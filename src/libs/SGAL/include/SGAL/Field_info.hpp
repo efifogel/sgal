@@ -144,6 +144,11 @@ public:
    */
   Field_rule get_rule() const;
 
+  /*! Obtain the name of the field rule.
+   * \return the name of field rule.
+   */
+  const char* get_rule_name() const;
+
   /*! Obtain the execution function */
   Execution_function execution_function() const;
 
@@ -158,6 +163,10 @@ public:
   /* Obtain the field info type.
    */
   virtual Uint get_type_id() const = 0;
+
+  /*! Obtain the name of the field info type.
+   */
+  const char* get_type_name() const;
 
   /*! Create an object that holds a pointer to the value of an actual field
    * with this info.
@@ -175,8 +184,6 @@ public:
    * \return \true if the field is a scalar and false otherwise.
    */
   virtual Boolean is_scalar() const = 0;
-
-  static Field_type get_field_type(const std::string& type);
 
   /*! Write a field using a given formatter.
    * \param container (in) The container that contains the field.
@@ -392,6 +399,21 @@ public:
   void write(Formatter* formatter, const Shared_container_array& value,
              const Shared_container_array& default_value,
              Boolean declaration = false) const;
+
+  /*! Obtain the name of a rule.
+   */
+  static const char* get_rule_name(Field_rule id);
+
+  /*! Obtain the name of a type.
+   */
+  static const char* get_type_name(Uint id);
+
+private:
+  /*! The names of the field rules. */
+  const static char* s_rule_names[];
+
+  /*! The names of the field types. */
+  const static char* s_type_names[];
 };
 
 #if defined(_MSC_VER)
@@ -415,6 +437,14 @@ inline Boolean Field_info::operator==(const Field_info& other) const
 //! \brief obtains the field rule.
 inline Field_info::Field_rule Field_info::get_rule() const { return m_rule; }
 
+//! \brief obtains the name of the field rule.
+inline const char* Field_info::get_rule_name() const
+{ return get_rule_name(get_rule()); }
+
+//! \brief obtains the name of the field info type.
+inline const char* Field_info::get_type_name() const
+{ return get_type_name(get_type_id()); }
+
 //! \brief determines whether
 inline Boolean Field_info::is_initially_blocked() const
 { return m_initially_blocked; }
@@ -425,6 +455,14 @@ inline std::ostream& operator<<(std::ostream& os, const Field_info& fi)
   os << fi.get_name().c_str() << ", " << fi.get_id();
   return os;
 }
+
+//! \brief obtains the name of a rule.
+inline const char* Field_info::get_rule_name(Field_rule id)
+{ return s_rule_names[id]; }
+
+//! \brief obtains the name of a type.
+inline const char* Field_info::get_type_name(Uint id)
+{ return s_type_names[id]; }
 
 SGAL_END_NAMESPACE
 

@@ -93,7 +93,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_boolean(Field_info::Field_rule rule, Uint type_id,
+  virtual void single_boolean(const std::string& rule, const std::string&_type,
                               const std::string& name,
                               Boolean default_value);
 
@@ -102,7 +102,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_float(Field_info::Field_rule rule, Uint type_id,
+  virtual void single_float(const std::string& rule, const std::string&_type,
                             const std::string& name,
                             Float value);
 
@@ -111,7 +111,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_uint(Field_info::Field_rule rule, Uint type_id,
+  virtual void single_uint(const std::string& rule, const std::string&_type,
                            const std::string& name,
                            Uint value);
 
@@ -120,7 +120,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_int32(Field_info::Field_rule rule, Uint type_id,
+  virtual void single_int32(const std::string& rule, const std::string&_type,
                             const std::string& name,
                             Int32 value);
 
@@ -129,7 +129,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_scene_time(Field_info::Field_rule rule, Uint type_id,
+  virtual void single_scene_time(const std::string& rule,
+                                 const std::string&_type,
                                  const std::string& name,
                                  Scene_time value);
 
@@ -138,7 +139,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_vector2f(Field_info::Field_rule rule, Uint type_id,
+  virtual void single_vector2f(const std::string& rule, const std::string&_type,
                                const std::string& name,
                                const Vector2f& value);
 
@@ -147,7 +148,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_vector3f(Field_info::Field_rule rule, Uint type_id,
+  virtual void single_vector3f(const std::string& rule, const std::string&_type,
                                const std::string& name,
                                const Vector3f& value);
 
@@ -156,7 +157,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_vector4f(Field_info::Field_rule rule, Uint type_id,
+  virtual void single_vector4f(const std::string& rule, const std::string&_type,
                                const std::string& name,
                                const Vector4f& value);
 
@@ -165,7 +166,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_rotation(Field_info::Field_rule rule, Uint type_id,
+  virtual void single_rotation(const std::string& rule, const std::string&_type,
                                const std::string& name,
                                const Rotation& value);
 
@@ -174,7 +175,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_sphere_bound(Field_info::Field_rule rule, Uint type_id,
+  virtual void single_sphere_bound(const std::string& rule,
+                                   const std::string&_type,
                                    const std::string& name,
                                    const Sphere_bound& value);
 
@@ -183,7 +185,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_string(Field_info::Field_rule rule, Uint type_id,
+  virtual void single_string(const std::string& rule, const std::string&_type,
                              const std::string& name,
                              const std::string& value);
 
@@ -192,7 +194,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_boolean(Field_info::Field_rule rule, Uint type_id,
+  virtual void multi_boolean(const std::string& rule, const std::string&_type,
                              const std::string& name,
                              const std::vector<Boolean>& value);
 
@@ -201,7 +203,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_float(Field_info::Field_rule rule, Uint type_id,
+  virtual void multi_float(const std::string& rule, const std::string&_type,
                            const std::string& name,
                            const std::vector<Float>& value);
 
@@ -210,7 +212,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_uint(Field_info::Field_rule rule, Uint type_id,
+  virtual void multi_uint(const std::string& rule, const std::string&_type,
                           const std::string& name,
                           const std::vector<Uint>& value);
 
@@ -219,7 +221,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_int32(Field_info::Field_rule rule, Uint type_id,
+  virtual void multi_int32(const std::string& rule, const std::string&_type,
                            const std::string& name,
                            const std::vector<Int32>& value);
 
@@ -228,7 +230,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_scene_time(Field_info::Field_rule rule, Uint type_id,
+  virtual void multi_scene_time(const std::string& rule,
+                                const std::string&_type,
                                 const std::string& name,
                                 const std::vector<Scene_time>& value);
 
@@ -237,7 +240,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_vector2f(Field_info::Field_rule rule, Uint type_id,
+  virtual void multi_vector2f(const std::string& rule, const std::string&_type,
                               const std::string& name,
                               const std::vector<Vector2f>& value);
 
@@ -246,7 +249,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_vector3f(Field_info::Field_rule rule, Uint type_id,
+  virtual void multi_vector3f(const std::string& rule, const std::string&_type,
                               const std::string& name,
                               const std::vector<Vector3f>& value);
 
@@ -255,7 +258,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_vector4f(Field_info::Field_rule rule, Uint type_id,
+  virtual void multi_vector4f(const std::string& rule, const std::string&_type,
                               const std::string& name,
                               const std::vector<Vector4f>& value);
 
@@ -264,7 +267,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_rotation(Field_info::Field_rule rule, Uint type_id,
+  virtual void multi_rotation(const std::string& rule, const std::string&_type,
                               const std::string& name,
                               const std::vector<Rotation>& value);
 
@@ -273,7 +276,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_sphere_bound(Field_info::Field_rule rule, Uint type_id,
+  virtual void multi_sphere_bound(const std::string& rule,
+                                  const std::string&_type,
                                   const std::string& name,
                                   const std::vector<Sphere_bound>& value);
 
@@ -282,7 +286,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_string(Field_info::Field_rule rule, Uint type_id,
+  virtual void multi_string(const std::string& rule, const std::string&_type,
                             const std::string& name,
                             const std::vector<std::string>& value);
   //@}
@@ -502,13 +506,34 @@ public:
   /*! The name so fthe containers that have been exported already. */
   std::set<std::string> m_names;
 
-  const static char* s_rule_names[];
-
 private:
+  /*! Declare a single field of type T.
+   */
+  template <typename T>
+  void single_declaration(const std::string& rule, const std::string& type,
+                          const std::string& name, const T& value)
+  {
+    new_line();
+    indent();
+    if ((rule.compare("exposedField") == 0) || (rule.compare("field") == 0))
+      out() << rule << " " << type << " " << name << " " << value;
+    else out() << rule << " " << type << " " << name;
+    new_line();
+  }
+
+  /*! Declare a multi field of type T.
+   */
+  template <typename T>
+  void multi_declaration(const std::string& rule, const std::string& type,
+                          const std::string& name, const T& value)
+  {
+    SGAL_error_msg("Not implemented yet!");
+  }
+
   /*! Export a single field of type T.
    */
   template <typename T>
-  void single_field(const std::string& name, const T& value,
+  void single_definition(const std::string& name, const T& value,
                     const T& default_value)
   {
     if (value == default_value) return;
@@ -521,7 +546,7 @@ private:
   /*! Export a multi field of Array of type T.
    */
   template <typename T>
-  void multi_field(const std::string& name, const std::vector<T>& value,
+  void multi_definition(const std::string& name, const std::vector<T>& value,
                    const std::vector<T>& default_value)
   {
     if (value.size() == 0) return;
@@ -553,246 +578,268 @@ private:
 // Declarations
 
 //! \brief writes a single Boolean field.
-inline void Vrml_formatter::single_boolean(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::single_boolean(const std::string& rule,
+                                           const std::string& type,
                                            const std::string& name,
                                            Boolean value)
-{}
+{ single_declaration(rule, type, name, value); }
 
 //! \brief writes a single Float field.
-inline void Vrml_formatter::single_float(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::single_float(const std::string& rule,
+                                         const std::string& type,
                                          const std::string& name,
                                          Float value)
-{}
+{ single_declaration(rule, type, name, value); }
 
 //! \brief writes a single Uint field.
-inline void Vrml_formatter::single_uint(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::single_uint(const std::string& rule,
+                                        const std::string& type,
                                         const std::string& name,
                                         Uint value)
-{}
+{ single_declaration(rule, type, name, value); }
 
 //! \brief writes a single Int field.
-inline void Vrml_formatter::single_int32(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::single_int32(const std::string& rule,
+                                         const std::string& type,
                                          const std::string& name,
                                          Int32 value)
-{}
+{ single_declaration(rule, type, name, value); }
 
 //! \brief writes a single Scene_time field.
-inline void Vrml_formatter::single_scene_time(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::single_scene_time(const std::string& rule,
+                                              const std::string& type,
                                               const std::string& name,
                                               Scene_time value)
-{}
+{ single_declaration(rule, type, name, value); }
 
 //! \brief writes a single Vector2f field.
-inline void Vrml_formatter::single_vector2f(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::single_vector2f(const std::string& rule,
+                                            const std::string& type,
                                             const std::string& name,
                                             const Vector2f& value)
-{}
+{ single_declaration(rule, type, name, value); }
 
 //! \brief writes a single Vector3f field.
-inline void Vrml_formatter::single_vector3f(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::single_vector3f(const std::string& rule,
+                                            const std::string& type,
                                             const std::string& name,
                                             const Vector3f& value)
-{}
+{ single_declaration(rule, type, name, value); }
 
 //! \brief writes a single Vector4f field.
-inline void Vrml_formatter::single_vector4f(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::single_vector4f(const std::string& rule,
+                                            const std::string& type,
                                             const std::string& name,
                                             const Vector4f& value)
-{}
+{ single_declaration(rule, type, name, value); }
 
 //! \brief writes a single Rotation field.
-inline void Vrml_formatter::single_rotation(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::single_rotation(const std::string& rule,
+                                            const std::string& type,
                                             const std::string& name,
                                             const Rotation& value)
-{}
+{ single_declaration(rule, type, name, value); }
 
 //! \brief writes a single Sphere_bound field.
-inline void Vrml_formatter::single_sphere_bound(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::single_sphere_bound(const std::string& rule,
+                                                const std::string& type,
                                                 const std::string& name,
                                                 const Sphere_bound& value)
-{}
+{ single_declaration(rule, type, name, value); }
 
 //! \brief writes a single string field.
-inline void Vrml_formatter::single_string(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::single_string(const std::string& rule,
+                                          const std::string& type,
                                           const std::string& name,
                                           const std::string& value)
-{}
+{ single_declaration(rule, type, name, value); }
 
 //! \brief writes a multi-Boolean field.
-inline void Vrml_formatter::multi_boolean(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::multi_boolean(const std::string& rule,
+                                          const std::string& type,
                                           const std::string& name,
                                           const std::vector<Boolean>& value)
-{}
+{ multi_declaration(rule, type, name, value); }
 
 //! \brief writes a multi-Float field.
-inline void Vrml_formatter::multi_float(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::multi_float(const std::string& rule,
+                                        const std::string& type,
                                         const std::string& name,
                                         const std::vector<Float>& value)
-{}
+{ multi_declaration(rule, type, name, value); }
 
 //! \brief writes a multi-Uint field.
-inline void Vrml_formatter::multi_uint(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::multi_uint(const std::string& rule,
+                                       const std::string& type,
                                        const std::string& name,
                                        const std::vector<Uint>& value)
-{}
+{ multi_declaration(rule, type, name, value); }
 
 //! \brief writes a multi-Int field.
-inline void Vrml_formatter::multi_int32(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::multi_int32(const std::string& rule,
+                                        const std::string& type,
                                         const std::string& name,
                                         const std::vector<Int32>& value)
-{}
+{ multi_declaration(rule, type, name, value); }
 
 //! \brief writes a multi-Scene_time field.
-inline void Vrml_formatter::multi_scene_time(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::multi_scene_time(const std::string& rule,
+                                             const std::string& type,
                                              const std::string& name,
                                              const std::vector<Scene_time>& value)
-{}
+{ multi_declaration(rule, type, name, value); }
 
 //! \brief writes a multi-Vector2f field.
-inline void Vrml_formatter::multi_vector2f(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::multi_vector2f(const std::string& rule,
+                                           const std::string& type,
                                            const std::string& name,
                                            const std::vector<Vector2f>& value)
-{}
+{ multi_declaration(rule, type, name, value); }
 
 //! \brief writes a multi-Vector3f field.
-inline void Vrml_formatter::multi_vector3f(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::multi_vector3f(const std::string& rule,
+                                           const std::string& type,
                                            const std::string& name,
                                            const std::vector<Vector3f>& value)
-{}
+{ multi_declaration(rule, type, name, value); }
 
 //! \brief writes a multi-Vector4f field.
-inline void Vrml_formatter::multi_vector4f(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::multi_vector4f(const std::string& rule,
+                                           const std::string& type,
                                            const std::string& name,
                                            const std::vector<Vector4f>& value)
-{}
+{ multi_declaration(rule, type, name, value); }
 
 //! \brief writes a multi-Rotation field.
-inline void Vrml_formatter::multi_rotation(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::multi_rotation(const std::string& rule,
+                                           const std::string& type,
                                            const std::string& name,
                                            const std::vector<Rotation>& value)
-{}
+{ multi_declaration(rule, type, name, value); }
 
 //! \brief writes a multi-Sphere_bound field.
-inline void Vrml_formatter::multi_sphere_bound(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::multi_sphere_bound(const std::string& rule,
+                                               const std::string& type,
                                                const std::string& name,
                                                const std::vector<Sphere_bound>& value)
-{}
+{ multi_declaration(rule, type, name, value); }
 
 //! \brief writes a multi-string field.
-inline void Vrml_formatter::multi_string(Field_info::Field_rule rule, Uint type_id,
+inline void Vrml_formatter::multi_string(const std::string& rule,
+                                         const std::string& type,
                                          const std::string& name,
                                          const std::vector<std::string>& value)
-{}
+{ multi_declaration(rule, type, name, value); }
 
 // Definitions
 //! \brief writes a single Float field.
 inline void Vrml_formatter::single_float(const std::string& name,
                                          Float value, Float default_value)
-{ single_field(name, value, default_value); }
+{ single_definition(name, value, default_value); }
 
 //! \brief writes a single Uint field.
 inline void Vrml_formatter::single_uint(const std::string& name,
                                         Uint value, Uint default_value)
-{ single_field(name, value, default_value); }
+{ single_definition(name, value, default_value); }
 
 //! \brief writes a single Int field.
 inline void Vrml_formatter::single_int32(const std::string& name,
                                          Int32 value, Int32 default_value)
-{ single_field(name, value, default_value); }
+{ single_definition(name, value, default_value); }
 
 //! \brief writes a single Scene_time field.
 inline void Vrml_formatter::single_scene_time(const std::string& name,
                                               Scene_time value,
                                               Scene_time default_value)
-{ single_field(name, value, default_value); }
+{ single_definition(name, value, default_value); }
 
 //! \brief writes a single Vector2f field.
 inline void Vrml_formatter::single_vector2f(const std::string& name,
                                             const Vector2f& value,
                                             const Vector2f& default_value)
-{ single_field(name, value, default_value); }
+{ single_definition(name, value, default_value); }
 
 //! \brief writes a single Vector3f field.
 inline void Vrml_formatter::single_vector3f(const std::string& name,
                                             const Vector3f& value,
                                             const Vector3f& default_value)
-{ single_field(name, value, default_value); }
+{ single_definition(name, value, default_value); }
 
 //! \brief writes a single Vector4f field.
 inline void Vrml_formatter::single_vector4f(const std::string& name,
                                             const Vector4f& value,
                                             const Vector4f& default_value)
-{ single_field(name, value, default_value); }
+{ single_definition(name, value, default_value); }
 
 //! \brief writes a single Rotation field.
 inline void Vrml_formatter::single_rotation(const std::string& name,
                                             const Rotation& value,
                                             const Rotation& default_value)
-{ single_field(name, value, default_value); }
+{ single_definition(name, value, default_value); }
 
 //! \brief writes a single Sphere_bound field.
 inline void
 Vrml_formatter::single_sphere_bound(const std::string& name,
                                     const Sphere_bound& value,
                                     const Sphere_bound& default_value)
-{ single_field(name, value, default_value); }
+{ single_definition(name, value, default_value); }
 
 // Multi-field
 //! \brief writes a single Float field.
 inline void Vrml_formatter::multi_float(const std::string& name,
                                         const std::vector<Float>& value,
                                         const std::vector<Float>& default_value)
-{ multi_field(name, value, default_value); }
+{ multi_definition(name, value, default_value); }
 
 //! \brief writes a single Uint field.
 inline void Vrml_formatter::multi_uint(const std::string& name,
                                        const std::vector<Uint>& value,
                                        const std::vector<Uint>& default_value)
-{ multi_field(name, value, default_value); }
+{ multi_definition(name, value, default_value); }
 
 //! \brief writes a single Int field.
 inline void Vrml_formatter::multi_int32(const std::string& name,
                                         const std::vector<Int32>& value,
                                         const std::vector<Int32>& default_value)
-{ multi_field(name, value, default_value); }
+{ multi_definition(name, value, default_value); }
 
 //! \brief writes a single Scene_time field.
 inline void
 Vrml_formatter::multi_scene_time(const std::string& name,
                                  const std::vector<Scene_time>& value,
                                  const std::vector<Scene_time>& default_value)
-{ multi_field(name, value, default_value); }
+{ multi_definition(name, value, default_value); }
 
 //! \brief writes a single Vector2f field.
 inline void Vrml_formatter::multi_vector2f(const std::string& name,
                                            const std::vector<Vector2f>& value,
                                            const std::vector<Vector2f>& default_value)
-{ multi_field(name, value, default_value); }
+{ multi_definition(name, value, default_value); }
 
 //! \brief writes a single Vector3f field.
 inline void Vrml_formatter::multi_vector3f(const std::string& name,
                                            const std::vector<Vector3f>& value,
                                            const std::vector<Vector3f>& default_value)
-{ multi_field(name, value, default_value); }
+{ multi_definition(name, value, default_value); }
 
 //! \brief writes a single Vector4f field.
 inline void Vrml_formatter::multi_vector4f(const std::string& name,
                                            const std::vector<Vector4f>& value,
                                            const std::vector<Vector4f>& default_value)
-{ multi_field(name, value, default_value); }
+{ multi_definition(name, value, default_value); }
 
 //! \brief writes a single Rotation field.
 inline void Vrml_formatter::multi_rotation(const std::string& name,
                                            const std::vector<Rotation>& value,
                                            const std::vector<Rotation>& default_value)
-{ multi_field(name, value, default_value); }
+{ multi_definition(name, value, default_value); }
 
 //! \brief writes a single Sphere_bound field.
 inline void
 Vrml_formatter::multi_sphere_bound(const std::string& name,
                                    const std::vector<Sphere_bound>& value,
                                    const std::vector<Sphere_bound>& default_value)
-{ multi_field(name, value, default_value); }
+{ multi_definition(name, value, default_value); }
 
 SGAL_END_NAMESPACE
 

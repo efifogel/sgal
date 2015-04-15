@@ -26,7 +26,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/Node.hpp"
+#include "SGAL/Container.hpp"
 #include "SGAL/Agent.hpp"
 #include "SGAL/Action.hpp"
 #include "SGAL/Field_infos.hpp"
@@ -53,10 +53,10 @@ template class SGAL_SGAL_DECL std::basic_string<char>;
 
 /*! \class Script_base Script_base.hpp
  */
-class SGAL_SGAL_DECL Script_base : public Node, public Agent {
+class SGAL_SGAL_DECL Script_base : public Container, public Agent {
 public:
   enum {
-    FIRST = Node::LAST-1,
+    FIRST = Container::LAST-1,
     URL,
     DIRECT_OUTPUT,
     MUST_EVALUATE,
@@ -150,10 +150,6 @@ public:
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
-
-  /*! Dummy. */
-  virtual Action::Trav_directive Draw(Draw_action* /* draw_action */)
-  { return Action::TRAV_CONT; }
 
   /*! Handle tick events. */
   virtual void handle(Tick_event* event);

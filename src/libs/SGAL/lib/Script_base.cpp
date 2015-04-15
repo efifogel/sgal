@@ -40,7 +40,7 @@ Container_proto* Script_base::s_prototype(nullptr);
 
 /*! Constructor */
 Script_base::Script_base(Boolean proto) :
-  Node(proto),
+  Container(proto),
   m_direct_output(s_def_direct_output),
   m_must_evaluate(s_def_must_evaluate),
   m_protocol(PROTOCOL_INVALID)
@@ -54,7 +54,7 @@ Script_base::~Script_base()
 void Script_base::init_prototype()
 {
   if (s_prototype) return;
-  s_prototype = new Container_proto(Node::get_prototype());
+  s_prototype = new Container_proto(Container::get_prototype());
 
   String_handle_function url_func =
     static_cast<String_handle_function>(&Script_base::url_handle);
@@ -95,7 +95,7 @@ Container_proto* Script_base::get_prototype()
 /*! \brief sets the attributes of the object extracted from the input file. */
 void Script_base::set_attributes(Element* elem)
 {
-  Node::set_attributes(elem);
+  Container::set_attributes(elem);
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
@@ -128,7 +128,7 @@ Attribute_list Script_base::get_attributes()
   Attribute_list attribs;
   Attribue attrib;
 
-  attribs = Node::get_attributes();
+  attribs = Container::get_attributes();
 
   attrib.first = "url";
   attrib.second = m_url;

@@ -27,46 +27,28 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Field_info::Field_type Field_info::get_field_type(const std::string& type)
-{
-  if (type == "SFBool" || type == "Boolean") return SF_BOOL;
-  else if (type == "SFColor" || type == "Color") return SF_COLOR;
-  else if (type == "SFFloat" || type == "Float") return SF_FLOAT;
-  else if (type == "SFImage" || type == "Image") return SF_IMAGE;
-  else if (type == "SFInt32" || type == "Integer") return SF_INT32;
-  else if (type == "SFSharedContainer" || type == "SharedContainer")
-    return SF_SHARED_CONTAINER;
-  else if (type == "SFRotation" || type == "Rotation") return SF_ROTATION;
-  else if (type == "SFSphereBound" || type == "SphereBound") return SF_SB;
-  else if (type == "SFString" || type == "String") return SF_STR;
-  else if (type == "SFTime" || type == "Time") return SF_TIME;
-  else if (type == "SFVec2f" || type == "Vector2Float") return SF_VEC2F;
-  else if (type == "SFVec3F" || type == "Vector3Float") return SF_VEC3F;
-  else if (type == "SFVec4F" || type == "Vector4Float") return SF_VEC4F;
-  else if (type == "MFBool" || type == "Booleans") return MF_BOOL;
-  else if (type == "MFColor" || type == "Colors") return MF_VEC3F;
-  else if (type == "MFFloat" || type == "Floats") return MF_FLOAT;
-  else if (type == "MFInt32" || type == "Integers") return MF_INT32;
-  else if (type == "MFSharedNode" || type == "SharedContainers")
-    return MF_SHARED_CONTAINER;
-  else if (type == "MFRotation" || type == "Rotations") return MF_ROTATION;
-  else if (type == "MFSphereBound" || type == "SphereBounds") return MF_SB;
-  else if (type == "MFString" || type == "Strings") return MF_STR;
-  else if (type == "MFTime" || type == "Times") return MF_TIME;
-  else if (type == "MFVec2F" || type == "Vector2Floats") return MF_VEC2F;
-  else if (type == "MFVec3F" || type == "Vector3Floats") return MF_VEC3F;
-  else if (type == "MFVec4F" || type == "Vector4Floats") return MF_VEC4F;
+//! \brief the names of the field rules.
+const char* Field_info::s_rule_names[] = {
+  "eventIn", "eventOut", "field", "exposedField"
+};
 
-  assert(false);
-  return NUM_FIELD_TYPES;
-}
+//! \brief the names of the field types.
+const char* Field_info::s_type_names[] = {
+  "SFBool", "SFFloat", "SFUint32", "SFInt32",
+  "SFTime", "SFVec2f", "SFVec3f", "SFColor",
+  "SFVec4f", "SFRotation", "SFSphereBound", "SFImage",
+  "SFString", "SFSharedContainer", "MFBool", "MFFloat",
+  "MFUint32", "MFInt32", "MFTime", "MFVec2f",
+  "MFVec3f", "MFColor", "MFVec4f", "MFRotation",
+  "MFSphereBound", "MFImage", "MFString", "MFSharedContainer",
+};
 
 //! \brief writes the (single) Boolean field.
 void Field_info::write(Formatter* formatter, Boolean value,
                        Boolean default_value, Boolean declaration) const
 {
   if (declaration)
-    formatter->single_boolean(get_rule(), get_type_id(), get_name(),
+    formatter->single_boolean(get_rule_name(), get_type_name(), get_name(),
                               default_value);
   else formatter->single_boolean(get_name(), value, default_value);
 }
@@ -76,7 +58,7 @@ void Field_info::write(Formatter* formatter, Float value,
                        Float default_value, Boolean declaration) const
 {
   if (declaration)
-    formatter->single_float(get_rule(), get_type_id(), get_name(),
+    formatter->single_float(get_rule_name(), get_type_name(), get_name(),
                             default_value);
   else formatter->single_float(get_name(), value, default_value);
 }
@@ -86,7 +68,7 @@ void Field_info::write(Formatter* formatter, Uint value,
                        Uint default_value, Boolean declaration) const
 {
   if (declaration)
-    formatter->single_uint(get_rule(), get_type_id(), get_name(),
+    formatter->single_uint(get_rule_name(), get_type_name(), get_name(),
                            default_value);
   else formatter->single_uint(get_name(), value, default_value);
 }
@@ -96,7 +78,7 @@ void Field_info::write(Formatter* formatter, Int32 value,
                        Int32 default_value, Boolean declaration) const
 {
   if (declaration)
-    formatter->single_int32(get_rule(), get_type_id(), get_name(),
+    formatter->single_int32(get_rule_name(), get_type_name(), get_name(),
                             default_value);
   else formatter->single_int32(get_name(), value, default_value);
 }
@@ -107,7 +89,7 @@ void Field_info::write(Formatter* formatter, const Scene_time& value,
                        Boolean declaration) const
 {
   if (declaration)
-    formatter->single_scene_time(get_rule(), get_type_id(), get_name(),
+    formatter->single_scene_time(get_rule_name(), get_type_name(), get_name(),
                                  default_value);
   else formatter->single_scene_time(get_name(), value, default_value);
 }
@@ -118,7 +100,7 @@ void Field_info::write(Formatter* formatter, const Vector2f& value,
                        Boolean declaration) const
 {
   if (declaration)
-    formatter->single_vector2f(get_rule(), get_type_id(), get_name(),
+    formatter->single_vector2f(get_rule_name(), get_type_name(), get_name(),
                                default_value);
   else formatter->single_vector2f(get_name(), value, default_value);
 }
@@ -128,7 +110,7 @@ void Field_info::write(Formatter* formatter, const Vector3f& value,
                        const Vector3f& default_value, Boolean declaration) const
 {
   if (declaration)
-    formatter->single_vector3f(get_rule(), get_type_id(), get_name(),
+    formatter->single_vector3f(get_rule_name(), get_type_name(), get_name(),
                                default_value);
   else formatter->single_vector3f(get_name(), value, default_value);
 }
@@ -138,7 +120,7 @@ void Field_info::write(Formatter* formatter, const Vector4f& value,
                        const Vector4f& default_value, Boolean declaration) const
 {
   if (declaration)
-    formatter->single_vector4f(get_rule(), get_type_id(), get_name(),
+    formatter->single_vector4f(get_rule_name(), get_type_name(), get_name(),
                                default_value);
   else formatter->single_vector4f(get_name(), value, default_value);
 }
@@ -148,7 +130,7 @@ void Field_info::write(Formatter* formatter, const Rotation& value,
                        const Rotation& default_value, Boolean declaration) const
 {
   if (declaration)
-    formatter->single_rotation(get_rule(), get_type_id(), get_name(),
+    formatter->single_rotation(get_rule_name(), get_type_name(), get_name(),
                                default_value);
   else formatter->single_rotation(get_name(), value, default_value);
 }
@@ -159,7 +141,7 @@ void Field_info::write(Formatter* formatter, const Sphere_bound& value,
                        Boolean declaration) const
 {
   if (declaration)
-    formatter->single_sphere_bound(get_rule(), get_type_id(), get_name(),
+    formatter->single_sphere_bound(get_rule_name(), get_type_name(), get_name(),
                                    default_value);
   else formatter->single_sphere_bound(get_name(), value, default_value);
 }
@@ -170,7 +152,7 @@ void Field_info::write(Formatter* formatter, const std::string& value,
                        Boolean declaration) const
 {
   if (declaration)
-    formatter->single_string(get_rule(), get_type_id(), get_name(),
+    formatter->single_string(get_rule_name(), get_type_name(), get_name(),
                              default_value);
   else formatter->single_string(get_name(), value, default_value);
 }
@@ -195,7 +177,7 @@ void Field_info::write(Formatter* formatter, const Boolean_array& value,
                        Boolean declaration) const
 {
   if (declaration)
-    formatter->multi_boolean(get_rule(), get_type_id(), get_name(),
+    formatter->multi_boolean(get_rule_name(), get_type_name(), get_name(),
                              default_value);
   else formatter->multi_boolean(get_name(), value, default_value);
 }
@@ -206,7 +188,7 @@ void Field_info::write(Formatter* formatter, const Float_array& value,
                        Boolean declaration) const
 {
   if (declaration)
-    formatter->multi_float(get_rule(), get_type_id(), get_name(),
+    formatter->multi_float(get_rule_name(), get_type_name(), get_name(),
                            default_value);
   else formatter->multi_float(get_name(), value, default_value);
 }
@@ -217,7 +199,8 @@ void Field_info::write(Formatter* formatter, const Uint_array& value,
                        Boolean declaration) const
 {
   if (declaration)
-    formatter->multi_uint(get_rule(), get_type_id(), get_name(), default_value);
+    formatter->multi_uint(get_rule_name(), get_type_name(), get_name(),
+                          default_value);
   else formatter->multi_uint(get_name(), value, default_value);
 }
 
@@ -227,7 +210,7 @@ void Field_info::write(Formatter* formatter, const Int32_array& value,
                        Boolean declaration) const
 {
   if (declaration)
-    formatter->multi_int32(get_rule(), get_type_id(), get_name(),
+    formatter->multi_int32(get_rule_name(), get_type_name(), get_name(),
                            default_value);
   else formatter->multi_int32(get_name(), value, default_value);
 }
@@ -238,7 +221,7 @@ void Field_info::write(Formatter* formatter, const Scene_time_array& value,
                        Boolean declaration) const
 {
   if (declaration)
-    formatter->multi_scene_time(get_rule(), get_type_id(), get_name(),
+    formatter->multi_scene_time(get_rule_name(), get_type_name(), get_name(),
                                 default_value);
   else formatter->multi_scene_time(get_name(), value, default_value);
 }
@@ -249,7 +232,7 @@ void Field_info::write(Formatter* formatter, const Vector2f_array& value,
                        Boolean declaration) const
 {
   if (declaration)
-    formatter->multi_vector2f(get_rule(), get_type_id(), get_name(),
+    formatter->multi_vector2f(get_rule_name(), get_type_name(), get_name(),
                               default_value);
   else formatter->multi_vector2f(get_name(), value, default_value);
 }
@@ -260,7 +243,7 @@ void Field_info::write(Formatter* formatter, const Vector3f_array& value,
                        Boolean declaration) const
 {
   if (declaration)
-    formatter->multi_vector3f(get_rule(), get_type_id(), get_name(),
+    formatter->multi_vector3f(get_rule_name(), get_type_name(), get_name(),
                               default_value);
   else formatter->multi_vector3f(get_name(), value, default_value);
 }
@@ -271,7 +254,7 @@ void Field_info::write(Formatter* formatter, const Vector4f_array& value,
                        Boolean declaration) const
 {
   if (declaration)
-    formatter->multi_vector4f(get_rule(), get_type_id(), get_name(),
+    formatter->multi_vector4f(get_rule_name(), get_type_name(), get_name(),
                               default_value);
   else formatter->multi_vector4f(get_name(), value, default_value);
 }
@@ -282,7 +265,7 @@ void Field_info::write(Formatter* formatter, const Rotation_array& value,
                        Boolean declaration) const
 {
   if (declaration)
-    formatter->multi_rotation(get_rule(), get_type_id(), get_name(),
+    formatter->multi_rotation(get_rule_name(), get_type_name(), get_name(),
                               default_value);
   else formatter->multi_rotation(get_name(), value, default_value);
 }
@@ -293,7 +276,7 @@ void Field_info::write(Formatter* formatter, const Sphere_bound_array& value,
                        Boolean declaration) const
 {
   if (declaration)
-    formatter->multi_sphere_bound(get_rule(), get_type_id(), get_name(),
+    formatter->multi_sphere_bound(get_rule_name(), get_type_name(), get_name(),
                                   default_value);
   else formatter->multi_sphere_bound(get_name(), value, default_value);
 }
@@ -304,7 +287,7 @@ void Field_info::write(Formatter* formatter, const String_array& value,
                        Boolean declaration) const
 {
   if (declaration)
-    formatter->multi_string(get_rule(), get_type_id(), get_name(),
+    formatter->multi_string(get_rule_name(), get_type_name(), get_name(),
                             default_value);
   else formatter->multi_string(get_name(), value, default_value);
 }

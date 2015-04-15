@@ -28,10 +28,6 @@
 
 SGAL_BEGIN_NAMESPACE
 
-const char* Vrml_formatter::s_rule_names[] = {
-  "eventIn", "eventOut", "field", "exposedField"
-};
-
 //! \brief constructs.
 Vrml_formatter::Vrml_formatter(const std::string& filename) :
   Text_formatter(filename)

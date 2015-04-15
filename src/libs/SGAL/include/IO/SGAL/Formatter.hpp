@@ -335,8 +335,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_boolean(Field_info::Field_rule /* rule */,
-                              Uint /* type_id */,
+  virtual void single_boolean(const std::string& /* rule */,
+                              const std::string& /* type */,
                               const std::string& /* name */,
                               Boolean /* default_value */) {}
 
@@ -345,8 +345,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_float(Field_info::Field_rule /* rule */,
-                            Uint /* type_id */,
+  virtual void single_float(const std::string& /* rule */,
+                            const std::string& /* type */,
                             const std::string& /* name */,
                             Float /* value */) {};
 
@@ -355,8 +355,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_uint(Field_info::Field_rule /* rule */,
-                           Uint /* type_id */,
+  virtual void single_uint(const std::string& /* rule */,
+                           const std::string& /* type */,
                            const std::string& /* name */,
                            Uint /* value */) {}
 
@@ -365,8 +365,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_int32(Field_info::Field_rule /* rule */,
-                            Uint /* type_id */,
+  virtual void single_int32(const std::string& /* rule */,
+                            const std::string& /* type */,
                             const std::string& /* name */,
                             Int32 /* value */) {}
 
@@ -375,8 +375,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_scene_time(Field_info::Field_rule /* rule */,
-                                 Uint /* type_id */,
+  virtual void single_scene_time(const std::string& /* rule */,
+                                 const std::string& /* type */,
                                  const std::string& /* name */,
                                  Scene_time /* value */) {}
 
@@ -385,8 +385,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_vector2f(Field_info::Field_rule /* rule */,
-                               Uint /* type_id */,
+  virtual void single_vector2f(const std::string& /* rule */,
+                               const std::string& /* type */,
                                const std::string& /* name */,
                                const Vector2f& /* value */) {}
 
@@ -395,8 +395,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_vector3f(Field_info::Field_rule /* rule */,
-                               Uint /* type_id */,
+  virtual void single_vector3f(const std::string& /* rule */,
+                               const std::string& /* type */,
                                const std::string& /* name */,
                                const Vector3f& /* value */) {}
 
@@ -405,8 +405,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_vector4f(Field_info::Field_rule /* rule */,
-                               Uint /* type_id */,
+  virtual void single_vector4f(const std::string& /* rule */,
+                               const std::string& /* type */,
                                const std::string& /* name */,
                                const Vector4f& /* value */) {}
 
@@ -415,8 +415,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_rotation(Field_info::Field_rule /* rule */,
-                               Uint /* type_id */,
+  virtual void single_rotation(const std::string& /* rule */,
+                               const std::string& /* type */,
                                const std::string& /* name */,
                                const Rotation& /* value */) {}
 
@@ -425,8 +425,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_sphere_bound(Field_info::Field_rule /* rule */,
-                                   Uint /* type_id */,
+  virtual void single_sphere_bound(const std::string& /* rule */,
+                                   const std::string& /* type */,
                                    const std::string& /* name */,
                                    const Sphere_bound& /* value */) {}
 
@@ -435,8 +435,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_string(Field_info::Field_rule /* rule */,
-                             Uint /* type_id */,
+  virtual void single_string(const std::string& /* rule */,
+                             const std::string& /* type */,
                              const std::string& /* name */,
                              const std::string& /* value */) {}
 
@@ -445,8 +445,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_boolean(Field_info::Field_rule /* rule */,
-                             Uint /* type_id */,
+  virtual void multi_boolean(const std::string& /* rule */,
+                             const std::string& /* type */,
                              const std::string& /* name */,
                              const std::vector<Boolean>& /* value */) {}
 
@@ -455,8 +455,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_float(Field_info::Field_rule /* rule */,
-                           Uint /* type_id */,
+  virtual void multi_float(const std::string& /* rule */,
+                           const std::string& /* type */,
                            const std::string& /* name */,
                            const std::vector<Float>& /* value */) {}
 
@@ -465,8 +465,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_uint(Field_info::Field_rule /* rule */,
-                          Uint /* type_id */,
+  virtual void multi_uint(const std::string& /* rule */,
+                          const std::string& /* type */,
                           const std::string& /* name */,
                           const std::vector<Uint>& /* value */) {}
 
@@ -475,8 +475,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_int32(Field_info::Field_rule /* rule */,
-                           Uint /* type_id */,
+  virtual void multi_int32(const std::string& /* rule */,
+                           const std::string& /* type */,
                            const std::string& /* name */,
                            const std::vector<Int32>& /* value */) {}
 
@@ -485,8 +485,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_scene_time(Field_info::Field_rule /* rule */,
-                                Uint /* type_id */,
+  virtual void multi_scene_time(const std::string& /* rule */,
+                                const std::string& /* type */,
                                 const std::string& /* name */,
                                 const std::vector<Scene_time>& /* value */) {}
 
@@ -495,8 +495,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_vector2f(Field_info::Field_rule /* rule */,
-                              Uint /* type_id */,
+  virtual void multi_vector2f(const std::string& /* rule */,
+                              const std::string& /* type */,
                               const std::string& /* name */,
                               const std::vector<Vector2f>& /* value */) {}
 
@@ -505,8 +505,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_vector3f(Field_info::Field_rule /* rule */,
-                              Uint /* type_id */,
+  virtual void multi_vector3f(const std::string& /* rule */,
+                              const std::string& /* type */,
                               const std::string& /* name */,
                               const std::vector<Vector3f>& /* value */) {}
 
@@ -515,8 +515,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_vector4f(Field_info::Field_rule /* rule */,
-                              Uint /* type_id */,
+  virtual void multi_vector4f(const std::string& /* rule */,
+                              const std::string& /* type */,
                               const std::string& /* name */,
                               const std::vector<Vector4f>& /* value */) {}
 
@@ -525,8 +525,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_rotation(Field_info::Field_rule /* rule */,
-                              Uint /* type_id */,
+  virtual void multi_rotation(const std::string& /* rule */,
+                              const std::string& /* type */,
                               const std::string& /* name */,
                               const std::vector<Rotation>& /* value */) {}
 
@@ -535,8 +535,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_sphere_bound(Field_info::Field_rule /* rule */,
-                                  Uint /* type_id */,
+  virtual void multi_sphere_bound(const std::string& /* rule */,
+                                  const std::string& /* type */,
                                   const std::string& /* name */,
                                   const std::vector<Sphere_bound>& /* value */) {}
 
@@ -545,8 +545,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_string(Field_info::Field_rule /* rule */,
-                            Uint /* type_id */,
+  virtual void multi_string(const std::string& /* rule */,
+                            const std::string& /* type */,
                             const std::string& /* name */,
                             const std::vector<std::string>& /* value */) {}
   //@}
