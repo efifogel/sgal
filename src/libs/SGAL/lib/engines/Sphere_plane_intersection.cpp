@@ -87,7 +87,7 @@ void Sphere_plane_intersection::init_prototype()
     static_cast<Boolean_handle_function>
     (&Sphere_plane_intersection::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          RULE_EXPOSED_FIELD,
+                                          RULE_IN,
                                           trigger_func, exec_func));
 
   // circleTranslation

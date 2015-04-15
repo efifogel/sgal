@@ -43,6 +43,7 @@
 #include "SGAL/Sphere_environment.hpp"
 #include "SGAL/Cube_environment.hpp"
 #include "SGAL/Texture_2d.hpp"
+#include "SGAL/Vrml_formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -910,6 +911,26 @@ void Appearance::field_changed(const Field_info* field_info)
    default: break;
   }
   process_content_changed();
+}
+
+//! \brief writes all fields of this container.
+void Appearance::write_fields(Formatter* formatter)
+{
+  auto* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
+  if (vrml_formatter) {
+    auto* proto = get_prototype();
+    for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
+      const Field_info* field_info = (*it).second;
+      if (field_info->get_rule() == RULE_IN) continue;
+      if (BACK_MATERIAL == field_info->get_id()) {
+        if (get_material() == get_back_material()) continue;
+      }
+      field_info->write(this, formatter);
+    }
+    return;
+  }
+
+  Container::write_fields(formatter);
 }
 
 SGAL_END_NAMESPACE

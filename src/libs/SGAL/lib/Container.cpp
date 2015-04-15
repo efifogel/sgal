@@ -91,7 +91,7 @@ Field* Container::get_field(const Field_info* field_info)
 //! \brief adds a field given its field-info.
 Field* Container::add_field(const Field_info* field_info)
 {
-  if (!field_info) return NULL;
+  if (!field_info) return nullptr;
 
   // Check if the field already exists -> dont add it again
   auto* field = get_field(field_info);
@@ -184,8 +184,8 @@ void Container::write_fields(Formatter* formatter)
   auto* proto = get_prototype();
   for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const Field_info* field_info = (*it).second;
-    if (field_info->get_rule() == RULE_IN) continue;
-    field_info->write(this, formatter);
+    if (field_info->get_rule() == RULE_EXPOSED_FIELD)
+      field_info->write(this, formatter);
   }
 }
 

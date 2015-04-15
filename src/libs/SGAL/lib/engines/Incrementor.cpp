@@ -66,18 +66,20 @@ void Incrementor::init_prototype()
     static_cast<Int32_handle_function>(&Incrementor::min_value_handle);
   s_prototype->add_field_info(new SF_int32(MIN_VALUE, "minValue",
                                            RULE_EXPOSED_FIELD,
-                                           min_value_func, exec_func));
+                                           min_value_func,
+                                           s_def_min_value, exec_func));
 
   Int32_handle_function max_value_func =
     static_cast<Int32_handle_function>(&Incrementor::max_value_handle);
   s_prototype->add_field_info(new SF_int32(MAX_VALUE, "maxValue",
                                            RULE_EXPOSED_FIELD,
-                                           max_value_func, exec_func));
+                                           max_value_func,
+                                           s_def_max_value, exec_func));
 
   Boolean_handle_function trigger_func =
     static_cast<Boolean_handle_function>(&Incrementor::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          RULE_EXPOSED_FIELD,
+                                          RULE_IN,
                                           trigger_func,
                                           exec_func));
 

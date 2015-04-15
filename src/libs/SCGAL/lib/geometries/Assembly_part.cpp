@@ -125,34 +125,31 @@ Assembly_part::Appearance_list& Assembly_part::get_sgm_apps()
 //! \brief constructs all the SGM's that comprise this part.
 void Assembly_part::clean_sgm_geos(Group* /* group */)
 {
-  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
-    Shared_node node = *it;
+  for (auto it = m_childs.begin(); it != m_childs.end(); ++it) {
+    auto node = *it;
     clean_sgm_geos(&*node);
   }
 }
 
 //! \brief constructs all the SGM's that comprise this part.
-void Assembly_part::clean_sgm_geos(Node* node)
+void Assembly_part::clean_sgm_geos(Container* node)
 {
   static float total_duration_time = 0;
   static Uint total_number_of_vertices = 0;
   static Uint total_number_of_edges = 0;
   static Uint total_number_of_facets = 0;
 
-  Shape* shape = dynamic_cast<Shape*>(node);
+  auto* shape = dynamic_cast<Shape*>(node);
   if (shape) {
-    Shared_appearance app = shape->get_appearance();
-    Shared_sgm_geo sgm_geo =
-      boost::dynamic_pointer_cast<Sgm_geo>(shape->get_geometry());
+    auto app = shape->get_appearance();
+    auto sgm_geo = boost::dynamic_pointer_cast<Sgm_geo>(shape->get_geometry());
     if (sgm_geo) {
       m_sgm_geos.push_back(sgm_geo);
       m_sgm_apps.push_back(app);
       return;
     }
 
-    typedef boost::shared_ptr<Exact_polyhedron_geo>
-      Shared_exact_polyhedron_geo;
-    Shared_exact_polyhedron_geo polyhedron_geo =
+    auto polyhedron_geo =
       boost::dynamic_pointer_cast<Exact_polyhedron_geo>(shape->get_geometry());
     if (polyhedron_geo) {
       typedef CGAL::Nef_polyhedron_3<Exact_kernel, CGAL::SNC_indexed_items>
@@ -193,7 +190,7 @@ void Assembly_part::clean_sgm_geos(Node* node)
         number_of_edges += p.size_of_halfedges()/2;
         number_of_facets += p.size_of_facets();
         // std::cout << p << std::endl;
-        Shared_sgm_geo sgm_geo = Shared_sgm_geo(new Sgm_geo);
+        auto sgm_geo = Shared_sgm_geo(new Sgm_geo);
         sgm_geo->set_polyhedron(&p);
         sgm_geo->set_aos_edge_color(app->get_material()->get_diffuse_color());
         // We need to clean, because the Polyhedron is local
@@ -216,20 +213,19 @@ void Assembly_part::clean_sgm_geos(Node* node)
       return;
     }
 
-    typedef boost::shared_ptr<Exact_nef_polyhedron>
-      Shared_exact_nef_polyhedron;
-    Shared_exact_nef_polyhedron nef_geo =
+    auto nef_geo =
       boost::dynamic_pointer_cast<Exact_nef_polyhedron>(shape->get_geometry());
     if (nef_geo) {
       nef_geo->convex_decomposition();
-      Exact_nef_polyhedron::Volume_const_iterator ci;
-      for (ci = nef_geo->volumes_begin(); ci != nef_geo->volumes_end(); ++ci) {
+      for (auto ci = nef_geo->volumes_begin(); ci != nef_geo->volumes_end();
+           ++ci)
+      {
         if (!ci->mark()) continue;
 
         Sgm_geo::Polyhedron polyhedron;
         nef_geo->convert_inner_shell_to_polyhedron(ci->shells_begin(),
                                                    polyhedron);
-        Shared_sgm_geo sgm_geo = Shared_sgm_geo(new Sgm_geo);
+        auto sgm_geo = Shared_sgm_geo(new Sgm_geo);
         sgm_geo->set_polyhedron(&polyhedron);
         // We need to clean, because the Polyhedron is local
         sgm_geo->clean_sgm();
@@ -246,14 +242,14 @@ void Assembly_part::clean_sgm_geos(Node* node)
     return;
   }
 
-  Switch* my_switch = dynamic_cast<Switch*>(node);
+  auto* my_switch = dynamic_cast<Switch*>(node);
   if (my_switch) {
-    Shared_node choice = my_switch->get_choice();
+    auto choice = my_switch->get_choice();
     if (!choice) return;
     return clean_sgm_geos(&*choice);
   }
 
-  Group* group = dynamic_cast<Group*>(node);
+  auto* group = dynamic_cast<Group*>(node);
   if (group) return clean_sgm_geos(group);
 }
 

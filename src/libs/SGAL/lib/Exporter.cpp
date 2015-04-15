@@ -30,6 +30,7 @@
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/File_format.hpp"
+#include "SGAL/Vrml_formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -37,9 +38,10 @@ const std::string Exporter::s_tag = "Exporter";
 Container_proto* Exporter::s_prototype(nullptr);
 
 // Default values
-const std::string Exporter::s_def_dir_name = ".";
-const std::string Exporter::s_def_file_name = "sgal";
+const std::string Exporter::s_def_dir_name(".");
+const std::string Exporter::s_def_file_name("sgal");
 const File_format::Id Exporter::s_def_file_format(File_format::ID_WRL);
+const Boolean Exporter::s_def_separate(false);
 
 REGISTER_TO_FACTORY(Exporter, "Exporter");
 
@@ -49,7 +51,7 @@ Exporter::Exporter(Boolean proto) :
   m_dir_name(s_def_dir_name),
   m_file_name(s_def_file_name),
   m_file_format(s_def_file_format),
-  m_separate(false),
+  m_separate(s_def_separate),
   m_count(0),
   m_trigger(false)
 {}
@@ -81,10 +83,10 @@ void Exporter::init_prototype()
   Execution_function exec_func =
     static_cast<Execution_function>(&Exporter::execute);
 
-  Boolean_handle_function trigger_func =
+  auto trigger_func =
     static_cast<Boolean_handle_function>(&Exporter::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          RULE_EXPOSED_FIELD,
+                                          RULE_IN,
                                           trigger_func,
                                           false, exec_func));
 
@@ -98,18 +100,25 @@ void Exporter::init_prototype()
                                             s_def_dir_name));
 
   // fileName
-  String_handle_function file_name_func =
+  auto file_name_func =
     static_cast<String_handle_function>(&Exporter::file_name_handle);
   s_prototype->add_field_info(new SF_string(FILE_NAME, "fileName",
                                             RULE_EXPOSED_FIELD,
                                             file_name_func, s_def_file_name));
 
   // fileFormat
-  Uint_handle_function file_format_func =
+  auto file_format_func =
     reinterpret_cast<Uint_handle_function>(&Exporter::file_format_handle);
   s_prototype->add_field_info(new SF_uint(FILE_FORMAT, "fileFormat",
                                           RULE_EXPOSED_FIELD,
                                           file_format_func, s_def_file_format));
+
+  // separate
+  auto separate_func =
+    reinterpret_cast<Boolean_handle_function>(&Exporter::separate_handle);
+  s_prototype->add_field_info(new SF_bool(SEPARATE, "separate",
+                                          RULE_EXPOSED_FIELD,
+                                          separate_func, s_def_separate));
 }
 
 //! \brief deletes the container prototype.
@@ -176,5 +185,26 @@ void Exporter::set_attributes(Element* elem)
 
 //! \brief adds the container to a given scene.
 void Exporter::add_to_scene(Scene_graph* sg) { m_scene_graph = sg; }
+
+//! \breif writes all fields of this container.
+void Exporter::write_fields(Formatter* formatter)
+{
+  auto* vrml_formatter = static_cast<Vrml_formatter*>(formatter);
+  if (!vrml_formatter) {
+    Exporter::write(formatter);
+    return;
+  }
+
+  auto* proto = get_prototype();
+  for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
+    const auto* field_info = (*it).second;
+    if (field_info->get_rule() != RULE_EXPOSED_FIELD) continue;
+    if (FILE_FORMAT == field_info->get_id())
+      vrml_formatter->single_string(field_info->get_name(),
+                                    File_format::get_name(m_file_format),
+                                    File_format::get_name(s_def_file_format));
+    else field_info->write(this, formatter);
+  }
+}
 
 SGAL_END_NAMESPACE

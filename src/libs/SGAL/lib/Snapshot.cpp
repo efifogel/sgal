@@ -192,7 +192,7 @@ void Snapshot::init_prototype()
     static_cast<Boolean_handle_function>(&Snapshot::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER,
                                           "trigger",
-                                          RULE_EXPOSED_FIELD,
+                                          RULE_IN,
                                           trigger_func,
                                           false));
 
@@ -335,30 +335,22 @@ Attribute_list Snapshot::get_attributes()
 
 #endif
 
-//! \breif writes this container.
-void Snapshot::write(Formatter* formatter)
+//! \breif writes all fields of this container.
+void Snapshot::write_fields(Formatter* formatter)
 {
-  Vrml_formatter* vrml_formatter = static_cast<Vrml_formatter*>(formatter);
-  if (vrml_formatter) {
-    formatter->container_begin(get_tag());
+  auto* vrml_formatter = static_cast<Vrml_formatter*>(formatter);
+  if (!vrml_formatter) return;
 
-    // Travese prototype field-info records
-    Container_proto* proto = get_prototype();
-    Container_proto::Id_const_iterator it = proto->ids_begin(proto);
-    for (; it != proto->ids_end(proto); ++it) {
-      const Field_info* field_info = (*it).second;
-      if (FILE_FORMAT == field_info->get_id()) {
-        vrml_formatter->single_string(field_info->get_name(),
-                                      s_file_format_names[m_file_format],
-                                      s_file_format_names[s_def_file_format]);
-        continue;
-      }
-      field_info->write(this, formatter);
-    }
-    formatter->container_end();
-    return;
+  auto* proto = get_prototype();
+  for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
+    const auto* field_info = (*it).second;
+    if (field_info->get_rule() != RULE_EXPOSED_FIELD) continue;
+    if (FILE_FORMAT == field_info->get_id())
+      vrml_formatter->single_string(field_info->get_name(),
+                                    s_file_format_names[m_file_format],
+                                    s_file_format_names[s_def_file_format]);
+    else field_info->write(this, formatter);
   }
-  Container::write(formatter);
 }
 
 SGAL_END_NAMESPACE

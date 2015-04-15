@@ -175,9 +175,8 @@ protected:
   template <typename OutputIterator>
   OutputIterator get_parts(Group* group, OutputIterator oi) const
   {
-    Node_iterator it;
-    for (it = group->children_begin(); it != group->children_end(); ++it) {
-      Shared_node node = *it;
+    for (auto it = group->children_begin(); it != group->children_end(); ++it) {
+      auto node = *it;
       oi = get_parts(&*node, oi);
     }
     return oi;
@@ -185,22 +184,22 @@ protected:
 
   /*! Obtain all the SGM's that comprise this part. */
   template <typename OutputIterator>
-  OutputIterator get_parts(Node* node, OutputIterator oi) const
+  OutputIterator get_parts(Container* node, OutputIterator oi) const
   {
-    Assembly_part* part = dynamic_cast<Assembly_part*>(node);
+    auto* part = dynamic_cast<Assembly_part*>(node);
     if (part) {
       oi++ = part;
       return oi;
     }
 
-    Switch* my_switch = dynamic_cast<Switch*>(node);
+    auto* my_switch = dynamic_cast<Switch*>(node);
     if (my_switch) {
-      Shared_node choice = my_switch->get_choice();
+      auto choice = my_switch->get_choice();
       if (!choice) return oi;
       return get_parts(&*choice, oi);
     }
 
-    Group* group = dynamic_cast<Group*>(node);
+    auto* group = dynamic_cast<Group*>(node);
     if (group) return get_parts(group, oi);
 
     return oi;
@@ -324,7 +323,7 @@ private:
   Boolean m_inc_alternate;
 
   /*! Space holder. */
-  Node_array m_childs_save;
+  Container_array m_childs_save;
 
   /*! Indicates whether to draw the Gausian maps of the Minkowski sums of the
    * parts.
@@ -349,7 +348,7 @@ private:
 
   /*! Assign each part a unique non-negative number.
    */
-  Uint assign_id(Node* node, Uint id) const;
+  Uint assign_id(Container* node, Uint id) const;
 
   /*! Assign each part a unique non-negative number.
    */
@@ -491,13 +490,13 @@ private:
 //   }
 // }
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Assembly* Assembly::prototype() { return new Assembly(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline  Container* Assembly::clone() { return new Assembly(); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Assembly::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

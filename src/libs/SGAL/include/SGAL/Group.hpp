@@ -71,13 +71,14 @@ public:
     LAST
   };
 
+  typedef boost::shared_ptr<Container>          Shared_container;
   typedef boost::shared_ptr<Node>               Shared_node;
   typedef boost::shared_ptr<Light>              Shared_light;
   typedef boost::shared_ptr<Touch_sensor>       Shared_touch_sensor;
 
-  typedef std::vector<Shared_node>              Node_array;
-  typedef Node_array::iterator                  Node_iterator;
-  typedef Node_array::const_iterator            Node_const_iterator;
+  typedef std::vector<Shared_container>         Container_array;
+  typedef Container_array::iterator             Container_iterator;
+  typedef Container_array::const_iterator       Container_const_iterator;
 
   /*! Constructor.
    * \param proto determines whether to construct a prototype.
@@ -119,7 +120,7 @@ public:
   /// \name field handlers
   //@{
   Boolean* is_visible_handle(const Field_info*) { return &m_is_visible; }
-  Node_array* childs_handle(const Field_info*) { return &m_childs; }
+  Container_array* childs_handle(const Field_info*) { return &m_childs; }
   Vector3f* bbox_center_handle(const Field_info*) { return &m_bbox_center; }
   Vector3f* bbox_size_handle(const Field_info*) { return &m_bbox_size; }
   //@}
@@ -179,17 +180,17 @@ public:
    * \param index the index of the child.
    * \return the child node.
    */
-  Shared_node get_child(Uint index);
+  Shared_container get_child(Uint index);
 
   /*! Obtain the begin iterator of the children.
    * \return The begin iterator of the children.
    */
-  Node_iterator children_begin();
+  Container_iterator children_begin();
 
   /*! Obtain the pass-the-end iterator of the children.
    * \return The pass-the-end iterator of the children.
    */
-  Node_iterator children_end();
+  Container_iterator children_end();
 
   /*! Turn on the flag that indicates whether the shape should be rendered. */
   void set_visible();
@@ -211,7 +212,7 @@ public:
    * Lights appear in front of the sequence followed by all the rest.
    * \param node (in) the child node to add.
    */
-  void add_child(Shared_node node);
+  void add_child(Shared_container node);
 
   /*! Set the center of a bounding box that encloses the children of the
    * group.
@@ -240,7 +241,7 @@ public:
   /* Remove a given child from the sequence of children of the group.
    * \param node (in) the child node to remove.
    */
-  void remove_child(Shared_node node);
+  void remove_child(Shared_container node);
 
   /*! Add a touch sensor to the group.
    * \param (in) touch_sensor The touch sensor node to add.
@@ -275,7 +276,7 @@ protected:
   Boolean m_is_visible;
 
   /*! The list of child objects. */
-  Node_array m_childs;
+  Container_array m_childs;
 
   /*! Indicates whether the group has a touch sensor. */
   Shared_touch_sensor m_touch_sensor;
@@ -327,13 +328,15 @@ inline Group* Group::prototype() { return new Group(true); }
 inline Container* Group::clone() { return new Group(); }
 
 //! \brief obtains the beginning iterator of the children.
-inline Group::Node_iterator Group::children_begin() { return m_childs.begin(); }
+inline Group::Container_iterator Group::children_begin()
+{ return m_childs.begin(); }
 
 //! \brief obtains the pass-the-end iterator of the children.
-inline Group::Node_iterator Group::children_end() { return m_childs.end(); }
+inline Group::Container_iterator Group::children_end()
+{ return m_childs.end(); }
 
 //! \brief obtains the number of children of the group.
-inline unsigned int Group::children_size() { return m_childs.size(); }
+inline Uint Group::children_size() { return m_childs.size(); }
 
 //! \brief determines whether the group is visible.
 inline Boolean Group::is_visible() const { return m_is_visible; }

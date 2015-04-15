@@ -17,6 +17,7 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <string.h>
+#include <boost/assign/list_of.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Math_defs.hpp"
@@ -26,21 +27,28 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field.hpp"
+#include "SGAL/Field_infos.hpp"
 #include "SGAL/Scene_graph.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 std::string Navigation_info::s_tag = "NavigationInfo";
 Container_proto* Navigation_info::s_prototype(nullptr);
-const char* Navigation_info::s_type_strings[] =
-  {"NONE", "EXAMINE", "FLY", "WALK", "TRANSFORM"};
 
 REGISTER_TO_FACTORY(Navigation_info, "Navigation_info");
+
+// Default values
+const String_array Navigation_info::s_def_types =
+  boost::assign::list_of(static_cast<std::string>("WALK"));
+
+const char* Navigation_info::s_type_strings[] =
+  {"NONE", "EXAMINE", "FLY", "WALK", "TRANSFORM"};
 
 //! \brief constructor.
 Navigation_info::Navigation_info(Boolean proto) :
   Navigation_sensor(Vector3f(), Rotation(), proto),
   m_any(false),
+  m_types(s_def_types),
   m_type(SGAL::NONE)
 {}
 
@@ -50,6 +58,8 @@ Navigation_info::~Navigation_info() {}
 //! \brief parses the type string-attribute.
 int Navigation_info::parse_type(const std::string& type)
 {
+  m_types.clear();
+
   Uint i;
   for (i = 0; i < type.size(); ++i) {
     // Skip white space:
@@ -69,7 +79,8 @@ int Navigation_info::parse_type(const std::string& type)
     for (j = 0; j < SGAL::NUM_TYPES; ++j) {
       const char* nav_type = s_type_strings[j];
       if (type.compare(i, strlen(nav_type), nav_type) == 0) {
-        m_type = (SGAL::Navigation_info_type) j;
+        m_types.push_back(nav_type);
+        m_type = (Navigation_info_type) j;
         found = true;
         break;
       }
@@ -100,8 +111,8 @@ void Navigation_info::set_attributes(Element* elem)
   Navigation_sensor::set_attributes(elem);
 
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "type") {
       parse_type(value);
       elem->mark_delete(ai);
@@ -130,6 +141,14 @@ void Navigation_info::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Navigation_sensor::get_prototype());
+
+  // types string
+  auto types_func =
+    static_cast<String_array_handle_function>(&Navigation_info::types_handle);
+  s_prototype->add_field_info(new MF_string(TYPES, "type",
+                                            RULE_EXPOSED_FIELD,
+                                            types_func,
+                                            s_def_types));
 }
 
 //! \brief deletes the prototype.
@@ -139,7 +158,7 @@ void Navigation_info::delete_prototype()
   s_prototype = nullptr;
 }
 
-//! \brief Obtains the prototype.
+//! \brief obtains the prototype.
 Container_proto* Navigation_info::get_prototype()
 {
   if (!s_prototype) init_prototype();

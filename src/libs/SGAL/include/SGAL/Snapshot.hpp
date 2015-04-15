@@ -121,10 +121,10 @@ public:
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
-  /*! Write this container.
-   * \param formatter The formatter to use for the writing, e.g., VRML.
+  /*! Write all fields of this container.
+   * \param[in] formatter The formatter to use for the writing, e.g., VRML.
    */
-  virtual void write(Formatter* formatter);
+  virtual void write_fields(Formatter* formatter);
 
   /*! Trigger the snapshot.
    */

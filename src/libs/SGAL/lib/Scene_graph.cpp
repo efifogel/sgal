@@ -919,13 +919,14 @@ void Scene_graph::write(const std::string& filename, std::ostream& os,
 void Scene_graph::write_vrml(const std::string& filename, std::ostream& os)
 {
   Vrml_formatter formatter(filename, os);
-  auto root = get_root();
   formatter.begin();
-  if (root->children_size() > 1) root->write(&formatter);
-  else {
-    auto transform = boost::dynamic_pointer_cast<Transform>(root->get_child(0));
-    auto it = transform->children_begin();
-    for (; it != transform->children_end(); ++it) formatter.write(*it);
+  auto root = get_root();
+  for (auto it1 = root->children_begin(); it1 != root->children_end(); ++it1) {
+    auto transform = boost::dynamic_pointer_cast<Transform>(*it1);
+    if (!transform) continue;
+    SGAL_assertion(transfor->get_name().compare(g_navigation_root_name) == 0);
+    auto it2 = transform->children_begin();
+    for (; it2 != transform->children_end(); ++it2) formatter.write(*it2);
   }
   formatter.end();
 }
@@ -934,13 +935,14 @@ void Scene_graph::write_vrml(const std::string& filename, std::ostream& os)
 void Scene_graph::write_stl(const std::string& filename, std::ostream& os)
 {
   Stl_formatter formatter(filename, os);
-  auto root = get_root();
   formatter.begin();
-  if (root->children_size() > 1) root->write(&formatter);
-  else {
-    auto transform = boost::dynamic_pointer_cast<Transform>(root->get_child(0));
-    auto it = transform->children_begin();
-    for (; it != transform->children_end(); ++it) formatter.write(*it);
+  auto root = get_root();
+  for (auto it1 = root->children_begin(); it1 != root->children_end(); ++it1) {
+    auto transform = boost::dynamic_pointer_cast<Transform>(*it1);
+    if (!transform) continue;
+    SGAL_assertion(transfor->get_name().compare(g_navigation_root_name) == 0);
+    auto it2 = transform->children_begin();
+    for (; it2 != transform->children_end(); ++it2) formatter.write(*it2);
   }
   formatter.end();
 }
@@ -949,13 +951,14 @@ void Scene_graph::write_stl(const std::string& filename, std::ostream& os)
 void Scene_graph::write_obj(const std::string& filename, std::ostream& os)
 {
   Obj_formatter formatter(filename, os);
-  auto root = get_root();
   formatter.begin();
-  if (root->children_size() > 1) root->write(&formatter);
-  else {
-    auto transform = boost::dynamic_pointer_cast<Transform>(root->get_child(0));
-    auto it = transform->children_begin();
-    for (; it != transform->children_end(); ++it) formatter.write(*it);
+  auto root = get_root();
+  for (auto it1 = root->children_begin(); it1 != root->children_end(); ++it1) {
+    auto transform = boost::dynamic_pointer_cast<Transform>(*it1);
+    if (!transform) continue;
+    SGAL_assertion(transfor->get_name().compare(g_navigation_root_name) == 0);
+    auto it2 = transform->children_begin();
+    for (; it2 != transform->children_end(); ++it2) formatter.write(*it2);
   }
   formatter.end();
 }

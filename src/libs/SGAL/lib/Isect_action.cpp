@@ -25,10 +25,10 @@
 
 SGAL_BEGIN_NAMESPACE
 
-//! \brief constructor.
+//! \brief constructs.
 Isect_action::Isect_action() : m_current_id(0) {}
 
-//! \brief destructor.
+//! \brief destructs.
 Isect_action::~Isect_action() {}
 
 /*! \brief applies the draw action for selection on a given node.

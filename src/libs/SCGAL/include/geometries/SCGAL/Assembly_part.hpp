@@ -117,7 +117,7 @@ protected:
   virtual const std::string& get_tag() const { return s_tag; }
 
   /*! Construct all the SGM's that comprise this part. */
-  void clean_sgm_geos(Node* node);
+  void clean_sgm_geos(Container* node);
 
   /*! Construct all the SGM's that comprise this part. */
   void clean_sgm_geos(Group* group);
@@ -153,11 +153,11 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Assembly_part* Assembly_part::prototype()
 { return new Assembly_part(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Assembly_part::clone() { return new Assembly_part(); }
 
 SGAL_END_NAMESPACE

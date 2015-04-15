@@ -130,6 +130,11 @@ public:
    */
   virtual void write(Formatter* formatter);
 
+  /*! Write all fields of this container.
+   * \param formatter The formatter to use for the writing, e.g., VRML.
+   */
+  virtual void write_fields(Formatter* formatter);
+
   /*! Obtain the name of the container provided in the USE and DEF tags.
    */
   const std::string& get_name() const;
@@ -238,11 +243,6 @@ public:
 
   /*! Processe change of content. */
   void process_content_changed();
-
-  /*! Write all fields of this container.
-   * \param formatter The formatter to use for the writing, e.g., VRML.
-   */
-  void write_fields(Formatter* formatter);
 
 protected:
   /*! A pointer to the execution coordinator. */

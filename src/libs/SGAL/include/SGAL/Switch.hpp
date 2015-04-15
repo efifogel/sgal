@@ -118,7 +118,7 @@ public:
 
   /*! Return the node to traverse.
    */
-  virtual Shared_node get_choice();
+  virtual Shared_container get_choice();
 
 protected:
   /*! Obtain the tag (type) of the container.

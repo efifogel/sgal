@@ -355,7 +355,7 @@ inline const std::string& Field_info::get_name() const { return m_name; }
 inline Execution_function Field_info::execution_function() const
 { return m_exec_func; }
 
-//*! \brief equality opetator.
+//! \brief equality opetator.
 inline Boolean Field_info::operator==(const Field_info& other) const
 { return (m_id == other.m_id); }
 

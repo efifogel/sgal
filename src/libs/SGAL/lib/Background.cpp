@@ -41,7 +41,7 @@ Container_proto* Background::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Background, "Background");
 
-/*! Constructor */
+//! \brief constructs.
 Background::Background(Boolean proto) :
   Bindable_node(proto),
   m_clear_color(true),
@@ -49,23 +49,21 @@ Background::Background(Boolean proto) :
   m_clear_stencil(false)
 {}
 
-/*! Destructor */
+//!\brief destructs.
 Background::~Background() {}
 
-/*! Obtain the bindable stack */
+//! Obtain the bindable stack.
 Bindable_stack* Background::get_stack()
 { return m_scene_graph->get_background_stack(); }
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Background::set_attributes(Element* elem)
 {
   Bindable_node::set_attributes(elem);
 
-  typedef Element::Str_attr_iter                Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "clearColor") {
       set_clear_color(compare_to_true(value));
       elem->mark_delete(ai);
@@ -86,7 +84,7 @@ void Background::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene. */
+//! \brief adds the container to a given scene.
 void Background::add_to_scene(Scene_graph* sg)
 {
   set_scene_graph(sg);
@@ -95,28 +93,28 @@ void Background::add_to_scene(Scene_graph* sg)
   insert_stack(this);
 }
 
-/*! \brief initializes the protoype. */
+//! \brief initializes the protoype.
 void Background::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Bindable_node::get_prototype());
 }
 
-/*! \brief deletes the protoype. */
+//! \brief deletes the protoype.
 void Background::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the protoype. */
+//! \brief obtains the protoype.
 Container_proto* Background::get_prototype()
 {
   if (s_prototype == NULL) Background::init_prototype();
   return s_prototype;
 }
 
-/*! \breif drwas the background */
+//! \breif drwas the background.
 void Background::draw(Draw_action* draw_action)
 {
   Context* context = draw_action->get_context();
@@ -128,7 +126,7 @@ void Background::draw(Draw_action* draw_action)
   context->clear(which);
 }
 
-/*! \brief draws a 2D polygon with texture coordinates. */
+//! \brief draws a 2D polygon with texture coordinates.
 void Background::draw_polygon()
 {
   glColor3f(1, 1, 1);

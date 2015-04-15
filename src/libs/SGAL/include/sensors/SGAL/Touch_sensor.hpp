@@ -257,7 +257,7 @@ protected:
    */
   virtual void start_dragging(const Vector2sh& point);
 
-  /*! \brief Invoked when dragging stops.
+  /*! Invoked when dragging stops.
    * Updates and cascades the m_is_active field.
    * Updates and cascades the m_touch_time field.
    * Unlockes the dragging in the execution coordinator.
@@ -326,18 +326,18 @@ private:
   static Boolean s_def_enabled;
 };
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Touch_sensor* Touch_sensor::prototype()
 { return new Touch_sensor(false, true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Touch_sensor::clone() { return new Touch_sensor(); }
 
-/*! \brief draws the node while traversing the scene graph. */
+//! \brief draws the node while traversing the scene graph.
 inline Action::Trav_directive Touch_sensor::draw(Draw_action* /* draw_action */)
 { return Action::TRAV_CONT; }
 
-/*! \brief obtains the the range of ids used for selection. */
+//! \brief obtains the the range of ids used for selection.
 inline void Touch_sensor::get_selection_ids(Uint& start_id, Uint& num_ids)
 {
   start_id = m_start_selection_id;
@@ -348,18 +348,17 @@ inline void Touch_sensor::get_selection_ids(Uint& start_id, Uint& num_ids)
 #pragma warning( pop )
 #endif
 
-/*! \brief sets the range of ids used for selection. */
+//! \brief sets the range of ids used for selection.
 inline void Touch_sensor::set_selection_ids(Uint start_id, Uint num_ids)
 {
   m_start_selection_id = start_id;
   m_num_selection_ids = num_ids;
 }
 
-/*! \brief obtains the id of the geometry, which the cursor is hoovering above.
- */
+//! \brief obtains the id of the geometry, which the cursor is hoovering above.
 inline Uint Touch_sensor::get_selection_id() const { return m_selection_id; }
 
-/*! \brief sets the id of the geometry, which the cursor is hoovering above. */
+//! \brief sets the id of the geometry, which the cursor is hoovering above.
 inline void Touch_sensor::set_selection_id(Uint id) { m_selection_id = id; }
 
 /*! \brief obtains the (normalized) id of the geometry, which the cursor is
@@ -374,26 +373,26 @@ inline Uint Touch_sensor::get_over_selection_id() const
 inline Uint Touch_sensor::get_active_selection_id() const
 { return m_active_selection_id; }
 
-/*! \brief determines whether the touch sensor is enabled. */
+//! \brief determines whether the touch sensor is enabled.
 inline Boolean Touch_sensor::is_enabled() const { return m_enabled; }
 
-/*! \brief sets the scene-graph pointer. */
+//! \brief sets the scene-graph pointer.
 inline void Touch_sensor::set_scene_graph(Scene_graph* sg)
 { m_scene_graph = sg; }
 
-/*! \brief obtains the scene-graph pointer. */
+//! \brief obtains the scene-graph pointer.
 inline Scene_graph* Touch_sensor::get_scene_graph() const
 { return m_scene_graph; }
 
-/*! \brief sets the routed node pointer. */
+//! \brief sets the routed node pointer.
 // inline void Touch_sensor::set_routed_node(Container* node)
 // { m_routed_node = node; }
 
-/*! \brief gets the routed node pointer. */
+//! \brief gets the routed node pointer.
 // inline Container* Touch_sensor::get_routed_node() const
 // { return m_routed_node; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Touch_sensor::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

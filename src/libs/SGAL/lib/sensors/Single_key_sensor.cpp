@@ -34,6 +34,7 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Utilities.hpp"
+#include "SGAL/Vrml_formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -41,8 +42,9 @@ const std::string Single_key_sensor::s_tag = "SingleKeySensor";
 Container_proto* Single_key_sensor::s_prototype(nullptr);
 
 //! default values.
-Uint Single_key_sensor::s_def_num_states = 2;
-Boolean Single_key_sensor::s_def_trigger_on_release(true);
+const Uint Single_key_sensor::s_def_num_states(2);
+const Boolean Single_key_sensor::s_def_state(true);
+const Boolean Single_key_sensor::s_def_trigger_on_release(true);
 
 REGISTER_TO_FACTORY(Single_key_sensor, "Single_key_sensor");
 
@@ -52,7 +54,7 @@ Single_key_sensor::Single_key_sensor(Boolean proto) :
   m_press(false),
   m_time(0.0),
   m_boolean(false),
-  m_state(true),
+  m_state(s_def_state),
   m_int_state(0),
   m_num_states(s_def_num_states),
   m_trigger_on_release(s_def_trigger_on_release)
@@ -69,6 +71,13 @@ void Single_key_sensor::init_prototype()
   s_prototype = new Container_proto();
 
   // Add the object fields to the prototype
+
+  // key
+  Uint_handle_function key_func =
+    static_cast<Uint_handle_function>(&Single_key_sensor::key_handle);
+  s_prototype->add_field_info(new SF_uint(KEY, "key", RULE_EXPOSED_FIELD,
+                                          key_func));
+
   // press
   Boolean_handle_function press_func =
     static_cast<Boolean_handle_function>(&Single_key_sensor::press_handle);
@@ -88,7 +97,7 @@ void Single_key_sensor::init_prototype()
     static_cast<Boolean_handle_function>(&Single_key_sensor::state_handle);
   s_prototype->add_field_info(new SF_bool(STATE, "state",
                                           RULE_EXPOSED_FIELD,
-                                          state_func));
+                                          state_func, s_def_state));
 
   // intState
   Int32_handle_function int_state_func =
@@ -103,7 +112,7 @@ void Single_key_sensor::init_prototype()
   s_prototype->add_field_info(new SF_uint(NUMBER_OF_STATES,
                                           "numberOfStates",
                                           RULE_EXPOSED_FIELD,
-                                          num_states_func));
+                                          num_states_func, s_def_num_states));
 }
 
 //! \brief deletes the node prototype.
@@ -162,8 +171,8 @@ void Single_key_sensor::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "key") {
       m_key = value[1];
       elem->mark_delete(ai);
@@ -192,6 +201,24 @@ void Single_key_sensor::set_attributes(Element* elem)
   }
   // Remove all the deleted attributes:
   elem->delete_marked();
+}
+
+//! \brief writes all fields of this container.
+void Single_key_sensor::write_fields(Formatter* formatter)
+{
+  auto* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
+  if (!vrml_formatter) return;
+
+  auto* proto = get_prototype();
+  for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
+    const Field_info* field_info = (*it).second;
+    if (field_info->get_rule() != RULE_EXPOSED_FIELD) continue;
+    if (KEY == field_info->get_id()) {
+      std::string key(1, static_cast<char>(m_key));
+      vrml_formatter->single_string(field_info->get_name(), key, std::string());
+    }
+    else field_info->write(this, formatter);
+  }
 }
 
 #if 0

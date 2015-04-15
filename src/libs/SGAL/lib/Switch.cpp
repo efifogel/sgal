@@ -41,17 +41,17 @@ const Uint Switch::s_def_which_choice(static_cast<Uint>(-1));
 
 REGISTER_TO_FACTORY(Switch, "Switch");
 
-//! \brief Constructor.
+//! \brief Constructs.
 Switch::Switch(Boolean proto) :
   Group(proto),
   m_which_choice(s_def_which_choice)
 {}
 
-//! \brief destructor.
+//! \brief destructs.
 Switch::~Switch() {}
 
 //! \brief obtains the node to traverse.
-Switch::Shared_node Switch::get_choice()
+Switch::Shared_container Switch::get_choice()
 {
   return (m_which_choice < m_childs.size()) ?
     get_child(m_which_choice) : Shared_node();
@@ -62,15 +62,15 @@ void Switch::cull(Cull_context& cull_context)
 {
   if (!is_visible())  return;
 
-  auto node = get_choice();
-  if (node) node->cull(cull_context);
+  auto node = boost::dynamic_pointer_cast<Node>(get_choice());
+ if (node) node->cull(cull_context);
 }
 
 //! \brief applies drawing on the choosen node, ignores the rest.
 Action::Trav_directive Switch::draw(Draw_action* draw_action)
 {
   if (!is_visible())  return Action::TRAV_CONT;
-  auto node = get_choice();
+  auto node = boost::dynamic_pointer_cast<Node>(get_choice());
   if (node) draw_action->apply(&*node);
   return Action::TRAV_CONT;
 }
@@ -79,7 +79,7 @@ Action::Trav_directive Switch::draw(Draw_action* draw_action)
 void Switch::isect(Isect_action* isect_action)
 {
   if (!is_visible()) return;
-  auto node = get_choice();
+  auto node = boost::dynamic_pointer_cast<Node>(get_choice());
   if (!node) return;
 
   if (m_touch_sensor && m_touch_sensor->is_enabled()) {
@@ -125,7 +125,7 @@ void Switch::clean_sphere_bound()
     return;
   }
 
-  auto node = get_choice();
+  auto node = boost::dynamic_pointer_cast<Node>(get_choice());
   if (node && node->is_dirty_sphere_bound()) {
     const auto& sb = node->get_sphere_bound();
     m_sphere_bound.set_center(sb.get_center());
@@ -217,7 +217,7 @@ void Switch::write(Formatter* formatter)
                   << std::endl;);
   Stl_formatter* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
   if (stl_formatter) {
-    Shared_node node = get_choice();
+    Shared_node node = boost::dynamic_pointer_cast<Node>(get_choice());
     if (node) node->write(formatter);
     return;
   }

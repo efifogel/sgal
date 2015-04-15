@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_BACKGROUND_HPP
@@ -54,83 +51,83 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  /*! Construct. */
   Background(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destruct. */
   virtual ~Background();
 
-  /*! Construct the prototype */
+  /*! Construct the prototype. */
   static Background* prototype();
 
-  /*! Clone */
+  /*! Clone. */
   virtual Container* clone();
 
-  /*! Initialize the protoype */
+  /*! Initialize the protoype. */
   virtual void init_prototype();
 
-  /*! Delete the protoype */
+  /*! Delete the protoype. */
   virtual void delete_prototype();
 
-  /*! Obtain the protoype */
+  /*! Obtain the protoype. */
   virtual Container_proto* get_prototype();
 
-  /*! Obtain the bindable stack */
+  /*! Obtain the bindable stack. */
   virtual Bindable_stack* get_stack();
 
-  /*! Set the attributes of this container */
+  /*! Set the attributes of this container. */
   virtual void set_attributes(Element* elem);
 
-  /*! Add the container to a given scene
-   * \param scene_graph the given scene
+  /*! Add the container to a given scene.
+   * \param scene_graph the given scene.
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
-  /*! Draw the background */
+  /*! Draw the background. */
   virtual void draw(Draw_action* draw_action);
 
-  /*! Set the scene graph */
+  /*! Set the scene graph. */
   void set_scene_graph(Scene_graph* sg);
 
-  /*! Obtain the flag that indicates whether to clear the color buffer */
+  /*! Obtain the flag that indicates whether to clear the color buffer. */
   Boolean get_clear_color() const;
 
-  /*! Set the flag that indicates whether to clear the color buffer */
+  /*! Set the flag that indicates whether to clear the color buffer. */
   void set_clear_color(Boolean clear);
 
-  /*! Obtain the flag that Indicates whether to clear the depth buffer */
+  /*! Obtain the flag that Indicates whether to clear the depth buffer. */
   Boolean get_clear_depth() const;
 
-  /*! Set the flag that Indicates whether to clear the depth buffer */
+  /*! Set the flag that Indicates whether to clear the depth buffer. */
   void set_clear_depth(Boolean clear);
 
-  /*! Obtain the flag that Indicates whether to clear the stencil buffer */
+  /*! Obtain the flag that Indicates whether to clear the stencil buffer. */
   Boolean get_clear_stencil() const;
 
-  /*! Set the flag that Indicates whether to clear the stencil buffer */
+  /*! Set the flag that Indicates whether to clear the stencil buffer. */
   void set_clear_stencil(Boolean clear);
 
 protected:
-  /*! Draw a 2d polygon with texture coordinates */
+  /*! Draw a 2d polygon with texture coordinates. */
   void draw_polygon();
 
   /*! The Scene_graph */
   Scene_graph* m_scene_graph;
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
   /*! The node prototype */
   static Container_proto* s_prototype;
 
-  /*! Indicates whether the color buffer should be cleared */
+  /*! Indicates whether the color buffer should be cleared. */
   Boolean m_clear_color;
 
-  /*! Indicates whether the depth buffer should be cleared */
+  /*! Indicates whether the depth buffer should be cleared. */
   Boolean m_clear_depth;
 
-  /*! Indicates whether the stencil buffer should be cleared */
+  /*! Indicates whether the stencil buffer should be cleared. */
   Boolean m_clear_stencil;
 };
 
@@ -138,38 +135,35 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Background* Background::prototype() { return new Background(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Background::clone() { return new Background(); }
 
-/*! \brief sets the scene graph. */
+//! \brief sets the scene graph.
 inline void Background::set_scene_graph(Scene_graph* sg)
 { m_scene_graph = sg; }
 
-/*! \brief obtains the flag that indicates whether to clear the color buffer.
- */
+//! \brief obtains the flag that indicates whether to clear the color buffer.
 inline Boolean Background::get_clear_color() const { return m_clear_color; }
 
-/*! \brief sets the flag that indicates whether to clear the color buffer. */
+//! \brief sets the flag that indicates whether to clear the color buffer.
 inline void Background::set_clear_color(Boolean clear)
 { m_clear_color = clear; }
 
-/*! \brief obtains the flag that Indicates whether to clear the depth buffer.
- */
+//! \brief obtains the flag that Indicates whether to clear the depth buffer.
 inline Boolean Background::get_clear_depth() const { return m_clear_depth; }
 
-/*! \brief sets the flag that Indicates whether to clear the depth buffer. */
+//! \brief sets the flag that Indicates whether to clear the depth buffer.
 inline void Background::set_clear_depth(Boolean clear)
 { m_clear_depth = clear; }
 
-/*! \brief obtains the flag that Indicates whether to clear the stencil buffer.
- */
+//! \brief obtains the flag that Indicates whether to clear the stencil buffer.
 inline Boolean Background::get_clear_stencil() const
 { return m_clear_stencil; }
 
-/*! \brief sets the flag that Indicates whether to clear the stencil buffer. */
+//! \brief sets the flag that Indicates whether to clear the stencil buffer.
 inline void Background::set_clear_stencil(Boolean clear)
 { m_clear_stencil = clear; }
 

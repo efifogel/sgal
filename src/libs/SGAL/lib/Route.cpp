@@ -22,10 +22,12 @@
 #include "SGAL/Field.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_factory.hpp"
+#include "SGAL/Container_proto.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 const std::string Route::s_tag = "ROUTE";
+Container_proto* Route::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Route, "Route");
 
@@ -39,8 +41,8 @@ Route::Route(Boolean proto) :
 {}
 
 /*! Sets the connection */
-void Route::set(Container * src_node, Field * src_field,
-                Container * dst_node, Field * dst_field)
+void Route::set(Container* src_node, Field* src_field,
+                Container* dst_node, Field* dst_field)
 {
   // Disconnect old connections if exists:
   if (m_src_field && m_dst_field) m_src_field->disconnect(m_dst_field);
@@ -67,7 +69,7 @@ void Route::set(Container * src_node, Field * src_field,
 }
 
 /*! \brief sets the attributes of the object extracted from the input file. */
-void Route::set_attributes(Element * elem)
+void Route::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
@@ -101,6 +103,38 @@ void Route::set_attributes(Element * elem)
 //   }
 //   // Remove all the deleted attributes:
 //   elem->delete_marked();
+}
+
+//! \brief initializes the node prototype.
+void Route::init_prototype()
+{
+  if (s_prototype) return;
+  s_prototype = new Container_proto();
+}
+
+//! \brief deletes the node prototype.
+void Route::delete_prototype()
+{
+  if (!s_prototype) return;
+  delete s_prototype;
+  s_prototype = nullptr;
+}
+
+//! \brief obtains the node prototype.
+Container_proto* Route::get_prototype()
+{
+  if (!s_prototype) Route::init_prototype();
+  return s_prototype;
+}
+
+//! \brief writes this container.
+void Route::write(Formatter* formatter)
+{
+  SGAL_TRACE_CODE(Trace::WRITING,
+                  std::cout << "Container: " << "Tag: " << get_tag()
+                  << ", name: " << get_name()
+                  << std::endl;);
+  //! \todo implelemnt!
 }
 
 #if 0

@@ -367,14 +367,14 @@ inline void Formatter::set_in(std::istream& is) { m_in = &is; }
 //! \brief Obtain the output stream. */
 inline std::ostream& Formatter::out()
 {
-  SGAL_assertion(m_out != NULL);
+  SGAL_assertion(m_out != nullptr);
   return *m_out;
 }
 
 //! \brief Obtain the input stream. */
 inline std::istream& Formatter::in()
 {
-  SGAL_assertion(m_in != NULL);
+  SGAL_assertion(m_in != nullptr);
   return *m_in;
 }
 

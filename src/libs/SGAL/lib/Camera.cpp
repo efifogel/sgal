@@ -222,7 +222,8 @@ void Camera::init_prototype()
     static_cast<Vector3f_handle_function>(&Camera::position_handle);
   s_prototype->add_field_info(new SF_vector3f(POSITION, "position",
                                               RULE_EXPOSED_FIELD,
-                                              position_func, exec_func));
+                                              position_func, s_def_position,
+                                              exec_func));
 
   // orientation
   exec_func =
@@ -231,7 +232,8 @@ void Camera::init_prototype()
     static_cast<Rotation_handle_function>(&Camera::orientation_handle);
   s_prototype->add_field_info(new SF_rotation(ORIENTATION, "orientation",
                                               RULE_EXPOSED_FIELD,
-                                              orientation_func, exec_func));
+                                              orientation_func,
+                                              s_def_orientation, exec_func));
 
   // fieldOfView
   exec_func =
@@ -240,7 +242,8 @@ void Camera::init_prototype()
     static_cast<Float_handle_function>(&Camera::fov_handle);
   s_prototype->add_field_info(new SF_float(FIELDOFVIEW, "fieldOfView",
                                            RULE_EXPOSED_FIELD,
-                                           fov_func, exec_func));
+                                           fov_func, s_def_field_of_view,
+                                           exec_func));
 
   // description
   String_handle_function description_func =
@@ -254,7 +257,8 @@ void Camera::init_prototype()
     static_cast<Float_handle_function>(&Camera::radius_scale_handle);
   s_prototype->add_field_info(new SF_float(RADIUS_SCALE, "radiusScale",
                                            RULE_EXPOSED_FIELD,
-                                           radius_scale_func));
+                                           radius_scale_func,
+                                           s_def_radius_scale));
 }
 
 //! \brief deletes the camera prototype.

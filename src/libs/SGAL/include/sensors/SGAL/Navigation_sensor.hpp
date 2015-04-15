@@ -300,23 +300,23 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Navigation_sensor* Navigation_sensor::prototype()
 { return new Navigation_sensor(Vector3f(), Rotation(), true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Navigation_sensor::clone()
 { return new Navigation_sensor(); }
 
-/*! \brief sets the scene graph. */
+//! \brief sets the scene graph.
 inline void Navigation_sensor::set_scene_graph(Scene_graph* sg)
 { m_scene_graph = sg; }
 
-/*! \brief obtains the dragging speed. */
+//! \brief obtains the dragging speed.
 inline Float Navigation_sensor::get_dragging_speed() const
 { return m_dragging_speed; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Navigation_sensor::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

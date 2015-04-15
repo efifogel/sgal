@@ -56,7 +56,7 @@ Container_proto* Touch_sensor::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Touch_sensor, "Touch_sensor");
 
-/*! Constructor */
+//!\brief constructs.
 Touch_sensor::Touch_sensor(Boolean enabled, Boolean proto) :
   Node(proto),
   m_scene_graph(NULL),
@@ -78,13 +78,13 @@ Touch_sensor::Touch_sensor(Boolean enabled, Boolean proto) :
   m_last_tex_coord(0, 0),
   m_last_selection_id(0),
   m_drag_locked(false)
-  // m_routed_node(NULL)
+  // m_routed_node(nullptr)
 { if (!proto && m_enabled) register_events(); }
 
-/*! Destructor */
+//!\brief destructs.
 Touch_sensor::~Touch_sensor() { set_enabled(false); }
 
-/*! \brief initializes the prototype. */
+//! \brief initializes the prototype.
 void Touch_sensor::init_prototype()
 {
   // The prototype shuold be allocated only once for all instances.
@@ -187,21 +187,21 @@ void Touch_sensor::init_prototype()
   //                                              routed_node_func, exec_func));
 }
 
-/*! \brief deletes the prototype. */
+//! \brief deletes the prototype.
 void Touch_sensor::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the prototype. */
+//! \brief obtains the prototype.
 Container_proto* Touch_sensor::get_prototype()
 {
   if (!s_prototype) Touch_sensor::init_prototype();
   return s_prototype;
 }
 
-/*! \brief enables or disables the sensor. */
+//! \brief enables or disables the sensor.
 void Touch_sensor::set_enabled(bool enabled)
 {
   if (enabled == m_enabled) return;
@@ -229,21 +229,21 @@ void Touch_sensor::external_activate(const Field_info *)
   if (is_touch_time_field) is_touch_time_field->cascade();
 }
 
-/*! \brief */
+//! \brief
 void Touch_sensor::set_normal(const Vector3f& normal)
 {
   m_last_normal = m_hit_normal;
   m_hit_normal = normal;
 }
 
-/*! \brief */
+//! \brief
 void Touch_sensor::set_point(const Vector3f& point)
 {
   m_last_point = m_hit_point;
   m_hit_point = point;
 }
 
-/*! \brief */
+//! \brief
 void Touch_sensor::set_tex_coord(const Vector2f& tex_coord)
 {
   m_last_tex_coord = m_hit_tex_coord;
@@ -270,7 +270,7 @@ void Touch_sensor::set_is_active(const Boolean active)
   if (field) field->cascade();
 }
 
-/*! \brief invoked when dragging starts. */
+//! \brief invoked when dragging starts.
 void Touch_sensor::start_dragging(const Vector2sh& /* point */)
 {
   if (!m_enabled) return;
@@ -290,7 +290,7 @@ void Touch_sensor::start_dragging(const Vector2sh& /* point */)
   set_active_selection_id(m_selection_id - m_start_selection_id);
 }
 
-/*! \brief invoked when dragging stops. */
+//! \brief invoked when dragging stops.
 void Touch_sensor::dragging_done(const Vector2sh& point)
 {
   if (!m_enabled) return;
@@ -330,7 +330,7 @@ void Touch_sensor::dragging_done(const Vector2sh& point)
   //! \todo m_execution_coordinator->unlock_dragging();
 }
 
-/*! \brief sets the attributes of the object extracted from the input file. */
+//! \brief sets the attributes of the object extracted from the input file.
 void Touch_sensor::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
@@ -350,14 +350,14 @@ void Touch_sensor::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the touch sensor to a given scene. */
+//! \brief adds the touch sensor to a given scene.
 void Touch_sensor::add_to_scene(Scene_graph* sg)
 {
   m_scene_graph = sg;
   sg->add_touch_sensor(this);
 }
 
-/*! \brief writes this container. */
+//! \brief writes this container.
 void Touch_sensor::write(Formatter* formatter)
 {
   formatter->container_begin(get_tag());
@@ -366,7 +366,7 @@ void Touch_sensor::write(Formatter* formatter)
 }
 
 #if 0
-/*! \brief obtains the list of atributes of this object. */
+//! \brief obtains the list of atributes of this object.
 Attribute_list Touch_sensor::get_attributes()
 {
   Attribute_list attribs;

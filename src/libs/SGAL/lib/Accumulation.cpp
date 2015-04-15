@@ -266,7 +266,7 @@ void Accumulation::init_prototype()
     static_cast<Boolean_handle_function>(&Accumulation::enabled_handle);
   s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
                                           RULE_EXPOSED_FIELD,
-                                          enabled_func,
+                                          enabled_func, s_def_enabled,
                                           exec_func));
 
   // quality
@@ -274,7 +274,7 @@ void Accumulation::init_prototype()
     reinterpret_cast<Uint_handle_function>(&Accumulation::quality_handle);
   s_prototype->add_field_info(new SF_uint(QUALITY, "quality",
                                           RULE_EXPOSED_FIELD,
-                                          quality_func,
+                                          quality_func, s_def_quality,
                                           exec_func));
 
   // delay
@@ -282,7 +282,7 @@ void Accumulation::init_prototype()
     static_cast<Uint_handle_function>(&Accumulation::delay_handle);
   s_prototype->add_field_info(new SF_uint(DELAY, "delay",
                                           RULE_EXPOSED_FIELD,
-                                          delay_func));
+                                          delay_func, s_def_delay));
 }
 
 /*! \brief deletes the node prototype. */
@@ -314,8 +314,8 @@ void Accumulation::set_attributes(Element* elem)
   Container::set_attributes(elem);
 
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "enabled") {
       set_enabled(compare_to_true(value));
       elem->mark_delete(ai);

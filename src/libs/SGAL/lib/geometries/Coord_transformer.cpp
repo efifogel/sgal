@@ -192,13 +192,13 @@ void Coord_transformer::init_prototype()
     (&Coord_transformer::coord_array_changed_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD_CHANGED,
                                                       "coord_changed",
-                                                      RULE_EXPOSED_FIELD,
+                                                      RULE_OUT,
                                                       coord_changed_func));
 
   Boolean_handle_function changed_func =
     static_cast<Boolean_handle_function>(&Coord_transformer::changed_handle);
   s_prototype->add_field_info(new SF_bool(CHANGED, "changed",
-                                          RULE_EXPOSED_FIELD,
+                                          RULE_OUT,
                                           changed_func));
 }
 

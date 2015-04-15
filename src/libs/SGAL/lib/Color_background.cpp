@@ -39,16 +39,16 @@ const Vector4f Color_background::m_def_color(1, 1, 1, 0);
 
 REGISTER_TO_FACTORY(Color_background, "Color_background");
 
-/*! Constructor */
+//! \brief constructs.
 Color_background::Color_background(Boolean proto) :
   Background(proto),
   m_color(m_def_color)
 {}
 
-/*! Destructor */
+//! \brief destructs.
 Color_background::~Color_background() {}
 
-/*! \brief draws the background. This is done by setting the clear color. */
+//! \brief draws the background. This is done by setting the clear color.
 void Color_background::draw(Draw_action* draw_action)
 {
   Context* context = draw_action->get_context();
@@ -59,16 +59,14 @@ void Color_background::draw(Draw_action* draw_action)
   context->clear(which, m_color);
 }
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Color_background::set_attributes(Element* elem)
 {
   Background::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "color") {
       set_color(Vector4f(value));
       elem->mark_delete(ai);
@@ -80,12 +78,12 @@ void Color_background::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene. */
+//! \brief adds the container to a given scene.
 void Color_background::add_to_scene(Scene_graph* sg)
 { Background::add_to_scene(sg); }
 
 #if 0
-/*! \brief obtains the attributes. */
+//! \brief obtains the attributes.
 Attribute_list Color_background::get_attributes()
 {
   Attribute_list attribs;
@@ -103,7 +101,7 @@ Attribute_list Color_background::get_attributes()
 }
 #endif
 
-/*! \brief */
+//! \brief
 void Color_background::init_prototype()
 {
   if (s_prototype) return;
@@ -118,14 +116,14 @@ void Color_background::init_prototype()
                                               color_func));
 }
 
-/*! \brief */
+//! \brief
 void Color_background::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief */
+//! \brief
 Container_proto* Color_background::get_prototype()
 {
   if (s_prototype == NULL) Color_background::init_prototype();

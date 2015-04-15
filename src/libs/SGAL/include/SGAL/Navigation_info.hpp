@@ -20,6 +20,7 @@
 #define SGAL_NAVIGATION_INFO_HPP
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Array_types.hpp"
 #include "SGAL/Navigation_info_types.hpp"
 #include "SGAL/Navigation_sensor.hpp"
 
@@ -38,6 +39,7 @@ class SGAL_SGAL_DECL Navigation_info : public Navigation_sensor {
 public:
   enum {
     FIRST = Navigation_sensor::LAST - 1,
+    TYPES,
     LAST
   };
 
@@ -62,6 +64,11 @@ public:
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  String_array* types_handle(const Field_info*) { return &m_types; }
+  //@}
+
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
 
@@ -69,6 +76,14 @@ public:
    * \param scene_graph the given scene.
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
+
+  /*! Set the navigation paradigm list.
+   */
+  void set_types(const String_array& justify);
+
+  /*! Obtain the navigation paradigm list.
+   */
+  const String_array& get_types() const;
 
   /*! Set the type */
   void set_type(Navigation_info_type type);
@@ -82,18 +97,26 @@ protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
 
+  // Default values
+  static const String_array s_def_types;
+
 private:
-  /*! The navigation type strings */
+  /*! The navigation type strings. */
   static const char* s_type_strings[];
 
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto* s_prototype;
 
-  /*! Indicates whether to allow the user to change navigation type */
+  /*! Indicates whether to allow the user to change navigation type. */
   bool m_any;
+
+  /*! A list of navigation paradigms; one of "WALK", "EXAMINE", "FLY", or
+   * "NONE".
+   */
+  String_array m_types;
 
   /*! The navigation type. */
   Navigation_info_type m_type;
@@ -112,6 +135,14 @@ inline Navigation_info* Navigation_info::prototype()
 
 //! \brief clones.
 inline Container* Navigation_info::clone() { return new Navigation_info(); }
+
+//! \brief sets the navigation paradigm list.
+inline void Navigation_info::set_types(const String_array& types)
+{ m_types = types; }
+
+//! \brief obtains the navigation paradigm list.
+inline const String_array& Navigation_info::get_types() const
+{ return m_types; }
 
 //! \brief sets the type.
 inline void Navigation_info::set_type(Navigation_info_type type)

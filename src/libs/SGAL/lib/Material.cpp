@@ -231,8 +231,8 @@ void Material::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "ambientIntensity") {
       set_ambient_intensity(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);

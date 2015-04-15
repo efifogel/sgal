@@ -41,7 +41,7 @@ Vrml_formatter::Vrml_formatter(const std::string& filename, std::istream& is) :
 {}
 
 //! \brief destructor
-Vrml_formatter::~Vrml_formatter() {}
+Vrml_formatter::~Vrml_formatter() { m_names.clear(); }
 
 //! \brief exports the headers of the scene graph.
 void Vrml_formatter::begin()
@@ -59,6 +59,27 @@ void Vrml_formatter::begin()
 void Vrml_formatter::end()
 {
   // set_mode(*m_out, m_old_out_mode);
+}
+
+//! \brief exports a scene-graph node.
+inline void Vrml_formatter::write(Shared_container container)
+{
+  const auto& name = container->get_name();
+  if (name.empty()) {
+    container->write(this);
+    return;
+  }
+  if (m_names.find(name) != m_names.end()) {
+    indent();
+    out() << "USE " << name;
+    new_line();
+    return;
+  }
+
+  m_names.insert(name);
+  indent();
+  out() << "DEF " << name << " ";
+  container->write(this);
 }
 
 //! \brief exports the container header.
@@ -147,6 +168,34 @@ void Vrml_formatter::multi_boolean(const std::string& name,
   indent();
   std::copy(value.begin(), value.end(),
             std::ostream_iterator<Boolean>(out(), " "));
+  new_line();
+  pop_indent();
+  indent();
+  out() << "]";
+  new_line();
+}
+
+//! \brief writes a single string field.
+inline void
+Vrml_formatter::multi_string(const std::string& name,
+                             const std::vector<std::string>& value,
+                             const std::vector<std::string>& default_value)
+{
+  if (value.size() == 0) return;
+  if ((value.size() == default_value.size()) &&
+      std::equal(value.begin(), value.end(), default_value.begin()))
+    return;
+
+  new_line();
+  indent();
+  out() << name << " [";
+  new_line();
+  push_indent();
+  indent();
+  std::transform(value.begin(), value.end(),
+                 std::ostream_iterator<std::string>(out(), " "),
+                 [](const std::string& src)
+                 { return std::move(std::string("\"").append(src).append("\"")); });
   new_line();
   pop_indent();
   indent();

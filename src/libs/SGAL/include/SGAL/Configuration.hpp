@@ -55,6 +55,7 @@ class SGAL_SGAL_DECL Configuration : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,
+    ACCUMULATION,
     POLY_MODE,
     DISPLAY_FPS,
     FIXED_HEADLIGHT,
@@ -110,6 +111,8 @@ public:
 
   /// \name field handlers
   //@{
+  Shared_accumulation* accumulation_handle(const Field_info*)
+  { return &m_accumulation; }
   Gfx::Poly_mode* poly_mode_handle(const Field_info*) { return &m_poly_mode; }
   Boolean* display_fps_handle(const Field_info*) { return &m_display_fps; }
   Boolean* is_fixed_head_light_handle(const Field_info*)
@@ -420,69 +423,69 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief lsConstruct the prototype. */
+//! \brief lsConstruct the prototype.
 inline Configuration* Configuration::prototype()
 { return new Configuration(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Configuration::clone() { return new Configuration(); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Configuration::get_tag() const { return s_tag; }
 
-/*! \brief */
+//! \brief
 inline void Configuration::set_global_lights_stationary(Boolean flag)
 { m_are_global_lights_stationary = flag; }
 
-/*! \brief */
+//! \brief
 inline Boolean Configuration::are_global_lights_stationary ()
 { return m_are_global_lights_stationary; }
 
-/*! \brief */
+//! \brief
 inline void Configuration::set_fixed_head_light(Boolean flag)
 { m_is_fixed_head_light = flag; }
 
-/*! \brief */
+//! \brief
 inline Boolean Configuration::is_fixed_head_light()
 { return m_is_fixed_head_light; }
 
-/*! \brief sets the number of the desired stencil bits. */
+//! \brief sets the number of the desired stencil bits.
 inline void Configuration::set_number_of_stencil_bits(Uint bits)
 { m_stencil_bits = bits; }
 
-/*! \brief obtains the number of the desired stencil bits. */
+//! \brief obtains the number of the desired stencil bits.
 inline Uint Configuration::get_number_of_stencil_bits() const
 { return m_stencil_bits; }
 
-/*! \brief sets the number of the desired depth bits. */
+//! \brief sets the number of the desired depth bits.
 inline void Configuration::set_number_of_depth_bits(Uint bits)
 { m_depth_bits = bits; }
 
-/*! \brief obtains the number of the desired depth bits. */
+//! \brief obtains the number of the desired depth bits.
 inline Uint Configuration::get_number_of_depth_bits() const
 { return m_depth_bits; }
 
-/*! \brief */
+//! \brief
 inline void Configuration::set_min_frame_rate(Float rate)
 { m_min_frame_rate = rate; }
 
-/*! \brief */
+//! \brief
 inline Float Configuration::get_min_frame_rate() const
 { return m_min_frame_rate; }
 
-/*! \brief */
+//! \brief
 inline void Configuration::set_min_zoom_distance(Float val)
 { m_min_zoom_distance = val; }
 
-/*! \brief */
+//! \brief
 inline Float Configuration::get_min_zoom_distance() const
 { return m_min_zoom_distance; }
 
-/*! \brief */
+//! \brief
 inline void Configuration::set_max_model_name(const std::string& name)
 { m_max_model_name = name; }
 
-/*! \brief */
+//! \brief
 inline std::string Configuration::get_max_model_name() const
 { return m_max_model_name; }
 
@@ -497,52 +500,52 @@ inline void Configuration::set_display_fps(Boolean flag)
  */
 inline Boolean Configuration::is_display_fps() const { return m_display_fps; }
 
-/*! \brief sets the polygon mode. */
+//! \brief sets the polygon mode.
 inline void Configuration::set_poly_mode(Gfx::Poly_mode mode)
 { m_poly_mode = mode; }
 
-/*! \brief obtains the polygon mode. */
+//! \brief obtains the polygon mode.
 inline Gfx::Poly_mode Configuration::get_poly_mode () const
 { return m_poly_mode; }
 
-/*! \brief determines whether texture-maping is enabled. */
+//! \brief determines whether texture-maping is enabled.
 inline Boolean Configuration::is_texture_map() const { return m_texture_map; }
 
-/*! \brief sets the texture-map flag. */
+//! \brief sets the texture-map flag.
 inline void Configuration::set_texture_map(Boolean flag)
 { m_texture_map = flag; }
 
-/*! \brief obtains the transformation speed scale. */
+//! \brief obtains the transformation speed scale.
 inline Float Configuration::get_speed_factor() const {return m_speed_factor; }
 
-/*! \brief sets the flag that indicates the drawing mode. */
+//! \brief sets the flag that indicates the drawing mode.
 inline void
 Configuration::set_geometry_drawing_mode(Geometry_drawing_mode mode)
 { m_geometry_drawing_mode = mode; }
 
-/*! \brief obtains the flag that indicates the drawing mode. */
+//! \brief obtains the flag that indicates the drawing mode.
 inline Configuration::Geometry_drawing_mode
 Configuration::get_geometry_drawing_mode() const
 { return m_geometry_drawing_mode; }
 
-/*! \brief sets the accumulation object. */
+//! \brief sets the accumulation object.
 inline void Configuration::set_accumulation(Shared_accumulation acc)
 { m_accumulation = acc; }
 
-/*! \brief obtains the accumulation object. */
+//! \brief obtains the accumulation object.
 inline Configuration::Shared_accumulation Configuration::get_accumulation()
   const
 { return m_accumulation; }
 
-/*! \brief sets the multisample object. */
+//! \brief sets the multisample object.
 inline void Configuration::set_multisample(Shared_multisample ms)
 { m_multisample = ms; }
 
-/*! \brief obtains the multisample object. */
+//! \brief obtains the multisample object.
 inline Configuration::Shared_multisample Configuration::get_multisample() const
 { return m_multisample; }
 
-/*! \brief obtains the verbosity level. */
+//! \brief obtains the verbosity level.
 inline Uint Configuration::get_verbosity_level() const
 { return m_verbosity_level; }
 

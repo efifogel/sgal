@@ -32,7 +32,7 @@
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Trace.hpp"
-#include "SGAL/Stl_formatter.hpp"
+#include "SGAL/Vrml_formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -1466,8 +1466,8 @@ void Script::execute(const Field_info* field_info)
 //! \brief writes this container.
 void Script::write(Formatter* formatter)
 {
-  auto* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
-  if (stl_formatter) return;
+  auto* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
+  if (vrml_formatter) Container::write(formatter);
 }
 
 SGAL_END_NAMESPACE

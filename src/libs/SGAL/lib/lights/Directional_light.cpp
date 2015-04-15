@@ -36,21 +36,21 @@ SGAL_BEGIN_NAMESPACE
 const std::string Directional_light::s_tag = "DirectionalLight";
 Container_proto * Directional_light::s_prototype(NULL);
 
-/*! the default direction of the light */
+/*! The default direction of the light */
 const Vector3f Directional_light::s_def_direction(0, 0, -1);
 
 REGISTER_TO_FACTORY(Directional_light, "Directional_light");
 
-/*! Constructor */
+//! \brief constructs.
 Directional_light::Directional_light(Boolean proto) :
   Light(proto),
   m_direction(s_def_direction)
 {}
 
-/*! Destructor */
+//! \brief destructs.
 Directional_light::~Directional_light() {}
 
-/*! Draw the light */
+//! \brief draws the light.
 Action::Trav_directive Directional_light::draw(Draw_action* draw_action)
 {
   if (!m_is_on) return Action::TRAV_CONT;
@@ -64,7 +64,7 @@ Action::Trav_directive Directional_light::draw(Draw_action* draw_action)
   return Action::TRAV_CONT;
 }
 
-/*! Initialize the node prototype */
+//! \brief initializes the node prototype.
 void Directional_light::init_prototype()
 {
   if (s_prototype) return;
@@ -84,7 +84,7 @@ void Directional_light::init_prototype()
                                               exec_func));
 }
 
-/*! Delete the node prototype */
+//! \brief deletes the node prototype.
 void Directional_light::delete_prototype()
 {
   delete s_prototype;
@@ -98,7 +98,7 @@ Container_proto* Directional_light::get_prototype()
   return s_prototype;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
+/*! \brief sets the attributes of the object extracted from the VRML or X3D file.
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */

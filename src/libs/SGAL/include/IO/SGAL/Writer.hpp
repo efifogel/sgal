@@ -61,12 +61,12 @@ public:
     boost::shared_ptr<Point_light> head_light = m_scene_graph->get_head_light();
     Uint i;
     for (i = 0; i < root->children_size(); ++i) {
-      boost::shared_ptr<Node> node = root->get_child(i);
+      auto node = root->get_child(i);
       if ((node != navigation_root) && (node != head_light))
         formatter.write(node);
     }
     for (i = 0; i < navigation_root->children_size(); ++i) {
-      boost::shared_ptr<Node> node = navigation_root->get_child(i);
+      auto node = navigation_root->get_child(i);
       formatter.write(node);
     }
     formatter.end();

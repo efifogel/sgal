@@ -31,6 +31,7 @@ class Container_proto;
 class Element;
 class Scene_graph;
 class Field_info;
+class Formatter;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -45,6 +46,7 @@ public:
     DIR_NAME,
     FILE_NAME,
     FILE_FORMAT,
+    SEPARATE,
     LAST
   };
 
@@ -89,6 +91,7 @@ public:
   std::string* file_name_handle(const Field_info*) { return &m_file_name; }
   File_format::Id* file_format_handle(const Field_info*)
   { return &m_file_format; }
+  Boolean* separate_handle(const Field_info*) { return &m_separate; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -98,6 +101,11 @@ public:
    * \param scene_graph the given scene.
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
+
+  /*! Write all fields of this container.
+   * \param[in] formatter The formatter to use for the writing, e.g., VRML.
+   */
+  virtual void write_fields(Formatter* formatter);
 
   /*! Execute the engine---write the content of the scene graph to a file. */
   virtual void execute(const Field_info* field_info);
@@ -163,6 +171,7 @@ private:
   const static std::string s_def_dir_name;
   const static std::string s_def_file_name;
   const static File_format::Id s_def_file_format;
+  const static Boolean s_def_separate;
 };
 
 #if defined(_MSC_VER)

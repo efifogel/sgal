@@ -69,7 +69,7 @@ const std::string Assembly::s_tag = "Assembly";
 
 REGISTER_TO_FACTORY(Assembly, "Assembly");
 
-/*! Constructor. */
+//! \brief constructs.
 Assembly::Assembly(Boolean proto) :
   Group(proto),
   m_dirty(true),
@@ -126,7 +126,7 @@ Assembly::Assembly(Boolean proto) :
   m_part_projection_aos_geo_node->set_which_choice(0);
 }
 
-/*! Destructor. */
+//! \brief destructs.
 Assembly::~Assembly()
 {
   remove_child(m_switch);
@@ -134,7 +134,7 @@ Assembly::~Assembly()
   clear();
 }
 
-/*! \brief clears the representation. */
+//! \brief clears the representation.
 void Assembly::clear()
 {
   m_parts.clear();                      // clear container of parts
@@ -146,20 +146,20 @@ void Assembly::clear()
   // Clear the Minkowski-sum Gaussian-map node + geometry children:
   Uint i;
   for (i = 0; i < m_ms_sgm_geo_node->children_size(); ++i) {
-    Shared_node node = m_ms_sgm_geo_node->get_child(i);
-    m_ms_sgm_geo_node->remove_child(node);
+    auto cont = m_ms_sgm_geo_node->get_child(i);
+    m_ms_sgm_geo_node->remove_child(cont);
   }
 
   // Clear the Minkowski-sum projection Aos node + geometry children:
   for (i = 0; i < m_projection_aos_geo_node->children_size(); ++i) {
-    Shared_node node = m_projection_aos_geo_node->get_child(i);
-    m_projection_aos_geo_node->remove_child(node);
+    auto cont = m_projection_aos_geo_node->get_child(i);
+    m_projection_aos_geo_node->remove_child(cont);
   }
 
   // Clear the per-part Minkowski-sum projection Aos node + geometry children:
   for (i = 0; i < m_part_projection_aos_geo_node->children_size(); ++i) {
-    Shared_node node = m_part_projection_aos_geo_node->get_child(i);
-    m_part_projection_aos_geo_node->remove_child(node);
+    auto cont = m_part_projection_aos_geo_node->get_child(i);
+    m_part_projection_aos_geo_node->remove_child(cont);
   }
 
   // Clear map of Minkowski sum lists:
@@ -172,7 +172,7 @@ void Assembly::clear()
   m_solutions.clear();
 }
 
-/*! \brief initializes the node prototype. */
+//! \brief initializes the node prototype.
 void Assembly::init_prototype()
 {
   if (s_prototype) return;
@@ -258,30 +258,28 @@ void Assembly::init_prototype()
                                           exec_func));
 }
 
-/*! \brief deletes the node prototype. */
+//! \brief deletes the node prototype.
 void Assembly::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the node prototype. */
+//! \brief obtains the node prototype.
 Container_proto* Assembly::get_prototype()
 {
   if (!s_prototype) Assembly::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of the object extracted from the input file. */
+//! \brief sets the attributes of the object extracted from the input file.
 void Assembly::set_attributes(Element* elem)
 {
   Group::set_attributes(elem);
 
-  typedef Element::Str_attr_iter        Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
 
     if (name == "solutionId") {
       m_solution_id = boost::lexical_cast<Uint>(value);
@@ -290,60 +288,57 @@ void Assembly::set_attributes(Element* elem)
   }
 }
 
-/*! \brief assigns each part a unique non-negative number. */
-Uint Assembly::assign_id(Node* node, Uint id) const
+//! \brief assigns each part a unique non-negative number.
+Uint Assembly::assign_id(Container* node, Uint id) const
 {
-  Assembly_part* part = dynamic_cast<Assembly_part*>(node);
+  auto* part = dynamic_cast<Assembly_part*>(node);
   if (part) {
     part->set_id(id++);
     return id;
   }
 
-  Switch* my_switch = dynamic_cast<Switch*>(node);
+  auto* my_switch = dynamic_cast<Switch*>(node);
   if (my_switch) {
-    Shared_node choice = my_switch->get_choice();
+    auto choice = my_switch->get_choice();
     if (!choice) return id;
     return assign_id(&*choice, id);
   }
 
-  Group* group = dynamic_cast<Group*>(node);
+  auto* group = dynamic_cast<Group*>(node);
   if (group) return assign_id(group, id);
 
   return id;
 }
 
-/*! \brief assigns each part a unique non-negative number. */
+//! \brief assigns each part a unique non-negative number.
 Uint Assembly::assign_id(Group* group, Uint id) const
 {
-  Node_const_iterator it;
-  for (it = group->children_begin(); it != group->children_end(); ++it) {
-    Shared_node node = *it;
+  for (auto it = group->children_begin(); it != group->children_end(); ++it) {
+    auto node = *it;
     id = assign_id(&*node, id);
   }
   return id;
 }
 
-/*! \brief prints information to an output stream. */
+//! \brief prints information to an output stream.
 void Assembly::print_info(std::ostream& out)
 {
   out << "Number of parts: " << m_number_of_parts << std::endl;
   out << "Number of parts: " << m_parts.size() << std::endl;
 
-  Assembly_part_iter ppit;
-  for (ppit = m_parts.begin(); ppit != m_parts.end(); ++ppit) {
-    Assembly_part* part = *ppit;
-    Sgm_geo_list& sgm_geos = part->get_sgm_geos();
+  for (auto ppit = m_parts.begin(); ppit != m_parts.end(); ++ppit) {
+    auto* part = *ppit;
+    auto& sgm_geos = part->get_sgm_geos();
     out << "size: " << sgm_geos.size() << std::endl;
   }
 
-  Minkowski_sum_list_iter msli;
   std::cout << "mk size: " << m_minkowski_sum_lists.size() << std::endl;
-  for (msli = m_minkowski_sum_lists.begin();
+  for (auto msli = m_minkowski_sum_lists.begin();
        msli != m_minkowski_sum_lists.end();
        ++msli)
   {
     Key key = (*msli).first;
-    Sgm_list& sgm_list = (*msli).second;
+    auto& sgm_list = (*msli).second;
     std::cout << key.first << "," << key.second << " size: "
               << sgm_list.size() << std::endl;
   }
@@ -352,11 +347,11 @@ void Assembly::print_info(std::ostream& out)
             << std::endl;
 }
 
-/*! \brief solves the puzzle. */
+//! \brief solves the puzzle.
 void Assembly::solve(const Field_info* /* field_info */)
 { if (m_dirty) clean(); }
 
-/*! \brief constructs the lists of the reflected sgm geometry nodes. */
+//! \brief constructs the lists of the reflected sgm geometry nodes.
 void Assembly::construct_reflected_sgms()
 {
   clock_t start_time = clock();
@@ -366,14 +361,12 @@ void Assembly::construct_reflected_sgms()
     kernel.construct_translated_point_3_object();
   Exact_kernel::Construct_vector_3 cvec = kernel.construct_vector_3_object();
 
-  Assembly_part_iter ppit;
-  for (ppit = m_parts.begin(); ppit != m_parts.end(); ++ppit) {
-    Assembly_part* part = *ppit;
-    Sgm_geo_list& sgm_geos = part->get_sgm_geos();
-    Sgm_geo_iter sit;
+  for (auto ppit = m_parts.begin(); ppit != m_parts.end(); ++ppit) {
+    auto* part = *ppit;
+    auto& sgm_geos = part->get_sgm_geos();
     m_parts_reflected_sgm_geos.push_back(Sgm_geo_list());
     Sgm_geo_list& part_reflected_sgm_geos = m_parts_reflected_sgm_geos.back();
-    for (sit = sgm_geos.begin(); sit != sgm_geos.end(); ++sit) {
+    for (auto sit = sgm_geos.begin(); sit != sgm_geos.end(); ++sit) {
       Shared_sgm_geo sgm_geo = *sit;
       Shared_sgm_geo reflected_sgm_geo(new Sgm_geo);
       /*! \todo Replace the code that computes the reflection about the origin
@@ -383,16 +376,14 @@ void Assembly::construct_reflected_sgms()
       typedef boost::shared_ptr<Exact_coord_array_3d>
         Shared_exact_coord_array_3d;
       Sgm_geo::Shared_coord_array tmp = sgm_geo->get_coord_array();
-      Shared_exact_coord_array_3d coord_array =
-        boost::dynamic_pointer_cast<Exact_coord_array_3d>(tmp);
+      auto coord_array = boost::dynamic_pointer_cast<Exact_coord_array_3d>(tmp);
       if (coord_array) {
-        Uint size  = coord_array->size();
+        Uint size = coord_array->size();
         Shared_exact_coord_array_3d
           inverse_coord_array(new Exact_coord_array_3d(size));
-        Exact_coord_array_3d::Exact_point_const_iter its;
         Exact_coord_array_3d::Exact_point_iter itt =
           inverse_coord_array->begin();
-        for (its = coord_array->begin(); its != coord_array->end(); ++its) {
+        for (auto its = coord_array->begin(); its != coord_array->end(); ++its) {
           const Exact_point_3& point = *its;
           Exact_vector_3 vec = cvec(point, CGAL::ORIGIN);
           *itt++ = tpoint(CGAL::ORIGIN, vec);
@@ -439,19 +430,17 @@ void Assembly::construct_reflected_sgms()
             << std::endl;
 }
 
-/*! \brief computes the Minkowski sums. */
+//! \brief computes the Minkowski sums.
 void Assembly::compute_minkowski_sums()
 {
   clock_t start_time = clock();
   Uint i = 0;
 
-  Assembly_part_iter ppit;
-  for (ppit = m_parts.begin(); ppit != m_parts.end(); ++ppit, ++i) {
-    Assembly_part* part = *ppit;
-    Sgm_geo_list& sgm_geos1 = part->get_sgm_geos();
+  for (auto ppit = m_parts.begin(); ppit != m_parts.end(); ++ppit, ++i) {
+    auto* part = *ppit;
+    auto& sgm_geos1 = part->get_sgm_geos();
     Uint j = 0;
-    Sgm_geo_list_iter slit2;
-    for (slit2 = m_parts_reflected_sgm_geos.begin();
+    for (auto slit2 = m_parts_reflected_sgm_geos.begin();
          slit2 != m_parts_reflected_sgm_geos.end();
          ++slit2, ++j)
     {
@@ -463,15 +452,13 @@ void Assembly::compute_minkowski_sums()
       m_minkowski_sum_lists[key] = Sgm_list();
       Sgm_list& sgms = m_minkowski_sum_lists[key];
 
-      Sgm_geo_iter sit1;
-      for (sit1 = sgm_geos1.begin(); sit1 != sgm_geos1.end(); ++sit1) {
+      for (auto sit1 = sgm_geos1.begin(); sit1 != sgm_geos1.end(); ++sit1) {
         Shared_sgm_geo sgm_geo1 = *sit1;
-        Sgm* sgm1 = sgm_geo1->get_sgm();
+        auto* sgm1 = sgm_geo1->get_sgm();
 
-        Sgm_geo_iter sit2;
-        for (sit2 = sgm_geos2.begin(); sit2 != sgm_geos2.end(); ++sit2) {
+        for (auto sit2 = sgm_geos2.begin(); sit2 != sgm_geos2.end(); ++sit2) {
           Shared_sgm_geo sgm_geo2 = *sit2;
-          Sgm* sgm2 = sgm_geo2->get_sgm();
+          auto* sgm2 = sgm_geo2->get_sgm();
 
           Sgm* sgm = new Sgm;
           Sgm_color_overlay_traits<Sgm> sgm_overlay;
@@ -489,13 +476,12 @@ void Assembly::compute_minkowski_sums()
             << std::endl;
 }
 
-/* \brief constructs the sgm geometry nodes. */
+//! \brief constructs the sgm geometry nodes.
 void Assembly::construct_sgms_nodes()
 {
   clock_t start_time = clock();
 
-  Assembly_part_iter ppit;
-  for (ppit = m_parts.begin(); ppit != m_parts.end(); ++ppit) {
+  for (auto ppit = m_parts.begin(); ppit != m_parts.end(); ++ppit) {
     Assembly_part* part = *ppit;
     Sgm_geo_list& sgm_geos = part->get_sgm_geos();
     Appearance_list& sgm_apps = part->get_sgm_apps();
@@ -521,12 +507,11 @@ void Assembly::construct_sgms_nodes()
             << std::endl;
 }
 
-/* \brief constructs the reflected sgm geometry nodes. */
+//! \brief constructs the reflected sgm geometry nodes.
 void Assembly::construct_reflected_sgms_nodes()
 {
   Sgm_geo_list_iter rslit = m_parts_reflected_sgm_geos.begin();
-  Assembly_part_iter ppit;
-  for (ppit = m_parts.begin(); ppit != m_parts.end(); ++ppit, ++rslit) {
+  for (auto ppit = m_parts.begin(); ppit != m_parts.end(); ++ppit, ++rslit) {
     Assembly_part* part = *ppit;
     Sgm_geo_list& sgm_geos = part->get_sgm_geos();
     Sgm_geo_list& reflected_sgm_geos = *rslit;
@@ -556,18 +541,16 @@ void Assembly::construct_reflected_sgms_nodes()
   }
 }
 
-/*! \brief constructs the Minkowski-sum nodes. */
+//! \brief constructs the Minkowski-sum nodes.
 void Assembly::construct_minkowski_sum_nodes()
 {
-  Minkowski_sum_list_iter msli;
-  for (msli = m_minkowski_sum_lists.begin();
+  for (auto msli = m_minkowski_sum_lists.begin();
        msli != m_minkowski_sum_lists.end();
        ++msli)
   {
-    Sgm_list& sgm_list = (*msli).second;
-    Sgm_iter sit;
-    for (sit = sgm_list.begin(); sit != sgm_list.end(); ++sit) {
-      Sgm* sgm = *sit;
+    auto& sgm_list = (*msli).second;
+    for (auto sit = sgm_list.begin(); sit != sgm_list.end(); ++sit) {
+      auto* sgm = *sit;
 
       Shared_shape shape(new Shape());
       shape->set_appearance(m_appearance);
@@ -583,16 +566,15 @@ void Assembly::construct_minkowski_sum_nodes()
   }
 }
 
-/*! \brief constructs the Minkowski-sum projection nodes */
+//! \brief constructs the Minkowski-sum projection nodes.
 void Assembly::construct_projection_nodes()
 {
-  Projection_list_iter pli;
-  for (pli = m_projection_lists.begin(); pli != m_projection_lists.end(); ++pli)
+  for (auto pli = m_projection_lists.begin(); pli != m_projection_lists.end();
+       ++pli)
   {
-    Aos_list& aos_list = (*pli).second;
-    Aos_iter ait;
-    for (ait = aos_list.begin(); ait != aos_list.end(); ++ait) {
-      Aos_mark* aos = *ait;
+    auto& aos_list = (*pli).second;
+    for (auto ait = aos_list.begin(); ait != aos_list.end(); ++ait) {
+      auto* aos = *ait;
 
       Shared_shape shape(new Shape());
       shape->set_appearance(m_appearance);
@@ -625,11 +607,12 @@ void Assembly::compute_projection(Sgm::Face_const_handle fit, Aos_mark* aos)
    */
   Sgm::Halfedge_const_iterator first;
   if (fit->number_of_outer_ccbs() == 1) {
-    Sgm::Outer_ccb_const_iterator oit = fit->outer_ccbs_begin();
+    auto oit = fit->outer_ccbs_begin();
     first = *oit;
-  } else {
+  }
+  else {
     SGAL_assertion(fit->number_of_inner_ccbs() == 1);
-    Sgm::Inner_ccb_const_iterator iit = fit->inner_ccbs_begin();
+    auto iit = fit->inner_ccbs_begin();
     first = *iit;
   }
 
@@ -806,7 +789,7 @@ void Assembly::compute_projection(Sgm::Vertex_const_handle vit, Aos_mark* aos)
   hes.clear();
 }
 
-/*! \brief finds the next halfedge on the silhouette. */
+//! \brief finds the next halfedge on the silhouette.
 Assembly::Sgm::Halfedge_const_handle
 Assembly::find_next_silhouette_halfedge(Sgm::Halfedge_const_handle first_he)
 {
@@ -990,8 +973,7 @@ void Assembly::compute_projection(const Sgm* sgm, Aos_mark* aos)
   Exact_kernel::Coplanar_3 coplanar = kernel.coplanar_3_object();
 
   // Traverse all Gaussian map vertices (primal facets):
-  Sgm::Vertex_const_iterator vit;
-  for (vit = sgm->vertices_begin(); vit != sgm->vertices_end(); ++vit) {
+  for (auto vit = sgm->vertices_begin(); vit != sgm->vertices_end(); ++vit) {
     if (vit->degree() < 3) continue;
     Sgm::Halfedge_around_vertex_const_circulator hedge1 =
       vit->incident_halfedges();
@@ -1079,7 +1061,7 @@ void Assembly::compute_projection(const Sgm* sgm, Aos_mark* aos)
   compute_general_projection(sgm, aos);
 }
 
-/*! \brief computes the Minkowski-sum projections. */
+//! \brief computes the Minkowski-sum projections.
 void Assembly::compute_projections()
 {
   clock_t start_time = clock();
@@ -1089,11 +1071,11 @@ void Assembly::compute_projections()
       if (i == j) continue;
       Key key = std::make_pair(i, j);
       m_projection_lists[key] = Aos_list();
-      Aos_list& aoss = m_projection_lists[key];
-      Sgm_list& sgms = m_minkowski_sum_lists[key];
+      auto& aoss = m_projection_lists[key];
+      auto& sgms = m_minkowski_sum_lists[key];
       Sgm_iter sit;
       for (sit = sgms.begin(); sit != sgms.end(); ++sit) {
-        Sgm* sgm = *sit;
+        auto* sgm = *sit;
         Aos_mark* aos = new Aos_mark;
         aoss.push_back(aos);
         compute_projection(sgm, aos);
@@ -1108,9 +1090,7 @@ void Assembly::compute_projections()
             << std::endl;
 }
 
-/*! \brief computes the union of the pairwise Minkowski-sum projections per
- * part.
- */
+//! \brief computes the union of the pairwise Minkowski-sum projections per part.
 void Assembly::compute_part_projections()
 {
   clock_t start_time = clock();
@@ -1119,8 +1099,8 @@ void Assembly::compute_part_projections()
     for (j = 0; j < m_number_of_parts; ++j) {
       if (i == j) continue;
       Key key = std::make_pair(i, j);
-      Aos_list& aoss = m_projection_lists[key];
-      Aos_mark* aos = new Aos_mark;
+      auto& aoss = m_projection_lists[key];
+      auto* aos = new Aos_mark;
       m_part_projections[key] = aos;
       // std::cout << "compute_part_projections ("
       //           << i << "," << j << ")" << std::endl;
@@ -1143,16 +1123,14 @@ void Assembly::remove_marked_edges(Aos_mark* aos)
 
   std::list<Aos_mark::Halfedge_handle> tmp;
 
-  Aos_mark::Edge_iterator eit;
-  for (eit = aos->edges_begin(); eit != aos->edges_end(); ++eit) {
+  for (auto eit = aos->edges_begin(); eit != aos->edges_end(); ++eit) {
     if (eit->mark()) {
       CGAL_assertion(eit->face()->mark() && eit->twin()->face()->mark());
       tmp.push_back(eit);
     }
   }
 
-  std::list<Aos_mark::Halfedge_handle>::iterator it;
-  for (it = tmp.begin(); it != tmp.end(); ++it) {
+  for (auto it = tmp.begin(); it != tmp.end(); ++it) {
     Aos_mark::Halfedge_handle eh = *it;
     // std::cout << "removing ("
     //           << eh->source()->point() << ") => (" << eh->target()->point()
@@ -1257,15 +1235,14 @@ void Assembly::compute_part_projections(Aos_list& aoss, Aos_mark* res_aos)
   // std::cout << "compute_part_projections: 3a " << std::endl;
 }
 
-/*! \brief constructs the per-part Minkowski-sum projection nodes. */
+//! \brief constructs the per-part Minkowski-sum projection nodes.
 void Assembly::construct_part_projection_nodes()
 {
   // std::cout << "Assembly::construct_part_projection_nodes" << std::endl;
-  Projection_iter pli;
-  for (pli = m_part_projections.begin(); pli != m_part_projections.end();
+  for (auto pli = m_part_projections.begin(); pli != m_part_projections.end();
        ++pli)
   {
-    Aos_mark* aos = (*pli).second;
+    auto* aos = (*pli).second;
     Shared_shape shape(new Shape());
     shape->set_appearance(m_appearance);
     // shape->set_draw_depth(false);
@@ -1295,7 +1272,7 @@ void Assembly::construct_part_projection_nodes()
   // std::cout << "Assembly::construct_part_projection_nodes end" << std::endl;
 }
 
-/* \brief computes the NDBG. */
+//! \brief computes the NDBG.
 void Assembly::compute_aos_graph()
 {
   // std::cout << "compute_aos_graph" << std::endl;
@@ -1340,7 +1317,7 @@ void Assembly::compute_aos_graph()
             << std::endl;
 }
 
-/*! \brief construct the graph node. */
+//! \brief construct the graph node.
 void Assembly::construct_graph_node()
 {
   m_graph_node->set_appearance(m_appearance);
@@ -1359,7 +1336,7 @@ void Assembly::construct_graph_node()
   aos_geo->set_aos_vertex_radius(.03f);
 }
 
-/*! \brief processes the NDBG. */
+//! \brief processes the NDBG.
 void Assembly::process_aos_graph()
 {
   std::cout << "# vertices: " << m_aos_graph->number_of_vertices()
@@ -1550,7 +1527,7 @@ void Assembly::process_aos_graph()
   }
 }
 
-/*! \brief cleans internal representation. */
+//! \brief cleans internal representation.
 void Assembly::clean()
 {
   // Visit all parts and assign each a unique non-negative number:
@@ -1635,13 +1612,10 @@ void Assembly::draw_aos_minkowski_sums_changed(const Field_info* field_info)
 
   Uint i;
   for (i = 0; i < m_ms_sgm_geo_node->children_size(); ++i) {
-    Shared_node node = m_ms_sgm_geo_node->get_child(i);
-    Shared_shape shape = boost::static_pointer_cast<Shape>(node);
-    typedef boost::shared_ptr<Geometry>         Shared_geometry;
-    Shared_geometry geo = shape->get_geometry();
-    typedef boost::shared_ptr<Spherical_gaussian_map_base_geo>
-      Shared_spherical_gaussian_map_base_geo;
-    Shared_spherical_gaussian_map_base_geo sgm_geo =
+    auto node = m_ms_sgm_geo_node->get_child(i);
+    auto shape = boost::static_pointer_cast<Shape>(node);
+    auto geo = shape->get_geometry();
+    auto sgm_geo =
       boost::static_pointer_cast<Spherical_gaussian_map_base_geo>(geo);
     sgm_geo->set_draw_aos(m_draw_aos_minkowski_sums);
   }

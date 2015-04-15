@@ -27,7 +27,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Constructor */
+//! \brief constructs.
 Container_proto::Container_proto(Container_proto* ancestor) :
   m_ancestor(ancestor),
   m_first_id(0)
@@ -36,14 +36,11 @@ Container_proto::Container_proto(Container_proto* ancestor) :
     m_first_id = ancestor->m_first_id + ancestor->m_field_info_ids.size();
 }
 
-/*! Destructor
- * Deletes the field-info instances and search structures
- */
+//! \brief destructs.
 Container_proto::~Container_proto()
 {
-  Field_info_id_iter fi;
-  for (fi = m_field_info_ids.begin(); fi != m_field_info_ids.end(); ++fi) {
-    Field_info * field_info = (*fi).second;
+  for (auto fi = m_field_info_ids.begin(); fi != m_field_info_ids.end(); ++fi) {
+    auto* field_info = (*fi).second;
     delete field_info;
   }
   m_field_info_ids.clear();
@@ -59,7 +56,7 @@ Container_proto::~Container_proto()
  * and its name into the name container.
  * \param field_info (in) a pointer to a field-information record to be added
  */
-void Container_proto::add_field_info(Field_info * field_info)
+void Container_proto::add_field_info(Field_info* field_info)
 {
   SGAL_assertion(m_first_id <= field_info->get_id());
 
@@ -79,7 +76,7 @@ void Container_proto::add_field_info(Field_info * field_info)
  * field-infos range, find it there. Otherwise, search for the record in the
  * ancestor prototype recursively.
  */
-Field_info * Container_proto::get_field_info(Uint id) const
+Field_info* Container_proto::get_field_info(Uint id) const
 {
   //! !todo currently not all field enums are made field-info records.
 //   if (id >= m_first_id) {
@@ -89,13 +86,13 @@ Field_info * Container_proto::get_field_info(Uint id) const
   Field_info_id_const_iter fi = m_field_info_ids.find(id);
   if (fi != m_field_info_ids.end()) return (*fi).second;
   if (m_ancestor) return m_ancestor->get_field_info(id);
-  return NULL;
+  return nullptr;
 }
 
 /*! \brief obtains a field info by its name from the current prototype or from
  * one of its ancestors.
  */
-Field_info * Container_proto::get_field_info(const std::string & name) const
+Field_info* Container_proto::get_field_info(const std::string& name) const
 {
   // Try to find the name on the current map
   // Since in VRML/X3D a field name may appear with "set_XXXX" or "XXXX_changed"
@@ -118,7 +115,7 @@ Field_info * Container_proto::get_field_info(const std::string & name) const
 
   // if ancestor is null there is no field info with the requested info
   // in this proto nor in its ancestors -> return NULL
-  return NULL;
+  return nullptr;
 }
 
 //! \brief obtains the begin iterator of the extended range of field info ids.
@@ -148,18 +145,18 @@ Container_proto::ids_end(const Container_proto* prototype) const
  */
 void Container_proto::get_iDsList(FieldIDsList & IDsList) const
 {
-  Field_info * field_info;
+  Field_info* field_info;
 
-  Field_info_id_iter iter = m_field_info_ids.begin();
-  while( iter != m_field_info_ids.end()) {
+  auto iter = m_field_info_ids.begin();
+  while (iter != m_field_info_ids.end()) {
     field_info = (*iter).second;
-    if (field_info == NULL) {
+    if (field_info == nullptr) {
       assert(false);
       return;
     }
     IDsList.push_back(FieldIdPair(field_info->get_id(),
                                   field_info->get_name()));
-    iter++;
+    ++iter;
   }
 }
 #endif

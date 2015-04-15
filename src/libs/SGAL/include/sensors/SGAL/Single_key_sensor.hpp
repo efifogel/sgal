@@ -34,24 +34,21 @@ SGAL_BEGIN_NAMESPACE
 class Element;
 class Keyboard_event;
 class Container_proto;
+class Formatter;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif
 
-/*!
- * This class is used as a container of fields. That is, it (indirectly)
- * derives from 'Container' through 'Node'. As such, for each field f a
- * pointer to a member function that obtains a pointer to the data member
- * that stores the value of the field f is used. This member function is
- * invoked relative to the based 'Container' class.
+/*! clas Single_key_sensor Single_key_sensor.hpp
  * Keep 'Node' as the first derived class. Otherwise, MSVC complains.
  */
 class SGAL_SGAL_DECL Single_key_sensor : public Node, public Agent {
 public:
   enum {
     FIRST = Container::LAST - 1,
+    KEY,
     PRESS,
     TIME,
     STATE,
@@ -84,6 +81,7 @@ public:
   /// \name field handlers
   //@{
   // press
+  Uint* key_handle(const Field_info*) { return &m_key; }
   Boolean* press_handle(const Field_info*) { return &m_press; }
   Scene_time* time_handle(const Field_info*) { return &m_time; }
   Boolean* state_handle(const Field_info*) { return &m_state; }
@@ -98,6 +96,11 @@ public:
 
   /*! Draw the node (does nothing). */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
+
+  /*! Write all fields of this container.
+   * \param formatter The formatter to use for the writing, e.g., VRML.
+   */
+  virtual void write_fields(Formatter* formatter);
 
   /*! Print out the name of this agent (for debugging purposes). */
   virtual void identify();
@@ -154,8 +157,9 @@ private:
   Boolean m_trigger_on_release;
 
   /*! Default Values. */
-  static Uint s_def_num_states;
-  static Boolean s_def_trigger_on_release;
+  static const Uint s_def_num_states;
+  static const Boolean s_def_state;
+  static const Boolean s_def_trigger_on_release;
 };
 
 #if defined(_MSC_VER)

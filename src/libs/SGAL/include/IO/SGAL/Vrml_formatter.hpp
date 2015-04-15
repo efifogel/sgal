@@ -25,6 +25,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <set>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Text_formatter.hpp"
@@ -71,6 +72,10 @@ public:
   /*! Export the routing statements.
    */
   virtual void end();
+
+  /*! Write a container.
+   */
+  virtual void write(Shared_container container);
 
   /*! Export the container header.
    */
@@ -291,6 +296,9 @@ public:
 
   //@}
 
+  /*! The name so fthe containers that have been exported already. */
+  std::set<std::string> m_names;
+
 private:
   /*! Export a single field of type T.
    */
@@ -444,13 +452,6 @@ inline void
 Vrml_formatter::multi_sphere_bound(const std::string& name,
                                    const std::vector<Sphere_bound>& value,
                                    const std::vector<Sphere_bound>& default_value)
-{ multi_field(name, value, default_value); }
-
-//! \brief writes a single string field.
-inline void
-Vrml_formatter::multi_string(const std::string& name,
-                             const std::vector<std::string>& value,
-                             const std::vector<std::string>& default_value)
 { multi_field(name, value, default_value); }
 
 SGAL_END_NAMESPACE

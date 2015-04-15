@@ -118,7 +118,7 @@ SGAL_END_NAMESPACE
 
 %type <Shared_group> vrmlScene
 %type <Shared_transform> statements
-%type <Shared_node> statement
+%type <Shared_container> statement
 %type <Shared_container> nodeStatement protoStatement routeStatement
 %type <Shared_container> node sfnodeValue
 %type <Shared_container> proto externproto
@@ -360,9 +360,9 @@ statements      : /* empty */
                 { std::swap($$, $1); if ($2) $$->add_child($2); }
                 ;
 
-statement       : nodeStatement { $$ = boost::dynamic_pointer_cast<Node>($1); }
-                | protoStatement { $$ = boost::dynamic_pointer_cast<Node>($1); }
-                | routeStatement { $$ = boost::dynamic_pointer_cast<Node>($1); }
+statement       : nodeStatement { std::swap($$, $1); }
+                | protoStatement { std::swap($$, $1); }
+                | routeStatement { std::swap($$, $1); }
                 ;
 
 nodeStatement   : node { scene_graph->add_container($1); std::swap($$, $1); }

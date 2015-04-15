@@ -608,15 +608,9 @@ void Mesh_set::write(Formatter* formatter)
                   std::cout << "Mesh_set: " << "Tag: " << get_tag()
                   << ", name: " << get_name()
                   << std::endl;);
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (m_coord_indices.empty() && m_flat_coord_indices.empty()) return;
-  if (m_dirty_coord_indices) clean_coord_indices();
 
   auto* obj_formatter = dynamic_cast<Obj_formatter*>(formatter);
   if (obj_formatter) {
-    if (m_dirty_color_indices) clean_color_indices();
-    if (m_dirty_normal_indices) clean_normal_indices();
-    if (m_dirty_tex_coord_indices) clean_tex_coord_indices();
     // Apply the active (top) transform matrix to the coordinates.
     const Matrix4f& matrix = obj_formatter->top_matrix();
     if (!m_coord_array || (m_coord_array->size() == 0)) return;
@@ -630,6 +624,14 @@ void Mesh_set::write(Formatter* formatter)
     if ((PT_TRIANGLES == get_primitive_type()) ||
         (PT_QUADS == get_primitive_type()))
     {
+      if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+      if (m_flat_coord_indices.empty()) return;
+
+      //! \todo use the following:
+      // if (m_dirty_flat_color_indices) clean_flat_color_indices();
+      // if (m_dirty_flat_normal_indices) clean_flat_normal_indices();
+      // if (m_dirty_flat_tex_coord_indices) clean_flat_tex_coord_indices();
+
       const auto& indices = get_flat_coord_indices();
       Uint j = 0;
       for (Uint i = 0; i < get_num_primitives(); ++i) {
@@ -651,6 +653,14 @@ void Mesh_set::write(Formatter* formatter)
       }
     }
     else {
+      if (m_dirty_coord_indices) clean_coord_indices();
+      if (m_coord_indices.empty()) return;
+
+      //! \todo use the following:
+      // if (m_dirty_color_indices) clean_color_indices();
+      // if (m_dirty_normal_indices) clean_normal_indices();
+      // if (m_dirty_tex_coord_indices) clean_tex_coord_indices();
+
       //! \todo triangulate and export.
       const auto& indices = get_coord_indices();
       std::cout << "size: " << indices.size() << std::endl;
@@ -676,6 +686,9 @@ void Mesh_set::write(Formatter* formatter)
     if ((PT_TRIANGLES == get_primitive_type()) ||
         (PT_QUADS == get_primitive_type()))
     {
+      if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+      if (m_flat_coord_indices.empty()) return;
+
       Vector3f vert;
       const auto& indices = get_flat_coord_indices();
       Uint j = 0;
@@ -696,6 +709,9 @@ void Mesh_set::write(Formatter* formatter)
       }
     }
     else {
+      if (m_dirty_coord_indices) clean_coord_indices();
+      if (m_coord_indices.empty()) return;
+
       //! \todo triangulate and export.
       const auto& indices = get_coord_indices();
       std::cout << "size: " << indices.size() << std::endl;
@@ -708,9 +724,12 @@ void Mesh_set::write(Formatter* formatter)
 
   Vrml_formatter* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
   if (vrml_formatter) {
+
+    if (m_dirty_coord_indices) clean_coord_indices();
     if (m_dirty_color_indices) clean_color_indices();
     if (m_dirty_normal_indices) clean_normal_indices();
     if (m_dirty_tex_coord_indices) clean_tex_coord_indices();
+    if (m_coord_indices.empty()) return;
 
     /*! \todo the following can be replaced with the call to
      * Geo_set::write(Formatter* formatter)
@@ -721,6 +740,7 @@ void Mesh_set::write(Formatter* formatter)
     auto* proto = get_prototype();
     for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
       const Field_info* field_info = (*it).second;
+      if (field_info->get_rule() != RULE_EXPOSED_FIELD) continue;
       if (COORD_INDEX_ARRAY == field_info->get_id()) {
         const auto& indices = get_coord_indices();
         Uint size = indices.size();
@@ -728,8 +748,19 @@ void Mesh_set::write(Formatter* formatter)
         std::vector<Int32>::iterator rit = value.begin();
         for (auto it = indices.begin(); it != indices.end(); ++it) *rit++ = *it;
         formatter->multi_int32(field_info->get_name(), value, default_value);
+        continue;
       }
-      else field_info->write(this, formatter);
+      if (NORMAL_INDEX_ARRAY == field_info->get_id()) {
+        const auto& indices = get_normal_indices();
+        Uint size = indices.size();
+        std::vector<int> value(size), default_value;
+        std::vector<Int32>::iterator rit = value.begin();
+        for (auto it = indices.begin(); it != indices.end(); ++it) *rit++ = *it;
+        formatter->multi_int32(field_info->get_name(), value, default_value);
+        continue;
+      }
+
+      field_info->write(this, formatter);
     }
     formatter->container_end();
     return;

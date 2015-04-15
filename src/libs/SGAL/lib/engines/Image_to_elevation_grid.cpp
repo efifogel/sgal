@@ -68,7 +68,7 @@ void Image_to_elevation_grid::init_prototype()
     static_cast<Boolean_handle_function>
     (&Image_to_elevation_grid::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          RULE_EXPOSED_FIELD,
+                                          RULE_IN,
                                           trigger_func, exec_func));
 
   // elevationGrid

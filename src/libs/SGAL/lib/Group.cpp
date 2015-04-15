@@ -92,14 +92,14 @@ Group::~Group()
 }
 
 //! \brief obtains a child according to its position in the children array.
-Group::Shared_node Group::get_child(Uint index)
+Group::Shared_container Group::get_child(Uint index)
 {
-  if (index >= m_childs.size()) return Group::Shared_node();
+  if (index >= m_childs.size()) return Group::Shared_container();
   return m_childs[index];
 }
 
 //! \brief adds a child to the sequence of children of the group.
-void Group::add_child(Shared_node node)
+void Group::add_child(Shared_container node)
 {
   // Lights are inserted at the begining of the sequence, the engines, and
   // then all the rest.
@@ -124,7 +124,7 @@ void Group::add_child(Shared_node node)
 }
 
 //! \brief removes a given child from the sequence of children of the group.
-void Group::remove_child(Shared_node node)
+void Group::remove_child(Shared_container node)
 {
   auto light = boost::dynamic_pointer_cast<Light>(node);
   if (light) {
@@ -139,11 +139,14 @@ void Group::remove_child(Shared_node node)
     return;
   }
 
-  Observer observer(this, get_field_info(SPHERE_BOUND));
+  const auto* field_info = get_field_info(SPHERE_BOUND);
+  Observer observer(this, field_info);
   node->unregister_observer(observer);
   m_dirty_sphere_bound = true;
   m_childs.erase(std::remove(m_childs.begin(), m_childs.end(), node),
                  m_childs.end());
+
+  field_changed(field_info);
 }
 
 //! \brief draws the children of the group.
@@ -152,8 +155,10 @@ Action::Trav_directive Group::draw(Draw_action* draw_action)
   if (!is_visible() || (draw_action == 0) || (draw_action->get_context() == 0))
     return Action::TRAV_CONT;
   if (has_lights()) draw_action->get_context()->push_lights();
-  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it)
-    draw_action->apply(&*(*it));
+  for (auto it = m_childs.begin(); it != m_childs.end(); ++it) {
+    auto node = boost::dynamic_pointer_cast<Node>(*it);
+    if (node) draw_action->apply(&*(node));
+  }
   if (has_lights()) draw_action->get_context()->pop_lights();
   return Action::TRAV_CONT;
 }
@@ -164,8 +169,10 @@ Action::Trav_directive Group::draw(Draw_action* draw_action)
 void Group::cull(Cull_context& cull_context)
 {
   if (!is_visible()) return;
-  for (auto it = m_childs.begin(); it != m_childs.end(); ++it)
-    (*it)->cull(cull_context);
+  for (auto it = m_childs.begin(); it != m_childs.end(); ++it) {
+    auto node = boost::dynamic_pointer_cast<Node>(*it);
+    if (node) node->cull(cull_context);
+  }
 }
 
 //! \brief allocates the selection ids for this group.
@@ -202,15 +209,21 @@ void Group::isect(Isect_action* isect_action)
   // reserved for this Group. A start selection id that is equal to zero
   // indicates that no selection ids have been reserved.
   if (m_start_selection_id == 0) {
-    for (auto it = m_childs.begin(); it != m_childs.end(); ++it)
-      isect_action->apply(&*(*it));
+    for (auto it = m_childs.begin(); it != m_childs.end(); ++it) {
+      auto node = boost::dynamic_pointer_cast<Node>(*it);
+      if (node) isect_action->apply(&*(node));
+    }
   }
   else {
     Uint save_id = isect_action->get_id();                // save the id
     Uint selection_id = m_start_selection_id;
-    for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
-      isect_action->set_id(selection_id++);
-      isect_action->apply(&*(*it));
+    for (auto it = m_childs.begin(); it != m_childs.end(); ++it) {
+      auto node = boost::dynamic_pointer_cast<Node>(*it);
+      if (node) {
+        isect_action->set_id(selection_id);
+        isect_action->apply(&*(node));
+      }
+      ++selection_id;
     }
     isect_action->set_id(save_id);                        // restore the id
   }
@@ -237,10 +250,13 @@ void Group::clean_sphere_bound()
 
   Sphere_bound_vector_const spheres;
   for (auto it = m_childs.begin(); it != m_childs.end(); ++it) {
-    if ((*it)->is_dirty_sphere_bound()) (*it)->clean_sphere_bound();
-    const Sphere_bound& sb = (*it)->get_sphere_bound();
-    if (sb.get_radius() == 0) continue;
-    spheres.push_back(&sb);
+    auto node = boost::dynamic_pointer_cast<Node>(*it);
+    if (node) {
+      if (node->is_dirty_sphere_bound()) node->clean_sphere_bound();
+      const Sphere_bound& sb = node->get_sphere_bound();
+      if (sb.get_radius() == 0) continue;
+      spheres.push_back(&sb);
+    }
   }
 
   m_sphere_bound.set_around(spheres);
@@ -284,7 +300,7 @@ void Group::set_attributes(Element* elem)
     const auto& name = elem->get_name(cai);
     auto cont = elem->get_value(cai);
     if (name == "children") {
-      Shared_node node = boost::dynamic_pointer_cast<Node>(cont);
+      Shared_container node = boost::dynamic_pointer_cast<Container>(cont);
       if (node) add_child(node);
       elem->mark_delete(cai);
       continue;
@@ -298,11 +314,8 @@ void Group::set_attributes(Element* elem)
     const auto& name = elem->get_name(mcai);
     auto& cont_list = elem->get_value(mcai);
     if (name == "children") {
-      for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++) {
-        Shared_container cont = *ci;
-        Shared_node node = boost::dynamic_pointer_cast<Node>(cont);
-        if (node) add_child(node);
-      }
+      for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++)
+        add_child(*ci);
       elem->mark_delete(mcai);
     }
     continue;
@@ -374,7 +387,7 @@ Container_proto* Group::get_prototype()
 Boolean Group::attach_context(Context* context)
 {
   Boolean result = Node::attach_context(context);
-  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it)
+  for (auto it = m_childs.begin(); it != m_childs.end(); ++it)
     result &= (*it)->attach_context(context);
   return result;
 }
@@ -383,7 +396,7 @@ Boolean Group::attach_context(Context* context)
 Boolean Group::detach_context(Context* context)
 {
   Boolean result = Node::detach_context(context);
-  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it)
+  for (auto it = m_childs.begin(); it != m_childs.end(); ++it)
     result &= (*it)->detach_context(context);
   return result;
 }

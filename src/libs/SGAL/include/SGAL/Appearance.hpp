@@ -49,7 +49,9 @@ class Halftone;
 #pragma warning( disable: 4251 )
 #endif
 
-/*! \brief A represenation of an appearance of a shape */
+/*! \class Appearance Appearance.hpp
+ * An appearance of a shape.
+ */
 class SGAL_SGAL_DECL Appearance : public Container {
 public:
   enum {
@@ -64,10 +66,10 @@ public:
   typedef boost::shared_ptr<Halftone>           Shared_halftone;
   typedef boost::shared_ptr<Tex_gen>            Shared_tex_gen;
 
-  /*! Constructor */
+  /*! Construct. */
   Appearance(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destruct. */
   virtual ~Appearance();
 
   /*! Construct the prototype. */
@@ -107,6 +109,11 @@ public:
 
   /*! Detache a given context. */
   virtual Boolean detach_context(Context* context = 0);
+
+  /*! Write all fields of this container.
+   * \param[in] formatter The formatter to use for the writing, e.g., VRML.
+   */
+  virtual void write_fields(Formatter* formatter);
 
   /*! Set the appearance with the content of another appearance. */
   void set(Appearance* app);

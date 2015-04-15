@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_ROUTE_HPP
@@ -34,6 +31,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Action.hpp"
+#include "SGAL/Trace.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -41,6 +39,7 @@ class Element;
 class Draw_action;
 class Field;
 class Scene_graph;
+class Formatter;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -49,17 +48,41 @@ class Scene_graph;
 
 class SGAL_SGAL_DECL Route : public Container {
 public:
-  /*! Constructor */
+  /*! Construct from prototype.
+   */
   Route(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destruct. */
   virtual ~Route() {};
 
-  /*! Construct the prototype */
-  static Route* prototype() { return new Route(true); }
+  /*! Construct the prototype.
+   * \return the prototype.
+   */
+  static Route* prototype();
 
-  /*! Clone */
-  virtual Container* clone() { return new Route(); }
+  /*! Clone.
+   * \return the clone.
+   */
+  virtual Container* clone();
+
+  /// \name Protoype handling
+  //@{
+  /*! Initialize the node prototype. */
+  virtual void init_prototype();
+
+  /*! Delete the node prototype. */
+  virtual void delete_prototype();
+
+  /*! Obtain the node prototype.
+   * \return the node prototype.
+   */
+  virtual Container_proto* get_prototype();
+  //@}
+
+  /*! Write this container.
+   * \param formatter The formatter to use for the writing, e.g., VRML.
+   */
+  virtual void write(Formatter* formatter);
 
   /*! Set the connection */
   void set(Container* src_node, Field* src_field,
@@ -78,6 +101,9 @@ private:
   /*! The tag that identifies this container type */
   static const std::string s_tag;
 
+  /*! The node prototype */
+  static Container_proto* s_prototype;
+
   /*! The route source-node */
   Container* m_src_node;
 
@@ -94,6 +120,12 @@ private:
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief constructs the prototype.
+inline Route* Route::prototype() { return new Route(true); }
+
+//! \brief clones.
+inline Container* Route::clone() { return new Route(); }
 
 SGAL_END_NAMESPACE
 
