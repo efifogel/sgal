@@ -22,8 +22,15 @@
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/version.hpp"
 #include "SGAL/Container.hpp"
+#include "SGAL/Route.hpp"
+#include "SGAL/Field.hpp"
+#include "SGAL/Field_info.hpp"
 
 SGAL_BEGIN_NAMESPACE
+
+const char* Vrml_formatter::s_rule_names[] = {
+  "eventIn", "eventOut", "field", "exposedField"
+};
 
 //! \brief constructs.
 Vrml_formatter::Vrml_formatter(const std::string& filename) :
@@ -46,7 +53,7 @@ Vrml_formatter::~Vrml_formatter() { m_names.clear(); }
 //! \brief exports the headers of the scene graph.
 void Vrml_formatter::begin()
 {
-  SGAL_assertion(m_out != NULL);
+  SGAL_assertion(m_out != nullptr);
   // m_old_out_mode = get_mode(*m_out);
   // set_ascii_mode(*m_out);
 
@@ -64,6 +71,19 @@ void Vrml_formatter::end()
 //! \brief exports a scene-graph node.
 inline void Vrml_formatter::write(Shared_container container)
 {
+  auto route = boost::dynamic_pointer_cast<Route>(container);
+  if (route) {
+    new_line();
+    indent();
+    out() << "ROUTE "
+          << route->get_source_node()->get_name() << "."
+          << route->get_source_field()->get_field_info()->get_name() << " TO "
+          << route->get_destination_node()->get_name() << "."
+          << route->get_destination_field()->get_field_info()->get_name();
+    new_line();
+    return;
+  }
+
   const auto& name = container->get_name();
   if (name.empty()) {
     container->write(this);

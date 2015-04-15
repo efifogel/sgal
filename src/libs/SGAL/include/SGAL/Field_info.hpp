@@ -62,6 +62,47 @@ class Field;
 #endif
 
 class SGAL_SGAL_DECL Field_info {
+public:
+  enum Field_type {
+    SF_BOOL = 0,
+    SF_FLOAT,
+    SF_UINT32,
+    SF_INT32,
+    SF_TIME,
+    SF_VEC2F,
+    SF_VEC3F,
+    SF_COLOR,
+    SF_VEC4F,
+    SF_ROTATION,
+    SF_SB,
+    SF_IMAGE,
+    SF_STR,
+    SF_SHARED_CONTAINER,
+    MF_BOOL,
+    MF_FLOAT,
+    MF_UINT32,
+    MF_INT32,
+    MF_TIME,
+    MF_VEC2F,
+    MF_VEC3F,
+    MF_COLOR,
+    MF_VEC4F,
+    MF_ROTATION,
+    MF_SB,
+    MF_IMAGE,
+    MF_STR,
+    MF_SHARED_CONTAINER,
+    NUM_FIELD_TYPES
+  };
+
+  enum Field_rule {
+    RULE_IN = 0,
+    RULE_OUT,
+    RULE_FIELD,
+    RULE_EXPOSED_FIELD,
+    NUM_FIELD_RULES
+  };
+
 protected:
   /*! The field id (e.g, Group::ISVISIBLE). */
   Uint m_id;
@@ -79,7 +120,8 @@ protected:
   Boolean m_initially_blocked;
 
 public:
-  /*! Constructor. */
+  /*! Construct.
+   */
   Field_info(Uint id, const std::string& name, Field_rule rule,
              Execution_function exec_func = nullptr,
              Boolean initially_blocked = false) :
@@ -88,9 +130,9 @@ public:
     m_rule(rule),
     m_exec_func(exec_func),
     m_initially_blocked(initially_blocked)
-  { }
+  {}
 
-  /*! Destructor */
+  /*! Destruct. */
   virtual ~Field_info() {};
 
   /*! Obtain the field id.
@@ -138,39 +180,46 @@ public:
    */
   virtual Boolean is_scalar() const = 0;
 
+  static Field_type get_field_type(const std::string& type);
+
   /*! Write a field using a given formatter.
    * \param container (in) The container that contains the field.
    * \param formatter (in) The given formatter, e.g., VRML.
    */
-  virtual void write(Container* container, Formatter* formatter) const = 0;
+  virtual void write(Container* container, Formatter* formatter,
+                     Boolean declaration = false) const = 0;
 
   /*! Write the (single) Boolean field.
    * \param formatter The formatter.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  void write(Formatter* formatter, Boolean value, Boolean default_value) const;
+  void write(Formatter* formatter, Boolean value, Boolean default_value,
+             Boolean declaration = false) const;
 
   /*! Write the (single) Boolean field.
    * \param formatter The formatter.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  void write(Formatter* formatter, Float value, Float default_value) const;
+  void write(Formatter* formatter, Float value, Float default_value,
+             Boolean declaration = false) const;
 
   /*! Write the (single) Boolean field.
    * \param formatter The formatter.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  void write(Formatter* formatter, Uint value, Uint default_value) const;
+  void write(Formatter* formatter, Uint value, Uint default_value,
+             Boolean declaration = false) const;
 
   /*! Write the (single) Boolean field.
    * \param formatter The formatter.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  void write(Formatter* formatter, Int32 value, Int32 default_value) const;
+  void write(Formatter* formatter, Int32 value, Int32 default_value,
+             Boolean declaration = false) const;
 
   /*! Write the (single) Boolean field.
    * \param formatter The formatter.
@@ -178,7 +227,8 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, const Scene_time& value,
-             const Scene_time& default_value) const;
+             const Scene_time& default_value,
+             Boolean declaration = false) const;
 
   /*! Write the (single) Boolean field.
    * \param formatter The formatter.
@@ -186,7 +236,7 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, const Vector2f& value,
-             const Vector2f& default_value) const;
+             const Vector2f& default_value, Boolean declaration = false) const;
 
   /*! Write the (single) Boolean field.
    * \param formatter The formatter.
@@ -194,7 +244,7 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, const Vector3f& value,
-             const Vector3f& default_value) const;
+             const Vector3f& default_value, Boolean declaration = false) const;
 
   /*! Write the (single) Boolean field.
    * \param formatter The formatter.
@@ -202,7 +252,7 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, const Vector4f& value,
-             const Vector4f& default_value) const;
+             const Vector4f& default_value, Boolean declaration = false) const;
 
   /*! Write the (single) Boolean field.
    * \param formatter The formatter.
@@ -210,7 +260,7 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, const Rotation& value,
-             const Rotation& default_value) const;
+             const Rotation& default_value, Boolean declaration = false) const;
 
   /*! Write the (single) Boolean field.
    * \param formatter The formatter.
@@ -218,7 +268,8 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, const Sphere_bound& value,
-             const Sphere_bound& default_value) const;
+             const Sphere_bound& default_value,
+             Boolean declaration = false) const;
 
   /*! Write the (single) Boolean field.
    * \param formatter The formatter.
@@ -226,7 +277,8 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, const std::string& value,
-             const std::string& default_value) const;
+             const std::string& default_value,
+             Boolean declaration = false) const;
 
   /*! Write the (single) Boolean field.
    * \param formatter The formatter.
@@ -234,7 +286,8 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, Shared_container value,
-             Shared_container default_value) const;
+             Shared_container default_value,
+             Boolean declaration = false) const;
 
   /*! Write the multi-boolean field.
    * \param formatter The formatter.
@@ -242,7 +295,8 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, const Boolean_array& value,
-             const Boolean_array& default_value) const;
+             const Boolean_array& default_value,
+             Boolean declaration = false) const;
 
   /*! Write the multi-float field.
    * \param formatter The formatter.
@@ -250,7 +304,8 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, const Float_array& value,
-             const Float_array& default_value) const;
+             const Float_array& default_value,
+             Boolean declaration = false) const;
 
   /*! Write the multi Uint field.
    * \param formatter The formatter.
@@ -258,7 +313,8 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, const Uint_array& value,
-             const Uint_array& default_value) const;
+             const Uint_array& default_value,
+             Boolean declaration = false) const;
 
   /*! Write the multi-int field.
    * \param formatter The formatter.
@@ -266,7 +322,8 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, const Int32_array& value,
-             const Int32_array& default_value) const;
+             const Int32_array& default_value,
+             Boolean declaration = false) const;
 
   /*! Write the multi-scene-time field.
    * \param formatter The formatter.
@@ -274,7 +331,8 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, const Scene_time_array& value,
-             const Scene_time_array& default_value) const;
+             const Scene_time_array& default_value,
+             Boolean declaration = false) const;
 
   /*! Write the multi-vector2f field.
    * \param formatter The formatter.
@@ -282,7 +340,8 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, const Vector2f_array& value,
-             const Vector2f_array& default_value) const;
+             const Vector2f_array& default_value,
+             Boolean declaration = false) const;
 
   /*! Write the multi-vector3f field.
    * \param formatter The formatter.
@@ -290,7 +349,8 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, const Vector3f_array& value,
-             const Vector3f_array& default_value) const;
+             const Vector3f_array& default_value,
+             Boolean declaration = false) const;
 
   /*! Write the multi-vector4f field.
    * \param formatter The formatter.
@@ -298,7 +358,8 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, const Vector4f_array& value,
-             const Vector4f_array& default_value) const;
+             const Vector4f_array& default_value,
+             Boolean declaration = false) const;
 
   /*! Write the multi-rotation field.
    * \param formatter The formatter.
@@ -306,7 +367,8 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, const Rotation_array& value,
-             const Rotation_array& default_value) const;
+             const Rotation_array& default_value,
+             Boolean declaration = false) const;
 
   /*! Write the multisphere-bound field.
    * \param formatter The formatter.
@@ -314,7 +376,8 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, const Sphere_bound_array& value,
-             const Sphere_bound_array& default_value) const;
+             const Sphere_bound_array& default_value,
+             Boolean declaration = false) const;
 
   /*! Write the multi-string field.
    * \param formatter The formatter.
@@ -322,7 +385,8 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, const String_array& value,
-             const String_array& default_value) const;
+             const String_array& default_value,
+             Boolean declaration = false) const;
 
   /*! Write the multi-shared container field.
    * \param formatter The formatter.
@@ -330,7 +394,8 @@ public:
    * \param default_value The attribute default value.
    */
   void write(Formatter* formatter, const Shared_container_array& value,
-             const Shared_container_array& default_value) const;
+             const Shared_container_array& default_value,
+             Boolean declaration = false) const;
 
   /*! \todo
   // Creates an SAI_field of the same type id and name
@@ -360,7 +425,7 @@ inline Boolean Field_info::operator==(const Field_info& other) const
 { return (m_id == other.m_id); }
 
 //! \brief obtains the field rule.
-inline Field_rule Field_info::get_rule() const { return m_rule; }
+inline Field_info::Field_rule Field_info::get_rule() const { return m_rule; }
 
 //! \brief determines whether
 inline Boolean Field_info::is_initially_blocked() const

@@ -367,8 +367,8 @@ public:
              Route* route);
 
   /*! Route the connection */
-  bool route(Container* src_node, const char* src_field_str,
-             Container* dts_node, const char* dst_field_str,
+  bool route(Shared_container src_node, const char* src_field_str,
+             Shared_container dts_node, const char* dst_field_str,
              Route* route);
 
   /*! Add a directory to the directory-search list */

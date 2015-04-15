@@ -35,8 +35,11 @@
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Sphere_bound.hpp"
 #include "SGAL/Container.hpp"
+#include "SGAL/Field_enums.hpp"
 
 SGAL_BEGIN_NAMESPACE
+
+class Field_info;
 
 /*! A pure class that can be the base of specific formatter that exports a
  * scene graph to an output stream.
@@ -99,6 +102,18 @@ public:
   /*! Write the container ending section */
   virtual void container_end() {}
 
+  /*! Export a triangular facet.
+   * \param p1 (in) the point (in world coordinate system) of the first vertex.
+   * \param p2 (in) the point (in world coordinate system) of the second vertex.
+   * \param p3 (in) the point (in world coordinate system) of the third vertex.
+   * \param normal (in) the facet normal.
+   */
+  virtual void facet(const Vector3f& /* p1 */, const Vector3f& /* p2 */,
+                     const Vector3f& /* p3 */, const Vector3f& /* normal */) {}
+  //@}
+
+  /// \name Definitions
+  //@{
   /*! Write a single Boolean field.
    * \param name The attribute name.
    * \param value The attribute value.
@@ -311,16 +326,229 @@ public:
   /*! Write the multi-container field ending section.
    */
   virtual void multi_container_end() {}
+  //@}
 
-  /*! Export a triangular facet.
-   * \param p1 (in) the point (in world coordinate system) of the first vertex.
-   * \param p2 (in) the point (in world coordinate system) of the second vertex.
-   * \param p3 (in) the point (in world coordinate system) of the third vertex.
-   * \param normal (in) the facet normal.
+  /// \name Declaration
+  //@{
+  /*! Write a single Boolean field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
    */
-  virtual void facet(const Vector3f& /* p1 */, const Vector3f& /* p2 */,
-                     const Vector3f& /* p3 */, const Vector3f& /* normal */) {}
+  virtual void single_boolean(Field_rule /* rule */,
+                              Uint /* type_id */,
+                              const std::string& /* name */,
+                              Boolean /* default_value */) {}
 
+  /*! Write a single Float field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void single_float(Field_rule /* rule */,
+                            Uint /* type_id */,
+                            const std::string& /* name */,
+                            Float /* value */) {};
+
+  /*! Write a single Uint field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void single_uint(Field_rule /* rule */,
+                           Uint /* type_id */,
+                           const std::string& /* name */,
+                           Uint /* value */) {}
+
+  /*! Write a single Int field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void single_int32(Field_rule /* rule */,
+                            Uint /* type_id */,
+                            const std::string& /* name */,
+                            Int32 /* value */) {}
+
+  /*! Write a single Scene_time field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void single_scene_time(Field_rule /* rule */,
+                                 Uint /* type_id */,
+                                 const std::string& /* name */,
+                                 Scene_time /* value */) {}
+
+  /*! Write a single Vector2f field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void single_vector2f(Field_rule /* rule */,
+                               Uint /* type_id */,
+                               const std::string& /* name */,
+                               const Vector2f& /* value */) {}
+
+  /*! Write a single Vector3f field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void single_vector3f(Field_rule /* rule */,
+                               Uint /* type_id */,
+                               const std::string& /* name */,
+                               const Vector3f& /* value */) {}
+
+  /*! Write a single Vector4f field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void single_vector4f(Field_rule /* rule */,
+                               Uint /* type_id */,
+                               const std::string& /* name */,
+                               const Vector4f& /* value */) {}
+
+  /*! Write a single Rotation field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void single_rotation(Field_rule /* rule */,
+                               Uint /* type_id */,
+                               const std::string& /* name */,
+                               const Rotation& /* value */) {}
+
+  /*! Write a single Sphere_bound field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void single_sphere_bound(Field_rule /* rule */,
+                                   Uint /* type_id */,
+                                   const std::string& /* name */,
+                                   const Sphere_bound& /* value */) {}
+
+  /*! Write a single string field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void single_string(Field_rule /* rule */,
+                             Uint /* type_id */,
+                             const std::string& /* name */,
+                             const std::string& /* value */) {}
+
+  /*! Write a multi-Boolean field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_boolean(Field_rule /* rule */,
+                             Uint /* type_id */,
+                             const std::string& /* name */,
+                             const std::vector<Boolean>& /* value */) {}
+
+  /*! Write a multi-Float field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_float(Field_rule /* rule */,
+                           Uint /* type_id */,
+                           const std::string& /* name */,
+                           const std::vector<Float>& /* value */) {}
+
+  /*! Write a multi-Uint field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_uint(Field_rule /* rule */,
+                          Uint /* type_id */,
+                          const std::string& /* name */,
+                          const std::vector<Uint>& /* value */) {}
+
+  /*! Write a multi-Int field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_int32(Field_rule /* rule */,
+                           Uint /* type_id */,
+                           const std::string& /* name */,
+                           const std::vector<Int32>& /* value */) {}
+
+  /*! Write a multi-Scene_time field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_scene_time(Field_rule /* rule */,
+                                Uint /* type_id */,
+                                const std::string& /* name */,
+                                const std::vector<Scene_time>& /* value */) {}
+
+  /*! Write a multi-Vector2f field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_vector2f(Field_rule /* rule */,
+                              Uint /* type_id */,
+                              const std::string& /* name */,
+                              const std::vector<Vector2f>& /* value */) {}
+
+  /*! Write a multi-Vector3f field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_vector3f(Field_rule /* rule */,
+                              Uint /* type_id */,
+                              const std::string& /* name */,
+                              const std::vector<Vector3f>& /* value */) {}
+
+  /*! Write a multi-Vector4f field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_vector4f(Field_rule /* rule */,
+                              Uint /* type_id */,
+                              const std::string& /* name */,
+                              const std::vector<Vector4f>& /* value */) {}
+
+  /*! Write a multi-Rotation field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_rotation(Field_rule /* rule */,
+                              Uint /* type_id */,
+                              const std::string& /* name */,
+                              const std::vector<Rotation>& /* value */) {}
+
+  /*! Write a multi-Sphere_bound field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_sphere_bound(Field_rule /* rule */,
+                                  Uint /* type_id */,
+                                  const std::string& /* name */,
+                                  const std::vector<Sphere_bound>& /* value */) {}
+
+  /*! Write a multi-string field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_string(Field_rule /* rule */,
+                            Uint /* type_id */,
+                            const std::string& /* name */,
+                            const std::vector<std::string>& /* value */) {}
   //@}
 
 protected:

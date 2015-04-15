@@ -1463,11 +1463,17 @@ void Script::execute(const Field_info* field_info)
   cascade_assigned();
 }
 
-//! \brief writes this container.
-void Script::write(Formatter* formatter)
+//! \brief writes all fields of this container.
+void Script::write_fields(Formatter* formatter)
 {
   auto* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
-  if (vrml_formatter) Container::write(formatter);
+  if (!vrml_formatter) return;
+
+  auto* proto = get_prototype();
+  for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
+    const Field_info* field_info = (*it).second;
+    field_info->write(this, formatter, true);
+  }
 }
 
 SGAL_END_NAMESPACE

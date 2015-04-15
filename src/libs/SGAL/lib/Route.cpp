@@ -34,15 +34,13 @@ REGISTER_TO_FACTORY(Route, "Route");
 /*! Constructor */
 Route::Route(Boolean proto) :
   Container(proto),
-  m_src_node(0),
   m_src_field(0),
-  m_dst_node(0),
   m_dst_field(0)
 {}
 
 /*! Sets the connection */
-void Route::set(Container* src_node, Field* src_field,
-                Container* dst_node, Field* dst_field)
+void Route::set(Shared_container src_node, Field* src_field,
+                Shared_container dst_node, Field* dst_field)
 {
   // Disconnect old connections if exists:
   if (m_src_field && m_dst_field) m_src_field->disconnect(m_dst_field);
@@ -125,16 +123,6 @@ Container_proto* Route::get_prototype()
 {
   if (!s_prototype) Route::init_prototype();
   return s_prototype;
-}
-
-//! \brief writes this container.
-void Route::write(Formatter* formatter)
-{
-  SGAL_TRACE_CODE(Trace::WRITING,
-                  std::cout << "Container: " << "Tag: " << get_tag()
-                  << ", name: " << get_name()
-                  << std::endl;);
-  //! \todo implelemnt!
 }
 
 #if 0

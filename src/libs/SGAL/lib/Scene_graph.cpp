@@ -570,14 +570,14 @@ void Scene_graph::route_navigation_info(Navigation_info* nav,
       nav->add_field(Navigation_sensor::MIN_ZOOM_DISTANCE);
 
       // Connect the Navigation_info (sensor) to the Transform:
-      Field* pos_field = nav->get_field(Navigation_sensor::TRANSLATION);
-      Field* orient_field = nav->get_field(Navigation_sensor::ROTATION);
+      auto* pos_field = nav->get_field(Navigation_sensor::TRANSLATION);
+      auto* orient_field = nav->get_field(Navigation_sensor::ROTATION);
       SGAL_assertion(pos_field);
       SGAL_assertion(orient_field);
 
       Shared_transform navigat_root = get_navigation_root();
-      Field* sg_pos_field = navigat_root->get_field(Transform::TRANSLATION);
-      Field* sg_orient_field = navigat_root->get_field(Transform::ROTATION);
+      auto* sg_pos_field = navigat_root->get_field(Transform::TRANSLATION);
+      auto* sg_orient_field = navigat_root->get_field(Transform::ROTATION);
       SGAL_assertion(sg_pos_field);
       SGAL_assertion(sg_orient_field);
 
@@ -846,30 +846,30 @@ bool Scene_graph::route(const std::string& src_node_str,
   if (!dst_node) return false;
 
   // Get the source and destination fields from the container:
-  Field* src_field = src_node->get_source_field(src_field_name);
+  auto* src_field = src_node->get_source_field(src_field_name);
   if (!src_field) return false;
 
-  Field* dst_field = dst_node->get_destination_field(dst_field_name);
+  auto* dst_field = dst_node->get_destination_field(dst_field_name);
   if (!dst_field) return false;
 
-  route->set(&*src_node, src_field, &*dst_node, dst_field);
+  route->set(src_node, src_field, dst_node, dst_field);
 
   return true;
 }
 
 //! \brief routes the connection.
-bool Scene_graph::route(Container* src_node, const char* src_field_name,
-                        Container* dst_node, const char* dst_field_name,
+bool Scene_graph::route(Shared_container src_node, const char* src_field_name,
+                        Shared_container dst_node, const char* dst_field_name,
                         Route* route)
 {
   if (!src_node) return false;
   if (!dst_node) return false;
 
   // Get the source and destination fields from the container:
-  Field* src_field = src_node->get_source_field(src_field_name);
+  auto* src_field = src_node->get_source_field(src_field_name);
   if (!src_field) return false;
 
-  Field* dst_field = dst_node->get_destination_field(dst_field_name);
+  auto* dst_field = dst_node->get_destination_field(dst_field_name);
   if (!dst_field) return false;
 
   route->set(src_node, src_field, dst_node, dst_field);

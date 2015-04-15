@@ -178,10 +178,11 @@ public:
    * \param container (in) The container that contains the field.
    * \param formatter (in) The given formatter, e.g., VRML.
    */
-  virtual void write(Container* container, Formatter* formatter) const
+  virtual void write(Container* container, Formatter* formatter,
+                     Boolean declaration = false) const
   {
     const T* handle = (container->*m_handle)(this);
-    Field_info::write(formatter, *handle, m_initial_value);
+    Field_info::write(formatter, *handle, m_initial_value, declaration);
   }
 
   /*! \todo

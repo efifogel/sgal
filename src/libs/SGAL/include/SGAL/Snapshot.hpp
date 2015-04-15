@@ -134,7 +134,7 @@ public:
 
   /*! Set the triger field.
    */
-  void set_trigger(Field_info* field_info = NULL);
+  void set_trigger(Field_info* field_info = nullptr);
 
   virtual Action::Trav_directive draw(Draw_action* draw_action);
 

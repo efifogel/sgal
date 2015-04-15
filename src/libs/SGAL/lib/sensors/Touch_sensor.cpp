@@ -98,15 +98,15 @@ void Touch_sensor::init_prototype()
 
   // Add the object fields to the prototype
   // enabled
-  Boolean_handle_function enabled_func =
+  auto enabled_func =
     static_cast<Boolean_handle_function>(&Touch_sensor::enabled_handle);
   s_prototype->add_field_info(new SF_bool(ENABLED,
                                           "enabled",
                                           RULE_EXPOSED_FIELD,
-                                          enabled_func));
+                                          enabled_func, s_def_enabled));
 
   // hitNormal
-  Vector3f_handle_function hit_normal_func =
+  auto hit_normal_func =
     static_cast<Vector3f_handle_function>(&Touch_sensor::hit_normal_handle);
   s_prototype->add_field_info(new SF_vector3f(HITNORMAL,
                                               "hitNormal",
@@ -114,7 +114,7 @@ void Touch_sensor::init_prototype()
                                               hit_normal_func));
 
   // hitPoint
-  Vector3f_handle_function hit_point_func =
+  auto hit_point_func =
     static_cast<Vector3f_handle_function>(&Touch_sensor::hit_point_handle);
   s_prototype->add_field_info(new SF_vector3f(HITPOINT,
                                               "hitPoint",
@@ -122,7 +122,7 @@ void Touch_sensor::init_prototype()
                                               hit_point_func));
 
   // hitTexCoord
-  Vector2f_handle_function hit_tex_coord_func =
+  auto hit_tex_coord_func =
     static_cast<Vector2f_handle_function>(&Touch_sensor::hit_tex_coord_handle);
   s_prototype->add_field_info(new SF_vector2f(HITTEXCOORD,
                                               "hitTexCoord",
@@ -130,7 +130,7 @@ void Touch_sensor::init_prototype()
                                               hit_tex_coord_func));
 
   // isActive
-  Boolean_handle_function is_active_func =
+  auto is_active_func =
     static_cast<Boolean_handle_function>(&Touch_sensor::is_active_handle);
   s_prototype->add_field_info(new SF_bool(IS_ACTIVE,
                                           "isActive",
@@ -139,7 +139,7 @@ void Touch_sensor::init_prototype()
 
   // exActivate
   exec_func = static_cast<Execution_function>(&Touch_sensor::external_activate);
-  Boolean_handle_function ex_activate_func =
+  auto ex_activate_func =
     static_cast<Boolean_handle_function>(&Touch_sensor::ex_activate_handle);
   s_prototype->add_field_info(new SF_bool(EXACTIVATE,
                                           "exActivate",
@@ -147,7 +147,7 @@ void Touch_sensor::init_prototype()
                                           ex_activate_func, exec_func));
 
   // isOver
-  Boolean_handle_function is_over_func =
+  auto is_over_func =
     static_cast<Boolean_handle_function>(&Touch_sensor::is_over_handle);
   s_prototype->add_field_info(new SF_bool(IS_OVER,
                                           "isOver",
@@ -155,7 +155,7 @@ void Touch_sensor::init_prototype()
                                           is_over_func));
 
   // touchTime
-  Scene_time_handle_function touch_time_func =
+  auto touch_time_func =
     static_cast<Scene_time_handle_function>(&Touch_sensor::touch_time_handle);
   s_prototype->add_field_info(new SF_time(TOUCH_TIME,
                                           "touchTime",
@@ -163,7 +163,7 @@ void Touch_sensor::init_prototype()
                                           touch_time_func));
 
   // overSelectionId
-  Uint_handle_function over_selection_id_func =
+  auto over_selection_id_func =
     static_cast<Uint_handle_function>(&Touch_sensor::over_selection_id_handle);
   s_prototype->add_field_info(new SF_uint(OVER_SELECTION_ID,
                                           "overSelectionId",
@@ -171,7 +171,7 @@ void Touch_sensor::init_prototype()
                                           over_selection_id_func));
 
   // activeSelectionId
-  Uint_handle_function active_selection_id_func =
+  auto active_selection_id_func =
     static_cast<Uint_handle_function>
     (&Touch_sensor::active_selection_id_handle);
   s_prototype->add_field_info(new SF_uint(ACTIVE_SELECTION_ID,

@@ -462,8 +462,8 @@ void Knot_scene::init_animation()
 
     // ROUTE TIME.fraction_changed TO POS_INTERPOLATOR.set_fraction
     m_time_routers[i] = new SGAL::Route;
-    if (!m_scene_graph->route(&*(m_time_sensors[i]), "fraction_changed",
-                              &*(m_pos_interpolators[i]), "set_fraction",
+    if (!m_scene_graph->route((m_time_sensors[i]), "fraction_changed",
+                              (m_pos_interpolators[i]), "set_fraction",
                               m_time_routers[i]))
       std::cerr << "Route 1 failed!" << std::endl;
 
@@ -973,8 +973,8 @@ void Knot_scene::animate(Scene_time cur_time, Uint color, Uint dir, Uint route)
   puzzle.m_pieces[color]->m_position[2] += s_directions[dir][2];
 
   // Route the interpolator to the transform:
-  if (!m_scene_graph->route(&*(m_pos_interpolators[route]), "value_changed",
-                            &*(m_transforms[color]), "set_translation",
+  if (!m_scene_graph->route(m_pos_interpolators[route], "value_changed",
+                            m_transforms[color], "set_translation",
                             m_pos_interpolator_routers[route]))
     std::cerr << "Route 2 failed!" << std::endl;
 

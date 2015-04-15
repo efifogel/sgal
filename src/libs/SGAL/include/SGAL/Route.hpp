@@ -27,6 +27,7 @@
  */
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
@@ -39,7 +40,6 @@ class Element;
 class Draw_action;
 class Field;
 class Scene_graph;
-class Formatter;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -48,6 +48,17 @@ class Formatter;
 
 class SGAL_SGAL_DECL Route : public Container {
 public:
+  enum {
+    FIRST = Container::LAST - 1,
+    SSOURCEC_NODE,
+    SSOURCEC_FIELD,
+    DESTINATION_NODE,
+    DESTINATION_FIELD,
+    LAST
+  };
+
+  typedef boost::shared_ptr<Container>                  Shared_container;
+
   /*! Construct from prototype.
    */
   Route(Boolean proto = false);
@@ -79,14 +90,26 @@ public:
   virtual Container_proto* get_prototype();
   //@}
 
-  /*! Write this container.
-   * \param formatter The formatter to use for the writing, e.g., VRML.
+  /*! Obtain the source node.
    */
-  virtual void write(Formatter* formatter);
+  Shared_container get_source_node();
 
-  /*! Set the connection */
-  void set(Container* src_node, Field* src_field,
-           Container* dst_node, Field* dst_field);
+  /*! Obtain the destination node.
+   */
+  Shared_container get_destination_node();
+
+  /*! Obtain the source field within the source node.
+   */
+  Field* get_source_field();
+
+  /*! Obtain the destination field within the destination node.
+   */
+  Field* get_destination_field();
+
+  /*! Set the connection.
+   */
+  void set(Shared_container src_node, Field* src_field,
+           Shared_container dst_node, Field* dst_field);
 
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
@@ -105,13 +128,13 @@ private:
   static Container_proto* s_prototype;
 
   /*! The route source-node */
-  Container* m_src_node;
+  Shared_container m_src_node;
 
   /*! The route source-field */
   Field* m_src_field;
 
   /*! The route destination-node */
-  Container* m_dst_node;
+  Shared_container m_dst_node;
 
   /*! The route destination-field */
   Field* m_dst_field;
@@ -126,6 +149,18 @@ inline Route* Route::prototype() { return new Route(true); }
 
 //! \brief clones.
 inline Container* Route::clone() { return new Route(); }
+
+//! \brief obtains the source node.
+inline Route::Shared_container Route::get_source_node() { return m_src_node; }
+
+//! \brief obtains the destination node.
+inline Route::Shared_container Route::get_destination_node() { return m_dst_node; }
+
+//! \brief obtains the source field within the source node.
+inline Field* Route::get_source_field() { return m_src_field; }
+
+//! \brief obtains the destination field within the destination node.
+inline Field* Route::get_destination_field() { return m_dst_field; }
 
 SGAL_END_NAMESPACE
 
