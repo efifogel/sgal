@@ -22,6 +22,7 @@
 #include <iterator>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/exception.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "SGAL/Obj_formatter.hpp"
 #include "SGAL/version.hpp"
@@ -140,7 +141,10 @@ void Obj_formatter::write(Shared_container container)
       out() << "usemtl " << name << std::endl;
     }
     else {
-      name.append("MAT").append(std::to_string(m_num_appearances));
+      // MSVC 10 complains that the statement below is an ambiguous call to
+      // overloaded function
+      // name.append("MAT").append(std::to_string(m_num_appearances));
+      name.append("MAT").append(boost::lexical_cast<std::string>(m_num_appearances));
       material_out() << "newmtl " << name << std::endl;
       out() << "usemtl " << name << std::endl;
     }

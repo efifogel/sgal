@@ -607,12 +607,14 @@ void Assembly::compute_projection(Sgm::Face_const_handle fit, Aos_mark* aos)
    */
   Sgm::Halfedge_const_iterator first;
   if (fit->number_of_outer_ccbs() == 1) {
-    auto oit = fit->outer_ccbs_begin();
+    // Do not change the following definition to "auto", cause MSVC 10 burfs!
+    Sgm::Outer_ccb_const_iterator oit = fit->outer_ccbs_begin();
     first = *oit;
   }
   else {
     SGAL_assertion(fit->number_of_inner_ccbs() == 1);
-    auto iit = fit->inner_ccbs_begin();
+    // Do not change the following definition to "auto", cause MSVC 10 burfs!
+    Sgm::Inner_ccb_const_iterator iit = fit->inner_ccbs_begin();
     first = *iit;
   }
 
