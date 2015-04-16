@@ -97,7 +97,7 @@ struct Handle_function {
  * stores a value of a specific type. The type of the field value can be any
  * basic type, a complex type, or an array of the above.
  */
-template <typename T, Uint type_id>
+template <typename T, Field_info::Field_type type_id>
 class Field_info_template : public Field_info {
 public:
   typedef typename Handle_function<T>::type     Handle;
@@ -146,7 +146,7 @@ public:
   virtual ~Field_info_template() {}
 
   /*! Obtain the field-info type id. */
-  virtual Uint get_type_id() const { return type_id; }
+  virtual Field_type get_type_id() const { return type_id; }
 
   /*! Create an object that holds a pointer to the value of an actual field
    * with this info.

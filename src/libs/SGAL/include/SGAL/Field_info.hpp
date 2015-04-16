@@ -162,7 +162,7 @@ public:
 
   /* Obtain the field info type.
    */
-  virtual Uint get_type_id() const = 0;
+  virtual Field_type get_type_id() const = 0;
 
   /*! Obtain the name of the field info type.
    */
@@ -406,7 +406,7 @@ public:
 
   /*! Obtain the name of a type.
    */
-  static const char* get_type_name(Uint id);
+  static const char* get_type_name(Field_type id);
 
 private:
   /*! The names of the field rules. */
@@ -461,7 +461,7 @@ inline const char* Field_info::get_rule_name(Field_rule id)
 { return s_rule_names[id]; }
 
 //! \brief obtains the name of a type.
-inline const char* Field_info::get_type_name(Uint id)
+inline const char* Field_info::get_type_name(Field_type id)
 { return s_type_names[id]; }
 
 SGAL_END_NAMESPACE

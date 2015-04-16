@@ -98,7 +98,8 @@ void Time_sensor::init_prototype()
   s_prototype->add_field_info(new SF_time(CYCLE_INTERVAL,
                                           "cycleInterval",
                                           Field_info::RULE_EXPOSED_FIELD,
-                                          cycle_interval_func));
+                                          cycle_interval_func,
+                                          s_def_cycle_interval));
 
   // frequency
   Uint_handle_function frequency_func =
@@ -112,27 +113,24 @@ void Time_sensor::init_prototype()
   exec_func = static_cast<Execution_function>(&Time_sensor::execute_enabled);
   Boolean_handle_function enabled_func =
     static_cast<Boolean_handle_function>(&Time_sensor::enabled_handle);
-  s_prototype->add_field_info(new SF_bool(ENABLED,
-                                          "enabled",
+  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
                                           Field_info::RULE_EXPOSED_FIELD,
-                                          enabled_func,
+                                          enabled_func, s_def_enabled,
                                           exec_func));
 
   // loop
   Boolean_handle_function loop_func =
     static_cast<Boolean_handle_function>(&Time_sensor::loop_handle);
-  s_prototype->add_field_info(new SF_bool(LOOP,
-                                          "loop",
+  s_prototype->add_field_info(new SF_bool(LOOP, "loop",
                                           Field_info::RULE_EXPOSED_FIELD,
-                                          loop_func));
+                                          loop_func, s_def_loop));
 
   // startTime
   Scene_time_handle_function start_time_func =
     static_cast<Scene_time_handle_function>(&Time_sensor::start_time_handle);
-  s_prototype->add_field_info(new SF_time(START_TIME,
-                                          "startTime",
+  s_prototype->add_field_info(new SF_time(START_TIME, "startTime",
                                           Field_info::RULE_EXPOSED_FIELD,
-                                          start_time_func));
+                                          start_time_func, s_def_start_time));
 
   // stopTime
   Scene_time_handle_function stop_time_func =
@@ -140,14 +138,14 @@ void Time_sensor::init_prototype()
   s_prototype->add_field_info(new SF_time(STOP_TIME,
                                           "stopTime",
                                           Field_info::RULE_EXPOSED_FIELD,
-                                          stop_time_func));
+                                          stop_time_func, s_def_stop_time));
 
   // cycleTime
   Scene_time_handle_function cycle_time_func =
     static_cast<Scene_time_handle_function>(&Time_sensor::cycle_time_handle);
   s_prototype->add_field_info(new SF_time(CYCLE_TIME,
                                           "cycleTime",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_OUT,
                                           cycle_time_func));
 
   // fraction
@@ -155,7 +153,7 @@ void Time_sensor::init_prototype()
     static_cast<Float_handle_function>(&Time_sensor::fraction_handle);
   s_prototype->add_field_info(new SF_float(FRACTION,
                                            "fraction_changed",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_OUT,
                                            fraction_func));
 
   // trueFractionChanged
@@ -172,7 +170,8 @@ void Time_sensor::init_prototype()
   s_prototype->add_field_info(new SF_float(FRACTION_BIAS,
                                            "fractionBias",
                                            Field_info::RULE_EXPOSED_FIELD,
-                                           fraction_bias_func));
+                                           fraction_bias_func,
+                                           s_def_fraction_bias));
 
   // FractionScale
   Float_handle_function fraction_scale_func =
@@ -180,22 +179,21 @@ void Time_sensor::init_prototype()
   s_prototype->add_field_info(new SF_float(FRACTION_SCALE,
                                            "fractionScale",
                                            Field_info::RULE_EXPOSED_FIELD,
-                                           fraction_scale_func));
+                                           fraction_scale_func,
+                                           s_def_fraction_scale));
 
   // isActive
   Boolean_handle_function is_active_func =
     static_cast<Boolean_handle_function>(&Time_sensor::is_active_handle);
-  s_prototype->add_field_info(new SF_bool(IS_ACTIVE,
-                                          "isActive",
-                                          Field_info::RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_bool(IS_ACTIVE, "isActive",
+                                          Field_info::RULE_OUT,
                                           is_active_func));
 
   // time
   Scene_time_handle_function time_func =
     static_cast<Scene_time_handle_function>(&Time_sensor::time_handle);
-  s_prototype->add_field_info(new SF_time(TIME,
-                                          "time",
-                                          Field_info::RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_time(TIME, "time",
+                                          Field_info::RULE_OUT,
                                           time_func));
 
   // start
@@ -290,7 +288,7 @@ void Time_sensor::stop(const Field_info *)
  */
 void Time_sensor::set_blocking_of_fields_for_active(Boolean block)
 {
-  Field* field = add_field(START_TIME);
+  auto* field = add_field(START_TIME);
   if (field != nullptr) field->set_blocked(block);
   field = add_field(START);
   if (field != nullptr) field->set_blocked(block);
@@ -364,13 +362,11 @@ bool Time_sensor::update_time(Scene_time current_time)
     if ((current_time - m_start_time) < m_cycle_interval)
       m_time_in_cycle = current_time - m_start_time;
     // else start from 0
-    else
-      m_time_in_cycle = 0;
+    else m_time_in_cycle = 0;
 
     m_end_of_cycle = false;
   }
-  else
-    m_time_in_cycle = m_time_in_cycle + delta_time;
+  else m_time_in_cycle = m_time_in_cycle + delta_time;
 
   // If the cycle is over and loop is false return
   if (m_end_of_cycle && !m_loop) return true;
@@ -408,11 +404,11 @@ bool Time_sensor::update_time(Scene_time current_time)
   if (is_active_field != nullptr) is_active_field->cascade();
   if (cycle_time_field != nullptr) cycle_time_field->cascade();
 
-  Field* fraction_field = get_field(FRACTION);
+  auto* fraction_field = get_field(FRACTION);
   if (fraction_field != nullptr) fraction_field->cascade();
-  Field* true_fraction_field = get_field(TRUE_FRACTION);
+  auto* true_fraction_field = get_field(TRUE_FRACTION);
   if (true_fraction_field != nullptr) true_fraction_field->cascade();
-  Field* time_field = get_field(TIME);
+  auto* time_field = get_field(TIME);
   if (time_field != nullptr) time_field->cascade();
 
   return true;
@@ -424,8 +420,8 @@ void Time_sensor::set_attributes(Element* elem)
   Node::set_attributes(elem);
 
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ai++) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "cycleInterval") {
       m_cycle_interval = boost::lexical_cast<Float>(value);
       elem->mark_delete(ai);

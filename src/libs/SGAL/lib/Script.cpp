@@ -914,7 +914,8 @@ void Script::add_to_scene(Scene_graph* scene_graph)
 }
 
 //! \brief adds a field info record to the script node.
-void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type type,
+void Script::add_field_info(Field_info::Field_rule rule,
+                            Field_info::Field_type type,
                             const std::string& name, const std::string& value)
 {
   auto* prototype = get_prototype();
@@ -929,7 +930,8 @@ void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type 
     {
      auto initial_value = value.empty() ? false : compare_to_true(value);
      variant_field = initial_value;
-     add_fi<Field_info::SF_BOOL>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::SF_BOOL>(id, name, rule, initial_value, exec_func,
+                                 prototype);
     }
     break;
 
@@ -937,7 +939,8 @@ void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type 
     {
      auto initial_value = value.empty() ? 0 : boost::lexical_cast<Float>(value);
      variant_field = initial_value;
-     add_fi<Field_info::SF_FLOAT>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::SF_FLOAT>(id, name, rule, initial_value, exec_func,
+                                  prototype);
     }
     break;
 
@@ -946,7 +949,8 @@ void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type 
      auto initial_value =
        value.empty() ? 0 : boost::lexical_cast<Scene_time>(value);
      variant_field = initial_value;
-     add_fi<Field_info::SF_TIME>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::SF_TIME>(id, name, rule, initial_value, exec_func,
+                                 prototype);
     }
     break;
 
@@ -954,7 +958,8 @@ void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type 
     {
      auto initial_value = value.empty() ? 0 : boost::lexical_cast<Int32>(value);
      variant_field = initial_value;
-     add_fi<Field_info::SF_INT32>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::SF_INT32>(id, name, rule, initial_value, exec_func,
+                                  prototype);
     }
     break;
 
@@ -962,7 +967,8 @@ void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type 
     {
      Vector2f initial_value(value);
      variant_field = initial_value;
-     add_fi<Field_info::SF_VEC2F>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::SF_VEC2F>(id, name, rule, initial_value, exec_func,
+                                  prototype);
     }
     break;
 
@@ -970,7 +976,8 @@ void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type 
     {
      Vector3f initial_value(value);
      variant_field = initial_value;
-     add_fi<Field_info::SF_VEC3F>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::SF_VEC3F>(id, name, rule, initial_value, exec_func,
+                                  prototype);
     }
     break;
 
@@ -978,7 +985,8 @@ void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type 
     {
      Vector3f initial_value(value);
      variant_field = initial_value;
-     add_fi<Field_info::SF_COLOR>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::SF_COLOR>(id, name, rule, initial_value, exec_func,
+                                  prototype);
     }
     break;
 
@@ -986,7 +994,8 @@ void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type 
     {
      Rotation initial_value(value);
      variant_field = initial_value;
-     add_fi<Field_info::SF_ROTATION>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::SF_ROTATION>(id, name, rule, initial_value, exec_func,
+                                     prototype);
     }
     break;
 
@@ -994,7 +1003,8 @@ void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type 
     {
      std::string initial_value(value);
      variant_field = initial_value;
-     add_fi<Field_info::SF_STR>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::SF_STR>(id, name, rule, initial_value, exec_func,
+                                prototype);
     }
     break;
 
@@ -1006,8 +1016,8 @@ void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type 
     {
      Shared_container initial_value;
      variant_field = initial_value;
-     add_fi<Field_info::SF_SHARED_CONTAINER>(id, name, rule, initial_value, exec_func,
-                                 prototype);
+     add_fi<Field_info::SF_SHARED_CONTAINER>(id, name, rule, initial_value,
+                                             exec_func, prototype);
     }
     break;
 
@@ -1015,7 +1025,8 @@ void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type 
     {
      Boolean_array initial_value;
      variant_field = initial_value;
-     add_fi<Field_info::MF_BOOL>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::MF_BOOL>(id, name, rule, initial_value, exec_func,
+                                 prototype);
     }
     break;
 
@@ -1023,7 +1034,8 @@ void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type 
     {
      Float_array initial_value;
      variant_field = initial_value;
-     add_fi<Field_info::MF_FLOAT>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::MF_FLOAT>(id, name, rule, initial_value, exec_func,
+                                  prototype);
     }
     break;
 
@@ -1031,7 +1043,8 @@ void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type 
     {
      Scene_time_array initial_value;
      variant_field = initial_value;
-     add_fi<Field_info::MF_TIME>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::MF_TIME>(id, name, rule, initial_value, exec_func,
+                                 prototype);
     }
     break;
 
@@ -1039,7 +1052,8 @@ void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type 
     {
      Int32_array initial_value;
      variant_field = initial_value;
-     add_fi<Field_info::MF_INT32>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::MF_INT32>(id, name, rule, initial_value, exec_func,
+                                  prototype);
     }
      break;
 
@@ -1047,7 +1061,8 @@ void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type 
     {
      Vector2f_array initial_value;
      variant_field = initial_value;
-     add_fi<Field_info::MF_VEC2F>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::MF_VEC2F>(id, name, rule, initial_value, exec_func,
+                                  prototype);
     }
     break;
 
@@ -1056,7 +1071,8 @@ void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type 
     {
      Vector3f_array initial_value;
      variant_field = initial_value;
-     add_fi<Field_info::MF_VEC3F>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::MF_VEC3F>(id, name, rule, initial_value, exec_func,
+                                  prototype);
     }
     break;
 
@@ -1064,7 +1080,8 @@ void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type 
     {
      Rotation_array initial_value;
      variant_field = initial_value;
-     add_fi<Field_info::MF_ROTATION>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::MF_ROTATION>(id, name, rule, initial_value, exec_func,
+                                     prototype);
     }
     break;
 
@@ -1072,7 +1089,8 @@ void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type 
     {
      String_array initial_value;
      variant_field = initial_value;
-     add_fi<Field_info::MF_STR>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::MF_STR>(id, name, rule, initial_value, exec_func,
+                                prototype);
     }
     break;
 
@@ -1080,8 +1098,8 @@ void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type 
     {
      Shared_container_array initial_value;
      variant_field = initial_value;
-     add_fi<Field_info::MF_SHARED_CONTAINER>(id, name, rule, initial_value, exec_func,
-                                 prototype);
+     add_fi<Field_info::MF_SHARED_CONTAINER>(id, name, rule, initial_value,
+                                             exec_func, prototype);
     }
     break;
 
@@ -1189,7 +1207,7 @@ v8::Handle<v8::Value> Script::get_multi_float(const Field_info* field_info)
 //! \brief converts a multi time field value to a v8 engine array of floats.
 v8::Handle<v8::Value> Script::get_multi_time(const Field_info* field_info)
 {
-  Scene_time_array* tmp = field_handle<Scene_time_array>(field_info);
+  auto* tmp = field_handle<Scene_time_array>(field_info);
   v8::Handle<v8::Array> array = v8::Array::New(m_isolate, tmp->size());
   if (array.IsEmpty()) {
     std::cerr << "failed to allocate v8 Array!" << std::endl;
@@ -1203,7 +1221,7 @@ v8::Handle<v8::Value> Script::get_multi_time(const Field_info* field_info)
 //! \brief converts a multi int32 field value to a v8 engine array of int32.
 v8::Handle<v8::Value> Script::get_multi_int32(const Field_info* field_info)
 {
-  Int32_array* tmp = field_handle<Int32_array>(field_info);
+  auto* tmp = field_handle<Int32_array>(field_info);
   v8::Handle<v8::Array> array = v8::Array::New(m_isolate, tmp->size());
   if (array.IsEmpty()) {
     std::cerr << "failed to allocate v8 Array!" << std::endl;
@@ -1217,7 +1235,7 @@ v8::Handle<v8::Value> Script::get_multi_int32(const Field_info* field_info)
 //! \brief converts a multi string field value to a v8 engine array of strings.
 v8::Handle<v8::Value> Script::get_multi_string(const Field_info* field_info)
 {
-  String_array* tmp = field_handle<String_array>(field_info);
+  auto* tmp = field_handle<String_array>(field_info);
   v8::Handle<v8::Array> array = v8::Array::New(m_isolate, tmp->size());
   if (array.IsEmpty()) {
     std::cerr << "failed to allocate v8 Array!" << std::endl;
@@ -1233,7 +1251,7 @@ v8::Handle<v8::Value> Script::get_multi_string(const Field_info* field_info)
  */
 v8::Handle<v8::Value> Script::get_multi_vector2f(const Field_info* field_info)
 {
-  Vector2f_array* tmp = field_handle<Vector2f_array>(field_info);
+  auto* tmp = field_handle<Vector2f_array>(field_info);
   v8::Handle<v8::Array> array = v8::Array::New(m_isolate, tmp->size());
   if (array.IsEmpty()) {
     std::cerr << "failed to allocate v8 Array!" << std::endl;
@@ -1290,7 +1308,7 @@ v8::Handle<v8::Value> Script::get_multi_external(const Field_info* field_info)
  */
 void Script::add_callbacks(v8::Local<v8::Object> global)
 {
-  Container_proto* proto = get_prototype();
+  auto* proto = get_prototype();
   for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const Field_info* field_info = (*it).second;
     if ((field_info->get_rule() != Field_info::RULE_FIELD) &&
@@ -1317,7 +1335,7 @@ void Script::cascade_assigned()
 {
   if (m_direct_output) return;
   for (auto it = m_assigned.begin(); it != m_assigned.end(); ++it) {
-    Field* field = get_field(*it);
+    auto* field = get_field(*it);
     if (field) field->cascade();
   }
 }

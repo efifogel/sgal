@@ -38,7 +38,7 @@ const Boolean Script_base::s_def_must_evaluate(false);
 
 Container_proto* Script_base::s_prototype(nullptr);
 
-/*! Constructor */
+//! \brief constructs.
 Script_base::Script_base(Boolean proto) :
   Container(proto),
   m_direct_output(s_def_direct_output),
@@ -46,11 +46,11 @@ Script_base::Script_base(Boolean proto) :
   m_protocol(PROTOCOL_INVALID)
 { if (!proto) Tick_event::doregister(this); }
 
-/*! Destructor */
+//! \brief destructs.
 Script_base::~Script_base()
 { Tick_event::unregister(this); }
 
-/*! \brief initializes the container prototype. */
+//! \brief initializes the container prototype.
 void Script_base::init_prototype()
 {
   if (s_prototype) return;
@@ -77,7 +77,7 @@ void Script_base::init_prototype()
                                           s_def_must_evaluate));
 }
 
-/*! \brief deletes the container prototype. */
+//! \brief deletes the container prototype.
 void Script_base::delete_prototype()
 {
   if (!s_prototype) return;
@@ -85,14 +85,14 @@ void Script_base::delete_prototype()
   s_prototype = nullptr;
 }
 
-/*! \brief obtains the container prototype. */
+//! \brief obtains the container prototype.
 Container_proto* Script_base::get_prototype()
 {
   if (!s_prototype) Script_base::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of the object extracted from the input file. */
+//! \brief sets the attributes of the object extracted from the input file.
 void Script_base::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
@@ -138,12 +138,10 @@ Attribute_list Script_base::get_attributes()
 }
 #endif
 
-/*! \brief handles tick events. */
-void Script_base::handle(Tick_event* event)
-{ m_time = event->get_sim_time(); }
+//! \brief handles tick events.
+void Script_base::handle(Tick_event* event) { m_time = event->get_sim_time(); }
 
-/*! \brief prints an identification message. */
-void Script_base::identify()
-{ std::cout << "Agent: Script" << std::endl; }
+//! \brief prints an identification message.
+void Script_base::identify() { std::cout << "Agent: Script" << std::endl; }
 
 SGAL_END_NAMESPACE
