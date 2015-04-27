@@ -34,6 +34,7 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Image_to_elevation_grid.hpp"
 #include "SGAL/Elevation_grid.hpp"
+#include "SGAL/Vrml_formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -193,6 +194,14 @@ elevation_grid_changed(const Field_info* /* field_info. */)
 {
   //m_dirty = true;
   //m_dirty_elevation_grid = true;
+}
+
+//! \breif writes a field of this container.
+void Image_to_elevation_grid::write(Formatter* formatter)
+{
+  auto* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
+  if (!vrml_formatter) return;
+  Node::write(vrml_formatter);
 }
 
 SGAL_END_NAMESPACE

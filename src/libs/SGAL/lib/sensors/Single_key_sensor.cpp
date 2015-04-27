@@ -203,22 +203,19 @@ void Single_key_sensor::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-//! \brief writes all fields of this container.
-void Single_key_sensor::write_fields(Formatter* formatter)
+//! \brief writes a field of this container.
+void Single_key_sensor::write_field(const Field_info* field_info,
+                                    Formatter* formatter)
 {
   auto* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
-  if (!vrml_formatter) return;
-
-  auto* proto = get_prototype();
-  for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
-    const Field_info* field_info = (*it).second;
-    if (field_info->get_rule() != Field_info::RULE_EXPOSED_FIELD) continue;
+  if (vrml_formatter) {
     if (KEY == field_info->get_id()) {
       std::string key(1, static_cast<char>(m_key));
       vrml_formatter->single_string(field_info->get_name(), key, std::string());
+      return;
     }
-    else field_info->write(this, formatter);
   }
+  field_info->write(this, formatter);
 }
 
 #if 0

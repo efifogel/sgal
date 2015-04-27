@@ -186,25 +186,19 @@ void Exporter::set_attributes(Element* elem)
 //! \brief adds the container to a given scene.
 void Exporter::add_to_scene(Scene_graph* sg) { m_scene_graph = sg; }
 
-//! \breif writes all fields of this container.
-void Exporter::write_fields(Formatter* formatter)
+//! \breif writes a field of this container.
+void Exporter::write_field(const Field_info* field_info, Formatter* formatter)
 {
   auto* vrml_formatter = static_cast<Vrml_formatter*>(formatter);
-  if (!vrml_formatter) {
-    Exporter::write(formatter);
-    return;
-  }
-
-  auto* proto = get_prototype();
-  for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
-    const auto* field_info = (*it).second;
-    if (field_info->get_rule() != Field_info::RULE_EXPOSED_FIELD) continue;
-    if (FILE_FORMAT == field_info->get_id())
+  if (vrml_formatter) {
+    if (FILE_FORMAT == field_info->get_id()) {
       vrml_formatter->single_string(field_info->get_name(),
                                     File_format::get_name(m_file_format),
                                     File_format::get_name(s_def_file_format));
-    else field_info->write(this, formatter);
+      return;
+    }
   }
+  field_info->write(this, formatter);
 }
 
 SGAL_END_NAMESPACE

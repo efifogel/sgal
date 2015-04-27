@@ -178,14 +178,20 @@ Field* Container::get_destination_field(const std::string& dst_field_name)
   return nullptr;
 }
 
+//! \brief writes a field of this container.
+void Container::write_field(const Field_info* field_info, Formatter* formatter)
+{ field_info->write(this, formatter); }
+
 //! \brief writes all fields of this container.
 void Container::write_fields(Formatter* formatter)
 {
   auto* proto = get_prototype();
   for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const Field_info* field_info = (*it).second;
-    if (field_info->get_rule() == Field_info::RULE_EXPOSED_FIELD)
-      field_info->write(this, formatter);
+    if ((Field_info::RULE_IN == field_info->get_rule()) ||
+        (Field_info::RULE_OUT == field_info->get_rule()))
+      continue;
+    write_field(field_info, formatter);
   }
 }
 

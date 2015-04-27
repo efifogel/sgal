@@ -1491,11 +1491,10 @@ void Script::write_fields(Formatter* formatter)
   auto* proto = get_prototype();
   for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const Field_info* field_info = (*it).second;
-    if ((URL == field_info->get_id()) ||
-        (DIRECT_OUTPUT == field_info->get_id()) ||
-        (MUST_EVALUATE == field_info->get_id()))
-      field_info->write(this, formatter, false);
-    else field_info->write(this, formatter, true);
+    Boolean definition = ((URL == field_info->get_id()) ||
+                          (DIRECT_OUTPUT == field_info->get_id()) ||
+                          (MUST_EVALUATE == field_info->get_id()));
+    field_info->write(this, formatter, !definition);
   }
 }
 

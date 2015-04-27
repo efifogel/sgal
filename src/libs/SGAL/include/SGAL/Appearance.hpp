@@ -110,10 +110,11 @@ public:
   /*! Detache a given context. */
   virtual Boolean detach_context(Context* context = 0);
 
-  /*! Write all fields of this container.
+  /*! Write a field of this container.
+   * \param[in] field_info The field information record.
    * \param[in] formatter The formatter to use for the writing, e.g., VRML.
    */
-  virtual void write_fields(Formatter* formatter);
+  virtual void write_field(const Field_info* field_info, Formatter* formatter);
 
   /*! Set the appearance with the content of another appearance. */
   void set(Appearance* app);

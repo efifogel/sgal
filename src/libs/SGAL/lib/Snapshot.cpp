@@ -335,22 +335,19 @@ Attribute_list Snapshot::get_attributes()
 
 #endif
 
-//! \breif writes all fields of this container.
-void Snapshot::write_fields(Formatter* formatter)
+//! \breif writes a field of this container.
+void Snapshot::write_field(const Field_info* field_info, Formatter* formatter)
 {
   auto* vrml_formatter = static_cast<Vrml_formatter*>(formatter);
-  if (!vrml_formatter) return;
-
-  auto* proto = get_prototype();
-  for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
-    const auto* field_info = (*it).second;
-    if (field_info->get_rule() != Field_info::RULE_EXPOSED_FIELD) continue;
-    if (FILE_FORMAT == field_info->get_id())
+  if (vrml_formatter) {
+    if (FILE_FORMAT == field_info->get_id()) {
       vrml_formatter->single_string(field_info->get_name(),
                                     s_file_format_names[m_file_format],
                                     s_file_format_names[s_def_file_format]);
-    else field_info->write(this, formatter);
+      return;
+    }
   }
+  field_info->write(this, formatter);
 }
 
 SGAL_END_NAMESPACE

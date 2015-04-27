@@ -97,10 +97,11 @@ public:
   /*! Draw the node (does nothing). */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
 
-  /*! Write all fields of this container.
-   * \param formatter The formatter to use for the writing, e.g., VRML.
+  /*! Write a field of this container.
+   * \param[in] field_info The field information record.
+   * \param[in] formatter The formatter to use for the writing, e.g., VRML.
    */
-  virtual void write_fields(Formatter* formatter);
+  virtual void write_field(const Field_info* field_info, Formatter* formatter);
 
   /*! Print out the name of this agent (for debugging purposes). */
   virtual void identify();

@@ -96,6 +96,12 @@ public:
    */
   virtual void write(Formatter* formatter);
 
+  /*! Write a field of this container.
+   * \param[in] field_info The field information record.
+   * \param[in] formatter The formatter to use for the writing, e.g., VRML.
+   */
+  virtual void write_field(const Field_info* field_info, Formatter* formatter);
+
   /*! Obtain the bounding box.
    */
   virtual Bounding_box bounding_box();

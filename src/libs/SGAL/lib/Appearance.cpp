@@ -913,24 +913,18 @@ void Appearance::field_changed(const Field_info* field_info)
   process_content_changed();
 }
 
-//! \brief writes all fields of this container.
-void Appearance::write_fields(Formatter* formatter)
+//! \brief writes a field of this container.
+void Appearance::write_field(const Field_info* field_info, Formatter* formatter)
 {
   auto* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
   if (vrml_formatter) {
-    auto* proto = get_prototype();
-    for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
-      const Field_info* field_info = (*it).second;
-      if (field_info->get_rule() == Field_info::RULE_IN) continue;
-      if (BACK_MATERIAL == field_info->get_id()) {
-        if (get_material() == get_back_material()) continue;
-      }
+    if (BACK_MATERIAL == field_info->get_id()) {
+      if (get_material() == get_back_material()) return;
       field_info->write(this, formatter);
+      return;
     }
-    return;
   }
-
-  Container::write_fields(formatter);
+  field_info->write(this, formatter);
 }
 
 SGAL_END_NAMESPACE

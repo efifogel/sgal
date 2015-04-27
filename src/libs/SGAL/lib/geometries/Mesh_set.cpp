@@ -669,6 +669,7 @@ void Mesh_set::write(Formatter* formatter)
       SGAL_error_msg("Not impelmented yet!");
     }
     obj_formatter->add_index(world_coords.size());
+    return;
   }
 
   Stl_formatter* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
@@ -724,48 +725,48 @@ void Mesh_set::write(Formatter* formatter)
 
   Vrml_formatter* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
   if (vrml_formatter) {
-
     if (m_dirty_coord_indices) clean_coord_indices();
     if (m_dirty_color_indices) clean_color_indices();
     if (m_dirty_normal_indices) clean_normal_indices();
     if (m_dirty_tex_coord_indices) clean_tex_coord_indices();
     if (m_coord_indices.empty()) return;
 
-    /*! \todo the following can be replaced with the call to
-     * Geo_set::write(Formatter* formatter)
-     * after m_coord_indices is make Array<Int> (and not Array<Uint>).
-     */
-    formatter->container_begin(get_tag());
-    // Travese prototype field-info records
-    auto* proto = get_prototype();
-    for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
-      const Field_info* field_info = (*it).second;
-      if (field_info->get_rule() != Field_info::RULE_EXPOSED_FIELD) continue;
-      if (COORD_INDEX_ARRAY == field_info->get_id()) {
-        const auto& indices = get_coord_indices();
-        Uint size = indices.size();
-        std::vector<int> value(size), default_value;
-        std::vector<Int32>::iterator rit = value.begin();
-        for (auto it = indices.begin(); it != indices.end(); ++it) *rit++ = *it;
-        formatter->multi_int32(field_info->get_name(), value, default_value);
-        continue;
-      }
-      if (NORMAL_INDEX_ARRAY == field_info->get_id()) {
-        const auto& indices = get_normal_indices();
-        Uint size = indices.size();
-        std::vector<int> value(size), default_value;
-        std::vector<Int32>::iterator rit = value.begin();
-        for (auto it = indices.begin(); it != indices.end(); ++it) *rit++ = *it;
-        formatter->multi_int32(field_info->get_name(), value, default_value);
-        continue;
-      }
-
-      field_info->write(this, formatter);
-    }
-    formatter->container_end();
+    Geo_set::write(formatter);
     return;
   }
   Geo_set::write(formatter);
+}
+
+//! \brief writes a field of this container.
+void Mesh_set::write_field(const Field_info* field_info, Formatter* formatter)
+{
+  /*! \todo the following can be replaced with the call to
+   * Geo_set::write(Formatter* formatter)
+   * after m_coord_indices is made Array<Int> (and not Array<Uint>).
+   */
+
+  auto* vrml_formatter = static_cast<Vrml_formatter*>(formatter);
+  if (vrml_formatter) {
+    if (COORD_INDEX_ARRAY == field_info->get_id()) {
+      const auto& indices = get_coord_indices();
+      Uint size = indices.size();
+      std::vector<int> value(size), default_value;
+      auto rit = value.begin();
+      for (auto it = indices.begin(); it != indices.end(); ++it) *rit++ = *it;
+      formatter->multi_int32(field_info->get_name(), value, default_value);
+      return;
+    }
+    if (NORMAL_INDEX_ARRAY == field_info->get_id()) {
+      const auto& indices = get_normal_indices();
+      Uint size = indices.size();
+      std::vector<int> value(size), default_value;
+      auto rit = value.begin();
+      for (auto it = indices.begin(); it != indices.end(); ++it) *rit++ = *it;
+      formatter->multi_int32(field_info->get_name(), value, default_value);
+      return;
+    }
+  }
+  field_info->write(this, formatter);
 }
 
 //! \brief colapses identical coordinates.

@@ -101,6 +101,12 @@ public:
    */
   virtual void write(Formatter* formatter);
 
+  /*! Write a field of this container.
+   * \param[in] field_info The field information record.
+   * \param[in] formatter The formatter to use for the writing, e.g., VRML.
+   */
+   virtual void write_field(const Field_info* field_info, Formatter* formatter);
+
   /*! Draw the polygons for selection.
    */
   virtual void isect(Isect_action* action);

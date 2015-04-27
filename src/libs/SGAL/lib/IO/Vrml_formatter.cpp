@@ -80,6 +80,17 @@ inline void Vrml_formatter::write(Shared_container container)
     return;
   }
 
+  // If the number of shared objects (including this one) is greater than 2,
+  // generate a name and use it, so that the container can be referred
+  // to by the name.
+  if (container.use_count() > 2) {
+    const auto& name = container->get_name();
+    if (name.empty()) {
+      std::string name = std::string("_").append(std::to_string((size_t)(&*container)));
+      container->set_name(name);
+    }
+  }
+
   const auto& name = container->get_name();
   if (name.empty()) {
     container->write(this);

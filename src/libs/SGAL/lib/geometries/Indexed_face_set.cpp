@@ -47,6 +47,7 @@
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/GL_error.hpp"
 #include "SGAL/calculate_multiple_normals_per_vertex.hpp"
+#include "SGAL/Vrml_formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -425,6 +426,27 @@ void Indexed_face_set::write(Formatter* formatter)
       (is_dirty_coord_indices() && is_dirty_flat_coord_indices()))
     clean_coords();
   Boundary_set::write(formatter);
+}
+
+//! \brief writes a field of this container.
+void Indexed_face_set::write_field(const Field_info* field_info,
+                                   Formatter* formatter)
+{
+  auto* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
+  if (vrml_formatter) {
+    if (COLOR_PER_VERTEX == field_info->get_id()) {
+      const auto & name = field_info->get_name();
+      vrml_formatter->single_boolean(name, get_color_per_vertex(), true);
+      return;
+    }
+
+    if (NORMAL_PER_VERTEX == field_info->get_id()) {
+      const auto & name = field_info->get_name();
+      vrml_formatter->single_boolean(name, get_normal_per_vertex(), true);
+      return;
+    }
+  }
+  Boundary_set::write_field(field_info, formatter);
 }
 
 SGAL_END_NAMESPACE

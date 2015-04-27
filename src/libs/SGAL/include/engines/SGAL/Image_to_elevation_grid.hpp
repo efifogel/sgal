@@ -36,6 +36,7 @@ class Container_proto;
 class Element;
 class Field_info;
 class Elevation_grid;
+class Formatter;
 
 class SGAL_SGAL_DECL Image_to_elevation_grid : public Node {
 public:
@@ -86,6 +87,11 @@ public:
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
+
+  /*! Write this container.
+   * \param[in] formatter The formatter to use for the writing, e.g., VRML.
+   */
+  virtual void write(Formatter* formatter);
 
   /*! The interpolation execution function.
    */
