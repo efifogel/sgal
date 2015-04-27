@@ -98,6 +98,17 @@ inline void Vrml_formatter::write(Shared_container container)
   container->write(this);
 }
 
+//! \brief exports a declaration statement without default value.
+void Vrml_formatter::declaration(const std::string& rule,
+                                 const std::string& type,
+                                 const std::string& name)
+{
+  new_line();
+  indent();
+  out() << rule << " " << type << " " << name;
+  new_line();
+}
+
 //! \brief exports the container header.
 void Vrml_formatter::container_begin(const std::string& tag)
 {

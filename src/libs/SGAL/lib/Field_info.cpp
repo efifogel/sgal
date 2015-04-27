@@ -47,10 +47,15 @@ const char* Field_info::s_type_names[] = {
 void Field_info::write(Formatter* formatter, Boolean value,
                        Boolean default_value, Boolean declaration) const
 {
-  if (declaration)
-    formatter->single_boolean(get_rule_name(), get_type_name(), get_name(),
-                              default_value);
-  else formatter->single_boolean(get_name(), value, default_value);
+  const auto& name = get_name();
+  if (declaration) {
+    const auto& rule_name = get_rule_name();
+    const auto& type_name = get_type_name();
+    if ((RULE_FIELD == get_rule()) || (RULE_EXPOSED_FIELD == get_rule()))
+      formatter->single_boolean(rule_name, type_name, name, default_value);
+    else formatter->declaration(rule_name, type_name, name);
+  }
+  else formatter->single_boolean(name, value, default_value);
 }
 
 //! \brief writes the (single) Float field.
@@ -162,7 +167,8 @@ void Field_info::write(Formatter* formatter, Shared_container value,
                        Shared_container default_value,
                        Boolean declaration) const
 {
-  if (declaration) SGAL_error();
+  if (declaration)
+    formatter->declaration(get_rule_name(), get_type_name(), get_name());
   else {
     if (!value) return;
     formatter->single_container_begin(get_name());
@@ -298,6 +304,11 @@ void Field_info::write(Formatter* formatter,
                        const Shared_container_array& default_value,
                        Boolean declaration) const
 {
+  if (declaration) {
+    formatter->declaration(get_rule_name(), get_type_name(), get_name());
+    return;
+  }
+
   SGAL_TRACE_CODE(Trace::WRITING,
                   std::cout << "Field_info: " << ", name: " << get_name()
                   << ": " << value.size()
