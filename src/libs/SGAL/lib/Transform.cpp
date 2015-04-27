@@ -572,7 +572,7 @@ void Transform::init_prototype()
   Boolean_handle_function reset_func =
     static_cast<Boolean_handle_function>(&Transform::reset_handle);
   s_prototype->add_field_info(new SF_bool(RESET, "reset",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_OUT,
                                           reset_func,
                                           exec_func));
 }
