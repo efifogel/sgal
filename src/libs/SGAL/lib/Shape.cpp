@@ -234,7 +234,8 @@ void Shape::clean()
 
   // If the geometry has no color coordinates, enabled the light by default.
   if (m_override_light_enable) {
-    if (!m_geometry->has_color()) m_appearance->set_light_enable(true);
+    if (m_geometry && !m_geometry->has_color())
+      m_appearance->set_light_enable(true);
   }
 
   if (m_override_tex_gen) {
