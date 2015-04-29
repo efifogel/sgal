@@ -1710,14 +1710,14 @@ inline void glLoadMatrixd(const GLdouble* m)
 /*! glLoadMatrixf wrapper */
 inline void glLoadMatrixf(const GLfloat* m)
 {
-    SGAL_TRACE_CODE(Trace::GRAPHICS,
-                    std::cout << "glLoadMatrixf(";
-                    for (Uint i = 0; i < 16; ++i) {
-                      std::cout << m[i];
-                      if ((i % 4) != 3) std::cout << ", ";
-                      else std::cout << std::endl;
-                    }
-                    std::cout << ");\n";);
+  SGAL_TRACE_CODE(Trace::GRAPHICS,
+                  std::cout << "glLoadMatrixf(";
+                  for (Uint i = 0; i < 16; ++i) {
+                    std::cout << m[i];
+                    if ((i % 4) != 3) std::cout << ", ";
+                    else std::cout << std::endl;
+                  }
+                  std::cout << ");\n";);
   ::glLoadMatrixf(m);
   SGAL_CHECK_GL();
 }
@@ -1931,9 +1931,13 @@ inline void glMultMatrixd(const GLdouble* m)
 /*! glMultMatrixf wrapper */
 inline void glMultMatrixf(const GLfloat* m)
 {
-  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glMultMatrixf("
-                  << "matrix" << ");"
-                  << std::endl;);
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glMultMatrixf(";
+                  for (Uint i = 0; i < 16; ++i) {
+                    std::cout << m[i];
+                    if ((i % 4) != 3) std::cout << ", ";
+                    else std::cout << std::endl;
+                  }
+                  std::cout << ");\n";);
   ::glMultMatrixf(m);
   SGAL_CHECK_GL();
 }

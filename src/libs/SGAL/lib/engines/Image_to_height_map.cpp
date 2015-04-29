@@ -18,7 +18,7 @@
 
 /*! \file
  *
- * Converts an image to a elevation_grid
+ * Converts an image to a height map
  */
 
 #include <boost/lexical_cast.hpp>
@@ -32,84 +32,95 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
-#include "SGAL/Image_to_elevation_grid.hpp"
-#include "SGAL/Elevation_grid.hpp"
+#include "SGAL/Image_to_height_map.hpp"
+#include "SGAL/Coord_array_1d.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-const std::string Image_to_elevation_grid::s_tag = "ImageToElavationGrid";
-Container_proto* Image_to_elevation_grid::s_prototype(nullptr);
+const std::string Image_to_height_map::s_tag = "ImageToHeightMap";
+Container_proto* Image_to_height_map::s_prototype(nullptr);
 
 // Defaults values:
 
-REGISTER_TO_FACTORY(Image_to_elevation_grid, "Image_to_elevation_grid");
+REGISTER_TO_FACTORY(Image_to_height_map, "Image_to_height_map");
 
 //! \brief constructor.
-Image_to_elevation_grid::Image_to_elevation_grid(Boolean proto) :
+Image_to_height_map::Image_to_height_map(Boolean proto) :
   Node(proto),
   m_trigger(false)
 {}
 
 //! \brief destructor.
-Image_to_elevation_grid::~Image_to_elevation_grid() {}
+Image_to_height_map::~Image_to_height_map() {}
 
 //! \brief initializes the container prototype.
-void Image_to_elevation_grid::init_prototype()
+void Image_to_height_map::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Node::get_prototype());
 
   // Add the field-info records to the prototype:
   Execution_function exec_func =
-    static_cast<Execution_function>(&Image_to_elevation_grid::execute);
+    static_cast<Execution_function>(&Image_to_height_map::execute);
 
   // trigger
   Boolean_handle_function trigger_func =
     static_cast<Boolean_handle_function>
-    (&Image_to_elevation_grid::trigger_handle);
+    (&Image_to_height_map::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
                                           Field_info::RULE_IN,
                                           trigger_func, exec_func));
 
-  // elevationGrid
-  exec_func = static_cast<Execution_function>
-    (&Image_to_elevation_grid::elevation_grid_changed);
-  Shared_container_handle_function elevation_grid_func =
-    reinterpret_cast<Shared_container_handle_function>
-    (&Image_to_elevation_grid::elevation_grid_handle);
-  s_prototype->add_field_info(new SF_shared_container(ELEVATION_GRID,
-                                                      "elevationGrid",
-                                                      Field_info::RULE_EXPOSED_FIELD,
-                                                      elevation_grid_func,
-                                                      exec_func));
-
   // image
   Shared_container_handle_function image_func =
     reinterpret_cast<Shared_container_handle_function>
-    (&Image_to_elevation_grid::image_handle);
+    (&Image_to_height_map::image_handle);
   s_prototype->add_field_info(new SF_shared_container(IMAGE,
                                                       "image",
                                                       Field_info::RULE_EXPOSED_FIELD,
                                                       image_func));
+
+  // heightMap
+  Shared_container_handle_function height_map_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Image_to_height_map::height_map_handle);
+  s_prototype->add_field_info(new SF_shared_container(HEIGHT_MAP,
+                                                      "heightMap",
+                                                      Field_info::RULE_OUT,
+                                                      height_map_func));
+
+  // xDimension
+  Uint_handle_function x_dimension_func =
+    static_cast<Uint_handle_function>(&Image_to_height_map::x_dimension_handle);
+  s_prototype->add_field_info(new SF_uint(X_DIMENSION, "xDimension",
+                                          Field_info::RULE_OUT,
+                                          x_dimension_func));
+
+  // zDimension
+  Uint_handle_function z_dimension_func =
+    static_cast<Uint_handle_function>(&Image_to_height_map::z_dimension_handle);
+  s_prototype->add_field_info(new SF_uint(Z_DIMENSION, "zDimension",
+                                          Field_info::RULE_OUT,
+                                          z_dimension_func));
 }
 
 //! \brief deletes the container prototype.
-void Image_to_elevation_grid::delete_prototype()
+void Image_to_height_map::delete_prototype()
 {
   delete s_prototype;
   s_prototype = nullptr;
 }
 
 //! \brief obtains the container prototype.
-Container_proto* Image_to_elevation_grid::get_prototype()
+Container_proto* Image_to_height_map::get_prototype()
 {
-  if (!s_prototype) Image_to_elevation_grid::init_prototype();
+  if (!s_prototype) Image_to_height_map::init_prototype();
   return s_prototype;
 }
 
 //! \brief sets the attributes of the object extracted from the input file.
-void Image_to_elevation_grid::set_attributes(Element* elem)
+void Image_to_height_map::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
@@ -137,9 +148,9 @@ void Image_to_elevation_grid::set_attributes(Element* elem)
       elem->mark_delete(cai);
       continue;
     }
-    if (name == "elevationGrid") {
-      auto eg = boost::dynamic_pointer_cast<Elevation_grid>(cont);
-      set_elevation_grid(eg);
+    if (name == "heightMap") {
+      auto height_map = boost::dynamic_pointer_cast<Coord_array_1d>(cont);
+      set_height_map(height_map);
       elem->mark_delete(cai);
       continue;
     }
@@ -149,22 +160,21 @@ void Image_to_elevation_grid::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-//! \brief sets the 2D array that represents the elevation_grid above a grid.
-void Image_to_elevation_grid::
-set_elevation_grid(Shared_elevation_grid elevation_grid)
-{ m_elevation_grid = elevation_grid; }
+//! \brief sets the 2D array that represents the height map.
+void Image_to_height_map::set_height_map(Shared_coord_array_1d height_map)
+{ m_height_map = height_map; }
 
 //! \brief executes the engine.
-void Image_to_elevation_grid::execute(const Field_info* /*! field_info */)
+void Image_to_height_map::execute(const Field_info* /*! field_info */)
 {
   if (!m_image) return;
 
   auto size = m_image->get_width() * m_image->get_height();
-  if (!m_elevation_grid) {
-    m_elevation_grid.reset(new Elevation_grid);
-    SGAL_assertion(m_elevation_grid);
+  if (!m_height_map) {
+    m_height_map.reset(new Coord_array_1d);
+    SGAL_assertion(m_height_map);
   }
-  auto& heights = m_elevation_grid->get_height();
+  auto& heights = m_height_map->get_array();
   heights.resize(size);
 
   if (m_image->is_dirty()) m_image->clean();
@@ -182,22 +192,31 @@ void Image_to_elevation_grid::execute(const Field_info* /*! field_info */)
     heights[i] = static_cast<Float>(pixels[j]) * factor;
     j += 4;
   }
-  m_elevation_grid->set_x_dimension(width);
-  m_elevation_grid->set_z_dimension(height);
-  Field* elevation_grid_field = get_field(ELEVATION_GRID);
-  if (elevation_grid_field != nullptr) elevation_grid_field->cascade();
+  auto* height_map_field = get_field(HEIGHT_MAP);
+  if (height_map_field != nullptr) height_map_field->cascade();
+
+  set_x_dimension(width);
+  set_z_dimension(height);
 }
 
-//! \brief processes change of elevation_grid.
-void Image_to_elevation_grid::
-elevation_grid_changed(const Field_info* /* field_info. */)
+//! \brief sets the number of grid points along the x-dimension.
+void Image_to_height_map::set_x_dimension(Uint x_dimension)
 {
-  //m_dirty = true;
-  //m_dirty_elevation_grid = true;
+  m_x_dimension = x_dimension;
+  auto* field = get_field(X_DIMENSION);
+  if (field != nullptr) field->cascade();
+}
+
+//! \brief sets the number of grid points along the z-dimension.
+void Image_to_height_map::set_z_dimension(Uint z_dimension)
+{
+  m_z_dimension = z_dimension;
+  auto* field = get_field(Z_DIMENSION);
+  if (field != nullptr) field->cascade();
 }
 
 //! \breif writes a field of this container.
-void Image_to_elevation_grid::write(Formatter* formatter)
+void Image_to_height_map::write(Formatter* formatter)
 {
   auto* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
   if (!vrml_formatter) return;

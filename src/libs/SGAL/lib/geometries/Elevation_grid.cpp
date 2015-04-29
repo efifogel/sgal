@@ -23,6 +23,8 @@
 #include "SGAL/Elevation_grid.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Coord_array_1d.hpp"
+#include "SGAL/Vrml_formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -45,11 +47,17 @@ Elevation_grid::Elevation_grid(Boolean proto) :
   m_z_dimension(s_def_z_dimension),
   m_z_spacing(s_def_z_spacing),
   m_is_closed(s_def_is_closed),
-  m_base_height(s_def_base_height)
-{ if (m_is_closed) set_solid(false); }
+  m_base_height(s_def_base_height),
+  m_dirty_height(true),
+  m_dirty_height_map(true)
+{ set_solid(m_is_closed); }
 
 //! \brief destructor.
-Elevation_grid::~Elevation_grid() {}
+Elevation_grid::~Elevation_grid()
+{
+  Observer observer(this, get_field_info(HEIGHT_MAP));
+  if (m_height_map) m_height_map->unregister_observer(observer);
+}
 
 //! \brief sets the ellpsoid attributes.
 void Elevation_grid::set_attributes(Element* elem)
@@ -64,6 +72,8 @@ void Elevation_grid::set_attributes(Element* elem)
       m_height.resize(size);
       std::istringstream svalue(value, std::istringstream::in);
       for (size_t i = 0; i < size; ++i) svalue >> m_height[i];
+      m_dirty_height = false;
+      m_dirty_height_map = true;
       elem->mark_delete(ai);
       continue;
     }
@@ -98,6 +108,20 @@ void Elevation_grid::set_attributes(Element* elem)
       continue;
     }
   }
+
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
+    const auto& name = elem->get_name(cai);
+    auto cont = elem->get_value(cai);
+    if (name == "heightMap") {
+      auto height_map = boost::dynamic_pointer_cast<Coord_array_1d>(cont);
+      set_height_map(height_map);
+      elem->mark_delete(cai);
+      continue;
+    }
+  }
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
@@ -108,22 +132,35 @@ void Elevation_grid::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Indexed_face_set::get_prototype());
 
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Elevation_grid::structure_changed);
-
   // height
+  auto exec_func =
+    static_cast<Execution_function>(&Elevation_grid::height_changed);
   auto height_func =
     reinterpret_cast<Float_array_handle_function>
     (&Elevation_grid::height_handle);
   s_prototype->add_field_info(new MF_float(HEIGHT, "height",
-                                           Field_info::RULE_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            height_func, exec_func));
 
+  // heightMap
+  exec_func =
+    static_cast<Execution_function>(&Elevation_grid::height_map_changed);
+  Shared_container_handle_function height_map_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Elevation_grid::height_map_handle);
+  s_prototype->add_field_info(new SF_shared_container(HEIGHT_MAP,
+                                                      "heightMap",
+                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      height_map_func,
+                                                      exec_func));
+
   // xDimension
+  exec_func =
+    static_cast<Execution_function>(&Elevation_grid::structure_changed);
   Uint_handle_function x_dimension_func =
     static_cast<Uint_handle_function>(&Elevation_grid::x_dimension_handle);
   s_prototype->add_field_info(new SF_uint(X_DIMENSION, "xDimension",
-                                          Field_info::RULE_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           x_dimension_func, s_def_x_dimension,
                                           exec_func));
 
@@ -132,7 +169,7 @@ void Elevation_grid::init_prototype()
   Float_handle_function x_spacing_func =
     static_cast<Float_handle_function>(&Elevation_grid::x_spacing_handle);
   s_prototype->add_field_info(new SF_float(X_SPACING, "xSpacing",
-                                           Field_info::RULE_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            x_spacing_func, s_def_x_spacing,
                                            exec_func));
 
@@ -140,7 +177,7 @@ void Elevation_grid::init_prototype()
   Uint_handle_function z_dimension_func =
     static_cast<Uint_handle_function>(&Elevation_grid::z_dimension_handle);
   s_prototype->add_field_info(new SF_uint(Z_DIMENSION, "zDimension",
-                                          Field_info::RULE_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           z_dimension_func, s_def_z_dimension,
                                           exec_func));
 
@@ -148,7 +185,7 @@ void Elevation_grid::init_prototype()
   Float_handle_function z_spacing_func =
     static_cast<Float_handle_function>(&Elevation_grid::z_spacing_handle);
   s_prototype->add_field_info(new SF_float(Z_SPACING, "zSpacing",
-                                           Field_info::RULE_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            z_spacing_func, s_def_z_spacing,
                                            exec_func));
 
@@ -156,7 +193,7 @@ void Elevation_grid::init_prototype()
   Boolean_handle_function is_closed_func =
     static_cast<Boolean_handle_function>(&Elevation_grid::is_closed_handle);
   s_prototype->add_field_info(new SF_bool(IS_CLOSED, "closed",
-                                          Field_info::RULE_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           is_closed_func,
                                           s_def_is_closed,
                                           exec_func));
@@ -165,7 +202,7 @@ void Elevation_grid::init_prototype()
   Float_handle_function base_height_func =
     static_cast<Float_handle_function>(&Elevation_grid::base_height_handle);
   s_prototype->add_field_info(new SF_float(BASE_HEIGHT, "baseHeight",
-                                           Field_info::RULE_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            base_height_func, s_def_base_height,
                                            exec_func));
 }
@@ -185,11 +222,28 @@ Container_proto* Elevation_grid::get_prototype()
 }
 
 //! \brief Set the 2D array that represents the height above a grid.
-void Elevation_grid::set_height(Float_array& height)
+void Elevation_grid::set_height(const Float_array& height)
 {
-  if (m_height == height) return;
   m_height = height;
+  m_dirty_height = false;
+  m_dirty_height_map = true;
   structure_changed(get_field_info(HEIGHT));
+}
+
+//! \brief sets the height map.
+void Elevation_grid::set_height_map(Shared_coord_array_1d height_map)
+{
+  if (m_height_map == height_map) return;
+
+  Observer observer(this, get_field_info(HEIGHT_MAP));
+  if (m_height_map) m_height_map->unregister_observer(observer);
+
+  m_height_map = height_map;
+  m_dirty_height_map = false;
+  m_dirty_height = true;
+
+  if (m_height_map) m_height_map->register_observer(observer);
+  structure_changed(get_field_info(HEIGHT_MAP));
 }
 
 //! \brief Set the number of grid points along the x-dimension.
@@ -247,7 +301,7 @@ void Elevation_grid::set_closed(Boolean flag)
 {
   if (flag == m_is_closed) return;
   m_is_closed = flag;
-  if (m_is_closed) set_solid(false);
+  set_solid(m_is_closed);
   structure_changed(get_field_info(IS_CLOSED));
 }
 
@@ -264,6 +318,11 @@ void Elevation_grid::clean_coords()
 {
   m_dirty_coord_array = false;
 
+  if ((m_x_dimension == 0) || (m_z_dimension == 0)) return;
+  auto height_map = get_height_map();
+  if (!height_map) return;
+
+  const auto& heights = height_map->get_array();
   if (!m_coord_array) m_coord_array.reset(new Coord_array_3d);
   auto coords = boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
   SGAL_assertion(coords);
@@ -278,7 +337,7 @@ void Elevation_grid::clean_coords()
     auto z = static_cast<Float>(m_z_spacing * j);
     for (size_t i = 0; i < m_x_dimension; ++i) {
       auto x = static_cast<Float>(m_x_spacing * i);
-      auto y = m_height[i + j * m_x_dimension];
+      auto y = heights[i + j * m_x_dimension];
       min_y = (k == 0) ? y : std::min(y, min_y);
       (*coords)[k++].set(x, y, z);
     }
@@ -289,11 +348,11 @@ void Elevation_grid::clean_coords()
     Float x(0.0f);
     Float z(0.0f);
     (*coords)[k++].set(x, y, z);
-    z = m_z_spacing * (m_z_dimension - 1);
-    (*coords)[k++].set(x, y, z);
     x = m_x_spacing * (m_x_dimension - 1);
     (*coords)[k++].set(x, y, z);
-    z = 0.0f;
+    z = m_z_spacing * (m_z_dimension - 1);
+    (*coords)[k++].set(x, y, z);
+    x = 0.0f;
     (*coords)[k++].set(x, y, z);
   }
 
@@ -306,6 +365,8 @@ void Elevation_grid::clean_flat_coord_indices()
   m_dirty_coord_indices = true;
   m_dirty_flat_coord_indices = false;
   m_coord_indices_flat = true;
+
+  if ((m_x_dimension == 0) || (m_z_dimension == 0)) return;
 
   m_num_primitives = (m_x_dimension - 1) * (m_z_dimension - 1) * 2;
   if (is_closed()) m_num_primitives += (m_z_dimension + m_x_dimension) * 2 + 2;
@@ -329,50 +390,52 @@ void Elevation_grid::clean_flat_coord_indices()
     }
   }
   if (is_closed()) {
-    // Front
+    // // Front
     size_t anckor = m_x_dimension * m_z_dimension;
+    size_t base = m_x_dimension-1;
     for (size_t i = 0; i < m_x_dimension-1; ++i) {
       m_flat_coord_indices[k++] = anckor;
-      m_flat_coord_indices[k++] = i+1;
       m_flat_coord_indices[k++] = i;
+      m_flat_coord_indices[k++] = i+1;
     }
     m_flat_coord_indices[k++] = anckor;
+    m_flat_coord_indices[k++] = base;
     m_flat_coord_indices[k++] = anckor+1;
-    m_flat_coord_indices[k++] = m_x_dimension-1;
 
     // right
     ++anckor;
+    base = m_x_dimension * m_z_dimension - 1;
     for (size_t j = 0; j < m_z_dimension-1; ++j) {
       m_flat_coord_indices[k++] = anckor;
-      m_flat_coord_indices[k++] = m_x_dimension*(j+2)-1;
       m_flat_coord_indices[k++] = m_x_dimension*(j+1)-1;
+      m_flat_coord_indices[k++] = m_x_dimension*(j+2)-1;
     }
     m_flat_coord_indices[k++] = anckor;
-    m_flat_coord_indices[k++] = anckor+1;
     m_flat_coord_indices[k++] = m_x_dimension * m_z_dimension - 1;
+    m_flat_coord_indices[k++] = anckor+1;
 
-    // back
+    // // back
     ++anckor;
-    size_t base = m_x_dimension * (m_z_dimension - 1);
+    base = m_x_dimension * (m_z_dimension - 1);
     for (size_t i = 0; i < m_x_dimension-1; ++i) {
       m_flat_coord_indices[k++] = anckor;
-      m_flat_coord_indices[k++] = base + m_x_dimension - 2;
-      m_flat_coord_indices[k++] = base + m_x_dimension - 1;
+      m_flat_coord_indices[k++] = base + i + 1;
+      m_flat_coord_indices[k++] = base + i;
     }
     m_flat_coord_indices[k++] = anckor;
-    m_flat_coord_indices[k++] = anckor+1;
     m_flat_coord_indices[k++] = base;
+    m_flat_coord_indices[k++] = anckor+1;
 
-    // top
+    // left
     ++anckor;
     for (size_t j = 0; j < m_z_dimension-1; ++j) {
       m_flat_coord_indices[k++] = anckor;
-      m_flat_coord_indices[k++] = m_x_dimension*(m_z_dimension-j-2)-1;
-      m_flat_coord_indices[k++] = m_x_dimension*(m_z_dimension-j-1)-1;
+      m_flat_coord_indices[k++] = m_x_dimension*(j+1);
+      m_flat_coord_indices[k++] = m_x_dimension*j;
     }
     m_flat_coord_indices[k++] = anckor;
-    m_flat_coord_indices[k++] = anckor+1;
     m_flat_coord_indices[k++] = 0;
+    m_flat_coord_indices[k++] = anckor-3;
 
     // bottom
     anckor = m_x_dimension * m_z_dimension;
@@ -393,12 +456,95 @@ void Elevation_grid::clean_tex_coord_array_2d()
   std::cout << "Not implemented yet!" << std::endl;
 }
 
+//! \brief processes change of height.
+void Elevation_grid::height_changed(const Field_info* field_info)
+{
+  m_dirty_height = false;
+  m_dirty_height_map = true;
+  structure_changed(field_info);
+}
+
+//! \brief processes change of height map.
+void Elevation_grid::height_map_changed(const Field_info* field_info)
+{
+  // Observe that the observer, being a pair of this container object and the
+  // field_info argument, is automatically unregistered as an observer
+  // of the previous value of the m_height_map.
+  if (m_height_map) {
+    Observer observer(this, field_info);
+    m_height_map->register_observer(observer);
+  }
+
+  m_dirty_height_map = false;
+  m_dirty_height = true;
+  structure_changed(field_info);
+}
+
 //! \brief processes change of structure.
 void Elevation_grid::structure_changed(const Field_info* field_info)
 {
   clear_coord_array();
   clear_flat_coord_indices();
-  field_changed(field_info);
+  sphere_bound_changed(field_info);
+}
+
+//! \brief obtain the (const) 2D array that represents the height above a grid.
+Float_array& Elevation_grid::get_height()
+{
+  if (m_dirty_height) clean_height();
+  return m_height;
+}
+
+//! \brief cleans the 2D array representing the height above the grid.
+void Elevation_grid::clean_height()
+{
+  if (m_height_map) m_height = m_height_map->get_array();
+  else m_height.clear();
+  m_dirty_height = false;
+}
+
+//! \brief obtain the (const) 2D array that represents the height above a grid.
+inline Elevation_grid::Shared_coord_array_1d Elevation_grid::get_height_map()
+{
+  if (m_dirty_height_map) clean_height_map();
+  return m_height_map;
+}
+
+//! \brief cleans the 2D array representing the height above the grid.
+void Elevation_grid::clean_height_map()
+{
+  if (!m_height_map) m_height_map.reset(new Coord_array_1d);
+  m_height_map->set_array(m_height);
+  m_dirty_height_map = false;
+}
+
+//! Write this container.
+void Elevation_grid::write(Formatter* formatter)
+{
+  if (m_dirty_height) clean_height();
+  Indexed_face_set::write(formatter);
+}
+
+//! \brief writes a field of this container.
+void Elevation_grid::write_field(const Field_info* field_info,
+                                   Formatter* formatter)
+{
+  auto* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
+  if (vrml_formatter) {
+    // Skip the height map gield.
+    if (HEIGHT_MAP == field_info->get_id()) return;
+  }
+  Indexed_face_set::write_field(field_info, formatter);
+}
+
+//! \brief Process change of field.
+void Elevation_grid::field_changed(const Field_info* field_info)
+{
+  switch (field_info->get_id()) {
+   case HEIGHT_MAP: height_map_changed(field_info); return;
+   default: break;
+  }
+  Indexed_face_set::field_changed(field_info);
 }
 
 SGAL_END_NAMESPACE

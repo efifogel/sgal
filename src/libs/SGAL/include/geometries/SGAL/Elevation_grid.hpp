@@ -27,6 +27,10 @@ SGAL_BEGIN_NAMESPACE
 
 class Container_proto;
 class Element;
+class Coord_array_1d;
+class Formatter;
+class Field_info;
+class Formatter;
 
 /*! class Elevation_grid Elevation_grid.hpp
  * The ElevationGrid node specifies a uniform rectangular grid of varying
@@ -39,6 +43,7 @@ public:
   enum {
     FIRST = Indexed_face_set::LAST - 1,
     HEIGHT,
+    HEIGHT_MAP,
     X_DIMENSION,
     X_SPACING,
     Z_DIMENSION,
@@ -47,6 +52,8 @@ public:
     BASE_HEIGHT,
     LAST
   };
+
+  typedef boost::shared_ptr<Coord_array_1d>             Shared_coord_array_1d;
 
   /*! Constructor.
    * \param proto (in) determines whether to construct a prototype.
@@ -81,6 +88,8 @@ public:
   /// \name field handlers
   //@{
   Float_array* height_handle(const Field_info*) { return &m_height; }
+  Shared_coord_array_1d* height_map_handle(const Field_info*)
+  { return &m_height_map; }
   Uint* x_dimension_handle(const Field_info*) { return &m_x_dimension; }
   Float* x_spacing_handle(const Field_info*) { return &m_x_spacing; }
   Uint* z_dimension_handle(const Field_info*) { return &m_z_dimension; }
@@ -106,6 +115,29 @@ public:
    */
   virtual void clean_tex_coord_array_2d();
 
+  /*! Write this container.
+   * \param formatter The formatter to use for the writing, e.g., VRML.
+   */
+  virtual void write(Formatter* formatter);
+
+  /*! Write a field of this container.
+   * \param[in] field_info The field information record.
+   * \param[in] formatter The formatter to use for the writing, e.g., VRML.
+   */
+  virtual void write_field(const Field_info* field_info, Formatter* formatter);
+
+  /*! Process change of field.
+   */
+  virtual void field_changed(const Field_info* field_info);
+
+  /*! Process change of height.
+   */
+  void height_changed(const Field_info* field_info);
+
+  /*! Process change of height map.
+   */
+  void height_map_changed(const Field_info* field_info);
+
   /*! Process change of structure.
    */
   void structure_changed(const Field_info* field_info);
@@ -113,17 +145,22 @@ public:
   /*! Set the 2D array that represents the height above a grid.
    * \param height (in) the new height field.
    */
-  void set_height(Float_array& height);
+  void set_height(const Float_array& height);
 
   /*! Obtain the (const) 2D array that represents the height above a grid.
    * \return the 2D array.
    */
-  const Float_array& get_height() const;
-
-  /*! Obtain the (non const) 2D array that represents the height above a grid.
-   * \return the 2D array.
-   */
   Float_array& get_height();
+
+  /*! Set the height map.
+   * \param[in] height the new height map.
+   */
+  void set_height_map(Shared_coord_array_1d height_map);
+
+  /*! Obtain the height map.
+   * \return the height map.
+   */
+  Shared_coord_array_1d get_height_map();
 
   /*! Set the number of grid points along the x-dimension.
    * \param x_dimension (in) the number of grid points along the x-dimension.
@@ -195,6 +232,9 @@ protected:
   /*! A 2D array of scalar values representing the height above a grid. */
   Float_array m_height;
 
+  /*! A 2D array of scalar values representing the height above a grid. */
+  Shared_coord_array_1d m_height_map;
+
   /*! The number of grid points along the x-dimension. */
   Uint m_x_dimension;
 
@@ -213,11 +253,27 @@ protected:
   /*! The base height in case the surface is closed. */
   Float m_base_height;
 
+  /*! Indicates whether the 2D array representing the height above the grid is
+   * dirty.
+   */
+  Boolean m_dirty_height;
+
+  /*! Indicates whether the height map is dirty. */
+  Boolean m_dirty_height_map;
+
   /*! Obtain the tag (type) of the container.
    */
   virtual const std::string& get_tag() const;
 
 private:
+  /*! Clean the 2D array representing the height above the grid.
+   */
+  void clean_height();
+
+  /*! Clean the height map.
+   */
+  void clean_height_map();
+
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
@@ -242,15 +298,6 @@ inline Container* Elevation_grid::clone() { return new Elevation_grid(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Elevation_grid::get_tag() const { return s_tag; }
-
-//! \brief obtain the (const) 2D array that represents the height above a grid.
-inline const Float_array& Elevation_grid::get_height() const
-{ return m_height; }
-
-/*! \brief obtain the (non const) 2D array that represents the height above a
- * grid.
- */
-inline Float_array& Elevation_grid::get_height() { return m_height; }
 
 //! \brief obtains the number of grid points along the x-dimension.
 inline Uint Elevation_grid::get_x_dimension() const { return m_x_dimension; }

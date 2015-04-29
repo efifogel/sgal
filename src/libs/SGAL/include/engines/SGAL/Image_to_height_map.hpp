@@ -18,11 +18,11 @@
 
 /*! \file
  *
- * Converts an image to a elevation_grid
+ * Converts an image to a height map.
  */
 
-#ifndef SGAL_IMAGE_TO_ELEVATION_GRID_HPP
-#define SGAL_IMAGE_TO_ELEVATION_GRID_HPP
+#ifndef SGAL_IMAGE_TO_HEIGHT_MAP_HPP
+#define SGAL_IMAGE_TO_HEIGHT_MAP_HPP
 
 #include <string>
 #include <boost/shared_ptr.hpp>
@@ -35,30 +35,32 @@ SGAL_BEGIN_NAMESPACE
 class Container_proto;
 class Element;
 class Field_info;
-class Elevation_grid;
+class Coord_array_1d;
 class Formatter;
 
-class SGAL_SGAL_DECL Image_to_elevation_grid : public Node {
+class SGAL_SGAL_DECL Image_to_height_map : public Node {
 public:
   enum {
     FIRST = Node::LAST-1,
     TRIGGER,
     IMAGE,
-    ELEVATION_GRID,
+    HEIGHT_MAP,
+    X_DIMENSION,
+    Z_DIMENSION,
     LAST
   };
 
-  typedef boost::shared_ptr<Elevation_grid>     Shared_elevation_grid;
+  typedef boost::shared_ptr<Coord_array_1d>     Shared_coord_array_1d;
   typedef boost::shared_ptr<Image>              Shared_image;
 
   /*! Constructor. */
-  Image_to_elevation_grid(Boolean proto = false);
+  Image_to_height_map(Boolean proto = false);
 
   /*! Destructor. */
-  virtual ~Image_to_elevation_grid();
+  virtual ~Image_to_height_map();
 
   /*! Construct the prototype. */
-  static Image_to_elevation_grid* prototype();
+  static Image_to_height_map* prototype();
 
   /*! Clone. */
   virtual Container* clone();
@@ -75,10 +77,12 @@ public:
 
   /// \name field handlers
   //@{
-  Shared_elevation_grid* elevation_grid_handle(const Field_info*)
-  { return &m_elevation_grid; }
-  Shared_image* image_handle(const Field_info*) { return &m_image; }
   Boolean* trigger_handle(const Field_info*) { return &m_trigger; }
+  Shared_image* image_handle(const Field_info*) { return &m_image; }
+  Shared_coord_array_1d* height_map_handle(const Field_info*)
+  { return &m_height_map; }
+  Uint* x_dimension_handle(const Field_info*) { return &m_x_dimension; }
+  Uint* z_dimension_handle(const Field_info*) { return &m_z_dimension; }
   //@}
 
   /*! Set the attributes of the object extracted from the VRML or X3D file.
@@ -97,24 +101,31 @@ public:
    */
   virtual void execute(const Field_info* field_info);
 
-  /*! Process change of elevation grid. */
-  void elevation_grid_changed(const Field_info* field_info);
-
   /*! Obtain the texture image. */
   Shared_image get_image() const;
 
   /*! Set the texture image. */
   void set_image(Shared_image image);
 
-  /*! Set the 2D array that represents the elevation_grid above a grid.
-   * \param elevation_grid (in) the new elevation_grid field.
+  /*! Set the 2D array that represents the height map.
+   * \param height_map (in) the new height_map field.
    */
-  void set_elevation_grid(Shared_elevation_grid elevation_grid);
+  void set_height_map(Shared_coord_array_1d height_map);
 
-  /*! Obtain the 2D array that represents the elevation_grid above a grid.
+  /*! Obtain the 2D array that represents the height map.
    * \return the 2D array.
    */
-  Shared_elevation_grid get_elevation_grid() const;
+  Shared_coord_array_1d get_height_map() const;
+
+  /*! Set the number of grid points along the x-dimension.
+   * \param x[in]_dimension the number of grid points along the x-dimension.
+   */
+  void set_x_dimension(Uint x_dimension);
+
+  /*! Set the number of grid points along the z-dimension.
+   * \param[in] z_dimension the number of grid points along the z-dimension.
+   */
+  void set_z_dimension(Uint z_dimension);
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -123,9 +134,15 @@ protected:
   /*! The texture pixels. */
   Shared_image m_image;
 
-  /*! A 2D array of scalar values representing the elevation_grid above a grid.
+  /*! A 2D array of scalar values representing the height map.
    */
-  Shared_elevation_grid m_elevation_grid;
+  Shared_coord_array_1d m_height_map;
+
+  /*! The number of grid points along the x-dimension. */
+  Uint m_x_dimension;
+
+  /*! The number of grid points along the z-dimension. */
+  Uint m_z_dimension;
 
   /*! Trigger of the engine that makes the engine excute. */
   Boolean m_trigger;
@@ -141,28 +158,27 @@ private:
 };
 
 //! \brief constructs the prototype.
-inline Image_to_elevation_grid* Image_to_elevation_grid::prototype()
-{ return new Image_to_elevation_grid(true); }
+inline Image_to_height_map* Image_to_height_map::prototype()
+{ return new Image_to_height_map(true); }
 
 //! \brief clones.
-inline Container* Image_to_elevation_grid::clone()
-{ return new Image_to_elevation_grid(); }
+inline Container* Image_to_height_map::clone()
+{ return new Image_to_height_map(); }
 
 //! \brief obtains the texture image.
-inline Image_to_elevation_grid::Shared_image
-Image_to_elevation_grid::get_image() const { return m_image; }
+inline Image_to_height_map::Shared_image
+Image_to_height_map::get_image() const { return m_image; }
 
 //! \brief sets the texture image.
-inline  void Image_to_elevation_grid::set_image(Shared_image image)
+inline  void Image_to_height_map::set_image(Shared_image image)
 { m_image = image; }
 
-//! \brief obtain the 2D array that represents the height above a grid.
-inline Image_to_elevation_grid::Shared_elevation_grid
-Image_to_elevation_grid::get_elevation_grid() const
-{ return m_elevation_grid; }
+//! \brief obtain the 2D array that represents the height map.
+inline Image_to_height_map::Shared_coord_array_1d
+Image_to_height_map::get_height_map() const { return m_height_map; }
 
 //! \brief obtains the tag (type) of the container.
-inline const std::string& Image_to_elevation_grid::get_tag() const
+inline const std::string& Image_to_height_map::get_tag() const
 { return s_tag; }
 
 SGAL_END_NAMESPACE

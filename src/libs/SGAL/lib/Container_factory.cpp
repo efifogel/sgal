@@ -33,7 +33,7 @@
 #include "SGAL/Font_style.hpp"
 #include "SGAL/Halftone.hpp"
 #include "SGAL/Image.hpp"
-#include "SGAL/Image_to_elevation_grid.hpp"
+#include "SGAL/Image_to_height_map.hpp"
 #include "SGAL/Image_sphere_environment.hpp"
 #include "SGAL/Image_texture.hpp"
 // #include "SGAL/Image_texture_WT.hpp"
@@ -59,6 +59,7 @@
 #include "SGAL/Coord_transformer.hpp"
 #include "SGAL/Coord_minkowski.hpp"
 #include "SGAL/Color_array.hpp"
+#include "SGAL/Coord_array_1d.hpp"
 #include "SGAL/Coord_array_2d.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Exporter.hpp"
@@ -178,6 +179,7 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Collision);
   REGISTER_OBJECT(Color_background);
   REGISTER_OBJECT(Color_array);
+  REGISTER_OBJECT(Coord_array_1d);
   REGISTER_OBJECT(Coord_array_2d);
   REGISTER_OBJECT(Coord_array_3d);
   REGISTER_OBJECT(Configuration);
@@ -198,7 +200,7 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Geodesic);
   REGISTER_OBJECT(Halftone);
   REGISTER_OBJECT(Image);
-  REGISTER_OBJECT(Image_to_elevation_grid);
+  REGISTER_OBJECT(Image_to_height_map);
   REGISTER_OBJECT(Image_background);
   REGISTER_OBJECT(Image_sphere_environment);
   REGISTER_OBJECT(Image_texture);
