@@ -17,6 +17,7 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <iterator>
+#include <boost/lexical_cast.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Vrml_formatter.hpp"
@@ -81,12 +82,18 @@ inline void Vrml_formatter::write(Shared_container container)
   }
 
   // If the number of shared objects (including this one) is greater than 2,
-  // generate a name and use it, so that the container can be referred
-  // to by the name.
+  // generate a unique name and use it, so that the container can be referred
+  // to by the name later on.
   if (container.use_count() > 2) {
     const auto& name = container->get_name();
     if (name.empty()) {
-      std::string name = std::string("_").append(std::to_string((size_t)(&*container)));
+      auto addr = reinterpret_cast<size_t>(&*container);
+      std::string name =
+#if !(defined _MSC_VER) || (_MSC_VER <= 1600)
+        std::string("_").append(boost::lexical_cast<std::string>(addr));
+#else
+      std::string("_").append(std::to_string(addr));
+#endif
       container->set_name(name);
     }
   }
