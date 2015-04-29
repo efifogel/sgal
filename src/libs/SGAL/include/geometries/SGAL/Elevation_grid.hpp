@@ -43,6 +43,8 @@ public:
     X_SPACING,
     Z_DIMENSION,
     Z_SPACING,
+    IS_CLOSED,
+    BASE_HEIGHT,
     LAST
   };
 
@@ -83,6 +85,8 @@ public:
   Float* x_spacing_handle(const Field_info*) { return &m_x_spacing; }
   Uint* z_dimension_handle(const Field_info*) { return &m_z_dimension; }
   Float* z_spacing_handle(const Field_info*) { return &m_z_spacing; }
+  Boolean* is_closed_handle(const Field_info*) { return &m_is_closed; }
+  Float* base_height_handle(const Field_info*) { return &m_base_height; }
   //@}
 
   /*! Set the attributes of the object.
@@ -165,6 +169,28 @@ public:
    */
   Float get_z_spacing() const;
 
+  /*! Turn on the flag that indicates whether the shape should be closed. */
+  void set_closed();
+
+  /*! Turn off the flag that indicates whether the shape should be closed. */
+  void set_open();
+
+  /*! Set the flag that indicates whether the shape should be closed. */
+  void set_closed(Boolean flag);
+
+  /*! Determine whether the shape should be closed. */
+  Boolean is_closed() const;
+
+  /*! Set the height of the base in case the surface is closed.
+   * \param[in] base_height the base height.
+   */
+  void set_base_height(Float base_height);
+
+  /*! Obtain the height of the base in case the surface is closed.
+   * \return the base height.
+   */
+  Float get_base_height() const;
+
 protected:
   /*! A 2D array of scalar values representing the height above a grid. */
   Float_array m_height;
@@ -180,6 +206,12 @@ protected:
 
   /*! The distance between two successive grid points along the z-dimension. */
   Float m_z_spacing;
+
+  /*! Indicates whether the 3D object is closed. */
+  Boolean m_is_closed;
+
+  /*! The base height in case the surface is closed. */
+  Float m_base_height;
 
   /*! Obtain the tag (type) of the container.
    */
@@ -197,6 +229,8 @@ private:
   static const Float s_def_x_spacing;
   static const Uint s_def_z_dimension;
   static const Float s_def_z_spacing;
+  static const Boolean s_def_is_closed;
+  static const Float s_def_base_height;
 };
 
 //! \brief constructs the prototype.
@@ -221,14 +255,24 @@ inline Float_array& Elevation_grid::get_height() { return m_height; }
 //! \brief obtains the number of grid points along the x-dimension.
 inline Uint Elevation_grid::get_x_dimension() const { return m_x_dimension; }
 
-//! \brief obtain the distance between two successive grid points along the
+/*! \brief obtain the distance between two successive grid points along the
+ * the x-dimension.
+ */
 inline Float Elevation_grid::get_x_spacing() const { return m_x_spacing; }
 
 //! \brief obtains the number of grid points along the z-dimension.
 inline Uint Elevation_grid::get_z_dimension() const { return m_z_dimension; }
 
-//! \brief obtains the distance between two successive grid points along the
+/*! \brief obtains the distance between two successive grid points along the
+ * the z-dimension
+ */
 inline Float Elevation_grid::get_z_spacing() const { return m_z_spacing; }
+
+//! \brief determines whether the shape should be closed.
+inline Boolean Elevation_grid::is_closed() const { return m_is_closed; }
+
+//! \brief obtains the height of the base.
+inline Float Elevation_grid::get_base_height() const { return m_base_height; }
 
 SGAL_END_NAMESPACE
 

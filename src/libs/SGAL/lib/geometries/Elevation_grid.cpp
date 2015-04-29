@@ -34,6 +34,8 @@ const Uint Elevation_grid::s_def_x_dimension(0);
 const Float Elevation_grid::s_def_x_spacing(1.0f);
 const Uint Elevation_grid::s_def_z_dimension(0);
 const Float Elevation_grid::s_def_z_spacing(1.0f);
+const Boolean Elevation_grid::s_def_is_closed(false);
+const Float Elevation_grid::s_def_base_height(1.0f);
 
 //! \brief constructor.
 Elevation_grid::Elevation_grid(Boolean proto) :
@@ -41,10 +43,10 @@ Elevation_grid::Elevation_grid(Boolean proto) :
   m_x_dimension(s_def_x_dimension),
   m_x_spacing(s_def_x_spacing),
   m_z_dimension(s_def_z_dimension),
-  m_z_spacing(s_def_z_spacing)
-{
-  // set_solid(false);
-}
+  m_z_spacing(s_def_z_spacing),
+  m_is_closed(s_def_is_closed),
+  m_base_height(s_def_base_height)
+{ if (m_is_closed) set_solid(false); }
 
 //! \brief destructor.
 Elevation_grid::~Elevation_grid() {}
@@ -85,6 +87,16 @@ void Elevation_grid::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "closed") {
+      set_closed(compare_to_true(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "baseHeight") {
+      set_base_height(boost::lexical_cast<Float>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
   }
   // Remove all the deleted attributes:
   elem->delete_marked();
@@ -112,7 +124,8 @@ void Elevation_grid::init_prototype()
     static_cast<Uint_handle_function>(&Elevation_grid::x_dimension_handle);
   s_prototype->add_field_info(new SF_uint(X_DIMENSION, "xDimension",
                                           Field_info::RULE_FIELD,
-                                          x_dimension_func, exec_func));
+                                          x_dimension_func, s_def_x_dimension,
+                                          exec_func));
 
 
   // xSpacing
@@ -120,21 +133,41 @@ void Elevation_grid::init_prototype()
     static_cast<Float_handle_function>(&Elevation_grid::x_spacing_handle);
   s_prototype->add_field_info(new SF_float(X_SPACING, "xSpacing",
                                            Field_info::RULE_FIELD,
-                                           x_spacing_func, exec_func));
+                                           x_spacing_func, s_def_x_spacing,
+                                           exec_func));
 
   // zDimension
   Uint_handle_function z_dimension_func =
     static_cast<Uint_handle_function>(&Elevation_grid::z_dimension_handle);
   s_prototype->add_field_info(new SF_uint(Z_DIMENSION, "zDimension",
                                           Field_info::RULE_FIELD,
-                                          z_dimension_func, exec_func));
+                                          z_dimension_func, s_def_z_dimension,
+                                          exec_func));
 
   // zSpacing
   Float_handle_function z_spacing_func =
     static_cast<Float_handle_function>(&Elevation_grid::z_spacing_handle);
   s_prototype->add_field_info(new SF_float(Z_SPACING, "zSpacing",
                                            Field_info::RULE_FIELD,
-                                           z_spacing_func, exec_func));
+                                           z_spacing_func, s_def_z_spacing,
+                                           exec_func));
+
+  // is closed
+  Boolean_handle_function is_closed_func =
+    static_cast<Boolean_handle_function>(&Elevation_grid::is_closed_handle);
+  s_prototype->add_field_info(new SF_bool(IS_CLOSED, "closed",
+                                          Field_info::RULE_FIELD,
+                                          is_closed_func,
+                                          s_def_is_closed,
+                                          exec_func));
+
+  // baseHeight
+  Float_handle_function base_height_func =
+    static_cast<Float_handle_function>(&Elevation_grid::base_height_handle);
+  s_prototype->add_field_info(new SF_float(BASE_HEIGHT, "baseHeight",
+                                           Field_info::RULE_FIELD,
+                                           base_height_func, s_def_base_height,
+                                           exec_func));
 }
 
 //! \brief deletes the container prototype.
@@ -154,6 +187,7 @@ Container_proto* Elevation_grid::get_prototype()
 //! \brief Set the 2D array that represents the height above a grid.
 void Elevation_grid::set_height(Float_array& height)
 {
+  if (m_height == height) return;
   m_height = height;
   structure_changed(get_field_info(HEIGHT));
 }
@@ -161,6 +195,7 @@ void Elevation_grid::set_height(Float_array& height)
 //! \brief Set the number of grid points along the x-dimension.
 void Elevation_grid::set_x_dimension(Uint x_dimension)
 {
+  if (m_x_dimension == x_dimension) return;
   m_x_dimension = x_dimension;
   structure_changed(get_field_info(X_DIMENSION));
 }
@@ -168,6 +203,7 @@ void Elevation_grid::set_x_dimension(Uint x_dimension)
 //! \brief Set the distance between two successive grid points along the
 void Elevation_grid::set_x_spacing(Float x_spacing)
 {
+  if (m_x_spacing == x_spacing) return;
   m_x_spacing = x_spacing;
   structure_changed(get_field_info(X_SPACING));
 }
@@ -175,6 +211,7 @@ void Elevation_grid::set_x_spacing(Float x_spacing)
 //! \brief Set the number of grid points along the z-dimension.
 void Elevation_grid::set_z_dimension(Uint z_dimension)
 {
+  if (m_z_dimension == z_dimension) return;
   m_z_dimension = z_dimension;
   structure_changed(get_field_info(Z_DIMENSION));
 }
@@ -182,8 +219,44 @@ void Elevation_grid::set_z_dimension(Uint z_dimension)
 //! \brief Set the distance between two successive grid points along the
 void Elevation_grid::set_z_spacing(Float z_spacing)
 {
+  if (m_z_spacing == z_spacing) return;
   m_z_spacing = z_spacing;
   structure_changed(get_field_info(Z_SPACING));
+}
+
+//! \brief turns on the flag that indicates whether the shape should be closed.
+void Elevation_grid::set_closed()
+{
+  if (m_is_closed) return;
+  m_is_closed = true;
+  set_solid(true);
+  structure_changed(get_field_info(IS_CLOSED));
+}
+
+//! \brief turns off the flag that indicates whether the shape should be closed.
+void Elevation_grid::set_open()
+{
+  if (!m_is_closed) return;
+  m_is_closed = false;
+  set_solid(false);
+  structure_changed(get_field_info(IS_CLOSED));
+}
+
+//! \brief set the flag that indicates whether the shape should be closed.
+void Elevation_grid::set_closed(Boolean flag)
+{
+  if (flag == m_is_closed) return;
+  m_is_closed = flag;
+  if (m_is_closed) set_solid(false);
+  structure_changed(get_field_info(IS_CLOSED));
+}
+
+//! \brief Set the height of the base in case the surface is closed.
+void Elevation_grid::set_base_height(Float base_height)
+{
+  if (m_base_height == base_height) return;
+  m_base_height = base_height;
+  structure_changed(get_field_info(BASE_HEIGHT));
 }
 
 //! \brief cleans the representation.
@@ -196,17 +269,34 @@ void Elevation_grid::clean_coords()
   SGAL_assertion(coords);
 
   Uint size = m_x_dimension * m_z_dimension;
+  if (is_closed()) size += 4;
   coords->resize(size);
 
+  Float min_y(0.0f);
   size_t k(0);
   for (size_t j = 0; j < m_z_dimension; ++j) {
-    for (size_t i = 0; i < m_z_dimension; ++i) {
+    auto z = static_cast<Float>(m_z_spacing * j);
+    for (size_t i = 0; i < m_x_dimension; ++i) {
       auto x = static_cast<Float>(m_x_spacing * i);
-      auto y = m_height[i + j * m_z_dimension];
-      auto z = static_cast<Float>(m_z_spacing * j);
+      auto y = m_height[i + j * m_x_dimension];
+      min_y = (k == 0) ? y : std::min(y, min_y);
       (*coords)[k++].set(x, y, z);
     }
   }
+
+  if (is_closed()) {
+    Float y = min_y - get_base_height();
+    Float x(0.0f);
+    Float z(0.0f);
+    (*coords)[k++].set(x, y, z);
+    z = m_z_spacing * (m_z_dimension - 1);
+    (*coords)[k++].set(x, y, z);
+    x = m_x_spacing * (m_x_dimension - 1);
+    (*coords)[k++].set(x, y, z);
+    z = 0.0f;
+    (*coords)[k++].set(x, y, z);
+  }
+
   coord_content_changed(get_field_info(COORD_ARRAY));
 }
 
@@ -218,14 +308,15 @@ void Elevation_grid::clean_flat_coord_indices()
   m_coord_indices_flat = true;
 
   m_num_primitives = (m_x_dimension - 1) * (m_z_dimension - 1) * 2;
+  if (is_closed()) m_num_primitives += (m_z_dimension + m_x_dimension) * 2 + 2;
   Uint size = m_num_primitives * 3;
   m_flat_coord_indices.resize(size);
 
   // Generate:
   size_t k(0);
   for (size_t j = 0; j < m_z_dimension-1; ++j) {
-    for (size_t i = 0; i < m_z_dimension-1; ++i) {
-      Uint ll = i + j * m_z_dimension;
+    for (size_t i = 0; i < m_x_dimension-1; ++i) {
+      Uint ll = i + j * m_x_dimension;
       Uint lr = ll + 1;
       Uint ur = lr + m_z_dimension;
       Uint ul = ll + m_z_dimension;
@@ -236,6 +327,61 @@ void Elevation_grid::clean_flat_coord_indices()
       m_flat_coord_indices[k++] = lr;
       m_flat_coord_indices[k++] = ll;
     }
+  }
+  if (is_closed()) {
+    // Front
+    size_t anckor = m_x_dimension * m_z_dimension;
+    for (size_t i = 0; i < m_x_dimension-1; ++i) {
+      m_flat_coord_indices[k++] = anckor;
+      m_flat_coord_indices[k++] = i+1;
+      m_flat_coord_indices[k++] = i;
+    }
+    m_flat_coord_indices[k++] = anckor;
+    m_flat_coord_indices[k++] = anckor+1;
+    m_flat_coord_indices[k++] = m_x_dimension-1;
+
+    // right
+    ++anckor;
+    for (size_t j = 0; j < m_z_dimension-1; ++j) {
+      m_flat_coord_indices[k++] = anckor;
+      m_flat_coord_indices[k++] = m_x_dimension*(j+2)-1;
+      m_flat_coord_indices[k++] = m_x_dimension*(j+1)-1;
+    }
+    m_flat_coord_indices[k++] = anckor;
+    m_flat_coord_indices[k++] = anckor+1;
+    m_flat_coord_indices[k++] = m_x_dimension * m_z_dimension - 1;
+
+    // back
+    ++anckor;
+    size_t base = m_x_dimension * (m_z_dimension - 1);
+    for (size_t i = 0; i < m_x_dimension-1; ++i) {
+      m_flat_coord_indices[k++] = anckor;
+      m_flat_coord_indices[k++] = base + m_x_dimension - 2;
+      m_flat_coord_indices[k++] = base + m_x_dimension - 1;
+    }
+    m_flat_coord_indices[k++] = anckor;
+    m_flat_coord_indices[k++] = anckor+1;
+    m_flat_coord_indices[k++] = base;
+
+    // top
+    ++anckor;
+    for (size_t j = 0; j < m_z_dimension-1; ++j) {
+      m_flat_coord_indices[k++] = anckor;
+      m_flat_coord_indices[k++] = m_x_dimension*(m_z_dimension-j-2)-1;
+      m_flat_coord_indices[k++] = m_x_dimension*(m_z_dimension-j-1)-1;
+    }
+    m_flat_coord_indices[k++] = anckor;
+    m_flat_coord_indices[k++] = anckor+1;
+    m_flat_coord_indices[k++] = 0;
+
+    // bottom
+    anckor = m_x_dimension * m_z_dimension;
+    m_flat_coord_indices[k++] = anckor;
+    m_flat_coord_indices[k++] = anckor+1;
+    m_flat_coord_indices[k++] = anckor+2;
+    m_flat_coord_indices[k++] = anckor;
+    m_flat_coord_indices[k++] = anckor+2;
+    m_flat_coord_indices[k++] = anckor+3;
   }
 
   set_primitive_type(PT_TRIANGLES);
