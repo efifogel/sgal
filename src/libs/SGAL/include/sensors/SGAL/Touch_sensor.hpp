@@ -49,7 +49,6 @@ class Vector2sh;
 class Scene_graph;
 class Passive_motion_event;
 class Tick_event;
-class Formatter;
 class Draw_action;
 
 #if defined(_MSC_VER)
@@ -138,9 +137,6 @@ public:
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
-  /*! Write this container */
-  virtual void write(Formatter* formatter);
-
   /*! Draw the node while traversing the scene graph */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
 
@@ -178,13 +174,13 @@ public:
 
   /*! Set the flag that indicates whether the cursor hoovers above a selected
    * geometry.
-   * \param over (in) the flag.
+   * \param[in] over the flag.
    */
   void set_is_over(const Boolean over);
 
   /*! Set the flag that indicates whether the mouse is pressed when the cursor
    * is above a selected geometry.
-   * \param active (in) the flag.
+   * \param[in] active the flag.
    */
   void set_is_active(const Boolean active);
 
@@ -253,7 +249,7 @@ protected:
   /*! Invoked when dragging starts.
    * Locks the dragging for the current sensor if possible (if not returns).
    * Updates and cascades the m_is_active field
-   * @param point (in) not used for now
+   * @param[in] point not used for now
    */
   virtual void start_dragging(const Vector2sh& point);
 
@@ -261,7 +257,7 @@ protected:
    * Updates and cascades the m_is_active field.
    * Updates and cascades the m_touch_time field.
    * Unlockes the dragging in the execution coordinator.
-   * @param point (in) not used for now
+   * @param[in] point not used for now
    */
   virtual void dragging_done(const Vector2sh& point);
 

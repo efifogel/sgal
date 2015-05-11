@@ -629,7 +629,7 @@ void Exact_polyhedron_geo::print_stat()
               << std::endl;
 }
 
-//! Write this container.
+//! \brief exports this container.
 void Exact_polyhedron_geo::write(Formatter* formatter)
 {
   SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());

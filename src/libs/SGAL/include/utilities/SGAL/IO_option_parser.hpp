@@ -33,7 +33,8 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/File_format.hpp"
+#include "SGAL/File_format_2d.hpp"
+#include "SGAL/File_format_3d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -46,11 +47,14 @@ namespace po = boost::program_options;
 
 class SGAL_SGAL_DECL IO_option_parser {
 public:
-  typedef std::vector<File_format::Id>  Formats;
-  typedef Formats::const_iterator       Format_const_iter;
+  typedef std::vector<File_format_2d::Id>   Formats_2d;
+  typedef Formats_2d::const_iterator        Format_2d_const_iter;
 
-  typedef std::vector<std::string>      Input_path;
-  typedef Input_path::const_iterator    Input_path_const_iterator;
+  typedef std::vector<File_format_3d::Id>   Formats_3d;
+  typedef Formats_3d::const_iterator        Format_3d_const_iter;
+
+  typedef std::vector<std::string>          Input_path;
+  typedef Input_path::const_iterator        Input_path_const_iterator;
 
   /*! Constructor. */
   IO_option_parser();
@@ -72,25 +76,46 @@ public:
    */
   const po::options_description& get_io_opts() const;
 
-  /*! Obtain the begin iterator of the selected format container.
-   * \return the begin iterator of the selected format container.
+  /*! Obtain the begin iterator of the selected 2d format container.
+   * \return the begin iterator of the selected 2d format container.
    */
-  Format_const_iter formats_begin() const;
+  Format_2d_const_iter formats_2d_begin() const;
 
-  /*! Obtain the past-the-end iterator of the selected format container.
-   * \return the past-the-end iterator of the selected format container.
+  /*! Obtain the past-the-end iterator of the selected 2d format container.
+   * \return the past-the-end iterator of the selected 2d format container.
    */
-  Format_const_iter formats_end() const;
+  Format_2d_const_iter formats_2d_end() const;
 
-  /*! Obtain the size of the selected format container.
-   * \return the size of the selected format container.
+  /*! Obtain the size of the selected 2d format container.
+   * \return the size of the selected 2d format container.
    */
-  Uint formats_size() const;
+  size_t formats_2d_size() const;
 
-  /*! Determine whether to save the scene to output files.
+  /*! Determine whether to take a snapshot of the scene and save it in a file.
+   * \return true if a snapshot of the the scene should be taken;
+   *         false otherwise.
+   */
+  Boolean do_snapshot() const;
+
+  /*! Obtain the begin iterator of the selected 3d format container.
+   * \return the begin iterator of the selected 3d format container.
+   */
+  Format_3d_const_iter formats_3d_begin() const;
+
+  /*! Obtain the past-the-end iterator of the selected 3d format container.
+   * \return the past-the-end iterator of the selected 3d format container.
+   */
+  Format_3d_const_iter formats_3d_end() const;
+
+  /*! Obtain the size of the selected 3d format container.
+   * \return the size of the selected 3d format container.
+   */
+  size_t formats_3d_size() const;
+
+  /*! Determine whether to export the scene.
    * \return true if the scene should be saved in output files; false otherwise.
    */
-  Boolean do_save() const;
+  Boolean do_export() const;
 
   /*! Determine whether the operation is interactive.
    * \return true if the operation is interactive; false otherwise.
@@ -129,11 +154,17 @@ protected:
   /*! The options. */
   po::options_description m_io_opts;
 
-  /*! The selected formats. */
-  Formats m_formats;
+  /*! The selected 2D formats. */
+  Formats_2d m_formats_2d;
+
+  /*! The selected 3D formats. */
+  Formats_3d m_formats_3d;
+
+  /*! Indicates whether a snapshot of the scene should be taken. */
+  Boolean m_snapshot;
 
   /*! Indicates whether to save the scene to an output file. */
-  Boolean m_save;
+  Boolean m_export;
 
   /*! Indicates whether the operation is interactive. */
   Boolean m_interactive;
@@ -164,21 +195,39 @@ private:
 inline const po::options_description& IO_option_parser::get_io_opts() const
 { return m_io_opts; }
 
-//! \brief obtains the begin iterator of the selected format container.
+//! \brief obtains the begin iterator of the selected 2d format container.
 inline
-IO_option_parser::Format_const_iter IO_option_parser::formats_begin() const
-{ return m_formats.begin(); }
+IO_option_parser::Format_2d_const_iter IO_option_parser::formats_2d_begin() const
+{ return m_formats_2d.begin(); }
 
-//! \brief obtains the past-the-end iterator of the selected format container.
+//! \brief obtains the past-the-end iterator of the selected 2d format container.
 inline
-IO_option_parser::Format_const_iter IO_option_parser::formats_end() const
-{ return m_formats.end(); }
+IO_option_parser::Format_2d_const_iter IO_option_parser::formats_2d_end() const
+{ return m_formats_2d.end(); }
 
-//! \brief obtains the size of the selected format container.
-inline Uint IO_option_parser::formats_size() const { return m_formats.size(); }
+//! \brief obtains the size of the selected 2d format container.
+inline size_t IO_option_parser::formats_2d_size() const
+{ return m_formats_2d.size(); }
+
+//! \brief determines whether a snapshot of the scene should be taken.
+inline Boolean IO_option_parser::do_snapshot() const { return m_snapshot; }
+
+//! \brief obtains the begin iterator of the selected 3d format container.
+inline
+IO_option_parser::Format_3d_const_iter IO_option_parser::formats_3d_begin() const
+{ return m_formats_3d.begin(); }
+
+//! \brief obtains the past-the-end iterator of the selected 3d format container.
+inline
+IO_option_parser::Format_3d_const_iter IO_option_parser::formats_3d_end() const
+{ return m_formats_3d.end(); }
+
+//! \brief obtains the size of the selected 3d format container.
+inline size_t IO_option_parser::formats_3d_size() const
+{ return m_formats_3d.size(); }
 
 //! \brief determines whether to save to output files.
-inline Boolean IO_option_parser::do_save() const { return m_save; }
+inline Boolean IO_option_parser::do_export() const { return m_export; }
 
 //! \brief determines whether the operation is interactive.
 inline Boolean IO_option_parser::is_interactive() const
@@ -213,6 +262,41 @@ inline UnaryFunction IO_option_parser::for_each_dir(UnaryFunction func)
   if (!get_variable_map().count("input-path")) return func;
   return std::for_each(dirs_begin(), dirs_end(), func);
 }
+
+/*! Extractors of D (graphics) and 2D (image) file format types from the
+ * corresponding Id types.
+ */
+template <typename T> struct File_format;
+template <> struct File_format<File_format_2d::Id>
+{ typedef File_format_2d type; };
+template <> struct File_format<File_format_3d::Id>
+{ typedef File_format_3d type; };
+
+//! Import 3D (graphics) and 2D (image) file formats
+template <typename InputStream, typename Id>
+InputStream& import(InputStream& in, Id& format)
+{
+  typedef typename File_format<Id>::type                My_file_format;
+  std::string token;
+  in >> token;
+  for (size_t i = 0; i < My_file_format::NUM_IDS; ++i) {
+    if (! My_file_format::compare_name(i, token)) continue;
+    format = static_cast<Id>(i);
+    return in;
+  }
+  throw po::validation_error(po::validation_error::invalid_option_value);
+  return in;
+}
+
+//! Import 2D (image) file formats
+template <typename InputStream>
+InputStream& operator>>(InputStream& in, File_format_2d::Id& format)
+{ return import(in, format); }
+
+//! Import 3D (graphics) file formats
+template <typename InputStream>
+InputStream& operator>>(InputStream& in, File_format_3d::Id& format)
+{ return import(in, format); }
 
 SGAL_END_NAMESPACE
 

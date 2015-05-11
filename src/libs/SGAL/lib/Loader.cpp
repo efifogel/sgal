@@ -31,6 +31,7 @@
 #include "SGAL/Transform.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Indexed_face_set.hpp"
+#include "SGAL/File_format_3d.hpp"
 
 #include "Vrml_scanner.hpp"
 
@@ -99,7 +100,7 @@ int Loader::load(const char* filename, Scene_graph* sg)
 //! \brief reads a scene graph from a file in the STL binary format.
 int Loader::read_stl(std::ifstream& stl_stream, Scene_graph* scene_graph)
 {
-  scene_graph->set_input_format_id(File_format::ID_STL);
+  scene_graph->set_input_format_id(File_format_3d::ID_STL);
 
   Group* group = new Group;
   scene_graph->set_root(Shared_group(group));

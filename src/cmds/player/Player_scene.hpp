@@ -223,26 +223,29 @@ protected:
 
   SGAL::Boolean m_simulate;
 
-  /*! \brief draws guides that separate the window into 4x5 rectangles. */
+  /*! Draw guides that separate the window into 4x5 rectangles. */
   void draw_grid();
 
-  /*! \brief prints statistic information. */
+  /*! Print statistic information. */
   void print_stat();
 
-  /*! \brief updates directory search. */
+  /*! Updates directory search. */
   void update_data_dirs();
 
-  /*! \brief indulges user requests from the command line. */
+  /*! Indulge user requests from the command line. */
   void indulge_user();
 
-  /*! \brief print geometry information of Index_face_set. */
+  /*! Print geometry information of Index_face_set. */
   void print_geometry_info(SGAL::Indexed_face_set* ifs);
 
-  /*! \brief print geometry information of Box. */
+  /*! Print geometry information of Box. */
   void print_geometry_info(SGAL::Box* box);
 
-  /*! Save the scene. */
-  void save_scene();
+  /*! Take a snapshot of the scene. */
+  void snapshot_scene();
+
+  /*! Export the scene. */
+  void export_scene();
 
 private:
   typedef std::list<fi::path>                                   Path_list;

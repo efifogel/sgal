@@ -37,6 +37,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Snapshot.hpp"
+#include "SGAL/File_format_2d.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -54,17 +55,13 @@ const std::string Snapshot::s_tag = "Snapshot";
 Container_proto* Snapshot::s_prototype(nullptr);
 
 // Default values
-const std::string Snapshot::s_def_dir_name = ".";
-const std::string Snapshot::s_def_file_name = "snaphsot";
-const Snapshot::File_format Snapshot::s_def_file_format = Snapshot::FF_ppm;
-const Uint Snapshot::s_def_quality = 50;
+const std::string Snapshot::s_def_dir_name(".");
+const std::string Snapshot::s_def_file_name("snaphsot");
+const File_format_2d::Id Snapshot::s_def_file_format(File_format_2d::ID_PPM);
+const Uint Snapshot::s_def_quality(50);
 const Boolean Snapshot::s_def_flip(true);
 
 REGISTER_TO_FACTORY(Snapshot, "Snapshot");
-
-/*! File format names */
-const char* Snapshot::s_file_format_names[] =
-  { "", "jpg", "png", "gif", "tiff", "bmp", "ppm", "pgm", "pbm" };
 
 //! \brief constructor
 Snapshot::Snapshot(Boolean proto) :
@@ -110,6 +107,7 @@ Action::Trav_directive Snapshot::draw(Draw_action* draw_action)
 //! \brief allocates space for the image.
 Boolean Snapshot::allocate_space(Draw_action* action)
 {
+  if (!m_image) m_image.reset(new Image);
   Uint width = m_image->get_width();
   Uint height = m_image->get_height();
   Image::Format format = m_image->get_format();
@@ -170,14 +168,14 @@ void Snapshot::write_image()
     oss << m_count++;
     file_name += "_" + oss.str();
   }
-  file_name += std::string(".") + s_file_format_names[m_file_format];
+  file_name += std::string(".") + File_format_2d::get_name(m_file_format);
 
   Uint width = m_image->get_width();
   Uint height = m_image->get_height();
   Uchar* pixels = static_cast<Uchar *>(m_image->get_pixels());
   Magick::Image image(width, height, "RGB", Magick::CharPixel, pixels);
   if (m_flip) image.flip();
-  image.magick(s_file_format_names[m_file_format]);
+  image.magick(File_format_2d::get_name(m_file_format));
   image.write(file_name);
 }
 
@@ -269,15 +267,15 @@ void Snapshot::set_attributes(Element* elem)
       continue;
     }
     if (name == "fileFormat") {
-      std::string str = strip_double_quotes(value);
-      Uint i;
-      for (i = 0; i < FF_num; ++i) {
-        if (str == s_file_format_names[i]) {
-          set_file_format(static_cast<File_format>(i));
+      auto str = strip_double_quotes(value);
+      size_t i;
+      for (i = 0; i < File_format_2d::NUM_IDS; ++i) {
+        if (File_format_2d::compare_name(i, str)) {
+          set_file_format(static_cast<File_format_2d::Id>(i));
           break;
         }
       }
-      if (i == FF_num) {
+      if (i == File_format_2d::NUM_IDS) {
         std::cerr << "Illegal file format (" << value.c_str() << ")!"
                   << std::endl;
       }
@@ -300,7 +298,7 @@ void Snapshot::set_attributes(Element* elem)
        ++cai)
   {
     const auto& name = elem->get_name(cai);
-    Shared_container cont = elem->get_value(cai);
+    auto cont = elem->get_value(cai);
     if (name == "image") {
       m_image = boost::dynamic_pointer_cast<Image>(cont);
       elem->mark_delete(cai);
@@ -342,8 +340,8 @@ void Snapshot::write_field(const Field_info* field_info, Formatter* formatter)
   if (vrml_formatter) {
     if (FILE_FORMAT == field_info->get_id()) {
       vrml_formatter->single_string(field_info->get_name(),
-                                    s_file_format_names[m_file_format],
-                                    s_file_format_names[s_def_file_format]);
+                                    File_format_2d::get_name(m_file_format),
+                                    File_format_2d::get_name(s_def_file_format));
       return;
     }
   }

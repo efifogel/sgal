@@ -92,8 +92,8 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Write this container.
-   * \param[in] formatter The formatter to use for the writing, e.g., VRML.
+  /*! Export this container.
+   * \param[in] formatter The formatter to use for exporting, e.g., VRML.
    */
   virtual void write(Formatter* formatter);
 
@@ -108,7 +108,7 @@ public:
   void set_image(Shared_image image);
 
   /*! Set the 2D array that represents the height map.
-   * \param height_map (in) the new height_map field.
+   * \param[in] height_map the new height_map field.
    */
   void set_height_map(Shared_coord_array_1d height_map);
 
@@ -118,7 +118,7 @@ public:
   Shared_coord_array_1d get_height_map() const;
 
   /*! Set the number of grid points along the x-dimension.
-   * \param x[in]_dimension the number of grid points along the x-dimension.
+   * \param[in] x_dimension the number of grid points along the x-dimension.
    */
   void set_x_dimension(Uint x_dimension);
 

@@ -97,9 +97,9 @@ public:
   /*! Draw the node (does nothing). */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
 
-  /*! Write a field of this container.
+  /*! Export a field of this container.
    * \param[in] field_info The field information record.
-   * \param[in] formatter The formatter to use for the writing, e.g., VRML.
+   * \param[in] formatter The formatter to use for exporting, e.g., VRML.
    */
   virtual void write_field(const Field_info* field_info, Formatter* formatter);
 

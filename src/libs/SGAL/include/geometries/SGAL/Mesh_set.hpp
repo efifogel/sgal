@@ -91,14 +91,14 @@ public:
   /*! Draw the representation. */
   virtual void draw_geometry(Draw_action* action) = 0;
 
-  /*! Write this container.
-   * \param formatter The formatter to use for the writing, e.g., VRML.
+  /*! Export this container.
+   * \param[in] formatter The formatter to use for exporting, e.g., VRML.
    */
   virtual void write(Formatter* formatter);
 
-  /*! Write a field of this container.
+  /*! Export a field of this container.
    * \param[in] field_info The field information record.
-   * \param[in] formatter The formatter to use for the writing, e.g., VRML.
+   * \param[in] formatter The formatter to use for exporting, e.g., VRML.
    */
   virtual void write_field(const Field_info* field_info, Formatter* formatter);
 
@@ -167,26 +167,26 @@ public:
   /// \name Change Recators
   //@{
   /*! Respond to a change in the coordinate-index array.
-   * \param field_info (in) the information record of the field that caused
-   *                   the change.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
    */
   virtual void coord_indices_changed(const Field_info* field_info);
 
   /*! Respond to a change in the normal-index array.
-   * \param field_info (in) the information record of the field that caused
-   *                   the change.
+   * \param[in] field_info the information record of the field that caused
+   *            the change.
    */
   virtual void normal_indices_changed(const Field_info* field_info);
 
   /*! Respond to a change in the color-index array.
-   * \param field_info (in) the information record of the field that caused
-   *                   the change.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
    */
   virtual void color_indices_changed(const Field_info* field_info);
 
   /*! Respond to a change in the texture-coordinate index array.
-   * \param field_info (in) the information record of the field that caused
-   *                   the change.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
    */
   virtual void tex_coord_indices_changed(const Field_info* field_info);
   //@}
@@ -555,20 +555,20 @@ protected:
   void collapse_identical_coordinates(Index_array& indices);
 
   /*! Export a triangular facet.
-   * \param p1 (in) the point of the first vertex.
-   * \param p2 (in) the point of the second vertex.
-   * \param p3 (in) the point of the third vertex.
-   * \param stl_formater (in) the formatter.
+   * \param[in] p1 the point of the first vertex.
+   * \param[in] p2 the point of the second vertex.
+   * \param[in] p3 the point of the third vertex.
+   * \param[in] stl_formater the formatter.
    */
   void write_facet(const Vector3f& p1, const Vector3f& p2,
                    const Vector3f& p3, Formatter* formatter);
 
   /*! Export a quadrilateral facet.
-   * \param p1 (in) the point of the first vertex.
-   * \param p2 (in) the point of the second vertex.
-   * \param p3 (in) the point of the third vertex.
-   * \param p4 (in) the point of the forth vertex.
-   * \param stl_formater (in) the formatter.
+   * \param[in] p1 the point of the first vertex.
+   * \param[in] p2 the point of the second vertex.
+   * \param[in] p3 the point of the third vertex.
+   * \param[in] p4 the point of the forth vertex.
+   * \param[in] stl_formater the formatter.
    */
   void write_facet(const Vector3f& p1, const Vector3f& p2,
                    const Vector3f& p3, const Vector3f& p4,

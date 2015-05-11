@@ -78,7 +78,6 @@ public:
     ROTATED,
     TRUE_DRAW_PRIMAL,
     TRUE_DRAW_AOS,
-    EXPORT,
     LAST
   };
 
@@ -269,9 +268,6 @@ protected:
   /*! Indicates that the coordinates were rotated. */
   Boolean m_rotated;
 
-  /*! When trigerred the CGM is exported. */
-  Boolean m_export;
-
   /*! Indicates wether to draw the polyhedron or its Gaussian map. */
   Boolean m_draw_aos;
 
@@ -405,11 +401,6 @@ protected:
 
   virtual void isect_primary() {}
 
-  /*! Export the planar maps associated with the faces of the unit sphere.
-   */
-  void output(const Field_info* /* field_info */)
-  { SGAL_assertion_msg(0, "Not implemented yet!"); }
-
   /*! \brief imports  the planar maps associated with the faces of the unit
    * sphere.
    */
@@ -448,7 +439,6 @@ public:
   Boolean* translated_handle(const Field_info*) { return &m_translated; }
   Boolean* rotated_handle(const Field_info*) { return &m_rotated; }
   Boolean* draw_primal_handle(const Field_info*) { return &m_draw_primal; }
-  Boolean* export_handle(const Field_info*) { return &m_export; }
   Vector3f* aos_edge_colors1_handle(const Field_info*)
    { return &m_aos_edge_colors[0]; }
   Vector3f* aos_edge_colors2_handle(const Field_info*)

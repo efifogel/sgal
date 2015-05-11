@@ -453,18 +453,6 @@ void Spherical_gaussian_map_base_geo::init_prototype()
                                           Field_info::RULE_EXPOSED_FIELD,
                                           draw_aos_func));
 
-  // export
-  exec_func =
-    static_cast<Execution_function>(&Spherical_gaussian_map_base_geo::output);
-  Boolean_handle_function export_func =
-    static_cast<Boolean_handle_function>
-    (&Spherical_gaussian_map_base_geo::export_handle);
-  s_prototype->add_field_info(new SF_bool(EXPORT,
-                                          "export",
-                                          Field_info::RULE_EXPOSED_FIELD,
-                                          export_func,
-                                          exec_func));
-
   // aosEdgeColor1
   Vector3f_handle_function aos_edge_colors1_func =
     static_cast<Vector3f_handle_function>

@@ -23,7 +23,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Node.hpp"
-#include "SGAL/File_format.hpp"
+#include "SGAL/File_format_3d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -51,7 +51,7 @@ public:
   };
 
   /*! Constructor.
-   * \param proto (in) determines whether to construct a prototype.
+   * \param[in] proto determines whether to construct a prototype.
    */
   Exporter(Boolean proto = false);
 
@@ -89,7 +89,7 @@ public:
   Boolean* trigger_handle(const Field_info*) { return &m_trigger; }
   std::string* dir_name_handle(const Field_info*) { return &m_dir_name; }
   std::string* file_name_handle(const Field_info*) { return &m_file_name; }
-  File_format::Id* file_format_handle(const Field_info*)
+  File_format_3d::Id* file_format_handle(const Field_info*)
   { return &m_file_format; }
   Boolean* separate_handle(const Field_info*) { return &m_separate; }
   //@}
@@ -102,13 +102,13 @@ public:
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
-  /*! Write a field of this container.
+  /*! Export a field of this container.
    * \param[in] field_info The field information record.
-   * \param[in] formatter The formatter to use for the writing, e.g., VRML.
+   * \param[in] formatter The formatter to use for the exporting, e.g., VRML.
    */
   virtual void write_field(const Field_info* field_info, Formatter* formatter);
 
-  /*! Execute the engine---write the content of the scene graph to a file. */
+  /*! Execute the engine---export the content of the scene graph. */
   virtual void execute(const Field_info* field_info);
 
   /*! Set the name of the dir where the snapshot is written to.
@@ -129,11 +129,11 @@ public:
 
   /*! Set the file format.
    */
-  void set_file_format(File_format::Id format);
+  void set_file_format(File_format_3d::Id format);
 
   /*! Obtain the file format.
    */
-  File_format::Id get_file_format() const;
+  File_format_3d::Id get_file_format() const;
 
   /*! Indicates whether to save different geometries in separate files. */
   Boolean m_separate;
@@ -153,7 +153,7 @@ protected:
   std::string m_file_name;
 
   /*! The format of the file the image is written to. */
-  File_format::Id m_file_format;
+  File_format_3d::Id m_file_format;
 
 private:
   /*! The tag that identifies this container type. */
@@ -171,7 +171,7 @@ private:
   // Default values for fields
   const static std::string s_def_dir_name;
   const static std::string s_def_file_name;
-  const static File_format::Id s_def_file_format;
+  const static File_format_3d::Id s_def_file_format;
   const static Boolean s_def_separate;
 };
 
@@ -200,11 +200,11 @@ inline const std::string& Exporter::get_file_name() const
 { return m_file_name; }
 
 //! \brief sets the file format.
-inline void Exporter::set_file_format(File_format::Id format)
+inline void Exporter::set_file_format(File_format_3d::Id format)
 { m_file_format = format; }
 
 //! \brief obtains the file format.
-inline File_format::Id Exporter::get_file_format() const
+inline File_format_3d::Id Exporter::get_file_format() const
 { return m_file_format; }
 
 //! \brief obtains the tag (type) of the container.

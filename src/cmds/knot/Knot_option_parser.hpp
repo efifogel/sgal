@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Knot_option_parser.hpp 5029 2007-09-03 08:43:47Z efif $
-// $Revision: 5029 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef KNOT_OPTION_PARSER_HPP

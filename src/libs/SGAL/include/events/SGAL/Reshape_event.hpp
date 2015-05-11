@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_RESHAPE_EVENT_HPP
@@ -111,21 +108,20 @@ public:
 #pragma warning( pop )
 #endif
 
-/*! \brief obtains the set of agents registered to process this type of event.
- */
+//! \brief obtains the set of agents registered to process this type of event.
 inline const std::set<Agent*>& Reshape_event::get_set(void) const
 { return s_set; }
 
-/*! \brief sets the window width */
+//! \brief sets the window width.
 inline void Reshape_event::set_width(Uint width) { m_width = width; }
 
-/*! \brief obtains the window width */
+//! \brief obtains the window width.
 inline Uint Reshape_event::get_width() const { return m_width; }
 
-/*! \brief sets the window height */
+//! \brief sets the window height.
 inline void Reshape_event::set_height(Uint height) { m_height = height; }
 
-/*! \brief obtains the window height */
+//! \brief obtains the window height.
 inline Uint Reshape_event::get_height() const { return m_height; }
 
 SGAL_END_NAMESPACE

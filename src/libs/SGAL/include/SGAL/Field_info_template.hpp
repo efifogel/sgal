@@ -176,7 +176,7 @@ public:
    */
   virtual Boolean is_scalar() const { return Is_scalar<T>::value(); }
 
-  /*! Write a field using a given formatter.
+  /*! Export a field using a given formatter.
    * \param container (in) The container that contains the field.
    * \param formatter (in) The given formatter, e.g., VRML.
    */

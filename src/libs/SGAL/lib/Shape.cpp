@@ -528,7 +528,7 @@ void Shape::field_changed(const Field_info* field_info)
 //! \brief writes this container.
 void Shape::write(Formatter* formatter)
 {
-  SGAL_TRACE_CODE(Trace::WRITING,
+  SGAL_TRACE_CODE(Trace::EXPORT_3D,
                   std::cout << "Shape: " << "Tag: " << get_tag()
                   << ", name: " << get_name()
                   << std::endl;);

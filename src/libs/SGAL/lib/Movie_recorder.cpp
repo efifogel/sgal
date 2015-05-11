@@ -454,27 +454,31 @@ Container_proto* Movie_recorder::get_prototype()
 void Movie_recorder::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "movieFileName") {
       set_movieFileName(value);
       elem->mark_delete(ai);
+      continue;
     }
-    else if (name == "hintFileName") {
+    if (name == "hintFileName") {
       SetHintFileName(value);
       elem->mark_delete(ai);
+      continue;
     }
-    else if (name == "totalFrames") {
+    if (name == "totalFrames") {
       SetTotalFrames(boost::lexical_cast<Uint>(value));
       elem->mark_delete(ai);
+      continue;
     }
-    else if (name == "mode") {
+    if (name == "mode") {
       SetRecordingMode(value);
       elem->mark_delete(ai);
+      continue;
     }
-    else if (name == "transmitterIP") {
+    if (name == "transmitterIP") {
       m_transmitterIP = value;
 /*//      strcpy(m_transmitterIP, value.c_str());
       hostent *pHostent = gethostbyname("meiron.enbaya.org");
@@ -488,22 +492,26 @@ void Movie_recorder::set_attributes(Element* elem)
         pHostent1 = gethostbyaddr ((char*) &res, sizeof(res),AF_INET);
       }*/
       elem->mark_delete(ai);
+      continue;
     }
-    else if (name == "transmitterPort") {
+    if (name == "transmitterPort") {
       m_transmitterPort = boost::lexical_cast<Uint>(value);
       elem->mark_delete(ai);
+      continue;
     }
-    else if (name == "receiverIP") {
+    if (name == "receiverIP") {
       m_receiverIP = value;
 //      strcpy(m_receiverIP, value.c_str());
 
       elem->mark_delete(ai);
+      continue;
     }
-    else if (name == "receiverPort") {
+    if (name == "receiverPort") {
       m_receiverPort = boost::lexical_cast<Uint>(value);
       elem->mark_delete(ai);
+      continue;
     }
-    else if (name == "cif") {
+    if (name == "cif") {
       StringVector aParametrs = std::stringUtils::SplitStringByToken(value, ",");
       assert(aParametrs.size() == 2);
       m_width = atoi(aParametrs[0].c_str());
@@ -512,10 +520,12 @@ void Movie_recorder::set_attributes(Element* elem)
       m_horzBlocks = m_width/BLOCK_SIZE;
       m_vertBlocks = m_height/BLOCK_SIZE;
       elem->mark_delete(ai);
+      continue;
     }
-    else if (name == "hintType") {
+    if (name == "hintType") {
       m_hintType = value;
       elem->mark_delete(ai);
+      continue;
     }
   }
   // Remove all the marked attributes:

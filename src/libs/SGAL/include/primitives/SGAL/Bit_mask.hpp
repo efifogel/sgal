@@ -56,8 +56,6 @@ public:
   inline void set(bool true_false)
   { m_mask = (true_false) ? ~(Double_word)0 : 0; }
 
-  // void Write(EOutput* out);
-
   inline Bit_mask& set(const Bit_mask& bm)
   { m_mask = bm.m_mask; return* this; }
 

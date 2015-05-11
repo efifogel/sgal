@@ -604,7 +604,7 @@ void Mesh_set::clear_tex_coord_indices()
 //! \brief writes this container.
 void Mesh_set::write(Formatter* formatter)
 {
-  SGAL_TRACE_CODE(Trace::WRITING,
+  SGAL_TRACE_CODE(Trace::EXPORT_3D,
                   std::cout << "Mesh_set: " << "Tag: " << get_tag()
                   << ", name: " << get_name()
                   << std::endl;);
@@ -848,12 +848,12 @@ void Mesh_set::collapse_identical_coordinates(Index_array& indices)
   set_coord_array(shared_coords);
 }
 
-//! \brief exports a triangular facet.
+//! \brief writes a triangular facet.
 void Mesh_set::write_facet(const Vector3f& p1, const Vector3f& p2,
                            const Vector3f& p3, Formatter* formatter)
 {
   if (Vector3f::collinear(p1, p2, p3)) {
-    std::cerr << "Cannot export a triangular facet using collinear points!"
+    std::cerr << "Cannot write a triangular facet using collinear points!"
               << std::endl;
     return;
   }
@@ -862,7 +862,7 @@ void Mesh_set::write_facet(const Vector3f& p1, const Vector3f& p2,
   formatter->facet(p1, p2, p3, n);
 }
 
-//! \brief exports a quadrilateral facet.
+//! \brief writes a quadrilateral facet.
 void Mesh_set::write_facet(const Vector3f& p1, const Vector3f& p2,
                            const Vector3f& p3, const Vector3f& p4,
                            Formatter* formatter)

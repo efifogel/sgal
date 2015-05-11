@@ -46,7 +46,7 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Field.hpp"
-#include "SGAL/Stl_formatter.hpp"
+#include "SGAL/Vrml_formatter.hpp"
 
 #include "SCGAL/Exact_polyhedron.hpp"
 #include "SCGAL/compute_planes.hpp"
@@ -315,8 +315,8 @@ Container_proto* Boolean_operation::get_prototype()
 //! \brief writes this container.
 void Boolean_operation::write(Formatter* formatter)
 {
-  Stl_formatter* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
-  if (stl_formatter) return;
+  Vrml_formatter* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
+  if (vrml_formatter) Node::write(formatter);
 }
 
 SGAL_END_NAMESPACE

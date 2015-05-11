@@ -125,19 +125,19 @@ public:
    */
   virtual void add_to_scene(Scene_graph* /* scene_graph */) {}
 
-  /*! Write this container.
-   * \param[in] formatter The formatter to use for the writing, e.g., VRML.
+  /*! Export this container.
+   * \param[in] formatter The formatter to use for exporting, e.g., VRML.
    */
   virtual void write(Formatter* formatter);
 
-  /*! Write all fields of this container.
-   * \param[in] formatter The formatter to use for the writing, e.g., VRML.
+  /*! Export all fields of this container.
+   * \param[in] formatter The formatter to use for exporting, e.g., VRML.
    */
   virtual void write_fields(Formatter* formatter);
 
-  /*! Write a field of this container.
+  /*! Export a field of this container.
    * \param[in] field_info The field information record.
-   * \param[in] formatter The formatter to use for the writing, e.g., VRML.
+   * \param[in] formatter The formatter to use for exporting, e.g., VRML.
    */
   virtual void write_field(const Field_info* field_info, Formatter* formatter);
 

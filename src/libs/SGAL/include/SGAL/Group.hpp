@@ -153,12 +153,12 @@ public:
 
   /*! Associate the group node with a scene graph, so that the touch sensor
    * node, if exists, is registered with the scene graph.
-   * \param scene_graph (in) The scene graph.
+   * \param[in] scene_graph The scene graph.
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
-  /*! Write this container.
-   * \param formatter (in) The formatter to use, e.g., VRML.
+  /*! Export this container.
+   * \param[in] formatter The formatter to use for exporting, e.g., VRML.
    */
   virtual void write(Formatter* formatter);
 
@@ -199,7 +199,7 @@ public:
   void set_invisible();
 
   /*! Set the flag that indicates whether the shape should be rendered.
-   * \param flag (in) The input flag.
+   * \param[in] flag The input flag.
    */
   void set_visible(Boolean flag);
 
@@ -210,7 +210,7 @@ public:
 
   /* Add a child to the array of children of the group.
    * Lights appear in front of the sequence followed by all the rest.
-   * \param node (in) the child node to add.
+   * \param[in] node the child node to add.
    */
   void add_child(Shared_container node);
 
@@ -239,17 +239,17 @@ public:
   const Vector3f& get_bbox_size() const;
 
   /* Remove a given child from the sequence of children of the group.
-   * \param node (in) the child node to remove.
+   * \param[in] node the child node to remove.
    */
   void remove_child(Shared_container node);
 
   /*! Add a touch sensor to the group.
-   * \param (in) touch_sensor The touch sensor node to add.
+   * \param[in] touch_sensor The touch sensor node to add.
    */
   void add_touch_sensor(Shared_touch_sensor touch_sensor);
 
   /*! Remove a touch sensor from the group.
-   * \param (in) touch_sensor The touch sensor node to remove.
+   * \param[in] touch_sensor The touch sensor node to remove.
    */
   void remove_touch_sensor(Shared_touch_sensor touch_sensor);
 
@@ -259,7 +259,7 @@ public:
   Boolean has_touch_sensor() const;
 
   /*! Add a light source to the group.
-   * \param light (in) The ligh node to add.
+   * \param[in] light The ligh node to add.
    */
   void add_light(Shared_light light);
 

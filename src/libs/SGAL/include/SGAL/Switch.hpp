@@ -103,8 +103,8 @@ public:
   /*! Clean the sphere bound of the group. */
   virtual void clean_sphere_bound();
 
-  /*! Write this container.
-   * \param formatter (in) the formatter to use; e.g., VRML.
+  /*! Export this container.
+   * \param[in] formatter the formatter to use for exporting; e.g., VRML.
    */
   virtual void write(Formatter* formatter);
 

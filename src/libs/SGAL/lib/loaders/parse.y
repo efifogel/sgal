@@ -241,13 +241,13 @@ SGAL_END_NAMESPACE
 
 Start           : VRML vrmlScene
                 {
-                  scene_graph->set_input_format_id(File_format::ID_WRL);
+                  scene_graph->set_input_format_id(File_format_3d::ID_WRL);
                   scene_graph->set_root($2);
                 }
                 | K_SOLID IDENTIFIER facets K_SOLID_END IDENTIFIER
                 {
                   /* STL */
-                  scene_graph->set_input_format_id(File_format::ID_STL);
+                  scene_graph->set_input_format_id(File_format_3d::ID_STL);
                   if ($2.compare($5) != 0)
                     error(yyla.location,
                           std::string("Non matching solid names \"") +

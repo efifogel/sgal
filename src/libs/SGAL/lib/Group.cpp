@@ -404,7 +404,7 @@ Boolean Group::detach_context(Context* context)
 //! \brief writes this container.
 void Group::write(Formatter* formatter)
 {
-  SGAL_TRACE_CODE(Trace::WRITING,
+  SGAL_TRACE_CODE(Trace::EXPORT_3D,
                   std::cout << "Group: " << "Tag: " << get_tag()
                   << ", name: " << get_name()
                   << std::endl;);

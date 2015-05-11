@@ -88,6 +88,7 @@
 #include "SGAL/Stl_formatter.hpp"
 #include "SGAL/Group.hpp"
 #include "SGAL/Node.hpp"
+#include "SGAL/Snapshot.hpp"
 
 #if (defined USE_GLUT)
 #include "SGLUT/Glut_window_item.hpp"
@@ -273,11 +274,44 @@ void Player_scene::create_scene()
 
   const std::string& output_filename = m_option_parser->get_output_file();
   if (output_filename.empty()) m_option_parser->set_output_file(filename);
-  if (m_option_parser->do_save()) save_scene();
+  if (m_option_parser->do_snapshot()) snapshot_scene();
+  if (m_option_parser->do_export()) export_scene();
 }
 
-//! Save the scene.
-void Player_scene::save_scene()
+//! \brief takes a snapshot of the scene.
+void Player_scene::snapshot_scene()
+{
+  const auto& output_pathname = m_option_parser->get_output_path();
+  const auto& output_filename = m_option_parser->get_output_file();
+  if (0 == m_option_parser->formats_2d_size()) {
+    boost::shared_ptr<SGAL::Snapshot> snapshot(new SGAL::Snapshot);
+    SGAL_assertion(snapshot);
+    m_scene_graph->get_root()->add_child(snapshot);
+    snapshot->add_to_scene(m_scene_graph);
+    if (!output_pathname.empty()) snapshot->set_dir_name(output_pathname);
+    if (!output_filename.empty()) snapshot->set_file_name(output_filename);
+    snapshot->trigger();
+    return;
+  }
+
+  // Iterate over all requested formats.
+  for (auto it = m_option_parser->formats_2d_begin();
+       it != m_option_parser->formats_2d_end(); ++it)
+  {
+    boost::shared_ptr<SGAL::Snapshot> snapshot(new SGAL::Snapshot);
+    SGAL_assertion(snapshot);
+    m_scene_graph->get_root()->add_child(snapshot);
+    snapshot->add_to_scene(m_scene_graph);
+    if (!output_pathname.empty()) snapshot->set_dir_name(output_pathname);
+    if (!output_filename.empty()) snapshot->set_file_name(output_filename);
+    SGAL::File_format_2d::Id format_id = *it;
+    snapshot->set_file_format(format_id);
+    snapshot->trigger();
+  }
+}
+
+//! \brief exports the scene.
+void Player_scene::export_scene()
 {
   // Save to output files.
   const auto& output_filename = m_option_parser->get_output_file();
@@ -285,42 +319,42 @@ void Player_scene::save_scene()
   fi::path output_path(output_pathname);
   auto input_format_id = m_scene_graph->get_input_format_id();
 
-  if (0 == m_option_parser->formats_size()) {
+  if (0 == m_option_parser->formats_3d_size()) {
     SGAL_assertion(!output_filename.empty());
     fi::path output_filename_path(output_filename);
     if (! output_filename_path.has_extension()) {
       const std::string& new_extension =
-        SGAL::File_format::get_name(input_format_id);
+        SGAL::File_format_3d::get_name(input_format_id);
       output_filename_path.replace_extension(new_extension);
     }
     output_path /= output_filename_path;
     m_scene_graph->write(output_path.string(), input_format_id);
+    return;
   }
-  else {
-    // Iterate over all requested formats.
-    for (auto it = m_option_parser->formats_begin();
-         it != m_option_parser->formats_end(); ++it)
-    {
-      SGAL::File_format::Id format_id = *it;
-      const auto& new_extension = SGAL::File_format::get_name(format_id);
-      fi::path output_filename_path(output_filename);
-      output_filename_path.replace_extension(new_extension);
-      output_path /= output_filename_path;
-      m_scene_graph->write(output_path.string(), format_id);
 
-      // #if BOOST_VERSION <= 104800
-      // // Workaround a bug in boost version 1.48 and lower:
-      // fi::path tmp_path(output_filename);
-      // fi::path output_path = tmp_path.parent_path();
-      // output_path /= tmp_path.stem();
-      // std::string final = output_path.string() + "." + new_extension;
-      // m_scene_graph->write(final, format_id);
-      // #else
-      // fi::path output_filename_path(output_filename);
-      // output_filename_path.replace_extension(new_extension);
-      // m_scene_graph->write(output_filename_path.string(), format_id);
-      // #endif
-    }
+  // Iterate over all requested formats.
+  for (auto it = m_option_parser->formats_3d_begin();
+       it != m_option_parser->formats_3d_end(); ++it)
+  {
+    SGAL::File_format_3d::Id format_id = *it;
+    const auto& new_extension = SGAL::File_format_3d::get_name(format_id);
+    fi::path output_filename_path(output_filename);
+    output_filename_path.replace_extension(new_extension);
+    output_path /= output_filename_path;
+    m_scene_graph->write(output_path.string(), format_id);
+
+    // #if BOOST_VERSION <= 104800
+    // // Workaround a bug in boost version 1.48 and lower:
+    // fi::path tmp_path(output_filename);
+    // fi::path output_path = tmp_path.parent_path();
+    // output_path /= tmp_path.stem();
+    // std::string final = output_path.string() + "." + new_extension;
+    // m_scene_graph->write(final, format_id);
+    // #else
+    // fi::path output_filename_path(output_filename);
+    // output_filename_path.replace_extension(new_extension);
+    // m_scene_graph->write(output_filename_path.string(), format_id);
+    // #endif
   }
 }
 

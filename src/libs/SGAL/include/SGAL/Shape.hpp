@@ -142,8 +142,8 @@ public:
   /*! Add the container to the given scene. */
   void add_to_scene(Scene_graph* sg);
 
-  /*! Write this container.
-   * \param formatter (in) The formatter to use, e.g., VRML.
+  /*! Export this container.
+   * \param[in] formatter The formatter to use for exporting, e.g., VRML.
    */
   virtual void write(Formatter* formatter);
 

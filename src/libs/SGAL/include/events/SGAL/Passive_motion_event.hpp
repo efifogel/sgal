@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_PASSIVE_MOTION_EVENT_HPP
@@ -114,29 +111,28 @@ public:
 #pragma warning( pop )
 #endif
 
-/*! \brief obtains the set of agents registered to process this type of event.
- */
+//! \brief obtains the set of agents registered to process this type of event.
 inline const std::set<Agent*>& Passive_motion_event::get_set(void) const
 { return s_set; }
 
-/*! \brief sets the window where the event took place */
+//! \brief sets the window where the event took place.
 inline void Passive_motion_event::set_window_item(Window_item* item)
 { m_window_item = item; }
 
-/*! \brief obtains the window where the event took place */
+//! \brief obtains the window where the event took place.
 inline Window_item* Passive_motion_event::get_window_item() const
 { return m_window_item; }
 
-/*! \brief sets the x-coordinate of the cursor at the time of the event */
+//! \brief sets the x-coordinate of the cursor at the time of the event.
 inline void Passive_motion_event::set_x(Uint x) { m_x = x; }
 
-/*! \brief obtains the x-coordinate of the cursor at the time of the event */
+//! \brief obtains the x-coordinate of the cursor at the time of the event.
 inline Uint Passive_motion_event::get_x() const { return m_x; }
 
-/*! \brief sets the y-coordinate of the cursor at the time of the event */
+//! \brief sets the y-coordinate of the cursor at the time of the event.
 inline void Passive_motion_event::set_y(Uint y) { m_y = y; }
 
-/*! \brief obtains the x-coordinate of the cursor at the time of the event */
+//! \brief obtains the x-coordinate of the cursor at the time of the event.
 inline Uint Passive_motion_event::get_y() const { return m_y; }
 
 SGAL_END_NAMESPACE

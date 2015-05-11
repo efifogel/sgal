@@ -32,16 +32,16 @@ Uint Tick_event::s_num_ticks = 0;
 Tick_event::Tick_event(void) : Event(), m_est_tick_duration(0), m_sim_time(0)
 { ++s_num_ticks; }
 
-/*! \brief deligates the handling of the current event to the given agent. */
+//! \brief deligates the handling of the current event to the given agent.
 void Tick_event::handle(Agent* agent) { agent->handle(this); }
 
-/*! \brief exports an identification message to standard output. */
+//! \brief exports an identification message to standard output.
 void Tick_event::identify(void) { std::cout << "Event: Tick" << std::endl; }
 
-/*! \brief registers the event for a particular agent. */
+//! \brief registers the event for a particular agent.
 void Tick_event::doregister(Agent* agent) { s_set.insert(agent); }
 
-/*! \brief unregisters the event for a particular agent. */
+//! \brief unregisters the event for a particular agent.
 void Tick_event::unregister(Agent* agent) { s_set.erase(agent); }
 
 SGAL_END_NAMESPACE

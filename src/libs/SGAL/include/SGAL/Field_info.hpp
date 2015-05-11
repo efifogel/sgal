@@ -185,220 +185,270 @@ public:
    */
   virtual Boolean is_scalar() const = 0;
 
-  /*! Write a field using a given formatter.
-   * \param container (in) The container that contains the field.
-   * \param formatter (in) The given formatter, e.g., VRML.
+  /*! Export a field using a given formatter.
+   * \param[in] container The container that contains the field.
+   * \param[in] formatter The given formatter, e.g., VRML.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   virtual void write(Container* container, Formatter* formatter,
                      Boolean declaration = false) const = 0;
 
-  /*! Write the (single) Boolean field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the (single) Boolean field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, Boolean value, Boolean default_value,
              Boolean declaration = false) const;
 
-  /*! Write the (single) Boolean field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the (single) Boolean field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, Float value, Float default_value,
              Boolean declaration = false) const;
 
-  /*! Write the (single) Boolean field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the (single) Boolean field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, Uint value, Uint default_value,
              Boolean declaration = false) const;
 
-  /*! Write the (single) Boolean field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the (single) Boolean field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, Int32 value, Int32 default_value,
              Boolean declaration = false) const;
 
-  /*! Write the (single) Boolean field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the (single) Boolean field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, const Scene_time& value,
              const Scene_time& default_value,
              Boolean declaration = false) const;
 
-  /*! Write the (single) Boolean field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the (single) Boolean field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, const Vector2f& value,
              const Vector2f& default_value, Boolean declaration = false) const;
 
-  /*! Write the (single) Boolean field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the (single) Boolean field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, const Vector3f& value,
              const Vector3f& default_value, Boolean declaration = false) const;
 
-  /*! Write the (single) Boolean field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the (single) Boolean field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, const Vector4f& value,
              const Vector4f& default_value, Boolean declaration = false) const;
 
-  /*! Write the (single) Boolean field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the (single) Boolean field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, const Rotation& value,
              const Rotation& default_value, Boolean declaration = false) const;
 
-  /*! Write the (single) Boolean field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the (single) Boolean field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, const Sphere_bound& value,
              const Sphere_bound& default_value,
              Boolean declaration = false) const;
 
-  /*! Write the (single) Boolean field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the (single) Boolean field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, const std::string& value,
              const std::string& default_value,
              Boolean declaration = false) const;
 
-  /*! Write the (single) Boolean field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the (single) Boolean field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, Shared_container value,
              Shared_container default_value,
              Boolean declaration = false) const;
 
-  /*! Write the multi-boolean field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the multi-boolean field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, const Boolean_array& value,
              const Boolean_array& default_value,
              Boolean declaration = false) const;
 
-  /*! Write the multi-float field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the multi-float field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, const Float_array& value,
              const Float_array& default_value,
              Boolean declaration = false) const;
 
-  /*! Write the multi Uint field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the multi Uint field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, const Uint_array& value,
              const Uint_array& default_value,
              Boolean declaration = false) const;
 
-  /*! Write the multi-int field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the multi-int field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, const Int32_array& value,
              const Int32_array& default_value,
              Boolean declaration = false) const;
 
-  /*! Write the multi-scene-time field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the multi-scene-time field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, const Scene_time_array& value,
              const Scene_time_array& default_value,
              Boolean declaration = false) const;
 
-  /*! Write the multi-vector2f field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the multi-vector2f field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, const Vector2f_array& value,
              const Vector2f_array& default_value,
              Boolean declaration = false) const;
 
-  /*! Write the multi-vector3f field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the multi-vector3f field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, const Vector3f_array& value,
              const Vector3f_array& default_value,
              Boolean declaration = false) const;
 
-  /*! Write the multi-vector4f field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the multi-vector4f field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, const Vector4f_array& value,
              const Vector4f_array& default_value,
              Boolean declaration = false) const;
 
-  /*! Write the multi-rotation field.
-   * \param formatter The formatter.
-   * \param value The attribute value.
-   * \param default_value The attribute default value.
+  /*! Export the multi-rotation field.
+   * \param[in] formatter The formatter.
+   * \param[in] value The attribute value.
+   * \param[in] default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, const Rotation_array& value,
              const Rotation_array& default_value,
              Boolean declaration = false) const;
 
-  /*! Write the multisphere-bound field.
+  /*! Export the multisphere-bound field.
    * \param formatter The formatter.
    * \param value The attribute value.
    * \param default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, const Sphere_bound_array& value,
              const Sphere_bound_array& default_value,
              Boolean declaration = false) const;
 
-  /*! Write the multi-string field.
+  /*! Export the multi-string field.
    * \param formatter The formatter.
    * \param value The attribute value.
    * \param default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, const String_array& value,
              const String_array& default_value,
              Boolean declaration = false) const;
 
-  /*! Write the multi-shared container field.
+  /*! Export the multi-shared container field.
    * \param formatter The formatter.
    * \param value The attribute value.
    * \param default_value The attribute default value.
+   * \patam[in] declaration Indicates whether the exported statement is a
+   *            declaration or a definition.
    */
   void write(Formatter* formatter, const Shared_container_array& value,
              const Shared_container_array& default_value,
-             Boolean declaration = false) const;
+              Boolean declaration = false) const;
 
   /*! Obtain the name of a rule.
    */

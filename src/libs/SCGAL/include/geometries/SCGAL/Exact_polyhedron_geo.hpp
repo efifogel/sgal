@@ -77,7 +77,7 @@ public:
   typedef Exact_kernel                  Kernel;
 
   /*! Constructor.
-   * \param proto (in) determines whether to construct a prototype.
+   * \param[in] proto determines whether to construct a prototype.
    */
   Exact_polyhedron_geo(Boolean proto = false);
 
@@ -121,8 +121,8 @@ public:
    */
   virtual void draw(Draw_action* action);
 
-  /*! Write this container.
-   * \param formatter The formatter to use for the writing, e.g., VRML.
+  /*! Export this container.
+   * \param[in] formatter The formatter to use for the exporting, e.g., VRML.
    */
   virtual void write(Formatter* formatter);
 
@@ -174,8 +174,8 @@ public:
   void set_polyhedron(Exact_polyhedron& polyhedron);
 
   /*! Obtain the polyhedron data-structure.
-   * \param with_planes (in) indicates whether to clean the planes (as well
-   *        as the polyhedron itself.
+   * \param[in] with_planes indicates whether to clean the planes (as well
+   *            as the polyhedron itself.
    * \return the polyhedron data-structure.
    */
   const Exact_polyhedron& get_polyhedron(Boolean with_planes = false);
@@ -191,8 +191,8 @@ public:
   /// \name Change Recators
   //@{
   /*! Respond to a change in the coordinate array.
-   * \param field_info (in) the information record of the field that caused
-   *                   the change.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
    */
   virtual void coord_content_changed(const Field_info* field_info);
   //@}
@@ -239,7 +239,7 @@ protected:
     {}
 
     /*! Calculate the normal of a given (half)edge.
-     * \param edge (in) the given (half)edge.
+     * \param[in] edge the given (half)edge.
      */
     template <typename Halfedge>
     void operator()(Halfedge& edge)

@@ -914,7 +914,8 @@ void Appearance::field_changed(const Field_info* field_info)
 }
 
 //! \brief writes a field of this container.
-void Appearance::write_field(const Field_info* field_info, Formatter* formatter)
+void Appearance::write_field(const Field_info* field_info,
+                              Formatter* formatter)
 {
   auto* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
   if (vrml_formatter) {

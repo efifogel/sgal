@@ -39,7 +39,6 @@
 #include "SGAL/Tick_event.hpp"
 #include "SGAL/Motion_event.hpp"
 #include "SGAL/Passive_motion_event.hpp"
-#include "SGAL/Formatter.hpp"
 #include "SGAL/Execution_function.hpp"
 
 // #include "Os.h"
@@ -52,7 +51,7 @@ SGAL_BEGIN_NAMESPACE
 Boolean Touch_sensor::s_def_enabled(true);
 
 const std::string Touch_sensor::s_tag = "TouchSensor";
-Container_proto* Touch_sensor::s_prototype(NULL);
+Container_proto* Touch_sensor::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Touch_sensor, "Touch_sensor");
 
@@ -110,7 +109,7 @@ void Touch_sensor::init_prototype()
     static_cast<Vector3f_handle_function>(&Touch_sensor::hit_normal_handle);
   s_prototype->add_field_info(new SF_vector3f(HITNORMAL,
                                               "hitNormal",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_OUT,
                                               hit_normal_func));
 
   // hitPoint
@@ -118,7 +117,7 @@ void Touch_sensor::init_prototype()
     static_cast<Vector3f_handle_function>(&Touch_sensor::hit_point_handle);
   s_prototype->add_field_info(new SF_vector3f(HITPOINT,
                                               "hitPoint",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_OUT,
                                               hit_point_func));
 
   // hitTexCoord
@@ -126,7 +125,7 @@ void Touch_sensor::init_prototype()
     static_cast<Vector2f_handle_function>(&Touch_sensor::hit_tex_coord_handle);
   s_prototype->add_field_info(new SF_vector2f(HITTEXCOORD,
                                               "hitTexCoord",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_OUT,
                                               hit_tex_coord_func));
 
   // isActive
@@ -134,7 +133,7 @@ void Touch_sensor::init_prototype()
     static_cast<Boolean_handle_function>(&Touch_sensor::is_active_handle);
   s_prototype->add_field_info(new SF_bool(IS_ACTIVE,
                                           "isActive",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_OUT,
                                           is_active_func));
 
   // exActivate
@@ -144,7 +143,7 @@ void Touch_sensor::init_prototype()
   s_prototype->add_field_info(new SF_bool(EXACTIVATE,
                                           "exActivate",
                                           Field_info::RULE_EXPOSED_FIELD,
-                                          ex_activate_func, exec_func));
+                                          ex_activate_func, false, exec_func));
 
   // isOver
   auto is_over_func =
@@ -159,7 +158,7 @@ void Touch_sensor::init_prototype()
     static_cast<Scene_time_handle_function>(&Touch_sensor::touch_time_handle);
   s_prototype->add_field_info(new SF_time(TOUCH_TIME,
                                           "touchTime",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_OUT,
                                           touch_time_func));
 
   // overSelectionId
@@ -167,7 +166,7 @@ void Touch_sensor::init_prototype()
     static_cast<Uint_handle_function>(&Touch_sensor::over_selection_id_handle);
   s_prototype->add_field_info(new SF_uint(OVER_SELECTION_ID,
                                           "overSelectionId",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_OUT,
                                           over_selection_id_func));
 
   // activeSelectionId
@@ -176,7 +175,7 @@ void Touch_sensor::init_prototype()
     (&Touch_sensor::active_selection_id_handle);
   s_prototype->add_field_info(new SF_uint(ACTIVE_SELECTION_ID,
                                           "activeSelectionId",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_OUT,
                                           active_selection_id_func));
 
   // RoutedNode
@@ -225,8 +224,8 @@ void Touch_sensor::external_activate(const Field_info *)
 
   // Update and cascade the m_touch_time field
   //!\todo m_touch_time = m_execution_coordinator->get_scene_time();
-  Field* is_touch_time_field = get_field(TOUCH_TIME);
-  if (is_touch_time_field) is_touch_time_field->cascade();
+  auto* field = get_field(TOUCH_TIME);
+  if (field) field->cascade();
 }
 
 //! \brief
@@ -335,11 +334,9 @@ void Touch_sensor::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "enabled") {
       set_enabled(compare_to_true(value));
       elem->mark_delete(ai);
@@ -355,14 +352,6 @@ void Touch_sensor::add_to_scene(Scene_graph* sg)
 {
   m_scene_graph = sg;
   sg->add_touch_sensor(this);
-}
-
-//! \brief writes this container.
-void Touch_sensor::write(Formatter* formatter)
-{
-  formatter->container_begin(get_tag());
-  formatter->single_boolean("enabled", m_enabled, s_def_enabled);
-  formatter->container_end();
 }
 
 #if 0

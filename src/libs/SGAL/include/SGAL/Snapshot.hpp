@@ -30,6 +30,7 @@
 #include "SGAL/Node.hpp"
 #include "SGAL/Action.hpp"
 #include "SGAL/Image.hpp"
+#include "SGAL/File_format_2d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -60,20 +61,6 @@ public:
     FILE_FORMAT,
     IMAGE,
     LAST
-  };
-
-  /*! File formats */
-  enum File_format {
-    FF_illegal = 0,
-    FF_jpeg,
-    FF_png,
-    FF_gif,
-    FF_tiff,
-    FF_bmp,
-    FF_ppm,
-    FF_pgm,
-    FF_pbm,
-    FF_num
   };
 
   typedef boost::shared_ptr<Image>              Shared_image;
@@ -109,7 +96,8 @@ public:
   Boolean* trigger_handle(const Field_info*) { return &m_trigger; }
   std::string* dir_name_handle(const Field_info*) { return &m_dir_name; }
   std::string* file_name_handle(const Field_info*) { return &m_file_name; }
-  File_format* file_format_handle(const Field_info*) { return &m_file_format; }
+  File_format_2d::Id* file_format_handle(const Field_info*)
+  { return &m_file_format; }
   Shared_image* image_handle(const Field_info*) { return &m_image; }
   //@}
 
@@ -121,9 +109,9 @@ public:
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
-  /*! Write a field of this container.
+  /*! Export a field of this container.
    * \param[in] field_info The field information record.
-   * \param[in] formatter The formatter to use for the writing, e.g., VRML.
+   * \param[in] formatter The formatter to use for exporting, e.g., VRML.
    */
   virtual void write_field(const Field_info* field_info, Formatter* formatter);
 
@@ -132,10 +120,6 @@ public:
   void trigger();
 
   // virtual Attribute_list get_attributes();
-
-  /*! Set the triger field.
-   */
-  void set_trigger(Field_info* field_info = nullptr);
 
   virtual Action::Trav_directive draw(Draw_action* draw_action);
 
@@ -149,7 +133,7 @@ public:
 
   /*! Set the name of the file where the snapshot is written to.
    */
-  void set_file_name(std::string& file_name);
+  void set_file_name(const std::string& file_name);
 
   /*! Obtain the name of the file where the snapshot is written to.
    */
@@ -157,11 +141,11 @@ public:
 
   /*! Set the file format.
    */
-  void set_file_format(File_format format);
+  void set_file_format(File_format_2d::Id format);
 
   /*! Obtain the file format.
    */
-  File_format get_file_format() const;
+  File_format_2d::Id get_file_format() const;
 
   /*! Set the image.
    */
@@ -186,7 +170,7 @@ protected:
   std::string m_file_name;
 
   /*! The format of the file the image is written to. */
-  File_format m_file_format;
+  File_format_2d::Id m_file_format;
 
   /*! The quality of the (loss) image (applicable to jpeg). */
   Uint m_quality;
@@ -196,10 +180,6 @@ protected:
 
   /*! The sequence counter. */
   Uint m_count;
-
-protected:
-  /*! File format names. */
-  static const char* s_file_format_names[];
 
 private:
   /*! The tag that identifies this container type. */
@@ -220,7 +200,7 @@ private:
   // Default values for fields
   const static std::string s_def_dir_name;
   const static std::string s_def_file_name;
-  const static File_format s_def_file_format;
+  const static File_format_2d::Id s_def_file_format;
   const static Uint s_def_quality;
   const static Boolean s_def_flip;
 
@@ -258,7 +238,7 @@ inline void Snapshot::set_dir_name(std::string dir_name)
 inline std::string Snapshot::get_dir_name() const { return m_dir_name; }
 
 //! \brief sets the name of the file where the snapshot is written to.
-inline void Snapshot::set_file_name(std::string& file_name)
+inline void Snapshot::set_file_name(const std::string& file_name)
 { m_file_name = file_name; }
 
 //! \brief obtains the name of the file where the snapshot is written to.
@@ -266,11 +246,11 @@ inline const std::string& Snapshot::get_file_name() const
 { return m_file_name; }
 
 //! \brief sets the file format.
-inline void Snapshot::set_file_format(File_format format)
+inline void Snapshot::set_file_format(File_format_2d::Id format)
 { m_file_format = format; }
 
 //! \brief obtains the file format.
-inline Snapshot::File_format Snapshot::get_file_format() const
+inline File_format_2d::Id Snapshot::get_file_format() const
 { return m_file_format; }
 
 //! \brief sets the image.

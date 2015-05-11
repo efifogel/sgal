@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1308 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_SIMULATE_EVENT_HPP
@@ -89,16 +86,15 @@ public:
 #pragma warning( pop )
 #endif
 
-/*! \brief obtains the set of agents registered to process this type of event.
- */
+//! \brief obtains the set of agents registered to process this type of event.
 inline const std::set<Agent*>& Simulate_event::get_set(void) const
 { return s_set; }
 
-/*! \brief */
+//! \brief
 inline void Simulate_event::set_simulate(Boolean simulate)
 { m_simulate = simulate; }
 
-/*! \brief */
+//! \brief
 inline Boolean Simulate_event::get_simulate(void) const { return m_simulate; }
 
 SGAL_END_NAMESPACE

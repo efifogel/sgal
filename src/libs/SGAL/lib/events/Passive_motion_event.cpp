@@ -30,22 +30,22 @@ std::set<Agent*> Passive_motion_event::s_set;
 /*! Constructor */
 Passive_motion_event::Passive_motion_event(void) :
   Event(),
-  m_window_item(NULL),
+  m_window_item(nullptr),
   m_x(0), m_y(0)
 {}
 
-/*! \brief deligates the handling of the current event to the given agent. */
+//! \brief deligates the handling of the current event to the given agent.
 void Passive_motion_event::handle(Agent* agent) { agent->handle(this); }
 
-/*! \brief exports an identification message to standard output. */
+//! \brief exports an identification message to standard output.
 void Passive_motion_event::identify(void)
 { std::cout << "Event: Passive_motion" << std::endl; }
 
-/*! \brief registers this event for a particular agent. */
+//! \brief registers this event for a particular agent.
 void Passive_motion_event::doregister(Agent* agent)
 { s_set.insert(agent); }
 
-/*! \brief unregisters this event for a particular agent. */
+//! \brief unregisters this event for a particular agent.
 void Passive_motion_event::unregister(Agent* agent)
 { s_set.erase(agent); }
 

@@ -58,7 +58,7 @@ protected:
    */
   Uint get_indent() const;
 
-  /*! Write an indentation.
+  /*! Export an indentation.
    */
   void indent();
 

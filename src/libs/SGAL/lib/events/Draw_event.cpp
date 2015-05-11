@@ -34,17 +34,16 @@ Draw_event::Draw_event(void) :
   m_suppress_accumulation(false)
 {}
 
-/*! deligates the handling of the current event to the given agent. */
+//! deligates the handling of the current event to the given agent.
 void Draw_event::handle(Agent* agent) { agent->handle(this); }
 
-/*! exports an identification message to standard output. */
+//! exports an identification message to standard output.
 void Draw_event::identify(void) { std::cout << "Event: Draw" << std::endl; }
 
-/*! \brief registers this event for a particular agent. */
+//! \brief registers this event for a particular agent.
 void Draw_event::doregister(Agent* agent) { s_set.insert(agent); }
 
-/*! \brief unregisters this event for a particular agent. */
+//! \brief unregisters this event for a particular agent.
 void Draw_event::unregister(Agent* agent) { s_set.erase(agent); }
 
 SGAL_END_NAMESPACE
-

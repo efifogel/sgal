@@ -518,16 +518,16 @@ void Elevation_grid::clean_height_map()
   m_dirty_height_map = false;
 }
 
-//! Write this container.
+//! \brief exports this container.
 void Elevation_grid::write(Formatter* formatter)
 {
   if (m_dirty_height) clean_height();
   Indexed_face_set::write(formatter);
 }
 
-//! \brief writes a field of this container.
+//! \brief exports a field of this container.
 void Elevation_grid::write_field(const Field_info* field_info,
-                                   Formatter* formatter)
+                                 Formatter* formatter)
 {
   auto* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
   if (vrml_formatter) {

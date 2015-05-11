@@ -59,13 +59,7 @@ public:
   Boolean equal(const Vector4ub& v) const;
 
 public:
-  // Methods
-  // Output function
-  // void Write(EOutput* out);
-
-public:
   // operators
-  // Opertors
   Vector4ub& operator=(const Vector4ub& v);
   Vector4ub& operator=(Ubyte v);
   Ubyte& operator[](int i);

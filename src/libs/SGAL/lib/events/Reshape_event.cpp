@@ -34,23 +34,23 @@ Reshape_event::Reshape_event(void) :
   m_width(0), m_height(0)
 {}
 
-/*! \brief deligates the handling of the current event to the given agent. */
+//! \brief deligates the handling of the current event to the given agent.
 void Reshape_event::handle(Agent* agent) { agent->handle(this); }
 
-/*! \brief exports an identification message to standard output. */
+//! \brief exports an identification message to standard output.
 void Reshape_event::identify(void)
 { std::cout << "Event: Reshape" << std::endl; }
 
-/*! \brief sets the window item */
+//! \brief sets the window item.
 void Reshape_event::set_window_item(Window_item* item) { m_window_item = item; }
 
-/*! \brief obtains the window where the event took place */
+//! \brief obtains the window where the event took place.
 Window_item* Reshape_event::get_window_item() const { return m_window_item; }
 
-/*! \brief registersw this event for a particular agent. */
+//! \brief registersw this event for a particular agent.
 void Reshape_event::doregister(Agent* agent) { s_set.insert(agent); }
 
-/*! \brief unregisters this event for a particular agent */
+//! \brief unregisters this event for a particular agent.
 void Reshape_event::unregister(Agent* agent) { s_set.erase(agent); }
 
 SGAL_END_NAMESPACE

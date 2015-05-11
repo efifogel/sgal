@@ -19,9 +19,6 @@
 #ifndef SGAL_STL_FORMATTER_HPP
 #define SGAL_STL_FORMATTER_HPP
 
-/*! \file
- */
-
 #include <iostream>
 #include <string>
 #include <stack>
@@ -40,7 +37,10 @@ class Container;
 #pragma warning( disable: 4251 )
 #endif
 
-/*! Writes a scene graph to an output stream in the VRML format */
+/*! \class Stl_formatter Stl_formatter.hpp
+ * Stl_formater formats the scene, which is exported to an output stream,
+ * in the STL format.
+ */
 class SGAL_SGAL_DECL Stl_formatter : public Text_formatter {
 public:
   /*! Construct from file name.
@@ -79,10 +79,10 @@ public:
   virtual void write(Shared_container container);
 
   /*! Export a triangular facet.
-   * \param p1 (in) the point (in world coordinate system) of the first vertex.
-   * \param p2 (in) the point (in world coordinate system) of the second vertex.
-   * \param p3 (in) the point (in world coordinate system) of the third vertex.
-   * \param normal (in) the facet normal.
+   * \param[in] p1 the point (in world coordinate system) of the first vertex.
+   * \param[in] p2 the point (in world coordinate system) of the second vertex.
+   * \param[in] p3 the point (in world coordinate system) of the third vertex.
+   * \param[in] normal the facet normal.
    */
   virtual void facet(const Vector3f& local_p1, const Vector3f& local_p2,
                      const Vector3f& local_p3, const Vector3f& normal);

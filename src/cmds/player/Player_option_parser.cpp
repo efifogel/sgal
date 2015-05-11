@@ -98,7 +98,7 @@ Player_option_parser::get_sub_index_buffer_size(SGAL::Uint & size) const
 SGAL::Boolean Player_option_parser::is_interactive() const
 {
   if (m_variable_map["interactive"].defaulted())
-    return (do_save()) ? false : IO_option_parser::is_interactive();
+    return (do_export() || do_snapshot()) ?
+      false : IO_option_parser::is_interactive();
   return IO_option_parser::is_interactive();
 }
-

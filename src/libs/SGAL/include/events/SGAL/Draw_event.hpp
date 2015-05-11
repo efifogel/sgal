@@ -103,23 +103,23 @@ public:
 #pragma warning( pop )
 #endif
 
-/*! \brief obtains set of agents registered to process this type of event. */
+//! \brief obtains set of agents registered to process this type of event.
 inline const std::set<Agent*>& Draw_event::get_set(void) const
 { return s_set; }
 
-/*! \brief sets the window where the event took place. */
+//! \brief sets the window where the event took place.
 inline void Draw_event::set_window_item(Window_item* item)
 { m_window_item = item; }
 
-/*! \brief obtains the window where the event took place. */
+//! \brief obtains the window where the event took place.
 inline Window_item* Draw_event::get_window_item() const
 { return m_window_item; }
 
-/*! \brief sets the flag that indicates whether to suppress accumulation. */
+//! \brief sets the flag that indicates whether to suppress accumulation.
 inline void Draw_event::set_suppress_accumulation(Boolean flag)
 { m_suppress_accumulation = flag; }
 
-/*! \brief obtains the flag that indicates whether to suppress accumulation. */
+//! \brief obtains the flag that indicates whether to suppress accumulation.
 inline Boolean Draw_event::get_suppress_accumulation() const
 { return m_suppress_accumulation; }
 

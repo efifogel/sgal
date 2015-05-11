@@ -43,7 +43,10 @@ class Container;
 #pragma warning( disable: 4251 )
 #endif
 
-/*! Writes a scene graph to an output stream in the VRML format */
+/*! \class Obj_formatter Obj_formatter.hpp
+ * Obj_formater formats the scene, which is exported to an output stream,
+ * in the OBJ format.
+ */
 class SGAL_SGAL_DECL Obj_formatter : public Text_formatter {
 public:
   /*! Construct default. */
@@ -74,6 +77,7 @@ public:
   virtual void end();
 
   /*! Export a scene-graph container.
+   * \param[in] container The container to export.
    */
   virtual void write(Shared_container container);
 

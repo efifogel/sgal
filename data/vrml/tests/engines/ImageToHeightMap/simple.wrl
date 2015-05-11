@@ -14,24 +14,39 @@ DEF SNAP Snapshot {
   fileName "simple"
 }
 Transform {
-  rotation 1 -1 0 0.3
+  # rotation 1 -1 0 0.3
   children [
     DEF SHAPE Shape {
       appearance Appearance {
 	material Material {
 	  diffuseColor 0.8 0.8 0.8
-	  specularColor 0.2 0.2 0.2
+	  specularColor 0.1 0.1 0.1
 	}
+      }
+      geometry DEF ELEVATION_GRID ElevationGrid {
+	closed TRUE
+	baseHeight 1
       }
     }
    ]
 }
 
-DEF IMAGE_TO_ELEVATION_GRID ImageToElavationGrid {
+DEF IMAGE_TO_HEIGHT_MAP ImageToHeightMap {
   image Image { url ["logo.png"] }
 }
 
-ROUTE SIM.start TO IMAGE_TO_ELEVATION_GRID.trigger
-ROUTE IMAGE_TO_ELEVATION_GRID.elevationGrid TO SHAPE.geometry
+ROUTE SIM.start TO IMAGE_TO_HEIGHT_MAP.trigger
+ROUTE IMAGE_TO_HEIGHT_MAP.heightMap TO ELEVATION_GRID.heightMap
+ROUTE IMAGE_TO_HEIGHT_MAP.xDimension TO ELEVATION_GRID.xDimension
+ROUTE IMAGE_TO_HEIGHT_MAP.zDimension TO ELEVATION_GRID.zDimension
 
 ROUTE SNAP_KEY.state TO SNAP.trigger
+
+DEF EXPORTER_KEY SingleKeySensor { key "E" }
+DEF EXPORTER Exporter {
+  fileName "simple.out"
+  dirName "."
+  fileFormat "stl"
+  separate FALSE
+}
+ROUTE EXPORTER_KEY.state TO EXPORTER.trigger

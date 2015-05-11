@@ -27,16 +27,16 @@ SGAL_BEGIN_NAMESPACE
 
 std::set<Agent*> Stop_event::s_set;
 
-/*! \brief deligates the handling of the current event to the given agent. */
+//! \brief deligates the handling of the current event to the given agent.
 void Stop_event::handle(Agent* agent) { agent->handle(this); }
 
-/*! \brief exports an identification message to standard output. */
+//! \brief exports an identification message to standard output.
 void Stop_event::identify(void) { std::cout << "Stop" << std::endl; }
 
-/*! \brief registers this event for a particular agent. */
+//! \brief registers this event for a particular agent.
 void Stop_event::doregister(Agent* agent) { s_set.insert(agent); }
 
-/*! \brief unregisters this event for a particular agent. */
+//! \brief unregisters this event for a particular agent.
 void Stop_event::unregister(Agent* agent) { s_set.erase(agent); }
 
 SGAL_END_NAMESPACE

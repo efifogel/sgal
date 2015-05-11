@@ -60,7 +60,7 @@ public:
   };
 
   /*! Constructor.
-   * \param proto (in) determines whether to construct a prototype.
+   * \param[in] proto determines whether to construct a prototype.
    */
   Script(Boolean proto = false);
 
@@ -103,15 +103,15 @@ public:
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
-  /*! Write all fields of this container.
-   * \param[in] formatter The formatter to use for the writing, e.g., VRML.
+  /*! Export all fields of this container.
+   * \param[in] formatter The formatter to use for exporting, e.g., VRML.
    */
   virtual void write_fields(Formatter* formatter);
 
   /*! Add a field information record to the script node.
-   * \param type (in) the type of the field.
-   * \param name (in) the name of the field.
-   * \param value (in) the initial value of the field.
+   * \param[in] type the type of the field.
+   * \param[in] name the name of the field.
+   * \param[in] value the initial value of the field.
    */
   void add_field_info(Field_info::Field_rule rule, Field_info::Field_type type,
                       const std::string& name, const std::string& value);
@@ -131,47 +131,47 @@ private:
   static std::vector<Container_proto*> s_prototypes;
 
   /*! Intercept getting scalars.
-   * \param info (in)
+   * \param[in] info
    */
   static void getter(v8::Local<v8::String> property,
               const v8::PropertyCallbackInfo<v8::Value>& info);
 
   /*! Intercept setting scalars.
-   * \param property (in)
-   * \param value (in)
-   * \param info (in)
+   * \param[in] property
+   * \param[in] value
+   * \param[in] info
    */
   static void setter(v8::Local<v8::String> property,
                      v8::Local<v8::Value> value,
                      const v8::PropertyCallbackInfo<void>& info);
 
   /*! Intercept getting arrays.
-   * \param property (in)
-   * \param info (in)
+   * \param[in] property
+   * \param[in] info
    */
   static void array_getter(v8::Local<v8::String> property,
                            const v8::PropertyCallbackInfo<v8::Value>& info);
 
   /*! Intercept setting arrays.
-   * \param property (in)
-   * \param value (in)
-   * \param info (in)
+   * \param[in] property
+   * \param[in] value
+   * \param[in] info
    */
   static void array_setter(v8::Local<v8::String> property,
                            v8::Local<v8::Value> value,
                            const v8::PropertyCallbackInfo<void>& info);
 
   /*! Intercept getting an array element by index.
-   * \param property (in)
-   * \param info (in)
+   * \param[in] property
+   * \param[in] info
    */
   static void indexed_getter(uint32_t index,
                              const v8::PropertyCallbackInfo<v8::Value>& info);
 
   /*! Intercept setting an array element by index.
-   * \param property (in)
-   * \param value (in)
-   * \param info (in)
+   * \param[in] property
+   * \param[in] value
+   * \param[in] info
    */
   static void indexed_setter(uint32_t index,
                              v8::Local<v8::Value> value,
@@ -213,13 +213,13 @@ private:
 
   /*! Add setter and getter callbacks to the engine for every field and every
    * output field.
-   * \param global (in) the global object associated with the context.
+   * \param[in] global the global object associated with the context.
    */
   void add_callbacks(v8::Local<v8::Object> global);
 
   /*! Obtain the first argument for the call.
-   * \param field_info (in) the field information record of the field that
-   *        stores the value of the first argument.
+   * \param[in] field_info the field information record of the field that
+   *            stores the value of the first argument.
    * \return the argument.
    */
    v8::Handle<v8::Value> get_argument(const Field_info* field_info);
@@ -229,101 +229,101 @@ private:
   void bound_script();
 
   /*! Convert a single Boolean field value to a v8 engine Boolean.
-   * \param field_info (in) the field information record of the field that
-   *        stores the value.
+   * \param[in] field_info the field information record of the field that
+   *            stores the value.
    */
   v8::Handle<v8::Value> get_single_boolean(const Field_info* field_info);
 
   /*! Convert a single float  field value to a v8 engine float.
-   * \param field_info (in) the field information record of the field that
-   *        stores the value.
+   * \param[in] field_info the field information record of the field that
+   *            stores the value.
    */
   v8::Handle<v8::Value> get_single_float(const Field_info* field_info);
 
   /*! Convert a single time field value to a v8 engine float.
-   * \param field_info (in) the field information record of the field that
-   *        stores the value.
+   * \param[in] field_info the field information record of the field that
+   *            stores the value.
    */
   v8::Handle<v8::Value> get_single_time(const Field_info* field_info);
 
   /*! Convert a single int32 field value to a v8 engine int32.
-   * \param field_info (in) the field information record of the field that
-   *        stores the value.
+   * \param[in] field_info the field information record of the field that
+   *            stores the value.
    */
   v8::Handle<v8::Value> get_single_int32(const Field_info* field_info);
 
   /*! Convert a single string field value to a v8 engine string.
-   * \param field_info (in) the field information record of the field that
-   *        stores the value.
+   * \param[in] field_info the field information record of the field that
+   *            stores the value.
    */
   v8::Handle<v8::Value> get_single_string(const Field_info* field_info);
 
   /*! Convert a single Vector2f field value to a v8 engine array of 2 floats.
-   * \param field_info (in) the field information record of the field that
-   *        stores the value.
+   * \param[in] field_info the field information record of the field that
+   *            stores the value.
    */
   v8::Handle<v8::Value> get_single_vector2f(const Field_info* field_info);
 
   /*! Convert a single Vector3f field value to a v8 engine array of 3 floats.
-   * \param field_info (in) the field information record of the field that
-   *        stores the value.
+   * \param[in] field_info the field information record of the field that
+   *            stores the value.
    */
   v8::Handle<v8::Value> get_single_vector3f(const Field_info* field_info);
 
   /*! Convert a single shared container field value to a v8 engine external.
-   * \param field_info (in) the field information record of the field that
-   *        stores the value.
+   * \param[in] field_info the field information record of the field that
+   *            stores the value.
    */
   v8::Handle<v8::Value> get_single_external(const Field_info* field_info);
 
   /*! Convert a multi Boolean field value to a v8 engine array of Booleans.
-   * \param field_info (in) the field information record of the field that
-   *        stores the value.
+   * \param[in] field_info the field information record of the field that
+   *            stores the value.
    */
   v8::Handle<v8::Value> get_multi_boolean(const Field_info* field_info);
 
   /*! Convert a multi float field value to a v8 engine array of floats.
-   * \param field_info (in) the field information record of the field that
-   *        stores the value.
+   * \param[in] field_info the field information record of the field that
+   *            stores the value.
    */
   v8::Handle<v8::Value> get_multi_float(const Field_info* field_info);
 
   /*! Convert a multi time field value to a v8 engine array of floats.
-   * \param field_info (in) the field information record of the field that
-   *        stores the value.
+   * \param[in] field_info the field information record of the field that
+   *            stores the value.
    */
   v8::Handle<v8::Value> get_multi_time(const Field_info* field_info);
 
   /*! Convert a multi int32 field value to a v8 engine array of int32.
-   * \param field_info (in) the field information record of the field that
-   *        stores the value.
+   * \param[in] field_info the field information record of the field that
+   *            stores the value.
    */
   v8::Handle<v8::Value> get_multi_int32(const Field_info* field_info);
 
   /*! Convert a multi string field value to a v8 engine array of strings.
-   * \param field_info (in) the field information record of the field that
-   *        stores the value.
+   * \param[in] field_info the field information record of the field that
+   *            stores the value.
    */
   v8::Handle<v8::Value> get_multi_string(const Field_info* field_info);
 
   /*! Convert a multi Vector2f field value to a v8 engine array of arrays of
    * 2 floats.
-   * \param field_info (in) the field information record of the field that
-   *        stores the value.
+   * \param[in] field_info the field information record of the field that
+   *            stores the value.
    */
   v8::Handle<v8::Value> get_multi_vector2f(const Field_info* field_info);
 
   /*! Convert a multi Vector3f field value to a v8 engine array of arrays of
    * 3 floats.
-   * \param field_info (in) the field information record of the field that
-   *        stores the value.
+   * \param[in] field_info the field information record of the field that
+   *            stores the value.
    */
   v8::Handle<v8::Value> get_multi_vector3f(const Field_info* field_info);
 
   /*! Convert a multi shared-container field value to a v8 engine array of
    * exernals.
-   * \param field_info (in) the field information record of the field that
-   *        stores the value.
+   * \param[in] field_info the field information record of the field that
+   *            stores the value.
    */
   v8::Handle<v8::Value> get_multi_external(const Field_info* field_info);
 };

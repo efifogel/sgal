@@ -41,8 +41,8 @@ namespace po = boost::program_options;
 
 const Char* Option_parser::s_trace_opts[] = {
   "graphics",
-  "vrml_parsing",
-  "window_manager",
+  "vrml-parsing",
+  "window-manager",
   "event",
   "script",
   "ifs",
@@ -50,7 +50,8 @@ const Char* Option_parser::s_trace_opts[] = {
   "polyhedron",
   "cgm",
   "destructor",
-  "writing",
+  "export-3d",
+  "export-2d",
   "font"
 };
 
@@ -114,7 +115,8 @@ Option_parser::Option_parser() :
      "  polyhedron\n"
      "  cgm\n"
      "  destructor\n"
-     "  writing\n"
+     "  export-2d\n"
+     "  export-3d\n"
      "  font\n"
      )
     ;

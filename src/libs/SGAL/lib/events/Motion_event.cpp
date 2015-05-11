@@ -32,16 +32,16 @@ Motion_event::Motion_event(void) :
   m_x(0), m_y(0)
 {}
 
-/*! \brief deligates the handling of the current event to the given agent. */
+//! \brief deligates the handling of the current event to the given agent.
 void Motion_event::handle(Agent * agent) { agent->handle(this); }
 
-/*! \brief exports an identification message to standard output. */
+//! \brief exports an identification message to standard output.
 void Motion_event::identify(void) { std::cout << "Event: Motion" << std::endl; }
 
-/*! \brief registers this event for a particular agent. */
+//! \brief registers this event for a particular agent.
 void Motion_event::doregister(Agent* agent) { s_set.insert(agent); }
 
-/*! \brief unregisters this event for a particular agent. */
+//! \brief unregisters this event for a particular agent.
 void Motion_event::unregister(Agent* agent) { s_set.erase(agent); }
 
 SGAL_END_NAMESPACE

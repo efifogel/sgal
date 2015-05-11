@@ -53,8 +53,6 @@
 #include "SGAL/Context.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Touch_sensor.hpp"
-#include "SGAL/Writer.hpp"
-#include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Piece.hpp"
 #include "SGAL/Time_sensor.hpp"
 #include "SGAL/Position_interpolator.hpp"
@@ -750,9 +748,7 @@ void Knot_scene::init_scene()
   m_scene_graph->bind();
 
   if (m_option_parser.export_vrml()) {
-    SGAL::Writer writer(m_scene_graph);
-    SGAL::Vrml_formatter formatter("", std::cout);
-    writer(formatter);
+    m_scene_graph->write_vrml("knot.out.wrl", std::cout);
   }
 
   if (m_option_parser.solve()) SGAL::Tick_event::doregister(this);

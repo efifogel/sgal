@@ -49,7 +49,7 @@ Stl_formatter::Stl_formatter(const std::string& filename, std::istream& is) :
 //! \brief destructor
 Stl_formatter::~Stl_formatter() { m_matrices.pop(); }
 
-//! \brief writes the headers of the scene graph.
+//! \brief writes the begin statement.
 void Stl_formatter::begin()
 {
   SGAL_assertion(m_out != NULL);
@@ -60,14 +60,14 @@ void Stl_formatter::begin()
   new_line();
 }
 
-//! \brief writes the routing statements.
+//! \brief writes the end statement.
 void Stl_formatter::end()
 {
   out() << "endsolid sgal" << std::endl;
   new_line();
 }
 
-//! \brief exports a vertex.
+//! \brief writes a vertex.
 void Stl_formatter::vertex(const Vector3f& p)
 {
   indent();
@@ -75,7 +75,7 @@ void Stl_formatter::vertex(const Vector3f& p)
   new_line();
 }
 
-//! \brief exports a facet header.
+//! \brief writes a facet header.
 void Stl_formatter::facet_begin(const Vector3f& n)
 {
   indent();
@@ -88,7 +88,7 @@ void Stl_formatter::facet_begin(const Vector3f& n)
   push_indent();
 }
 
-//! \brief exports a facet trailer.
+//! \brief writes a facet trailer.
 void Stl_formatter::facet_end()
 {
   pop_indent();
@@ -101,7 +101,7 @@ void Stl_formatter::facet_end()
   new_line();
 }
 
-//! \brief exports a triangular facet.
+//! \brief writes a triangular facet.
 void Stl_formatter::facet(const Vector3f& p1, const Vector3f& p2,
                           const Vector3f& p3, const Vector3f& normal)
 {

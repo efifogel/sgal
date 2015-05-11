@@ -55,7 +55,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Navigation_info_types.hpp"
 #include "SGAL/Bindable_stack.hpp"
-#include "SGAL/File_format.hpp"
+#include "SGAL/File_format_3d.hpp"
 
 //! \todo #include "Event_filter.h"
 //! \todo #include "Model_stats.h"
@@ -402,41 +402,42 @@ public:
   /*! Obtain the input file format.
    * \return The input file format.
    */
-  File_format::Id get_input_format_id() const;
+  File_format_3d::Id get_input_format_id() const;
 
   /*! Set the input file format.
    * \param[in] format The input file format.
    */
-  void set_input_format_id(File_format::Id format_id);
+  void set_input_format_id(File_format_3d::Id format_id);
 
   /// \name Writters
   //@{
-  /*! Write the scene to a file in a given format.
+  /*! Export the scene to a file in a given format.
    * \param[in] filename The file name.
    * \param[in] format_id The id of the given format.
    */
-  void write(const std::string& filename, File_format::Id format_id);
+  void write(const std::string& filename, File_format_3d::Id format_id);
 
-  /*! Write the scene to an output stream in a given format.
+  /*! Export the scene to an output stream in a given format.
    * \param[in] filename The file name.
    * \param[in] os (in) The output stream.
    * \param[in] format_id The id of the given format.
    */
-  void write(const std::string& filename, std::ostream& os, File_format::Id format_id);
+  void write(const std::string& filename, std::ostream& os,
+             File_format_3d::Id format_id);
 
-  /*! Write the scene to an output stream in VRML format.
+  /*! Export the scene to an output stream in VRML format.
    * \param[in] filename The file name.
    * \param[in] os The output stream.
    */
   void write_vrml(const std::string& filename, std::ostream& os);
 
-  /*! Write the scene to an output stream in STL format.
+  /*! Export the scene to an output stream in STL format.
    * \param[in] filename The file name.
    * \param[in] os The output stream.
    */
   void write_stl(const std::string& filename, std::ostream& os);
 
-  /*! Write the scene to an output stream in OBJ format.
+  /*! Export the scene to an output stream in OBJ format.
    * \param[in] filename The file name.
    * \param[in] os The output stream.
    */
@@ -591,7 +592,7 @@ private:
   Boolean m_owned_camera;
 
   //! The id of the input format.
-  File_format::Id m_input_format_id;
+  File_format_3d::Id m_input_format_id;
 
   void set_head_light(Configuration* config);
 
@@ -638,11 +639,11 @@ inline Scene_graph::Shared_group Scene_graph::get_root() const
 { return m_root; }
 
 //! \brief obtains the input file format.
-inline File_format::Id Scene_graph::get_input_format_id() const
+inline File_format_3d::Id Scene_graph::get_input_format_id() const
 { return m_input_format_id; }
 
 //! \brief sets the input file format.
-inline void Scene_graph::set_input_format_id(File_format::Id format_id)
+inline void Scene_graph::set_input_format_id(File_format_3d::Id format_id)
 { m_input_format_id = format_id; }
 
 //! \brief obtains the begin pointer of the containers.

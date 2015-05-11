@@ -17,12 +17,12 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/File_format.hpp"
+#include "SGAL/File_format_3d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 //! file format options.
-const Char* File_format::s_names[] = {
+const Char* File_format_3d::s_names[] = {
   "none",
   "wrl",
   "x3d",
@@ -31,10 +31,10 @@ const Char* File_format::s_names[] = {
 };
 
 //! \brief compares the name of the ith format to a given token.
-Boolean File_format::compare_name(Uint i, const std::string& token)
+Boolean File_format_3d::compare_name(Uint i, const std::string& token)
 { return (token.compare(s_names[i]) == 0); }
 
 //! obtains the ith format name.
-const Char* File_format::get_name(Uint i) { return s_names[i]; }
+const Char* File_format_3d::get_name(Uint i) { return s_names[i]; }
 
 SGAL_END_NAMESPACE

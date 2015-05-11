@@ -29,7 +29,7 @@
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Utilities.hpp"
-#include "SGAL/File_format.hpp"
+#include "SGAL/File_format_3d.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -40,7 +40,7 @@ Container_proto* Exporter::s_prototype(nullptr);
 // Default values
 const std::string Exporter::s_def_dir_name(".");
 const std::string Exporter::s_def_file_name("sgal");
-const File_format::Id Exporter::s_def_file_format(File_format::ID_WRL);
+const File_format_3d::Id Exporter::s_def_file_format(File_format_3d::ID_WRL);
 const Boolean Exporter::s_def_separate(false);
 
 REGISTER_TO_FACTORY(Exporter, "Exporter");
@@ -59,7 +59,7 @@ Exporter::Exporter(Boolean proto) :
 //! \brief destructor.
 Exporter::~Exporter() {}
 
-//! \brief executes the engine---writes the content of the scene graph to a file.
+//! \brief executes the engine---exports the content of the scene graph.
 void Exporter::execute(const Field_info* /* field_info */)
 {
   if (!m_scene_graph) return;
@@ -69,14 +69,14 @@ void Exporter::execute(const Field_info* /* field_info */)
     oss << m_count++;
     file_name += "_" + oss.str();
   }
-  file_name += std::string(".") + File_format::get_name(m_file_format);
+  file_name += std::string(".") + File_format_3d::get_name(m_file_format);
   m_scene_graph->write(file_name, m_file_format);
 }
 
 //! \brief initializes the container prototype.
 void Exporter::init_prototype()
 {
-  if (s_prototype)  return;
+  if (s_prototype) return;
   s_prototype = new Container_proto(Node::get_prototype());
 
   // trigger
@@ -157,15 +157,15 @@ void Exporter::set_attributes(Element* elem)
       continue;
     }
     if (name == "fileFormat") {
-      std::string str = strip_double_quotes(value);
+      auto str = strip_double_quotes(value);
       Uint i;
-      for (i = 0; i < File_format::NUM_IDS; ++i) {
-        if (str == File_format::get_name(i)) {
-          set_file_format(static_cast<File_format::Id>(i));
+      for (i = 0; i < File_format_3d::NUM_IDS; ++i) {
+        if (File_format_3d::compare_name(i, str)) {
+          set_file_format(static_cast<File_format_3d::Id>(i));
           break;
         }
       }
-      if (i == File_format::NUM_IDS) {
+      if (i == File_format_3d::NUM_IDS) {
         std::cerr << "Illegal file format (" << value.c_str() << ")!"
                   << std::endl;
       }
@@ -186,15 +186,15 @@ void Exporter::set_attributes(Element* elem)
 //! \brief adds the container to a given scene.
 void Exporter::add_to_scene(Scene_graph* sg) { m_scene_graph = sg; }
 
-//! \breif writes a field of this container.
+//! \breif exports a field of this container.
 void Exporter::write_field(const Field_info* field_info, Formatter* formatter)
 {
   auto* vrml_formatter = static_cast<Vrml_formatter*>(formatter);
   if (vrml_formatter) {
     if (FILE_FORMAT == field_info->get_id()) {
       vrml_formatter->single_string(field_info->get_name(),
-                                    File_format::get_name(m_file_format),
-                                    File_format::get_name(s_def_file_format));
+                                    File_format_3d::get_name(m_file_format),
+                                    File_format_3d::get_name(s_def_file_format));
       return;
     }
   }

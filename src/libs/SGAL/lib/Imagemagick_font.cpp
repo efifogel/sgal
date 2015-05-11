@@ -43,7 +43,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Constructor */
+/*! \brief constructs. */
 Imagemagick_font::Imagemagick_font(const std::string & name, Boolean antialias,
                                    Boolean left_to_right,
                                    Boolean top_to_bottom) :

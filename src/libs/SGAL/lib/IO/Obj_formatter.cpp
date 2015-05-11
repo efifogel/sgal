@@ -64,7 +64,7 @@ Obj_formatter::Obj_formatter(const std::string& filename, std::istream& is) :
 Obj_formatter::~Obj_formatter()
 { m_matrices.pop(); }
 
-//! \brief writes the headers of the scene graph.
+//! \brief exports the headers of the scene graph.
 void Obj_formatter::begin()
 {
   SGAL_assertion(m_out != nullptr);
@@ -86,7 +86,7 @@ void Obj_formatter::begin()
   // set_ascii_mode(*m_out);
 }
 
-//! \brief writes the routing statements.
+//! \brief exports the routing statements.
 void Obj_formatter::end()
 { m_material_out.close(); }
 
@@ -114,7 +114,7 @@ void Obj_formatter::quad(Uint i0, Uint i1, Uint i2, Uint i3)
   new_line();
 }
 
-//! \brief writes a scene-graph container.
+//! \brief exports a scene-graph container.
 void Obj_formatter::write(Shared_container container)
 {
   auto transform = boost::dynamic_pointer_cast<Transform>(container);

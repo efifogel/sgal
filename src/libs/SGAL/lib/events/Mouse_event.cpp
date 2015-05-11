@@ -34,16 +34,16 @@ Mouse_event::Mouse_event(void) :
   m_button(LEFT_BUTTON), m_state(UP), m_x(0), m_y(0)
 {}
 
-/*! \brief deligates the handling of the current event to the given agent. */
+//! \brief deligates the handling of the current event to the given agent.
 void Mouse_event::handle(Agent* agent) { agent->handle(this); }
 
-/*! \brief exports an identification message to standard output. */
+//! \brief exports an identification message to standard output.
 void Mouse_event::identify(void) { std::cout << "Event: Mouse" << std::endl; }
 
-/*! \brief registers this event for a particular agent. */
+//! \brief registers this event for a particular agent.
 void Mouse_event::doregister(Agent* agent) { s_set.insert(agent); }
 
-/*! \brief unregisters this event for a particular agent. */
+//! \brief unregisters this event for a particular agent.
 void Mouse_event::unregister(Agent* agent) { s_set.erase(agent); }
 
 SGAL_END_NAMESPACE

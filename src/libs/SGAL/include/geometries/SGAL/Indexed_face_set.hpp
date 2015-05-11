@@ -96,14 +96,14 @@ public:
    */
   virtual void draw(Draw_action* action);
 
-  /*! Write this container.
-   * \param formatter The formatter to use for the writing, e.g., VRML.
+  /*! Export this container.
+   * \param[in] formatter The formatter to use for exporting, e.g., VRML.
    */
   virtual void write(Formatter* formatter);
 
-  /*! Write a field of this container.
+  /*! Export a field of this container.
    * \param[in] field_info The field information record.
-   * \param[in] formatter The formatter to use for the writing, e.g., VRML.
+   * \param[in] formatter The formatter to use for exporting, e.g., VRML.
    */
    virtual void write_field(const Field_info* field_info, Formatter* formatter);
 
@@ -153,13 +153,13 @@ public:
   Boolean is_dirty_polyhedron() const;
 
   /*! Set the polyhedron data-structure.
-   * \param polyhedron (in) the polyhedron data-structure.
+   * \param[in] polyhedron the polyhedron data-structure.
    */
   void set_polyhedron(Polyhedron& polyhedron);
 
   /*! Obtain the polyhedron data-structure.
-   * \param with_planes (in) indicates whether to clean the planes (as well
-   *        as the polyhedron itself.
+   * \param[in] with_planes indicates whether to clean the planes (as well
+   *            as the polyhedron itself.
    * \return the polyhedron data-structure.
    */
   const Polyhedron& get_polyhedron(Boolean with_planes = false);
@@ -171,8 +171,8 @@ public:
   /// \name Change Recators
   //@{
   /*! Respond to a change in the coordinate array.
-   * \param field_info (in) the information record of the field that caused
-   *                   the change.
+   * \param[in] field_info the information record of the field that caused
+   *            the change.
    */
   virtual void coord_content_changed(const Field_info* field_info);
   //@}
@@ -240,7 +240,7 @@ private:
     {}
 
     /*! Calculate the normal of a given (half)edge.
-     * \param edge (in) the given (half)edge.
+     * \param[in] edge the given (half)edge.
      */
     template <typename Halfedge>
     void operator()(Halfedge& edge)

@@ -14,13 +14,10 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_FILE_FORMAT_HPP
-#define SGAL_FILE_FORMAT_HPP
+#ifndef SGAL_FILE_FORMAT_3D_HPP
+#define SGAL_FILE_FORMAT_3D_HPP
 
 #include <string>
 
@@ -29,7 +26,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_SGAL_DECL File_format {
+class SGAL_SGAL_DECL File_format_3d {
 public:
   /*! Format ids */
   enum Id {
@@ -42,13 +39,13 @@ public:
   };
 
   /*! Compare the name of the ith format to a given token.
-   * \param i The index of the format to compare against.
-   * \param token The token string to compare.
+   * \param[in] i The index of the format to compare against.
+   * \param[in] token The token string to compare.
    */
   static Boolean compare_name(Uint i, const std::string& token);
 
   /*! obtains the ith format name.
-   * \param i The index of the format.
+   * \param[in] i The index of the format.
    * \return the name of the ith format.
    */
   static const Char* get_name(Uint i);

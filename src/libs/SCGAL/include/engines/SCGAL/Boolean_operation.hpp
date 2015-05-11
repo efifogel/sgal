@@ -111,8 +111,8 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Write this container.
-   * \param formatter (in) the formatter to use; e.g., VRML.
+  /*! Export this container.
+   * \param[in] formatter the formatter to use for exporting; e.g., VRML.
    */
   virtual void write(Formatter* formatter);
 
@@ -147,22 +147,22 @@ public:
   Shared_mesh_set get_operand1() const;
 
   /*! Set the 2nd operand.
-   * \param operand (in) the operand.
+   * \param[in] operand the operand.
    */
   void set_operand2(Shared_mesh_set operand);
 
   /*! Obtain the 2nd operand.
-   * \result the (in) operand.
+   * \result[in] the operand.
    */
   Shared_mesh_set get_operand2() const;
 
   /*! Set the resulting geometry.
-   * \param result (in) the resulting geomery.
+   * \param[in] result the resulting geomery.
    */
   void set_result(const std::vector<Shared_exact_polyhedron_geo>& result);
 
   /*! Obtain the resulting geometry.
-   * \result (in) the resulting geomery.
+   * \param[in] result the resulting geomery.
    */
   const std::vector<Shared_exact_polyhedron_geo>& get_result() const;
 

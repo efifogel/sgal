@@ -56,7 +56,7 @@ public:
   typedef boost::shared_ptr<Coord_array_1d>             Shared_coord_array_1d;
 
   /*! Constructor.
-   * \param proto (in) determines whether to construct a prototype.
+   * \para[in]m proto determines whether to construct a prototype.
    */
   Elevation_grid(Boolean proto = false);
 
@@ -99,7 +99,7 @@ public:
   //@}
 
   /*! Set the attributes of the object.
-   * \param elem (in) contains lists of attribute names and values
+   * \param[in] elem contains lists of attribute names and values
    */
   virtual void set_attributes(Element* elem);
 
@@ -115,14 +115,14 @@ public:
    */
   virtual void clean_tex_coord_array_2d();
 
-  /*! Write this container.
-   * \param formatter The formatter to use for the writing, e.g., VRML.
+  /*! Export this container.
+   * \param[in] formatter The formatter to use for exporting, e.g., VRML.
    */
   virtual void write(Formatter* formatter);
 
-  /*! Write a field of this container.
+  /*! Export a field of this container.
    * \param[in] field_info The field information record.
-   * \param[in] formatter The formatter to use for the writing, e.g., VRML.
+   * \param[in] formatter The formatter to use for exporting, e.g., VRML.
    */
   virtual void write_field(const Field_info* field_info, Formatter* formatter);
 
@@ -143,7 +143,7 @@ public:
   void structure_changed(const Field_info* field_info);
 
   /*! Set the 2D array that represents the height above a grid.
-   * \param height (in) the new height field.
+   * \param[in] height the new height field.
    */
   void set_height(const Float_array& height);
 
@@ -163,7 +163,7 @@ public:
   Shared_coord_array_1d get_height_map();
 
   /*! Set the number of grid points along the x-dimension.
-   * \param x_dimension (in) the number of grid points along the x-dimension.
+   * \param[in] x_dimension the number of grid points along the x-dimension.
    */
   void set_x_dimension(Uint x_dimension);
 
@@ -174,7 +174,7 @@ public:
 
   /*! Set the distance between two successive grid points along the
    * x-dimension.
-   * \param x_spacing (in) the distance.
+   * \param[in] x_spacing the distance.
    */
   void set_x_spacing(Float x_spacing);
 
@@ -185,7 +185,7 @@ public:
   Float get_x_spacing() const;
 
   /*! Set the number of grid points along the z-dimension.
-   * \param z_dimension (in) the number of grid points along the z-dimension.
+   * \param[in] z_dimension the number of grid points along the z-dimension.
    */
   void set_z_dimension(Uint z_dimension);
 
@@ -196,7 +196,7 @@ public:
 
   /*! Set the distance between two successive grid points along the
    * z-dimension.
-   * \param z_spacing (in) the distance.
+   * \param[in] z_spacing the distance.
    */
   void set_z_spacing(Float z_spacing);
 

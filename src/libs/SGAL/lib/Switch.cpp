@@ -30,6 +30,7 @@
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Formatter.hpp"
 #include "SGAL/Stl_formatter.hpp"
+#include "SGAL/Obj_formatter.hpp"
 #include "SGAL/Trace.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -208,15 +209,16 @@ Attribute_list Switch::get_attributes()
 }
 #endif
 
-//! \brief writes this container.
+//! \brief exports this container.
 void Switch::write(Formatter* formatter)
 {
-  SGAL_TRACE_CODE(Trace::WRITING,
+  SGAL_TRACE_CODE(Trace::EXPORT_3D,
                   std::cout << "Switch: " << "Tag: " << get_tag()
                   << ", name: " << get_name()
                   << std::endl;);
   Stl_formatter* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
-  if (stl_formatter) {
+  Obj_formatter* obj_formatter = dynamic_cast<Obj_formatter*>(formatter);
+  if (stl_formatter || obj_formatter) {
     Shared_node node = boost::dynamic_pointer_cast<Node>(get_choice());
     if (node) node->write(formatter);
     return;

@@ -399,9 +399,9 @@ private:
   // Knot_scene(const Knot_scene&) = delete;
 };
 
-/*! Exporter. */
+//! \brief exports.
 inline std::ostream& operator<<(std::ostream& os,
-                                 const Knot_scene::State state)
+                                const Knot_scene::State state)
 {
   Knot_scene::Uint color;
   for (color = 0; color < Knot_scene::NUMBER_OF_COLORS; ++color) {

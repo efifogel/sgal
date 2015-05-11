@@ -98,7 +98,7 @@ Scene_graph::Scene_graph(bool syncronize) :
   m_owned_configuration(false),
   m_owned_navigation_info(false),
   m_owned_camera(false),
-  m_input_format_id(File_format::NONE)
+  m_input_format_id(File_format_3d::NONE)
 {
   m_isect_action = new Isect_action();
   m_touch_sensors.clear();
@@ -889,8 +889,9 @@ Camera* Scene_graph::get_active_camera()
 Background* Scene_graph::get_active_background()
 { return static_cast<Background*>(m_background_stack.top()); }
 
-//! \brief writes the scene to a file in a given format.
-void Scene_graph::write(const std::string& filename, File_format::Id format_id)
+//! \brief exports the scene to a file in a given format.
+void Scene_graph::write(const std::string& filename,
+                        File_format_3d::Id format_id)
 {
   if (filename.empty()) write(filename, std::cout, format_id);
   else {
@@ -901,21 +902,21 @@ void Scene_graph::write(const std::string& filename, File_format::Id format_id)
   }
 }
 
-//! \brief writes the scene to an output stream in a given format.
+//! \brief exports the scene to an output stream in a given format.
 void Scene_graph::write(const std::string& filename, std::ostream& os,
-                        File_format::Id format_id)
+                        File_format_3d::Id format_id)
 {
   switch (format_id) {
-   case File_format::ID_WRL: write_vrml(filename, os); break;
-   case File_format::ID_X3D: break;
-   case File_format::ID_STL: write_stl(filename, os); break;
-   case File_format::ID_OBJ: write_obj(filename, os);break;
-   case File_format::NONE:
-   case File_format::NUM_IDS: return;
+   case File_format_3d::ID_WRL: write_vrml(filename, os); break;
+   case File_format_3d::ID_X3D: break;
+   case File_format_3d::ID_STL: write_stl(filename, os); break;
+   case File_format_3d::ID_OBJ: write_obj(filename, os);break;
+   case File_format_3d::NONE:
+   case File_format_3d::NUM_IDS: return;
   }
 }
 
-//! \brief writes the scene to an output stream in the VRML format.
+//! \brief exports the scene to an output stream in the VRML format.
 void Scene_graph::write_vrml(const std::string& filename, std::ostream& os)
 {
   Vrml_formatter formatter(filename, os);
@@ -931,7 +932,7 @@ void Scene_graph::write_vrml(const std::string& filename, std::ostream& os)
   formatter.end();
 }
 
-//! \brief writes the scene to an output stream in the STL format.
+//! \brief exports the scene to an output stream in the STL format.
 void Scene_graph::write_stl(const std::string& filename, std::ostream& os)
 {
   Stl_formatter formatter(filename, os);
@@ -947,7 +948,7 @@ void Scene_graph::write_stl(const std::string& filename, std::ostream& os)
   formatter.end();
 }
 
-//! \brief writes the scene to an output stream in the OBJ format.
+//! \brief exports the scene to an output stream in the OBJ format.
 void Scene_graph::write_obj(const std::string& filename, std::ostream& os)
 {
   Obj_formatter formatter(filename, os);

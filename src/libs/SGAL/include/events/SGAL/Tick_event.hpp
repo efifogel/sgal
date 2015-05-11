@@ -119,8 +119,7 @@ public:
 //! \brief obtains the total number of ticks.
 inline Uint Tick_event::get_num_ticks() const { return s_num_ticks; }
 
-/*! \brief obtains the set of agents registered to process this type of event.
- */
+//! \brief obtains the set of agents registered to process this type of event.
 inline const std::set<Agent*>& Tick_event::get_set(void) const
 { return s_set; }
 
