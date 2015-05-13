@@ -39,7 +39,6 @@ DEF HIDE2_KEY SingleKeySensor {
 }
 
 DEF SNAP_DUAL Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
@@ -48,7 +47,6 @@ DEF SNAP_DUAL Snapshot {
 }
 
 DEF SNAP_PRIMAL Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE

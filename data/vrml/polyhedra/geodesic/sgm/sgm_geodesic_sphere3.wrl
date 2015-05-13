@@ -13,7 +13,6 @@ DEF SNAP_CGM_KEY SingleKeySensor { key "C" }
 DEF SNAP_PRIMAL_KEY SingleKeySensor { key "X" }
 
 DEF SNAP_CGM Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
@@ -22,7 +21,6 @@ DEF SNAP_CGM Snapshot {
 }
 
 DEF SNAP_PRIMAL Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
@@ -542,7 +540,7 @@ DEF trans Transform {
     }
    ]
 }
-  
+
 ROUTE GEOM.trueDrawPrimal TO PRIMAL_VIEW.set_bind
 ROUTE GEOM.trueDrawAos TO DUAL_VIEW.set_bind
 ROUTE DRAW_DUAL_KEY.state TO GEOM.drawAos

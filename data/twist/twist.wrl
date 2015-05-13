@@ -12,7 +12,6 @@ ColorBackground {
 # }
 DEF SNAP_KEY SingleKeySensor { key "S" }
 DEF SNAP Snapshot {
-  image Image { }
   fileFormat "png"
   sequence FALSE
   dirName "."

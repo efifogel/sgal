@@ -31,7 +31,6 @@ DEF HIDE_KEY SingleKeySensor {
 }
 
 DEF SNAP_DUAL Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE

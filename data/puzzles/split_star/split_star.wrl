@@ -50,7 +50,6 @@ DEF SNAP_T_KEY SingleKeySensor { key "T" }
 DEF INC_SOLUTION_ID_KEY SingleKeySensor { key "I" }
 
 DEF SNAP Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE

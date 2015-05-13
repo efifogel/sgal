@@ -18,7 +18,6 @@ DEF SNAP_SGM_KEY SingleKeySensor { key "N" }
 DEF SNAP_PRIMAL_KEY SingleKeySensor { key "X" }
 
 DEF SNAP_SGM Snapshot {
-  image Image { }
   fileFormat "jpg"
   sequence FALSE
   dirName "."
@@ -26,7 +25,6 @@ DEF SNAP_SGM Snapshot {
 }
 
 DEF SNAP_PRIMAL Snapshot {
-  image Image { }
   fileFormat "jpg"
   sequence FALSE
   dirName "."

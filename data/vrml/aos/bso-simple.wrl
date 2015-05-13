@@ -4,8 +4,8 @@ DEF CONFIG Configuration {
   stencilBits 1
 }
 
-DEF BACKGROUND ColorBackground { 
-  color 1 1 1 0 
+DEF BACKGROUND ColorBackground {
+  color 1 1 1 0
   clearStencil TRUE
 }
 
@@ -37,7 +37,6 @@ DEF HIDE_DISCONTINUITY_KEY SingleKeySensor {
   key "d"
 }
 DEF SNAP Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
@@ -58,7 +57,7 @@ DEF CHANGE_POLYSET_KEY SingleKeySensor {
 }
 
 Transform {
-  rotation 0 0 1 -0.826 
+  rotation 0 0 1 -0.826
   children [
     DEF POLYSET_SWITCH Switch {
       whichChoice 0
@@ -90,7 +89,7 @@ Transform {
             aosMarkedEdgeRadius 0.003
 	    aosMarkedFaceColor 1 0 0
 	    aosMarkedFaceTransparency 0.5
-	    # aosMarkedFaceIndex [28 46 47]	    
+	    # aosMarkedFaceIndex [28 46 47]
             coord DEF COORD ExactCoordinate {
               exactPoint [
 			-1 -1 -1,
@@ -165,7 +164,7 @@ Transform {
             aosIsolatedVertexRadius 0.015
             aosIsolatedVertexPointSize 3
 	    aosIsolatedVertexColor 1 0 0
-            # insertionStrategy "increment"	    
+            # insertionStrategy "increment"
 	    aosMarkedVertexStyle "none"
 	    aosMarkedEdgeEnabled TRUE
             aosMarkedEdgeStyle "tube"
@@ -337,4 +336,3 @@ ROUTE SNAP_KEY.state TO SNAP.trigger
 ROUTE HIDE_DISCONTINUITY_KEY.intState TO DISCONTINUITY_SWITCH.whichChoice
 ROUTE HIDE_SINGULARITIES_KEY.intState TO SINGULARITIES_SWITCH.whichChoice
 ROUTE CHANGE_POLYSET_KEY.intState TO POLYSET_SWITCH.whichChoice
-

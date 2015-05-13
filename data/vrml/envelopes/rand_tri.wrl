@@ -17,7 +17,6 @@ DEF VERTEX_SHAPE_KEY SingleKeySensor {
   intState 2 # disc
 }
 DEF SNAP Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE

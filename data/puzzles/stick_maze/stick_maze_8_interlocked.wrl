@@ -15,7 +15,6 @@ DEF DRAW_AOS_KEY SingleKeySensor { key "c" }
 DEF SOLVE_KEY SingleKeySensor { key "s" }
 DEF SNAP_KEY SingleKeySensor { key "S" }
 DEF SNAP Snapshot {
-  image Image { }
   fileFormat "png"
   sequence FALSE
   dirName "."

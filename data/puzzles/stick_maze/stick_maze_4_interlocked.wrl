@@ -18,7 +18,6 @@ DEF INC_ALT_KEY SingleKeySensor { key "i" }
 DEF INC_MINK_SUM_KEY SingleKeySensor { key "d" }
 DEF SNAP_KEY SingleKeySensor { key "S" }
 DEF SNAP Snapshot {
-  image Image { }
   fileFormat "png"
   sequence FALSE
   dirName "."

@@ -42,7 +42,6 @@ DEF DRAW_AOS_MINK_SUM_KEY SingleKeySensor { key "A" }
 DEF INC_MINK_SUM_KEY SingleKeySensor { key "D" }
 
 DEF SNAP Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE

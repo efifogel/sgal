@@ -2,13 +2,12 @@
 # Configuration { geometryDrawingMode "vertexArray" }
 DEF SNAP_KEY SingleKeySensor { key "D" }
 DEF SNAP Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
   dirName "."
   fileName "Platonic_Solids"
-  }
+}
 ColorBackground { color 1 1 1 }
 NavigationInfo { type [ "EXAMINE" "ANY" ] }
 Shape {
@@ -183,7 +182,7 @@ Shape {
   }
   geometry IndexedFaceSet {
     coord Coordinate {
-      point [ 
+      point [
 0 0 1.732051,
 	      1.632993   0        -0.5773503,
 	     -0.8164966  1.414214 -0.5773503,
@@ -211,14 +210,14 @@ Transform {
 		  children [
 		    Shape {
 		      appearance DEF TEXT_APP Appearance {
-			material Material { 
+			material Material {
 			ambientColor    0.2 0.2 0.2
             diffuseColor    0.8 0.8 0.8
             specularColor   0 0 0
             emissiveColor   0 0 0
             shininess       0.2
             transparency    0
-			#diffuseColor 255 0 0 
+			#diffuseColor 255 0 0
 			}
 		      }
 		      geometry Text { string "Dodecahedron" }
@@ -242,12 +241,12 @@ Transform {
 		      geometry Text { string "Cube" }
 		      }
 
-		    
+
 		   ]
 		}
 	       ]
 	    }
-		
+
 		Transform {
 	      translation -7 1.35 0
 	      #rotation 1 0 0 1.5708
@@ -262,12 +261,12 @@ Transform {
 		      geometry Text { string "Icosahedron" }
 		      }
 
-		    
+
 		   ]
 		}
 	       ]
 	    }
-		
+
 		Transform {
 	      translation 0.8 5.5 0
 	      #rotation 1 0 0 1.5708
@@ -282,12 +281,12 @@ Transform {
 		      geometry Text { string "Octahedron" }
 		      }
 
-		    
+
 		   ]
 		}
 	       ]
 	    }
-		
+
 				Transform {
 	      translation -5 5.5 0
 	      #rotation 1 0 0 1.5708
@@ -302,12 +301,12 @@ Transform {
 		      geometry Text { string "Tetrahedron" }
 		      }
 
-		    
+
 		   ]
 		}
 	       ]
 	    }
-		
+
 		DirectionalLight {
         on         TRUE
         intensity  0.9
@@ -320,7 +319,7 @@ Transform {
         intensity  0.9
         color      0.42 0.98 0.66
         direction  -1 1 1
-    }		
+    }
 
-	
+
 	ROUTE SNAP_KEY.state TO SNAP.trigger

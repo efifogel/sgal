@@ -47,7 +47,6 @@ DEF HIDE_DISCONTINUITY_KEY SingleKeySensor {
 }
 
 DEF SNAP Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE

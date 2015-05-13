@@ -46,7 +46,6 @@ DEF HIDE_DISCONTINUITY_KEY SingleKeySensor {
 }
 
 DEF SNAP Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
@@ -107,7 +106,7 @@ Transform {
 		       ]
 	  }
 	}
-	
+
 	# The singularity points:
 	DEF SINGULARITIES_SWITCH Switch {
 	  whichChoice -1
@@ -186,7 +185,7 @@ Transform {
 	    }
 	   ]
 	}
-	
+
 	# The axes:
 	DEF AXES Transform {
 	  scale 0.2 0.2 0.2

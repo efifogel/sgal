@@ -6,7 +6,6 @@ Configuration {
 # ColorBackground { color 1 1 1 }
 DEF SNAP_KEY SingleKeySensor { key "S" }
 DEF SNAP Snapshot {
-  image Image { }
   fileFormat "png"
   sequence FALSE
   dirName "."

@@ -39,7 +39,6 @@ DEF SNAP_R_KEY SingleKeySensor { key "R" }
 DEF SNAP_B_KEY SingleKeySensor { key "B" }
 
 DEF SNAP Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
@@ -49,7 +48,6 @@ DEF SNAP Snapshot {
 
 # Singles:
 DEF SNAP_R Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
@@ -59,7 +57,6 @@ DEF SNAP_R Snapshot {
 }
 
 DEF SNAP_B Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE

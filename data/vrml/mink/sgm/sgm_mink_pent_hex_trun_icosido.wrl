@@ -24,7 +24,6 @@ DEF SNAP_MINK_PRIMAL_KEY SingleKeySensor { key "X" }
 DEF SNAP_MINK_DUAL_KEY SingleKeySensor { key "C" }
 
 DEF SNAP_DUAL Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
@@ -33,7 +32,6 @@ DEF SNAP_DUAL Snapshot {
 }
 
 DEF SNAP_PRIMAL Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
@@ -391,7 +389,7 @@ DEF TRANS Transform {
 		}
 	       ]
 	    }
-	    
+
 	    DEF TRANSFORM_OBSTACLE Transform {
 	      children [
 		DEF SELECT_OBSTACLE TouchSensor { enabled TRUE }

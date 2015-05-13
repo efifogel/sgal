@@ -10,7 +10,6 @@ DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
 DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
 DEF SNAP_KEY SingleKeySensor { key "S" }
 DEF SNAP Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE

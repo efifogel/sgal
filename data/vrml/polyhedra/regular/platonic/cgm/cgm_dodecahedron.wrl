@@ -16,7 +16,6 @@ DEF SNAP_CGM_UNFOLDED_KEY SingleKeySensor { key "U" }
 DEF SNAP_PRIMAL_KEY SingleKeySensor { key "X" }
 
 DEF SNAP_CGM Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
@@ -25,7 +24,6 @@ DEF SNAP_CGM Snapshot {
 }
 
 DEF SNAP_CGM_UNFOLDED Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
@@ -34,7 +32,6 @@ DEF SNAP_CGM_UNFOLDED Snapshot {
 }
 
 DEF SNAP_PRIMAL Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
