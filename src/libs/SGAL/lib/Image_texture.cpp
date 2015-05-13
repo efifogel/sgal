@@ -56,13 +56,10 @@ Container_proto* Image_texture::get_prototype()
 //! \brief sets the attributes of the image texture.
 void Image_texture::set_attributes(Element* elem)
 {
-  typedef Element::Str_attr_iter        Str_attr_iter;
-
   Texture_2d::set_attributes(elem);
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "url") {
       std::string url = strip_double_quotes(value);
       set_url(url);
