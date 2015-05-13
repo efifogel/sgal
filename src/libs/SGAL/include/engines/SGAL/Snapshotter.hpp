@@ -142,9 +142,6 @@ protected:
   /*! The trigger of the engine, which makes the engine excute. */
   Boolean m_trigger;
 
-  /*! Indicates whether to generate the file name  as part of a sequence. */
-  Boolean m_sequence;
-
   /*! Indicates whether to take the snapshot from the front buffer. */
   Boolean m_front_buffer;
 
@@ -160,9 +157,6 @@ private:
 
   /*! The node prototype */
   static Container_proto* s_prototype;
-
-  /*! The sequence counter. */
-  Uint m_count;
 
   Uint m_size;
 

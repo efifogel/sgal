@@ -50,7 +50,6 @@ REGISTER_TO_FACTORY(Snapshotter, "Snapshotter");
 //! \brief constructor
 Snapshotter::Snapshotter(Boolean proto) :
   Node(proto),
-  m_count(0),
   m_trigger(false),
   m_front_buffer(s_def_front_buffer),
   m_flip(s_def_flip),
@@ -142,6 +141,7 @@ void Snapshotter::init_prototype()
                                           Field_info::RULE_IN,
                                           trigger_func,
                                           false));
+
   // frontBuffer
   auto front_buffer_func =
     static_cast<Boolean_handle_function>(&Snapshotter::front_buffer_handle);
@@ -197,11 +197,6 @@ void Snapshotter::set_attributes(Element* elem)
     }
     if (name == "flip") {
       set_flip(compare_to_true(value));
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "sequence") {
-      m_sequence = compare_to_true(value);
       elem->mark_delete(ai);
       continue;
     }
