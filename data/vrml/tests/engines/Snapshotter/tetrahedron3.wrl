@@ -29,11 +29,23 @@ DEF IMAGE_WRITER ImageWriter {
   fileFormat "png"
 }
 DEF TRIGGER Script {
-  eventIn SFNode image
+  # The order of eventOut items determines the order of their routing!
+  # If you set 'directOutput TRUE', then the order is determined by the
+  # order of the script statements.
+  eventIn SFNode imageIn
+  eventOut SFString fileName
+  eventOut SFNode imageOut
   eventOut SFBool trigger
-  url "javascript: function image(value, timestamp) { trigger = true; }"
+  field SFInt32 count 0
+  field SFString baseName "tet"
+  url "javascript: function imageIn(value, timestamp) {
+    fileName = baseName.concat(count++);
+    imageOut = value;
+    trigger = true;
+  }"
 }
 ROUTE SNAP_KEY.state TO SNAPSHOTTER.trigger
-ROUTE SNAPSHOTTER.image TO TRIGGER.image
-ROUTE SNAPSHOTTER.image TO IMAGE_WRITER.image
+ROUTE SNAPSHOTTER.image TO TRIGGER.imageIn
+ROUTE TRIGGER.imageOut TO IMAGE_WRITER.image
+ROUTE TRIGGER.fileName TO IMAGE_WRITER.fileName
 ROUTE TRIGGER.trigger TO IMAGE_WRITER.trigger

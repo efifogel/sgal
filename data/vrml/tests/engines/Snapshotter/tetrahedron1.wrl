@@ -21,10 +21,7 @@ Shape {
 }
 # Snapshot
 DEF SNAP_KEY SingleKeySensor { key "S" }
-DEF SNAPSHOTTER Snapshotter {
-  image Image { }
-  sequence FALSE
-}
+DEF SNAPSHOTTER Snapshotter {}
 DEF IMAGE_WRITER ImageWriter {
   dirName "."
   fileName "tetrahedron"
