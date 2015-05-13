@@ -20,7 +20,7 @@
 #include <windows.h>
 #endif
 #include <GL/gl.h>
-
+#include <string.h>
 #include <boost/lexical_cast.hpp>
 
 #include "SGAL/basic.hpp"
@@ -37,6 +37,7 @@
 SGAL_BEGIN_NAMESPACE
 
 Container_proto* Image_base::s_prototype(nullptr);
+const std::string Image_base::s_tag = "ImageBase";
 
 /*! A map from format to number of bits */
 Uint Image_base::s_format_sizes[] = {

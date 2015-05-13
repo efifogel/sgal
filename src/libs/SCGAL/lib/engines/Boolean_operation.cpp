@@ -222,20 +222,18 @@ void Boolean_operation::set_attributes(Element* elem)
   for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
        ++cai)
   {
-    const std::string& name = elem->get_name(cai);
-    Element::Shared_container cont = elem->get_value(cai);
+    const auto& name = elem->get_name(cai);
+    auto cont = elem->get_value(cai);
 
     if (name == "operand1") {
-      boost::shared_ptr<Mesh_set> mesh =
-        boost::dynamic_pointer_cast<Mesh_set>(cont);
+      auto mesh = boost::dynamic_pointer_cast<Mesh_set>(cont);
       set_operand1(mesh);
       elem->mark_delete(cai);
       continue;
     }
 
     if (name == "operand2") {
-      boost::shared_ptr<Mesh_set> mesh =
-        boost::dynamic_pointer_cast<Mesh_set>(cont);
+      auto mesh = boost::dynamic_pointer_cast<Mesh_set>(cont);
       set_operand2(mesh);
       elem->mark_delete(cai);
       continue;
@@ -253,27 +251,25 @@ void Boolean_operation::init_prototype()
   s_prototype = new Container_proto(Node::get_prototype());
 
   // Add the field-info records to the prototype:
-  Execution_function exec_func =
+  auto exec_func =
     static_cast<Execution_function>(&Boolean_operation::trigger_changed);
 
   // trigger
-  Boolean_handle_function trigger_func =
+  auto trigger_func =
     static_cast<Boolean_handle_function>(&Boolean_operation::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           trigger_func, exec_func));
 
   // operation
-  Uint_handle_function operation_func =
-    reinterpret_cast<Uint_handle_function>
+  auto operation_func = reinterpret_cast<Uint_handle_function>
     (&Boolean_operation::operation_handle);
   s_prototype->add_field_info(new SF_uint(OPERATION, "operation",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           operation_func, exec_func));
 
   // operand1
-  Shared_container_handle_function operand1_func =
-    reinterpret_cast<Shared_container_handle_function>
+  auto operand1_func = reinterpret_cast<Shared_container_handle_function>
     (&Boolean_operation::operand1_handle);
   s_prototype->add_field_info(new SF_shared_container(OPERAND1, "operand1",
                                                       Field_info::RULE_EXPOSED_FIELD,
@@ -281,8 +277,7 @@ void Boolean_operation::init_prototype()
                                                       exec_func));
 
   // operand2
-  Shared_container_handle_function operand2_func =
-    reinterpret_cast<Shared_container_handle_function>
+  auto operand2_func = reinterpret_cast<Shared_container_handle_function>
     (&Boolean_operation::operand2_handle);
   s_prototype->add_field_info(new SF_shared_container(OPERAND2, "operand2",
                                                       Field_info::RULE_EXPOSED_FIELD,
@@ -290,8 +285,7 @@ void Boolean_operation::init_prototype()
                                                       exec_func));
 
   // result
-  Shared_container_array_handle_function result_func =
-    reinterpret_cast<Shared_container_array_handle_function>
+  auto result_func = reinterpret_cast<Shared_container_array_handle_function>
     (&Boolean_operation::result_handle);
   s_prototype->add_field_info(new MF_shared_container(RESULT, "result",
                                                       Field_info::RULE_EXPOSED_FIELD,

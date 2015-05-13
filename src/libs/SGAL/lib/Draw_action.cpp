@@ -32,7 +32,6 @@ Draw_action::Draw_action(Configuration* config) :
   m_pass_no(0),
   m_second_pass_required(false),
   m_current_lod(-1),    // Negative lod force choosing max level.
-  m_snap_from_front(false),
   m_clear(Gfx::COLOR_CLEAR | Gfx::DEPTH_CLEAR),
   m_snap(true),
   m_apply_camera(true),

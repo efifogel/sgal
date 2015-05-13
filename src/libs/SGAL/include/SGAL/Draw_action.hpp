@@ -89,10 +89,6 @@ public:
 
   Shared_matrix4f get_current_wtm() const;
 
-  void set_snap_from_front(Boolean flag);
-
-  Boolean is_snap_from_front() const;
-
   void set_clear(Uint mask);
 
   Uint get_clear() const;
@@ -124,9 +120,6 @@ private:
   /*! The world transformation matrix */
   Shared_matrix4f m_current_wtm;
 
-  /*! indicates for the snapshot from which buffer to take the image from */
-  Boolean m_snap_from_front;
-
   /*! Indicates whether the frame buffers should be cleared */
   Uint m_clear;
 
@@ -149,12 +142,6 @@ inline void Draw_action::set_current_wtm(Shared_matrix4f wtm)
 
 inline Draw_action::Shared_matrix4f Draw_action::get_current_wtm() const
 { return m_current_wtm; }
-
-inline void Draw_action::set_snap_from_front(Boolean flag)
-{ m_snap_from_front = flag; }
-
-inline Boolean Draw_action::is_snap_from_front() const
-{ return m_snap_from_front; }
 
 inline void Draw_action::set_clear(Uint mask) { m_clear = mask; }
 

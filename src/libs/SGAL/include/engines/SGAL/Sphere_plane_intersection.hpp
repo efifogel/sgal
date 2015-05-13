@@ -89,11 +89,14 @@ public:
    */
   virtual void set_attributes(Element* elem);
 
-  // virtual Attribute_list get_attributes();
+  /*! Trigger the execution of the engine as a response to change in one
+   * of the input fields.
+   */
+  void trigger_changed(const Field_info* field_info);
 
   /*! The interpolation execution function.
    */
-  virtual void execute(const Field_info* field_info);
+  void execute();
 
   /*! Obtain the sphere radius.
    */

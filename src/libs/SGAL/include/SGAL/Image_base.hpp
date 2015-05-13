@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7205 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_IMAGE_HPP
@@ -34,6 +31,7 @@
 #include <windows.h>
 #endif
 #include <GL/gl.h>
+#include <string>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
@@ -177,11 +175,14 @@ public:
     kNumFormats
   };
 
-  /*! Constructor */
+  /*! Construct default. */
   Image_base(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Image_base();
+
+  /*! Clone. */
+  virtual Container* clone();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -309,6 +310,9 @@ public:
   Float get_transparency() const;
 
 protected:
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
+
   /*! A map from format to number of bits. */
   static Uint s_format_sizes[];
 
@@ -368,6 +372,9 @@ private:
   /*! The node prototype. */
   static Container_proto* s_prototype;
 
+  /*! The tag that identifies this container type. */
+  static const std::string s_tag;
+
   /// \name Default values
   //@{
   static const Uint s_def_width;
@@ -379,6 +386,9 @@ private:
   static const Float s_def_transparency;
   //@}
 };
+
+//! \brief clones.
+inline Container* Image_base::clone() { return new Image_base(); }
 
 //! \brief sets the image width.
 inline void Image_base::set_width(Uint width) { m_width = width; }
@@ -473,6 +483,9 @@ inline void Image_base::set_transparency(Float transparency)
 
 //! \brief obtain the transparency of the image.
 inline Float Image_base::get_transparency() const { return m_transparency; }
+
+//! \brief obtains the tag (type) of the container.
+inline const std::string& Image_base::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

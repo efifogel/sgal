@@ -61,20 +61,18 @@ void Image_to_height_map::init_prototype()
   s_prototype = new Container_proto(Node::get_prototype());
 
   // Add the field-info records to the prototype:
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Image_to_height_map::execute);
+  auto exec_func =
+    static_cast<Execution_function>(&Image_to_height_map::trigger_changed);
 
   // trigger
-  Boolean_handle_function trigger_func =
-    static_cast<Boolean_handle_function>
-    (&Image_to_height_map::trigger_handle);
+  auto trigger_func =
+    static_cast<Boolean_handle_function>(&Image_to_height_map::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
                                           Field_info::RULE_IN,
                                           trigger_func, exec_func));
 
   // image
-  Shared_container_handle_function image_func =
-    reinterpret_cast<Shared_container_handle_function>
+  auto image_func = reinterpret_cast<Shared_container_handle_function>
     (&Image_to_height_map::image_handle);
   s_prototype->add_field_info(new SF_shared_container(IMAGE,
                                                       "image",
@@ -82,8 +80,7 @@ void Image_to_height_map::init_prototype()
                                                       image_func));
 
   // heightMap
-  Shared_container_handle_function height_map_func =
-    reinterpret_cast<Shared_container_handle_function>
+  auto height_map_func = reinterpret_cast<Shared_container_handle_function>
     (&Image_to_height_map::height_map_handle);
   s_prototype->add_field_info(new SF_shared_container(HEIGHT_MAP,
                                                       "heightMap",
@@ -91,14 +88,14 @@ void Image_to_height_map::init_prototype()
                                                       height_map_func));
 
   // xDimension
-  Uint_handle_function x_dimension_func =
+  auto x_dimension_func =
     static_cast<Uint_handle_function>(&Image_to_height_map::x_dimension_handle);
   s_prototype->add_field_info(new SF_uint(X_DIMENSION, "xDimension",
                                           Field_info::RULE_OUT,
                                           x_dimension_func));
 
   // zDimension
-  Uint_handle_function z_dimension_func =
+  auto z_dimension_func =
     static_cast<Uint_handle_function>(&Image_to_height_map::z_dimension_handle);
   s_prototype->add_field_info(new SF_uint(Z_DIMENSION, "zDimension",
                                           Field_info::RULE_OUT,
@@ -123,15 +120,11 @@ Container_proto* Image_to_height_map::get_prototype()
 void Image_to_height_map::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
-  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const auto& name = elem->get_name(ai);
-    const auto& value = elem->get_value(ai);
-    if (name == "trigger") {
-      m_trigger = boost::lexical_cast<Boolean>(value);
-      elem->mark_delete(ai);
-      continue;
-    }
-  }
+
+  // for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  //   const auto& name = elem->get_name(ai);
+  //   const auto& value = elem->get_value(ai);
+  // }
 
   for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
        ++cai)
@@ -164,8 +157,14 @@ void Image_to_height_map::set_attributes(Element* elem)
 void Image_to_height_map::set_height_map(Shared_coord_array_1d height_map)
 { m_height_map = height_map; }
 
+/*! \brief triggers the execution of the engine as a response to change in one
+ * of the input fields.
+ */
+void Image_to_height_map::trigger_changed(const Field_info* /* field_info */)
+{ execute(); }
+
 //! \brief executes the engine.
-void Image_to_height_map::execute(const Field_info* /*! field_info */)
+void Image_to_height_map::execute()
 {
   if (!m_image) return;
 

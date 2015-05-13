@@ -82,8 +82,13 @@ public:
 
   // virtual Attribute_list get_attributes();
 
+  /*! Trigger the execution of the engine as a response to change in one
+   * of the input fields.
+   */
+  void trigger_changed(const Field_info* field_info);
+
   /*! Increment the counter. */
-  virtual void execute(const Field_info* field_info);
+  void execute();
 
   /*! Obtain the minimum value. */
   Int32 get_min_value() const;
@@ -165,4 +170,3 @@ inline const std::string& Incrementor::get_tag() const { return s_tag; }
 SGAL_END_NAMESPACE
 
 #endif
-

@@ -93,6 +93,7 @@ class Event_filter;
 class Route;
 class Isect_action;
 class Simulation;
+class Snapshotter;
 
 #if (defined _MSC_VER)
 #pragma warning( push )
@@ -243,6 +244,7 @@ public:
 
   /*! Add a snapshot node to the list of snapshots nodes. */
   void add_snaphot(Snapshot* snapshot);
+  void set_snaphotter(Snapshotter* snapshotter);
 
   /*! Add a Simulation node to the list of Simulation nodes. */
   void add_simulation(Simulation* simulation);
@@ -526,6 +528,7 @@ private:
    * sequence.
    */
   Snapshot_list m_snapshots;
+  Snapshotter* m_snapshotter;
 
   /*! A list of Simulation containetrs. */
   Simulation_list m_simulations;

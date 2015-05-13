@@ -97,9 +97,14 @@ public:
    */
   virtual void write(Formatter* formatter);
 
-  /*! The interpolation execution function.
+  /*! Execute the engine.
    */
-  virtual void execute(const Field_info* field_info);
+  void execute();
+
+  /*! Trigger the execution of the engine as a response to change in one
+   * of the input fields.
+   */
+  void trigger_changed(const Field_info* field_info);
 
   /*! Obtain the texture image. */
   Shared_image get_image() const;
@@ -144,7 +149,7 @@ protected:
   /*! The number of grid points along the z-dimension. */
   Uint m_z_dimension;
 
-  /*! Trigger of the engine that makes the engine excute. */
+  /*! The trigger of the engine, which makes the engine excute. */
   Boolean m_trigger;
 
 private:

@@ -51,6 +51,7 @@
 #include "SGAL/Route.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Snapshot.hpp"
+#include "SGAL/Snapshotter.hpp"
 #include "SGAL/Point_light.hpp"
 #include "SGAL/Bindable_stack.hpp"
 #include "SGAL/Camera.hpp"
@@ -83,6 +84,7 @@ Scene_graph::Scene_graph(bool syncronize) :
   m_does_have_lights(false),
   // m_current_light_id(0),
   m_isect_action(nullptr),
+  m_snapshotter(nullptr),
   m_execution_coordinator(nullptr),
   m_default_event_filter(nullptr),
   m_configuration(nullptr),
@@ -234,15 +236,10 @@ void Scene_graph::draw(Draw_action* draw_action)
   if (poly_mode != Gfx::FILL_PMODE) m_context->set_cull_face(Gfx::BACK_CULL);
 
   if (accumulation_enabled) {
-    if (acc->is_done() && draw_action->get_snap()) {
-      draw_action->set_snap_from_front(false);
+    if (acc->is_done() && draw_action->get_snap())
       process_snapshots(draw_action);
-    }
   }
-  else if (draw_action->get_snap()) {
-    draw_action->set_snap_from_front(false);
-    process_snapshots(draw_action);
-  }
+  else if (draw_action->get_snap()) process_snapshots(draw_action);
 
   if (acc && !acc->is_active()) acc->reset_delay_time();
 
@@ -423,6 +420,7 @@ void Scene_graph::process_snapshots(Draw_action* action)
     Snapshot* snapshot = *i;
     snapshot->draw(action);
   }
+  if (m_snapshotter) m_snapshotter->draw(action);
 }
 
 //! \brief adds a Simulation node to the list of Simulation nodes.
@@ -556,6 +554,8 @@ void Scene_graph::add_time_sensor(Time_sensor* time_sensor)
 //! \brief adds a snapshot node to the list of snapshots nodes.
 void Scene_graph::add_snaphot(Snapshot* snapshot)
 { m_snapshots.push_back(snapshot); }
+void Scene_graph::set_snaphotter(Snapshotter* snapshotter)
+{ m_snapshotter = snapshotter; }
 
 //! \brief routes the Navigation_info node properly.
 void Scene_graph::route_navigation_info(Navigation_info* nav,

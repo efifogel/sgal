@@ -36,6 +36,7 @@
 #include "SGAL/Image_to_height_map.hpp"
 #include "SGAL/Image_sphere_environment.hpp"
 #include "SGAL/Image_texture.hpp"
+#include "SGAL/Image_writer.hpp"
 // #include "SGAL/Image_texture_WT.hpp"
 #include "SGAL/Incrementor.hpp"
 #include "SGAL/Navigation_info.hpp"
@@ -121,6 +122,7 @@
 
 // #include "SGAL/Prog_indexed_tri_set.hpp"
 #include "SGAL/Snapshot.hpp"
+#include "SGAL/Snapshotter.hpp"
 // #include "SGAL/Movie_recorder.hpp"
 // #include "SGAL/Field_def.hpp"
 
@@ -204,6 +206,7 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Image_background);
   REGISTER_OBJECT(Image_sphere_environment);
   REGISTER_OBJECT(Image_texture);
+  REGISTER_OBJECT(Image_writer);
   REGISTER_OBJECT(Incrementor);
   REGISTER_OBJECT(Indexed_face_set);
   REGISTER_OBJECT(Indexed_geodesic_set);
@@ -225,6 +228,7 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Simulation);
   REGISTER_OBJECT(Single_key_sensor);
   REGISTER_OBJECT(Snapshot);
+  REGISTER_OBJECT(Snapshotter);
   REGISTER_OBJECT(Sphere);
   REGISTER_OBJECT(Sphere_environment);
   REGISTER_OBJECT(Sphere_plane_intersection);

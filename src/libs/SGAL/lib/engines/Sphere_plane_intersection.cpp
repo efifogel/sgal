@@ -38,7 +38,6 @@ const std::string Sphere_plane_intersection::s_tag = "SpherePlaneIntersection";
 Container_proto* Sphere_plane_intersection::s_prototype(nullptr);
 
 // Defaults values:
-  // Default values:
 const Float Sphere_plane_intersection::s_def_sphere_radius(1);
 const Vector4f Sphere_plane_intersection::s_def_plane(0, 0, 1, 0);
 
@@ -62,20 +61,18 @@ void Sphere_plane_intersection::init_prototype()
   s_prototype = new Container_proto(Node::get_prototype());
 
   // Add the field-info records to the prototype:
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Sphere_plane_intersection::execute);
+  auto exec_func =
+    static_cast<Execution_function>(&Sphere_plane_intersection::trigger_changed);
 
   // sphereRadius
-  Float_handle_function sphere_radius_func =
-    static_cast<Float_handle_function>
+  auto sphere_radius_func = static_cast<Float_handle_function>
     (&Sphere_plane_intersection::sphere_radius_handle);
   s_prototype->add_field_info(new SF_float(SPHERE_RADIUS, "sphereRadius",
                                            Field_info::RULE_EXPOSED_FIELD,
                                            sphere_radius_func, exec_func));
 
   // plane
-  Vector4f_handle_function plane_func =
-    static_cast<Vector4f_handle_function>
+  auto plane_func = static_cast<Vector4f_handle_function>
     (&Sphere_plane_intersection::plane_handle);
   s_prototype->add_field_info(new SF_vector4f(PLANE, "plane",
                                               Field_info::RULE_EXPOSED_FIELD,
@@ -83,16 +80,14 @@ void Sphere_plane_intersection::init_prototype()
                                               exec_func));
 
   // trigger
-  Boolean_handle_function trigger_func =
-    static_cast<Boolean_handle_function>
+  auto trigger_func = static_cast<Boolean_handle_function>
     (&Sphere_plane_intersection::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
                                           Field_info::RULE_IN,
                                           trigger_func, exec_func));
 
   // circleTranslation
-  Vector3f_handle_function circle_translation_func =
-    static_cast<Vector3f_handle_function>
+  auto circle_translation_func = static_cast<Vector3f_handle_function>
     (&Sphere_plane_intersection::circle_translation_handle);
   s_prototype->add_field_info(new SF_vector3f(CIRCLE_TRANSLATION,
                                               "circleTranslation",
@@ -100,8 +95,7 @@ void Sphere_plane_intersection::init_prototype()
                                               circle_translation_func));
 
   // circleRotation
-  Rotation_handle_function circle_rotation_func =
-    static_cast<Rotation_handle_function>
+  auto circle_rotation_func = static_cast<Rotation_handle_function>
     (&Sphere_plane_intersection::circle_rotation_handle);
   s_prototype->add_field_info(new SF_rotation(CIRCLE_ROTATION,
                                               "circleRotation",
@@ -109,8 +103,7 @@ void Sphere_plane_intersection::init_prototype()
                                               circle_rotation_func));
 
   // circleRadius
-  Float_handle_function circle_radius_func =
-    static_cast<Float_handle_function>
+  auto circle_radius_func = static_cast<Float_handle_function>
     (&Sphere_plane_intersection::circle_radius_handle);
   s_prototype->add_field_info(new SF_float(CIRCLE_RADIUS, "circleRadius",
                                            Field_info::RULE_EXPOSED_FIELD,
@@ -134,14 +127,10 @@ Container_proto* Sphere_plane_intersection::get_prototype()
 //! \brief sets the attributes of the object extracted from the input file.
 void Sphere_plane_intersection::set_attributes(Element* elem)
 {
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-
   Node::set_attributes(elem);
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "sphereRadius") {
       m_sphere_radius = boost::lexical_cast<Float>(value);
       elem->mark_delete(ai);
@@ -170,19 +159,21 @@ void Sphere_plane_intersection::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "trigger") {
-      m_trigger = boost::lexical_cast<Boolean>(value);
-      elem->mark_delete(ai);
-      continue;
-    }
   }
 
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
 
+/*! \brief triggers the execution of the engine as a response to change in one
+ * of the input fields.
+ */
+void Sphere_plane_intersection::
+trigger_changed(const Field_info* /* field_info */)
+{ execute(); }
+
 //! \brief executes the engine.
-void Sphere_plane_intersection::execute(const Field_info* /*! field_info */)
+void Sphere_plane_intersection::execute()
 {
   Field* circle_trans = get_field(CIRCLE_TRANSLATION);
   Field* circle_rot = get_field(CIRCLE_ROTATION);
