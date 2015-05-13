@@ -50,7 +50,7 @@
 #include "SGAL/Types.hpp"
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/errors.hpp"
-#include "SGAL/Image.hpp"
+#include "SGAL/Image_reader.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_infos.hpp"
@@ -59,49 +59,49 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Image::s_prototype(nullptr);
-const std::string Image::s_tag = "Image";
+Container_proto* Image_reader::s_prototype(nullptr);
+const std::string Image_reader::s_tag = "ImageReader";
 
-REGISTER_TO_FACTORY(Image, "Image");
+REGISTER_TO_FACTORY(Image_reader, "Image_reader");
 
 //! \brief constructor
-Image::Image(Boolean proto) : Image_base(proto) {}
+Image_reader::Image_reader(Boolean proto) : Image(proto) {}
 
 //! \brief destructor
-Image::~Image() {}
+Image_reader::~Image_reader() {}
 
 //! \brief initializess the node prototype.
-void Image::init_prototype()
+void Image_reader::init_prototype()
 {
   if (s_prototype) return;
-  s_prototype = new Container_proto(Image_base::get_prototype());
+  s_prototype = new Container_proto(Image::get_prototype());
 
   // url
   String_handle_function url_func =
-    static_cast<String_handle_function>(&Image::url_handle);
+    static_cast<String_handle_function>(&Image_reader::url_handle);
   s_prototype->add_field_info(new SF_string(URL, "url",
                                             Field_info::RULE_EXPOSED_FIELD,
                                             url_func));
 }
 
 //! \brief deletes the prototype.
-void Image::delete_prototype()
+void Image_reader::delete_prototype()
 {
   delete s_prototype;
   s_prototype = nullptr;
 }
 
 //! \brief obtains the prototype.
-Container_proto* Image::get_prototype()
+Container_proto* Image_reader::get_prototype()
 {
-  if (!s_prototype) Image::init_prototype();
+  if (!s_prototype) Image_reader::init_prototype();
   return s_prototype;
 }
 
 //! \brief sets the attributes of the image.
-void Image::set_attributes(Element* elem)
+void Image_reader::set_attributes(Element* elem)
 {
-  Image_base::set_attributes(elem);
+  Image::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
   Str_attr_iter ai;
@@ -122,35 +122,35 @@ void Image::set_attributes(Element* elem)
 }
 
 //! \brief obtains the image width.
-Uint Image::get_width()
+Uint Image_reader::get_width()
 {
   if (m_dirty) clean();
   return m_width;
 }
 
 //! \brief obtains the image height.
-Uint Image::get_height()
+Uint Image_reader::get_height()
 {
   if (m_dirty) clean();
   return m_height;
 }
 
 //! \brief obtains the image format.
-Image_base::Format Image::get_format()
+Image::Format Image_reader::get_format()
 {
   if (m_dirty) clean();
   return m_format;
 }
 
 //! \brief obtains the image pixel data.
-void* Image::get_pixels()
+void* Image_reader::get_pixels()
 {
   if (m_dirty) clean();
   return m_pixels;
 }
 
 //! \brief cleans the image.
-void Image::clean()
+void Image_reader::clean()
 {
   if (m_url.empty()) return;
 
@@ -199,42 +199,42 @@ void Image::clean()
       image.opacity(boost::lexical_cast<Uint>(quantum_range * m_transparency));
       image.colorSpace(Magick::TransparentColorspace);
     }
-    Image_base::Format format = kIllegal;
+    Image::Format format = kIllegal;
     std::string magick_map;
     Magick::StorageType magick_type = Magick::CharPixel;
     Magick::ImageType type = image.type();
     switch (type) {
      case Magick::GrayscaleType:       // Grayscale img
       // std::cout << "GrayscaleType" << std::endl;
-      format = Image_base::kLuminance8;
+      format = Image::kLuminance8;
       magick_map = "R";
       magick_type = Magick::CharPixel;
       break;
 
      case Magick::TrueColorType:       // Truecolor img
       // std::cout << "TrueColorType" << std::endl;
-      format = Image_base::kRGB8_8_8;
+      format = Image::kRGB8_8_8;
       magick_map = "RGB";
       magick_type = Magick::CharPixel;
       break;
 
      case Magick::TrueColorMatteType:  // Truecolor img + opacity
       // std::cout << "TrueColorMatteType" << std::endl;
-      format = Image_base::kRGBA8_8_8_8;
+      format = Image::kRGBA8_8_8_8;
       magick_map = "RGBA";
       magick_type = Magick::CharPixel;
       break;
 
      case Magick::PaletteMatteType:    // Indexed color (palette) img + opacity
       // std::cout << "PaletteMatteType" << std::endl;
-      format = Image_base::kRGBA8_8_8_8;
+      format = Image::kRGBA8_8_8_8;
       magick_map = "RGBA";
       magick_type = Magick::CharPixel;
       break;
 
      case Magick::PaletteType:         // Indexed color (palette) img
       // std::cout << "PaletteType" << std::endl;
-      format = Image_base::kRGB8_8_8;
+      format = Image::kRGB8_8_8;
       magick_map = "RGB";
       magick_type = Magick::CharPixel;
       break;
@@ -271,7 +271,7 @@ void Image::clean()
     m_width = width;
     m_height = height;
     m_format = format;
-    Uint size = Image_base::get_size(width, height, format);
+    Uint size = Image::get_size(width, height, format);
     m_pixels = new char[size];
     SGAL_assertion(m_pixels);
     m_owned_pixels = true;
@@ -286,7 +286,7 @@ void Image::clean()
 }
 
 //! \brief sets the URL.
-void Image::set_url(const std::string& url)
+void Image_reader::set_url(const std::string& url)
 {
   m_url = url;
   m_dirty = true;

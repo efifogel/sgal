@@ -21,7 +21,7 @@
 
 /*! \file
  * A class that holds images of various formats.
- * Image_base is a class that can hold an image in various formats.
+ * Image is a class that can hold an image in various formats.
  * We currently assume that the default image is RGB8_8_8 (24 bit).
  *
  *  Inherits from Container
@@ -42,7 +42,7 @@ SGAL_BEGIN_NAMESPACE
 class Element;
 class Container_proto;
 
-class SGAL_SGAL_DECL Image_base : public Container {
+class SGAL_SGAL_DECL Image : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,
@@ -176,10 +176,13 @@ public:
   };
 
   /*! Construct default. */
-  Image_base(Boolean proto = false);
+  Image(Boolean proto = false);
 
   /*! Destructor */
-  virtual ~Image_base();
+  virtual ~Image();
+
+  /*! Construct the prototype. */
+  static Image* prototype();
 
   /*! Clone. */
   virtual Container* clone();
@@ -387,105 +390,108 @@ private:
   //@}
 };
 
+//! \brief constructs the prototype.
+inline Image* Image::prototype() { return new Image(true); }
+
 //! \brief clones.
-inline Container* Image_base::clone() { return new Image_base(); }
+inline Container* Image::clone() { return new Image(); }
 
 //! \brief sets the image width.
-inline void Image_base::set_width(Uint width) { m_width = width; }
+inline void Image::set_width(Uint width) { m_width = width; }
 
 //! \brief obtains the image width.
-inline Uint Image_base::get_width() { return m_width; }
+inline Uint Image::get_width() { return m_width; }
 
 //! \brief sets the image height.
-inline void Image_base::set_height(Uint height) { m_height = height; }
+inline void Image::set_height(Uint height) { m_height = height; }
 
 //! \brief obtains the image height.
-inline Uint Image_base::get_height() { return m_height; }
+inline Uint Image::get_height() { return m_height; }
 
 //! \brief sets the image format.
-inline void Image_base::set_format(Format format) { m_format = format; }
+inline void Image::set_format(Format format) { m_format = format; }
 
 //! \brief obtains the image format.
-inline Image_base::Format Image_base::get_format() { return m_format; }
+inline Image::Format Image::get_format() { return m_format; }
 
 //! \brief sets the number of pixels in a row.
-inline void Image_base::set_pack_row_length(Uint length)
+inline void Image::set_pack_row_length(Uint length)
 { m_pack_row_length = length; }
 
 //! \brief obtains the number of pixels in a row.
-inline Uint Image_base::get_pack_row_length() const
+inline Uint Image::get_pack_row_length() const
 { return m_pack_row_length; }
 
 //! \brief obtains the image pixel data.
-inline void* Image_base::get_pixels() { return m_pixels; }
+inline void* Image::get_pixels() { return m_pixels; }
 
 //! \brief returns true if image hasn't been updated yet and false otherwise.
-inline Boolean Image_base::is_dirty() { return m_dirty; }
+inline Boolean Image::is_dirty() { return m_dirty; }
 
 /*! \brief cleans the image in case it is dirty. */
-inline void Image_base::clean() {}
+inline void Image::clean() {}
 
 /*! \brief obtains the memory that is used by an image (in bytes) with the given
  * attributes.
  */
-inline Uint Image_base::get_size(Uint width, Uint height, Format format)
+inline Uint Image::get_size(Uint width, Uint height, Format format)
 { return width * height * bits2bytes(s_format_sizes[format]); }
 
 //! \brief obtains the number of bits.
-inline Uint Image_base::get_format_size(Format format)
+inline Uint Image::get_format_size(Format format)
 { return s_format_sizes[format]; }
 
 //! \brief obtains the openGl format.
-inline GLenum Image_base::get_format_format(Format format)
+inline GLenum Image::get_format_format(Format format)
 { return s_format_formats[format]; }
 
 //! \brief obtains the storage type of component.
-inline GLenum Image_base::get_format_type(Format format)
+inline GLenum Image::get_format_type(Format format)
 { return s_format_types[format]; }
 
 //! \brief obtains the number of components.
-inline Uint Image_base::get_format_components(Format format)
+inline Uint Image::get_format_components(Format format)
 { return s_format_components[format]; }
 
 //! \brief obtains the openGl internal format.
-inline GLenum Image_base::get_format_internal_format(Format format)
+inline GLenum Image::get_format_internal_format(Format format)
 { return s_format_internal_formats[format]; }
 
 //! \brief obtains the format name (string).
-inline const char* Image_base::get_format_name(Format format)
+inline const char* Image::get_format_name(Format format)
 { return s_format_names[format]; }
 
 //! \brief sets the flag that indicates whether the image should be reflected.
-inline void Image_base::set_flip(Boolean flag) { m_flip = flag; }
+inline void Image::set_flip(Boolean flag) { m_flip = flag; }
 
 /*! \brief obtains the flag that indicates whether the image should be
  * reflected.
  */
-inline Boolean Image_base::get_flip() const { return m_flip; }
+inline Boolean Image::get_flip() const { return m_flip; }
 
 //! \brief sets the rotation angle.
-inline void Image_base::set_rotation(Float rotation) { m_rotation = rotation; }
+inline void Image::set_rotation(Float rotation) { m_rotation = rotation; }
 
 //! \brief obtains the rotation angle.
-inline Float Image_base::get_rotation() const { return m_rotation; }
+inline Float Image::get_rotation() const { return m_rotation; }
 
 /*! \brief sets the flag that indicates whether to add (or retain) the alpha
  * channel or remove it.
  */
-inline void Image_base::set_alpha(Boolean flag) { m_alpha = flag; }
+inline void Image::set_alpha(Boolean flag) { m_alpha = flag; }
 
 //! \brief determines whether to add (or retain) the alpha channel or remove it.
-inline Boolean Image_base::get_alpha() const { return m_alpha; }
+inline Boolean Image::get_alpha() const { return m_alpha; }
 
 //! \brief set the transparency of the image.
-inline void Image_base::set_transparency(Float transparency)
+inline void Image::set_transparency(Float transparency)
 { m_transparency = transparency; }
 
 //! \brief obtain the transparency of the image.
-inline Float Image_base::get_transparency() const { return m_transparency; }
+inline Float Image::get_transparency() const { return m_transparency; }
 
 //! \brief obtains the tag (type) of the container.
-inline const std::string& Image_base::get_tag() const { return s_tag; }
+inline const std::string& Image::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

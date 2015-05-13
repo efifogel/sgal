@@ -32,7 +32,7 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Scene_graph.hpp"
-#include "SGAL/Image.hpp"
+#include "SGAL/Image_reader.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -96,37 +96,37 @@ void Cube_environment::set_attributes(Element* elem)
     const std::string& name = elem->get_name(cai);
     Shared_container cont = elem->get_value(cai);
     if (name == "leftImage") {
-      Shared_image image = boost::dynamic_pointer_cast<Image>(cont);
+      auto image = boost::dynamic_pointer_cast<Image_reader>(cont);
       set_left_image(image);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "rightImage") {
-      Shared_image image = boost::dynamic_pointer_cast<Image>(cont);
+      auto image = boost::dynamic_pointer_cast<Image_reader>(cont);
       set_right_image(image);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "frontImage") {
-      Shared_image image = boost::dynamic_pointer_cast<Image>(cont);
+      auto image = boost::dynamic_pointer_cast<Image_reader>(cont);
       set_front_image(image);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "backImage") {
-      Shared_image image = boost::dynamic_pointer_cast<Image>(cont);
+      auto image = boost::dynamic_pointer_cast<Image_reader>(cont);
       set_back_image(image);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "bottomImage") {
-      Shared_image image = boost::dynamic_pointer_cast<Image>(cont);
+      auto image = boost::dynamic_pointer_cast<Image_reader>(cont);
       set_bottom_image(image);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "topImage") {
-      Shared_image image = boost::dynamic_pointer_cast<Image>(cont);
+      auto image = boost::dynamic_pointer_cast<Image_reader>(cont);
       set_top_image(image);
       elem->mark_delete(cai);
       continue;

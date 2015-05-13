@@ -16,8 +16,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_URL_IMAGE_HPP
-#define SGAL_URL_IMAGE_HPP
+#ifndef SGAL_IMAGE_READER_HPP
+#define SGAL_IMAGE_READER_HPP
 
 #include <string>
 #include <list>
@@ -25,7 +25,7 @@
 #include <boost/filesystem/path.hpp>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Image_base.hpp"
+#include "SGAL/Image.hpp"
 
 namespace fi = boost::filesystem;
 
@@ -36,25 +36,25 @@ SGAL_BEGIN_NAMESPACE
 #pragma warning( disable: 4251 )
 #endif
 
-class SGAL_SGAL_DECL Image : public Image_base {
+class SGAL_SGAL_DECL Image_reader : public Image {
 public:
   typedef std::list<fi::path>                   Path_list;
   typedef Path_list::iterator                   Path_iter;
 
   enum {
-    FIRST = Image_base::LAST - 1,
+    FIRST = Image::LAST - 1,
     URL,
     LAST
   };
 
   /*! Constructor */
-  Image(Boolean proto = false);
+  Image_reader(Boolean proto = false);
 
   /*! Destructor */
-  virtual ~Image();
+  virtual ~Image_reader();
 
   /*! Construct the prototype. */
-  static Image* prototype();
+  static Image_reader* prototype();
 
   /*! Clone. */
   virtual Container* clone();
@@ -98,7 +98,7 @@ public:
   virtual Uint get_height();
 
   /*! Obtain the image format. */
-  virtual Image_base::Format get_format();
+  virtual Image::Format get_format();
 
   /*! Obtain the image pixel data. */
   virtual void* get_pixels();
@@ -131,25 +131,28 @@ private:
 #endif
 
 //! \brief constructs the prototype.
-inline Image* Image::prototype() { return new Image(true); }
+inline Image_reader* Image_reader::prototype() { return new Image_reader(true); }
 
 //! \brief clones.
-inline Container* Image::clone() { return new Image(); }
+inline Container* Image_reader::clone() { return new Image_reader(); }
 
 //! \brief obtains the tag (type) of the container.
-inline const std::string& Image::get_tag() const { return s_tag; }
+inline const std::string& Image_reader::get_tag() const { return s_tag; }
 
 //! \brief obtains the URL.
-inline const std::string Image::get_url() const { return m_url; }
+inline const std::string Image_reader::get_url() const { return m_url; }
 
 //! \brief adds a directory to the directory-search list.
-inline void Image::add_dir(const fi::path& dir) { m_dirs.push_back(dir); }
+inline void Image_reader::add_dir(const fi::path& dir)
+{ m_dirs.push_back(dir); }
 
 //! \brief sets the directory-search structure.
-inline void Image::set_dirs(const Image::Path_list& dirs) { m_dirs = dirs; }
+inline void Image_reader::set_dirs(const Image_reader::Path_list& dirs)
+{ m_dirs = dirs; }
 
 //! \brief obtains the directory-search structure.
-inline const Image::Path_list& Image::get_dirs() const { return m_dirs; }
+inline const Image_reader::Path_list& Image_reader::get_dirs() const
+{ return m_dirs; }
 
 SGAL_END_NAMESPACE
 

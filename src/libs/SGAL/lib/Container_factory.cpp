@@ -35,6 +35,7 @@
 #include "SGAL/Image.hpp"
 #include "SGAL/Image_to_height_map.hpp"
 #include "SGAL/Image_sphere_environment.hpp"
+#include "SGAL/Image_reader.hpp"
 #include "SGAL/Image_texture.hpp"
 #include "SGAL/Image_writer.hpp"
 // #include "SGAL/Image_texture_WT.hpp"
@@ -205,6 +206,7 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Image_to_height_map);
   REGISTER_OBJECT(Image_background);
   REGISTER_OBJECT(Image_sphere_environment);
+  REGISTER_OBJECT(Image_reader);
   REGISTER_OBJECT(Image_texture);
   REGISTER_OBJECT(Image_writer);
   REGISTER_OBJECT(Incrementor);

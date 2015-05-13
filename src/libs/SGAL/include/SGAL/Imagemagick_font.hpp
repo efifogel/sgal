@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 5647 $
-//
 // Author(s)     : Ophir Setter      <ophir.setter@gmail.com>
 //                 Efi Fogel         <efifogel@gmail.com>
 
@@ -81,7 +78,7 @@ private:
   Texture_2d m_texture;
 
   /*! */
-  Image m_image;
+  Image_reader m_image;
 
   /*! */
   Uint m_text_width;

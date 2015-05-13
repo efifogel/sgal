@@ -65,6 +65,7 @@
 #include "SGAL/Stl_formatter.hpp"
 #include "SGAL/Group.hpp"
 #include "SGAL/Node.hpp"
+#include "SGAL/Image.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -392,17 +393,17 @@ void Scene_graph::isect(Uint x, Uint y)
   m_navigation_root->isect(m_isect_action);
   glPopAttrib();
 
-  Image_base::Format format = Image_base::kRGB8_8_8;
-  GLenum gl_format = Image_base::get_format_format(format);
-  GLenum gl_type = Image_base::get_format_type(format);
+  Image::Format format = Image::kRGB8_8_8;
+  GLenum gl_format = Image::get_format_format(format);
+  GLenum gl_type = Image::get_format_type(format);
   // Ideally, we would declare pixel[] as an array of size
-  // Image_base::get_format_components(format) (Uchar pixel[num_components]).
+  // Image::get_format_components(format) (Uchar pixel[num_components]).
   // Unfortunately, MSVC does not allow defining an array of non-constant
   // size, so we define it to be of the maximum (of 3 and 4).
 #if (_MSC_VER <= 1800)
   Uchar pixel[4];
 #else
-  Uchar pixel[Image_base::get_format_components(format)];
+  Uchar pixel[Image::get_format_components(format)];
 #endif
   glReadPixels(x, y, 1, 1, gl_format, gl_type, pixel);
   Uint index = m_isect_action->get_index(pixel);

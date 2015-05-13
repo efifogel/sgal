@@ -30,7 +30,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Sphere_environment.hpp"
-#include "SGAL/Image.hpp"
+#include "SGAL/Image_reader.hpp"
 #include "SGAL/Scene_graph.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -42,7 +42,7 @@ SGAL_BEGIN_NAMESPACE
 
 class SGAL_SGAL_DECL Image_sphere_environment : public Sphere_environment {
 public:
-  typedef Image::Path_list                          Path_list;
+  typedef Image_reader::Path_list               Path_list;
 
   /*! Constructor */
   Image_sphere_environment(Boolean proto = false);
@@ -99,7 +99,7 @@ private:
   static Container_proto* s_prototype;
 
   /*! The image. */
-  Image m_images[2];
+  Image_reader m_images[2];
 };
 
 #if defined(_MSC_VER)

@@ -134,7 +134,7 @@ void Image_writer::init_prototype()
   // image
   exec_func = static_cast<Execution_function>(&Image_writer::image_changed);
   auto image_func = reinterpret_cast<Shared_container_handle_function>
-    (&Image_writer::image_base_handle);
+    (&Image_writer::image_handle);
   s_prototype->add_field_info(new SF_shared_container(IMAGE,
                                                       "image",
                                                       Field_info::RULE_OUT,
@@ -214,7 +214,7 @@ void Image_writer::set_attributes(Element* elem)
     const auto& name = elem->get_name(cai);
     auto cont = elem->get_value(cai);
     if (name == "image") {
-      set_image(boost::dynamic_pointer_cast<Image_base>(cont));
+      set_image(boost::dynamic_pointer_cast<Image>(cont));
       elem->mark_delete(cai);
       continue;
     }
@@ -250,7 +250,7 @@ void Image_writer::write(Formatter* formatter)
 }
 
 //! \brief sets the image.
-void Image_writer::set_image(Shared_image_base image)
+void Image_writer::set_image(Shared_image image)
 {
   m_image = image;
   if (is_image_trigger()) execute();

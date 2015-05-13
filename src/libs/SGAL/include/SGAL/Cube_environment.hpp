@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -44,7 +41,7 @@ SGAL_BEGIN_NAMESPACE
 
 class Container_proto;
 class Scene_graph;
-class Image;
+class Image_reader;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -74,7 +71,7 @@ public:
     NUM_IMAGES
   };
 
-  typedef boost::shared_ptr<Image>                      Shared_image;
+  typedef boost::shared_ptr<Image_reader>       Shared_image;
 
   /*! Constructor */
   Cube_environment(Boolean proto = false);

@@ -38,7 +38,7 @@ class Container_proto;
 class Element;
 class Scene_graph;
 class ofstream;
-class Image_base;
+class Image;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -61,7 +61,7 @@ public:
     LAST
   };
 
-  typedef boost::shared_ptr<Image_base>         Shared_image;
+  typedef boost::shared_ptr<Image>              Shared_image;
 
   /*! Constructor
    */

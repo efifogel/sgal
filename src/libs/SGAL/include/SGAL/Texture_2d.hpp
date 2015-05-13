@@ -35,7 +35,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Texture.hpp"
-#include "SGAL/Image.hpp"
+#include "SGAL/Image_reader.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -95,10 +95,10 @@ public:
   // virtual Attribute_list get_attributes();
 
   /*! Obtain the texture image. */
-  Image* get_image() const;
+  Image_reader* get_image() const;
 
   /*! Set the texture image. */
-  void set_image(Image* image);
+  void set_image(Image_reader* image);
 
   /*! Obtain the texture format. */
   Image::Format get_format() const;
@@ -135,7 +135,7 @@ public:
 
 protected:
   /*! The texture pixels. */
-  Image* m_image;
+  Image_reader* m_image;
 
 #if 0
   /*! */
@@ -164,10 +164,10 @@ inline Texture_2d* Texture_2d::prototype() { return new Texture_2d(true); }
 inline Container* Texture_2d::clone() { return new Texture_2d(); }
 
 //! \brief obtains the texture image.
-inline Image* Texture_2d::get_image() const { return m_image; }
+inline Image_reader* Texture_2d::get_image() const { return m_image; }
 
 //! \brief sets the texture image.
-inline  void Texture_2d::set_image(Image* image) { m_image = image; }
+inline void Texture_2d::set_image(Image_reader* image) { m_image = image; }
 
 //! \brief obtain the texture format.
 inline  Image::Format Texture_2d::get_format() const

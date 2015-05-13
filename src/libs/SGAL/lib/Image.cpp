@@ -25,7 +25,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/Image_base.hpp"
+#include "SGAL/Image.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -36,11 +36,11 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Image_base::s_prototype(nullptr);
-const std::string Image_base::s_tag = "ImageBase";
+Container_proto* Image::s_prototype(nullptr);
+const std::string Image::s_tag = "ImageBase";
 
 /*! A map from format to number of bits */
-Uint Image_base::s_format_sizes[] = {
+Uint Image::s_format_sizes[] = {
     0,                  // kIllegal
     1,                  // kFormat1
     2,                  // kFormat2
@@ -128,7 +128,7 @@ Uint Image_base::s_format_sizes[] = {
  * The OpenGL format of the kIntensity<x> and kAlpha<x> formats is
  * GL_LUMINANCE<x>
  */
-GLenum Image_base::s_format_formats[] = {
+GLenum Image::s_format_formats[] = {
   (Uint) -1,                    // kIllegal
   (Uint) -1,                    // kFormat1
   (Uint) -1,                    // kFormat2
@@ -213,7 +213,7 @@ GLenum Image_base::s_format_formats[] = {
 };
 
 /*! A map from format to OpenGl internal format */
-GLenum Image_base::s_format_internal_formats[] = {
+GLenum Image::s_format_internal_formats[] = {
   (Uint) -1,                    // kIllegal
   (Uint) -1,                    // kFormat1
   (Uint) -1,                    // kFormat2
@@ -298,7 +298,7 @@ GLenum Image_base::s_format_internal_formats[] = {
 };
 
 /*! A map from format to storage type of component */
-GLenum Image_base::s_format_types[] = {
+GLenum Image::s_format_types[] = {
   (Uint) -1,                    // kIllegal
   (Uint) -1,                    // kFormat1
   (Uint) -1,                    // kFormat2
@@ -383,7 +383,7 @@ GLenum Image_base::s_format_types[] = {
 };
 
 /*! A map from format to number of components */
-GLenum Image_base::s_format_components[] = {
+GLenum Image::s_format_components[] = {
   (Uint) -1,                    // kIllegal
   (Uint) -1,                    // kFormat1
   (Uint) -1,                    // kFormat2
@@ -468,7 +468,7 @@ GLenum Image_base::s_format_components[] = {
 };
 
 /*! A map from format to format names */
-const char* Image_base::s_format_names[] = {
+const char* Image::s_format_names[] = {
   "Illegal",
   "Format1",
   "Format2",
@@ -553,16 +553,16 @@ const char* Image_base::s_format_names[] = {
 };
 
 // Default values
-const Uint Image_base::s_def_width(0);
-const Uint Image_base::s_def_height(0);
-const Image_base::Format Image_base::s_def_format(Image_base::kRGB8_8_8);
-const Boolean Image_base::s_def_flip(true);
-const Float Image_base::s_def_rotation(0);
-const Boolean Image_base::s_def_alpha(false);
-const Float Image_base::s_def_transparency(1);
+const Uint Image::s_def_width(0);
+const Uint Image::s_def_height(0);
+const Image::Format Image::s_def_format(Image::kRGB8_8_8);
+const Boolean Image::s_def_flip(true);
+const Float Image::s_def_rotation(0);
+const Boolean Image::s_def_alpha(false);
+const Float Image::s_def_transparency(1);
 
 //! \brief constructor
-Image_base::Image_base(Boolean proto) :
+Image::Image(Boolean proto) :
   Container(proto),
   m_width(s_def_width),
   m_height(s_def_height),
@@ -578,7 +578,7 @@ Image_base::Image_base(Boolean proto) :
 {}
 
 //! \brief destructor
-Image_base::~Image_base()
+Image::~Image()
 {
   if (m_owned_pixels) {
     if (m_pixels) {
@@ -590,54 +590,54 @@ Image_base::~Image_base()
 }
 
 //! \brief initializess the node prototype.
-void Image_base::init_prototype()
+void Image::init_prototype()
 {
   if (s_prototype)  return;
   s_prototype = new Container_proto();
 
   Uint_handle_function width_func =
-    static_cast<Uint_handle_function>(&Image_base::width_handle);
+    static_cast<Uint_handle_function>(&Image::width_handle);
   s_prototype->add_field_info(new SF_uint(WIDTH, "width",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           width_func,
                                           s_def_width));
 
   Uint_handle_function height_func =
-    static_cast<Uint_handle_function>(&Image_base::height_handle);
+    static_cast<Uint_handle_function>(&Image::height_handle);
   s_prototype->add_field_info(new SF_uint(HEIGHT, "height",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           height_func,
                                           s_def_height));
 
   Uint_handle_function format_func =
-    reinterpret_cast<Uint_handle_function>(&Image_base::format_handle);
+    reinterpret_cast<Uint_handle_function>(&Image::format_handle);
   s_prototype->add_field_info(new SF_uint(FORMAT, "format",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           format_func,
                                           s_def_format));
 
   Boolean_handle_function flip_func =
-    static_cast<Boolean_handle_function>(&Image_base::flip_handle);
+    static_cast<Boolean_handle_function>(&Image::flip_handle);
   s_prototype->add_field_info(new SF_bool(FLIP, "flip",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           flip_func,
                                           s_def_flip));
 
   Float_handle_function rotation_func =
-    static_cast<Float_handle_function>(&Image_base::rotation_handle);
+    static_cast<Float_handle_function>(&Image::rotation_handle);
   s_prototype->add_field_info(new SF_float(ROTATION, "rotation",
                                            Field_info::RULE_EXPOSED_FIELD,
                                            rotation_func, s_def_rotation));
 
   Boolean_handle_function alpha_func =
-    static_cast<Boolean_handle_function>(&Image_base::alpha_handle);
+    static_cast<Boolean_handle_function>(&Image::alpha_handle);
   s_prototype->add_field_info(new SF_bool(ALPHA, "alpha",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           alpha_func,
                                           s_def_alpha));
 
   Float_handle_function transparency_func =
-    static_cast<Float_handle_function>(&Image_base::transparency_handle);
+    static_cast<Float_handle_function>(&Image::transparency_handle);
   s_prototype->add_field_info(new SF_float(TRANSPARENCY, "transparency",
                                            Field_info::RULE_EXPOSED_FIELD,
                                            transparency_func,
@@ -645,21 +645,21 @@ void Image_base::init_prototype()
 }
 
 //! \brief deletes the prototype.
-void Image_base::delete_prototype()
+void Image::delete_prototype()
 {
   delete s_prototype;
   s_prototype = nullptr;
 }
 
 //! \brief obtains the prototype.
-Container_proto* Image_base::get_prototype()
+Container_proto* Image::get_prototype()
 {
-  if (!s_prototype) Image_base::init_prototype();
+  if (!s_prototype) Image::init_prototype();
   return s_prototype;
 }
 
 //! \brief sets the attributes of the image.
-void Image_base::set_attributes(Element* elem)
+void Image::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
   typedef Element::Str_attr_iter          Str_attr_iter;
@@ -717,7 +717,7 @@ void Image_base::set_attributes(Element* elem)
 }
 
 //! \brief draws the image.
-void Image_base::draw()
+void Image::draw()
 {
   if ((m_format <= kIllegal) || (m_format >= kNumFormats)) {
     std::cerr << "Illegal image format " << m_format << "!"
@@ -729,7 +729,7 @@ void Image_base::draw()
       (m_format ==  kDepth32) ||
       (m_format ==  kDepthStencil24_8))
   {
-    std::cerr << "Image_base of Format " << m_format << " cannot be drawn!"
+    std::cerr << "Image of Format " << m_format << " cannot be drawn!"
               << std::endl;
     return;
   }
@@ -742,14 +742,14 @@ void Image_base::draw()
 }
 
 //! \brief obtains the memory that is used by the image (in bytes).
-Uint Image_base::get_size() const
+Uint Image::get_size() const
 {
   if (m_pack_row_length == 0) return get_size(m_width, m_height, m_format);
   else return m_pack_row_length * m_height;
 }
 
 //! \brief sets the image pixel data.
-void Image_base::set_pixels(void* pixels)
+void Image::set_pixels(void* pixels)
 {
   if (m_owned_pixels) {
     if (m_pixels) delete [] (char*) m_pixels;
@@ -760,13 +760,13 @@ void Image_base::set_pixels(void* pixels)
 }
 
 //! \brief determines whether the image is empty.
-Boolean Image_base::empty()
+Boolean Image::empty()
 {
   return ((get_width() == 0) || (get_height() == 0) || (get_pixels() == nullptr));
 }
 
 //! \brief obtain the texture number of components.
-Uint Image_base::get_component_count()
-{ return Image_base::get_format_components(get_format()); }
+Uint Image::get_component_count()
+{ return Image::get_format_components(get_format()); }
 
 SGAL_END_NAMESPACE

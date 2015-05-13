@@ -48,7 +48,7 @@ public:
     LAST
   };
 
-  typedef boost::shared_ptr<Image_base>         Shared_image_base;
+  typedef boost::shared_ptr<Image>              Shared_image;
 
   /*! Constructor. */
   Image_writer(Boolean proto = false);
@@ -81,7 +81,7 @@ public:
   File_format_2d::Id* file_format_handle(const Field_info*)
   { return &m_file_format; }
   Boolean* flip_handle(const Field_info*) { return &m_flip; }
-  Shared_image_base* image_base_handle(const Field_info*)
+  Shared_image* image_handle(const Field_info*)
   { return &m_image; }
   //@}
 
@@ -153,11 +153,11 @@ public:
 
   /*! Set the image.
    */
-  void set_image(Shared_image_base image);
+  void set_image(Shared_image image);
 
   /*! Obtain the image.
    */
-  Shared_image_base get_image() const;
+  Shared_image get_image() const;
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -185,7 +185,7 @@ protected:
   Boolean m_flip;
 
   /*! The output image. */
-  Shared_image_base m_image;
+  Shared_image m_image;
 
 private:
   /*! The tag that identifies this container type. */
@@ -253,7 +253,7 @@ inline void Image_writer::set_flip(Boolean flag) { m_flip = flag; }
 inline Boolean Image_writer::get_flip() const { return m_flip; }
 
 //! \brief obtains the image.
-inline Image_writer::Shared_image_base Image_writer::get_image() const
+inline Image_writer::Shared_image Image_writer::get_image() const
 { return m_image; }
 
 //! \brief obtains the tag (type) of the container.

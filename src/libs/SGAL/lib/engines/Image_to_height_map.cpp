@@ -135,8 +135,8 @@ void Image_to_height_map::set_attributes(Element* elem)
       set_image(boost::dynamic_pointer_cast<Image>(cont));
       {
         //! \todo remove this
-        boost::filesystem::path dir(".");
-        m_image->add_dir(dir);
+        // boost::filesystem::path dir(".");
+        // m_image->add_dir(dir);
       }
       elem->mark_delete(cai);
       continue;

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12384 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -35,11 +32,11 @@ SGAL_BEGIN_NAMESPACE
 class Execution_coordinator;
 class Container_proto;
 class Element;
-class Image;
+class Image_reader;
 class Scene_graph;
 
 #if (defined _MSC_VER)
-template struct SGAL_SGAL_DECL std::pair<Image*, Boolean>;
+template struct SGAL_SGAL_DECL std::pair<Image_reader*, Boolean>;
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif
@@ -118,7 +115,7 @@ public:
 
 protected:
   /*! The texture images and a flag that indicates that the image is owned. */
-  std::pair<Image*,Boolean> m_images[NUM_IMAGES];
+  std::pair<Image_reader*,Boolean> m_images[NUM_IMAGES];
 
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;

@@ -27,7 +27,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Texture_2d.hpp"
-#include "SGAL/Image.hpp"
+#include "SGAL/Image_reader.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -49,7 +49,7 @@ class Scene_graph;
  */
 class SGAL_SGAL_DECL Image_texture : public Texture_2d {
 public:
-  typedef Image::Path_list                          Path_list;
+  typedef Image_reader::Path_list               Path_list;
 
   enum {
     FIRST = Texture_2d::LAST - 1,
@@ -127,7 +127,7 @@ private:
   static Container_proto* s_prototype;
 
   /*! The image. */
-  Image m_image;
+  Image_reader m_image;
 };
 
 #if defined(_MSC_VER)
@@ -158,11 +158,11 @@ inline Boolean Image_texture::get_flip() const
 { return m_image.get_flip(); }
 
 //! \brief sets the directory-search structure.
-inline void Image_texture::set_dirs(const Image::Path_list& dirs)
+inline void Image_texture::set_dirs(const Image_reader::Path_list& dirs)
 { m_image.set_dirs(dirs); }
 
 //! \brief obtains the directory-search structure.
-inline const Image::Path_list& Image_texture::get_dirs() const
+inline const Image_reader::Path_list& Image_texture::get_dirs() const
 { return m_image.get_dirs(); }
 
 //! \brief obtains the tag (type) of the container.

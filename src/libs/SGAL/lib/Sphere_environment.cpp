@@ -23,7 +23,7 @@
 #include "SGAL/Sphere_environment.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Shape.hpp"
-#include "SGAL/Image.hpp"
+#include "SGAL/Image_reader.hpp"
 #include "SGAL/Texture.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Scene_graph_int.hpp"

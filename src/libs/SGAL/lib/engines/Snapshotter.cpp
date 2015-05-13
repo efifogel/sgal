@@ -75,7 +75,7 @@ Action::Trav_directive Snapshotter::draw(Draw_action* draw_action)
 //! \brief allocates space for the image.
 Boolean Snapshotter::allocate_space(Draw_action* action)
 {
-  if (!m_image) m_image.reset(new Image_base);
+  if (!m_image) m_image.reset(new Image);
   Uint width = m_image->get_width();
   Uint height = m_image->get_height();
   Image::Format format = m_image->get_format();
