@@ -1001,7 +1001,7 @@ void Script::add_field_info(Field_info::Field_rule rule,
 
    case Field_info::SF_STR:
     {
-     std::string initial_value(value);
+     std::string initial_value = strip_double_quotes(value);
      variant_field = initial_value;
      add_fi<Field_info::SF_STR>(id, name, rule, initial_value, exec_func,
                                 prototype);
