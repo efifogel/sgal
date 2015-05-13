@@ -40,8 +40,7 @@
 SGAL_BEGIN_NAMESPACE
 
 class Container_proto;
-class Scene_graph;
-class Image_reader;
+class Image;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -71,7 +70,7 @@ public:
     NUM_IMAGES
   };
 
-  typedef boost::shared_ptr<Image_reader>       Shared_image;
+  typedef boost::shared_ptr<Image>              Shared_image;
 
   /*! Constructor */
   Cube_environment(Boolean proto = false);
@@ -87,11 +86,6 @@ public:
 
   /*! Set the attributes of the cubical environment map. */
   virtual void set_attributes(Element* elem);
-
-  /*! Add the container to a given scene.
-   * \param scene_graph the given scene.
-   */
-  virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -116,7 +110,7 @@ public:
   virtual Uint get_component_count() const;
 
   /*! Set the left image.
-   * \param image (in) the image.
+   * \param[in] image the image.
    */
   void set_left_image(Shared_image image);
 
@@ -127,7 +121,7 @@ public:
   const Shared_image get_left_image() const;
 
   /*! Set the right image.
-   * \param image (in) the image.
+   * \param[in] image the image.
    */
   void set_right_image(Shared_image image);
 
@@ -138,7 +132,7 @@ public:
   const Shared_image get_right_image() const;
 
   /*! Set the bottom image.
-   * \param image (in) the image.
+   * \param[in] image the image.
    */
   void set_front_image(Shared_image image);
 
@@ -149,7 +143,7 @@ public:
   const Shared_image get_front_image() const;
 
   /*! Set the top image.
-   * \param image (in) the image.
+   * \param[in] image the image.
    */
   void set_back_image(Shared_image image);
 
@@ -160,7 +154,7 @@ public:
   const Shared_image get_back_image() const;
 
   /*! Set the back image.
-   * \param image (in) the image.
+   * \param[in] image the image.
    */
   void set_bottom_image(Shared_image image);
 
@@ -171,7 +165,7 @@ public:
   const Shared_image get_bottom_image() const;
 
   /*! Set the front image.
-   * \param image (in) the image.
+   * \param[in] image the image.
    */
   void set_top_image(Shared_image image);
 
@@ -200,66 +194,66 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Cube_environment* Cube_environment::prototype()
 { return new Cube_environment(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Cube_environment::clone() { return new Cube_environment(); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Cube_environment::get_tag() const { return s_tag; }
 
-/*! \brief obtains the (non const) left image. */
+//! \brief obtains the (non const) left image.
 inline Cube_environment::Shared_image Cube_environment::get_left_image()
 { return m_images[LEFT_IMAGE]; }
 
-/*! \brief obtains the (const) left image. */
+//! \brief obtains the (const) left image.
 inline const Cube_environment::Shared_image Cube_environment::get_left_image()
   const
 { return m_images[LEFT_IMAGE]; }
 
-/*! \brief obtains the (non const) right image. */
+//! \brief obtains the (non const) right image.
 inline Cube_environment::Shared_image Cube_environment::get_right_image()
 { return m_images[RIGHT_IMAGE]; }
 
-/*! \brief obtains the (const) right image. */
+//! \brief obtains the (const) right image.
 inline const Cube_environment::Shared_image Cube_environment::get_right_image()
   const
 { return m_images[RIGHT_IMAGE]; }
 
-/*! \brief obtains the (non const) front image. */
+//! \brief obtains the (non const) front image.
 inline Cube_environment::Shared_image Cube_environment::get_front_image()
 { return m_images[FRONT_IMAGE]; }
 
-/*! \brief obtains the (const) front image. */
+//! \brief obtains the (const) front image.
 inline const Cube_environment::Shared_image Cube_environment::get_front_image()
   const
 { return m_images[FRONT_IMAGE]; }
 
-/*! \brief obtains the (non const) back image. */
+//! \brief obtains the (non const) back image.
 inline Cube_environment::Shared_image Cube_environment::get_back_image()
 { return m_images[BACK_IMAGE]; }
 
-/*! \brief obtains the (const) back image. */
+//! \brief obtains the (const) back image.
 inline const Cube_environment::Shared_image Cube_environment::get_back_image()
   const
 { return m_images[BACK_IMAGE]; }
 
-/*! \brief obtains the (non const) bottom image. */
+//! \brief obtains the (non const) bottom image.
 inline Cube_environment::Shared_image Cube_environment::get_bottom_image()
 { return m_images[BOTTOM_IMAGE]; }
 
-/*! \brief obtains the (const) bottom image. */
+//! \brief obtains the (const) bottom image.
 inline const Cube_environment::Shared_image Cube_environment::get_bottom_image()
   const
 { return m_images[BOTTOM_IMAGE]; }
 
-/*! \brief obtains the (non const) top image. */
+//! \brief obtains the (non const) top image.
 inline Cube_environment::Shared_image Cube_environment::get_top_image()
 { return m_images[TOP_IMAGE]; }
 
-/*! \brief obtains the (const) top image. */
+//! \brief obtains the (const) top image.
 inline const Cube_environment::Shared_image Cube_environment::get_top_image()
   const
 { return m_images[TOP_IMAGE]; }

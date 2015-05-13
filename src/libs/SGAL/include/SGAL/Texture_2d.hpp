@@ -32,10 +32,11 @@
 #endif
 #include <GL/gl.h>
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Texture.hpp"
-#include "SGAL/Image_reader.hpp"
+#include "SGAL/Image.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -46,7 +47,6 @@ class Text_texture;
 #endif
 class Element;
 class Container_proto;
-class Scene_graph;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -60,6 +60,8 @@ public:
     IMAGE,
     LAST
   };
+
+  typedef boost::shared_ptr<Image>              Shared_image;
 
   /*! Constructor */
   Texture_2d(Boolean proto = false);
@@ -87,18 +89,11 @@ public:
    */
   virtual void set_attributes(Element* elem);
 
-  /*! Add the container to a given scene.
-   * \param scene_graph the given scene.
-   */
-  virtual void add_to_scene(Scene_graph* scene_graph);
-
-  // virtual Attribute_list get_attributes();
-
   /*! Obtain the texture image. */
-  Image_reader* get_image() const;
+  Shared_image get_image() const;
 
   /*! Set the texture image. */
-  void set_image(Image_reader* image);
+  void set_image(Shared_image image);
 
   /*! Obtain the texture format. */
   Image::Format get_format() const;
@@ -135,7 +130,7 @@ public:
 
 protected:
   /*! The texture pixels. */
-  Image_reader* m_image;
+  Shared_image m_image;
 
 #if 0
   /*! */
@@ -164,10 +159,11 @@ inline Texture_2d* Texture_2d::prototype() { return new Texture_2d(true); }
 inline Container* Texture_2d::clone() { return new Texture_2d(); }
 
 //! \brief obtains the texture image.
-inline Image_reader* Texture_2d::get_image() const { return m_image; }
+inline Texture_2d::Shared_image Texture_2d::get_image() const
+{ return m_image; }
 
 //! \brief sets the texture image.
-inline void Texture_2d::set_image(Image_reader* image) { m_image = image; }
+inline void Texture_2d::set_image(Shared_image image) { m_image = image; }
 
 //! \brief obtain the texture format.
 inline  Image::Format Texture_2d::get_format() const

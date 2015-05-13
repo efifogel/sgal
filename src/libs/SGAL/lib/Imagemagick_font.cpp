@@ -43,7 +43,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! \brief constructs. */
+//! \brief constructs.
 Imagemagick_font::Imagemagick_font(const std::string & name, Boolean antialias,
                                    Boolean left_to_right,
                                    Boolean top_to_bottom) :
@@ -63,17 +63,17 @@ Imagemagick_font::Imagemagick_font(const std::string & name, Boolean antialias,
   m_magick_image.fontPointsize(m_point_size);
   m_magick_image.antiAlias(false);
 
-  m_texture.set_image(&m_image);
+  m_texture.set_image(m_image);
   m_texture.set_min_filter(Texture::NEAREST_MIN);
   m_texture.set_mag_filter(Texture::NEAREST_MAG);
 }
 
-/*! Destructor */
+//! \brief destructs
 Imagemagick_font::~Imagemagick_font()
 {
 }
 
-/*! Draw one string */
+//! \brief draws one string.
 void Imagemagick_font::draw_string(Context * context, const std::string & str,
                                    Float m_size)
 {
@@ -104,11 +104,11 @@ void Imagemagick_font::draw_string(Context * context, const std::string & str,
     // std::cout << "height: " << m_height << std::endl;
 
     // Create the texture:
-    m_image.set_width(m_width);
-    m_image.set_height(m_height);
-    m_image.set_format(Image::kIntensity8);
-    Uchar * pixels = new Uchar[m_image.get_size()];
-    m_image.set_pixels(pixels);
+    m_image->set_width(m_width);
+    m_image->set_height(m_height);
+    m_image->set_format(Image::kIntensity8);
+    Uchar* pixels = new Uchar[m_image->get_size()];
+    m_image->set_pixels(pixels);
     m_magick_image.write(0, 0, m_width, m_height, "R", Magick::CharPixel, pixels);
 
     //   Uint i;
@@ -154,7 +154,7 @@ void Imagemagick_font::draw_string(Context * context, const std::string & str,
   context->draw_alpha_func(Gfx::ALWAYS_AFUNC);
 }
 
-/*! Obtain the width and height of the string */
+//! \brief obtains the width and height of the string.
 void Imagemagick_font::get_string_size(const std::string & str,
                                        Uint & width, Uint & height)
 {
@@ -164,15 +164,10 @@ void Imagemagick_font::get_string_size(const std::string & str,
   height = static_cast<Uint>(m_type_metrics.textHeight());
 }
 
-/*! Initialize the font */
-void Imagemagick_font::init()
-{
+//! \brief initializes the font.
+void Imagemagick_font::init() {}
 
-}
-
-/*! Clear the font */
-void Imagemagick_font::clear()
-{
-}
+//! \brief clears the font.
+void Imagemagick_font::clear() {}
 
 SGAL_END_NAMESPACE

@@ -33,10 +33,6 @@
 #pragma warning( pop )
 #endif
 
-#if (defined _MSC_VER)
-#define __WIN32__
-#endif
-
 #if defined(_MSC_VER)
 #pragma warning( push )
 #pragma warning( disable: 4244 )
@@ -50,68 +46,126 @@
 #include "SGAL/Types.hpp"
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/errors.hpp"
-#include "SGAL/Image_reader.hpp"
+#include "SGAL/Image_url.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Utilities.hpp"
+#include "SGAL/Scene_graph.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Image_reader::s_prototype(nullptr);
-const std::string Image_reader::s_tag = "ImageReader";
+Container_proto* Image_url::s_prototype(nullptr);
+const std::string Image_url::s_tag("ImageUrl");
 
-REGISTER_TO_FACTORY(Image_reader, "Image_reader");
+REGISTER_TO_FACTORY(Image_url, "Image_url");
 
-//! \brief constructor
-Image_reader::Image_reader(Boolean proto) : Image(proto) {}
+// Default values
+const Boolean Image_url::s_def_flip(true);
+const Float Image_url::s_def_rotation(0);
+const Boolean Image_url::s_def_alpha(false);
+const Float Image_url::s_def_transparency(1);
+
+//! \brief construct default
+Image_url::Image_url(Boolean proto) :
+  Image(proto),
+  m_flip(s_def_flip),
+  m_rotation(s_def_rotation),
+  m_alpha(s_def_alpha),
+  m_transparency(s_def_transparency)
+{}
 
 //! \brief destructor
-Image_reader::~Image_reader() {}
+Image_url::~Image_url() {}
 
 //! \brief initializess the node prototype.
-void Image_reader::init_prototype()
+void Image_url::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Image::get_prototype());
 
   // url
   String_handle_function url_func =
-    static_cast<String_handle_function>(&Image_reader::url_handle);
+    static_cast<String_handle_function>(&Image_url::url_handle);
   s_prototype->add_field_info(new SF_string(URL, "url",
                                             Field_info::RULE_EXPOSED_FIELD,
                                             url_func));
+
+  Boolean_handle_function flip_func =
+    static_cast<Boolean_handle_function>(&Image_url::flip_handle);
+  s_prototype->add_field_info(new SF_bool(FLIP, "flip",
+                                          Field_info::RULE_EXPOSED_FIELD,
+                                          flip_func,
+                                          s_def_flip));
+
+  Float_handle_function rotation_func =
+    static_cast<Float_handle_function>(&Image_url::rotation_handle);
+  s_prototype->add_field_info(new SF_float(ROTATION, "rotation",
+                                           Field_info::RULE_EXPOSED_FIELD,
+                                           rotation_func, s_def_rotation));
+
+  Boolean_handle_function alpha_func =
+    static_cast<Boolean_handle_function>(&Image_url::alpha_handle);
+  s_prototype->add_field_info(new SF_bool(ALPHA, "alpha",
+                                          Field_info::RULE_EXPOSED_FIELD,
+                                          alpha_func,
+                                          s_def_alpha));
+
+  Float_handle_function transparency_func =
+    static_cast<Float_handle_function>(&Image_url::transparency_handle);
+  s_prototype->add_field_info(new SF_float(TRANSPARENCY, "transparency",
+                                           Field_info::RULE_EXPOSED_FIELD,
+                                           transparency_func,
+                                           s_def_transparency));
 }
 
 //! \brief deletes the prototype.
-void Image_reader::delete_prototype()
+void Image_url::delete_prototype()
 {
   delete s_prototype;
   s_prototype = nullptr;
 }
 
 //! \brief obtains the prototype.
-Container_proto* Image_reader::get_prototype()
+Container_proto* Image_url::get_prototype()
 {
-  if (!s_prototype) Image_reader::init_prototype();
+  if (!s_prototype) Image_url::init_prototype();
   return s_prototype;
 }
 
 //! \brief sets the attributes of the image.
-void Image_reader::set_attributes(Element* elem)
+void Image_url::set_attributes(Element* elem)
 {
   Image::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "url") {
       std::string url = strip_double_quotes(value);
       set_url(url);
       url.clear();
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "flip") {
+      set_flip(compare_to_true(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "rotation") {
+      set_rotation(boost::lexical_cast<Float>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "alpha") {
+      set_alpha(compare_to_true(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "transparency") {
+      set_transparency(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -121,36 +175,8 @@ void Image_reader::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-//! \brief obtains the image width.
-Uint Image_reader::get_width()
-{
-  if (m_dirty) clean();
-  return m_width;
-}
-
-//! \brief obtains the image height.
-Uint Image_reader::get_height()
-{
-  if (m_dirty) clean();
-  return m_height;
-}
-
-//! \brief obtains the image format.
-Image::Format Image_reader::get_format()
-{
-  if (m_dirty) clean();
-  return m_format;
-}
-
-//! \brief obtains the image pixel data.
-void* Image_reader::get_pixels()
-{
-  if (m_dirty) clean();
-  return m_pixels;
-}
-
 //! \brief cleans the image.
-void Image_reader::clean()
+void Image_url::clean()
 {
   if (m_url.empty()) return;
 
@@ -285,8 +311,12 @@ void Image_reader::clean()
   m_dirty = false;
 }
 
+//! \brief adds the container to a given scene.
+void Image_url::add_to_scene(Scene_graph* scene_graph)
+{ set_dirs(scene_graph->get_data_dirs()); }
+
 //! \brief sets the URL.
-void Image_reader::set_url(const std::string& url)
+void Image_url::set_url(const std::string& url)
 {
   m_url = url;
   m_dirty = true;

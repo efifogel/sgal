@@ -31,7 +31,7 @@ Transform {
 }
 
 DEF IMAGE_TO_HEIGHT_MAP ImageToHeightMap {
-  image Image { url ["logo.png"] }
+  image ImageUrl { url ["logo.png"] }
 }
 
 ROUTE SIM.start TO IMAGE_TO_HEIGHT_MAP.trigger

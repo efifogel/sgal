@@ -50,10 +50,10 @@ public:
 
   typedef boost::shared_ptr<Image>              Shared_image;
 
-  /*! Constructor. */
+  /*! Construct. */
   Image_writer(Boolean proto = false);
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Image_writer();
 
   /*! Construct the prototype. */
@@ -151,6 +151,10 @@ public:
   /*! Obtain the flag that indicates whether the image should be reflected. */
   Boolean get_flip() const;
 
+  /*! Set the quality.
+   */
+  void set_quality(Uint quality);
+
   /*! Set the image.
    */
   void set_image(Shared_image image);
@@ -201,6 +205,8 @@ private:
   const static File_format_2d::Id s_def_file_format;
   const static Uint s_def_quality;
   const static Boolean s_def_flip;
+
+  friend class Snapshot;
 };
 
 //! \brief constructs the prototype.
@@ -251,6 +257,9 @@ inline void Image_writer::set_flip(Boolean flag) { m_flip = flag; }
  * reflected.
  */
 inline Boolean Image_writer::get_flip() const { return m_flip; }
+
+//! \brief sets the quality.
+inline void Image_writer::set_quality(Uint quality) { m_quality = quality; }
 
 //! \brief obtains the image.
 inline Image_writer::Shared_image Image_writer::get_image() const

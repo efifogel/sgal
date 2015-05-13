@@ -33,7 +33,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-static Texture_font* s_default_font = nullptr;
+static Texture_font* s_default_font(nullptr);
 
 static const Int32 FIRST_CHAR = 32;
 static const Int32 LAST_CHAR = 128;
@@ -394,7 +394,7 @@ void Texture_font::create_image_texture(void* pixels)
 
   if (m_texture) m_texture.reset();
   m_texture = Shared_texture(new Image_texture);
-  Image_reader* image = new Image_reader;
+  Image* image = new Image;
   image->set_width(m_bitmap_width);
   image->set_height(m_bitmap_height);
   image->set_format(Image::kRGB8_8_8);     // default format

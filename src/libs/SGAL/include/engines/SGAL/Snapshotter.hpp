@@ -105,6 +105,10 @@ public:
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
+  /*! Set the size of the image.
+   */
+  void set_size(Draw_action* action);
+
   /*! Trigger the snapshot.
    */
   void trigger();
@@ -121,10 +125,16 @@ public:
   /*! Set the flag that indicates whether the image should be reflected. */
   void set_flip(Boolean flag);
 
-  /*! Obtain the flag that indicates whether the image should be reflected. */
-  Boolean get_flip() const;
+  /*! Determine whether the image should be reflected. */
+  Boolean is_flip() const;
 
+  /*! If triggered takes a snapshot and writes it to an image file.
+   */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
+
+  /*! Take a snapshot and write it to an image file.
+   */
+  void execute();
 
   /*! Set the image.
    */
@@ -158,15 +168,11 @@ private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 
-  Uint m_size;
-
   // Default values
+  //@{
   static const Boolean s_def_flip;
   static const Boolean s_def_front_buffer;
-
-  /*! Allocate space for the image.
-   */
-  Boolean allocate_space(Draw_action* action);
+  //@}
 
   /*! Take a snapshot of the window.
    */
@@ -198,10 +204,8 @@ inline Boolean Snapshotter::is_front_buffer() const { return m_front_buffer; }
 //! \brief sets the flag that indicates whether the image should be reflected.
 inline void Snapshotter::set_flip(Boolean flag) { m_flip = flag; }
 
-/*! \brief obtains the flag that indicates whether the image should be
- * reflected.
- */
-inline Boolean Snapshotter::get_flip() const { return m_flip; }
+//! \brief determines whether the image should be reflected.
+inline Boolean Snapshotter::is_flip() const { return m_flip; }
 
 //! \brief sets the image.
 inline void Snapshotter::set_image(Shared_image image) { m_image = image; }

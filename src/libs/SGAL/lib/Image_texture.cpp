@@ -24,13 +24,13 @@
 SGAL_BEGIN_NAMESPACE
 
 Container_proto* Image_texture::s_prototype(nullptr);
-const std::string Image_texture::s_tag = "ImageTexture";
+const std::string Image_texture::s_tag("ImageTexture");
 
 REGISTER_TO_FACTORY(Image_texture, "Image_texture");
 
 //! Constructor
 Image_texture::Image_texture(Boolean proto) : Texture_2d(proto)
-{ Texture_2d::set_image(&m_image); }
+{ Texture_2d::set_image(m_image); }
 
 //! \brief initializes the node prototype.
 void Image_texture::init_prototype()
@@ -102,26 +102,5 @@ void Image_texture::set_attributes(Element* elem)
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
-
-#if 0
-//! \brief
-Attribute_list Image_texture::get_attributes()
-{
-  Attribute_list attribs;
-  Attribue attrib;
-
-  attribs = Texture_2d::get_attributes();
-
-  attrib.first = "url";
-  attrib.second = get_fileName();
-  attribs.push_back(attrib);
-
-  return attribs;
-}
-#endif
-
-//! \brief adds the container to a given scene.
-void Image_texture::add_to_scene(Scene_graph* scene_graph)
-{ Texture_2d::add_to_scene(scene_graph); }
 
 SGAL_END_NAMESPACE

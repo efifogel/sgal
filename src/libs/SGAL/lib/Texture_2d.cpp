@@ -40,11 +40,10 @@
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Gl_wrapper.hpp"
-#include "SGAL/Scene_graph.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-const std::string Texture_2d::s_tag = "Texture2d";
+const std::string Texture_2d::s_tag("Texture2d");
 Container_proto* Texture_2d::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Texture_2d, "Texture_2d");
@@ -75,7 +74,7 @@ void Texture_2d::clean()
 {
   Texture::clean();
   if (m_image->is_dirty()) m_image->clean();
-  load_color_map(m_image, s_targets[m_target]);
+  load_color_map(&*m_image, s_targets[m_target]);
 #if 0
   if (m_text) m_text->clean();
 #endif
@@ -121,10 +120,6 @@ Container_proto* Texture_2d::get_prototype()
   if (!s_prototype) Texture_2d::init_prototype();
   return s_prototype;
 }
-
-//! \brief adds the container to a given scene.
-void Texture_2d::add_to_scene(Scene_graph* scene_graph)
-{ m_image->set_dirs(scene_graph->get_data_dirs()); }
 
 //! \brief prints texture information.
 void Texture_2d::print_info()

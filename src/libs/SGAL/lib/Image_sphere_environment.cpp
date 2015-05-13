@@ -20,47 +20,45 @@
 #include "SGAL/Image_sphere_environment.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Image.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Image_sphere_environment::s_prototype(NULL);
-const std::string Image_sphere_environment::s_tag =
-  "ImageSphereEnvironment";
+Container_proto* Image_sphere_environment::s_prototype(nullptr);
+const std::string Image_sphere_environment::s_tag("ImageSphereEnvironment");
 
 REGISTER_TO_FACTORY(Image_sphere_environment, "Image_sphere_environment");
 
-/*! Constructor */
+//! \brief construct
 Image_sphere_environment::Image_sphere_environment(Boolean proto) :
   Sphere_environment(proto)
 {}
 
-/*! Destructor */
+//! \brief destruct
 Image_sphere_environment::~Image_sphere_environment() {}
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Image_sphere_environment::set_attributes(Element* elem)
-{
-  Sphere_environment::set_attributes(elem);
-}
+{ Sphere_environment::set_attributes(elem); }
 
-/*! \brief initializes the node prototype. */
+//! \brief initializes the node prototype.
 void Image_sphere_environment::init_prototype()
 {
-  if (s_prototype != NULL) return;
+  if (s_prototype != nullptr) return;
   s_prototype = new Container_proto(Sphere_environment::get_prototype());
 }
 
-/*! \brief deletes the node prototype. */
+//! \brief deletes the node prototype.
 void Image_sphere_environment::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the node prototype. */
+//! \brief obtains the node prototype.
 Container_proto* Image_sphere_environment::get_prototype()
 {
-  if (s_prototype == NULL) Image_sphere_environment::init_prototype();
+  if (s_prototype == nullptr) Image_sphere_environment::init_prototype();
   return s_prototype;
 }
 

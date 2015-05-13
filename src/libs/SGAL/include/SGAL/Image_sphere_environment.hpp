@@ -14,15 +14,13 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1308 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_IMAGE_SPHERE_ENVIRONMENT_HPP
 #define SGAL_IMAGE_SPHERE_ENVIRONMENT_HPP
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 #if (defined _MSC_VER)
 #pragma warning( disable : 4786 )
@@ -30,8 +28,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Sphere_environment.hpp"
-#include "SGAL/Image_reader.hpp"
-#include "SGAL/Scene_graph.hpp"
+#include "SGAL/Image.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -42,7 +39,7 @@ SGAL_BEGIN_NAMESPACE
 
 class SGAL_SGAL_DECL Image_sphere_environment : public Sphere_environment {
 public:
-  typedef Image_reader::Path_list               Path_list;
+  typedef boost::shared_ptr<Image>              Shared_image;
 
   /*! Constructor */
   Image_sphere_environment(Boolean proto = false);
@@ -59,14 +56,8 @@ public:
   /*! Set the attributes of this image textute extracted from the VRML or X3D
    * file.
    * \param elem contains lists of attribute names and values
-   * \param sg a pointer to the scene graph
    */
   virtual void set_attributes(Element* elem);
-
-  /*! Add the container to a given scene.
-   * \param scene_graph the given scene
-   */
-  virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -81,12 +72,6 @@ public:
   //@{
   //@}
 
-  /*! Set the directory-search structure. */
-  void set_dirs(const Path_list& dirs);
-
-  /*! Obtain the directory-search structure. */
-  const Path_list& get_dirs() const;
-
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
@@ -99,29 +84,22 @@ private:
   static Container_proto* s_prototype;
 
   /*! The image. */
-  Image_reader m_images[2];
+  Shared_image m_images[2];
 };
 
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Image_sphere_environment* Image_sphere_environment::prototype()
 { return new Image_sphere_environment(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Image_sphere_environment::clone()
 { return new Image_sphere_environment(); }
 
-/*! \brief adds the container to a given scene */
-inline void Image_sphere_environment::add_to_scene(Scene_graph* sg)
-{
-  m_images[0].set_dirs(sg->get_data_dirs());
-  m_images[1].set_dirs(sg->get_data_dirs());
-}
-
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Image_sphere_environment::get_tag() const
 { return s_tag; }
 

@@ -66,7 +66,7 @@ extern "C" {
 
 SGAL_BEGIN_NAMESPACE
 
-const std::string Font_style::s_tag = "FontStyle";
+const std::string Font_style::s_tag("FontStyle");
 Container_proto* Font_style::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Font_style, "Font_style");
@@ -493,66 +493,6 @@ void Font_style::set_attributes(Element* elem)
   // Remove all the marked attributes:
   elem->delete_marked();
 }
-
-#if 0
-Attribute_list Font_style::get_attributes()
-{
-  Attribute_list attribs;
-  Attribue attrib;
-  Vector3f vec;
-  Rotation rot;
-
-  attribs = Node::get_attributes();
-
-  if (!m_family.empty()) {
-    attrib.first = "family";
-    attrib.second = m_family;
-    attribs.push_back(attrib);
-  }
-  if (!m_style.empty() && !m_style.equal("PLAIN")) {
-    attrib.first = "style";
-    attrib.second = m_style;
-    attribs.push_back(attrib);
-  }
-  if (!m_horizontal) {
-    attrib.first = "horizontal";
-    attrib.second = (m_horizontal)?"TRUE":"FALSE";
-    attribs.push_back(attrib);
-  }
-  if (!m_justify.empty() && !m_justify.equal("PLAIN")) {
-    attrib.first = "justify";
-    attrib.second = m_justify;
-    attribs.push_back(attrib);
-  }
-  if (!m_language.empty()) {
-    attrib.first = "language";
-    attrib.second = m_language;
-    attribs.push_back(attrib);
-  }
-  if (!m_left_to_right) {
-    attrib.first = "leftToRight";
-    attrib.second = (m_left_to_right)?"TRUE":"FALSE";
-    attribs.push_back(attrib);
-  }
-  if (m_spacing != 1) {
-    attrib.first = "spacing";
-    attrib.second = String::fromFloat(m_spacing,2);
-    attribs.push_back(attrib);
-  }
-  if (m_size != 1) {
-    attrib.first = "size";
-    attrib.second = String::fromFloat(m_size,2);
-    attribs.push_back(attrib);
-  }
-  if (!m_top2Bottom) {
-    attrib.first = "topToBottom";
-    attrib.second = (m_top2Bottom)?"TRUE":"FALSE";
-    attribs.push_back(attrib);
-  }
-
-  return attribs;
-}
-#endif
 
 //! \brief cleans the face.
 void Font_style::clean_face()

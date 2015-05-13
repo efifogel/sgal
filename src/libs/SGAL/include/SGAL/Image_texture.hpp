@@ -24,10 +24,11 @@
 #endif
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Texture_2d.hpp"
-#include "SGAL/Image_reader.hpp"
+#include "SGAL/Image_url.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -35,7 +36,6 @@
 SGAL_BEGIN_NAMESPACE
 
 class Element;
-class Scene_graph;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -49,7 +49,7 @@ class Scene_graph;
  */
 class SGAL_SGAL_DECL Image_texture : public Texture_2d {
 public:
-  typedef Image_reader::Path_list               Path_list;
+  typedef boost::shared_ptr<Image_url>          Shared_image;
 
   enum {
     FIRST = Texture_2d::LAST - 1,
@@ -77,13 +77,6 @@ public:
    */
   virtual void set_attributes(Element* elem);
 
-  // virtual Attribute_list get_attributes();
-
-  /*! Add the container to a given scene.
-   * \param scene_graph the given scene.
-   */
-  virtual void add_to_scene(Scene_graph* scene_graph);
-
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
@@ -109,12 +102,6 @@ public:
   /*! Obtain the flag that indicates whether to reflect the image. */
   Boolean get_flip() const;
 
-  /*! Set the directory-search structure. */
-  void set_dirs(const Path_list& dirs);
-
-  /*! Obtain the directory-search structure. */
-  const Path_list& get_dirs() const;
-
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
@@ -127,7 +114,7 @@ private:
   static Container_proto* s_prototype;
 
   /*! The image. */
-  Image_reader m_image;
+  Shared_image m_image;
 };
 
 #if defined(_MSC_VER)
@@ -143,27 +130,19 @@ inline Container* Image_texture::clone() { return new Image_texture(); }
 
 //! \brief sets the URL.
 inline void Image_texture::set_url(const std::string& url)
-{ m_image.set_url(url); }
+{ m_image->set_url(url); }
 
 //! \brief obtains the URL.
 inline const std::string Image_texture::get_url() const
-{ return m_image.get_url(); }
+{ return m_image->get_url(); }
 
 //! \brief sets the flag that indicates whether to reflect the image.
 inline void Image_texture::set_flip(Boolean flag)
-{ m_image.set_flip(flag); }
+{ m_image->set_flip(flag); }
 
 //! \brief obtains the flag that indicates whether to reflect the image.
 inline Boolean Image_texture::get_flip() const
-{ return m_image.get_flip(); }
-
-//! \brief sets the directory-search structure.
-inline void Image_texture::set_dirs(const Image_reader::Path_list& dirs)
-{ m_image.set_dirs(dirs); }
-
-//! \brief obtains the directory-search structure.
-inline const Image_reader::Path_list& Image_texture::get_dirs() const
-{ return m_image.get_dirs(); }
+{ return m_image->get_flip(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Image_texture::get_tag() const { return s_tag; }

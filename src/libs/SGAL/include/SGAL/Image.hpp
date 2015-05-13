@@ -21,10 +21,6 @@
 
 /*! \file
  * A class that holds images of various formats.
- * Image is a class that can hold an image in various formats.
- * We currently assume that the default image is RGB8_8_8 (24 bit).
- *
- *  Inherits from Container
  */
 
 #if (defined _MSC_VER)
@@ -50,10 +46,6 @@ public:
     HEIGHT,
     FORMAT,
     PIXELS,
-    FLIP,
-    ROTATION,
-    ALPHA,
-    TRANSPARENCY,
     LAST
   };
 
@@ -201,10 +193,6 @@ public:
   Uint* width_handle(const Field_info*) { return &m_width; }
   Uint* height_handle(const Field_info*) { return &m_height; }
   Format* format_handle(const Field_info*) { return &m_format; }
-  Boolean* flip_handle(const Field_info*) { return &m_flip; }
-  Float* rotation_handle(const Field_info*) { return &m_rotation; }
-  Boolean* alpha_handle(const Field_info*) { return &m_alpha; }
-  Float* transparency_handle(const Field_info*) { return &m_transparency; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -265,6 +253,10 @@ public:
    */
   static Uint get_size(Uint width, Uint height, Format format);
 
+  /*! Allocate space for the image.
+   */
+  void allocate_space();
+
  /*! Obtain the number of bits. */
   static Uint get_format_size(Format format);
 
@@ -285,32 +277,6 @@ public:
 
   /*! Draw the image. */
   void draw();
-
-  /*! Set the flag that indicates whether the image should be reflected. */
-  void set_flip(Boolean flag);
-
-  /*! Obtain the flag that indicates whether the image should be reflected. */
-  Boolean get_flip() const;
-
-  /*! Set the rotation angle. */
-  void set_rotation(Float rotation);
-
-  /*! Obtain the rotation angle. */
-  Float get_rotation() const;
-
-  /*! Set the flag that determine whether to add (or retain) the alpha
-   * channel, or remove it when present.
-   */
-  void set_alpha(Boolean flag);
-
-  /*! Determine whether to add (or retain) the alpha channel or remove it. */
-  Boolean get_alpha() const;
-
-  /*! Set the transparency of the image. */
-  void set_transparency(Float transparency);
-
-  /*! Obtain the transparency of the image. */
-  Float get_transparency() const;
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -352,20 +318,6 @@ protected:
   /*! Indicates whether the image is dirty and should be cleaned. */
   Boolean m_dirty;
 
-  /*! Indicates whether the image should be reflected when read from file. */
-  Boolean m_flip;
-
-  /*! The rotation angle. */
-  Float m_rotation;
-
-  /*! Indicates whether to add (or retain) the alpha channel or remove it
-   * when present.
-   */
-  Boolean m_alpha;
-
-  /*! The transparency of the image. */
-  Float m_transparency;
-
   /*! Indicates whether the image pixel space is owned. If it is owned it
    * should be destructed when the image is destructed.
    */
@@ -378,15 +330,14 @@ private:
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
+  /*! The size of memory allocated for the pixels. */
+  Uint m_size;
+
   /// \name Default values
   //@{
   static const Uint s_def_width;
   static const Uint s_def_height;
   static const Format s_def_format;
-  static const Boolean s_def_flip;
-  static const Float s_def_rotation;
-  static const Boolean s_def_alpha;
-  static const Float s_def_transparency;
   //@}
 };
 
@@ -396,24 +347,6 @@ inline Image* Image::prototype() { return new Image(true); }
 //! \brief clones.
 inline Container* Image::clone() { return new Image(); }
 
-//! \brief sets the image width.
-inline void Image::set_width(Uint width) { m_width = width; }
-
-//! \brief obtains the image width.
-inline Uint Image::get_width() { return m_width; }
-
-//! \brief sets the image height.
-inline void Image::set_height(Uint height) { m_height = height; }
-
-//! \brief obtains the image height.
-inline Uint Image::get_height() { return m_height; }
-
-//! \brief sets the image format.
-inline void Image::set_format(Format format) { m_format = format; }
-
-//! \brief obtains the image format.
-inline Image::Format Image::get_format() { return m_format; }
-
 //! \brief sets the number of pixels in a row.
 inline void Image::set_pack_row_length(Uint length)
 { m_pack_row_length = length; }
@@ -421,9 +354,6 @@ inline void Image::set_pack_row_length(Uint length)
 //! \brief obtains the number of pixels in a row.
 inline Uint Image::get_pack_row_length() const
 { return m_pack_row_length; }
-
-//! \brief obtains the image pixel data.
-inline void* Image::get_pixels() { return m_pixels; }
 
 //! \brief returns true if image hasn't been updated yet and false otherwise.
 inline Boolean Image::is_dirty() { return m_dirty; }
@@ -460,35 +390,6 @@ inline GLenum Image::get_format_internal_format(Format format)
 //! \brief obtains the format name (string).
 inline const char* Image::get_format_name(Format format)
 { return s_format_names[format]; }
-
-//! \brief sets the flag that indicates whether the image should be reflected.
-inline void Image::set_flip(Boolean flag) { m_flip = flag; }
-
-/*! \brief obtains the flag that indicates whether the image should be
- * reflected.
- */
-inline Boolean Image::get_flip() const { return m_flip; }
-
-//! \brief sets the rotation angle.
-inline void Image::set_rotation(Float rotation) { m_rotation = rotation; }
-
-//! \brief obtains the rotation angle.
-inline Float Image::get_rotation() const { return m_rotation; }
-
-/*! \brief sets the flag that indicates whether to add (or retain) the alpha
- * channel or remove it.
- */
-inline void Image::set_alpha(Boolean flag) { m_alpha = flag; }
-
-//! \brief determines whether to add (or retain) the alpha channel or remove it.
-inline Boolean Image::get_alpha() const { return m_alpha; }
-
-//! \brief set the transparency of the image.
-inline void Image::set_transparency(Float transparency)
-{ m_transparency = transparency; }
-
-//! \brief obtain the transparency of the image.
-inline Float Image::get_transparency() const { return m_transparency; }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Image::get_tag() const { return s_tag; }

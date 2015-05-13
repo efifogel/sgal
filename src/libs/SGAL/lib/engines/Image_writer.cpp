@@ -51,7 +51,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-const std::string Image_writer::s_tag = "ImageWriter";
+const std::string Image_writer::s_tag("ImageWriter");
 Container_proto* Image_writer::s_prototype(nullptr);
 
 // Default values

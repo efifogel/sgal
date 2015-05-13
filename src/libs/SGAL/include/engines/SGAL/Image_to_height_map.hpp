@@ -90,8 +90,6 @@ public:
    */
   virtual void set_attributes(Element* elem);
 
-  // virtual Attribute_list get_attributes();
-
   /*! Export this container.
    * \param[in] formatter The formatter to use for exporting, e.g., VRML.
    */

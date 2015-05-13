@@ -23,7 +23,7 @@
 #include "SGAL/Sphere_environment.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Shape.hpp"
-#include "SGAL/Image_reader.hpp"
+#include "SGAL/Image.hpp"
 #include "SGAL/Texture.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Scene_graph_int.hpp"
@@ -107,56 +107,6 @@ void Sphere_environment::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-#if 0
-Attribute_list Sphere_environment::get_attributes()
-{
-  Attribute_list attribs;
-  Attribue attrib;
-  char buf[32];
-
-  attribs = Texture::get_attributes();
-
-  if (m_alpha != m_def_alpha) {
-    attrib.first = "alpha";
-    sprintf(buf, "%g", m_alpha);
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-  if (m_quality != m_def_quality) {
-    attrib.first = "quality";
-    attrib.second = is_quality() ? "TRUE" : "FALSE";
-    attribs.push_back(attrib);
-  }
-
-  return attribs;
-}
-
-/*! Add the reflection map into the scene graph.
- * There are three ways an reflection map can be added.
- * -# the reflection map is defined as a child of a Shape object. In this case
- * we set the reflection map on the shape to point to this.
- * -# the reflection map is decalred at the top level of the scene graph. In
- * this case no object is assigned with this reflection map.
- *
- * In all cases the reflection map is added to the reflection map pool.
- *
- * @param sg a pointer to the scene graph
- * @param parent a pointer to the parent object. nullptr if the apperance
- * is defined in the top level.
- */
-void Sphere_environment::add_to_scene(Scene_graph* sg)
-{
-  Container::add_to_scene(sg, parent);
-  sg->add_container(this);
-  if (parent->get_name() == g_navigation_root_name) return;
-  Shape* shape = dynamic_cast<Shape *>(parent);
-  if (shape) {
-    shape->set_env_map(this);
-    return;
-  }
-}
-#endif
-
 //! \brief cleans the object in case it is dirty.
 void Sphere_environment::clean()
 {
@@ -178,14 +128,6 @@ Uint Sphere_environment::get_component_count() const
   if (!m_images[0].first) return 0;
   if (m_images[0].first->is_dirty()) m_images[0].first->clean();
   return m_images[0].first->get_component_count();
-}
-
-//! \brief adds the container to a given scene.
-void Sphere_environment::add_to_scene(Scene_graph* scene_graph)
-{
-  if (!m_images[0].first || !m_images[1].first) return;
-  m_images[0].first->set_dirs(scene_graph->get_data_dirs());
-  m_images[1].first->set_dirs(scene_graph->get_data_dirs());
 }
 
 SGAL_END_NAMESPACE

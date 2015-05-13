@@ -59,7 +59,6 @@ DEF SNAP Snapshot {
 
 # Singles:
 DEF SNAP_R Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
@@ -69,7 +68,6 @@ DEF SNAP_R Snapshot {
 }
 
 DEF SNAP_G Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
@@ -79,7 +77,6 @@ DEF SNAP_G Snapshot {
 }
 
 DEF SNAP_B Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
@@ -89,7 +86,6 @@ DEF SNAP_B Snapshot {
 }
 
 DEF SNAP_P Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
@@ -99,7 +95,6 @@ DEF SNAP_P Snapshot {
 }
 
 DEF SNAP_Y Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
@@ -109,7 +104,6 @@ DEF SNAP_Y Snapshot {
 }
 
 DEF SNAP_T Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
@@ -120,7 +114,6 @@ DEF SNAP_T Snapshot {
 
 # Pairs:
 DEF SNAP_BP Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
@@ -129,7 +122,6 @@ DEF SNAP_BP Snapshot {
 }
 
 DEF SNAP_TY Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE
@@ -138,7 +130,6 @@ DEF SNAP_TY Snapshot {
 }
 
 DEF SNAP_RG Snapshot {
-  image Image { }
   fileFormat "jpg"
   quality 98
   sequence FALSE

@@ -22,8 +22,6 @@
  */
 
 #include <boost/lexical_cast.hpp>
-//! \todo remove this
-#include <boost/filesystem/path.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Field.hpp"
@@ -35,10 +33,11 @@
 #include "SGAL/Image_to_height_map.hpp"
 #include "SGAL/Coord_array_1d.hpp"
 #include "SGAL/Vrml_formatter.hpp"
+#include "SGAL/Scene_graph.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-const std::string Image_to_height_map::s_tag = "ImageToHeightMap";
+const std::string Image_to_height_map::s_tag("ImageToHeightMap");
 Container_proto* Image_to_height_map::s_prototype(nullptr);
 
 // Defaults values:
@@ -133,11 +132,6 @@ void Image_to_height_map::set_attributes(Element* elem)
     auto cont = elem->get_value(cai);
     if (name == "image") {
       set_image(boost::dynamic_pointer_cast<Image>(cont));
-      {
-        //! \todo remove this
-        // boost::filesystem::path dir(".");
-        // m_image->add_dir(dir);
-      }
       elem->mark_delete(cai);
       continue;
     }

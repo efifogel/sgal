@@ -38,7 +38,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-const std::string Snapshotter::s_tag = "Snapshotter";
+const std::string Snapshotter::s_tag("Snapshotter");
 Container_proto* Snapshotter::s_prototype(nullptr);
 
 // Default values
@@ -52,68 +52,56 @@ Snapshotter::Snapshotter(Boolean proto) :
   Node(proto),
   m_trigger(false),
   m_front_buffer(s_def_front_buffer),
-  m_flip(s_def_flip),
-  m_size(0)
+  m_flip(s_def_flip)
 {}
 
 //! \brief destructor
 Snapshotter::~Snapshotter() {}
 
-//! \brief takes a snapshot and write to a file if triggered.
+//! \brief takes a snapshot and writes it to an image file.
+void Snapshotter::execute()
+{
+  if (!m_image) return;
+  m_image->allocate_space();
+  take_snapshot();
+  auto* field = get_field(IMAGE);
+  if (field != nullptr) field->cascade();
+}
+
+//! \brief if triggered takes a snapshot and writes it to an image file.
 Action::Trav_directive Snapshotter::draw(Draw_action* draw_action)
 {
   if (!m_trigger) return Action::TRAV_CONT;
   m_trigger = false;
 
-  if (!allocate_space(draw_action)) return Action::TRAV_CONT;
-  take_snapshot();
-  auto* field = get_field(IMAGE);
-  if (field != nullptr) field->cascade();
+  set_size(draw_action);
+  execute();
   return Action::TRAV_CONT;
 }
 
-//! \brief allocates space for the image.
-Boolean Snapshotter::allocate_space(Draw_action* action)
+/*! Set the size of image.
+ */
+void Snapshotter::set_size(Draw_action* draw_action)
 {
   if (!m_image) m_image.reset(new Image);
-  Uint width = m_image->get_width();
-  Uint height = m_image->get_height();
-  Image::Format format = m_image->get_format();
+  auto width = m_image->get_width();
+  auto height = m_image->get_height();
 
-  if ((width == 0) || (height == 0)) {
-    Context* context = action->get_context();
-    if (!context) return false;
-    Uint x0 = 0, y0 = 0;
-    Uint tw, th;
-    context->get_viewport(x0, y0, tw, th);
-    if (width == 0) {
-      m_image->set_width(tw);
-      width = tw;
-    }
-    if (height == 0) {
-      height = th;
-      m_image->set_height(th);
-    }
-  }
-
-  if (width == 0 || height == 0) return false;
-  Uint size = Image::get_size(width, height, format);
-  if (size > m_size) {
-    Uchar* pixels = (Uchar *) m_image->get_pixels();
-    if (pixels) delete [] pixels;
-    pixels = new Uchar[size];
-    if (!pixels) return false;
-    m_image->set_pixels(pixels);
-    m_size = size;
-  }
-  return true;
+  if ((width != 0) && (height != 0)) return;
+  auto* context = draw_action->get_context();
+  SGAL_assertion(context);
+  Uint x0 = 0, y0 = 0;
+  Uint tw, th;
+  context->get_viewport(x0, y0, tw, th);
+  if (width == 0) m_image->set_width(tw);
+  if (height == 0) m_image->set_height(th);
 }
 
 //! \brief takes a snapshot of the window.
 void Snapshotter::take_snapshot()
 {
-  Uint width = m_image->get_width();
-  Uint height = m_image->get_height();
+  auto width = m_image->get_width();
+  auto height = m_image->get_height();
   Image::Format format = m_image->get_format();
   void* pixels = m_image->get_pixels();
   GLenum gl_format = m_image->get_format_format(format);

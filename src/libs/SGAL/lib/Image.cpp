@@ -37,7 +37,7 @@
 SGAL_BEGIN_NAMESPACE
 
 Container_proto* Image::s_prototype(nullptr);
-const std::string Image::s_tag = "ImageBase";
+const std::string Image::s_tag("Image");
 
 /*! A map from format to number of bits */
 Uint Image::s_format_sizes[] = {
@@ -556,10 +556,6 @@ const char* Image::s_format_names[] = {
 const Uint Image::s_def_width(0);
 const Uint Image::s_def_height(0);
 const Image::Format Image::s_def_format(Image::kRGB8_8_8);
-const Boolean Image::s_def_flip(true);
-const Float Image::s_def_rotation(0);
-const Boolean Image::s_def_alpha(false);
-const Float Image::s_def_transparency(1);
 
 //! \brief constructor
 Image::Image(Boolean proto) :
@@ -570,11 +566,8 @@ Image::Image(Boolean proto) :
   m_pixels(nullptr),
   m_pack_row_length(0),
   m_dirty(true),
-  m_flip(s_def_flip),
-  m_rotation(s_def_rotation),
-  m_alpha(s_def_alpha),
-  m_transparency(s_def_transparency),
-  m_owned_pixels(false)
+  m_owned_pixels(false),
+  m_size(0)
 {}
 
 //! \brief destructor
@@ -586,6 +579,7 @@ Image::~Image()
       m_pixels = nullptr;
     }
     m_owned_pixels = false;
+    m_size = 0;
   }
 }
 
@@ -615,33 +609,6 @@ void Image::init_prototype()
                                           Field_info::RULE_EXPOSED_FIELD,
                                           format_func,
                                           s_def_format));
-
-  Boolean_handle_function flip_func =
-    static_cast<Boolean_handle_function>(&Image::flip_handle);
-  s_prototype->add_field_info(new SF_bool(FLIP, "flip",
-                                          Field_info::RULE_EXPOSED_FIELD,
-                                          flip_func,
-                                          s_def_flip));
-
-  Float_handle_function rotation_func =
-    static_cast<Float_handle_function>(&Image::rotation_handle);
-  s_prototype->add_field_info(new SF_float(ROTATION, "rotation",
-                                           Field_info::RULE_EXPOSED_FIELD,
-                                           rotation_func, s_def_rotation));
-
-  Boolean_handle_function alpha_func =
-    static_cast<Boolean_handle_function>(&Image::alpha_handle);
-  s_prototype->add_field_info(new SF_bool(ALPHA, "alpha",
-                                          Field_info::RULE_EXPOSED_FIELD,
-                                          alpha_func,
-                                          s_def_alpha));
-
-  Float_handle_function transparency_func =
-    static_cast<Float_handle_function>(&Image::transparency_handle);
-  s_prototype->add_field_info(new SF_float(TRANSPARENCY, "transparency",
-                                           Field_info::RULE_EXPOSED_FIELD,
-                                           transparency_func,
-                                           s_def_transparency));
 }
 
 //! \brief deletes the prototype.
@@ -662,11 +629,9 @@ Container_proto* Image::get_prototype()
 void Image::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "format") {
       const char** found = std::find(s_format_names,
                                      &s_format_names[kNumFormats],
@@ -687,26 +652,6 @@ void Image::set_attributes(Element* elem)
     }
     if (name == "height") {
       set_height(boost::lexical_cast<Uint>(value));
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "flip") {
-      set_flip(compare_to_true(value));
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "rotation") {
-      set_rotation(boost::lexical_cast<Float>(value));
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "alpha") {
-      set_alpha(compare_to_true(value));
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "transparency") {
-      set_transparency(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -748,15 +693,23 @@ Uint Image::get_size() const
   else return m_pack_row_length * m_height;
 }
 
-//! \brief sets the image pixel data.
-void Image::set_pixels(void* pixels)
+//! \brief allocates space for the image.
+void Image::allocate_space()
 {
-  if (m_owned_pixels) {
-    if (m_pixels) delete [] (char*) m_pixels;
-    m_owned_pixels = false;
-  }
-  m_pixels = pixels;
-  m_dirty = false;
+  auto width = get_width();
+  auto height = get_height();
+  auto format = get_format();
+
+  if ((width == 0) || (height == 0)) return;
+  Uint size = Image::get_size(width, height, format);
+  if (size <= m_size) return;
+
+  auto* pixels = (Uchar*) get_pixels();
+  if (pixels && m_owned_pixels) delete [] pixels;
+  m_pixels = new Uchar[size];
+  m_owned_pixels = true;
+  SGAL_assertion(m_pixels);
+  m_size = size;
 }
 
 //! \brief determines whether the image is empty.
@@ -768,5 +721,66 @@ Boolean Image::empty()
 //! \brief obtain the texture number of components.
 Uint Image::get_component_count()
 { return Image::get_format_components(get_format()); }
+
+//! \brief sets the image width.
+void Image::set_width(Uint width)
+{
+  m_width = width;
+  m_dirty = true;
+}
+
+//! \brief obtains the image width.
+Uint Image::get_width()
+{
+  if (m_dirty) clean();
+  return m_width;
+}
+
+//! \brief sets the image height.
+void Image::set_height(Uint height)
+{
+  m_height = height;
+  m_dirty = true;
+}
+
+//! \brief obtains the image height.
+Uint Image::get_height()
+{
+  if (m_dirty) clean();
+  return m_height;
+}
+
+//! \brief sets the image format.
+void Image::set_format(Format format)
+{
+  m_format = format;
+  m_dirty = true;
+}
+
+//! \brief obtains the image format.
+Image::Format Image::get_format()
+{
+  if (m_dirty) clean();
+  return m_format;
+}
+
+//! \brief sets the image pixel data.
+void Image::set_pixels(void* pixels)
+{
+  if (m_owned_pixels) {
+    if (m_pixels) delete [] (char*) m_pixels;
+    m_owned_pixels = false;
+  }
+  m_pixels = pixels;
+  m_size = 0;
+  m_dirty = false;
+}
+
+//! \brief obtains the image pixel data.
+void* Image::get_pixels()
+{
+  if (m_dirty) clean();
+  return m_pixels;
+}
 
 SGAL_END_NAMESPACE

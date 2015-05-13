@@ -23,6 +23,8 @@
 #ifndef SGAL_SPHERE_ENVIRONMENT_HPP
 #define SGAL_SPHERE_ENVIRONMENT_HPP
 
+#include <boost/shared_ptr.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Texture.hpp"
 #include "SGAL/Action.hpp"
@@ -32,11 +34,10 @@ SGAL_BEGIN_NAMESPACE
 class Execution_coordinator;
 class Container_proto;
 class Element;
-class Image_reader;
-class Scene_graph;
+class Image;
 
 #if (defined _MSC_VER)
-template struct SGAL_SGAL_DECL std::pair<Image_reader*, Boolean>;
+template struct SGAL_SGAL_DECL std::pair<Shared_image, Boolean>;
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif
@@ -55,6 +56,8 @@ public:
     IMAGE1,
     NUM_IMAGES
   };
+
+  typedef boost::shared_ptr<Image>              Shared_image;
 
   /*! Constructor */
   Sphere_environment(Boolean proto = false);
@@ -85,13 +88,6 @@ public:
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
 
-  // virtual Attribute_list get_attributes();
-
-  /*! Add the container to a given scene.
-   * \param scene_graph the given scene.
-   */
-  virtual void add_to_scene(Scene_graph* scene_graph);
-
   /*! Clean the object in case it is dirty. */
   virtual void clean();
 
@@ -115,7 +111,7 @@ public:
 
 protected:
   /*! The texture images and a flag that indicates that the image is owned. */
-  std::pair<Image_reader*,Boolean> m_images[NUM_IMAGES];
+  std::pair<Shared_image, Boolean> m_images[NUM_IMAGES];
 
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
@@ -142,27 +138,27 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Sphere_environment* Sphere_environment::prototype()
 { return new Sphere_environment(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Sphere_environment::clone()
 { return new Sphere_environment(); }
 
-/*! \brief sets the alpha value. */
+//! \brief sets the alpha value.
 inline void Sphere_environment::set_alpha(float alpha) { m_alpha = alpha; }
 
-/*! \brief obtains the alpha value. */
+//! \brief obtains the alpha value.
 inline float Sphere_environment::get_alpha() const { return m_alpha; }
 
-/*! \brief sets the quality. */
+//! \brief sets the quality.
 inline void Sphere_environment::set_quality(bool flag) { m_quality = flag; }
 
-/*! \brief obtains the quality. */
+//! \brief obtains the quality.
 inline bool Sphere_environment::get_quality() const { return m_quality; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Sphere_environment::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

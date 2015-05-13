@@ -23,6 +23,7 @@
 /*! \file
  *
  */
+#include <boost/shared_ptr.hpp>
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -40,6 +41,8 @@ SGAL_BEGIN_NAMESPACE
 
 class Imagemagick_font : public Font {
 public:
+  typedef boost::shared_ptr<Image>              Shared_image;
+
   /*! Constructor */
   Imagemagick_font(const std::string& name, Boolean antialias = true,
                    Boolean left_to_right = true, Boolean top_to_bottom = true);
@@ -78,7 +81,7 @@ private:
   Texture_2d m_texture;
 
   /*! */
-  Image_reader m_image;
+  Shared_image m_image;
 
   /*! */
   Uint m_text_width;
