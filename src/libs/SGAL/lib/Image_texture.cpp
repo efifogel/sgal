@@ -144,6 +144,26 @@ void Image_texture::set_attributes(Element* elem)
 void Image_texture::add_to_scene(Scene_graph* scene_graph)
 { m_scene_graph = scene_graph; }
 
+//! \brief sets the image.
+void Image_texture::set_image(Shared_image image)
+{
+  Observer observer(this, get_field_info(IMAGE));
+  if (m_image) m_image->unregister_observer(observer);
+  m_image = image;
+  m_image->register_observer(observer);
+  m_image->add_to_scene(m_scene_graph);
+  m_dirty_image = false;
+  m_dirty_url = true;
+  m_dirty_flip = true;
+}
+
+//! \brief obtains the image.
+const Image_texture::Shared_image Image_texture::get_image()
+{
+  if (m_dirty_image) clean_image();
+  return m_image;
+}
+
 //! \brief sets the URL.
 void Image_texture::set_url(const std::string& url)
 {
@@ -151,12 +171,6 @@ void Image_texture::set_url(const std::string& url)
   m_dirty_image = true;
   m_dirty_url = false;
 }
-
-//! \brief sets the image.
-void set_image(Shared_image image);
-
-  /*! Obtain the image. */
-  const Shared_image get_image();
 
 //! \brief obtains the URL.
 const std::string Image_texture::get_url()
