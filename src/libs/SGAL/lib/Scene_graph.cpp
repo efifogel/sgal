@@ -907,6 +907,9 @@ void Scene_graph::write(const std::string& filename,
 void Scene_graph::write(const std::string& filename, std::ostream& os,
                         File_format_3d::Id format_id)
 {
+  SGAL_TRACE_CODE(Trace::EXPORT_3D,
+                  std::cout << "Scene_graph: " << "Format: " << format_id
+                  << std::endl;);
   switch (format_id) {
    case File_format_3d::ID_WRL: write_vrml(filename, os); break;
    case File_format_3d::ID_X3D: break;
