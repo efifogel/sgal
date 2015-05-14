@@ -113,7 +113,7 @@ public:
   /*! Clean the object using the new decoded data. */
   virtual void clean();
 
-  /*! Determines whether the texture is empty. */
+  /*! Determine whether the texture is empty. */
   virtual Boolean empty();
 
   /*! Obtain the texture number of components. */

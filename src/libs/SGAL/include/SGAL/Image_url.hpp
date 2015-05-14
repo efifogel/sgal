@@ -87,7 +87,7 @@ public:
   virtual void set_attributes(Element* elem);
 
   /*! Add the container to a given scene.
-   * \param scene_graph the given scene.
+   * \param[in] scene_graph the given scene.
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
@@ -175,6 +175,8 @@ private:
   static const Boolean s_def_alpha;
   static const Float s_def_transparency;
   //@}
+
+  friend class Image_texture;
 };
 
 #if (defined _MSC_VER)

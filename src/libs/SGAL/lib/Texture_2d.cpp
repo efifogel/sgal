@@ -50,8 +50,7 @@ REGISTER_TO_FACTORY(Texture_2d, "Texture_2d");
 
 //! Constructor
 Texture_2d::Texture_2d(Boolean proto) :
-  Texture(proto),
-  m_image(nullptr)
+  Texture(proto)
 #if 0
   m_text(0)
 #endif

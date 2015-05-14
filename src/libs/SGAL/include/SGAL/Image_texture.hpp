@@ -24,11 +24,9 @@
 #endif
 
 #include <string>
-#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Texture_2d.hpp"
-#include "SGAL/Image_url.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -36,6 +34,7 @@
 SGAL_BEGIN_NAMESPACE
 
 class Element;
+class Scene_graph;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -49,8 +48,6 @@ class Element;
  */
 class SGAL_SGAL_DECL Image_texture : public Texture_2d {
 public:
-  typedef boost::shared_ptr<Image_url>          Shared_image;
-
   enum {
     FIRST = Texture_2d::LAST - 1,
     URL,
@@ -58,11 +55,11 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  /*! Construct */
   Image_texture(Boolean proto = false);
 
-  /*! Destructor */
-  virtual ~Image_texture() {}
+  /*! Destruct */
+  virtual ~Image_texture();
 
   /*! Construct the prototype. */
   static Image_texture* prototype();
@@ -77,6 +74,11 @@ public:
    */
   virtual void set_attributes(Element* elem);
 
+  /*! Add the container to a given scene.
+   * \param[in] scene_graph the given scene.
+   */
+  virtual void add_to_scene(Scene_graph* scene_graph);
+
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
@@ -88,23 +90,62 @@ public:
 
   /// \name field handlers
   //@{
+  std::string* url_handle(const Field_info*) { return &m_url; }
+  Boolean* flip_handle(const Field_info*) { return &m_flip; }
   //@}
+
+  /*! Respond to a change to a field.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
+   */
+  void field_changed(const Field_info* field_info);
+
+  /*! Set the image. */
+  void set_image(Shared_image image);
+
+  /*! Obtain the image. */
+  const Shared_image get_image();
 
   /*! Set the URL. */
   void set_url(const std::string& url);
 
   /*! Obtain the URL. */
-  const std::string get_url() const;
+  const std::string get_url();
 
   /*! Set the flag that indicates whether to reflect the image. */
   void set_flip(Boolean flag);
 
   /*! Obtain the flag that indicates whether to reflect the image. */
-  Boolean get_flip() const;
+  Boolean get_flip();
 
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
+
+  /*! Clean the object using the new decoded data. */
+  virtual void clean();
+
+  /*! Determines whether the texture is empty. */
+  virtual Boolean empty();
+
+  /*! Obtain the texture number of components. */
+  virtual Uint get_component_count();
+
+  /*! Clean the image.
+   */
+  void clean_image();
+
+  /*! Clean the parameters.
+   */
+  void clean_parameters();
+
+  /*! The uniform resource locator (url) that refers to the (Internet)
+   * resource that contains the image.
+   */
+  std::string m_url;
+
+  /*! Indicates whether the image should be reflected when read from file. */
+  Boolean m_flip;
 
 private:
   /*! The tag that identifies this container type. */
@@ -113,8 +154,17 @@ private:
   /*! The node prototype. */
   static Container_proto* s_prototype;
 
-  /*! The image. */
-  Shared_image m_image;
+  /*! Indicates whether the image is dirty and thus must be cleaned. */
+  Boolean m_dirty_image;
+
+  /*! Indicates whether the url attribute is dirty and thus must be cleaned. */
+  Boolean m_dirty_url;
+
+  /*! Indicates whether the flip attribute is dirty and thus must be cleaned. */
+  Boolean m_dirty_flip;
+
+  /*! The scene graph. */
+  Scene_graph* m_scene_graph;
 };
 
 #if defined(_MSC_VER)
@@ -127,22 +177,6 @@ inline Image_texture* Image_texture::prototype()
 
 //! \brief clones.
 inline Container* Image_texture::clone() { return new Image_texture(); }
-
-//! \brief sets the URL.
-inline void Image_texture::set_url(const std::string& url)
-{ m_image->set_url(url); }
-
-//! \brief obtains the URL.
-inline const std::string Image_texture::get_url() const
-{ return m_image->get_url(); }
-
-//! \brief sets the flag that indicates whether to reflect the image.
-inline void Image_texture::set_flip(Boolean flag)
-{ m_image->set_flip(flag); }
-
-//! \brief obtains the flag that indicates whether to reflect the image.
-inline Boolean Image_texture::get_flip() const
-{ return m_image->get_flip(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Image_texture::get_tag() const { return s_tag; }
