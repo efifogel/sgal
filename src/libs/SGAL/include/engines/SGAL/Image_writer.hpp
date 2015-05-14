@@ -39,7 +39,6 @@ public:
   enum {
     FIRST = Node::LAST-1,
     TRIGGER,
-    IMAGE_TRIGGER,
     DIR_NAME,
     FILE_NAME,
     FILE_FORMAT,
@@ -75,7 +74,6 @@ public:
   /// \name field handlers
   //@{
   Boolean* trigger_handle(const Field_info*) { return &m_trigger; }
-  Boolean* Image_trigger_handle(const Field_info*) { return &m_image_trigger; }
   std::string* dir_name_handle(const Field_info*) { return &m_dir_name; }
   std::string* file_name_handle(const Field_info*) { return &m_file_name; }
   File_format_2d::Id* file_format_handle(const Field_info*)
@@ -105,21 +103,6 @@ public:
    * of the input fields.
    */
   void trigger_changed(const Field_info* field_info);
-
-  /*! Respond to a change in the image.
-   * \param[in] field_info the information record of the field that caused
-   *                       the change.
-   */
-  virtual void image_changed(const Field_info* field_info);
-
-  /*! Set the flag that indicates whether ca change to the image triggers the
-   * engine.
-   */
-  void set_image_trigger(Boolean flag);
-
-  /*! Determine whether ca change to the image triggers the engine.
-   */
-  Boolean is_image_trigger();
 
   /*! Set the name of the dir where the snapshot is written to.
    */
@@ -170,9 +153,6 @@ protected:
   /*! The trigger of the engine, which makes the engine excute. */
   Boolean m_trigger;
 
-  /*! Indicates whether a change to the image triggers the engine. */
-  Boolean m_image_trigger;
-
   /*! The directory to save the image at. */
   std::string m_dir_name;
 
@@ -199,7 +179,6 @@ private:
   static Container_proto* s_prototype;
 
   // Default values:
-  const static Boolean s_def_image_trigger;
   const static std::string s_def_dir_name;
   const static std::string s_def_file_name;
   const static File_format_2d::Id s_def_file_format;
@@ -216,16 +195,6 @@ inline Image_writer* Image_writer::prototype()
 //! \brief clones.
 inline Container* Image_writer::clone()
 { return new Image_writer(); }
-
-/*! \brief sets the flag that indicates whether ca change to the image triggers
- * the engine.
- */
-inline void Image_writer::set_image_trigger(Boolean flag)
-{ m_image_trigger = flag; }
-
-//! \brief determines whether ca change to the image triggers the engine.
-inline Boolean Image_writer::is_image_trigger()
-{ return m_image_trigger; }
 
 //! \brief sets the name of the dir where the snapshot is written to.
 inline void Image_writer::set_dir_name(std::string dir_name)

@@ -55,7 +55,6 @@ const std::string Image_writer::s_tag("ImageWriter");
 Container_proto* Image_writer::s_prototype(nullptr);
 
 // Default values
-const Boolean Image_writer::s_def_image_trigger(true);
 const std::string Image_writer::s_def_dir_name(".");
 const std::string Image_writer::s_def_file_name("snaphsot");
 const File_format_2d::Id Image_writer::s_def_file_format(File_format_2d::ID_PPM);
@@ -68,7 +67,6 @@ REGISTER_TO_FACTORY(Image_writer, "Image_writer");
 Image_writer::Image_writer(Boolean proto) :
   Node(proto),
   m_trigger(false),
-  m_image_trigger(s_def_image_trigger),
   m_dir_name(s_def_dir_name),
   m_file_name(s_def_file_name),
   m_file_format(s_def_file_format),
@@ -132,13 +130,12 @@ void Image_writer::init_prototype()
                                           s_def_flip));
 
   // image
-  exec_func = static_cast<Execution_function>(&Image_writer::image_changed);
   auto image_func = reinterpret_cast<Shared_container_handle_function>
     (&Image_writer::image_handle);
   s_prototype->add_field_info(new SF_shared_container(IMAGE,
                                                       "image",
                                                       Field_info::RULE_OUT,
-                                                      image_func, exec_func));
+                                                      image_func));
 }
 
 //! \brief deletes the container prototype.
@@ -162,11 +159,6 @@ void Image_writer::set_attributes(Element* elem)
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
-    if (name == "imageTrigger") {
-      m_image_trigger = compare_to_true(value);
-      elem->mark_delete(ai);
-      continue;
-    }
     if (name == "dirName") {
       m_dir_name = strip_double_quotes(value);
       if (m_dir_name.empty()) m_dir_name = s_def_dir_name;
@@ -251,20 +243,12 @@ void Image_writer::write(Formatter* formatter)
 }
 
 //! \brief sets the image.
-void Image_writer::set_image(Shared_image image)
-{
-  m_image = image;
-  if (is_image_trigger()) execute();
-}
+void Image_writer::set_image(Shared_image image) { m_image = image; }
 
 /*! \brief triggers the execution of the engine as a response to change in one
  * of the input fields.
  */
 void Image_writer::trigger_changed(const Field_info* /* field_info */)
 { execute(); }
-
-//! \brief responds to a change in the image.
-void Image_writer::image_changed(const Field_info* field_info)
-{ if (is_image_trigger()) execute(); }
 
 SGAL_END_NAMESPACE

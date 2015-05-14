@@ -21,11 +21,13 @@ Shape {
 }
 # Snapshot
 DEF SNAP_KEY SingleKeySensor { key "S" }
-DEF SNAPSHOTTER Snapshotter {}
-DEF IMAGE_WRITER ImageWriter {
+DEF SNAPSHOT Snapshot {
   dirName "."
   fileName "tetrahedron"
   fileFormat "png"
+  image Image {
+    width 256
+    height 256
+  }
 }
-ROUTE SNAP_KEY.state TO SNAPSHOTTER.trigger
-ROUTE SNAPSHOTTER.image TO IMAGE_WRITER.image
+ROUTE SNAP_KEY.state TO SNAPSHOT.trigger

@@ -175,7 +175,7 @@ void Image_texture::set_url(const std::string& url)
 //! \brief obtains the URL.
 const std::string Image_texture::get_url()
 {
-  if (m_dirty_url) clean_parameters();
+  if (m_dirty_url) clean_attributes();
   return m_url;
 }
 
@@ -190,7 +190,7 @@ void Image_texture::set_flip(Boolean flag)
 //! \brief obtains the flag that indicates whether to reflect the image.
 Boolean Image_texture::get_flip()
 {
-  if (m_dirty_flip) clean_parameters();
+  if (m_dirty_flip) clean_attributes();
   return m_flip;
 }
 
@@ -211,15 +211,15 @@ void Image_texture::clean_image()
   image->set_flip(get_flip());
 }
 
-//! \brief cleans the parameters.
-void Image_texture::clean_parameters()
+//! \brief cleans the attributes.
+void Image_texture::clean_attributes()
 {
   m_dirty_url = false;
   m_dirty_flip = false;
   auto image = boost::dynamic_pointer_cast<Image_url>(m_image);
   if (image) {
-    set_url(image->get_url());
-    set_flip(image->get_flip());
+    m_url = image->get_url();
+    m_flip = image->get_flip();
   }
 }
 
@@ -236,6 +236,7 @@ void Image_texture::field_changed(const Field_info* field_info)
    case URL:
     m_dirty_url = false;
     m_dirty_image = true;
+    break;
 
    case FLIP:
     m_dirty_flip = false;

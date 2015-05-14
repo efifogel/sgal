@@ -63,6 +63,7 @@ Imagemagick_font::Imagemagick_font(const std::string & name, Boolean antialias,
   m_magick_image.fontPointsize(m_point_size);
   m_magick_image.antiAlias(false);
 
+  if (!m_image) m_image.reset(new Image);
   m_texture.set_image(m_image);
   m_texture.set_min_filter(Texture::NEAREST_MIN);
   m_texture.set_mag_filter(Texture::NEAREST_MAG);

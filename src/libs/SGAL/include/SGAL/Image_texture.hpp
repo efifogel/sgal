@@ -135,9 +135,9 @@ protected:
    */
   void clean_image();
 
-  /*! Clean the parameters.
+  /*! Clean the attributes.
    */
-  void clean_parameters();
+  void clean_attributes();
 
   /*! The uniform resource locator (url) that refers to the (Internet)
    * resource that contains the image.
