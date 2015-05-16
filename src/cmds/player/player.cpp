@@ -182,16 +182,17 @@ int main(int argc, char* argv[])
   }
 
   // Create a window manager:
-#if (defined USE_GLUT)
-  SGAL::Glut_window_manager* wm = SGAL::Glut_window_manager::instance();
-#elif defined(_WIN32)
-  SGAL::Windows_window_manager* wm = SGAL::Windows_window_manager::instance();
-#else
-  SGAL::X11_window_manager* wm = SGAL::X11_window_manager::instance();
-#endif
 
   // Initialize the visual:
   if (scene.has_visual()) {
+#if (defined USE_GLUT)
+    SGAL::Glut_window_manager* wm = SGAL::Glut_window_manager::instance();
+#elif defined(_WIN32)
+    SGAL::Windows_window_manager* wm = SGAL::Windows_window_manager::instance();
+#else
+    SGAL::X11_window_manager* wm = SGAL::X11_window_manager::instance();
+#endif
+
     scene.set_window_manager(wm);
     wm->set_scene(&scene);
 
