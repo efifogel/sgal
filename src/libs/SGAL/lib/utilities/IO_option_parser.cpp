@@ -35,10 +35,10 @@ IO_option_parser::IO_option_parser() :
   // Options allowed on the command line, config file, or env. variables
   m_io_opts.add_options()
     ("input-path", po::value<vs>()->composing(), "input path")
-    // ("formats-2d", po::value<Formats_2d>(&m_formats_2d)->multitoken(),
-    //    "Image formats\n"
-    //    "  jpg\n"
-    //    "  png")
+    ("formats-2d", po::value<Formats_2d>(&m_formats_2d)->multitoken(),
+       "Image formats\n"
+       "  jpg\n"
+       "  png")
     ("formats-3d,f", po::value<Formats_3d>(&m_formats_3d)->multitoken(),
        "3D formats\n"
        "  wrl\n"
