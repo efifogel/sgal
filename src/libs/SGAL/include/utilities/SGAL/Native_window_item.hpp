@@ -112,7 +112,13 @@ public:
   /*! Destructor. */
   virtual ~Native_window_item();
 
-  /*! Determine whether the window full screen. */
+  /*! Determine whether the window is double buffered. */
+  virtual Boolean is_double_buffer() const;
+
+  /*! Set the window to be double buffered. */
+  virtual void set_double_buffer(Boolean flag);
+
+  /*! Determine whether the window is full screen. */
   virtual Boolean is_full_screen() const;
 
   /*! Set the window to be full screen. */
@@ -127,7 +133,7 @@ public:
    * \param height the new height of the window.
    */
   virtual void set_height(Uint height);
-  
+
   /*! Set the width and height of the window.
    * \param width the new width of the window.
    * \param height the new height of the window.
@@ -150,7 +156,7 @@ public:
                                         Uint blue_bits);
 
   /*! Set the number of alpha bits.
-   * \param alpha_bits the number of alpha bits. 
+   * \param alpha_bits the number of alpha bits.
    */
   virtual void set_number_of_alpha_bits(Uint alpha_bits);
 
@@ -208,7 +214,7 @@ public:
    * \param stencil_bits the number of stencil bits.
    */
   virtual void set_number_of_stencil_bits(Uint stencil_bits);
-  
+
   /*! Obtain the number of stencil bits.
    * \return the number of stencil bits.
    */
@@ -244,7 +250,7 @@ public:
    * \param height the new height of the window.
    */
   static void set_init_size(Uint width, Uint height);
-  
+
   /*! Set the initial x-position of window otigins.
    * \param x the x-coordinate of the window origin.
    */
@@ -278,9 +284,13 @@ public:
 #endif
 };
 
-/*! \brief determines whether the window full screen. */
+//! \brief determines whether the window full screen.
 inline Boolean Native_window_item::is_full_screen() const
 { return m_full_screen; }
+
+//! \brief determines whether the window is double buffered.
+inline Boolean Native_window_item::is_double_buffer() const
+{ return m_double_buffer; }
 
 SGAL_END_NAMESPACE
 
