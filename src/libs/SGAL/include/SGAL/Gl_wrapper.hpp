@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_GL_WRAP_HPP
@@ -159,6 +156,33 @@ inline void glBegin(GLenum mode)
                   << std::endl;);
   ::glBegin(mode);
   // Cannot check for errors between glBegin() and glEnd()
+}
+
+/*! glBindFramebuffer wrapper
+ * \param[in] target the target to which the renderbuffer object is bound.
+ * \param[in] framebuffer the name of a framebuffer object.
+ */
+inline void glBindFramebuffer(GLenum target,  GLuint framebuffer)
+{
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glBindFramebuffer("
+                  << Gl_wrapper::find(target) << ", " << framebuffer << ");"
+                  << std::endl;);
+  ::glBindFramebuffer(target, framebuffer);
+  SGAL_CHECK_GL();
+}
+
+/*! glBindRenderbuffer wrapper
+ * Bind a named renderbuffer object.
+ * \param[in] target the target to which the renderbuffer object is bound.
+ * \param[in] renderbuffer the name of a renderbuffer object.
+ */
+inline void glBindRenderbuffer(GLenum target, GLuint renderbuffer)
+{
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glBindRenderbuffer("
+                  << Gl_wrapper::find(target) << ", " << renderbuffer << ");"
+                  << std::endl;);
+  ::glBindRenderbuffer(target, renderbuffer);
+  SGAL_CHECK_GL();
 }
 
 /*! glBindTexture wrapper */
@@ -711,12 +735,42 @@ inline void glCullFace(GLenum mode)
   SGAL_CHECK_GL();
 }
 
+/*! glDeleteFramebuffers wrapper
+ * Delete named framebuffer objects.
+ * \patam[i] n the number of framebuffer objects to be deleted.
+ * \patam[i] names an array containing the names of n framebuffer objects to
+ *                 be deleted.
+ */
+inline void glDeleteFramebuffers(GLsizei n, GLuint* names)
+{
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glDeleteFramebuffers("
+                  << n << ", names" << ");"
+                  << std::endl;);
+  ::glDeleteFramebuffers(n, names);
+  SGAL_CHECK_GL();
+}
+
 /*! glDeleteLists wrapper */
 inline void glDeleteLists(GLuint list, GLsizei range)
 {
   SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glDeleteLists(" << list << ");"
                   << std::endl;);
   ::glDeleteLists(list, range);
+  SGAL_CHECK_GL();
+}
+
+/*! glDeleteRenderbuffers wrapper
+ * Delete named renderbuffer objects
+ * \patam[i] n the number of framebuffer objects to be deleted.
+ * \patam[i] names an array containing the names of n framebuffer objects to
+ *                 be deleted.
+ */
+inline void glDeleteRenderbuffers(GLsizei n,  const GLuint * names)
+{
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glDeleteRenderbuffers("
+                  << n << ", names" << ");"
+                  << std::endl;);
+  ::glDeleteRenderbuffers(n, names);
   SGAL_CHECK_GL();
 }
 
@@ -1075,6 +1129,26 @@ inline void glFogiv(GLenum pname, const GLint* params)
   SGAL_CHECK_GL();
 }
 
+/*! glFramebufferRenderbuffer wrapper
+ * Attach a renderbuffer object to a framebuffer object.
+ * \param target
+ * \param attachment,
+ * \prama renderbuffertarget
+ * \param renderbuffer
+ */
+inline void glFramebufferRenderbuffer(GLenum target, GLenum attachment,
+                                      GLenum renderbuffertarget,
+                                      GLuint renderbuffer)
+{
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glFramebufferRenderbuffer("
+                  << Gl_wrapper::find(target) << ", "
+                  << Gl_wrapper::find(attachment) << ", "
+                  << Gl_wrapper::find(renderbuffertarget) << ", renderbuffer);"
+                  << std::endl;);
+  ::glFramebufferRenderbuffer(target, attachment,
+                              renderbuffertarget, renderbuffer);
+  SGAL_CHECK_GL();
+}
 
 /*! glFrontFace wrapper */
 inline void glFrontFace(GLenum mode)
@@ -1098,7 +1172,23 @@ inline void glFrustum(GLdouble left, GLdouble right, GLdouble bottom,
   SGAL_CHECK_GL();
 }
 
-/*! GLuint wrapper */
+/*! glGenFramebuffers wrapper
+ * Generate framebuffer object names
+ * \param[in] n the number of framebuffer object names to be generated.
+ * \param[out] ids an array in which the generated framebuffer object names are
+ *                 stored.
+ */
+inline void glGenFramebuffers(GLsizei n, GLuint* names)
+{
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glGenFramebuffers("
+                  << n << ", names" << ");"
+                  << std::endl;);
+  ::glGenFramebuffers(n, names);
+  SGAL_CHECK_GL();
+  return;
+}
+
+//! glGenLists wrapper
 inline GLuint glGenLists(GLsizei range)
 {
   SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glGenLists(" << range << ");"
@@ -1106,6 +1196,22 @@ inline GLuint glGenLists(GLsizei range)
   GLuint res = ::glGenLists(range);
   SGAL_CHECK_GL();
   return res;
+}
+
+/*! glGenFramebuffers wrapper
+ * Generate renderbuffer object names
+ * \param[in] n the number of renderbuffer object names to be generated.
+ * \param[out] ids an array in which the generated renderbuffer object names are
+ *                 stored.
+ */
+inline void glGenRenderbuffers(GLsizei n, GLuint* names)
+{
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glGenFramebuffers("
+                  << n << ", names" << ");"
+                  << std::endl;);
+  ::glGenRenderbuffers(n, names);
+  SGAL_CHECK_GL();
+  return;
 }
 
 /*! glGenTextures wrapper */
@@ -2521,7 +2627,7 @@ inline void glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height,
 {
   SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glReadPixels("
                   << x << ", " << y << ", " << width << ", " << height << ", "
-                  << Gl_wrapper::find(format) << ","
+                  << Gl_wrapper::find(format) << ", "
                   << Gl_wrapper::find(type) << ", pixels);"
                   << std::endl;);
   ::glReadPixels(x, y, width, height, format, type, pixels);
@@ -2604,14 +2710,33 @@ inline void glRectsv(const GLshort* v1, const GLshort* v2)
   SGAL_CHECK_GL();
 }
 
+/*! glRenderbufferStorage wrapper
+ * Create and initialize a renderbuffer object's data store.
+ * \param[in] target the renderbuffer target.
+ * \param[in] internalformat the color-renderable, depth-renderable, or
+		             stencil-renderable format of the renderbuffer.
+ * \param[in] width the width of the renderbuffer in pixels.
+ * \param[in] height the height of the renderbuffer in pixels.
+ */
+inline void glRenderbufferStorage(GLenum target, GLenum internalformat,
+                                  GLsizei width, GLsizei height)
+{
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glRenderbufferStorage(" << ");"
+                  << Gl_wrapper::find(target) << ", "
+                  << Gl_wrapper::find(internalformat) << ", width, height"
+                  << std::endl;);
+  ::glRenderbufferStorage(target, internalformat, width, height);
+  SGAL_CHECK_GL();
+}
+
 /*! GLint wrapper */
 inline GLint glRenderMode(GLenum mode)
 {
   SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glRenderMode(" << ");"
                   << std::endl;);
   GLint res = ::glRenderMode(mode);
-  return res;
   SGAL_CHECK_GL();
+  return res;
 }
 
 /*! glRotated wrapper */
