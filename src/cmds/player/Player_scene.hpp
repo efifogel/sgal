@@ -31,6 +31,7 @@
 #include <stdexcept>
 
 #include <boost/filesystem/path.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/Types.hpp"
 #include "SGAL/Scene_graph.hpp"
@@ -63,6 +64,7 @@ class Context;
 class Configuration;
 class Indexed_face_set;
 class Box;
+class Image;
 
 #if (defined USE_GLUT)
 class Glut_window_manager;
@@ -281,6 +283,15 @@ private:
 
   /*! A collection of directories to search files in. */
   Path_list m_dirs;
+
+  /*! Frame buffer object for off-screen drawing. */
+  GLuint m_frame_buffer;
+
+  /*! Render buffer object for off-screen drawing. */
+  GLuint m_render_buffer;
+
+  /*! The off-screen saved image. */
+  boost::shared_ptr<SGAL::Image> m_image;
 };
 
 //! \brief checks whether the scene is initialized.

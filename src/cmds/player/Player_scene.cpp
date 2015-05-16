@@ -89,6 +89,7 @@
 #include "SGAL/Group.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Snapshot.hpp"
+#include "SGAL/Gl_wrapper.hpp"
 
 #if (defined USE_GLUT)
 #include "SGLUT/Glut_window_item.hpp"
@@ -283,14 +284,23 @@ void Player_scene::snapshot_scene()
 {
   const auto& output_pathname = m_option_parser->get_output_path();
   const auto& output_filename = m_option_parser->get_output_file();
+  boost::shared_ptr<SGAL::Snapshot> snapshot(new SGAL::Snapshot);
+  SGAL_assertion(snapshot);
+  m_scene_graph->get_root()->add_child(snapshot);
+  if (!m_image) m_image.reset(new SGAL::Image);
+  SGAL_assertion(m_image);
+  m_image->set_width(m_win_width);
+  m_image->set_height(m_win_height);
+  snapshot->set_image(m_image);
+  snapshot->add_to_scene(m_scene_graph);
+  snapshot->set_mode(SGAL::Snapshotter::MODE_COLOR_ATTACHMENT);
+  snapshot->trigger();
   if (0 == m_option_parser->formats_2d_size()) {
-    boost::shared_ptr<SGAL::Snapshot> snapshot(new SGAL::Snapshot);
-    SGAL_assertion(snapshot);
-    m_scene_graph->get_root()->add_child(snapshot);
-    snapshot->add_to_scene(m_scene_graph);
     if (!output_pathname.empty()) snapshot->set_dir_name(output_pathname);
-    if (!output_filename.empty()) snapshot->set_file_name(output_filename);
-    snapshot->trigger();
+    auto lastdot = output_filename.find_last_of(".");
+    auto filename = (lastdot == std::string::npos) ? output_filename :
+      output_filename.substr(0, lastdot);
+    if (!filename.empty()) snapshot->set_file_name(filename);
     return;
   }
 
@@ -298,15 +308,13 @@ void Player_scene::snapshot_scene()
   for (auto it = m_option_parser->formats_2d_begin();
        it != m_option_parser->formats_2d_end(); ++it)
   {
-    boost::shared_ptr<SGAL::Snapshot> snapshot(new SGAL::Snapshot);
-    SGAL_assertion(snapshot);
-    m_scene_graph->get_root()->add_child(snapshot);
-    snapshot->add_to_scene(m_scene_graph);
     if (!output_pathname.empty()) snapshot->set_dir_name(output_pathname);
-    if (!output_filename.empty()) snapshot->set_file_name(output_filename);
+    auto lastdot = output_filename.find_last_of(".");
+    auto filename = (lastdot == std::string::npos) ? output_filename :
+      output_filename.substr(0, lastdot);
+    if (!filename.empty()) snapshot->set_file_name(filename);
     SGAL::File_format_2d::Id format_id = *it;
     snapshot->set_file_format(format_id);
-    snapshot->trigger();
   }
 }
 
@@ -400,14 +408,18 @@ void Player_scene::init_scene()
   m_window_item->set_title(filename);
   m_window_item->set_number_of_stencil_bits(1);
 
+  // When snapping an image of the scene, use off-screen rendering into a
+  // single color buffer.
+  if (m_option_parser->do_snapshot()) m_window_item->set_double_buffer(false);
+
   // Update the configuration node.
-  SGAL::Configuration* conf = m_scene_graph->get_configuration();
+  auto* conf = m_scene_graph->get_configuration();
   SGAL_assertion(conf);
   boost::shared_ptr<SGAL::Accumulation> acc = conf->get_accumulation();
   boost::shared_ptr<SGAL::Multisample> ms = conf->get_multisample();
 
   if (!acc && m_option_parser->get_accumulate()) {
-    SGAL::Accumulation* tmp = new SGAL::Accumulation;
+    auto* tmp = new SGAL::Accumulation;
     acc = boost::shared_ptr<SGAL::Accumulation>(tmp);
     conf->set_accumulation(acc);
   }
@@ -470,6 +482,13 @@ void Player_scene::init_scene()
     m_window_item->get_number_of_accumulation_bits(red_bits, green_bits,
                                                    blue_bits, alpha_bits);
     acc->set_number_of_bits(red_bits, green_bits, blue_bits, alpha_bits);
+  }
+
+  if (m_image) {
+    auto alpha_bits = m_window_item->get_number_of_alpha_bits();
+    //! \todo add an option to have alpha bits. If alpha bits are present
+    // use SGAL::Image::kRGBA8_8_8_8 instead of SGAL::Image::kRGB8_8_8
+    m_image->set_format(SGAL::Image::kRGB8_8_8);
   }
 
   indulge_user();
@@ -762,22 +781,44 @@ void Player_scene::draw_window(SGAL::Window_item* window_item,
 {
   if (!m_context) return;
   SGAL_assertion(m_scene_graph);
-  SGAL::Configuration* conf = m_scene_graph->get_configuration();
+  auto* conf = m_scene_graph->get_configuration();
   SGAL_assertion(conf);
 
   SGAL::Draw_action draw_action(conf);
   draw_action.set_context(m_context);
   draw_action.set_snap(false);
+
+  if (m_option_parser->do_snapshot()) {
+    //! \todo do off-screen rendering of the depth and stencil, if applicable,
+    // as well as of the color, and open a window of one pixel.
+    glGenFramebuffers(1, &m_frame_buffer);
+    glGenRenderbuffers(1, &m_render_buffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_render_buffer);
+    auto gl_format =
+      SGAL::Image::get_format_internal_format(m_image->get_format());
+    auto width = m_image->get_width();
+    auto height = m_image->get_height();
+    glRenderbufferStorage(GL_RENDERBUFFER, gl_format, width, height);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                              GL_RENDERBUFFER, m_render_buffer);
+    // glDrawBuffer(GL_COLOR_ATTACHMENT0);
+  }
   m_scene_graph->draw(&draw_action);
   if (m_option_parser->get_draw_grid()) draw_grid();
 
-  boost::shared_ptr<SGAL::Accumulation> acc = conf->get_accumulation();
+  auto acc = conf->get_accumulation();
   if (!acc || !acc->is_enabled() || dont_accumulate) {
     m_scene_graph->process_snapshots(&draw_action);
     if (acc) acc->disactivate();
     window_item->set_accumulating(false);
     // m_context->swap_buffers();
-    window_item->swap_buffers();
+    if (m_option_parser->do_snapshot()) {
+      glDeleteFramebuffers(1, &m_frame_buffer);
+      glDeleteRenderbuffers(1, &m_render_buffer);
+      m_window_manager->destroy_window(m_window_item);
+    }
+    else window_item->swap_buffers();
     return;
   }
 
@@ -794,13 +835,20 @@ void Player_scene::draw_window(SGAL::Window_item* window_item,
     acc->disactivate();
     m_scene_graph->process_snapshots(&draw_action);
     window_item->set_accumulating(false);
-    window_item->swap_buffers();
+    if (m_option_parser->do_snapshot()) {
+      glDeleteFramebuffers(1, &m_frame_buffer);
+      glDeleteRenderbuffers(1, &m_render_buffer);
+      m_window_manager->destroy_window(m_window_item);
+    }
+    else window_item->swap_buffers();
     return;
   }
 
   // Accumulation is not done:
   window_item->set_redraw(true);
-  if (acc->do_show()) window_item->swap_buffers();
+  if (acc->do_show()) {
+    if (!m_option_parser->do_snapshot()) window_item->swap_buffers();
+  }
 }
 
 //! \brief draws guides that separate the window into 4x5 rectangles.
@@ -838,6 +886,10 @@ void Player_scene::reshape_window(SGAL::Window_item* /* window_item */,
 {
   m_win_width = width;
   m_win_height = height;
+  if (m_image) {
+    m_image->set_width(width);
+    m_image->set_height(height);
+  }
   SGAL::Context* context = m_scene_graph->get_context();
   context->set_viewport(0, 0, width, height);
   SGAL::Camera* camera = m_scene_graph->get_active_camera();
