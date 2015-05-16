@@ -55,10 +55,22 @@ public:
   enum {
     FIRST = Node::LAST - 1,
     TRIGGER,
-    FRONT_BUFFER,
+    MODE,
     FLIP,
     IMAGE,
     LAST
+  };
+
+  enum Mode {
+    MODE_FRONT_LEFT = 0,
+    MODE_FRONT_RIGHT,
+    MODE_BACK_LEFT,
+    MODE_BACK_RIGHT,
+    MODE_FRONT,
+    MODE_BACK,
+    MODE_LEFT,
+    MODE_RIGHT,
+    MODE_COLOR_ATTACHMENT
   };
 
   typedef boost::shared_ptr<Image>              Shared_image;
@@ -92,7 +104,7 @@ public:
   /// \name field handlers
   //@{
   Boolean* trigger_handle(const Field_info*) { return &m_trigger; }
-  Boolean* front_buffer_handle(const Field_info*) { return &m_front_buffer; }
+  Mode* mode_handle(const Field_info*) { return &m_mode; }
   Boolean* flip_handle(const Field_info*) { return &m_flip; }
   Shared_image* image_handle(const Field_info*) { return &m_image; }
   //@}
@@ -109,25 +121,6 @@ public:
    */
   void set_size(Draw_action* action);
 
-  /*! Trigger the snapshot.
-   */
-  void trigger();
-
-  /*! Set the flag that indicates whether to take the snapshot from the front
-   * buffer.
-   */
-  void set_front_buffer(Boolean flag);
-
-  /*! Determine whether to take the snapshot from the front buffer.
-   */
-  Boolean is_front_buffer() const;
-
-  /*! Set the flag that indicates whether the image should be reflected. */
-  void set_flip(Boolean flag);
-
-  /*! Determine whether the image should be reflected. */
-  Boolean is_flip() const;
-
   /*! If triggered takes a snapshot and writes it to an image file.
    */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
@@ -135,6 +128,24 @@ public:
   /*! Take a snapshot and write it to an image file.
    */
   void execute();
+
+  /*! Trigger the snapshot.
+   */
+  void trigger();
+
+  /*! Set the color buffer.
+   */
+  void set_mode(Mode mode);
+
+  /*! Get the color buffer.
+   */
+  Mode get_mode() const;
+
+  /*! Set the flag that indicates whether the image should be reflected. */
+  void set_flip(Boolean flag);
+
+  /*! Determine whether the image should be reflected. */
+  Boolean is_flip() const;
 
   /*! Set the image.
    */
@@ -152,8 +163,10 @@ protected:
   /*! The trigger of the engine, which makes the engine excute. */
   Boolean m_trigger;
 
-  /*! Indicates whether to take the snapshot from the front buffer. */
-  Boolean m_front_buffer;
+  /*! The color buffer, whcih is the source for subsequent gl OpenGL calls,
+   * such as glReadPixels()
+   */
+  Mode m_mode;
 
   /*! Indicates whether the rows are in reverse order (window system style) */
   Boolean m_flip;
@@ -168,10 +181,13 @@ private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 
+  /*! The color buffer names. */
+  static const Char* s_mode_names[];
+
   // Default values
   //@{
   static const Boolean s_def_flip;
-  static const Boolean s_def_front_buffer;
+  static const Mode s_def_mode;
   //@}
 
   /*! Take a snapshot of the window.
@@ -192,14 +208,11 @@ inline Container* Snapshotter::clone() { return new Snapshotter(); }
 //! \brief triggers the snapshot.
 inline void Snapshotter::trigger() { m_trigger = true; }
 
-/*! \brief sets the flag that indicates whether to take the snapshot from the
- * front buffer.
- */
-inline void Snapshotter::set_front_buffer(Boolean flag)
-{ m_front_buffer = flag; }
+//! Set the color buffer.
+inline void Snapshotter::set_mode(Mode mode) { m_mode = mode; }
 
-//! \brief determines whether to take the snapshot from the front buffer.
-inline Boolean Snapshotter::is_front_buffer() const { return m_front_buffer; }
+//! gets the color buffer.
+inline Snapshotter::Mode Snapshotter::get_mode() const { return m_mode; }
 
 //! \brief sets the flag that indicates whether the image should be reflected.
 inline void Snapshotter::set_flip(Boolean flag) { m_flip = flag; }

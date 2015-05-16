@@ -43,7 +43,20 @@ Container_proto* Snapshotter::s_prototype(nullptr);
 
 // Default values
 const Boolean Snapshotter::s_def_flip(true);
-const Boolean Snapshotter::s_def_front_buffer(false);
+const Snapshotter::Mode Snapshotter::s_def_mode(MODE_BACK);
+
+//! The color buffer names.
+const Char* Snapshotter::s_mode_names[] = {
+  "frontLeft",
+  "frontRight",
+  "backLeft",
+  "backRight",
+  "front",
+  "back",
+  "left",
+  "right",
+  "colorAttachment"
+};
 
 REGISTER_TO_FACTORY(Snapshotter, "Snapshotter");
 
@@ -51,7 +64,7 @@ REGISTER_TO_FACTORY(Snapshotter, "Snapshotter");
 Snapshotter::Snapshotter(Boolean proto) :
   Node(proto),
   m_trigger(false),
-  m_front_buffer(s_def_front_buffer),
+  m_mode(s_def_mode),
   m_flip(s_def_flip)
 {}
 
@@ -110,7 +123,18 @@ void Snapshotter::take_snapshot()
   GLint val;
   glGetIntegerv(GL_READ_BUFFER, &val);
   GLenum read_buffer_mode = (GLenum)val;
-  (is_front_buffer()) ? glReadBuffer(GL_FRONT) : glReadBuffer(GL_BACK);
+  static GLenum gl_modes[] = {
+    GL_FRONT_LEFT,
+    GL_FRONT_RIGHT,
+    GL_BACK_LEFT,
+    GL_BACK_RIGHT,
+    GL_FRONT,
+    GL_BACK,
+    GL_LEFT,
+    GL_RIGHT,
+    GL_COLOR_ATTACHMENT0
+  };
+  glReadBuffer(gl_modes[get_mode()]);
   glReadPixels(0, 0, width, height, gl_format, gl_type, pixels);
   glReadBuffer(read_buffer_mode);
 }
@@ -130,13 +154,13 @@ void Snapshotter::init_prototype()
                                           trigger_func,
                                           false));
 
-  // frontBuffer
-  auto front_buffer_func =
-    static_cast<Boolean_handle_function>(&Snapshotter::front_buffer_handle);
-  s_prototype->add_field_info(new SF_bool(FLIP, "frontBuffer",
+  // mode
+  auto mode_func =
+    reinterpret_cast<Uint_handle_function>(&Snapshotter::mode_handle);
+  s_prototype->add_field_info(new SF_uint(FLIP, "mode",
                                           Field_info::RULE_EXPOSED_FIELD,
-                                          front_buffer_func,
-                                          s_def_front_buffer));
+                                          mode_func,
+                                          s_def_mode));
 
   // flip
   auto flip_func =
@@ -178,8 +202,12 @@ void Snapshotter::set_attributes(Element* elem)
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
-    if (name == "frontBuffer") {
-      set_front_buffer(compare_to_true(value));
+    if (name == "mode") {
+      auto num = sizeof(s_mode_names) / sizeof(char *);
+      const auto** found =
+        std::find(s_mode_names, &s_mode_names[num], strip_double_quotes(value));
+      auto index = found - s_mode_names;
+      if (index < num) set_mode(static_cast<Mode>(index));
       elem->mark_delete(ai);
       continue;
     }
