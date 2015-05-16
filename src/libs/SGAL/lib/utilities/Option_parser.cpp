@@ -107,7 +107,7 @@ Option_parser::Option_parser() :
      "trace options\n"
      "  graphics\n"
      "  vrml_parsing\n"
-     "  window_manager\n"
+     "  window-manager\n"
      "  event\n"
      "  script\n"
      "  ifs\n"
