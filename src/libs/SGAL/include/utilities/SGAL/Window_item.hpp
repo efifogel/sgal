@@ -120,6 +120,9 @@ public:
   /*! Obtain the window title. */
   const std::string& get_title() const;
 
+  /*! Set the window to be double buffered. */
+  virtual void set_double_buffer(Boolean flag) = 0;
+
   /*! Set the window to be full screen. */
   virtual void set_full_screen(Boolean flag) = 0;
 
