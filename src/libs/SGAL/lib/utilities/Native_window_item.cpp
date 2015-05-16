@@ -69,6 +69,10 @@ Native_window_item::Native_window_item() :
 //! \brief destructor.
 Native_window_item::~Native_window_item() {}
 
+//! \brief sets the window to be double buffered.
+void Native_window_item::set_double_buffer(Boolean flag)
+{ m_double_buffer = flag; }
+
 //! \brief sets the window to be full screen.
 void Native_window_item::set_full_screen(Boolean flag) { m_full_screen = flag; }
 
