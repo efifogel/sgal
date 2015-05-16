@@ -228,7 +228,12 @@ void Image_writer::execute()
   auto height = m_image->get_height();
   Uchar* pixels = static_cast<Uchar*>(m_image->get_pixels());
   if (!pixels) return;
-  Magick::Image image(width, height, "RGB", Magick::CharPixel, pixels);
+  auto format = m_image->get_format();
+  std::string name =
+    (format == Image::kRGB8_8_8) ? "RGB" :
+    (format == Image::kRGBA8_8_8_8) ? "RGBA" :
+    "unknown";
+  Magick::Image image(width, height, name.c_str(), Magick::CharPixel, pixels);
   if (m_flip) image.flip();
   image.magick(File_format_2d::get_name(m_file_format));
   image.write(file_name);
