@@ -252,29 +252,42 @@ Start           : VRML vrmlScene
                     error(yyla.location,
                           std::string("Non matching solid names \"") +
                           $2 + "\" and \"" + $5 + "\"!");
-                  Group* group = new Group;
-                  scene_graph->set_root(Shared_group(group));
-                  Transform* transform = new Transform;
-                  Shared_transform shared_transform(transform);
-                  scene_graph->add_container(shared_transform,
-                                             g_navigation_root_name);
-                  scene_graph->set_navigation_root(shared_transform);
-                  group->add_child(shared_transform);
-                  Shape* shape = new Shape;
-                  Shared_shape shared_shape(shape);
-                  transform->add_child(shared_shape);
-                  Shared_indexed_face_set shared_ifs = $3.first;
-                  shared_ifs->set_coord_indices_from_range($3.second->begin(),
-                                                           $3.second->end());
-                  shared_ifs->collapse_identical_coordinates();
-                  shape->set_geometry(shared_ifs);
-                  shape->add_to_scene(scene_graph);
-                  scene_graph->add_container(shared_shape);
+
+                  Shared_shape shape(new Shape);
+                  SGAL_assertion(shape);
+                  scene_graph->initialize(shape);
+
+                  /*! Add IndexedFaceSet */
+                  Shared_indexed_face_set ifs = $3.first;
+                  ifs->set_coord_indices_from_range($3.second->begin(),
+                                                    $3.second->end());
+                  ifs->collapse_identical_coordinates();
+                  shape->set_geometry(ifs);
 
                   /* Clear */
                   $3.second->clear();
                   delete $3.second;
-                  $3.second = NULL;
+                  $3.second = nullptr;
+                }
+                | K_SOLID facets K_SOLID_END
+                {
+                  /* STL */
+                  scene_graph->set_input_format_id(File_format_3d::ID_STL);
+                  Shared_shape shape(new Shape);
+                  SGAL_assertion(shape);
+                  scene_graph->initialize(shape);
+
+                  /*! Add IndexedFaceSet */
+                  Shared_indexed_face_set ifs = $2.first;
+                  ifs->set_coord_indices_from_range($2.second->begin(),
+                                                    $2.second->end());
+                  ifs->collapse_identical_coordinates();
+                  shape->set_geometry(ifs);
+
+                  /* Clear */
+                  $2.second->clear();
+                  delete $2.second;
+                  $2.second = nullptr;
                 }
                 | K_SOLID error
                   /* It is possible that even though the file starts with the

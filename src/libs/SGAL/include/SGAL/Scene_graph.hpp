@@ -94,6 +94,7 @@ class Route;
 class Isect_action;
 class Simulation;
 class Snapshotter;
+class Shape;
 
 #if (defined _MSC_VER)
 #pragma warning( push )
@@ -106,6 +107,7 @@ public:
   typedef boost::shared_ptr<Group>                Shared_group;
   typedef boost::shared_ptr<Transform>            Shared_transform;
   typedef boost::shared_ptr<Point_light>          Shared_point_light;
+  typedef boost::shared_ptr<Shape>                Shared_shape;
 
   typedef std::list<Shared_container>             Container_list;
   typedef Container_list::iterator                Container_list_iter;
@@ -156,10 +158,13 @@ public:
   /*! Release the graphics state context. */
   void release_context();
 
-  //! \todo void add_node(XML_entity* parent, XML_entity* node);
-
   /*! Obtain the context */
   Context* get_context() const { return m_context; }
+
+  /*! Initialize the scene graph with a root and a navigation root nodes.
+   * Use this function when parsing simple formats, such as stl.
+   */
+  void initialize(Shared_shape shape);
 
   /*! Create default nodes and route them appropriately.
    * The set of such nodes consists of a navigation sensor node, a

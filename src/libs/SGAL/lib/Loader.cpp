@@ -101,35 +101,26 @@ int Loader::load(const char* filename, Scene_graph* sg)
 int Loader::read_stl(std::ifstream& stl_stream, Scene_graph* scene_graph)
 {
   scene_graph->set_input_format_id(File_format_3d::ID_STL);
+  Shared_shape shape(new Shape);
+  SGAL_assertion(shape);
+  scene_graph->initialize(shape);       // initialize
 
-  Group* group = new Group;
-  scene_graph->set_root(Shared_group(group));
-  Transform* transform = new Transform;
-  Shared_transform shared_transform(transform);
-  scene_graph->add_container(shared_transform, g_navigation_root_name);
-  scene_graph->set_navigation_root(shared_transform);
-  group->add_child(shared_transform);
-  Shape* shape = new Shape;
-  Shared_shape shared_shape(shape);
-  transform->add_child(shared_shape);
-  Indexed_face_set* indexed_face_set = new Indexed_face_set;
-  Shared_indexed_face_set shared_ifs(indexed_face_set);
-  shape->set_geometry(shared_ifs);
-  shape->add_to_scene(scene_graph);
-  scene_graph->add_container(shared_shape);
+  /*! Add IndexedFaceSet */
+  Shared_indexed_face_set ifs(new Indexed_face_set);
+  shape->set_geometry(ifs);
 
   Int32 num_tris;
   stl_stream.read((char*)&num_tris, sizeof(Int32));
   std::cout << "# triangles: " << num_tris << std::endl;
-  shared_ifs->set_num_primitives(num_tris);
-  shared_ifs->set_primitive_type(Geo_set::PT_TRIANGLES);
+  ifs->set_num_primitives(num_tris);
+  ifs->set_primitive_type(Geo_set::PT_TRIANGLES);
   Uint num_vertices = num_tris * 3;
 
   Coord_array_3d* coords = new Coord_array_3d(num_vertices);
   Shared_coord_array_3d shared_coords(coords);
-  shared_ifs->set_coord_array(shared_coords);
-  auto& indices = shared_ifs->get_flat_coord_indices();
-  shared_ifs->set_coord_indices_flat(true);
+  ifs->set_coord_array(shared_coords);
+  auto& indices = ifs->get_flat_coord_indices();
+  ifs->set_coord_indices_flat(true);
   indices.resize(num_vertices);
 
   Uint index(0);
@@ -166,7 +157,7 @@ int Loader::read_stl(std::ifstream& stl_stream, Scene_graph* scene_graph)
     stl_stream.read((char*)&spacer, sizeof(unsigned short));
   }
 
-  shared_ifs->collapse_identical_coordinates();
+  ifs->collapse_identical_coordinates();
   return 0;
 }
 

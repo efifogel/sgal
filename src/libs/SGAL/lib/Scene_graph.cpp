@@ -30,6 +30,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Scene_graph.hpp"
+#include "SGAL/Scene_graph_int.hpp"
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Transform.hpp"
 #include "SGAL/Context.hpp"
@@ -66,6 +67,7 @@
 #include "SGAL/Group.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Image.hpp"
+#include "SGAL/Shape.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -929,7 +931,7 @@ void Scene_graph::write_vrml(const std::string& filename, std::ostream& os)
   for (auto it1 = root->children_begin(); it1 != root->children_end(); ++it1) {
     auto transform = boost::dynamic_pointer_cast<Transform>(*it1);
     if (!transform) continue;
-    SGAL_assertion(transfor->get_name().compare(g_navigation_root_name) == 0);
+    SGAL_assertion(transform->get_name().compare(g_navigation_root_name) == 0);
     auto it2 = transform->children_begin();
     for (; it2 != transform->children_end(); ++it2) formatter.write(*it2);
   }
@@ -945,7 +947,7 @@ void Scene_graph::write_stl(const std::string& filename, std::ostream& os)
   for (auto it1 = root->children_begin(); it1 != root->children_end(); ++it1) {
     auto transform = boost::dynamic_pointer_cast<Transform>(*it1);
     if (!transform) continue;
-    SGAL_assertion(transfor->get_name().compare(g_navigation_root_name) == 0);
+    SGAL_assertion(transform->get_name().compare(g_navigation_root_name) == 0);
     auto it2 = transform->children_begin();
     for (; it2 != transform->children_end(); ++it2) formatter.write(*it2);
   }
@@ -961,11 +963,27 @@ void Scene_graph::write_obj(const std::string& filename, std::ostream& os)
   for (auto it1 = root->children_begin(); it1 != root->children_end(); ++it1) {
     auto transform = boost::dynamic_pointer_cast<Transform>(*it1);
     if (!transform) continue;
-    SGAL_assertion(transfor->get_name().compare(g_navigation_root_name) == 0);
+    SGAL_assertion(transform->get_name().compare(g_navigation_root_name) == 0);
     auto it2 = transform->children_begin();
     for (; it2 != transform->children_end(); ++it2) formatter.write(*it2);
   }
   formatter.end();
+}
+
+//! \brief initializes the scene graph with a root and, a navigation root nodes.
+void Scene_graph::initialize(Shared_shape shape)
+{
+  Shared_group group(new Group);
+  SGAL_assertion(group);
+  set_root(group);
+  Shared_transform transform(new Transform);
+  SGAL_assertion(transform);
+  add_container(transform, g_navigation_root_name);
+  set_navigation_root(transform);
+  group->add_child(transform);
+  transform->add_child(shape);
+  shape->add_to_scene(this);
+  add_container(shape);
 }
 
 SGAL_END_NAMESPACE
