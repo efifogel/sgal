@@ -67,7 +67,6 @@
 #include "SGAL/Group.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Image.hpp"
-#include "SGAL/Shape.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -578,7 +577,7 @@ void Scene_graph::route_navigation_info(Navigation_info* nav,
       SGAL_assertion(pos_field);
       SGAL_assertion(orient_field);
 
-      Shared_transform navigat_root = get_navigation_root();
+      auto navigat_root = get_navigation_root();
       auto* sg_pos_field = navigat_root->get_field(Transform::TRANSLATION);
       auto* sg_orient_field = navigat_root->get_field(Transform::ROTATION);
       SGAL_assertion(sg_pos_field);
@@ -971,7 +970,7 @@ void Scene_graph::write_obj(const std::string& filename, std::ostream& os)
 }
 
 //! \brief initializes the scene graph with a root and, a navigation root nodes.
-void Scene_graph::initialize(Shared_shape shape)
+Scene_graph::Shared_transform Scene_graph::initialize()
 {
   Shared_group group(new Group);
   SGAL_assertion(group);
@@ -981,9 +980,7 @@ void Scene_graph::initialize(Shared_shape shape)
   add_container(transform, g_navigation_root_name);
   set_navigation_root(transform);
   group->add_child(transform);
-  transform->add_child(shape);
-  shape->add_to_scene(this);
-  add_container(shape);
+  return transform;
 }
 
 SGAL_END_NAMESPACE

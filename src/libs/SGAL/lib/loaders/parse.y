@@ -253,9 +253,14 @@ Start           : VRML vrmlScene
                           std::string("Non matching solid names \"") +
                           $2 + "\" and \"" + $5 + "\"!");
 
+                  auto transform = scene_graph->initialize();
+
+                  /*! Add Shape */
                   Shared_shape shape(new Shape);
                   SGAL_assertion(shape);
-                  scene_graph->initialize(shape);
+                  shape->add_to_scene(scene_graph);
+                  scene_graph->add_container(shape);
+                  transform->add_child(shape);
 
                   /*! Add IndexedFaceSet */
                   Shared_indexed_face_set ifs = $3.first;
@@ -273,9 +278,14 @@ Start           : VRML vrmlScene
                 {
                   /* STL */
                   scene_graph->set_input_format_id(File_format_3d::ID_STL);
+                  auto transform = scene_graph->initialize();
+
+                  /*! Add Shape */
                   Shared_shape shape(new Shape);
                   SGAL_assertion(shape);
-                  scene_graph->initialize(shape);
+                  shape->add_to_scene(scene_graph);
+                  scene_graph->add_container(shape);
+                  transform->add_child(shape);
 
                   /*! Add IndexedFaceSet */
                   Shared_indexed_face_set ifs = $2.first;

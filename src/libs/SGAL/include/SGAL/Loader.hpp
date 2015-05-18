@@ -20,6 +20,7 @@
 #define SGAL_LOADER_HPP
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Vector3f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -27,8 +28,8 @@ class Scene_graph;
 
 class SGAL_SGAL_DECL Loader {
 public:
-  /*! Constructor */
-  Loader() {}
+  /*! Construct */
+  Loader();
 
   /*! Load a scene graph from a file.
    */
@@ -45,7 +46,25 @@ public:
 
   /*! Read a scene graph from a file in the STL binary format.
    */
-  int read_stl(std::ifstream& stl_stream, Scene_graph* sg);
+  int read_stl(std::ifstream& stl_stream, Scene_graph* sg,
+               const Vector3f& color);
+
+  /*! Read a traingle (1 normal and 3 vertices)
+   */
+  void read_triangle(std::ifstream& stl_stream,
+                     Vector3f& v0, Vector3f& v1, Vector3f& v2, Ushort& spacer);
+
+private:
+  /*! Indicates whether multiple shape nodes should represent the entire mesh
+   * when colors are present. When colors are not present this flag has no
+   * effect.
+   * By default a single Shape node represents the entire mesh. When colors are
+   * present, we store the colors in the color array. When m_multiple_shapes is
+   * set to false and colors are present, we split the mesh into as many Shape
+   * nodes as different colors.
+   * \todo use a shader to combine the colors, when present, and phong shading.
+   */
+  Boolean m_multiple_shapes;
 };
 
 SGAL_END_NAMESPACE
