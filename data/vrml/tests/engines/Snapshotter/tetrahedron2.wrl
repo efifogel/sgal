@@ -21,18 +21,14 @@ Shape {
 }
 # Snapshot
 DEF SNAP_KEY SingleKeySensor { key "S" }
-DEF SNAPSHOTTER Snapshotter {}
+DEF SNAPSHOTTER Snapshotter {
+  image DEF IMAGE Image {}
+}
 DEF IMAGE_WRITER ImageWriter {
   dirName "."
   fileName "tetrahedron"
   fileFormat "png"
-}
-DEF TRIGGER Script {
-  eventIn SFNode image
-  eventOut SFBool trigger
-  url "javascript: function image(value, timestamp) { trigger = true; }"
+  image USE IMAGE
 }
 ROUTE SNAP_KEY.state TO SNAPSHOTTER.trigger
-ROUTE SNAPSHOTTER.image TO TRIGGER.image
-ROUTE SNAPSHOTTER.image TO IMAGE_WRITER.image
-ROUTE TRIGGER.trigger TO IMAGE_WRITER.trigger
+ROUTE SNAPSHOTTER.image TO IMAGE_WRITER.trigger

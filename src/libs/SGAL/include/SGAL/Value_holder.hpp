@@ -342,6 +342,14 @@ public:
   }
 };
 
+// Boolean <- Shared container
+template <>
+class Delegate_dispatcher<Shared_container, Boolean> {
+public:
+  void operator()(Shared_container* value1, Boolean* value2)
+  { *value2 = (*value1 != nullptr); }
+};
+
 // This is only for debugging
 // template <>
 // class Delegate_dispatcher<Float, Float> {
