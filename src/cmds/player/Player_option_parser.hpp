@@ -93,10 +93,10 @@ public:
    */
   SGAL::Boolean get_sub_index_buffer_size(SGAL::Uint & size) const;
 
-  /*! Determine whether the operation is interactive.
-   * \return true if the operation is interactive; false otherwise.
+  /*! Determine whether the interactive option has not been specified.
+   * \return true if the interactive option was left defaulted.
    */
-  SGAL::Boolean is_interactive() const;
+  SGAL::Boolean is_interactive_defaulted() const;
 
 protected:
   /*! The player option description. */
@@ -126,5 +126,11 @@ void Player_option_parser::configure(Window_manager* window_manager,
   Window_option_parser::configure(m_variable_map, window_manager);
   Option_parser::configure(scene_graph);
 }
+
+/*! \brief determines whether the application should stay interactive after
+ * exporting.
+ */
+inline SGAL::Boolean Player_option_parser::is_interactive_defaulted() const
+{ return m_variable_map["interactive"].defaulted(); }
 
 #endif

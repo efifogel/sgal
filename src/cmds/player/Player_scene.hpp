@@ -90,6 +90,8 @@ class CPlayerControlCtrl;
 
 class Player_scene : public SGAL::Scene {
 public:
+  typedef boost::shared_ptr<SGAL::Image>        Shared_image;
+
 #if (defined USE_GLUT)
   typedef SGAL::Glut_window_manager             Window_manager;
   typedef SGAL::Glut_window_item                Window_item;
@@ -133,6 +135,10 @@ public:
   /*! Clear the scene */
   virtual void clear_scene();
 
+  /*! Create a window.
+   */
+  virtual void create_window();
+
   /*! Reshape the viewport of a window of the scene.
    * It is assumed that the window context is the current context.
    * \param window_item the window to reshape
@@ -144,8 +150,9 @@ public:
 
   /*! Draw into a window of the scene.
    * It is assumed that the window context is the current context.
-   * \param window_item the window to draw
-   * \param dont_accumulate indicates that no accumulation should be performed
+   * \param[in] window_item the window to draw
+   * \param[in] dont_accumulate indicates that no accumulation should be
+   *                            performed
    */
   virtual void draw_window(SGAL::Window_item* window_item,
                            SGAL::Boolean dont_accumulate);
@@ -193,10 +200,15 @@ public:
   /*! Determine whether the scene does simulate something. */
   SGAL::Boolean is_simulating(void) const;
 
-  /*! Determine whether there is a visual.
-   * \return true if theere is a visual; false otherwise.
+  /*! Determine whether the application has a visual.
+   * \return true if the application has a visual; false otherwise.
    */
-  SGAL::Boolean has_visual() const;
+  SGAL::Boolean do_have_visual() const;
+
+  /*! Determine whether the application renders off screen.
+   * \return true if the application renders off screen.
+   */
+  SGAL::Boolean do_render_off_screen() const;
 
 protected:
   /*! The window manager. */
@@ -249,6 +261,21 @@ protected:
   /*! Export the scene. */
   void export_scene();
 
+  /*! Create default nodes in the scene graph. */
+  void create_defaults();
+
+  /*! Create visual.
+   */
+  void create_visual();
+
+  /*! Set preferred window attributes.
+   */
+  void set_preferred_window_attributes();
+
+  /*! Set actual window attributes.
+   */
+  void set_actual_window_attributes();
+
 private:
   typedef std::list<fi::path>                                   Path_list;
   typedef Path_list::iterator                                   Path_iter;
@@ -290,8 +317,8 @@ private:
   /*! Render buffer object for off-screen drawing. */
   GLuint m_render_buffer;
 
-  /*! The off-screen saved image. */
-  boost::shared_ptr<SGAL::Image> m_image;
+  /*! The snapshot image. */
+  Shared_image m_image;
 };
 
 //! \brief checks whether the scene is initialized.

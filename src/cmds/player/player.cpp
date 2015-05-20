@@ -184,7 +184,7 @@ int main(int argc, char* argv[])
   // Create a window manager:
 
   // Initialize the visual:
-  if (scene.has_visual()) {
+  if (scene.do_have_visual()) {
 #if (defined USE_GLUT)
     SGAL::Glut_window_manager* wm = SGAL::Glut_window_manager::instance();
 #elif defined(_WIN32)

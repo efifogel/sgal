@@ -83,13 +83,15 @@
 #include "SGAL/Multisample.hpp"
 #include "SGAL/Texture_2d.hpp"
 #include "SGAL/Image.hpp"
+#include "SGAL/Image_writer.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Stl_formatter.hpp"
 #include "SGAL/Group.hpp"
 #include "SGAL/Node.hpp"
-#include "SGAL/Snapshot.hpp"
+#include "SGAL/Snapshotter.hpp"
 #include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Field.hpp"
 
 #if (defined USE_GLUT)
 #include "SGLUT/Glut_window_item.hpp"
@@ -273,7 +275,7 @@ void Player_scene::create_scene()
   }
   print_stat();
 
-  const std::string& output_filename = m_option_parser->get_output_file();
+  const auto& output_filename = m_option_parser->get_output_file();
   if (output_filename.empty()) m_option_parser->set_output_file(filename);
   if (m_option_parser->do_snapshot()) snapshot_scene();
   if (m_option_parser->do_export()) export_scene();
@@ -284,23 +286,38 @@ void Player_scene::snapshot_scene()
 {
   const auto& output_pathname = m_option_parser->get_output_path();
   const auto& output_filename = m_option_parser->get_output_file();
-  boost::shared_ptr<SGAL::Snapshot> snapshot(new SGAL::Snapshot);
-  SGAL_assertion(snapshot);
-  m_scene_graph->get_root()->add_child(snapshot);
+  boost::shared_ptr<SGAL::Snapshotter> snapshotter(new SGAL::Snapshotter);
+  SGAL_assertion(snapshotter);
+  m_scene_graph->get_root()->add_child(snapshotter);
   if (!m_image) m_image.reset(new SGAL::Image);
   SGAL_assertion(m_image);
-  m_image->set_width(m_win_width);
-  m_image->set_height(m_win_height);
-  snapshot->set_image(m_image);
-  snapshot->add_to_scene(m_scene_graph);
-  snapshot->set_mode(SGAL::Snapshotter::MODE_COLOR_ATTACHMENT);
-  snapshot->trigger();
+  snapshotter->set_image(m_image);
+  snapshotter->add_to_scene(m_scene_graph);
+  auto mode = (do_render_off_screen()) ?
+    SGAL::Snapshotter::MODE_COLOR_ATTACHMENT : SGAL::Snapshotter::MODE_BACK;
+  snapshotter->set_mode(mode);
+  snapshotter->trigger();
+  auto* src_field = snapshotter->get_source_field("image");
+  SGAL_assertion(src_field);
+  typedef boost::shared_ptr<SGAL::Image_writer>         Shared_image_writer;
   if (0 == m_option_parser->formats_2d_size()) {
-    if (!output_pathname.empty()) snapshot->set_dir_name(output_pathname);
+    Shared_image_writer image_writer(new SGAL::Image_writer);
+    SGAL_assertion(image_writer);
+    m_scene_graph->get_root()->add_child(image_writer);
+
+    image_writer->set_image(m_image);
+    if (!output_pathname.empty()) image_writer->set_dir_name(output_pathname);
     auto lastdot = output_filename.find_last_of(".");
     auto filename = (lastdot == std::string::npos) ? output_filename :
       output_filename.substr(0, lastdot);
-    if (!filename.empty()) snapshot->set_file_name(filename);
+    if (!filename.empty()) image_writer->set_file_name(filename);
+
+    auto* dst_field = image_writer->get_destination_field("trigger");
+    SGAL_assertion(dst_field);
+
+    src_field->disconnect(dst_field); // disconnect old connections if exists
+    src_field->connect(dst_field);
+
     return;
   }
 
@@ -308,13 +325,24 @@ void Player_scene::snapshot_scene()
   for (auto it = m_option_parser->formats_2d_begin();
        it != m_option_parser->formats_2d_end(); ++it)
   {
-    if (!output_pathname.empty()) snapshot->set_dir_name(output_pathname);
+    Shared_image_writer image_writer(new SGAL::Image_writer);
+    SGAL_assertion(image_writer);
+    m_scene_graph->get_root()->add_child(image_writer);
+
+    image_writer->set_image(m_image);
+    if (!output_pathname.empty()) image_writer->set_dir_name(output_pathname);
     auto lastdot = output_filename.find_last_of(".");
     auto filename = (lastdot == std::string::npos) ? output_filename :
       output_filename.substr(0, lastdot);
-    if (!filename.empty()) snapshot->set_file_name(filename);
+    if (!filename.empty()) image_writer->set_file_name(filename);
     SGAL::File_format_2d::Id format_id = *it;
-    snapshot->set_file_format(format_id);
+    image_writer->set_file_format(format_id);
+
+    auto* dst_field = image_writer->get_destination_field("trigger");
+    SGAL_assertion(dst_field);
+
+    src_field->disconnect(dst_field); // disconnect old connections if exists
+    src_field->connect(dst_field);
   }
 }
 
@@ -387,42 +415,17 @@ void Player_scene::destroy_scene()
 #endif
 }
 
-//! \brief initializes the secene.
-void Player_scene::init_scene()
+//! \brief sets preferred window attributes.
+void Player_scene::set_preferred_window_attributes()
 {
-  // Create the missing nodes.
-  m_scene_graph->create_defaults();
-
-  // Configure the window manager and the scene graph.
-  m_option_parser->configure(m_window_manager, m_scene_graph);
-
-  // Prepare the window item.
-  std::string filename;
-  if (!m_option_parser->get_file_name(filename) || filename.empty()) {
-    std::string str("input file missing!");
-    throw Input_file_missing_error(str);
-    return;
-  }
-
-  m_window_item = new Window_item;
-  m_window_item->set_title(filename);
-  m_window_item->set_number_of_stencil_bits(1);
-
   // When snapping an image of the scene, use off-screen rendering into a
   // single color buffer.
-  if (m_option_parser->do_snapshot()) m_window_item->set_double_buffer(false);
+  m_window_item->set_double_buffer(!do_render_off_screen());
 
-  // Update the configuration node.
   auto* conf = m_scene_graph->get_configuration();
   SGAL_assertion(conf);
-  boost::shared_ptr<SGAL::Accumulation> acc = conf->get_accumulation();
-  boost::shared_ptr<SGAL::Multisample> ms = conf->get_multisample();
-
-  if (!acc && m_option_parser->get_accumulate()) {
-    auto* tmp = new SGAL::Accumulation;
-    acc = boost::shared_ptr<SGAL::Accumulation>(tmp);
-    conf->set_accumulation(acc);
-  }
+  auto acc = conf->get_accumulation();
+  auto ms = conf->get_multisample();
 
   if (acc) {
     SGAL::Uint red_bits, green_bits, blue_bits, alpha_bits;
@@ -433,16 +436,48 @@ void Player_scene::init_scene()
   if (ms) m_window_item->set_number_of_samples(ms->get_number_of_samples());
   m_window_item->set_number_of_stencil_bits(conf->get_number_of_stencil_bits());
   m_window_item->set_number_of_depth_bits(conf->get_number_of_depth_bits());
+}
 
-  SGAL::Boolean visual_chosen = false;
+//! \brief sets actual window attributes.
+void Player_scene::set_actual_window_attributes()
+{
+  auto* conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
 
+  conf->set_number_of_stencil_bits(m_window_item->get_number_of_stencil_bits());
+  conf->set_number_of_depth_bits(m_window_item->get_number_of_depth_bits());
+
+  auto ms = conf->get_multisample();
+  if (ms) ms->set_number_of_samples(m_window_item->get_number_of_samples());
+
+  auto acc = conf->get_accumulation();
+  if (acc) {
+    SGAL::Uint red_bits, green_bits, blue_bits, alpha_bits;
+    m_window_item->get_number_of_accumulation_bits(red_bits, green_bits,
+                                                   blue_bits, alpha_bits);
+    acc->set_number_of_bits(red_bits, green_bits, blue_bits, alpha_bits);
+  }
+
+  if (m_image) {
+    auto alpha_bits = m_window_item->get_number_of_alpha_bits();
+    //! \todo add an option to have alpha bits. If alpha bits are present
+    // use SGAL::Image::kRGBA8_8_8_8 instead of SGAL::Image::kRGB8_8_8
+    m_image->set_format(SGAL::Image::kRGB8_8_8);
+    m_image->set_width(m_win_width);
+    m_image->set_height(m_win_height);
+  }
+}
+
+//! \brief creates the visual.
+void Player_scene::create_visual()
+{
   SGAL::Uint sample_bits = m_window_item->get_number_of_samples();
   SGAL::Uint red_bits, green_bits, blue_bits, alpha_bits;
   m_window_item->get_number_of_accumulation_bits(red_bits, green_bits,
                                                  blue_bits, alpha_bits);
   SGAL::Boolean retry =
     ((red_bits + green_bits + blue_bits + alpha_bits + sample_bits) > 0);
-
+  SGAL::Boolean visual_chosen = false;
   while (retry && !visual_chosen) {
     try {
       m_window_manager->create_window(m_window_item);
@@ -475,21 +510,57 @@ void Player_scene::init_scene()
   };
 
   if (!visual_chosen) m_window_manager->create_window(m_window_item);
+}
 
-  if (ms) ms->set_number_of_samples(m_window_item->get_number_of_samples());
-  if (acc) {
-    SGAL::Uint red_bits, green_bits, blue_bits, alpha_bits;
-    m_window_item->get_number_of_accumulation_bits(red_bits, green_bits,
-                                                   blue_bits, alpha_bits);
-    acc->set_number_of_bits(red_bits, green_bits, blue_bits, alpha_bits);
+//! \brief creates a window.
+void Player_scene::create_window()
+{
+  // Prepare the window item.
+  std::string filename;
+  if (!m_option_parser->get_file_name(filename) || filename.empty()) {
+    std::string str("input file missing!");
+    throw Input_file_missing_error(str);
+    return;
   }
 
-  if (m_image) {
-    auto alpha_bits = m_window_item->get_number_of_alpha_bits();
-    //! \todo add an option to have alpha bits. If alpha bits are present
-    // use SGAL::Image::kRGBA8_8_8_8 instead of SGAL::Image::kRGB8_8_8
-    m_image->set_format(SGAL::Image::kRGB8_8_8);
+  m_window_item = new Window_item;
+  m_window_item->set_title(filename);
+  set_preferred_window_attributes();
+  create_visual();
+  set_actual_window_attributes();
+}
+
+//! \brief creates default nodes in the scene graph.
+void Player_scene::create_defaults()
+{
+  m_scene_graph->create_defaults();     // create missing nodes.
+
+  auto* conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
+
+  auto acc = conf->get_accumulation();
+  if (!acc && m_option_parser->get_accumulate()) {
+    auto* tmp = new SGAL::Accumulation;
+    acc.reset(tmp);
+    conf->set_accumulation(acc);
   }
+
+  //! \todo Introduce a command line option to use multisamples
+  // auto ms = conf->get_multisample();
+  // if (!ms && m_option_parser->get_multisample()) {
+  //   ...;
+  // }
+}
+
+//! \brief initializes the secene.
+void Player_scene::init_scene()
+{
+  create_defaults();
+
+  // Configure the window manager and the scene graph.
+  m_option_parser->configure(m_window_manager, m_scene_graph);
+
+  create_window();                      // create a window
 
   indulge_user();
 
@@ -770,6 +841,7 @@ void Player_scene::handle(SGAL::Reshape_event* event)
 //! \brief handles a draw event.
 void Player_scene::handle(SGAL::Draw_event* event)
 {
+  std::cout << "Player_scene::handle()" << std::endl;
   SGAL::Window_item* window_item = event->get_window_item();
   SGAL::Boolean dont_accumulate = event->get_suppress_accumulation();
   draw_window(window_item, dont_accumulate);
@@ -779,6 +851,9 @@ void Player_scene::handle(SGAL::Draw_event* event)
 void Player_scene::draw_window(SGAL::Window_item* window_item,
                                SGAL::Boolean dont_accumulate)
 {
+  // std::cout << "do_redraw: " << window_item->do_redraw() << std::endl;
+  // std::cout << "is_visible: " << window_item->is_visible() << std::endl;
+  // std::cout << "Player_scene::draw_window()" << std::endl;
   if (!m_context) return;
   SGAL_assertion(m_scene_graph);
   auto* conf = m_scene_graph->get_configuration();
@@ -788,7 +863,7 @@ void Player_scene::draw_window(SGAL::Window_item* window_item,
   draw_action.set_context(m_context);
   draw_action.set_snap(false);
 
-  if (m_option_parser->do_snapshot()) {
+  if (do_render_off_screen()) {
     //! \todo do off-screen rendering of the depth and stencil, if applicable,
     // as well as of the color, and open a window of one pixel.
     glGenFramebuffers(1, &m_frame_buffer);
@@ -809,13 +884,12 @@ void Player_scene::draw_window(SGAL::Window_item* window_item,
 
   auto acc = conf->get_accumulation();
   if (!acc || !acc->is_enabled() || dont_accumulate) {
-    m_scene_graph->process_snapshots(&draw_action);
+    m_scene_graph->process_snapshotters(&draw_action);
     if (acc) acc->disactivate();
     window_item->set_accumulating(false);
-    // m_context->swap_buffers();
-    if (m_option_parser->do_snapshot()) {
-      glDeleteFramebuffers(1, &m_frame_buffer);
+    if (do_render_off_screen()) {
       glDeleteRenderbuffers(1, &m_render_buffer);
+      glDeleteFramebuffers(1, &m_frame_buffer);
       m_window_manager->destroy_window(m_window_item);
     }
     else window_item->swap_buffers();
@@ -833,11 +907,11 @@ void Player_scene::draw_window(SGAL::Window_item* window_item,
   if (acc->is_done()) {
     // Accumulation is done:
     acc->disactivate();
-    m_scene_graph->process_snapshots(&draw_action);
+    m_scene_graph->process_snapshotters(&draw_action);
     window_item->set_accumulating(false);
-    if (m_option_parser->do_snapshot()) {
-      glDeleteFramebuffers(1, &m_frame_buffer);
+    if (do_render_off_screen()) {
       glDeleteRenderbuffers(1, &m_render_buffer);
+      glDeleteFramebuffers(1, &m_frame_buffer);
       m_window_manager->destroy_window(m_window_item);
     }
     else window_item->swap_buffers();
@@ -847,7 +921,7 @@ void Player_scene::draw_window(SGAL::Window_item* window_item,
   // Accumulation is not done:
   window_item->set_redraw(true);
   if (acc->do_show()) {
-    if (!m_option_parser->do_snapshot()) window_item->swap_buffers();
+    if (!do_render_off_screen()) window_item->swap_buffers();
   }
 }
 
@@ -902,10 +976,24 @@ void Player_scene::reshape_window(SGAL::Window_item* /* window_item */,
  */
 SGAL::Boolean Player_scene::is_simulating(void) const
 {
-  const SGAL::Scene_graph* sg = get_scene_graph();
+  const auto* sg = get_scene_graph();
   return sg && sg->has_time_sensors();
 }
 
 //! \brief determines whether the operation is interactive.
-SGAL::Boolean Player_scene::has_visual() const
-{ return m_option_parser->is_interactive() || is_simulating(); }
+SGAL::Boolean Player_scene::do_have_visual() const
+{
+  return (is_simulating() ||
+          (!m_option_parser->is_interactive_defaulted() &&
+           m_option_parser->is_interactive()) ||
+          (m_option_parser->is_interactive() && !m_option_parser->do_export()));
+}
+
+//! \brief determines whether the application renders off screen.
+SGAL::Boolean Player_scene::do_render_off_screen() const
+{
+  return ((m_option_parser->is_interactive_defaulted() ||
+           !m_option_parser->is_interactive()) &&
+          (!m_option_parser->is_interactive() ||
+           m_option_parser->do_snapshot()));
+}

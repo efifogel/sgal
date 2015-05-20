@@ -93,11 +93,3 @@ Player_option_parser::get_sub_index_buffer_size(SGAL::Uint & size) const
   size = m_variable_map["sub-index-buffer-size"].as<SGAL::Uint>();
   return true;
 }
-
-//! \brief determines whether the operation is interactive.
-SGAL::Boolean Player_option_parser::is_interactive() const
-{
-  if (m_variable_map["interactive"].defaulted())
-    return (do_export()) ? false : IO_option_parser::is_interactive();
-  return IO_option_parser::is_interactive();
-}
