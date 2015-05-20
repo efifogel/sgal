@@ -290,7 +290,7 @@ Snapshot::Shared_image_writer Snapshot::get_image_writer()
 }
 
 //! \brief adds the container to a given scene.
-void Snapshot::add_to_scene(Scene_graph* sg) { sg->add_snaphot(this); }
+void Snapshot::add_to_scene(Scene_graph* sg) { sg->add_snaphotter(this); }
 
 //! \breif writes a field of this container.
 void Snapshot::write_field(const Field_info* field_info, Formatter* formatter)

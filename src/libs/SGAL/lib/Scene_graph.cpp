@@ -51,7 +51,6 @@
 #include "SGAL/GL_error.hpp"
 #include "SGAL/Route.hpp"
 #include "SGAL/Trace.hpp"
-#include "SGAL/Snapshot.hpp"
 #include "SGAL/Snapshotter.hpp"
 #include "SGAL/Point_light.hpp"
 #include "SGAL/Bindable_stack.hpp"
@@ -86,7 +85,6 @@ Scene_graph::Scene_graph(bool syncronize) :
   m_does_have_lights(false),
   // m_current_light_id(0),
   m_isect_action(nullptr),
-  m_snapshotter(nullptr),
   m_execution_coordinator(nullptr),
   m_default_event_filter(nullptr),
   m_configuration(nullptr),
@@ -239,9 +237,9 @@ void Scene_graph::draw(Draw_action* draw_action)
 
   if (accumulation_enabled) {
     if (acc->is_done() && draw_action->get_snap())
-      process_snapshots(draw_action);
+      process_snapshotters(draw_action);
   }
-  else if (draw_action->get_snap()) process_snapshots(draw_action);
+  else if (draw_action->get_snap()) process_snapshotters(draw_action);
 
   if (acc && !acc->is_active()) acc->reset_delay_time();
 
@@ -416,13 +414,10 @@ void Scene_graph::isect(Uint x, Uint y)
 }
 
 //! \brief processes all snapshot nodes.
-void Scene_graph::process_snapshots(Draw_action* action)
+void Scene_graph::process_snapshotters(Draw_action* action)
 {
-  for (Snapshot_iter i = m_snapshots.begin(); i != m_snapshots.end(); ++i) {
-    Snapshot* snapshot = *i;
-    snapshot->draw(action);
-  }
-  if (m_snapshotter) m_snapshotter->draw(action);
+  for (auto it = m_snapshotters.begin(); it != m_snapshotters.end(); ++it)
+    (*it)->draw(action);
 }
 
 //! \brief adds a Simulation node to the list of Simulation nodes.
@@ -554,10 +549,8 @@ void Scene_graph::add_time_sensor(Time_sensor* time_sensor)
 { m_time_sensors.push_back(time_sensor); }
 
 //! \brief adds a snapshot node to the list of snapshots nodes.
-void Scene_graph::add_snaphot(Snapshot* snapshot)
-{ m_snapshots.push_back(snapshot); }
-void Scene_graph::set_snaphotter(Snapshotter* snapshotter)
-{ m_snapshotter = snapshotter; }
+void Scene_graph::add_snaphotter(Snapshotter* snapshotter)
+{ m_snapshotters.push_back(snapshotter); }
 
 //! \brief routes the Navigation_info node properly.
 void Scene_graph::route_navigation_info(Navigation_info* nav,

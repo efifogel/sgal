@@ -235,6 +235,6 @@ void Snapshotter::set_attributes(Element* elem)
 }
 
 //! \brief adds the container to a given scene.
-void Snapshotter::add_to_scene(Scene_graph* sg) { sg->set_snaphotter(this); }
+void Snapshotter::add_to_scene(Scene_graph* sg) { sg->add_snaphotter(this); }
 
 SGAL_END_NAMESPACE

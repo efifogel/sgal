@@ -73,7 +73,6 @@ class Geometry;
 class Camera;
 class Touch_sensor;
 class Time_sensor;
-class Snapshot;
 class Point_light;
 class Viewpoint;
 class Fog;
@@ -122,8 +121,8 @@ public:
   typedef std::list<Time_sensor*>                 Time_sensor_list;
   typedef Time_sensor_list::iterator              Time_sensor_iter;
 
-  typedef std::list<Snapshot*>                    Snapshot_list;
-  typedef Snapshot_list::iterator                 Snapshot_iter;
+  typedef std::list<Snapshotter*>                 Snapshotter_list;
+  typedef Snapshotter_list::iterator              Snapshotter_iter;
 
   typedef std::list<Simulation*>                  Simulation_list;
   typedef Simulation_list::iterator               Simulation_iter;
@@ -191,8 +190,8 @@ public:
 
   //! \todo Event_filter* get_navigation_sensor() { return m_navigation_sensor; }
 
-  /*! Process all snapshot nodes. */
-  void process_snapshots(Draw_action* action);
+  /*! Process all snapshotter nodes. */
+  void process_snapshotters(Draw_action* action);
 
   /*! Start simulation. */
   void start_simulation();
@@ -246,8 +245,7 @@ public:
   Boolean has_time_sensors() const { return m_time_sensors.size() > 0; }
 
   /*! Add a snapshot node to the list of snapshots nodes. */
-  void add_snaphot(Snapshot* snapshot);
-  void set_snaphotter(Snapshotter* snapshotter);
+  void add_snaphotter(Snapshotter* snapshotter);
 
   /*! Add a Simulation node to the list of Simulation nodes. */
   void add_simulation(Simulation* simulation);
@@ -530,8 +528,7 @@ private:
   /*! an array of snapshot objects to be processed at the end of the rendering
    * sequence.
    */
-  Snapshot_list m_snapshots;
-  Snapshotter* m_snapshotter;
+  Snapshotter_list m_snapshotters;
 
   /*! A list of Simulation containetrs. */
   Simulation_list m_simulations;
