@@ -79,8 +79,14 @@ void Native_window_item::set_full_screen(Boolean flag) { m_full_screen = flag; }
 //! \brief sets the width of the window.
 void Native_window_item::set_width(Uint width) { m_width = width; }
 
+//! \brief obtains the width of the window.
+Uint Native_window_item::get_width() { return m_width; }
+
 //! \brief Sets the height of the window.
 void Native_window_item::set_height(Uint height) { m_height = height; }
+
+//! \brief obtains the height of the window.
+Uint Native_window_item::get_height() { return m_height; }
 
 //! \brief sets the width and height of the window.
 void Native_window_item::set_size(Uint width, Uint height)

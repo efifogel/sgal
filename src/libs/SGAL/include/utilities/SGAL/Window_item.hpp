@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Id: $
-// $Revision: 7919 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_WINDOW_ITEM_HPP
@@ -131,10 +128,20 @@ public:
    */
   virtual void set_width(Uint width) = 0;
 
+  /*! Obtain the width of the window.
+   * \return the width of the window.
+   */
+  virtual Uint get_width() = 0;
+
   /*! Set the height of the window.
    * \param height the new height of the window.
    */
   virtual void set_height(Uint height) = 0;
+
+  /*! Obtain the height of the window.
+   * \return the height of the window.
+   */
+  virtual Uint get_height() = 0;
 
   /*! Set the width and height of the window.
    * \param width the new width of the window.

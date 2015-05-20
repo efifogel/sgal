@@ -129,10 +129,20 @@ public:
    */
   virtual void set_width(Uint width);
 
+  /*! Obtain the width of the window.
+   * \return the width of the window.
+   */
+  virtual Uint get_width();
+
   /*! Set the height of the window.
    * \param height the new height of the window.
    */
   virtual void set_height(Uint height);
+
+  /*! Obtain the height of the window.
+   * \return the height of the window.
+   */
+  virtual Uint get_height();
 
   /*! Set the width and height of the window.
    * \param width the new width of the window.
