@@ -277,6 +277,7 @@ void Player_scene::create_scene()
 
   const auto& output_filename = m_option_parser->get_output_file();
   if (output_filename.empty()) m_option_parser->set_output_file(filename);
+  create_defaults();
   if (m_option_parser->do_snapshot()) snapshot_scene();
   if (m_option_parser->do_export()) export_scene();
 }
@@ -293,8 +294,14 @@ void Player_scene::snapshot_scene()
   SGAL_assertion(m_image);
   snapshotter->set_image(m_image);
   snapshotter->add_to_scene(m_scene_graph);
-  auto mode = (do_render_off_screen()) ?
-    SGAL::Snapshotter::MODE_COLOR_ATTACHMENT : SGAL::Snapshotter::MODE_BACK;
+  //! \todo Fix offscreen rendering to:
+  // 1. render depth & stencil to framebuffer, and
+  // 2. render color to texture.
+  // Then, map the texture back onto the screen.
+  // Untill fixed supress the use. Simply render to the back buffer meanwhile.
+  // auto mode = (do_render_offscreen()) ?
+  //   SGAL::Snapshotter::MODE_COLOR_ATTACHMENT : SGAL::Snapshotter::MODE_BACK;
+  auto mode = SGAL::Snapshotter::MODE_BACK;
   snapshotter->set_mode(mode);
   snapshotter->trigger();
   auto* src_field = snapshotter->get_source_field("image");
@@ -397,11 +404,7 @@ void Player_scene::export_scene()
 //! \brief destroys the scene.
 void Player_scene::destroy_scene()
 {
-  if (m_context) {
-    delete m_context;
-    m_context = nullptr;
-  }
-
+  m_scene_graph->destroy_defaults();
   if (m_scene_graph) {
     delete m_scene_graph;
     m_scene_graph = nullptr;
@@ -416,11 +419,11 @@ void Player_scene::destroy_scene()
 }
 
 //! \brief sets preferred window attributes.
+//! \todo set the width and height of the window to 1x1 when offscreen
+//        rendering is in effect.
 void Player_scene::set_preferred_window_attributes()
 {
-  // When snapping an image of the scene, use off-screen rendering into a
-  // single color buffer.
-  m_window_item->set_double_buffer(!do_render_off_screen());
+  m_window_item->set_double_buffer(!do_render_offscreen());
 
   auto* conf = m_scene_graph->get_configuration();
   SGAL_assertion(conf);
@@ -555,8 +558,6 @@ void Player_scene::create_defaults()
 //! \brief initializes the secene.
 void Player_scene::init_scene()
 {
-  create_defaults();
-
   // Configure the window manager and the scene graph.
   m_option_parser->configure(m_window_manager, m_scene_graph);
 
@@ -569,6 +570,13 @@ void Player_scene::init_scene()
   SGAL_assertion(m_context);
   m_scene_graph->set_context(m_context);
   m_scene_graph->init_context();
+  //! \todo Fix offscreen rendering to:
+  // 1. render depth & stencil to framebuffer, and
+  // 2. render color to texture.
+  // Then, map the texture back onto the screen.
+  // Untill fixed supress the use.
+  // if (do_render_offscreen()) init_offscreen_rendering();
+
   m_scene_graph->start_simulation();
   m_scene_graph->bind();
   m_window_item->show();
@@ -581,56 +589,44 @@ void Player_scene::indulge_user()
   if (m_option_parser->get_display_texture_info()) {
     SGAL_assertion(m_scene_graph);
     // Look for non instance containers:
-    SGAL::Scene_graph::Container_list_iter ci;
-    for (ci = m_scene_graph->containers_begin();
+    for (auto ci = m_scene_graph->containers_begin();
          ci != m_scene_graph->containers_end(); ++ci)
     {
-      boost::shared_ptr<SGAL::Container> cont = *ci;
-      boost::shared_ptr<SGAL::Texture_2d> texture =
-        boost::dynamic_pointer_cast<SGAL::Texture_2d>(cont);
+      auto cont = *ci;
+      auto texture = boost::dynamic_pointer_cast<SGAL::Texture_2d>(cont);
       if (texture) texture->print_info();
     }
 
     // Look for instance containers:
-    SGAL::Scene_graph::Container_map_iter ii;
-    for (ii = m_scene_graph->instances_begin();
+    for (auto ii = m_scene_graph->instances_begin();
          ii != m_scene_graph->instances_end(); ++ii)
     {
-      boost::shared_ptr<SGAL::Container> cont = (*ii).second;
-      boost::shared_ptr<SGAL::Texture_2d> texture =
-        boost::dynamic_pointer_cast<SGAL::Texture_2d>(cont);
+      auto cont = (*ii).second;
+      auto texture = boost::dynamic_pointer_cast<SGAL::Texture_2d>(cont);
       if (texture) texture->print_info();
     }
   }
 
   if (m_option_parser->get_display_geometry_info()) {
     // Look for non instance containers:
-    SGAL::Scene_graph::Container_list_iter ci;
-    for (ci = m_scene_graph->containers_begin();
+    for (auto ci = m_scene_graph->containers_begin();
          ci != m_scene_graph->containers_end(); ++ci)
     {
-      boost::shared_ptr<SGAL::Container> cont = *ci;
-      // std::cout << "Tag 1: " << cont->get_tag().c_str() << std::endl;
-      boost::shared_ptr<SGAL::Indexed_face_set> ifs =
-        boost::dynamic_pointer_cast<SGAL::Indexed_face_set>(cont);
+      auto cont = *ci;
+      auto ifs = boost::dynamic_pointer_cast<SGAL::Indexed_face_set>(cont);
       if (ifs) print_geometry_info(&*ifs);
-      boost::shared_ptr<SGAL::Box> box =
-        boost::dynamic_pointer_cast<SGAL::Box>(cont);
+      auto box = boost::dynamic_pointer_cast<SGAL::Box>(cont);
       if (box) print_geometry_info(&*box);
     }
 
     // Look for instance containers:
-    SGAL::Scene_graph::Container_map_iter ii;
-    for (ii = m_scene_graph->instances_begin();
+    for (auto ii = m_scene_graph->instances_begin();
          ii != m_scene_graph->instances_end(); ++ii)
     {
-      boost::shared_ptr<SGAL::Container> cont = (*ii).second;
-      // std::cout << "Tag 2: " << cont->get_tag().c_str() << std::endl;
-      boost::shared_ptr<SGAL::Indexed_face_set> ifs =
-        boost::dynamic_pointer_cast<SGAL::Indexed_face_set>(cont);
+      auto cont = (*ii).second;
+      auto ifs = boost::dynamic_pointer_cast<SGAL::Indexed_face_set>(cont);
       if (ifs) print_geometry_info(&*ifs);
-      boost::shared_ptr<SGAL::Box> box =
-        boost::dynamic_pointer_cast<SGAL::Box>(cont);
+      auto box = boost::dynamic_pointer_cast<SGAL::Box>(cont);
       if (box) print_geometry_info(&*box);
     }
   }
@@ -647,24 +643,20 @@ void Player_scene::indulge_user()
   if (m_option_parser->get_sub_index_buffer_size(sub_index_buffer_size)) {
     SGAL_assertion(m_scene_graph);
     // Look for non instance containers:
-    SGAL::Scene_graph::Container_vector_iter ci;
-    for (ci = m_scene_graph->containers_begin();
+    for (auto ci = m_scene_graph->containers_begin();
          ci != m_scene_graph->containers_end(); ++ci)
     {
-      SGAL::Container* cont = *ci;
-      // std::cout << "Tag 1: " << cont->get_tag().c_str() << std::endl;
-      SGAL::Geo_set* ifs = dynamic_cast<SGAL::Geo_set*>(cont);
+      auto* cont = *ci;
+      auto* ifs = dynamic_cast<SGAL::Geo_set*>(cont);
       if (ifs) ifs->set_sub_index_array_size(sub_index_buffer_size);
     }
 
     // Look for instance containers:
-    SGAL::Scene_graph::Container_map_iter ii;
-    for (ii = m_scene_graph->instances_begin();
+    for (auto ii = m_scene_graph->instances_begin();
          ii != m_scene_graph->instances_end(); ++ii)
     {
-      SGAL::Container* cont = (*ii).second;
-      // std::cout << "Tag 2: " << cont->get_tag().c_str() << std::endl;
-      SGAL::Geo_set* ifs = dynamic_cast<SGAL::Geo_set*>(cont);
+      auto* cont = (*ii).second;
+      auto* ifs = dynamic_cast<SGAL::Geo_set*>(cont);
       if (ifs) ifs->set_sub_index_array_size(sub_index_buffer_size);
     }
   }
@@ -766,10 +758,21 @@ void Player_scene::print_stat()
 //! \brief clears the scene.
 void Player_scene::clear_scene()
 {
+  //! \todo Fix offscreen rendering to:
+  // 1. render depth & stencil to framebuffer, and
+  // 2. render color to texture.
+  // Then, map the texture back onto the screen.
+  // Untill fixed supress the use.
+  // if (do_render_offscreen()) clear_offscreen_rendering();
   m_scene_graph->release_context();
-  m_scene_graph->destroy_defaults();
-  delete m_window_item;
-  m_window_item = nullptr;
+  if (m_context) {
+    delete m_context;
+    m_context = nullptr;
+  }
+  if (m_window_item) {
+    delete m_window_item;
+    m_window_item = nullptr;
+  }
 }
 
 //! \brief identifies the agent.
@@ -810,9 +813,9 @@ void Player_scene::handle(SGAL::Passive_motion_event* /* event */)
 void Player_scene::handle(SGAL::Keyboard_event* keyboard_event)
 {
   SGAL_assertion(m_scene_graph);
-  SGAL::Configuration* conf = m_scene_graph->get_configuration();
+  auto* conf = m_scene_graph->get_configuration();
   SGAL_assertion(conf);
-  boost::shared_ptr<SGAL::Accumulation> acc = conf->get_accumulation();
+  auto acc = conf->get_accumulation();
   if (acc && acc->is_enabled() && !acc->is_done()) acc->enactivate();
 
   if (keyboard_event->get_pressed()) return;
@@ -832,7 +835,7 @@ void Player_scene::handle(SGAL::Tick_event* tick_event)
 //! \brief handles a reshape event.
 void Player_scene::handle(SGAL::Reshape_event* event)
 {
-  SGAL::Window_item* window_item = event->get_window_item();
+  auto* window_item = event->get_window_item();
   SGAL::Uint width = event->get_width();
   SGAL::Uint height = event->get_height();
   reshape_window(window_item, width, height);
@@ -842,18 +845,49 @@ void Player_scene::handle(SGAL::Reshape_event* event)
 void Player_scene::handle(SGAL::Draw_event* event)
 {
   std::cout << "Player_scene::handle()" << std::endl;
-  SGAL::Window_item* window_item = event->get_window_item();
+  auto* window_item = event->get_window_item();
   SGAL::Boolean dont_accumulate = event->get_suppress_accumulation();
   draw_window(window_item, dont_accumulate);
 }
 
+//! \brief initializes offscreen rendering.
+//! \todo Fix offscreen rendering to:
+// 1. render depth & stencil to framebuffer, and
+// 2. render color to texture.
+// Then, map the texture back onto the screen.
+void Player_scene::init_offscreen_rendering()
+{
+  glGenFramebuffers(1, &m_frame_buffer);
+  glGenRenderbuffers(1, &m_render_buffer);
+  glBindRenderbuffer(GL_RENDERBUFFER, m_render_buffer);
+  auto gl_format =
+    SGAL::Image::get_format_internal_format(m_image->get_format());
+  auto width = m_image->get_width();
+  auto height = m_image->get_height();
+  glRenderbufferStorage(GL_RENDERBUFFER, gl_format, width, height);
+  glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffer);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                            GL_RENDERBUFFER, m_render_buffer);
+}
+
+//! \brief clears offscreen rendering.
+//! \todo Fix offscreen rendering to:
+// 1. render depth & stencil to framebuffer, and
+// 2. render color to texture.
+// Then, map the texture back onto the screen.
+void Player_scene::clear_offscreen_rendering()
+{
+  glDeleteRenderbuffers(1, &m_render_buffer);
+  m_render_buffer = 0;
+  glDeleteFramebuffers(1, &m_frame_buffer);
+  m_frame_buffer = 0;
+}
+
 //! \brief draws into a window of the scene.
+// \todo Replace accumulation with rendering to texture and blending.
 void Player_scene::draw_window(SGAL::Window_item* window_item,
                                SGAL::Boolean dont_accumulate)
 {
-  // std::cout << "do_redraw: " << window_item->do_redraw() << std::endl;
-  // std::cout << "is_visible: " << window_item->is_visible() << std::endl;
-  // std::cout << "Player_scene::draw_window()" << std::endl;
   if (!m_context) return;
   SGAL_assertion(m_scene_graph);
   auto* conf = m_scene_graph->get_configuration();
@@ -863,22 +897,6 @@ void Player_scene::draw_window(SGAL::Window_item* window_item,
   draw_action.set_context(m_context);
   draw_action.set_snap(false);
 
-  if (do_render_off_screen()) {
-    //! \todo do off-screen rendering of the depth and stencil, if applicable,
-    // as well as of the color, and open a window of one pixel.
-    glGenFramebuffers(1, &m_frame_buffer);
-    glGenRenderbuffers(1, &m_render_buffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, m_render_buffer);
-    auto gl_format =
-      SGAL::Image::get_format_internal_format(m_image->get_format());
-    auto width = m_image->get_width();
-    auto height = m_image->get_height();
-    glRenderbufferStorage(GL_RENDERBUFFER, gl_format, width, height);
-    glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffer);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                              GL_RENDERBUFFER, m_render_buffer);
-    // glDrawBuffer(GL_COLOR_ATTACHMENT0);
-  }
   m_scene_graph->draw(&draw_action);
   if (m_option_parser->get_draw_grid()) draw_grid();
 
@@ -887,12 +905,8 @@ void Player_scene::draw_window(SGAL::Window_item* window_item,
     m_scene_graph->process_snapshotters(&draw_action);
     if (acc) acc->disactivate();
     window_item->set_accumulating(false);
-    if (do_render_off_screen()) {
-      glDeleteRenderbuffers(1, &m_render_buffer);
-      glDeleteFramebuffers(1, &m_frame_buffer);
-      m_window_manager->destroy_window(m_window_item);
-    }
-    else window_item->swap_buffers();
+    if (!do_render_offscreen()) window_item->swap_buffers();
+    if (!is_interactive()) m_window_manager->destroy_window(m_window_item);
     return;
   }
 
@@ -909,19 +923,15 @@ void Player_scene::draw_window(SGAL::Window_item* window_item,
     acc->disactivate();
     m_scene_graph->process_snapshotters(&draw_action);
     window_item->set_accumulating(false);
-    if (do_render_off_screen()) {
-      glDeleteRenderbuffers(1, &m_render_buffer);
-      glDeleteFramebuffers(1, &m_frame_buffer);
-      m_window_manager->destroy_window(m_window_item);
-    }
-    else window_item->swap_buffers();
+    if (!do_render_offscreen()) window_item->swap_buffers();
+    if (!is_interactive()) m_window_manager->destroy_window(m_window_item);
     return;
   }
 
   // Accumulation is not done:
   window_item->set_redraw(true);
   if (acc->do_show()) {
-    if (!do_render_off_screen()) window_item->swap_buffers();
+    if (!do_render_offscreen()) window_item->swap_buffers();
   }
 }
 
@@ -990,10 +1000,19 @@ SGAL::Boolean Player_scene::do_have_visual() const
 }
 
 //! \brief determines whether the application renders off screen.
-SGAL::Boolean Player_scene::do_render_off_screen() const
+SGAL::Boolean Player_scene::do_render_offscreen() const
 {
   return ((m_option_parser->is_interactive_defaulted() ||
            !m_option_parser->is_interactive()) &&
           (!m_option_parser->is_interactive() ||
            m_option_parser->do_snapshot()));
+}
+
+//! \brief determines whether the scene is interactive.
+SGAL::Boolean Player_scene::is_interactive() const
+{
+  return ((!m_option_parser->is_interactive_defaulted() ||
+           (!m_option_parser->do_snapshot() && !m_option_parser->do_export())) &&
+          (m_option_parser->is_interactive_defaulted() ||
+           m_option_parser->is_interactive()));
 }

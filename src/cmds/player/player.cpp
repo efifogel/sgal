@@ -208,6 +208,7 @@ int main(int argc, char* argv[])
     wm->event_loop(scene.is_simulating());
     wm->clear();
   }
+  scene.clear_scene();
   scene.destroy_scene();
   return 0;
 }

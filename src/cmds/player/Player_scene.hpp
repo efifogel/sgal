@@ -208,7 +208,15 @@ public:
   /*! Determine whether the application renders off screen.
    * \return true if the application renders off screen.
    */
-  SGAL::Boolean do_render_off_screen() const;
+  SGAL::Boolean do_render_offscreen() const;
+
+  /*! Determine whether the scene is interactive. A non interactive scene
+   * is being rendered at most once.
+   * \return false if the user has explicitly requested for a non interactive
+   *         scene, or if she has requested taking a snapshot of scene or
+   *         exporting the scene.
+   */
+  SGAL::Boolean is_interactive() const;
 
 protected:
   /*! The window manager. */
@@ -275,6 +283,14 @@ protected:
   /*! Set actual window attributes.
    */
   void set_actual_window_attributes();
+
+  /*! Initialize offscreen rendering.
+   */
+  void init_offscreen_rendering();
+
+  /*! Clear offscreen rendering.
+   */
+  void clear_offscreen_rendering();
 
 private:
   typedef std::list<fi::path>                                   Path_list;
