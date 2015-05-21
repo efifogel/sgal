@@ -262,15 +262,9 @@ void X11_window_manager::process_xevent(XEvent& event)
     // Draw only if the number of Expose events that are to follow vanishes:
     if (event.xexpose.count != 0) break;
     for (auto it = this->begin_windows(); it != this->end_windows(); ++it) {
-      X11_window_item* window_item = *it;
+      auto* window_item = *it;
       if (window_item->m_window == event.xexpose.window) {
-#if 0
         window_item->set_redraw(true);
-#else
-        window_item->set_redraw(false);
-        window_item->make_current();
-        m_scene->draw_window(window_item, m_button_state != 0);
-#endif
         break;
       }
     }
