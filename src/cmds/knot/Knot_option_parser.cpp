@@ -39,7 +39,7 @@ Knot_option_parser::Knot_option_parser() :
   m_cycle_interval(1)
 {
   m_knot_opts.add_options()
-    ("solve,S", po::value<Boolean>(&m_solve)->default_value(false),
+    ("solve", po::value<Boolean>(&m_solve)->default_value(false),
      "solve the puzzle")
     ("export,E",  po::value<Boolean>(&m_export)->default_value(false),
      "export in VRML format")

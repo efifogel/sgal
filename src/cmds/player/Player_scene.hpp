@@ -135,9 +135,16 @@ public:
   /*! Clear the scene */
   virtual void clear_scene();
 
-  /*! Create a window.
+  /*! Initialize the window. Typically used to create a context.
+   * \param[in] window_item the window to initialize
    */
-  virtual void create_window();
+  virtual void init_window(SGAL::Window_item* window_item,
+                           SGAL::Uint width, SGAL::Uint height);
+
+  /*! Clear a window. Used to clear a context.
+   * \param[in] window_item the window to initialize
+   */
+  virtual void clear_window(SGAL::Window_item* window_item);
 
   /*! Reshape the viewport of a window of the scene.
    * It is assumed that the window context is the current context.
@@ -231,6 +238,12 @@ protected:
   /* The height of the window. */
   SGAL::Uint m_win_height;
 
+  /*! The width of the offscreen framebuffer. */
+  SGAL::Uint m_offscreen_width;
+
+  /* The height of the offscreen framebuffer. */
+  SGAL::Uint m_offscreen_height;
+
   /*! An isolated instance of the V8 engine. */
   v8::Isolate* m_isolate;
 
@@ -244,6 +257,10 @@ protected:
   Player_option_parser* m_option_parser;
 
   SGAL::Boolean m_simulate;
+
+  /*! Create a window.
+   */
+  void create_window();
 
   /*! Draw guides that separate the window into 4x5 rectangles. */
   void draw_grid();
@@ -331,7 +348,7 @@ private:
   GLuint m_frame_buffer;
 
   /*! Render buffer object for off-screen drawing. */
-  GLuint m_render_buffer;
+  GLuint m_render_buffers[2];
 
   /*! The snapshot image. */
   Shared_image m_image;

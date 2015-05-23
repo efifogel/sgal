@@ -76,7 +76,6 @@
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Material.hpp"
 #include "SGAL/Single_key_sensor.hpp"
-#include "SGAL/Camera.hpp"
 #include "SGAL/Frustum.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Accumulation.hpp"
@@ -138,6 +137,7 @@ Player_scene::Player_scene(Player_option_parser* option_parser) :
   m_window_manager(nullptr),
   m_window_item(nullptr),
   m_win_width(0), m_win_height(0),
+  m_offscreen_width(0), m_offscreen_height(0),
   m_isolate(nullptr),
   m_scene_graph(nullptr),
   m_context(nullptr),
@@ -294,14 +294,8 @@ void Player_scene::snapshot_scene()
   SGAL_assertion(m_image);
   snapshotter->set_image(m_image);
   snapshotter->add_to_scene(m_scene_graph);
-  //! \todo Fix offscreen rendering to:
-  // 1. render depth & stencil to framebuffer, and
-  // 2. render color to texture.
-  // Then, map the texture back onto the screen.
-  // Untill fixed supress the use. Simply render to the back buffer meanwhile.
-  // auto mode = (do_render_offscreen()) ?
-  //   SGAL::Snapshotter::MODE_COLOR_ATTACHMENT : SGAL::Snapshotter::MODE_BACK;
-  auto mode = SGAL::Snapshotter::MODE_BACK;
+  auto mode = (do_render_offscreen()) ?
+    SGAL::Snapshotter::MODE_COLOR_ATTACHMENT : SGAL::Snapshotter::MODE_BACK;
   snapshotter->set_mode(mode);
   snapshotter->trigger();
   auto* src_field = snapshotter->get_source_field("image");
@@ -419,11 +413,17 @@ void Player_scene::destroy_scene()
 }
 
 //! \brief sets preferred window attributes.
-//! \todo set the width and height of the window to 1x1 when offscreen
-//        rendering is in effect.
 void Player_scene::set_preferred_window_attributes()
 {
-  m_window_item->set_double_buffer(!do_render_offscreen());
+  // If offscreen rendering is in effect, set the offsecreen width and height
+  // to the prferred ones, respectively, and the window width and height to 1x1.
+  if (do_render_offscreen()) {
+    m_offscreen_width = m_window_item->get_width();
+    m_offscreen_height = m_window_item->get_height();
+    m_window_item->set_size(1, 1);
+    m_window_item->set_double_buffer(false);
+  }
+  else m_window_item->set_double_buffer(true);
 
   auto* conf = m_scene_graph->get_configuration();
   SGAL_assertion(conf);
@@ -466,8 +466,14 @@ void Player_scene::set_actual_window_attributes()
     //! \todo add an option to have alpha bits. If alpha bits are present
     // use SGAL::Image::kRGBA8_8_8_8 instead of SGAL::Image::kRGB8_8_8
     m_image->set_format(SGAL::Image::kRGB8_8_8);
-    m_image->set_width(m_win_width);
-    m_image->set_height(m_win_height);
+    if (do_render_offscreen()) {
+      m_image->set_width(m_offscreen_width);
+      m_image->set_height(m_offscreen_height);
+    }
+    else {
+      m_image->set_width(m_win_width);
+      m_image->set_height(m_win_height);
+    }
   }
 }
 
@@ -556,30 +562,13 @@ void Player_scene::create_defaults()
 }
 
 //! \brief initializes the secene.
+// Creates all windows; in this case only one.
 void Player_scene::init_scene()
 {
   // Configure the window manager and the scene graph.
   m_option_parser->configure(m_window_manager, m_scene_graph);
-
   create_window();                      // create a window
-
   indulge_user();
-
-  // Construct the context.
-  m_context = new SGAL::Context();
-  SGAL_assertion(m_context);
-  m_scene_graph->set_context(m_context);
-  m_scene_graph->init_context();
-  //! \todo Fix offscreen rendering to:
-  // 1. render depth & stencil to framebuffer, and
-  // 2. render color to texture.
-  // Then, map the texture back onto the screen.
-  // Untill fixed supress the use.
-  // if (do_render_offscreen()) init_offscreen_rendering();
-
-  m_scene_graph->start_simulation();
-  m_scene_graph->bind();
-  m_window_item->show();
 }
 
 //! \brief indulges user requests from the command line.
@@ -758,17 +747,7 @@ void Player_scene::print_stat()
 //! \brief clears the scene.
 void Player_scene::clear_scene()
 {
-  //! \todo Fix offscreen rendering to:
-  // 1. render depth & stencil to framebuffer, and
-  // 2. render color to texture.
-  // Then, map the texture back onto the screen.
-  // Untill fixed supress the use.
-  // if (do_render_offscreen()) clear_offscreen_rendering();
-  m_scene_graph->release_context();
-  if (m_context) {
-    delete m_context;
-    m_context = nullptr;
-  }
+  // delete all windows.
   if (m_window_item) {
     delete m_window_item;
     m_window_item = nullptr;
@@ -836,8 +815,8 @@ void Player_scene::handle(SGAL::Tick_event* tick_event)
 void Player_scene::handle(SGAL::Reshape_event* event)
 {
   auto* window_item = event->get_window_item();
-  SGAL::Uint width = event->get_width();
-  SGAL::Uint height = event->get_height();
+  auto width = event->get_width();
+  auto height = event->get_height();
   reshape_window(window_item, width, height);
 }
 
@@ -851,36 +830,85 @@ void Player_scene::handle(SGAL::Draw_event* event)
 }
 
 //! \brief initializes offscreen rendering.
-//! \todo Fix offscreen rendering to:
-// 1. render depth & stencil to framebuffer, and
-// 2. render color to texture.
-// Then, map the texture back onto the screen.
 void Player_scene::init_offscreen_rendering()
 {
-  glGenFramebuffers(1, &m_frame_buffer);
-  glGenRenderbuffers(1, &m_render_buffer);
-  glBindRenderbuffer(GL_RENDERBUFFER, m_render_buffer);
+  auto width = m_offscreen_width;
+  auto height = m_offscreen_height;
+  m_render_buffers[0] = 0;
+  m_render_buffers[1] = 0;
+  SGAL::glGenRenderbuffers(2, m_render_buffers);
+
+  SGAL::glBindRenderbuffer(GL_RENDERBUFFER, m_render_buffers[0]);
   auto gl_format =
     SGAL::Image::get_format_internal_format(m_image->get_format());
-  auto width = m_image->get_width();
-  auto height = m_image->get_height();
-  glRenderbufferStorage(GL_RENDERBUFFER, gl_format, width, height);
-  glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffer);
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                            GL_RENDERBUFFER, m_render_buffer);
+  SGAL::glRenderbufferStorage(GL_RENDERBUFFER, gl_format,
+                              width, height);
+  SGAL::glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+  SGAL::glBindRenderbuffer(GL_RENDERBUFFER, m_render_buffers[1]);
+  SGAL::glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT,
+                              width, height);
+  SGAL::glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+  SGAL::glGenFramebuffers(1, &m_frame_buffer);
+  SGAL::glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffer);
+  SGAL::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                  GL_RENDERBUFFER, m_render_buffers[0]);
+  SGAL::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                  GL_RENDERBUFFER, m_render_buffers[1]);
 }
 
 //! \brief clears offscreen rendering.
-//! \todo Fix offscreen rendering to:
-// 1. render depth & stencil to framebuffer, and
-// 2. render color to texture.
-// Then, map the texture back onto the screen.
 void Player_scene::clear_offscreen_rendering()
 {
-  glDeleteRenderbuffers(1, &m_render_buffer);
-  m_render_buffer = 0;
-  glDeleteFramebuffers(1, &m_frame_buffer);
+  SGAL::glDeleteRenderbuffers(2, m_render_buffers);
+  m_render_buffers[0] = 0;
+  m_render_buffers[1] = 0;
+  SGAL::glDeleteFramebuffers(1, &m_frame_buffer);
   m_frame_buffer = 0;
+}
+
+//! \brief initializes the window.
+// creates the context.
+void Player_scene::init_window(SGAL::Window_item* window_item,
+                               SGAL::Uint width, SGAL::Uint height)
+{
+  m_context = new SGAL::Context();
+  SGAL_assertion(m_context);
+
+  m_win_width = width;
+  m_win_height = height;
+  if (do_render_offscreen()) {
+    init_offscreen_rendering();
+    m_context->set_viewport(0, 0, m_offscreen_width, m_offscreen_height);
+  }
+  else {
+    if (m_image) {
+      m_image->set_width(width);
+      m_image->set_height(height);
+    }
+    m_context->set_viewport(0, 0, m_win_width, m_win_height);
+  }
+
+  m_scene_graph->start_simulation();
+  m_scene_graph->bind();
+  window_item->show();
+
+  m_scene_graph->set_context(m_context);
+  m_scene_graph->init_context();
+}
+
+//! \brief clears a window.
+// destroys the context.
+void Player_scene::clear_window(SGAL::Window_item* window_item)
+{
+  if (do_render_offscreen()) clear_offscreen_rendering();
+  m_scene_graph->release_context();
+  m_scene_graph->set_context(nullptr);
+  if (m_context) {
+    delete m_context;
+    m_context = nullptr;
+  }
 }
 
 //! \brief draws into a window of the scene.
@@ -968,17 +996,21 @@ void Player_scene::draw_grid()
 void Player_scene::reshape_window(SGAL::Window_item* /* window_item */,
                                   SGAL::Uint width, SGAL::Uint height)
 {
+  if (!m_context) return;
+  if ((m_win_width == width) && (m_win_height == height)) return;
   m_win_width = width;
   m_win_height = height;
-  if (m_image) {
-    m_image->set_width(width);
-    m_image->set_height(height);
+  if (do_render_offscreen()) {
+    // I think that this case cannot take place.
+    m_context->set_viewport(0, 0, m_offscreen_width, m_offscreen_height);
   }
-  SGAL::Context* context = m_scene_graph->get_context();
-  context->set_viewport(0, 0, width, height);
-  SGAL::Camera* camera = m_scene_graph->get_active_camera();
-  SGAL_assertion(camera);
-  camera->init(context);
+  else {
+    m_context->set_viewport(0, 0, width, height);
+    if (m_image) {
+      m_image->set_width(width);
+      m_image->set_height(height);
+    }
+  }
 }
 
 /*! \brief returns true iff the scene does simulate something. In other words,
@@ -1002,10 +1034,15 @@ SGAL::Boolean Player_scene::do_have_visual() const
 //! \brief determines whether the application renders off screen.
 SGAL::Boolean Player_scene::do_render_offscreen() const
 {
-  return ((m_option_parser->is_interactive_defaulted() ||
-           !m_option_parser->is_interactive()) &&
-          (!m_option_parser->is_interactive() ||
-           m_option_parser->do_snapshot()));
+  //! \todo Fix antialiasing to render to texture and then blend (instead of
+  //        using the obsolete accumatayion buffer. Untill then supress the use
+  //        of the offscreen rendering, cause it cannot be used with
+  //        accumulation. Simply render to the back buffer meanwhile.
+  return false;
+  // return ((m_option_parser->is_interactive_defaulted() ||
+  //          !m_option_parser->is_interactive()) &&
+  //         (!m_option_parser->is_interactive() ||
+  //          m_option_parser->do_snapshot()));
 }
 
 //! \brief determines whether the scene is interactive.

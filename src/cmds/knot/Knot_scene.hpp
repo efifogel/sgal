@@ -154,6 +154,17 @@ public:
   /*! \brief clears the scene. */
   virtual void clear_scene();
 
+  /*! Initialize a window. Used to initialize a context.
+   * \param[in] window_item the window to initialize
+   */
+  virtual void init_window(SGAL::Window_item* window_item,
+                           SGAL::Uint width, SGAL::Uint height);
+
+  /*! Clear a window. Used to clear a context.
+   * \param[in] window_item the window to initialize
+   */
+  virtual void clear_window(SGAL::Window_item* window_item);
+
   /*! Reshape the viewport of a window of the scene.
    * It is assumed that the window context is the current context.
    * \param window_item the window to reshape.

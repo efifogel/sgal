@@ -48,7 +48,6 @@
 #include "SGAL/Shape.hpp"
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Material.hpp"
-#include "SGAL/Camera.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Container_factory.hpp"
@@ -212,11 +211,6 @@ Knot_scene::~Knot_scene(void) {}
 //! \brief destroys the scene.
 void Knot_scene::destroy_scene()
 {
-  if (m_context) {
-    delete m_context;
-    m_context = nullptr;
-  }
-
   if (m_scene_graph) {
     delete m_scene_graph;
     m_scene_graph = nullptr;
@@ -741,12 +735,6 @@ void Knot_scene::init_scene()
 
   m_scene_graph->create_defaults();
 
-  m_context = new SGAL::Context();
-  m_scene_graph->set_context(m_context);
-  m_scene_graph->init_context();
-  m_scene_graph->start_simulation();
-  m_scene_graph->bind();
-
   if (m_option_parser.export_vrml()) {
     m_scene_graph->write_vrml("knot.out.wrl", std::cout);
   }
@@ -762,10 +750,11 @@ void Knot_scene::clear_scene()
 {
   if (m_option_parser.solve()) SGAL::Tick_event::unregister(this);
   SGAL::Keyboard_event::unregister(this);
-  m_scene_graph->release_context();
   m_scene_graph->destroy_defaults();
-  delete m_window_item;
-  m_window_item = nullptr;
+  if (m_window_item) {
+    delete m_window_item;
+    m_window_item = nullptr;
+  }
 }
 
 //! \brief identifies the agent.
@@ -776,6 +765,7 @@ void Knot_scene::identify(void)
 void Knot_scene::draw_window(SGAL::Window_item* window_item,
                              SGAL::Boolean /* dont_accumulate */)
 {
+  if (!m_context) return;
   SGAL_assertion(m_scene_graph);
   SGAL::Configuration* conf = m_scene_graph->get_configuration();
   SGAL::Draw_action draw_action(conf);
@@ -787,15 +777,37 @@ void Knot_scene::draw_window(SGAL::Window_item* window_item,
   window_item->swap_buffers();
 }
 
+//! \brief initializes the window. Typically used to create a context.
+void Knot_scene::init_window(SGAL::Window_item* /* window_item */,
+                             SGAL::Uint width, SGAL::Uint height)
+{
+  m_context = new SGAL::Context();
+  SGAL_assertion(m_context);
+  m_context->set_viewport(0, 0, width, height);
+  m_scene_graph->set_context(m_context);
+  m_scene_graph->init_context();
+  m_scene_graph->start_simulation();
+  m_scene_graph->bind();
+}
+
+//! \brief clears a window.
+void Knot_scene::clear_window(SGAL::Window_item* /* window_item */)
+{
+  m_scene_graph->release_context();
+  m_scene_graph->set_context(nullptr);
+  if (m_context) {
+    delete m_context;
+    m_context = nullptr;
+  }
+}
+
 //! \brief reshapes the viewport.
 void Knot_scene::reshape_window(SGAL::Window_item* /* window_item */,
                                 SGAL::Uint width, SGAL::Uint height)
 {
-  SGAL::Context* context = m_scene_graph->get_context();
-  context->set_viewport(0, 0, width, height);
-  SGAL::Camera* camera = m_scene_graph->get_active_camera();
-  SGAL_assertion(camera);
-  camera->init(context);
+  if (!m_context) return;
+  SGAL_assertion(m_context);
+  m_context->set_viewport(0, 0, width, height);
 }
 
 //! \brief marks a given state as visited (insert into the hash data structure)

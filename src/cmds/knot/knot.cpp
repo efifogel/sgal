@@ -89,6 +89,7 @@ int main(int argc, char* argv[])
     return -1;
   }
   wm->event_loop(scene.is_simulating());
+  scene.clear_scene();
   scene.destroy_scene();
   return 0;
 }
