@@ -36,7 +36,7 @@
 /* keysymbols used to resolv what keys that are being pressed */
 #include <X11/keysym.h>
 
-/* the XF86 Video Mode extension allows us to change the displaymode of the
+/* The XF86 Video Mode extension allows us to change the displaymode of the
  * server this allows us to set the display to fullscreen and also read
  * videomodes and other information.
  */
@@ -109,6 +109,7 @@ void X11_window_manager::create_window(X11_window_item* window_item)
 //! \brief destroys an existing window.
 void X11_window_manager::destroy_window(X11_window_item* window_item)
 {
+  m_scene->clear_window(m_current_window);
   window_item->destroy();
   // Switch back to original desktop resolution if we were in fullscreen:
   if (window_item->is_full_screen()) {
@@ -248,11 +249,11 @@ void X11_window_manager::process_xevent(XEvent& event)
   Motion_event* motion_event;
   Passive_motion_event* passive_motion_event;
   Keyboard_event* keyboard_event;
-  XKeyboardControl kc_values;
+  // XKeyboardControl kc_values;
   Boolean pressed;
   XComposeStatus status_in_out;
 
-  kc_values.key = -1;         // ALL keys
+  // kc_values.key = -1;         // ALL keys
 
   // std::cout << "event type: " << event_names[event.type] << std::endl;
   switch (event.type) {
@@ -421,16 +422,16 @@ void X11_window_manager::process_xevent(XEvent& event)
         m_current_window->m_wm_delete)
     {
       this->remove_window(m_current_window);
-      kc_values.auto_repeat_mode = 1;
-      XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
+      // kc_values.auto_repeat_mode = 1;
+      //XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
     }
     break;
 
    case FocusIn:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "FocusIn" << std::endl;);
-    kc_values.auto_repeat_mode = 0;
-    XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
+    // kc_values.auto_repeat_mode = 0;
+    // XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
     for (auto it = this->begin_windows(); it != this->end_windows(); ++it) {
       X11_window_item* window_item = *it;
       if (window_item->m_window == event.xfocus.window) {
@@ -444,8 +445,8 @@ void X11_window_manager::process_xevent(XEvent& event)
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "FocusOut" << std::endl;);
     m_current_window = nullptr;
-    kc_values.auto_repeat_mode = 1;
-    XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
+    // kc_values.auto_repeat_mode = 1;
+    // XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
     break;
 
    case CreateNotify:
@@ -453,9 +454,13 @@ void X11_window_manager::process_xevent(XEvent& event)
                     std::cout << "CreateNotify" << std::endl;);
     if (event.xcreatewindow.override_redirect) break;
     // Check whether the event is associated with our window.
-    if (!m_current_window) break;
-    m_created = true;
-    this->insert_window(m_current_window);
+    if (m_current_window) {
+      m_created = true;
+      this->insert_window(m_current_window);
+      Uint width = event.xcreatewindow.width;
+      Uint height = event.xcreatewindow.height;
+      m_scene->init_window(m_current_window, width, height);
+    }
     break;
 
    case DestroyNotify:
@@ -468,8 +473,8 @@ void X11_window_manager::process_xevent(XEvent& event)
         window_item->reset_window();
         this->remove_window(window_item);
         m_current_window = nullptr;
-        kc_values.auto_repeat_mode = 1;
-        XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
+        // kc_values.auto_repeat_mode = 1;
+        // XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
         break;
       }
     }
