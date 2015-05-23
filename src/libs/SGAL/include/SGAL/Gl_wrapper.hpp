@@ -1206,7 +1206,7 @@ inline GLuint glGenLists(GLsizei range)
  */
 inline void glGenRenderbuffers(GLsizei n, GLuint* names)
 {
-  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glGenFramebuffers("
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glGenRenderbuffers("
                   << n << ", names" << ");"
                   << std::endl;);
   ::glGenRenderbuffers(n, names);
@@ -2721,9 +2721,9 @@ inline void glRectsv(const GLshort* v1, const GLshort* v2)
 inline void glRenderbufferStorage(GLenum target, GLenum internalformat,
                                   GLsizei width, GLsizei height)
 {
-  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glRenderbufferStorage(" << ");"
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glRenderbufferStorage("
                   << Gl_wrapper::find(target) << ", "
-                  << Gl_wrapper::find(internalformat) << ", width, height"
+                  << Gl_wrapper::find(internalformat) << ", width, height);"
                   << std::endl;);
   ::glRenderbufferStorage(target, internalformat, width, height);
   SGAL_CHECK_GL();
