@@ -131,8 +131,11 @@ Scene_graph::~Scene_graph()
 void Scene_graph::set_context(Context* context)
 {
   m_context = context;
+
+  //! \todo move the rest to init_context()
   if (m_isect_action) m_isect_action->set_context(context);
-  Uint bits = context->get_red_bits() + context->get_green_bits() +
+  if (!context) return;
+  auto bits = context->get_red_bits() + context->get_green_bits() +
     context->get_blue_bits() + context->get_alpha_bits();
   if (bits > 32) bits = 32;
   Uint max_id = (0x1 << bits) - 1;
@@ -144,6 +147,7 @@ void Scene_graph::set_context(Context* context)
  */
 void Scene_graph::init_context()
 {
+  SGAL_assertion(m_context);
   m_context->set_depth_enable(true);
   m_context->set_cull_face(Gfx::BACK_CULL);
   m_context->draw_app(0);
