@@ -66,7 +66,7 @@ class Indexed_face_set;
 class Box;
 class Image;
 
-#if (defined USE_GLUT)
+#if (defined SGAL_USE_GLUT)
 class Glut_window_manager;
 class Glut_window_item;
 #elif defined(_WIN32)
@@ -92,7 +92,7 @@ class Player_scene : public SGAL::Scene {
 public:
   typedef boost::shared_ptr<SGAL::Image>        Shared_image;
 
-#if (defined USE_GLUT)
+#if (defined SGAL_USE_GLUT)
   typedef SGAL::Glut_window_manager             Window_manager;
   typedef SGAL::Glut_window_item                Window_item;
 #elif defined(_WIN32)
@@ -119,6 +119,9 @@ public:
 
   /*! Destructor. */
   virtual ~Player_scene(void);
+
+  /*! Create the scene. */
+  virtual void create_scene(char* data, int size);
 
   /*! Create the scene. */
   virtual void create_scene();
@@ -224,6 +227,10 @@ public:
    *         exporting the scene.
    */
   SGAL::Boolean is_interactive() const;
+
+  /*! Find the input file.
+   */
+  void find_input_file(const std::string& filename);
 
 protected:
   /*! The window manager. */
@@ -331,6 +338,10 @@ private:
     Illegal_input(Error_id /* err */, const std::string& msg,
                   const std::string& filename) :
       std::logic_error(std::string(msg).append(" (").append(filename).append(")!"))
+    {}
+
+    Illegal_input(Error_id /* err */, const std::string& msg) :
+      std::logic_error(std::string(msg).append("!"))
     {}
   };
 

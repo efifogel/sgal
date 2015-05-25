@@ -36,7 +36,7 @@
 #include <boost/filesystem/exception.hpp>
 #include <boost/shared_ptr.hpp>
 
-#if defined(USE_V8)
+#if defined(SGAL_USE_V8)
 #include <v8.h>
 #endif
 
@@ -92,7 +92,7 @@
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Field.hpp"
 
-#if (defined USE_GLUT)
+#if (defined SGAL_USE_GLUT)
 #include "SGLUT/Glut_window_item.hpp"
 #include "SGLUT/Glut_window_manager.hpp"
 #elif defined(_WIN32)
@@ -115,19 +115,19 @@
 #include "SCGAL/basic.h"
 
 #include "SCGAL/Exact_polyhedron_geo.hpp"
-#if defined(USE_CGM)
+#if defined(SGAL_USE_CGM)
 #include "SCGAL/Cubical_gaussian_map_geo.hpp"
 #endif
-#if defined(USE_SGM)
+#if defined(SGAL_USE_SGM)
 #include "SCGAL/Spherical_gaussian_map_geo.hpp"
 #endif
-#if defined(USE_AOS)
+#if defined(SGAL_USE_AOS)
 #include "SCGAL/Arrangement_on_sphere_geo.hpp"
 #endif
-#if defined(USE_EOS)
+#if defined(SGAL_USE_EOS)
 #include "SCGAL/Envelope_on_sphere_geo.hpp"
 #endif
-#if defined(USE_NEF) && defined(USE_NGM)
+#if defined(SGAL_USE_NEF) && defined(SGAL_USE_NGM)
 #include "SCGAL/Nef_gaussian_map_geo.hpp"
 #endif
 #endif
@@ -203,16 +203,10 @@ Player_scene::~Player_scene(void)
   m_fullname.clear();
 }
 
-//! \brief creates the scene.
-void Player_scene::create_scene()
+//! \brief finds the input file.
+void Player_scene::find_input_file(const std::string& filename)
 {
-  // Obtain the input file full name.
-  std::string filename;
-  if (!m_option_parser->get_file_name(filename) || filename.empty()) {
-    std::string str("input file missing!");
-    throw Input_file_missing_error(str);
-    return;
-  }
+  SGAL_assertion(!filename.empty());
 
 #if (defined _MSC_VER)
   // Convert the ROOT from cygwin path to windows path, if relevant:
@@ -234,31 +228,30 @@ void Player_scene::create_scene()
 #else
     if (fi::exists(file_path)) m_fullname = file_path.native_file_string();
 #endif
-  } else {
-    m_option_parser->for_each_dir(Add_dir(m_dirs));
-    for (Path_iter pi = m_dirs.begin(); pi != m_dirs.end(); ++pi) {
-      fi::path full_file_path = *pi / file_path;
-      if (!fi::exists(full_file_path)) continue;
-#if BOOST_VERSION >= 103400
-      m_fullname = full_file_path.string();
-#else
-      m_fullname = full_file_path.native_file_string();
-#endif
-      break;
-    }
-  }
-  if (m_fullname.empty()) {
-    throw Illegal_input(FILE_NOT_FOUND, "cannot find file", filename);
     return;
   }
 
-  // std::cout << m_fullname.c_str() << std::endl;
+  m_option_parser->for_each_dir(Add_dir(m_dirs));
+  for (Path_iter pi = m_dirs.begin(); pi != m_dirs.end(); ++pi) {
+    fi::path full_file_path = *pi / file_path;
+    if (!fi::exists(full_file_path)) continue;
+#if BOOST_VERSION >= 103400
+    m_fullname = full_file_path.string();
+#else
+    m_fullname = full_file_path.native_file_string();
+#endif
+    return;
+  }
+}
 
+//! \brief creates the scene.
+void Player_scene::create_scene(char* data, int size)
+{
   // Construct a Scene_graph:
   m_scene_graph = new SGAL::Scene_graph;
   SGAL_assertion(m_scene_graph);
 
-#if defined(USE_V8)
+#if defined(SGAL_USE_V8)
   m_isolate = v8::Isolate::New();
   SGAL_assertion(m_isolate);
   m_scene_graph->set_isolate(m_isolate);
@@ -266,17 +259,73 @@ void Player_scene::create_scene()
 
   update_data_dirs();
 
+  // Load the buffer.
+  if (!data || (size == 0)) {
+    //! \todo introduce a new error.
+    throw Illegal_input(FILE_NOT_FOUND, "Data is nil", "");
+    return;
+  }
+
+  SGAL::Loader loader;
+  if (0 < m_option_parser->get_num_input_files()) {
+    const auto& filename = m_option_parser->get_input_file(0);
+    auto rc = loader.load(data, size, filename.c_str(), m_scene_graph);
+    if (rc < 0) {
+      throw Illegal_input(UNABLE_TO_LOAD, "Cannot load file", filename);
+      return;
+    }
+  }
+  else {
+    auto rc = loader.load(data, size, m_scene_graph);
+    if (rc < 0) {
+      throw Illegal_input(UNABLE_TO_LOAD, "Cannot load buffer");
+      return;
+    }
+  }
+  print_stat();
+
+  create_defaults();
+  if (m_option_parser->do_snapshot()) snapshot_scene();
+  if (m_option_parser->do_export()) export_scene();
+}
+
+//! \brief creates the scene.
+void Player_scene::create_scene()
+{
+  // Construct a Scene_graph:
+  m_scene_graph = new SGAL::Scene_graph;
+  SGAL_assertion(m_scene_graph);
+
+#if defined(SGAL_USE_V8)
+  m_isolate = v8::Isolate::New();
+  SGAL_assertion(m_isolate);
+  m_scene_graph->set_isolate(m_isolate);
+#endif
+
+  update_data_dirs();
+
+  // Find the input file full name.
+  if (0 == m_option_parser->get_num_input_files()) {
+    std::string str("input file missing!");
+    throw Input_file_missing_error(str);
+    return;
+  }
+  const auto& filename = m_option_parser->get_input_file(0);
+  find_input_file(filename);
+  if (m_fullname.empty()) {
+    throw Illegal_input(FILE_NOT_FOUND, "cannot find file", filename);
+    return;
+  }
+
   // Load the input file.
   SGAL::Loader loader;
-  int rc = loader.load(m_fullname.c_str(), m_scene_graph);
+  auto rc = loader.load(m_fullname.c_str(), m_scene_graph);
   if (rc < 0) {
     throw Illegal_input(UNABLE_TO_LOAD, "Cannot load file", filename);
     return;
   }
   print_stat();
 
-  const auto& output_filename = m_option_parser->get_output_file();
-  if (output_filename.empty()) m_option_parser->set_output_file(filename);
   create_defaults();
   if (m_option_parser->do_snapshot()) snapshot_scene();
   if (m_option_parser->do_export()) export_scene();
@@ -285,8 +334,8 @@ void Player_scene::create_scene()
 //! \brief takes a snapshot of the scene.
 void Player_scene::snapshot_scene()
 {
-  const auto& output_pathname = m_option_parser->get_output_path();
   const auto& output_filename = m_option_parser->get_output_file();
+  const auto& output_pathname = m_option_parser->get_output_path();
   boost::shared_ptr<SGAL::Snapshotter> snapshotter(new SGAL::Snapshotter);
   SGAL_assertion(snapshotter);
   m_scene_graph->get_root()->add_child(snapshotter);
@@ -350,7 +399,6 @@ void Player_scene::snapshot_scene()
 //! \brief exports the scene.
 void Player_scene::export_scene()
 {
-  // Save to output files.
   const auto& output_filename = m_option_parser->get_output_file();
   const auto& output_pathname = m_option_parser->get_output_path();
   fi::path output_path(output_pathname);
@@ -360,7 +408,7 @@ void Player_scene::export_scene()
     SGAL_assertion(!output_filename.empty());
     fi::path output_filename_path(output_filename);
     if (! output_filename_path.has_extension()) {
-      const std::string& new_extension =
+      const auto& new_extension =
         SGAL::File_format_3d::get_name(input_format_id);
       output_filename_path.replace_extension(new_extension);
     }
@@ -404,7 +452,7 @@ void Player_scene::destroy_scene()
     m_scene_graph = nullptr;
   }
 
-#if defined(USE_V8)
+#if defined(SGAL_USE_V8)
   if (m_isolate) {
     m_isolate->Dispose();
     m_isolate = nullptr;
@@ -525,12 +573,12 @@ void Player_scene::create_visual()
 void Player_scene::create_window()
 {
   // Prepare the window item.
-  std::string filename;
-  if (!m_option_parser->get_file_name(filename) || filename.empty()) {
+  if (0 == m_option_parser->get_num_input_files()) {
     std::string str("input file missing!");
     throw Input_file_missing_error(str);
     return;
   }
+  const auto& filename = m_option_parser->get_input_file(0);
 
   m_window_item = new Window_item;
   m_window_item->set_title(filename);
@@ -719,21 +767,21 @@ void Player_scene::print_stat()
       boost::shared_ptr<SGAL::Exact_polyhedron_geo> ep =
         boost::dynamic_pointer_cast<SGAL::Exact_polyhedron_geo>(cont);
       if (ep) ep->print_stat();
-#if defined(USE_AOS)
+#if defined(SGAL_USE_AOS)
       boost::shared_ptr<SGAL::Arrangement_on_sphere_geo> aos =
         boost::dynamic_pointer_cast<SGAL::Arrangement_on_sphere_geo>(cont);
       if (aos) aos->print_stat();
-#if defined(USE_SGM)
+#if defined(SGAL_USE_SGM)
       boost::shared_ptr<SGAL::Spherical_gaussian_map_geo> sgm =
         boost::dynamic_pointer_cast<SGAL::Spherical_gaussian_map_geo>(cont);
       if (sgm) sgm->print_stat();
 #endif
-#if defined(USE_CGM)
+#if defined(SGAL_USE_CGM)
       boost::shared_ptr<SGAL::Cubical_gaussian_map_geo> cgm =
         boost::dynamic_pointer_cast<SGAL::Cubical_gaussian_map_geo>(cont);
       if (cgm) cgm->print_stat();
 #endif
-#if defined(USE_NEF) && defined(USE_NGM)
+#if defined(SGAL_USE_NEF) && defined(SGAL_USE_NGM)
       boost::shared_ptr<SGAL::Nef_gaussian_map_geo> ngm =
         boost::dynamic_pointer_cast<SGAL::Nef_gaussian_map_geo>(cont);
       if (ngm) ngm->print_stat();
