@@ -28,31 +28,77 @@ class Scene_graph;
 
 class SGAL_SGAL_DECL Loader {
 public:
+  enum Return_code {
+    ERROR_PARSE = -4,
+    ERROR_OVERFLOW = -3,
+    ERROR_READ = -2,
+    ERROR_OPEN = -1,
+    SUCCESS = 0,
+    RETRY = 1
+  };
+
   /*! Construct */
   Loader();
 
-  /*! Load a scene graph from a file.
+  /*! Load a scene graph from a stream.
    */
-  int load(const char* filename, Scene_graph* sg);
+  Return_code load(std::istream& src_stream, Scene_graph* sg);
 
-  /*! Load a scene graph from an stl file.
-   * \param[in] filename the file name to parse
+  /*! Load a scene graph from a buffer.
+   */
+  Return_code load(char* data, size_t size, Scene_graph* sg);
+
+  /*! Load a scene graph from a buffer.
+   */
+  Return_code load(char* data, size_t size, const char* filename,
+                   Scene_graph* sg);
+
+  /*! Load a scene graph from a file.
+   * \param[in] filename the name of the file to load.
+   */
+  Return_code load(const char* filename, Scene_graph* sg);
+
+  /*! Load a scene graph from an stl stream.
+   * \param[in] stl_stream the stream to load.
    * \param[in] sg the scene graph
    * \param[in] force indicates whether to force reading, assuming that the
    *            file is in the STL binary format. (Do not check whether the
    *            file starts with the token "solid".)
    */
-  int load_stl(const char* filename, Scene_graph* sg, bool force = false);
+  Return_code load_stl(std::istream& stl_stream, Scene_graph* sg,
+                       bool force = false);
+
+  /*! Load a scene graph from an stl buffer.
+   * \param[in] data the buffer that contains a model in the stl format.
+   * \param[in] size the size of the buffer.
+   * \param[in] sg the scene graph
+   * \param[in] force indicates whether to force reading, assuming that the
+   *            file is in the STL binary format. (Do not check whether the
+   *            file starts with the token "solid".)
+   */
+  Return_code load_stl(char* data, size_t size, Scene_graph* sg,
+                       bool force = false);
+
+  /*! Load a scene graph from an stl file.
+   * \param[in] filename the name of the STL file to load.
+   * \param[in] sg the scene graph
+   * \param[in] force indicates whether to force reading, assuming that the
+   *            file is in the STL binary format. (Do not check whether the
+   *            file starts with the token "solid".)
+   */
+  Return_code load_stl(const char* filename, Scene_graph* sg,
+                       bool force = false);
 
   /*! Read a scene graph from a file in the STL binary format.
    */
-  int read_stl(std::ifstream& stl_stream, Scene_graph* sg,
-               const Vector3f& color);
+  Return_code read_stl(std::istream& stl_stream, Scene_graph* sg,
+                       const Vector3f& color);
 
   /*! Read a traingle (1 normal and 3 vertices)
    */
-  void read_triangle(std::ifstream& stl_stream,
-                     Vector3f& v0, Vector3f& v1, Vector3f& v2, Ushort& spacer);
+  Return_code read_triangle(std::istream& stl_stream,
+                            Vector3f& v0, Vector3f& v1, Vector3f& v2,
+                            Ushort& spacer);
 
 private:
   /*! Indicates whether multiple shape nodes should represent the entire mesh

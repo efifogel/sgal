@@ -19,9 +19,11 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/interprocess/streams/bufferstream.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -44,23 +46,15 @@ SGAL_BEGIN_NAMESPACE
 //! \brief constructs.
 Loader::Loader() : m_multiple_shapes(false) {}
 
-//! \brief loads a scene graph from an stl file.
-int Loader::load_stl(const char* filename, Scene_graph* sg, bool force)
+//! \brief loads a scene graph from an input stream.
+Loader::Return_code Loader::load_stl(std::istream& stl_stream, Scene_graph* sg,
+                                     bool force)
 {
-  std::ifstream stl_stream(filename, std::ios::in|std::ios::binary);
-  if (!stl_stream.good()) {
-    std::cerr << "Error: failed to open " << filename << "!" << std::endl;
-    return -1;
-  }
   char str[81];
   stl_stream.read(str, 80);
   std::string title(str);
-  if (!stl_stream) {
-    std::cout << "Error: only " << stl_stream.gcount() << " could be read!"
-              << std::endl;
-    stl_stream.close();
-    return -1;
-  }
+  if (!stl_stream) return ERROR_READ;
+
   if (force || (0 != title.compare(0, 5, "solid"))) {
     Vector3f color;
     auto pos = title.find("COLOR=");
@@ -72,31 +66,37 @@ int Loader::load_stl(const char* filename, Scene_graph* sg, bool force)
       Float alpha = static_cast<Float>(static_cast<Uchar>(str[pos+3])) / 255.0;
       color.set(red, green, blue);
     }
-    int rc = read_stl(stl_stream, sg, color);
-    stl_stream.close();
-    if (rc < 0) {
-      std::cerr << "Error: Failed to read " << filename << "!" << std::endl;
-      return -1;
-    }
-    return 0;
+    auto rc = read_stl(stl_stream, sg, color);
+    if (rc < 0) return rc;
+    return SUCCESS;
   }
-  stl_stream.close();
-  return 1;
+  return RETRY;
 }
 
-//! \brief loads a scene graph from a file.
-int Loader::load(const char* filename, Scene_graph* sg)
+//! \brief loads a scene graph from an stl file.
+Loader::Return_code Loader::load_stl(char* data, size_t size,
+                                     Scene_graph* sg, bool force)
 {
-  // Try to determine whether the file is binary or ascii
-  std::string file_extension = boost::filesystem::extension(filename);
-  if (boost::iequals(file_extension, ".stl")) {
-    int rc = load_stl(filename, sg);
-    if (rc <= 0) return rc;
-  }
+  boost::interprocess::bufferstream stl_stream(data, size);
+  if (!stl_stream.good()) return ERROR_OVERFLOW;
+  return load_stl(stl_stream, sg, force);
+}
 
-  // Open source file:
-  std::ifstream src_stream(filename);
+//! \brief loads a scene graph from an stl file.
+Loader::Return_code Loader::load_stl(const char* filename, Scene_graph* sg,
+                                     bool force)
+{
+  std::ifstream stl_stream(filename, std::ios::in|std::ios::binary);
+  if (!stl_stream.good()) return ERROR_OPEN;
 
+  auto rc = load_stl(stl_stream, sg, force);
+  stl_stream.close();
+  return rc;
+}
+
+//! \brief load a scene graph from a stream.
+Loader::Return_code  Loader::load(std::istream& src_stream, Scene_graph* sg)
+{
   Vrml_scanner scanner(&src_stream);
   // scanner.set_debug(1);
 
@@ -104,20 +104,77 @@ int Loader::load(const char* filename, Scene_graph* sg)
   bool maybe_binary_stl(false);
   Vrml_parser parser(scanner, sg, maybe_binary_stl);
   if (parser.parse()) {
-    if (maybe_binary_stl) {
-      int rc = load_stl(filename, sg, true);
-      if (rc == 0) return rc;
-    }
-    std::cerr << "Error: failed to parse " << filename << "!" << std::endl;
-    return -1;
+    if (maybe_binary_stl) return RETRY;
+    return ERROR_PARSE;
   }
-  return 0;
+  return SUCCESS;
+}
+
+//! \brief loads a scene graph from a buffer.
+Loader::Return_code Loader::load(char* data, size_t size,
+                                 const char* filename, Scene_graph* sg)
+{
+  // Try to determine the file type from its extension.
+  if (filename) {
+    std::string file_extension = boost::filesystem::extension(filename);
+    if (boost::iequals(file_extension, ".stl")) {
+      auto rc = load_stl(data, size, sg);
+      if (rc <= 0) return rc;
+    }
+  }
+  return load(data, size, sg);
+}
+
+//! \brief loads a scene graph from a buffer.
+Loader::Return_code Loader::load(char* data, size_t size, Scene_graph* sg)
+{
+  boost::interprocess::bufferstream src_stream(data, size);
+  if (!src_stream.good()) return ERROR_OVERFLOW;
+
+  auto rc = load(src_stream, sg);
+  if (rc < 0) {
+    src_stream.clear();
+    return rc;
+  }
+
+  src_stream.clear();
+
+  if (rc == RETRY) rc = load_stl(data, size, sg, true);
+  return rc;
+}
+
+//! \brief loads a scene graph from a file.
+Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
+{
+  // Try to determine the file type from its extension.
+  SGAL_assertion(filename);
+  std::string file_extension = boost::filesystem::extension(filename);
+  if (boost::iequals(file_extension, ".stl")) {
+    auto rc = load_stl(filename, sg);
+    if (rc <= 0) return rc;
+  }
+
+  // Open source file:
+  std::ifstream src_stream(filename);
+  if (!src_stream.good()) return ERROR_OPEN;
+
+  auto rc = load(src_stream, sg);
+  if (rc < 0) {
+    src_stream.close();
+    return rc;
+  }
+
+  src_stream.close();
+
+  if (rc == RETRY) rc = load_stl(filename, sg, true);
+  return rc;
 }
 
 //! \bried read a traingle (1 normal and 3 vertices)
-void Loader::read_triangle(std::ifstream& stl_stream,
-                           Vector3f& v0, Vector3f& v1, Vector3f& v2,
-                           Ushort& spacer)
+Loader::Return_code Loader::read_triangle(std::istream& stl_stream,
+                                          Vector3f& v0, Vector3f& v1,
+                                          Vector3f& v2,
+                                          Ushort& spacer)
 {
   Float x, y, z;
 
@@ -146,11 +203,15 @@ void Loader::read_triangle(std::ifstream& stl_stream,
 
   stl_stream.read((char*)&spacer, sizeof(unsigned short));
   //std::cout << std::hex << spacer << std::endl;
+
+  if (!stl_stream) return ERROR_READ;
+  return SUCCESS;
 }
 
-//! \brief reads a scene graph from a file in the STL binary format.
-int Loader::read_stl(std::ifstream& stl_stream, Scene_graph* scene_graph,
-                     const Vector3f& color)
+//! \brief reads a scene graph from a stream in the STL binary format.
+Loader::Return_code Loader::read_stl(std::istream& stl_stream,
+                                     Scene_graph* scene_graph,
+                                     const Vector3f& color)
 {
   Boolean use_colors((color[0] != .0f) || (color[1] != .0f) ||
                      (color[2] != .0f));
@@ -176,8 +237,9 @@ int Loader::read_stl(std::ifstream& stl_stream, Scene_graph* scene_graph,
 
   // read first triangle
   Vector3f v0, v1, v2;
-  unsigned short spacer = 0;
-  read_triangle(stl_stream, v0, v1, v2, spacer);
+  Ushort spacer = 0;
+  auto rc = read_triangle(stl_stream, v0, v1, v2, spacer);
+  if (rc < 0) return rc;
   Boolean colored = spacer & 0x0001;
   if (colored) {
     Float red = static_cast<Float>((spacer >> 1) & 0x001f) / 31.0f;
@@ -245,7 +307,8 @@ int Loader::read_stl(std::ifstream& stl_stream, Scene_graph* scene_graph,
 
     Int32 i(1);
     for (; i < total_num_tris; ++i) {
-      read_triangle(stl_stream, v0, v1, v2, spacer);
+      auto rc = read_triangle(stl_stream, v0, v1, v2, spacer);
+      if (rc < 0) return rc;
       Float red = color[0];
       Float green = color[1];
       Float blue = color[2];
@@ -292,7 +355,8 @@ int Loader::read_stl(std::ifstream& stl_stream, Scene_graph* scene_graph,
     total_num_vertices -= num_vertices;
   }
 
-  return 0;
+  if (!stl_stream) return ERROR_READ;
+  return SUCCESS;
 }
 
 SGAL_END_NAMESPACE
