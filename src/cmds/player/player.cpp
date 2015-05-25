@@ -36,7 +36,7 @@
 
 #include "SGAL/sgal.hpp"
 
-#if (defined USE_GLUT)
+#if (defined SGAL_USE_GLUT)
 #include "SGLUT/Glut_window_manager.hpp"
 #elif defined(_WIN32)
 #include "SGAL/Windows_window_manager.hpp"
@@ -47,7 +47,7 @@
 #include "Player_scene.hpp"
 #include "Player_option_parser.hpp"
 
-#if (defined USE_SCGAL)
+#if (defined SGAL_USE_SCGAL)
 SGAL_BEGIN_NAMESPACE
 extern void scgal_init();
 SGAL_END_NAMESPACE
@@ -126,20 +126,132 @@ void load_shared_library(std::string& library_name, std::string& function_name)
   init();
 }
 
-//! Main entry
+int visualize(Player_scene& scene)
+{
+  // Create a window manager:
+#if (defined SGAL_USE_GLUT)
+  SGAL::Glut_window_manager* wm = SGAL::Glut_window_manager::instance();
+#elif defined(_WIN32)
+  SGAL::Windows_window_manager* wm = SGAL::Windows_window_manager::instance();
+#else
+  SGAL::X11_window_manager* wm = SGAL::X11_window_manager::instance();
+#endif
+
+  scene.set_window_manager(wm);
+  wm->set_scene(&scene);
+
+  try {
+    wm->init();
+    scene.init_scene();
+  }
+  catch(std::exception& e) {
+    std::cerr << e.what() << std::endl;
+    return -1;
+  }
+  wm->event_loop(scene.is_simulating());
+  wm->clear();
+  scene.clear_scene();
+
+  return 0;
+}
+
+int play(char* data, size_t size, int argc, char* argv[])
+{
+  SGAL::initialize(argc, argv);
+#if (defined SGAL_USE_SCGAL)
+  SGAL::scgal_init();
+#endif
+
+  // Parse program options:
+  Player_option_parser option_parser;
+  option_parser.init();
+  try {
+    option_parser(argc, argv);
+    option_parser.apply();
+  }
+  catch(Player_option_parser::Generic_option_exception& /* e */) {
+    return 0;
+  }
+  catch(std::exception& e) {
+    std::cerr << e.what() << std::endl;
+    return 1;
+  }
+
+  // Load plugins
+  option_parser.for_each_plugin([](const std::string& plugin)
+                                {
+                                  std::vector<std::string> strs;
+                                  boost::split(strs, plugin,
+                                               boost::is_any_of(","));
+                                  if (strs.size() < 2) {
+                                    std::cerr << "Illegal plugin" << std::endl;
+                                    return;
+                                  }
+                                  load_shared_library(strs[0], strs[1]);
+                                });
+
+  // Create the scene:
+  Player_scene scene(&option_parser);
+  try {
+    scene.create_scene(data, size);
+  }
+  catch (std::exception& e) {
+    std::cerr << e.what() << std::endl;
+    return -1;
+  }
+
+  if (scene.do_have_visual()) {
+    auto rc = visualize(scene);
+    if (rc < 0) {
+      scene.destroy_scene();
+      return rc;
+    }
+  }
+
+  // Destroy the scene:
+  scene.destroy_scene();
+  return 0;
+}
+
+#if defined(SGAL_BUILD_PYBINDINGS)
+//! Main entry used only for debugging.
+// When building python bindings, the player is build as a shared library
+// without a main() function.
+#if 0
+int main(int argc, char* argv[])
+{
+  std::ifstream is("tetrahedron.wrl", std::ifstream::binary);
+  if (!is.good()) {
+    std::cerr << "Error: Failed to open tetrahedron.wrl!" << std::endl;
+    return -1;
+  }
+  is.seekg(0, is.end);
+  auto size = is.tellg();
+  if (size < 0) {
+    std::cerr << "Error: Failed to size tetrahedron.wrl!" << std::endl;
+    return -1;
+  }
+  is.seekg (0, is.beg);
+  auto* data = new char [size];
+  if (!data) {
+    std::cerr << "Error: Failed to allocate!" << std::endl;
+    return -1;
+  }
+  is.read(data, size);    // read data as a block
+  if (!is) std::cout << "Error: only " << is.gcount() << " could be read";
+  is.close();
+  auto rc = play(data, size, argc, argv);
+  delete[] data;
+  return rc;
+}
+#endif
+
+#else
+
 int main(int argc, char* argv[])
 {
   SGAL::initialize(argc, argv);
-#if (defined USE_SCGAL)
-  // try {
-  //   std::string library_name = "libSCGAL.so";
-  //   std::string function_name = "scgal_init";
-  //   load_shared_library(library_name, function_name);
-  // }
-  // catch(std::exception& e) {
-  //   std::cerr << e.what() << std::endl;
-  //   return -1;
-  // }
+#if (defined SGAL_USE_SCGAL)
   SGAL::scgal_init();
 #endif
 
@@ -181,34 +293,16 @@ int main(int argc, char* argv[])
     return -1;
   }
 
-  // Create a window manager:
-
-  // Initialize the visual:
   if (scene.do_have_visual()) {
-#if (defined USE_GLUT)
-    SGAL::Glut_window_manager* wm = SGAL::Glut_window_manager::instance();
-#elif defined(_WIN32)
-    SGAL::Windows_window_manager* wm = SGAL::Windows_window_manager::instance();
-#else
-    SGAL::X11_window_manager* wm = SGAL::X11_window_manager::instance();
-#endif
-
-    scene.set_window_manager(wm);
-    wm->set_scene(&scene);
-
-    try {
-      wm->init(static_cast<SGAL::Uint>(argc), argv);
-      scene.init_scene();
-    }
-    catch(std::exception& e) {
-      std::cerr << e.what() << std::endl;
+    auto rc = visualize(scene);
+    if (rc < 0) {
       scene.destroy_scene();
-      return -1;
+      return rc;
     }
-    wm->event_loop(scene.is_simulating());
-    wm->clear();
-    scene.clear_scene();
   }
+
+  // Destroy the scene:
   scene.destroy_scene();
   return 0;
 }
+#endif
