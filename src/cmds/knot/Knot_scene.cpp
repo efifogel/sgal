@@ -59,7 +59,7 @@
 #include "SGAL/Tick_event.hpp"
 #include "SGAL/Keyboard_event.hpp"
 
-#if (defined USE_GLUT)
+#if (defined SGAL_USE_GLUT)
 #include "SGLUT/Glut_window_item.hpp"
 #include "SGLUT/Glut_window_manager.hpp"
 #elif defined(_WIN32)

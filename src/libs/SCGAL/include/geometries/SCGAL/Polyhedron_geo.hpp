@@ -29,7 +29,7 @@
 #include <CGAL/HalfedgeDS_vector.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-#if !defined(USE_MIN_SPHERE)
+#if !defined(SGAL_USE_MIN_SPHERE)
 #include <CGAL/Min_sphere_of_spheres_d.h>
 #else
 #include <CGAL/Min_sphere_d.h>
@@ -79,7 +79,7 @@ public:
   typedef Coord_index_vector::const_iterator           Coord_index_iter;
 
   // Min sphere stuff:
-#if !defined(USE_MIN_SPHERE)
+#if !defined(SGAL_USE_MIN_SPHERE)
   typedef CGAL::Min_sphere_of_spheres_d_traits_3<Kernel,float>
     Min_sphere_traits;
   typedef CGAL::Min_sphere_of_spheres_d<Min_sphere_traits>

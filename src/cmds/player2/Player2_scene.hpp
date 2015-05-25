@@ -32,7 +32,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-#if defined(USE_CGM)
+#if defined(SGAL_USE_CGM)
 class Cubical_gaussian_map_geo;
 #endif
 
@@ -45,7 +45,7 @@ class Player2_option_parser;
 
 class Player2_scene : public Player_scene {
 public:
-#if defined(USE_CGM)
+#if defined(SGAL_USE_CGM)
   /*! The CGM geometry */
   typedef boost::shared_ptr<SGAL::Cubical_gaussian_map_geo>
     Shared_cubical_gaussian_map_geo;
@@ -72,8 +72,8 @@ public:
 
 private:
   Player2_option_parser* m_option_parser;
-  
-#if defined(USE_CGM)
+
+#if defined(SGAL_USE_CGM)
   /*! The CGM geometry */
   Shared_cubical_gaussian_map_geo m_cgm_geo;
 #endif

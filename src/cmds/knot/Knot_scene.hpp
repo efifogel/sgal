@@ -51,7 +51,7 @@ class Route;
 class Tick_event;
 class Keyboard_event;
 
-#if (defined USE_GLUT)
+#if (defined SGAL_USE_GLUT)
 class Glut_window_manager;
 class Glut_window_item;
 #elif defined(_WIN32)
@@ -66,7 +66,7 @@ SGAL_END_NAMESPACE
 
 class Knot_scene : public SGAL::Scene {
 public:
-#if (defined USE_GLUT)
+#if (defined SGAL_USE_GLUT)
   typedef SGAL::Glut_window_manager             Window_manager;
   typedef SGAL::Glut_window_item                Window_item;
 #elif defined(_WIN32)

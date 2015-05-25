@@ -26,7 +26,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-#if (defined USE_GLUT)
+#if (defined SGAL_USE_GLUT)
 class Glut_window_manager;
 #elif defined(_WIN32)
 class Windows_window_manager;

@@ -31,7 +31,7 @@
 
 
 
-#if (defined USE_GLUT)
+#if (defined SGAL_USE_GLUT)
 #include "SGLUT/Glut_window_manager.hpp"
 #elif defined(_WIN32)
 #include "SGAL/Windows_window_manager.hpp"
@@ -42,7 +42,7 @@
 //#include "Player_scene.hpp"
 #include "Player_option_parser.hpp"
 
-#if (defined USE_CGAL)
+#if (defined SGAL_USE_CGAL)
 SGAL_BEGIN_NAMESPACE
 extern void scgal_init();
 SGAL_END_NAMESPACE
@@ -163,7 +163,7 @@ CPlayerControlCtrl::CPlayerControlCtrl() :
   _tim_number(0),
   m_start_tick_time(0),
   m_sim_time(0),
-  m_est_tick_duration(0), 
+  m_est_tick_duration(0),
   m_required_tick_duration(0)
 {
   InitializeIIDs(&IID_DPlayerControl, &IID_DPlayerControlEvents);
@@ -201,7 +201,7 @@ void CPlayerControlCtrl::OnDraw(CDC* pdc, const CRect& rcBounds,
   //if (!IsOptimizedDraw())
   //{
   //	// The container does not support optimized drawing.
-  
+
   //	// TODO: if you selected any GDI objects into the device context *pdc,
   //	//		restore the previously-selected objects here.
   //}
@@ -296,11 +296,11 @@ void CPlayerControlCtrl::Play()
 {
   try {
 
-#if	(defined USE_CGAL)
+#if	(defined SGAL_USE_CGAL)
     SGAL::scgal_init();
 #endif
   }
-  catch(std::exception & e) 
+  catch(std::exception & e)
   {
     MessageBox(e.what(), "Exception");
     return;
@@ -310,7 +310,7 @@ void CPlayerControlCtrl::Play()
   //SGAL::Windows_window_manager * wm	= SGAL::Windows_window_manager::instance();
 
   // Parse program options:
-  try 
+  try
   {
     _option_parser.init();
     TCHAR *argv[2];
@@ -337,7 +337,7 @@ void CPlayerControlCtrl::Play()
     }
     _scene.create_scene();
   }
-  catch (std::exception & e) 
+  catch (std::exception & e)
   {
     MessageBox(e.what(), "Exception");
     return;
@@ -348,12 +348,12 @@ void CPlayerControlCtrl::Play()
     //		this->init(static_cast<SGAL::Uint>(argc), argv);
     _scene.init_scene();
   }
-  catch(std::exception & e) 
+  catch(std::exception & e)
   {
     MessageBox(e.what(), "Exception");
     return;
   }
-	
+
   //	if (_tim_number != 0)
   //		KillTimer(_tim_number);
   _tim_number = SetTimer(IDT_TIMER_0, CLOCKS_PER_SEC / 30, NULL);
@@ -381,7 +381,7 @@ BOOL CPlayerControlCtrl::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam,
       _window_item.make_current();
       _scene.reshape_window(&_window_item, LOWORD(lParam), HIWORD(lParam));
     }
-    break;   
+    break;
 
    case WM_KEYDOWN:
     switch (wParam) {
@@ -504,7 +504,7 @@ void CPlayerControlCtrl::OnTimer (UINT TimerVal)
 {
   if (_bPlay == false) return;
 
-  //Chech whether simulation is required: 
+  //Chech whether simulation is required:
   if (_scene.is_simulating() == false) return;
 
   // Measure the ellapsed time:
@@ -533,5 +533,3 @@ void CPlayerControlCtrl::OnTimer (UINT TimerVal)
     }
   }
 }
-
-

@@ -31,7 +31,7 @@
 #pragma warning( pop )
 #endif
 
-#if defined(USE_V8)
+#if defined(SGAL_USE_V8)
 #include <v8.h>
 #endif
 
@@ -43,7 +43,7 @@ SGAL_BEGIN_NAMESPACE
 SGAL_SGAL_DECL void initialize(int /* argc */, char* argv[])
 {
   Magick::InitializeMagick(*argv);
-#if defined(USE_V8)
+#if defined(SGAL_USE_V8)
   v8::V8::InitializeICU();
 #endif
 

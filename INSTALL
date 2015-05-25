@@ -326,7 +326,7 @@ latest release and on features developed in various branches. A feature
 of SGAL can be (typically) enabled and disabled by setting an
 appropriate environment variable. For example, consider the
 "Lines Through Segments" feature. You need to set the environment
-variable USE_LTS to 1 to enable this feature, and enable the
+variable SGAL_USE_LTS to 1 to enable this feature, and enable the
 corresponding CGAL feature. The corresponding CGAL feature has been
 developed in the CGAL branch origin/Lines_through_segments-pmoeller.
 You need to merge the source of this branch with the sources you use to
@@ -387,37 +387,37 @@ requires a corresponding CGAL feature, you must also install an
 appropriate version of CGAL that supports the corresponding CGAL
 feature.
 
-   USE_V8=1    # For V8 Support.
+   SGAL_USE_V8=1    # For V8 Support.
 
-   USE_SCGAL=1 # CGAL
-   USE_NGM=1   # Nef Gaussian Map (CGAL)
-   USE_LTS=1   # Lines Through Segments
-   USE_AOS=1   # Arrangement On Surface
-   USE_VOS=1   # Voronoi On Sphere
-   USE_SGM=1   # Spherical Gaussian Map
-   USE_NEF=1   # Nef
-   USE_CGM=1   # Cubical Gaussian Map
-   USE_GMP=1   # Link with GMP & MPFR
-   USE_SSC=1   # Smallest stabbing cube
+   SGAL_USE_SCGAL=1 # CGAL
+   SGAL_USE_NGM=1   # Nef Gaussian Map (CGAL)
+   SGAL_USE_LTS=1   # Lines Through Segments
+   SGAL_USE_AOS=1   # Arrangement On Surface
+   SGAL_USE_VOS=1   # Voronoi On Sphere
+   SGAL_USE_SGM=1   # Spherical Gaussian Map
+   SGAL_USE_NEF=1   # Nef
+   SGAL_USE_CGM=1   # Cubical Gaussian Map
+   SGAL_USE_GMP=1   # Link with GMP & MPFR
+   SGAL_USE_SSC=1   # Smallest stabbing cube
 
-   USE_LTS=1 requires origin/Lines_through_segments-pmoeller
-   USE_CGM=1 requires origin/Cubical_gaussian_map-efif
-   USE_VOS=1 requires remotes/origin/Envelope_voronoi_2-ophirset
-   USE_AOS=1 requires origin/Aos_2-remove_opt-efif
+   SGAL_USE_LTS=1 requires origin/Lines_through_segments-pmoeller
+   SGAL_USE_CGM=1 requires origin/Cubical_gaussian_map-efif
+   SGAL_USE_VOS=1 requires remotes/origin/Envelope_voronoi_2-ophirset
+   SGAL_USE_AOS=1 requires origin/Aos_2-remove_opt-efif
 
 For example:
 cmake -G"NMake Makefiles" \
   -DCMAKE_VERBOSE_MAKEFILE=ON \
-  -DUSE_V8=1 \
-  -DUSE_SCGAL=1 \
-  -DUSE_NGM=0 \
-  -DUSE_LTS=0 \
-  -DUSE_AOS=1 \
-  -DUSE_VOS=1 \
-  -DUSE_SGM=1 \
-  -DUSE_NEF=1 \
-  -DUSE_CGM=1 \
-  -DUSE_SSC=1 \
+  -DSGAL_USE_V8=1 \
+  -DSGAL_USE_SCGAL=1 \
+  -DSGAL_USE_NGM=0 \
+  -DSGAL_USE_LTS=0 \
+  -DSGAL_USE_AOS=1 \
+  -DSGAL_USE_VOS=1 \
+  -DSGAL_USE_SGM=1 \
+  -DSGAL_USE_NEF=1 \
+  -DSGAL_USE_CGM=1 \
+  -DSGAL_USE_SSC=1 \
   ${SGAL_SOURCE_DIR}
 
 2.7. Testing

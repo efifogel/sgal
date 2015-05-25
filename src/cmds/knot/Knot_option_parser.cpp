@@ -21,7 +21,7 @@
 #include "Knot_option_parser.hpp"
 
 #include "SGAL/Window_option_parser.hpp"
-#if (defined USE_GLUT)
+#if (defined SGAL_USE_GLUT)
 #include "SGLUT/Glut_window_manager.hpp"
 #elif defined(_WIN32)
 #include "SGAL/Windows_window_manager.hpp"

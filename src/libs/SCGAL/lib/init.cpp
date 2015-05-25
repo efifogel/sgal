@@ -41,28 +41,28 @@
 #include "SCGAL/Smallest_stabbing_cube.hpp"
 #include "SCGAL/Transformer_with_exact_coords.hpp"
 #include "SCGAL/Triangulation_geo.hpp"
-#if defined(USE_ENV)
+#if defined(SGAL_USE_ENV)
 #include "SCGAL/Lower_envelope_tri_geo.hpp"
 #include "SCGAL/Lower_envelope_sphere_geo.hpp"
 #include "SCGAL/Lower_envelope_plane_geo.hpp"
 #endif
-#if defined(USE_CGM)
+#if defined(SGAL_USE_CGM)
 #include "SCGAL/Cubical_gaussian_map_geo.hpp"
 #endif
-#if defined(USE_LTS)
+#if defined(SGAL_USE_LTS)
 #include "SCGAL/Lines_through_segments_geo.hpp"
 #endif
-#if defined(USE_SGM)
+#if defined(SGAL_USE_SGM)
 #include "SCGAL/Spherical_gaussian_map_geo.hpp"
 #include "SCGAL/Spherical_gaussian_map_colored_geo.hpp"
 #include "SCGAL/Spherical_gaussian_map_marked_geo.hpp"
 #include "SCGAL/Assembly.hpp"
 #include "SCGAL/Assembly_part.hpp"
 #endif
-#if defined(USE_AOT)
+#if defined(SGAL_USE_AOT)
 #include "SCGAL/Arrangement_on_torus_geo.hpp"
 #endif
-#if defined(USE_AOS)
+#if defined(SGAL_USE_AOS)
 #include "SCGAL/Arrangement_on_sphere_geo.hpp"
 #include "SCGAL/Arrangement_on_sphere_marked_geo.hpp"
 #include "SCGAL/Arrangement_on_sphere_overlay_geo.hpp"
@@ -73,21 +73,21 @@
 #endif
 #include "SCGAL/Arrangement_of_polygeodesics_on_sphere_geo.hpp"
 #endif
-#if defined(USE_VOS)
+#if defined(SGAL_USE_VOS)
 #include "SCGAL/Voronoi_diagram_on_sphere_geo.hpp"
 #include "SCGAL/Power_diagram_on_sphere_geo.hpp"
 #endif
-#if defined(USE_NEF)
+#if defined(SGAL_USE_NEF)
 #include "SCGAL/Exact_nef_polyhedron.hpp"
-#if defined(USE_NGM)
+#if defined(SGAL_USE_NGM)
 #include "SCGAL/Nef_gaussian_map_geo.hpp"
 #endif
 #endif
-#if defined(USE_QUADRIC)
+#if defined(SGAL_USE_QUADRIC)
 #include "SCGAL/Quadric_geo.hpp"
 #include "SCGAL/Arrangement_on_quadric_geo.hpp"
 #endif
-#if defined(USE_SSC)
+#if defined(SGAL_USE_SSC)
 #include "SCGAL/Smallest_stabbing_cube.hpp"
 #endif
 
@@ -107,28 +107,28 @@ SGAL_SCGAL_DECL void scgal_init()
   Container_factory::get_instance()->doregister(Exact_polyhedron_geo::prototype());
   Container_factory::get_instance()->doregister(Transformer_with_exact_coords::prototype());
   Container_factory::get_instance()->doregister(Triangulation_geo::prototype());
-#if defined(USE_ENV)
+#if defined(SGAL_USE_ENV)
   Container_factory::get_instance()->doregister(Lower_envelope_tri_geo::prototype());
   Container_factory::get_instance()->doregister(Lower_envelope_sphere_geo::prototype());
   Container_factory::get_instance()->doregister(Lower_envelope_plane_geo::prototype());
 #endif
-#if defined(USE_CGM)
+#if defined(SGAL_USE_CGM)
   Container_factory::get_instance()->doregister(Cubical_gaussian_map_geo::prototype());
 #endif
-#if defined(USE_LTS)
+#if defined(SGAL_USE_LTS)
   Container_factory::get_instance()->doregister(Lines_through_segments_geo::prototype());
 #endif
-#if defined(USE_SGM)
+#if defined(SGAL_USE_SGM)
   Container_factory::get_instance()->doregister(Spherical_gaussian_map_geo::prototype());
   Container_factory::get_instance()->doregister(Spherical_gaussian_map_colored_geo::prototype());
   Container_factory::get_instance()->doregister(Spherical_gaussian_map_marked_geo::prototype());
   Container_factory::get_instance()->doregister(Assembly::prototype());
   Container_factory::get_instance()->doregister(Assembly_part::prototype());
 #endif
-#if defined(USE_AOT)
+#if defined(SGAL_USE_AOT)
   Container_factory::get_instance()->doregister(Arrangement_on_torus_geo::prototype());
 #endif
-#if defined(USE_AOS)
+#if defined(SGAL_USE_AOS)
   Container_factory::get_instance()->doregister(Arrangement_on_sphere_geo::prototype());
   Container_factory::get_instance()->doregister(Arrangement_on_sphere_marked_geo::prototype());
   Container_factory::get_instance()->doregister(Arrangement_on_sphere_overlay_geo::prototype());
@@ -139,21 +139,21 @@ SGAL_SCGAL_DECL void scgal_init()
 #endif
   Container_factory::get_instance()->doregister(Arrangement_of_polygeodesics_on_sphere_geo::prototype());
 #endif
-#if defined(USE_VOS)
+#if defined(SGAL_USE_VOS)
   Container_factory::get_instance()->doregister(Voronoi_diagram_on_sphere_geo::prototype());
   Container_factory::get_instance()->doregister(Power_diagram_on_sphere_geo::prototype());
 #endif
-#if defined(USE_NEF)
+#if defined(SGAL_USE_NEF)
   Container_factory::get_instance()->doregister(Exact_nef_polyhedron::prototype());
-#if defined(USE_NGM)
+#if defined(SGAL_USE_NGM)
   Container_factory::get_instance()->doregister(Nef_gaussian_map_geo::prototype());
 #endif
 #endif
-#if defined(USE_QUADRIC)
+#if defined(SGAL_USE_QUADRIC)
   Container_factory::get_instance()->doregister(Quadric_geo::prototype());
   Container_factory::get_instance()->doregister(Arrangement_on_quadric_geo::prototype());
 #endif
-#if defined(USE_SSC)
+#if defined(SGAL_USE_SSC)
   Container_factory::get_instance()->doregister(Smallest_stabbing_cube::prototype());
 #endif
 }

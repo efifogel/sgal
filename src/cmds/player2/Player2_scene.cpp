@@ -45,7 +45,7 @@
 #include "SGAL/Context.hpp"
 #include "SGAL/Switch.hpp"
 
-#if (defined USE_GLUT)
+#if (defined SGAL_USE_GLUT)
 #include "SGLUT/Glut_window_item.hpp"
 #include "SGLUT/Glut_window_manager.hpp"
 #elif defined(_WIN32)
@@ -57,7 +57,7 @@
 #endif
 
 #include "SCGAL/Spherical_gaussian_map_base_geo.hpp"
-#if defined(USE_CGM)
+#if defined(SGAL_USE_CGM)
 #include "SCGAL/Cubical_gaussian_map_geo.hpp"
 #endif
 
@@ -78,7 +78,7 @@ void Player2_scene::init_scene()
 {
   Player_scene::init_scene();
 
-#if defined(USE_CGM)
+#if defined(SGAL_USE_CGM)
   m_cgm_geo = boost::dynamic_pointer_cast<SGAL::Cubical_gaussian_map_geo>
     (m_scene_graph->get_container("GEOM"));
 #endif
@@ -135,7 +135,7 @@ void Player2_scene::draw_window(SGAL::Window_item* window_item,
   if (acc) acc->set_enabled(false);
   m_context->set_viewport(-x + margin, -y, sw, sh);
   camera->init(m_context);
-#if defined(USE_CGM)
+#if defined(SGAL_USE_CGM)
   if (m_cgm_geo) m_cgm_geo->set_draw_aos(false);
 #endif
   if (m_sgm_geo) m_sgm_geo->set_draw_aos(false);
@@ -145,7 +145,7 @@ void Player2_scene::draw_window(SGAL::Window_item* window_item,
   if (acc) acc->set_enabled(enabled);
   m_context->set_viewport(hwidth - x - margin, -y, sw, sh);
   camera->init(m_context);
-#if defined(USE_CGM)
+#if defined(SGAL_USE_CGM)
   if (m_cgm_geo) m_cgm_geo->set_draw_aos(true);
 #endif
   if (m_sgm_geo) m_sgm_geo->set_draw_aos(true);

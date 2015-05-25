@@ -25,7 +25,7 @@
 ////
 
 #include "SGAL/sgal.hpp"
-#if (defined USE_GLUT)
+#if (defined SGAL_USE_GLUT)
 #include "SGLUT/Glut_window_manager.hpp"
 #elif defined(_WIN32)
 #include "SGAL/Windows_window_manager.hpp"
@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
   }
 
   // Create a window manager:
-#if (defined USE_GLUT)
+#if (defined SGAL_USE_GLUT)
   SGAL::Glut_window_manager * wm = SGAL::Glut_window_manager::instance();
 #elif defined(_WIN32)
   SGAL::Windows_window_manager * wm = SGAL::Windows_window_manager::instance();
@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
   wm->set_scene(&scene);
 
   try {
-    wm->init(static_cast<SGAL::Uint>(argc), argv);
+    wm->init();
     scene.init_scene();
   }
   catch(std::exception & e) {
