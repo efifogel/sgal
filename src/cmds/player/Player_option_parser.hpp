@@ -64,11 +64,21 @@ public:
   void configure(Window_manager* window_manage,
                  SGAL::Scene_graph* scene_graph);
 
-  /*! Obtain the base file-name.
-   * \param name the returned file name.
-   * \return true if a name was specified on the command line, false otherwise.
+  /*! Obtain the number of names of input files.
+   * \return the number of names of input files.
    */
-  bool get_file_name(std::string& name) const;
+  size_t get_num_input_files() const;
+
+  /*! Obtain the name of an input file.
+   * \param[in] the id of the file name to return;
+   * \return the name of an input file.
+   */
+  const std::string& get_input_file(size_t id) const;
+
+  /*! Obtain the name of the output file.
+   * \return the name of the output file.
+   */
+  const std::string& get_output_file() const;
 
   /*! Determines whether to display a grid.
    */
@@ -92,11 +102,6 @@ public:
    * array is set.
    */
   SGAL::Boolean get_sub_index_buffer_size(SGAL::Uint & size) const;
-
-  /*! Determine whether the interactive option has not been specified.
-   * \return true if the interactive option was left defaulted.
-   */
-  SGAL::Boolean is_interactive_defaulted() const;
 
 protected:
   /*! The player option description. */
@@ -126,11 +131,5 @@ void Player_option_parser::configure(Window_manager* window_manager,
   Window_option_parser::configure(m_variable_map, window_manager);
   Option_parser::configure(scene_graph);
 }
-
-/*! \brief determines whether the application should stay interactive after
- * exporting.
- */
-inline SGAL::Boolean Player_option_parser::is_interactive_defaulted() const
-{ return m_variable_map["interactive"].defaulted(); }
 
 #endif

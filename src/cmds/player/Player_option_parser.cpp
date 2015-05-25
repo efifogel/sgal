@@ -25,7 +25,7 @@
 #include "Player_option_parser.hpp"
 
 #include "SGAL/Window_option_parser.hpp"
-#if (defined USE_GLUT)
+#if (defined SGAL_USE_GLUT)
 #include "SGLUT/Glut_window_manager.hpp"
 #elif defined(_WIN32)
 #include "SGAL/Windows_window_manager.hpp"
@@ -76,13 +76,16 @@ void Player_option_parser::apply()
   SGAL::Window_option_parser::apply(m_variable_map);
 }
 
+//! \brief obtains the number of names of input files.
+size_t Player_option_parser::get_num_input_files() const
+{ return m_variable_map.count("input-file"); }
+
 //! \brief obtains the base file-name.
-bool Player_option_parser::get_file_name(std::string & name) const
+const std::string& Player_option_parser::get_input_file(size_t id) const
 {
-  if (!m_variable_map.count("input-file")) return false;
+  SGAL_assertion(id < m_variable_map.count("input-file"));
   typedef std::vector<std::string> vs;
-  name = m_variable_map["input-file"].as<vs>()[0];
-  return true;
+  return m_variable_map["input-file"].as<vs>()[id];
 }
 
 /*! Is the maximum number of vertices in the index array set? */
@@ -92,4 +95,11 @@ Player_option_parser::get_sub_index_buffer_size(SGAL::Uint & size) const
   if (!m_variable_map.count("sub-index-buffer-size")) return false;
   size = m_variable_map["sub-index-buffer-size"].as<SGAL::Uint>();
   return true;
+}
+
+//! \brief obtains the name of the output file.
+const std::string& Player_option_parser::get_output_file() const
+{
+  return (is_output_file_defaulted() && (0 < get_num_input_files())) ?
+    get_input_file(0) : get_output_file();
 }

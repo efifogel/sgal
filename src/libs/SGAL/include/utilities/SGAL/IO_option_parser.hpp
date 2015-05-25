@@ -122,18 +122,23 @@ public:
    */
   Boolean is_interactive() const;
 
-  /*! Set the output-file name.
-   * \param filename (in) the output-file name.
+  /*! Determine whether the interactive option has not been specified.
+   * \return true if the interactive option was left defaulted.
    */
-  void set_output_file(const std::string& filename);
+  Boolean is_interactive_defaulted() const;
 
   /*! Obtain the output-file name.
    * \return The output-file name.
    */
   const std::string& get_output_file() const;
 
-  /*! Obtain the output-path.
-   * \return The output-path.
+  /*! Determine whether the output-file option has not been specified.
+   * \return true if the output-file option was left defaulted.
+   */
+  Boolean is_output_file_defaulted() const;
+
+  /*! Obtain the output-path name.
+   * \return The output-path name.
    */
   const std::string& get_output_path() const;
 
@@ -233,13 +238,19 @@ inline Boolean IO_option_parser::do_export() const { return m_export; }
 inline Boolean IO_option_parser::is_interactive() const
 { return m_interactive; }
 
-//! \brief sets the output-file name.
-inline void IO_option_parser::set_output_file(const std::string& filename)
-{ m_output_file = filename; }
+//! \brief determines whether the interactive option has not been specified.
+inline Boolean IO_option_parser::is_interactive_defaulted() const
+{ return get_variable_map()["interactive"].defaulted(); }
 
 //! \brief obtains the output-file name.
 inline const std::string& IO_option_parser::get_output_file() const
 { return m_output_file; }
+
+/*! \brief determines whether the output-file option has not been specified.
+ * \return true if the output-file option was left defaulted.
+ */
+inline Boolean IO_option_parser::is_output_file_defaulted() const
+{ return get_variable_map()["output-file"].defaulted(); }
 
 //! \brief obtains the output path.
 inline const std::string& IO_option_parser::get_output_path() const
