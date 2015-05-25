@@ -244,36 +244,6 @@ Start           : VRML vrmlScene
                   scene_graph->set_input_format_id(File_format_3d::ID_WRL);
                   scene_graph->set_root($2);
                 }
-                | K_SOLID IDENTIFIER facets K_SOLID_END IDENTIFIER
-                {
-                  /* STL */
-                  scene_graph->set_input_format_id(File_format_3d::ID_STL);
-                  if ($2.compare($5) != 0)
-                    error(yyla.location,
-                          std::string("Non matching solid names \"") +
-                          $2 + "\" and \"" + $5 + "\"!");
-
-                  auto transform = scene_graph->initialize();
-
-                  /*! Add Shape */
-                  Shared_shape shape(new Shape);
-                  SGAL_assertion(shape);
-                  shape->add_to_scene(scene_graph);
-                  scene_graph->add_container(shape);
-                  transform->add_child(shape);
-
-                  /*! Add IndexedFaceSet */
-                  Shared_indexed_face_set ifs = $3.first;
-                  ifs->set_coord_indices_from_range($3.second->begin(),
-                                                    $3.second->end());
-                  ifs->collapse_identical_coordinates();
-                  shape->set_geometry(ifs);
-
-                  /* Clear */
-                  $3.second->clear();
-                  delete $3.second;
-                  $3.second = nullptr;
-                }
                 | K_SOLID facets K_SOLID_END
                 {
                   /* STL */
@@ -299,11 +269,12 @@ Start           : VRML vrmlScene
                   delete $2.second;
                   $2.second = nullptr;
                 }
+                | K_SOLID facets error
                 | K_SOLID error
                   /* It is possible that even though the file starts with the
                    * token "solid", the file is in the binary stl format.
                    */
-                {  maybe_binary_stl = true; }
+                { maybe_binary_stl = true; }
                 ;
 
 facets          : /* empty */

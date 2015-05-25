@@ -14,9 +14,6 @@
  * THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
  * PARTICULAR PURPOSE.
  *
- * $Id: $
- * $Revision: 13559 $
- *
  * Author(s)     : Efi Fogel
  */
 
@@ -103,9 +100,9 @@ loc.step();		// reset location
 
 <INITIAL>"#VRML V2.0"[^\n]*	{ BEGIN(vrml); return Vrml_parser::make_VRML(loc); }
 
-<INITIAL>"solid"	{ BEGIN(stl); return Vrml_parser::make_K_SOLID(loc); }
+<INITIAL>"solid"[^\n]*	{ BEGIN(stl); return Vrml_parser::make_K_SOLID(loc); }
 
-<stl>"endsolid"		{ return Vrml_parser::make_K_SOLID_END(loc); }
+<stl>"endsolid"[^\n]*	{ return Vrml_parser::make_K_SOLID_END(loc); }
 <stl>"facet"		{ return Vrml_parser::make_K_FACET(loc); }
 <stl>"endfacet"		{ return Vrml_parser::make_K_FACET_END(loc); }
 <stl>"normal"		{ return Vrml_parser::make_K_NORMAL(loc); }
