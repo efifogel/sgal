@@ -86,7 +86,7 @@ void Windows_window_manager::register_window_class()
 }
 
 /*! \brief initializes the window manager */
-void Windows_window_manager::init(Uint /* argc */, char* /* argv */ [])
+void Windows_window_manager::init()
 {
   // Get this module instance:
   m_hInstance = GetModuleHandle(NULL);

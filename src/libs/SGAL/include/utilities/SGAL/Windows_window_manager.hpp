@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 5154 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_WINDOWS_WINDOW_MANAGER_HPP
@@ -89,7 +86,7 @@ public:
    * \param argc the number of arguments.
    * \param argv the array of ASCII arrguments.
    */
-  void init(Uint argc, char* argv[]);
+  void init();
 
   /*! Clear the window manager */
   void clear();

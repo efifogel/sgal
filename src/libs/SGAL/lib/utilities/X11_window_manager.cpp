@@ -82,7 +82,7 @@ X11_window_manager* X11_window_manager::instance()
 }
 
 //! \brief initializes the window manager.
-void X11_window_manager::init(Uint /* argc */, char* /* argv */[])
+void X11_window_manager::init()
 {
   m_display = XOpenDisplay(0);
   m_screen = DefaultScreen(m_display);

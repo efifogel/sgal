@@ -75,7 +75,7 @@ public:
    * \param argc the number of arguments
    * \param argv the array of ASCII arrguments
    */
-  void init(Uint argc, char* argv[]);
+  void init();
 
   /*! Clear the window manager */
   void clear();
