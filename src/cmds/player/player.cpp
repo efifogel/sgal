@@ -155,7 +155,8 @@ int visualize(Player_scene& scene)
   return 0;
 }
 
-int play(char* data, size_t size, int argc, char* argv[])
+int play(char* data, size_t size, int argc, char* argv[],
+         SGAL::Matrix4f& proj_mat, SGAL::Matrix4f& view_mat)
 {
   SGAL::initialize(argc, argv);
 #if (defined SGAL_USE_SCGAL)
@@ -209,6 +210,9 @@ int play(char* data, size_t size, int argc, char* argv[])
   }
 
   // Destroy the scene:
+  scene.get_proj_mat(proj_mat);
+  scene.get_view_mat(view_mat);
+
   scene.destroy_scene();
   return 0;
 }

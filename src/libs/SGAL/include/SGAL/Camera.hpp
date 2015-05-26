@@ -143,6 +143,8 @@ public:
   /*! Obtain the (const) frustum. */
   const Frustum& get_frustum() const;
 
+  /*! Obtain the viewing matrix.
+   */
   const Matrix4f& get_view_mat();
 
   void update_matrix_requiered(const Field_info* info);

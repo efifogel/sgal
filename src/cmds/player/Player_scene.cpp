@@ -91,6 +91,7 @@
 #include "SGAL/Snapshotter.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Field.hpp"
+#include "SGAL/Camera.hpp"
 
 #if (defined SGAL_USE_GLUT)
 #include "SGLUT/Glut_window_item.hpp"
@@ -1100,4 +1101,20 @@ SGAL::Boolean Player_scene::is_interactive() const
            (!m_option_parser->do_snapshot() && !m_option_parser->do_export())) &&
           (m_option_parser->is_interactive_defaulted() ||
            m_option_parser->is_interactive()));
+}
+
+//! \brief obtains the camera projection matrix.
+void Player_scene::get_proj_mat(SGAL::Matrix4f& mat)
+{
+  auto* camera = m_scene_graph->get_active_camera();
+  auto& frustum = camera->get_frustum();
+  frustum.get_proj_mat(mat);
+}
+
+//! \brief obtains the camera viewing matrix.
+void Player_scene::get_view_mat(SGAL::Matrix4f& mat)
+{
+  auto* camera = m_scene_graph->get_active_camera();
+  const auto& tmp = camera->get_view_mat();
+  mat.set(tmp);
 }

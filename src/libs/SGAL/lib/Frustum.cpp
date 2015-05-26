@@ -81,13 +81,13 @@ void Frustum::copy(const Frustum* src)
   m_vert_fov = src->m_vert_fov;
 
   if (!m_dirty_corners) {
-    for (Uint i = 0; i < Frustum::NUM_CORNERS; i++) {
+    for (size_t i = 0; i < Frustum::NUM_CORNERS; i++) {
       m_corners[i] = src->m_corners[i];
     }
   }
 
   if (!m_dirty_planes) {
-    for (Uint i = 0; i < Frustum::NUM_PLANES; i++) {
+    for (size_t i = 0; i < Frustum::NUM_PLANES; i++) {
       m_facets[i] = src->m_facets[i];
     }
   }
@@ -302,33 +302,56 @@ void Frustum::get_diag_corners(float& left, float& right, float& bottom,
 /*! \brief calculates a matrix suitable for use as the GL_PROJECTION matrix
  * in OpenGL, projecting the contents of the frustum onto the near plane.
  */
-void Frustum::get_gl_proj_mat(Matrix4f& mat)
+void Frustum::get_proj_mat(Matrix4f& mat)
 {
   if (m_dirty_corners) clean_corners();
-  float left = m_corners[Frustum::NEAR_LL][0];
-  float right = m_corners[Frustum::NEAR_UR][0];
-  float bottom = m_corners[Frustum::NEAR_LL][1];
-  float top = m_corners[Frustum::NEAR_UR][1];
+  auto left = m_corners[Frustum::NEAR_LL][0];
+  auto right = m_corners[Frustum::NEAR_UR][0];
+  auto bottom = m_corners[Frustum::NEAR_LL][1];
+  auto top = m_corners[Frustum::NEAR_UR][1];
 
-  mat[0][0] = 2.0f * m_near_dist / (right - left);
-  mat[0][1] = 0.0f;
-  mat[0][2] = (right + left) / (right - left);
-  mat[0][3] = 0.0f;
+  if (m_type == Frustum::ORTHOGONAL) {
+    mat[0][0] = 2.0f / (right - left);
+    mat[0][1] = 0.0f;
+    mat[0][2] = 0.0f;
+    mat[0][3] = 0.0f;
 
-  mat[1][0] = 0.0f;
-  mat[1][1] = 2.0f * m_near_dist / (top - bottom);
-  mat[1][2] = (top + bottom) / (top - bottom);
-  mat[1][3] = 0.0f;
+    mat[1][0] = 0.0f;
+    mat[1][1] = 2.0f / (top - bottom);
+    mat[1][2] = 0.0f;
+    mat[1][3] = 0.0f;
 
-  mat[2][0] = 0.0f;
-  mat[2][1] = 0.0f;
-  mat[2][2] = -(m_far_dist + m_near_dist) / (m_far_dist - m_near_dist);
-  mat[2][3] = -2.0f * m_far_dist * m_near_dist / (m_far_dist - m_near_dist);
+    mat[2][0] = 0.0f;
+    mat[2][1] = 0.0f;
+    mat[2][2] = -2.0f / (m_far_dist - m_near_dist);
+    mat[2][3] = 0.0f;
 
-  mat[3][0] = 0.0f;
-  mat[3][1] = 0.0f;
-  mat[3][2] = -1.0f;
-  mat[3][3] = 0.0f;
+    mat[3][0] = -(right + left) / (right - left);
+    mat[3][1] = -(top + bottom) / (top - bottom);
+    mat[3][2] = -(m_far_dist + m_near_dist) / (m_far_dist - m_near_dist);
+    mat[3][3] = 1.0f;
+  }
+  else {
+    mat[0][0] = 2.0f * m_near_dist / (right - left);
+    mat[0][1] = 0.0f;
+    mat[0][2] = 0.0f;
+    mat[0][3] = 0.0f;
+
+    mat[1][0] = 0.0f;
+    mat[1][1] = 2.0f * m_near_dist / (top - bottom);
+    mat[1][2] = 0.0f;
+    mat[1][3] = 0.0f;
+
+    mat[2][0] = (right + left) / (right - left);
+    mat[2][1] = (top + bottom) / (top - bottom);
+    mat[2][2] = -(m_far_dist + m_near_dist) / (m_far_dist - m_near_dist);
+    mat[2][3] = -1.0f;
+
+    mat[3][0] = 0.0f;
+    mat[3][1] = 0.0f;
+    mat[3][2] = -2.0f * m_far_dist * m_near_dist / (m_far_dist - m_near_dist);
+    mat[3][3] = 0.0f;
+  }
 }
 
 //! \brief
@@ -471,10 +494,10 @@ void Frustum::apply()
 
   if (m_dirty_corners) clean_corners();
 
-  float xdim = m_corners[Frustum::NEAR_UR][0] - m_corners[Frustum::NEAR_LL][0];
-  float ydim = m_corners[Frustum::NEAR_UR][1] - m_corners[Frustum::NEAR_LL][1];
-  float dx = xdim * m_x_perturbation_scale;
-  float dy = ydim * m_y_perturbation_scale;
+  auto xdim = m_corners[Frustum::NEAR_UR][0] - m_corners[Frustum::NEAR_LL][0];
+  auto ydim = m_corners[Frustum::NEAR_UR][1] - m_corners[Frustum::NEAR_LL][1];
+  auto dx = xdim * m_x_perturbation_scale;
+  auto dy = ydim * m_y_perturbation_scale;
   if (m_type == Frustum::ORTHOGONAL) {
     glOrtho(m_corners[Frustum::NEAR_LL][0] + dx,
             m_corners[Frustum::NEAR_UR][0] + dx,
@@ -573,8 +596,8 @@ void Frustum::set_type(Frustum_type type)
 void Frustum::set_attributes(Element* elem)
 {
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "type") {
       Uint num = sizeof(s_type_strings) / sizeof(char*);
       const char** found = std::find(s_type_strings, &s_type_strings[num],

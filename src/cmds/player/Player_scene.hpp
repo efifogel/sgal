@@ -65,6 +65,7 @@ class Configuration;
 class Indexed_face_set;
 class Box;
 class Image;
+class Matrix4f;
 
 #if (defined SGAL_USE_GLUT)
 class Glut_window_manager;
@@ -231,6 +232,14 @@ public:
   /*! Find the input file.
    */
   void find_input_file(const std::string& filename);
+
+  /*! Obtain the camera projection matrix.
+   */
+  void get_proj_mat(SGAL::Matrix4f& mat);
+
+  /*! Obtain the camera viewing matrix.
+   */
+  void get_view_mat(SGAL::Matrix4f& mat);
 
 protected:
   /*! The window manager. */

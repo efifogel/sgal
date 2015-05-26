@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7628 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_FRUSTUM_HPP
@@ -38,10 +35,12 @@ class Element;
 
 class SGAL_SGAL_DECL Frustum {
 public:
-  /*! Constructor */
+  /*! Construct.
+   */
   Frustum();
 
-  /*! Destructor */
+  /*! Destruct.
+   */
   virtual ~Frustum();
 
 public:
@@ -80,7 +79,7 @@ public:
     FAR_UR,
     NUM_CORNERS
   };
-    
+
 public:
   // virtual functions
   virtual void copy(const Frustum* src);
@@ -106,7 +105,7 @@ public:
    * the far plane.
    */
   void get_near_far(Float& near_dist, Float& far_dist);
-    
+
   void set_fov(Float fov);
   Float get_fov();
   void set_horiz_fov(Float horiz_fov);
@@ -122,7 +121,7 @@ public:
   /*! Obtain the six coordinates defining the two diagonal corners. */
   void get_diag_corners(Float& left, Float& right, Float& bottom,
                         Float& top, Float& near_dist, Float& far_dist);
-  
+
   void get_corners(Float& left, Float& right, Float& bottom, Float& top,
                    Float& near_clip, Float& far_clip);
 
@@ -142,22 +141,27 @@ public:
   void set_aspect_ratio(Float ratio);
 
   /*! Obtain the aspect ratio of the frustum dimensions. */
-  Float get_aspect_ratio() const { return m_aspect_ratio; }
+  Float get_aspect_ratio() const;
 
-  void get_gl_proj_mat(Matrix4f& mat);
+  /*! Obtain the viewing matrix.
+   */
+  void get_proj_mat(Matrix4f& mat);
 
   Plane* get_facets();
 
 public:
-  /*! Set the attributes of this container. */
+  /*! Set the attributes of this container.
+   */
   void set_attributes(Element* elem);
 
-  /*! Make this frustum perspective. */
+  /*! Make this frustum perspective.
+   */
   void make_ortho(Float left, Float right, Float bottom, Float top);
   void make_ortho(Float left, Float right, Float bottom, Float top,
                   Float near_dist, Float far_dist);
 
-  /*! Make this frustum orthonormal. */
+  /*! Make this frustum orthonormal.
+   */
   void make_persp(Float left, Float right, Float bottom, Float top);
   void make_persp(Float left, Float right, Float bottom, Float top,
                   Float near_dist, Float far_dist);
@@ -168,18 +172,19 @@ public:
 
   void apply();
 
-  /*! Set the perturbation distances for accumulation AA. */
+  /*! Set the perturbation distances for accumulation AA.
+   */
   void set_perturbation_scale(Float xpert, Float ypert);
-  
+
 protected:
   // void calc(Frustum::Aspect_mode aspect_mode);
   void clean_corners();
-  void clean_planes();  
+  void clean_planes();
 
 private:
   /*! The frustum types (prespective, orthogonal, etc). */
   static const char* s_type_strings[];
-  
+
   Frustum::Frustum_type m_type;
 
   Float m_near_dist;
@@ -220,12 +225,15 @@ private:
   Float m_y_perturbation_scale;
 };
 
-/*! \brief set the perturbation scales for accumulation AA. */
+//! \brief set the perturbation scales for accumulation AA.
 inline void Frustum::set_perturbation_scale(Float xpert, Float ypert)
 {
   m_x_perturbation_scale = xpert;
   m_y_perturbation_scale = ypert;
 }
+
+//! \brief obtains the aspect ratio of the frustum dimensions.
+inline Float Frustum::get_aspect_ratio() const { return m_aspect_ratio; }
 
 SGAL_END_NAMESPACE
 
