@@ -783,4 +783,10 @@ void* Image::get_pixels()
   return m_pixels;
 }
 
+//! \brief obtains the openGl internal format.
+// Apparently, when compiling with VC, the symbol of this member is
+// unresolved if made inline, so keep it here.
+GLenum Image::get_format_internal_format(Format format)
+{ return s_format_internal_formats[format]; }
+
 SGAL_END_NAMESPACE
