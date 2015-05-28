@@ -383,10 +383,6 @@ inline GLenum Image::get_format_type(Format format)
 inline Uint Image::get_format_components(Format format)
 { return s_format_components[format]; }
 
-//! \brief obtains the openGl internal format.
-inline GLenum Image::get_format_internal_format(Format format)
-{ return s_format_internal_formats[format]; }
-
 //! \brief obtains the format name (string).
 inline const char* Image::get_format_name(Format format)
 { return s_format_names[format]; }
