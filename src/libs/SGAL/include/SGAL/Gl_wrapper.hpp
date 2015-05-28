@@ -158,6 +158,7 @@ inline void glBegin(GLenum mode)
   // Cannot check for errors between glBegin() and glEnd()
 }
 
+#ifdef GL_GLEXT_PROTOTYPES
 /*! glBindFramebuffer wrapper
  * \param[in] target the target to which the renderbuffer object is bound.
  * \param[in] framebuffer the name of a framebuffer object.
@@ -184,6 +185,7 @@ inline void glBindRenderbuffer(GLenum target, GLuint renderbuffer)
   ::glBindRenderbuffer(target, renderbuffer);
   SGAL_CHECK_GL();
 }
+#endif
 
 /*! glBindTexture wrapper */
 inline void glBindTexture(GLenum target, GLuint texture)
@@ -735,6 +737,7 @@ inline void glCullFace(GLenum mode)
   SGAL_CHECK_GL();
 }
 
+#ifdef GL_GLEXT_PROTOTYPES
 /*! glDeleteFramebuffers wrapper
  * Delete named framebuffer objects.
  * \patam[i] n the number of framebuffer objects to be deleted.
@@ -750,15 +753,6 @@ inline void glDeleteFramebuffers(GLsizei n, GLuint* names)
   SGAL_CHECK_GL();
 }
 
-/*! glDeleteLists wrapper */
-inline void glDeleteLists(GLuint list, GLsizei range)
-{
-  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glDeleteLists(" << list << ");"
-                  << std::endl;);
-  ::glDeleteLists(list, range);
-  SGAL_CHECK_GL();
-}
-
 /*! glDeleteRenderbuffers wrapper
  * Delete named renderbuffer objects
  * \patam[i] n the number of framebuffer objects to be deleted.
@@ -771,6 +765,16 @@ inline void glDeleteRenderbuffers(GLsizei n,  const GLuint * names)
                   << n << ", names" << ");"
                   << std::endl;);
   ::glDeleteRenderbuffers(n, names);
+  SGAL_CHECK_GL();
+}
+#endif
+
+/*! glDeleteLists wrapper */
+inline void glDeleteLists(GLuint list, GLsizei range)
+{
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glDeleteLists(" << list << ");"
+                  << std::endl;);
+  ::glDeleteLists(list, range);
   SGAL_CHECK_GL();
 }
 
@@ -1129,6 +1133,7 @@ inline void glFogiv(GLenum pname, const GLint* params)
   SGAL_CHECK_GL();
 }
 
+#ifdef GL_GLEXT_PROTOTYPES
 /*! glFramebufferRenderbuffer wrapper
  * Attach a renderbuffer object to a framebuffer object.
  * \param target
@@ -1149,6 +1154,7 @@ inline void glFramebufferRenderbuffer(GLenum target, GLenum attachment,
                               renderbuffertarget, renderbuffer);
   SGAL_CHECK_GL();
 }
+#endif
 
 /*! glFrontFace wrapper */
 inline void glFrontFace(GLenum mode)
@@ -1172,6 +1178,7 @@ inline void glFrustum(GLdouble left, GLdouble right, GLdouble bottom,
   SGAL_CHECK_GL();
 }
 
+#ifdef GL_GLEXT_PROTOTYPES
 /*! glGenFramebuffers wrapper
  * Generate framebuffer object names
  * \param[in] n the number of framebuffer object names to be generated.
@@ -1188,16 +1195,6 @@ inline void glGenFramebuffers(GLsizei n, GLuint* names)
   return;
 }
 
-//! glGenLists wrapper
-inline GLuint glGenLists(GLsizei range)
-{
-  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glGenLists(" << range << ");"
-                  << std::endl;);
-  GLuint res = ::glGenLists(range);
-  SGAL_CHECK_GL();
-  return res;
-}
-
 /*! glGenFramebuffers wrapper
  * Generate renderbuffer object names
  * \param[in] n the number of renderbuffer object names to be generated.
@@ -1212,6 +1209,17 @@ inline void glGenRenderbuffers(GLsizei n, GLuint* names)
   ::glGenRenderbuffers(n, names);
   SGAL_CHECK_GL();
   return;
+}
+#endif
+
+//! glGenLists wrapper
+inline GLuint glGenLists(GLsizei range)
+{
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glGenLists(" << range << ");"
+                  << std::endl;);
+  GLuint res = ::glGenLists(range);
+  SGAL_CHECK_GL();
+  return res;
 }
 
 /*! glGenTextures wrapper */
@@ -2710,6 +2718,7 @@ inline void glRectsv(const GLshort* v1, const GLshort* v2)
   SGAL_CHECK_GL();
 }
 
+#ifdef GL_GLEXT_PROTOTYPES
 /*! glRenderbufferStorage wrapper
  * Create and initialize a renderbuffer object's data store.
  * \param[in] target the renderbuffer target.
@@ -2728,8 +2737,9 @@ inline void glRenderbufferStorage(GLenum target, GLenum internalformat,
   ::glRenderbufferStorage(target, internalformat, width, height);
   SGAL_CHECK_GL();
 }
+#endif
 
-/*! GLint wrapper */
+/*! glRenderMode wrapper */
 inline GLint glRenderMode(GLenum mode)
 {
   SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glRenderMode(" << ");"
