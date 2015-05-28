@@ -103,8 +103,8 @@ is in the LD_LIBRARY_PATH.
 * libgl2ps-dev
 * libxxf86vm-dev
 * libgmp-dev
-* v8-dev
-* freetype-dev
+* libv8-dev
+* libfreetype6-dev
 * bison, YACC-compatible parser generator >= 2.7.91
 
 2.5.1.2. Required items on Windows
@@ -408,16 +408,16 @@ feature.
 For example:
 cmake -G"NMake Makefiles" \
   -DCMAKE_VERBOSE_MAKEFILE=ON \
-  -DSGAL_USE_V8=1 \
-  -DSGAL_USE_SCGAL=1 \
-  -DSGAL_USE_NGM=0 \
-  -DSGAL_USE_LTS=0 \
-  -DSGAL_USE_AOS=1 \
-  -DSGAL_USE_VOS=1 \
-  -DSGAL_USE_SGM=1 \
-  -DSGAL_USE_NEF=1 \
-  -DSGAL_USE_CGM=1 \
-  -DSGAL_USE_SSC=1 \
+  -DSGAL_USE_V8:BOOL=ON \
+  -DSGAL_USE_SCGAL:BOOL=ON \
+  -DSGAL_USE_NGM:BOOL=OFF \
+  -DSGAL_USE_LTS:BOOL=OFF \
+  -DSGAL_USE_AOS:BOOL=ON \
+  -DSGAL_USE_VOS:BOOL=ON \
+  -DSGAL_USE_SGM:BOOL=ON \
+  -DSGAL_USE_NEF:BOOL=ON \
+  -DSGAL_USE_CGM:BOOL=ON \
+  -DSGAL_USE_SSC:BOOL=ON \
   ${SGAL_SOURCE_DIR}
 
 2.7. Testing
