@@ -160,7 +160,7 @@ public:
 
   /*! Get the quality.
    */
-  Boolean get_quality() const;
+  Uint get_quality() const;
 
   /*! Set the image writer.
    */
@@ -241,7 +241,7 @@ inline Container* Snapshot::clone() { return new Snapshot(); }
 inline const std::string& Snapshot::get_tag() const { return s_tag; }
 
 //! \brief gets the quality.
-inline Boolean Snapshot::get_quality() const { return m_quality; }
+inline Uint Snapshot::get_quality() const { return m_quality; }
 
 /*! \brief sets the flag that indicates whether to generate the file name as
  * part of a sequence.
