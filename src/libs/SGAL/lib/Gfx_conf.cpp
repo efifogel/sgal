@@ -39,6 +39,23 @@ PFNGLUNMAPBUFFERARBPROC             glUnmapBufferARB             = NULL;
 PFNGLGETBUFFERPARAMETERIVARBPROC    glGetBufferParameterivARB    = NULL;
 PFNGLGETBUFFERPOINTERVARBPROC       glGetBufferPointervARB       = NULL;
 
+// Framebuffer object
+PFNGLGENFRAMEBUFFERSPROC            glGenFramebuffers            = NULL;
+PFNGLDELETEFRAMEBUFFERSPROC         glDeleteFramebuffers         = NULL;
+PFNGLBINDFRAMEBUFFERPROC            glBindFramebuffer            = NULL;
+PFNGLCHECKFRAMEBUFFERSTATUSPROC     glCheckFramebufferStatus     = NULL;
+PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC
+  glGetFramebufferAttachmentParameteriv = NULL;
+PFNGLGENERATEMIPMAPPROC             glGenerateMipmap             = NULL;
+PFNGLFRAMEBUFFERTEXTURE2DPROC       glFramebufferTexture2D       = NULL;
+PFNGLFRAMEBUFFERRENDERBUFFERPROC    glFramebufferRenderbuffer    = NULL;
+PFNGLGENRENDERBUFFERSPROC           glGenRenderbuffers           = NULL;
+PFNGLDELETERENDERBUFFERSPROC        glDeleteRenderbuffers        = NULL;
+PFNGLBINDRENDERBUFFERPROC           glBindRenderbuffer           = NULL;
+PFNGLRENDERBUFFERSTORAGEPROC        glRenderbufferStorage        = NULL;
+PFNGLGETRENDERBUFFERPARAMETERIVPROC glGetRenderbufferParameteriv = NULL;
+PFNGLISRENDERBUFFERPROC             glIsRenderbuffer             = NULL;
+
 PROC                                wglGetExtString              = NULL;
 PFNWGLCHOOSEPIXELFORMATARBPROC      wglChoosePixelFormatARB      = NULL;
 PFNWGLGETPIXELFORMATATTRIBIVARBPROC wglGetPixelFormatAttribivARB = NULL;
@@ -115,10 +132,9 @@ Gfx_conf::~Gfx_conf() {}
 void Gfx_conf::init()
 {
   int i;
-
-  const Uchar* vendor = glGetString(GL_VENDOR);
+  const GLubyte* vendor = glGetString(GL_VENDOR);
   for (i = 0; i < veNum; ++i) {
-    if (strncmp(s_vendors[i], reinterpret_cast<const char *>(vendor),
+    if (strncmp(s_vendors[i], reinterpret_cast<const char*>(vendor),
                 strlen(s_vendors[i])) == 0)
       break;
   }
@@ -177,6 +193,7 @@ void Gfx_conf::init()
     is_extension_supported(extensions, "GL_ARB_seamless_cube_map");
 
 #if defined(_WIN32)
+  // get pointers to GL functions
   glBindBufferARB =
     (PFNGLBINDBUFFERARBPROC)wglGetProcAddress("glBindBufferARB");
   glDeleteBuffersARB =
@@ -199,6 +216,40 @@ void Gfx_conf::init()
     (PFNGLGETBUFFERPARAMETERIVARBPROC)wglGetProcAddress("glGetBufferParameterivARB");
   glGetBufferPointervARB =
     (PFNGLGETBUFFERPOINTERVARBPROC)wglGetProcAddress("glGetBufferPointervARB");
+
+  // Framebuffer objects
+  glGenFramebuffers =
+    (PFNGLGENFRAMEBUFFERSPROC)wglGetProcAddress("glGenFramebuffers");
+  glDeleteFramebuffers =
+    (PFNGLDELETEFRAMEBUFFERSPROC)wglGetProcAddress("glDeleteFramebuffers");
+  glBindFramebuffer =
+    (PFNGLBINDFRAMEBUFFERPROC)wglGetProcAddress("glBindFramebuffer");
+  glCheckFramebufferStatus =
+    (PFNGLCHECKFRAMEBUFFERSTATUSPROC)
+    wglGetProcAddress("glCheckFramebufferStatus");
+  glGetFramebufferAttachmentParameteriv =
+    (PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC)
+    wglGetProcAddress("glGetFramebufferAttachmentParameteriv");
+  glGenerateMipmap =
+    (PFNGLGENERATEMIPMAPPROC)wglGetProcAddress("glGenerateMipmap");
+  glFramebufferTexture2D =
+    (PFNGLFRAMEBUFFERTEXTURE2DPROC)wglGetProcAddress("glFramebufferTexture2D");
+  glFramebufferRenderbuffer =
+    (PFNGLFRAMEBUFFERRENDERBUFFERPROC)
+    wglGetProcAddress("glFramebufferRenderbuffer");
+  glGenRenderbuffers =
+    (PFNGLGENRENDERBUFFERSPROC)wglGetProcAddress("glGenRenderbuffers");
+  glDeleteRenderbuffers =
+    (PFNGLDELETERENDERBUFFERSPROC)wglGetProcAddress("glDeleteRenderbuffers");
+  glBindRenderbuffer =
+    (PFNGLBINDRENDERBUFFERPROC)wglGetProcAddress("glBindRenderbuffer");
+  glRenderbufferStorage =
+    (PFNGLRENDERBUFFERSTORAGEPROC)wglGetProcAddress("glRenderbufferStorage");
+  glGetRenderbufferParameteriv =
+    (PFNGLGETRENDERBUFFERPARAMETERIVPROC)
+    wglGetProcAddress("glGetRenderbufferParameteriv");
+  glIsRenderbuffer =
+    (PFNGLISRENDERBUFFERPROC)wglGetProcAddress("glIsRenderbuffer");
 
   // Try To Use wglGetExtensionStringARB On Current DC, If Possible
   PROC wglGetExtString = wglGetProcAddress("wglGetExtensionsStringARB");

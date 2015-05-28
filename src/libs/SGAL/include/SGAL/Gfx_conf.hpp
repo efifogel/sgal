@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
-// $Revision: 7205 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_GFX_CONF_HPP
@@ -41,26 +38,37 @@
 
 #ifndef GL_GLEXT_PROTOTYPES
 
+#ifdef __cplusplus
+extern "C" {  // only need to export C interface if
+              // used by C++ source code
+#endif
+
 /* ARB_multitexture command function pointers */
-extern PFNGLMULTITEXCOORD2IARBPROC glMultiTexCoord2iARB;
-extern PFNGLMULTITEXCOORD3FARBPROC glMultiTexCoord3fARB;
-extern PFNGLMULTITEXCOORD3FVARBPROC glMultiTexCoord3fvARB;
-extern PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
+SGAL_SGAL_DECL extern PFNGLMULTITEXCOORD2IARBPROC glMultiTexCoord2iARB;
+SGAL_SGAL_DECL extern PFNGLMULTITEXCOORD3FARBPROC glMultiTexCoord3fARB;
+SGAL_SGAL_DECL extern PFNGLMULTITEXCOORD3FVARBPROC glMultiTexCoord3fvARB;
+SGAL_SGAL_DECL extern PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
 
 /* NV_register_combiners command function pointers */
-extern PFNGLCOMBINERPARAMETERFVNVPROC glCombinerParameterfvNV;
-extern PFNGLCOMBINERPARAMETERIVNVPROC glCombinerParameterivNV;
-extern PFNGLCOMBINERPARAMETERFNVPROC glCombinerParameterfNV;
-extern PFNGLCOMBINERPARAMETERINVPROC glCombinerParameteriNV;
-extern PFNGLCOMBINERINPUTNVPROC glCombinerInputNV;
-extern PFNGLCOMBINEROUTPUTNVPROC glCombinerOutputNV;
-extern PFNGLFINALCOMBINERINPUTNVPROC glFinalCombinerInputNV;
-extern PFNGLGETCOMBINERINPUTPARAMETERFVNVPROC glGetCombinerInputParameterfvNV;
-extern PFNGLGETCOMBINERINPUTPARAMETERIVNVPROC glGetCombinerInputParameterivNV;
-extern PFNGLGETCOMBINEROUTPUTPARAMETERFVNVPROC glGetCombinerOutputParameterfvNV;
-extern PFNGLGETCOMBINEROUTPUTPARAMETERIVNVPROC glGetCombinerOutputParameterivNV;
-extern PFNGLGETFINALCOMBINERINPUTPARAMETERFVNVPROC glGetFinalCombinerInputfvNV;
-extern PFNGLGETFINALCOMBINERINPUTPARAMETERIVNVPROC glGetFinalCombinerInputivNV;
+SGAL_SGAL_DECL extern PFNGLCOMBINERPARAMETERFVNVPROC glCombinerParameterfvNV;
+SGAL_SGAL_DECL extern PFNGLCOMBINERPARAMETERIVNVPROC glCombinerParameterivNV;
+SGAL_SGAL_DECL extern PFNGLCOMBINERPARAMETERFNVPROC glCombinerParameterfNV;
+SGAL_SGAL_DECL extern PFNGLCOMBINERPARAMETERINVPROC glCombinerParameteriNV;
+SGAL_SGAL_DECL extern PFNGLCOMBINERINPUTNVPROC glCombinerInputNV;
+SGAL_SGAL_DECL extern PFNGLCOMBINEROUTPUTNVPROC glCombinerOutputNV;
+SGAL_SGAL_DECL extern PFNGLFINALCOMBINERINPUTNVPROC glFinalCombinerInputNV;
+SGAL_SGAL_DECL extern PFNGLGETCOMBINERINPUTPARAMETERFVNVPROC
+  glGetCombinerInputParameterfvNV;
+SGAL_SGAL_DECL extern PFNGLGETCOMBINERINPUTPARAMETERIVNVPROC
+  glGetCombinerInputParameterivNV;
+SGAL_SGAL_DECL extern PFNGLGETCOMBINEROUTPUTPARAMETERFVNVPROC
+  glGetCombinerOutputParameterfvNV;
+SGAL_SGAL_DECL extern PFNGLGETCOMBINEROUTPUTPARAMETERIVNVPROC
+  glGetCombinerOutputParameterivNV;
+SGAL_SGAL_DECL extern PFNGLGETFINALCOMBINERINPUTPARAMETERFVNVPROC
+  glGetFinalCombinerInputfvNV;
+SGAL_SGAL_DECL extern PFNGLGETFINALCOMBINERINPUTPARAMETERIVNVPROC
+  glGetFinalCombinerInputivNV;
 
 /* WGL_EXT_swap_control command function pointers */
 // Not supported in glext.h:
@@ -68,29 +76,54 @@ extern PFNGLGETFINALCOMBINERINPUTPARAMETERIVNVPROC glGetFinalCombinerInputivNV;
 // extern PFNWGLGETSWAPINTERVALEXTPROC wglGetSwapIntervalEXT;
 
 // ARB_vertex_buffer_object
-extern PFNGLBINDBUFFERARBPROC                   glBindBufferARB;
-extern PFNGLDELETEBUFFERSARBPROC                glDeleteBuffersARB;
-extern PFNGLGENBUFFERSARBPROC                   glGenBuffersARB;
-extern PFNGLISBUFFERARBPROC                     glIsBufferARB;
-extern PFNGLBUFFERDATAARBPROC                   glBufferDataARB;
-extern PFNGLBUFFERSUBDATAARBPROC                glBufferSubDataARB;
-extern PFNGLGETBUFFERSUBDATAARBPROC             glGetBufferSubDataARB;
-extern PFNGLMAPBUFFERARBPROC                    glMapBufferARB;
-extern PFNGLUNMAPBUFFERARBPROC                  glUnmapBufferARB;
-extern PFNGLGETBUFFERPARAMETERIVARBPROC         glGetBufferParameterivARB;
-extern PFNGLGETBUFFERPOINTERVARBPROC            glGetBufferPointervARB;
+SGAL_SGAL_DECL extern PFNGLBINDBUFFERARBPROC glBindBufferARB;
+SGAL_SGAL_DECL extern PFNGLDELETEBUFFERSARBPROC glDeleteBuffersARB;
+SGAL_SGAL_DECL extern PFNGLGENBUFFERSARBPROC glGenBuffersARB;
+SGAL_SGAL_DECL extern PFNGLISBUFFERARBPROC glIsBufferARB;
+SGAL_SGAL_DECL extern PFNGLBUFFERDATAARBPROC glBufferDataARB;
+SGAL_SGAL_DECL extern PFNGLBUFFERSUBDATAARBPROC glBufferSubDataARB;
+SGAL_SGAL_DECL extern PFNGLGETBUFFERSUBDATAARBPROC glGetBufferSubDataARB;
+SGAL_SGAL_DECL extern PFNGLMAPBUFFERARBPROC glMapBufferARB;
+SGAL_SGAL_DECL extern PFNGLUNMAPBUFFERARBPROC glUnmapBufferARB;
+SGAL_SGAL_DECL extern PFNGLGETBUFFERPARAMETERIVARBPROC
+  glGetBufferParameterivARB;
+SGAL_SGAL_DECL extern PFNGLGETBUFFERPOINTERVARBPROC glGetBufferPointervARB;
+
+// Framebuffer object
+SGAL_SGAL_DECL extern PFNGLGENFRAMEBUFFERSPROC glGenFramebuffers;
+SGAL_SGAL_DECL extern PFNGLDELETEFRAMEBUFFERSPROC glDeleteFramebuffers;
+SGAL_SGAL_DECL extern PFNGLBINDFRAMEBUFFERPROC glBindFramebuffer;
+SGAL_SGAL_DECL extern PFNGLCHECKFRAMEBUFFERSTATUSPROC glCheckFramebufferStatus;
+SGAL_SGAL_DECL extern PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC
+  glGetFramebufferAttachmentParameteriv;
+SGAL_SGAL_DECL extern PFNGLGENERATEMIPMAPPROC glGenerateMipmap;
+SGAL_SGAL_DECL extern PFNGLFRAMEBUFFERTEXTURE2DPROC glFramebufferTexture2D;
+SGAL_SGAL_DECL extern PFNGLFRAMEBUFFERRENDERBUFFERPROC
+  glFramebufferRenderbuffer;
+SGAL_SGAL_DECL extern PFNGLGENRENDERBUFFERSPROC glGenRenderbuffers;
+SGAL_SGAL_DECL extern PFNGLDELETERENDERBUFFERSPROC glDeleteRenderbuffers;
+SGAL_SGAL_DECL extern PFNGLBINDRENDERBUFFERPROC glBindRenderbuffer;
+SGAL_SGAL_DECL extern PFNGLRENDERBUFFERSTORAGEPROC glRenderbufferStorage;
+SGAL_SGAL_DECL extern PFNGLGETRENDERBUFFERPARAMETERIVPROC
+  glGetRenderbufferParameteriv;
+SGAL_SGAL_DECL extern PFNGLISRENDERBUFFERPROC glIsRenderbuffer;
 
 // wgl extensions:
-extern PROC                                     wglGetExtString;
-extern PFNWGLCHOOSEPIXELFORMATARBPROC           wglChoosePixelFormatARB;
-extern PFNWGLGETPIXELFORMATATTRIBIVARBPROC      wglGetPixelFormatAttribivARB;
+SGAL_SGAL_DECL extern PROC wglGetExtString;
+SGAL_SGAL_DECL extern PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB;
+SGAL_SGAL_DECL extern PFNWGLGETPIXELFORMATATTRIBIVARBPROC
+  wglGetPixelFormatAttribivARB;
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif
 
 SGAL_BEGIN_NAMESPACE
 
-class Gfx_conf {
+class SGAL_SGAL_DECL Gfx_conf {
 public:
-
   // !!!! NOTE !!!!
   // If you add any new entries the one of the follwoing enums, make sure you
   // update the arrays in Gfx_conf.cpp. The enums and the arrays must be
@@ -105,7 +138,7 @@ public:
     veMicrosoft,
     veNum
   };
-  
+
   enum Renderer {
     reUnknown = 0,
     reGEFORCE2,
@@ -139,7 +172,7 @@ public:
    * Then, process the extension list and update the boolean flags that
    * indicate whether specific extensions are supported or not.
    * Finally, For OpenGl on Windows, obtain the address of OpenGL extension
-   * functions for use with the current OpenGL rendering context.  
+   * functions for use with the current OpenGL rendering context.
    */
   void init();
 
@@ -162,7 +195,7 @@ public:
    * \return the renderer name
    */
   const char* get_renderer_name() const;
-  
+
   /*! Is bump_map_ extension supported?
    * \return true iff bump_map_ extension is supported.
    */
@@ -188,12 +221,12 @@ public:
 
   /*! Disable vertex-buffer support */
   void disable_vertex_buffer_object_support();
-  
+
 private:
   /*! The vendor of the graphics-acceleration system */
   Vendor m_vendor;
 
-  /*! The renderer (card) of the graphics-acceleration system */  
+  /*! The renderer (card) of the graphics-acceleration system */
   Renderer m_renderer;
 
   /*! Indicates whether bump mapping is supported */
@@ -210,7 +243,7 @@ private:
 
   /*! Indicates whether seamless cube map is supported. */
   Boolean m_seamless_cube_map_supported;
-  
+
   static Gfx_conf* m_instance;
 
   /*! The vendor names */
@@ -223,7 +256,7 @@ private:
   static const char* s_versions[];
 
   // this is related to singleton distruction
-  //! \todo typedef Singleton_destroyer<Gfx_conf> Gfx_conf_destroyer;    
+  //! \todo typedef Singleton_destroyer<Gfx_conf> Gfx_conf_destroyer;
   //! \todo static Gfx_conf_destroyer m_gfx_conf_destroyer;
 
   //! \todo friend class Singleton_destroyer<Gfx_conf>;
