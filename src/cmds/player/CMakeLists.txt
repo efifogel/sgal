@@ -13,6 +13,8 @@ if (SGAL_USE_SCGAL)
   add_definitions(-DSCGAL_KERNEL=${SCGAL_KERNEL})
   add_definitions(-DCGAL_IDENTIFICATION_XY=${CGAL_IDENTIFICATION_XY})
 endif()
+
+add_definitions(-DSGAL_ALL_DYN_LINK)
 if (SGAL_USE_V8)
   add_definitions(-DSGAL_USE_V8)
 endif()
