@@ -46,11 +46,6 @@
 #endif
 #include <GL/gl.h>
 
-////
-// Until the bug is fixed.
-#include <CGAL/boost/graph/iterator.h>
-////
-
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/errors.hpp"
