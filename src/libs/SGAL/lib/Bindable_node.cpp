@@ -125,9 +125,8 @@ void Bindable_node::bind()
 void Bindable_node::set_is_bound(Boolean is_bound)
 {
   (is_bound) ? enable() : disable();
-
   m_is_bound = is_bound;
-  Field * is_bound_field = get_field(IS_BOUND);
+  Field* is_bound_field = get_field(IS_BOUND);
   if (is_bound_field) is_bound_field->cascade();
 }
 

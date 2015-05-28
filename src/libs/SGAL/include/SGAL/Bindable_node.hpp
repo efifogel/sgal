@@ -48,25 +48,32 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  /*! Construct
+   */
   Bindable_node(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destruct
+   */
   virtual ~Bindable_node();
 
-  /*! Clone */
+  /*! Clone
+   */
   virtual Container* clone();
 
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node.
+   */
   virtual void set_attributes(Element* elem);
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype.
+   */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype.
+   */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype */
+  /*! Obtain the node prototype.
+   */
   virtual Container_proto* get_prototype();
 
   /// \name field handlers
@@ -75,54 +82,61 @@ public:
   Boolean* is_bound_handle(const Field_info*) { return &m_is_bound; }
   //@}
 
-  /*! Obtain the Navigation_info at the top os the stack */
+  /*! Obtain the Navigation_info at the top os the stack.
+   */
   Bindable_node* top_stack();
 
   /*! Erase the Navigation_info */
   void erase_stack(Bindable_node* bindable);
 
-  /*! Pop the Navigation_info at the top of the stack */
+  /*! Pop the Navigation_info at the top of the stack.
+   */
   void pop_stack();
 
-  /*! Pushe a Navigation_info onto the stack */
+  /*! Pushe a Navigation_info onto the stack.
+   */
   void push_stack(Bindable_node* bindable);
 
-  /*! Insert a Navigation_info at the back of the stack */
+  /*! Insert a Navigation_info at the back of the stack.
+   */
   void insert_stack(Bindable_node* bindable);
 
-  /*! Bind this node (used during initialization) */
+  /*! Bind this node (used during initialization).
+   */
   void bind();
 
-  /*! Set the flag that indicates whether this node is bound */
+  /*! Set the flag that indicates whether this node is bound.
+   */
   void set_is_bound(bool is_bound);
 
-  /*! Bind or unbinds this node */
+  /*! Bind or unbinds this node.
+   */
   void set_bind(const Field_info* field_info);
 
 protected:
-  /*! Set this field to bind the node */
+  /*! Set this field to bind the node. */
   bool m_set_bind;
 
-  /*! Indicates whether the node is bound */
+  /*! Indicates whether the node is bound. */
   bool m_is_bound;
 
-  /*! Obtain the tag (type) of the container */
+  /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
-  /*! Obtain the bindable stack */
+  /*! Obtain the bindable stack. */
   virtual Bindable_stack* get_stack();
 
-  /*! Enable the bindable node */
+  /*! Enable the bindable node. */
   virtual void enable() {}
 
-  /*! Disable the bindable node */
+  /*! Disable the bindable node. */
   virtual void disable() {}
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto* s_prototype;
 };
 
@@ -130,14 +144,14 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Bindable_node::clone() { return new Bindable_node(); }
 
-/*! \brief obtains the bindable stack. */
+//! \brief obtains the bindable stack.
 inline Bindable_stack* Bindable_node::get_stack()
 { SGAL_error(); return NULL; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Bindable_node::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

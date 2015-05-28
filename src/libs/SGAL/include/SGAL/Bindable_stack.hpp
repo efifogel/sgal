@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_BINDABLE_STACK_HPP
@@ -42,39 +39,64 @@ private:
   typedef std::vector<Bindable_node*>           Bindable_vector;
   typedef Bindable_vector::iterator             Bindable_iter;
 
-  /*! The bindable stack */
+  /*! The bindable stack. */
   Bindable_vector m_bindable_stack;
 
 public:
-  /*! Bind the top-stack bindable element */
+  /*! Bind the top-stack bindable element.
+   * This is typically used during intialization, to activate a bindable the
+   * first time
+   */
   void bind_top();
 
-  /*! Obtain the bindable at the top os the stack */
-  Bindable_node* top()
-  { return m_bindable_stack.empty() ? NULL : m_bindable_stack.back(); }
+  /*! Obtain the bindable at the top os the stack.
+   */
+  Bindable_node* top();
 
-  /*! Erase the bindable */
+  /*! Erase the bindable. */
   void erase(Bindable_node* bindable);
 
-  /*! Pop the bindable at the top of the stack */
-  void pop() { m_bindable_stack.pop_back(); }
+  /*! Pop the bindable at the top of the stack.
+   */
+  void pop();
 
-  /*! Pushe a bindable onto the stack */
-  void push(Bindable_node* bindable) { m_bindable_stack.push_back(bindable); }
+  /*! Pushe a bindable onto the stack.
+   */
+  void push(Bindable_node* bindable);
 
-  /*! Insert a bindable at the back of the stack */
-  void insert(Bindable_node* bindable)
-  { m_bindable_stack.insert(m_bindable_stack.begin(), bindable); }
+  /*! Insert a bindable at the back of the stack.
+   */
+  void insert(Bindable_node* bindable);
 
-  /*! Apply a unary operation to all bindable nodes in the stack */
-  template <typename Unary_func>
-  void delegate(Unary_func& uf)
-  { uf = std::for_each(m_bindable_stack.begin(), m_bindable_stack.end(), uf); }
+  /*! Apply a unary operation to all bindable nodes in the stack.
+   */
+  template <typename UnaryFunc>
+  void delegate(UnaryFunc& uf);
 };
 
 #if (defined _MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief obtains the bindable at the top os the stack.
+inline Bindable_node* Bindable_stack::top()
+{ return m_bindable_stack.empty() ? nullptr : m_bindable_stack.back(); }
+
+//! \rief pops the bindable at the top of the stack.
+inline void Bindable_stack::pop() { m_bindable_stack.pop_back(); }
+
+//! \brief pushes a bindable onto the stack.
+inline void Bindable_stack::push(Bindable_node* bindable)
+{ m_bindable_stack.push_back(bindable); }
+
+//! \brief inserts a bindable at the back of the stack.
+inline void Bindable_stack::insert(Bindable_node* bindable)
+{ m_bindable_stack.insert(m_bindable_stack.begin(), bindable); }
+
+//! \brief applies a unary operation to all bindable nodes in the stack.
+template <typename UnaryFunc>
+inline void Bindable_stack::delegate(UnaryFunc& uf)
+{ uf = std::for_each(m_bindable_stack.begin(), m_bindable_stack.end(), uf); }
 
 SGAL_END_NAMESPACE
 

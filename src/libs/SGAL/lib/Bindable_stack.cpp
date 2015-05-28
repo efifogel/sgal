@@ -21,19 +21,15 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Bind the top-stack bindable element.
- * This is typically used during intialization, to activate a bindable the
- * first time
- */
+//! \brief binds the top-stack bindable element.
 void Bindable_stack::bind_top()
 {
-  Bindable_node * bindable = top();
+  Bindable_node* bindable = top();
   if (bindable) bindable->bind();
 }
 
-/*! Erase the bindable
- */
-void Bindable_stack::erase(Bindable_node * bindable)
+//! \brief erases the bindable.
+void Bindable_stack::erase(Bindable_node* bindable)
 {
   Bindable_iter ni;
   for (ni = m_bindable_stack.begin(); ni != m_bindable_stack.end(); ++ni)
