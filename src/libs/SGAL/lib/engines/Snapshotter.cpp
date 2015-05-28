@@ -206,7 +206,8 @@ void Snapshotter::set_attributes(Element* elem)
       auto num = sizeof(s_mode_names) / sizeof(char *);
       const auto** found =
         std::find(s_mode_names, &s_mode_names[num], strip_double_quotes(value));
-      auto index = found - s_mode_names;
+      // Do not use auto to prevent signed/unsigned mismatch
+      size_t index = found - s_mode_names;
       if (index < num) set_mode(static_cast<Mode>(index));
       elem->mark_delete(ai);
       continue;
