@@ -60,10 +60,10 @@ Loader::Return_code Loader::load_stl(std::istream& stl_stream, Scene_graph* sg,
     auto pos = title.find("COLOR=");
     if ((pos != std::string::npos) && (pos < 70)) {
       pos += 6;
-      Float red = static_cast<Float>(static_cast<Uchar>(str[pos])) / 255.0;
-      Float green = static_cast<Float>(static_cast<Uchar>(str[pos+1])) / 255.0;
-      Float blue = static_cast<Float>(static_cast<Uchar>(str[pos+2])) / 255.0;
-      Float alpha = static_cast<Float>(static_cast<Uchar>(str[pos+3])) / 255.0;
+      Float red = static_cast<Float>(static_cast<Uchar>(str[pos])) / 255.0f;
+      Float green = static_cast<Float>(static_cast<Uchar>(str[pos+1])) / 255.0f;
+      Float blue = static_cast<Float>(static_cast<Uchar>(str[pos+2])) / 255.0f;
+      Float alpha = static_cast<Float>(static_cast<Uchar>(str[pos+3])) / 255.0f;
       color.set(red, green, blue);
     }
     auto rc = read_stl(stl_stream, sg, color);
