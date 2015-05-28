@@ -11,7 +11,8 @@ file(MAKE_DIRECTORY ${GENERATED_DIR})
 add_custom_command(
 	OUTPUT ${GENERATED_DIR}/scan.cpp
 	COMMAND ${FLEX_EXECUTABLE}
-	ARGS -d -+ --nounistd -o ${GENERATED_DIR}/scan.cpp ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/scan.l)
+	ARGS -d -+ --nounistd -o ${GENERATED_DIR}/scan.cpp ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/scan.l
+	DEPENDS ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/scan.l)
 
 # Create custom command for bison (note the DEPENDS)
 set(SGAL_BISON_OUTPUT ${GENERATED_DIR}/parse.cpp
@@ -24,7 +25,7 @@ add_custom_command(
 	OUTPUT ${SGAL_BISON_OUTPUT}
 	COMMAND ${BISON_EXECUTABLE}
 	ARGS -y ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/parse.y -o ${GENERATED_DIR}/parse.cpp
-	DEPENDS ${GENERATED_DIR}/scan.cpp)
+	DEPENDS ${GENERATED_DIR}/scan.cpp ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/parse.y)
 
 # Add parser.c to the list of sources
 set(SGAL_AUTO_GENERATED_FILES ${SGAL_AUTO_GENERATED_FILES} ${GENERATED_DIR}/parse.cpp)
