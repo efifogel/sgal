@@ -136,22 +136,22 @@ public:
     std::string m_filename;
   };
 
-  /*! Constructor. */
+  /*! Construct. */
   Knot_scene(Knot_option_parser& option_parser);
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Knot_scene(void);
 
-  /*! \brief creates the scene. */
+  /*! Create the scene. */
   virtual void create_scene();
 
-  /*! \brief destroys the scene. */
+  /*! Destroy the scene. */
   virtual void destroy_scene();
 
-  /*! \brief initializes the secene. */
+  /*! Initialize the secene. */
   virtual void init_scene();
 
-  /*! \brief clears the scene. */
+  /*! Clear the scene. */
   virtual void clear_scene();
 
   /*! Initialize a window. Used to initialize a context.
