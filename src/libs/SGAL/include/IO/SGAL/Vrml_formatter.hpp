@@ -38,6 +38,11 @@ class Vector4f;
 class Rotation;
 class Sphere_bound;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! \class Vrml_formatter Vrml_formatter.hpp
  * Obj_formater formats the scene, which is exported to an output stream,
  * in the VRML format.
@@ -584,7 +589,9 @@ private:
   // IO::Mode m_old_in_mode;
 };
 
-// Declarations
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 //! \brief writes a single Boolean field.
 inline void Vrml_formatter::single_boolean(const std::string& rule,

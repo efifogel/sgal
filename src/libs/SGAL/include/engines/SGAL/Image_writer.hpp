@@ -34,6 +34,11 @@ class Field_info;
 class Image;
 class Formatter;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Image_writer : public Node {
 public:
   enum {
@@ -187,6 +192,10 @@ private:
 
   friend class Snapshot;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 //! \brief constructs the prototype.
 inline Image_writer* Image_writer::prototype()

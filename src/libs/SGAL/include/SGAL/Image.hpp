@@ -38,6 +38,11 @@ SGAL_BEGIN_NAMESPACE
 class Element;
 class Container_proto;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Image : public Container {
 public:
   enum {
@@ -340,6 +345,10 @@ private:
   static const Format s_def_format;
   //@}
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 //! \brief constructs the prototype.
 inline Image* Image::prototype() { return new Image(true); }

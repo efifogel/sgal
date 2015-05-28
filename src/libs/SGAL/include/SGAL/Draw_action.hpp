@@ -37,14 +37,19 @@ class Configuration;
 class Node;
 class Matrix4f;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Draw_action : public Action {
 public:
   typedef boost::shared_ptr<Matrix4f>         Shared_matrix4f;
 
-  /*! Constructor */
+  /*! Construct. */
   Draw_action(Configuration* configuration = nullptr);
 
-  /*! Destructor */
+  /*! Destruct. */
   virtual ~Draw_action();
 
   /*! Apply the draw action to a given node. For now this means calling
@@ -101,10 +106,12 @@ public:
 
   Boolean get_apply_camera() const;
 
-  /*! Set the configuration container */
+  /*! Set the configuration container.
+   */
   void set_configuration(Configuration* conf);
 
-  /*! Obtain the configuration container */
+  /*! Obtain the configuration container.
+   */
   Configuration* get_configuration() const;
 
 private:
@@ -132,6 +139,10 @@ private:
   /*! Configuration \todo move to action? */
   Configuration* m_configuration;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 inline void Draw_action::set_current_lod(Uint lod) { m_current_lod = lod; }
 
