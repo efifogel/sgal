@@ -138,6 +138,7 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG)(current_window));
     wm->set_current_window(current_window);
     wm->insert_window(current_window);
+    //wm->m_scene->init_window(current_window, creation->cx, creation->cy);
     break;
 
    case WM_DESTROY:
@@ -328,7 +329,8 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
       passive_motion_event->set_x(LOWORD(lParam));
       passive_motion_event->set_y(current_window->m_height - (HIWORD(lParam)));
       s_event_handler.issue(passive_motion_event);
-    } else {
+    }
+    else {
       motion_event = new Motion_event;
       motion_event->set_window_item(current_window);
       motion_event->set_x(LOWORD(lParam));
@@ -354,22 +356,25 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
   return lRet;
 }
 
-/*! \brief creates a new window */
+//! \brief creates a new window.
 void Windows_window_manager::create_window(Windows_window_item* window_item)
 {
   window_item->create(m_hInstance, m_window_class_name);
   m_current_window = window_item;
+  m_scene->init_window(window_item, window_item->get_width(),
+                       window_item->get_height());
 }
 
-/*! \brief destroys an existing window */
+//! \brief destroys an existing window.
 void Windows_window_manager::destroy_window(Windows_window_item* window_item)
 {
+  m_scene->clear_window(m_current_window);
   window_item->destroy();
   if (window_item == m_current_window) m_current_window = NULL;
   if (this->size_windows() == 0) PostQuitMessage(0);
 }
 
-/*! \brief performs the main event loop */
+//! \brief performs the main event loop.
 void Windows_window_manager::event_loop(Boolean simulating)
 {
   Boolean done = false;
