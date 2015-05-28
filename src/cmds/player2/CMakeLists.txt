@@ -6,7 +6,7 @@ set(PLAYER2_SOURCE_FILES ${PLAYER2_SOURCE_FILES} Player2_scene.cpp)
 set(PLAYER2_SOURCE_FILES ${PLAYER2_SOURCE_FILES} Player2_option_parser.cpp)
 
 #Add defines
-add_definitions(-DBOOST_ALL_DYN_LINK )
+add_definitions(-DSGAL_ALL_DYN_LINK )
 if (SGAL_USE_V8)
   add_definitions(-DSGAL_USE_V8)
 endif()
