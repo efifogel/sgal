@@ -29,11 +29,6 @@
 #endif
 #include <boost/extension/shared_library.hpp>
 
-////
-// Until the bug is fixed.
-#include <CGAL/boost/graph/iterator.h>
-////
-
 #include "SGAL/sgal.hpp"
 
 #if (defined SGAL_USE_GLUT)
