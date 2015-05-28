@@ -37,7 +37,7 @@ class Element;
 class Image;
 
 #if (defined _MSC_VER)
-template struct SGAL_SGAL_DECL std::pair<Shared_image, Boolean>;
+template struct SGAL_SGAL_DECL std::pair<boost::shared_ptr<Image>, Boolean>;
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif
