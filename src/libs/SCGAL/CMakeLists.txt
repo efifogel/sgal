@@ -8,6 +8,10 @@ if (SGAL_USE_VOS)
   set(SCGAL_AOS_BASE 1)
 endif()
 
+if (SGAL_USE_POS)
+  set(SCGAL_AOS_BASE 1)
+endif()
+
 if (SGAL_USE_SGM)
   set(SCGAL_AOS_BASE 1)
 endif()
@@ -29,7 +33,6 @@ endif()
 
 if (SCGAL_AOS_BASE)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_on_sphere_base_geo.cpp)
-  set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_of_polygeodesics_on_sphere_base_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_on_sphere_renderers.cpp)
 endif()
 
@@ -49,7 +52,6 @@ if (SGAL_USE_AOS)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Polygon_set_on_sphere_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_on_sphere_overlay_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_on_sphere_sim_geo.cpp)
-  set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_of_polygeodesics_on_sphere_geo.cpp)
 endif()
 
 if (SGAL_USE_VOS)
@@ -57,6 +59,11 @@ if (SGAL_USE_VOS)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Geodesic_voronoi_on_sphere_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Voronoi_diagram_on_sphere_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Power_diagram_on_sphere_geo.cpp)
+endif()
+
+if (SGAL_USE_POS)
+  set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_of_polygeodesics_on_sphere_base_geo.cpp)
+  set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_of_polygeodesics_on_sphere_geo.cpp)
 endif()
 
 if (SGAL_USE_SSC)

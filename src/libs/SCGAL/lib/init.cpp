@@ -71,6 +71,8 @@
 #if defined(NDEBUG)
 #include "SCGAL/Polygon_set_on_sphere_geo.hpp"
 #endif
+#endif
+#if defined(SGAL_USE_POS)
 #include "SCGAL/Arrangement_of_polygeodesics_on_sphere_geo.hpp"
 #endif
 #if defined(SGAL_USE_VOS)
@@ -137,6 +139,8 @@ SGAL_SCGAL_DECL void scgal_init()
 #if defined(NDEBUG)
   Container_factory::get_instance()->doregister(Polygon_set_on_sphere_geo::prototype());
 #endif
+#endif
+#if defined(SGAL_USE_POS)
   Container_factory::get_instance()->doregister(Arrangement_of_polygeodesics_on_sphere_geo::prototype());
 #endif
 #if defined(SGAL_USE_VOS)
