@@ -42,7 +42,8 @@ if (CMAKE_COMPILER_IS_GNUCXX)
   add_definitions(-std=c++0x)
 endif()
 
-add_definitions(-DBOOST_ALL_DYN_LINK)
+# Use dynamic link for all SGAL libraries
+add_definitions(-DSGAL_ALL_DYN_LINK)
 
 if (SGAL_TRACE)
   add_definitions(-DSGAL_TRACE)
