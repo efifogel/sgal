@@ -59,7 +59,7 @@
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Indexed_face_set.hpp"
-#ifdef USE_V8
+#ifdef SGAL_USE_V8
   #include "SGAL/Script.hpp"
 #endif
 
@@ -362,7 +362,7 @@ statement       : nodeStatement { std::swap($$, $1); }
 
 nodeStatement   : node { scene_graph->add_container($1); std::swap($$, $1); }
                 | K_DEF nodeNameId node
-                { scene_graph->add_container($3, $2); $$ = $3; }
+                { scene_graph->add_container($3, $2); std::swap($$, $3); }
                 | K_USE nodeNameId { $$ = scene_graph->get_container($2); }
                 ;
 
@@ -455,7 +455,7 @@ node            : nodeTypeId "{" nodeBody "}"
                 }
                 | K_SCRIPT "{" scriptBody "}"
                 {
-#ifdef USE_V8
+#ifdef SGAL_USE_V8
                   /* Every Script node has a unique type; thus, the type of the
                    * Script node is not registered in the container factory.
                    * Instead every Script node is explicitly created.
