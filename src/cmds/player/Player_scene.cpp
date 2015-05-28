@@ -89,7 +89,6 @@
 #include "SGAL/Group.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Snapshotter.hpp"
-#include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Camera.hpp"
 
@@ -205,8 +204,10 @@ Player_scene::~Player_scene(void)
 }
 
 //! \brief finds the input file.
-void Player_scene::find_input_file(const std::string& filename)
+void Player_scene::find_input_file(const std::string& const_filename)
 {
+  std::string filename(const_filename);
+
   SGAL_assertion(!filename.empty());
 
 #if (defined _MSC_VER)
@@ -885,35 +886,33 @@ void Player_scene::init_offscreen_rendering()
   auto height = m_offscreen_height;
   m_render_buffers[0] = 0;
   m_render_buffers[1] = 0;
-  SGAL::glGenRenderbuffers(2, m_render_buffers);
+  glGenRenderbuffers(2, m_render_buffers);
 
-  SGAL::glBindRenderbuffer(GL_RENDERBUFFER, m_render_buffers[0]);
+  glBindRenderbuffer(GL_RENDERBUFFER, m_render_buffers[0]);
   auto gl_format =
     SGAL::Image::get_format_internal_format(m_image->get_format());
-  SGAL::glRenderbufferStorage(GL_RENDERBUFFER, gl_format,
-                              width, height);
-  SGAL::glBindRenderbuffer(GL_RENDERBUFFER, 0);
+  glRenderbufferStorage(GL_RENDERBUFFER, gl_format, width, height);
+  glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-  SGAL::glBindRenderbuffer(GL_RENDERBUFFER, m_render_buffers[1]);
-  SGAL::glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT,
-                              width, height);
-  SGAL::glBindRenderbuffer(GL_RENDERBUFFER, 0);
+  glBindRenderbuffer(GL_RENDERBUFFER, m_render_buffers[1]);
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+  glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-  SGAL::glGenFramebuffers(1, &m_frame_buffer);
-  SGAL::glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffer);
-  SGAL::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                                  GL_RENDERBUFFER, m_render_buffers[0]);
-  SGAL::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                                  GL_RENDERBUFFER, m_render_buffers[1]);
+  glGenFramebuffers(1, &m_frame_buffer);
+  glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffer);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                            GL_RENDERBUFFER, m_render_buffers[0]);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                            GL_RENDERBUFFER, m_render_buffers[1]);
 }
 
 //! \brief clears offscreen rendering.
 void Player_scene::clear_offscreen_rendering()
 {
-  SGAL::glDeleteRenderbuffers(2, m_render_buffers);
+  glDeleteRenderbuffers(2, m_render_buffers);
   m_render_buffers[0] = 0;
   m_render_buffers[1] = 0;
-  SGAL::glDeleteFramebuffers(1, &m_frame_buffer);
+  glDeleteFramebuffers(1, &m_frame_buffer);
   m_frame_buffer = 0;
 }
 
@@ -938,12 +937,11 @@ void Player_scene::init_window(SGAL::Window_item* window_item,
     }
     m_context->set_viewport(0, 0, m_win_width, m_win_height);
   }
+  m_scene_graph->set_context(m_context);
 
   m_scene_graph->start_simulation();
   m_scene_graph->bind();
   window_item->show();
-
-  m_scene_graph->set_context(m_context);
   m_scene_graph->init_context();
 }
 
