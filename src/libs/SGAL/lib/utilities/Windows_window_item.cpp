@@ -91,7 +91,7 @@ Boolean Windows_window_item::init_multisample(HINSTANCE& /* hInstance */)
 void Windows_window_item::create_base(HINSTANCE& hInstance, char* wc_name,
                                       HWND hWnd)
 {
-  if (hWnd == NULL) {
+  if (hWnd == nullptr) {
     m_bOwnWnd = true;
 
     // Create a window:
@@ -101,7 +101,8 @@ void Windows_window_item::create_base(HINSTANCE& hInstance, char* wc_name,
     if (m_full_screen) {
       dw_ex_style = WS_EX_TOPMOST;                        // cover everything
       dw_style |= WS_POPUP;
-    } else {
+    }
+    else {
       dw_ex_style |= WS_EX_WINDOWEDGE;
       dw_style |= WS_OVERLAPPEDWINDOW;
       AdjustWindowRectEx(&rect, dw_style, FALSE, dw_ex_style);
@@ -124,7 +125,7 @@ void Windows_window_item::create_base(HINSTANCE& hInstance, char* wc_name,
   }
 
   // Make sure we got a window:
-  if (m_hWnd == NULL) {
+  if (m_hWnd == nullptr) {
     std::cerr << "CreateWindow() failed:  Cannot create a window!"
               << std::endl;
     return;
@@ -132,6 +133,8 @@ void Windows_window_item::create_base(HINSTANCE& hInstance, char* wc_name,
 
   m_hDC = GetDC(m_hWnd);                        // grab the device context
   if (m_hDC == 0) {                             // did we get a device context?
+    std::cerr << "CreateWindow() failed:  Cannot grab a context!"
+              << std::endl;
     if (m_bOwnWnd) DestroyWindow(m_hWnd);       // Destroy The Window
     m_hWnd = 0;                                 // Zero The Window Handle
     return;                                     // Return failure
@@ -242,7 +245,7 @@ void Windows_window_item::create(HINSTANCE& hInstance, char* wc_name,
   int iPixelFormat = GetPixelFormat(m_hDC);
 
   // obtain a detailed description of that pixel format
-  PIXELFORMATDESCRIPTOR  pfd;
+  PIXELFORMATDESCRIPTOR pfd;
   DescribePixelFormat(m_hDC, iPixelFormat,
                       sizeof(PIXELFORMATDESCRIPTOR), &pfd);
 
