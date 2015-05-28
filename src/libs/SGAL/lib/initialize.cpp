@@ -44,7 +44,7 @@ SGAL_SGAL_DECL void initialize(int /* argc */, char* argv[])
 {
   Magick::InitializeMagick(*argv);
 #if defined(SGAL_USE_V8)
-  v8::V8::InitializeICU();
+  v8::V8::Initialize();
 #endif
 
   /*! Container factory initialization.
