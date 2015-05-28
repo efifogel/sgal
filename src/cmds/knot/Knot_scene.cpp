@@ -429,6 +429,8 @@ void Knot_scene::create_scene()
     }
     m_solution_iterator = m_solution.begin();
   }
+
+  m_scene_graph->create_defaults();
 }
 
 //! \brief initializes the nodes required for animations.
@@ -733,16 +735,12 @@ void Knot_scene::init_scene()
   m_window_item->set_title("Knot");
   m_window_manager->create_window(m_window_item);
 
-  m_scene_graph->create_defaults();
-
   if (m_option_parser.export_vrml()) {
     m_scene_graph->write_vrml("knot.out.wrl", std::cout);
   }
 
   if (m_option_parser.solve()) SGAL::Tick_event::doregister(this);
   SGAL::Keyboard_event::doregister(this);
-
-  m_window_item->show();
 }
 
 //! \brief clears the scene.
@@ -785,9 +783,10 @@ void Knot_scene::init_window(SGAL::Window_item* /* window_item */,
   SGAL_assertion(m_context);
   m_context->set_viewport(0, 0, width, height);
   m_scene_graph->set_context(m_context);
-  m_scene_graph->init_context();
   m_scene_graph->start_simulation();
   m_scene_graph->bind();
+  m_window_item->show();
+  m_scene_graph->init_context();
 }
 
 //! \brief clears a window.
