@@ -5,31 +5,26 @@ find_package(OpenGL REQUIRED)
 
 set (GENERATED_DIR "${CMAKE_BINARY_DIR}/src/libs/SGAL/generated")
 
-# Create custom command for flex/lex (note the outputs)
-#add_custom_command(
-#	TARGET SGAL
-#	PRE_BUILD
-#	COMMAND ${CMAKE_COMMAND}
-#	ARGS -E make_directory ${GENERATED_DIR})
-
 file(MAKE_DIRECTORY ${GENERATED_DIR})
 
+# Create custom command for flex
 add_custom_command(
-	TARGET SGAL
-	SOURCE lib/loaders/scan.l
+	OUTPUT ${GENERATED_DIR}/scan.cpp
 	COMMAND ${FLEX_EXECUTABLE}
-	ARGS -d -+ --nounistd -o ${GENERATED_DIR}/scan.cpp ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/scan.l
-	OUTPUTS ${GENERATED_DIR}/scan.cpp)
+	ARGS -d -+ --nounistd -o ${GENERATED_DIR}/scan.cpp ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/scan.l)
 
-# Create custom command for bison/yacc (note the DEPENDS)
+# Create custom command for bison (note the DEPENDS)
+set(SGAL_BISON_OUTPUT ${GENERATED_DIR}/parse.cpp
+		      ${GENERATED_DIR}/parse.hpp
+		      ${GENERATED_DIR}/location.hh
+		      ${GENERATED_DIR}/position.hh
+		      ${GENERATED_DIR}/stack.hh)
+
 add_custom_command(
-	TARGET SGAL
-	SOURCE lib/loaders/parse.y
+	OUTPUT ${SGAL_BISON_OUTPUT}
 	COMMAND ${BISON_EXECUTABLE}
 	ARGS -y ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/parse.y -o ${GENERATED_DIR}/parse.cpp
-    PRE_BUILD
-	DEPENDS ${GENERATED_DIR}/scan.cpp
-	OUTPUTS ${GENERATED_DIR}/parse.cpp)
+	DEPENDS ${GENERATED_DIR}/scan.cpp)
 
 # Add parser.c to the list of sources
 set(SGAL_AUTO_GENERATED_FILES ${SGAL_AUTO_GENERATED_FILES} ${GENERATED_DIR}/parse.cpp)
