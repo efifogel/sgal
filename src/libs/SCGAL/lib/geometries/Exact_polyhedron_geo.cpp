@@ -601,7 +601,29 @@ Float Exact_polyhedron_geo::volume_of_convex_hull()
       volume += CGAL::to_double(tetr.volume());
     }
   }
-  // compute convex hull
+
+  return volume;
+}
+
+//! \brief computes the volume of the polyhedron.
+Exact_polyhedron_geo::Kernel::FT Exact_polyhedron_geo::volume()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  if (is_polyhedron_empty()) return 0;
+
+  Kernel::FT volume = 0;
+  Exact_point_3 origin(CGAL::ORIGIN);
+  std::for_each(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
+                [&](Exact_polyhedron::Facet& facet)
+                {
+                  SGAL_assertion(3 == CGAL::circulator_size(fit->facet_begin()));
+                  auto h = facet.halfedge();
+                  volume += CGAL::volume(origin,
+                                         h->vertex()->point(),
+                                         h->next()->vertex()->point(),
+                                         h->next()->next()->vertex()->point());
+                });
+
   return volume;
 }
 

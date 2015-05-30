@@ -211,9 +211,13 @@ public:
    */
   CGAL::Oriented_side oriented_side(const Exact_point_3& p);
 
-  /*! Computes the volume of the convex hull of the polyhedron.
+  /*! Compute the volume of the convex hull of the polyhedron.
    */
   Float volume_of_convex_hull();
+
+  /*! Compute the volume of the polyhedron.
+   */
+  Kernel::FT volume();
 
   /*! Print statistics.
    */
