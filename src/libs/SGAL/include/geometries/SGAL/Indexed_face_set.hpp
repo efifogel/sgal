@@ -185,6 +185,10 @@ public:
    */
   void calculate_multiple_normals_per_vertex();
 
+  /*! Compute the volume of the polyhedron.
+   */
+  Float volume();
+
 protected:
   /*! Indicates whether the coordinate array has beeen invalidated. */
   Boolean m_dirty_coord_array;

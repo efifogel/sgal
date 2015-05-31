@@ -449,4 +449,26 @@ void Indexed_face_set::write_field(const Field_info* field_info,
   Boundary_set::write_field(field_info, formatter);
 }
 
+//! \brief computes the volume of the polyhedron.
+Float Indexed_face_set::volume()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  if (is_polyhedron_empty()) return 0;
+
+  Float volume = 0;
+  Inexact_point_3 origin(CGAL::ORIGIN);
+  std::for_each(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
+                [&](Polyhedron::Facet& facet)
+                {
+                  SGAL_assertion(3 == CGAL::circulator_size(fit->facet_begin()));
+                  auto h = facet.halfedge();
+                  volume += CGAL::volume(origin,
+                                         h->vertex()->point(),
+                                         h->next()->vertex()->point(),
+                                         h->next()->next()->vertex()->point());
+                });
+
+  return volume;
+}
+
 SGAL_END_NAMESPACE
