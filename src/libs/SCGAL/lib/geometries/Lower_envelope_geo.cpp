@@ -37,7 +37,6 @@
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Context.hpp"
-#include "SGAL/Extrusion.hpp"
 #include "SGAL/Sphere.hpp"
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Material.hpp"
