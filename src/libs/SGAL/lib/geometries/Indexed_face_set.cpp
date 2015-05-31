@@ -61,6 +61,7 @@ REGISTER_TO_FACTORY(Indexed_face_set, "Indexed_face_set");
 //! \brief constructor.
 Indexed_face_set::Indexed_face_set(Boolean proto) :
   Boundary_set(proto),
+  m_dirty_volume(true),
   m_dirty_coord_array(true),
   m_dirty_polyhedron(true)
 {
@@ -106,6 +107,12 @@ void Indexed_face_set::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Boundary_set::get_prototype());
+
+  // volume
+  Float_handle_function volume_func = static_cast<Float_handle_function>
+    (&Indexed_face_set::volume_handle);
+  s_prototype->add_field_info(new SF_float(VOLUME, "volume",
+                                           Field_info::RULE_OUT, volume_func));
 }
 
 //! \brief deletes the container prototype.
@@ -298,6 +305,7 @@ void Indexed_face_set::clean_normals()
 void Indexed_face_set::clean_polyhedron()
 {
   m_dirty_polyhedron = false;
+  m_dirty_volume = true;
 
   auto coords = get_coord_array();
   if (!coords || coords->empty()) return;
@@ -365,6 +373,7 @@ void Indexed_face_set::clean_polyhedron()
 void Indexed_face_set::clear_polyhedron()
 {
   m_dirty_polyhedron = true;
+  m_dirty_volume = true;
   m_polyhedron.clear();
 }
 
@@ -373,6 +382,7 @@ void Indexed_face_set::set_polyhedron(Polyhedron& polyhedron)
 {
   m_polyhedron = polyhedron;
   m_dirty_polyhedron = false;
+  m_dirty_volume = true;
   clear_coord_array();
   clear_coord_indices();
   clear_flat_coord_indices();
@@ -449,26 +459,38 @@ void Indexed_face_set::write_field(const Field_info* field_info,
   Boundary_set::write_field(field_info, formatter);
 }
 
-//! \brief computes the volume of the polyhedron.
-Float Indexed_face_set::volume()
+//! \brief cleans (compute) the volume.
+void Indexed_face_set::clean_volume()
 {
-  if (m_dirty_polyhedron) clean_polyhedron();
-  if (is_polyhedron_empty()) return 0;
+  m_dirty_volume = false;
 
-  Float volume = 0;
+  if (is_polyhedron_empty()) {
+    m_volume = 0;
+    return;
+  }
+
+  m_volume = 0;
   Inexact_point_3 origin(CGAL::ORIGIN);
+  // The capture specification (&) is needed only for capturing 'origin' untill
+  // CGAL::volume() is fixed to accept CGAL::ORIGIN as an argument.
   std::for_each(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
                 [&](Polyhedron::Facet& facet)
                 {
                   SGAL_assertion(3 == CGAL::circulator_size(fit->facet_begin()));
                   auto h = facet.halfedge();
-                  volume += CGAL::volume(origin,
-                                         h->vertex()->point(),
-                                         h->next()->vertex()->point(),
-                                         h->next()->next()->vertex()->point());
+                  m_volume += CGAL::volume(origin,
+                                           h->vertex()->point(),
+                                           h->next()->vertex()->point(),
+                                           h->next()->next()->vertex()->point());
                 });
+}
 
-  return volume;
+//! \brief computes the volume of the polyhedron.
+Float Indexed_face_set::volume()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_dirty_volume) clean_volume();
+  return m_volume;
 }
 
 SGAL_END_NAMESPACE

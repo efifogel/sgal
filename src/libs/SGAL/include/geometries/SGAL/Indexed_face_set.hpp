@@ -51,6 +51,7 @@ class SGAL_SGAL_DECL Indexed_face_set : public Boundary_set {
 public:
   enum {
     FIRST = Boundary_set::LAST - 1,
+    VOLUME,
     LAST
   };
 
@@ -83,6 +84,7 @@ public:
 
   /// \name field handlers
   //@{
+  Float* volume_handle(const Field_info*) { return &m_volume; }
   //@}
 
   /*! Sets the attributes of this node extracted from the VRML or X3D file.
@@ -190,6 +192,13 @@ public:
   Float volume();
 
 protected:
+
+  /*! The volume of the polyhedron. */
+  Float m_volume;
+
+  /*! Indicates whether the volume is dirty and thus must be cleaned. */
+  Boolean m_dirty_volume;
+
   /*! Indicates whether the coordinate array has beeen invalidated. */
   Boolean m_dirty_coord_array;
 
@@ -207,6 +216,10 @@ protected:
   /*! Determine whether the angle between two given vectors is smooth.
    */
   Boolean is_smooth(const Vector3f& normal1, const Vector3f& normal2) const;
+
+  /*! Clean (compute) the volume.
+   */
+  void clean_volume();
 
 private:
   /*! A functor that calculates the normal of a given facet. */
