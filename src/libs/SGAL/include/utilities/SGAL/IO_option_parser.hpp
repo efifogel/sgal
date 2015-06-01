@@ -132,10 +132,10 @@ public:
    */
   const std::string& get_output_file() const;
 
-  /*! Determine whether the output-file option has not been specified.
-   * \return true if the output-file option was left defaulted.
+  /*! Determine whether the output-file option is empty.
+   * \return true if the output-file option is empty.
    */
-  Boolean is_output_file_defaulted() const;
+  Boolean is_output_file_empty() const;
 
   /*! Obtain the output-path name.
    * \return The output-path name.
@@ -246,11 +246,9 @@ inline Boolean IO_option_parser::is_interactive_defaulted() const
 inline const std::string& IO_option_parser::get_output_file() const
 { return m_output_file; }
 
-/*! \brief determines whether the output-file option has not been specified.
- * \return true if the output-file option was left defaulted.
- */
-inline Boolean IO_option_parser::is_output_file_defaulted() const
-{ return get_variable_map()["output-file"].defaulted(); }
+//! \brief determines whether the output-file option is empty.
+inline Boolean IO_option_parser::is_output_file_empty() const
+{ return get_variable_map()["output-file"].empty(); }
 
 //! \brief obtains the output path.
 inline const std::string& IO_option_parser::get_output_path() const
