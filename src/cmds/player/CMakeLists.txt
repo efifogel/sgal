@@ -42,8 +42,15 @@ include_directories(../../libs/SCGAL/include/primitives)
 
 #Add our executable
 if (SGAL_BUILD_PYBINDINGS)
+  find_package(PythonLibs REQUIRED)
+  find_package(Boost REQUIRED COMPONENTS python)
+  include_directories(${PYTHON_INCLUDE_DIRS})
   add_definitions(-DSGAL_BUILD_PYBINDINGS)
   add_library(player SHARED ${PLAYER_SOURCE_FILES})
+  target_link_libraries(player ${Boost_LIBRARIES})
+
+  # don't prepend wrapper library name with lib
+  set_target_properties(player PROPERTIES PREFIX "")
 else()
   add_executable(player ${PLAYER_SOURCE_FILES})
 endif()
