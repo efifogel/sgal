@@ -40,6 +40,7 @@
 #include "SGAL/Field.hpp"
 #include "SGAL/Load_int.hpp"
 #include "SGAL/Draw_action.hpp"
+#include "SGAL/Volume_action.hpp"
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Execution_coordinator.hpp"
 #include "SGAL/Sphere_bound.hpp"
@@ -978,6 +979,15 @@ Scene_graph::Shared_transform Scene_graph::initialize()
   set_navigation_root(transform);
   group->add_child(transform);
   return transform;
+}
+
+//! \brief computes the total volume of all polyhedrons.
+float Scene_graph::volume()
+{
+  auto root = get_root();
+  Volume_action action;
+  root->traverse(&action);
+  return action.volume();
 }
 
 SGAL_END_NAMESPACE

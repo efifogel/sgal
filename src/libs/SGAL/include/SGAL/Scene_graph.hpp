@@ -457,6 +457,10 @@ public:
    */
    void set_isolate(v8::Isolate* isolate);
 
+  /*! Compute the accumulated volume of all polyhedrons.
+   */
+  float volume();
+
 private:
   /*! Binadable stacks */
 

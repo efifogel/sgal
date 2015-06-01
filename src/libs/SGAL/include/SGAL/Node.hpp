@@ -85,8 +85,13 @@ public:
   { return &m_sphere_bound; }
   //@}
 
-  /*! Draw the object. */
+  /*! Draw the object represented by the node.
+   */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
+
+  /*! Traverse the node.
+   */
+  virtual Action::Trav_directive traverse(Action* action);
 
   /*! Cull the node if invisible and prepare for rendering. */
   virtual void cull(Cull_context& cull_context);
@@ -134,17 +139,21 @@ private:
   static Container_proto* s_prototype;
 };
 
-/*! \brief draws the object. */
+//! \brief draws the object.
 inline Action::Trav_directive Node::draw(Draw_action* /* draw_action */)
 { return Action::TRAV_CONT; }
 
-/*! \brief culls the node if invisible and prepare for rendering. */
+//! \brief traverses the object.
+inline Action::Trav_directive Node::traverse(Action* /* action */)
+{ return Action::TRAV_CONT; }
+
+//! \brief culls the node if invisible and prepare for rendering.
 inline void Node::cull(Cull_context& /* cull_context */) {}
 
-/*! \brief draws the node for selection. */
+//! \brief draws the node for selection.
 inline void Node::isect(Isect_action* /* isect_action */) {}
 
-/*! \brief cleans the bounding sphere. */
+//! \brief cleans the bounding sphere.
 inline void Node::clean_sphere_bound() {}
 
 /*! \brief determines whether the bounding sphere of the node must be
