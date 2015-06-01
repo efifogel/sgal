@@ -109,14 +109,16 @@ public:
   typedef SGAL::X11_window_item                 Window_item;
 #endif
 
-  /*! Constructor. */
-  Player_scene(Player_option_parser* option_parser);
-
-  /*! Constructor. */
+  /*! Construct default. */
   Player_scene();
 
-  /*! Initialize. */
-  void init();
+  /*! Construct. */
+  Player_scene(Player_option_parser* option_parser);
+
+  /*! Set the player option parser.
+   * \param[in] option_parser the player option parser.
+   */
+  void set(Player_option_parser* option_parser);
 
   /*! Destructor. */
   virtual ~Player_scene(void);
@@ -241,6 +243,10 @@ public:
    */
   void get_view_mat(SGAL::Matrix4f& mat);
 
+  /*! Obtain the total volume of all polyhedrons.
+   */
+  float volume();
+
 protected:
   /*! The window manager. */
   Window_manager* m_window_manager;
@@ -273,6 +279,9 @@ protected:
   Player_option_parser* m_option_parser;
 
   SGAL::Boolean m_simulate;
+
+  /*! Initialize. */
+  void init();
 
   /*! Create a window.
    */
@@ -389,5 +398,9 @@ inline SGAL::Scene_graph* Player_scene::get_scene_graph() const
 
 //! \brief obtains an isolated instance of the V8 engine.
 inline v8::Isolate* Player_scene::get_isolate() { return m_isolate; }
+
+//! \brief sets the player option parser.
+inline void Player_scene::set(Player_option_parser* option_parser)
+{ m_option_parser = option_parser; }
 
 #endif

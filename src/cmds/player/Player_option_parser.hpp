@@ -50,7 +50,7 @@ public:
    * \param argc (in)
    * \param argv (in)
    */
-  void operator()(int argc, char* argv[]);
+  void parse(int argc, char* argv[]);
 
   /*! Apply the options.
    */

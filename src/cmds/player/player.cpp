@@ -19,6 +19,15 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+
+#if defined(SGAL_BUILD_PYBINDINGS)
+#include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include <boost/python/module.hpp>
+#include <boost/python/def.hpp>
+#include <boost/python/implicit.hpp>
+#endif
+
 #include <boost/function.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem/exception.hpp>
@@ -121,98 +130,6 @@ void load_shared_library(std::string& library_name, std::string& function_name)
   init();
 }
 
-int visualize(Player_scene& scene)
-{
-  // Create a window manager:
-#if (defined SGAL_USE_GLUT)
-  SGAL::Glut_window_manager* wm = SGAL::Glut_window_manager::instance();
-#elif defined(_WIN32)
-  SGAL::Windows_window_manager* wm = SGAL::Windows_window_manager::instance();
-#else
-  SGAL::X11_window_manager* wm = SGAL::X11_window_manager::instance();
-#endif
-
-  scene.set_window_manager(wm);
-  wm->set_scene(&scene);
-
-  try {
-    wm->init();
-    scene.init_scene();
-  }
-  catch(std::exception& e) {
-    std::cerr << e.what() << std::endl;
-    return -1;
-  }
-  wm->event_loop(scene.is_simulating());
-  wm->clear();
-  scene.clear_scene();
-
-  return 0;
-}
-
-int play(char* data, size_t size, int argc, char* argv[],
-         SGAL::Matrix4f& proj_mat, SGAL::Matrix4f& view_mat)
-{
-  SGAL::initialize(argc, argv);
-#if (defined SGAL_USE_SCGAL)
-  SGAL::scgal_init();
-#endif
-
-  // Parse program options:
-  Player_option_parser option_parser;
-  option_parser.init();
-  try {
-    option_parser(argc, argv);
-    option_parser.apply();
-  }
-  catch(Player_option_parser::Generic_option_exception& /* e */) {
-    return 0;
-  }
-  catch(std::exception& e) {
-    std::cerr << e.what() << std::endl;
-    return 1;
-  }
-
-  // Load plugins
-  option_parser.for_each_plugin([](const std::string& plugin)
-                                {
-                                  std::vector<std::string> strs;
-                                  boost::split(strs, plugin,
-                                               boost::is_any_of(","));
-                                  if (strs.size() < 2) {
-                                    std::cerr << "Illegal plugin" << std::endl;
-                                    return;
-                                  }
-                                  load_shared_library(strs[0], strs[1]);
-                                });
-
-  // Create the scene:
-  Player_scene scene(&option_parser);
-  try {
-    scene.create_scene(data, size);
-  }
-  catch (std::exception& e) {
-    std::cerr << e.what() << std::endl;
-    return -1;
-  }
-
-  if (scene.do_have_visual()) {
-    auto rc = visualize(scene);
-    if (rc < 0) {
-      scene.destroy_scene();
-      return rc;
-    }
-  }
-
-  // Destroy the scene:
-  scene.get_proj_mat(proj_mat);
-  scene.get_view_mat(view_mat);
-
-  scene.destroy_scene();
-  return 0;
-}
-
-#if defined(SGAL_BUILD_PYBINDINGS)
 //! Main entry used only for debugging.
 // When building python bindings, the player is build as a shared library
 // without a main() function.
@@ -245,9 +162,109 @@ int main(int argc, char* argv[])
 }
 #endif
 
-#else
+/*! Player type. */
+class Player {
+public:
+  typedef std::vector<std::string>      Arguments;
 
-int main(int argc, char* argv[])
+  /*! Construct. */
+  Player(int argc, char* argv[]);
+
+  /*! Construct. */
+  Player(Arguments args);
+
+  /*! Destruct. */
+  ~Player();
+
+  /*! Operator */
+  int operator()();
+
+  /*! Operator */
+  int operator()(char* data, int size);
+
+  int create();
+  int create(char* data, int size);
+  int visualize();
+  void destroy();
+
+  /*! Obtain the accumulated volume of all polyhedrons in the scene.
+   */
+  float volume();
+
+private:
+  int init(int argc, char* argv[]);
+
+  Player_scene m_scene;
+  Player_option_parser* m_option_parser;
+};
+
+int Player::visualize()
+{
+  // Create a window manager:
+#if (defined SGAL_USE_GLUT)
+  SGAL::Glut_window_manager* wm = SGAL::Glut_window_manager::instance();
+#elif defined(_WIN32)
+  SGAL::Windows_window_manager* wm = SGAL::Windows_window_manager::instance();
+#else
+  SGAL::X11_window_manager* wm = SGAL::X11_window_manager::instance();
+#endif
+
+  m_scene.set_window_manager(wm);
+  wm->set_scene(&m_scene);
+
+  try {
+    wm->init();
+    m_scene.init_scene();
+  }
+  catch(std::exception& e) {
+    std::cerr << e.what() << std::endl;
+    return -1;
+  }
+  wm->event_loop(m_scene.is_simulating());
+  wm->clear();
+  m_scene.clear_scene();
+
+  return 0;
+}
+
+//! \brief constructs
+Player::Player(int argc, char* argv[]) :
+  m_option_parser(nullptr)
+{ init(argc, argv); }
+
+//! \brief constructs.
+Player::Player(Arguments arguments) :
+  m_option_parser(nullptr)
+{
+  int argc = static_cast<int>(arguments.size()) + 1;
+  char** argv = new char*[argc];
+  char const * progname = "player";
+  argv[0] = const_cast<char*>(progname);
+  size_t i(1);
+  std::for_each(arguments.begin(), arguments.end(),
+                [&](const std::string& arg)
+                { argv[i++] = const_cast<char*>(arg.c_str()); });
+
+  init(argc, argv);
+
+  if (argv) {
+    delete [] argv;
+    argv = nullptr;
+  }
+  argc = 0;
+}
+
+//! \brief destructs.
+Player::~Player()
+{
+  if (m_option_parser) {
+    delete m_option_parser;
+    m_option_parser = nullptr;
+  }
+}
+
+//! \brief initializes
+int Player::init(int argc, char* argv[])
 {
   SGAL::initialize(argc, argv);
 #if (defined SGAL_USE_SCGAL)
@@ -255,53 +272,147 @@ int main(int argc, char* argv[])
 #endif
 
   // Parse program options:
-  Player_option_parser option_parser;
-  option_parser.init();
+  m_option_parser = new Player_option_parser;
+  m_option_parser->init();
   try {
-    option_parser(argc, argv);
-    option_parser.apply();
+    m_option_parser->parse(argc, argv);
+    m_option_parser->apply();
   }
   catch(Player_option_parser::Generic_option_exception& /* e */) {
     return 0;
   }
   catch(std::exception& e) {
     std::cerr << e.what() << std::endl;
-    return 1;
+    return -1;
   }
 
   // Load plugins
-  option_parser.for_each_plugin([](const std::string& plugin)
-                                {
-                                  std::vector<std::string> strs;
-                                  boost::split(strs, plugin,
-                                               boost::is_any_of(","));
-                                  if (strs.size() < 2) {
-                                    std::cerr << "Illegal plugin" << std::endl;
-                                    return;
-                                  }
-                                  load_shared_library(strs[0], strs[1]);
-                                });
+  m_option_parser->for_each_plugin([](const std::string& plugin)
+                                   {
+                                     std::vector<std::string> strs;
+                                     boost::split(strs, plugin,
+                                                  boost::is_any_of(","));
+                                     if (strs.size() < 2) {
+                                       std::cerr << "Illegal plugin" << std::endl;
+                                       return;
+                                     }
+                                     load_shared_library(strs[0], strs[1]);
+                                   });
+}
 
-  // Create the scene:
-  Player_scene scene(&option_parser);
+//! \brief creates
+int Player::create()
+{
+  m_scene.set(m_option_parser);
   try {
-    scene.create_scene();
+    m_scene.create_scene();
   }
   catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
     return -1;
   }
+  return 0;
+}
 
-  if (scene.do_have_visual()) {
-    auto rc = visualize(scene);
+//! \brief creates
+int Player::create(char* data, int size)
+{
+  m_scene.set(m_option_parser);
+  try {
+    m_scene.create_scene(data, size);
+  }
+  catch (std::exception& e) {
+    std::cerr << e.what() << std::endl;
+    return -1;
+  }
+  return 0;
+}
+
+//! \brief destroys
+void Player::destroy()
+{
+  m_scene.destroy_scene();
+}
+
+//! operator()
+int Player::operator()()
+{
+  int rc;
+
+  // Create the scene:
+  rc = create();
+  if (rc < 0) return rc;
+
+  // Visualize the scene:
+  if (m_scene.do_have_visual()) {
+    rc = visualize();
     if (rc < 0) {
-      scene.destroy_scene();
+      m_scene.destroy_scene();
       return rc;
     }
   }
 
-  // Destroy the scene:
-  scene.destroy_scene();
+  // Destroy the scene
+  destroy();
+
   return 0;
 }
+
+/*! Operator */
+int Player::operator()(char* data, int size)
+{
+  int rc;
+
+  // Create the scene:
+  rc = create(data, size);
+  if (rc < 0) return rc;
+
+  // Visualize the scene:
+  if (m_scene.do_have_visual()) {
+    rc = visualize();
+    if (rc < 0) {
+      m_scene.destroy_scene();
+      return rc;
+    }
+  }
+
+  // Destroy the scene
+  destroy();
+
+  return 0;
+}
+
+//! \brief obtains the accumulated volume of all polyhedrons in the scene.
+float Player::volume()
+{ return m_scene.volume(); }
+
+#if defined(SGAL_BUILD_PYBINDINGS)
+
+BOOST_PYTHON_MODULE(player)
+{
+  using namespace boost::python;
+
+  class_<Player::Arguments>("Arguments")
+    .def(vector_indexing_suite<Player::Arguments>() );
+
+  class_<Player>("Player", init<Player::Arguments>())
+    .def("__call__", static_cast<int(Player::*)()>(&Player::operator()))
+    .def("__call__", static_cast<int(Player::*)(char*, int)>(&Player::operator()))
+    .def("create", static_cast<int(Player::*)()>(&Player::create))
+    .def("createFromData", static_cast<int(Player::*)(char*, int)>(&Player::create))
+    .def("visualize", &Player::visualize)
+    .def("destroy", &Player::destroy)
+    .def("volume", &Player::volume)
+    ;
+}
+
+#else
+
+//! \brief main entry.
+int main(int argc, char* argv[])
+{
+  Player player(argc, argv);
+  return player();
+}
+
 #endif

@@ -64,10 +64,8 @@ void Player_option_parser::init()
 }
 
 //! \brief parses the options.
-void Player_option_parser::operator()(int argc, char * argv[])
-{
-  SGAL::Option_parser::operator()(argc, argv);
-}
+void Player_option_parser::parse(int argc, char* argv[])
+{ SGAL::Option_parser::operator()(argc, argv); }
 
 //! \brief applies the options.
 void Player_option_parser::apply()
@@ -100,6 +98,6 @@ Player_option_parser::get_sub_index_buffer_size(SGAL::Uint & size) const
 //! \brief obtains the name of the output file.
 const std::string& Player_option_parser::get_output_file() const
 {
-  return (is_output_file_defaulted() && (0 < get_num_input_files())) ?
-    get_input_file(0) : get_output_file();
+  return (is_output_file_empty() && (0 < get_num_input_files())) ?
+    get_input_file(0) : Option_parser::get_output_file();
 }

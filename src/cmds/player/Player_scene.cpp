@@ -127,6 +127,19 @@
 #endif
 #endif
 
+//! \brief constructs default.
+Player_scene::Player_scene() :
+  m_window_manager(nullptr),
+  m_window_item(nullptr),
+  m_win_width(0), m_win_height(0),
+  m_offscreen_width(0), m_offscreen_height(0),
+  m_isolate(nullptr),
+  m_scene_graph(nullptr),
+  m_context(nullptr),
+  m_option_parser(nullptr),
+  m_simulate(false)
+{ init(); }
+
 //! \brief constructor.
 Player_scene::Player_scene(Player_option_parser* option_parser) :
   m_window_manager(nullptr),
@@ -137,16 +150,6 @@ Player_scene::Player_scene(Player_option_parser* option_parser) :
   m_scene_graph(nullptr),
   m_context(nullptr),
   m_option_parser(option_parser),
-  m_simulate(false)
-{ init(); }
-
-//! \brief constructor.
-Player_scene::Player_scene() :
-  m_window_manager(nullptr),
-  m_window_item(nullptr),
-  m_win_width(0), m_win_height(0),
-  m_scene_graph(nullptr),
-  m_context(nullptr),
   m_simulate(false)
 { init(); }
 
@@ -1110,4 +1113,10 @@ void Player_scene::get_view_mat(SGAL::Matrix4f& mat)
   auto* camera = m_scene_graph->get_active_camera();
   const auto& tmp = camera->get_view_mat();
   mat.set(tmp);
+}
+
+//! \brief obtains the accumulated volume of all polyhedrons.
+float Player_scene::volume()
+{
+  return m_scene_graph->volume();
 }
