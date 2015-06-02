@@ -94,10 +94,3 @@ Player_option_parser::get_sub_index_buffer_size(SGAL::Uint & size) const
   size = m_variable_map["sub-index-buffer-size"].as<SGAL::Uint>();
   return true;
 }
-
-//! \brief obtains the name of the output file.
-const std::string& Player_option_parser::get_output_file() const
-{
-  return (is_output_file_empty() && (0 < get_num_input_files())) ?
-    get_input_file(0) : Option_parser::get_output_file();
-}

@@ -75,11 +75,6 @@ public:
    */
   const std::string& get_input_file(size_t id) const;
 
-  /*! Obtain the name of the output file.
-   * \return the name of the output file.
-   */
-  const std::string& get_output_file() const;
-
   /*! Determines whether to display a grid.
    */
   bool get_draw_grid() const { return m_grid; }
