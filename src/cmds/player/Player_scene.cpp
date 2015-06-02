@@ -32,8 +32,7 @@
 #include <fstream>
 #include <string>
 
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/exception.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
 
 #if defined(SGAL_USE_V8)
@@ -334,8 +333,19 @@ void Player_scene::create_scene()
 //! \brief takes a snapshot of the scene.
 void Player_scene::snapshot_scene()
 {
-  const auto& output_filename = m_option_parser->get_output_file();
-  const auto& output_pathname = m_option_parser->get_output_path();
+  fi::path file_path;
+  if (!m_option_parser->is_output_file_empty())
+    file_path = fi::path(m_option_parser->get_output_file());
+  else {
+    SGAL_assertion(0 < get_num_input_files());
+    file_path = fi::path(m_option_parser->get_input_file(0)).filename();
+  }
+  // Remove extension
+  const auto& tmp = file_path.string();
+  auto lastdot = tmp.find_last_of(".");
+  auto file_name = (lastdot == std::string::npos) ? tmp : tmp.substr(0, lastdot);
+
+  const auto& parent_name = m_option_parser->get_output_path();
   boost::shared_ptr<SGAL::Snapshotter> snapshotter(new SGAL::Snapshotter);
   SGAL_assertion(snapshotter);
   m_scene_graph->get_root()->add_child(snapshotter);
@@ -356,12 +366,8 @@ void Player_scene::snapshot_scene()
     m_scene_graph->get_root()->add_child(image_writer);
 
     image_writer->set_image(m_image);
-    if (!output_pathname.empty()) image_writer->set_dir_name(output_pathname);
-    auto lastdot = output_filename.find_last_of(".");
-    auto filename = (lastdot == std::string::npos) ? output_filename :
-      output_filename.substr(0, lastdot);
-    if (!filename.empty()) image_writer->set_file_name(filename);
-
+    if (!parent_name.empty()) image_writer->set_dir_name(parent_name);
+    if (!file_name.empty()) image_writer->set_file_name(file_name);
     auto* dst_field = image_writer->get_destination_field("trigger");
     SGAL_assertion(dst_field);
 
@@ -380,11 +386,8 @@ void Player_scene::snapshot_scene()
     m_scene_graph->get_root()->add_child(image_writer);
 
     image_writer->set_image(m_image);
-    if (!output_pathname.empty()) image_writer->set_dir_name(output_pathname);
-    auto lastdot = output_filename.find_last_of(".");
-    auto filename = (lastdot == std::string::npos) ? output_filename :
-      output_filename.substr(0, lastdot);
-    if (!filename.empty()) image_writer->set_file_name(filename);
+    if (!parent_name.empty()) image_writer->set_dir_name(parent_name);
+    if (!file_name.empty()) image_writer->set_file_name(file_name);
     SGAL::File_format_2d::Id format_id = *it;
     image_writer->set_file_format(format_id);
 
@@ -399,21 +402,26 @@ void Player_scene::snapshot_scene()
 //! \brief exports the scene.
 void Player_scene::export_scene()
 {
-  const auto& output_filename = m_option_parser->get_output_file();
-  const auto& output_pathname = m_option_parser->get_output_path();
-  fi::path output_path(output_pathname);
+  fi::path file_path;
+  if (!m_option_parser->is_output_file_empty())
+    file_path = fi::path(m_option_parser->get_output_file());
+  else {
+    SGAL_assertion(0 < get_num_input_files());
+    file_path = fi::path(m_option_parser->get_input_file(0)).filename();
+  }
+  fi::path parent_path(m_option_parser->get_output_path());
   auto input_format_id = m_scene_graph->get_input_format_id();
 
   if (0 == m_option_parser->formats_3d_size()) {
-    SGAL_assertion(!output_filename.empty());
-    fi::path output_filename_path(output_filename);
-    if (! output_filename_path.has_extension()) {
+    SGAL_assertion(!file_path.empty());
+    if (! file_path.has_extension()) {
       const auto& new_extension =
         SGAL::File_format_3d::get_name(input_format_id);
-      output_filename_path.replace_extension(new_extension);
+      file_path.replace_extension(new_extension);
     }
-    output_path /= output_filename_path;
-    m_scene_graph->write(output_path.string(), input_format_id);
+    if (file_path.is_relative() && !parent_path.empty())
+      file_path = parent_path / file_path;
+    m_scene_graph->write(file_path.string(), input_format_id);
     return;
   }
 
@@ -423,23 +431,10 @@ void Player_scene::export_scene()
   {
     SGAL::File_format_3d::Id format_id = *it;
     const auto& new_extension = SGAL::File_format_3d::get_name(format_id);
-    fi::path output_filename_path(output_filename);
-    output_filename_path.replace_extension(new_extension);
-    output_path /= output_filename_path;
-    m_scene_graph->write(output_path.string(), format_id);
-
-    // #if BOOST_VERSION <= 104800
-    // // Workaround a bug in boost version 1.48 and lower:
-    // fi::path tmp_path(output_filename);
-    // fi::path output_path = tmp_path.parent_path();
-    // output_path /= tmp_path.stem();
-    // std::string final = output_path.string() + "." + new_extension;
-    // m_scene_graph->write(final, format_id);
-    // #else
-    // fi::path output_filename_path(output_filename);
-    // output_filename_path.replace_extension(new_extension);
-    // m_scene_graph->write(output_filename_path.string(), format_id);
-    // #endif
+    file_path.replace_extension(new_extension);
+    if (file_path.is_relative() && !parent_path.empty())
+      file_path = parent_path / file_path;
+    m_scene_graph->write(file_path.string(), format_id);
   }
 }
 
