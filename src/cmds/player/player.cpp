@@ -192,7 +192,7 @@ public:
   float volume();
 
 private:
-  int init(int argc, char* argv[]);
+  void init(int argc, char* argv[]);
 
   Player_scene m_scene;
   Player_option_parser* m_option_parser;
@@ -264,7 +264,7 @@ Player::~Player()
 }
 
 //! \brief initializes
-int Player::init(int argc, char* argv[])
+void Player::init(int argc, char* argv[])
 {
   SGAL::initialize(argc, argv);
 #if (defined SGAL_USE_SCGAL)
@@ -274,17 +274,8 @@ int Player::init(int argc, char* argv[])
   // Parse program options:
   m_option_parser = new Player_option_parser;
   m_option_parser->init();
-  try {
-    m_option_parser->parse(argc, argv);
-    m_option_parser->apply();
-  }
-  catch(Player_option_parser::Generic_option_exception& /* e */) {
-    return 0;
-  }
-  catch(std::exception& e) {
-    std::cerr << e.what() << std::endl;
-    return -1;
-  }
+  m_option_parser->parse(argc, argv);
+  m_option_parser->apply();
 
   // Load plugins
   m_option_parser->for_each_plugin([](const std::string& plugin)
@@ -411,8 +402,18 @@ BOOST_PYTHON_MODULE(player)
 //! \brief main entry.
 int main(int argc, char* argv[])
 {
-  Player player(argc, argv);
-  return player();
+  try {
+    Player player(argc, argv);
+    return player();
+  }
+  catch(Player_option_parser::Generic_option_exception& /* e */) {
+    return 0;
+  }
+  catch(std::exception& e) {
+    std::cerr << e.what() << std::endl;
+    return -1;
+  }
+  return 0;
 }
 
 #endif
