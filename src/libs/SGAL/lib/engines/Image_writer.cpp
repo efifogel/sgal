@@ -221,7 +221,11 @@ void Image_writer::execute()
 {
   if (!m_image) return;
   m_trigger = false;
-  std::string file_name = m_dir_name + "/" + m_file_name;
+
+  boost::filesystem::path file_path(m_file_name);
+  if (file_path.is_relative() && !m_dir_name.empty())
+    file_path = boost::filesystem::path(m_dir_name) / file_path;
+  auto file_name = file_path.string();
   file_name += std::string(".") + File_format_2d::get_name(m_file_format);
 
   auto width = m_image->get_width();
