@@ -984,6 +984,7 @@ Scene_graph::Shared_transform Scene_graph::initialize()
 //! \brief computes the total volume of all polyhedrons.
 float Scene_graph::volume()
 {
+  std::cout << "Scene_graph::volume()" << std::endl;
   auto root = get_root();
   Volume_action action;
   root->traverse(&action);

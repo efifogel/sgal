@@ -29,7 +29,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/Action.hpp"
+#include "SGAL/Contexted_action.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -42,7 +42,7 @@ class Matrix4f;
 #pragma warning( disable: 4251 )
 #endif
 
-class SGAL_SGAL_DECL Draw_action : public Action {
+class SGAL_SGAL_DECL Draw_action : public Contexted_action {
 public:
   typedef boost::shared_ptr<Matrix4f>         Shared_matrix4f;
 
@@ -56,7 +56,7 @@ public:
    * the draw method on the Node.
    * \param node (in) a pointer to the node to draw.
    */
-  virtual Trav_directive apply(Node* node);
+  virtual Trav_directive apply(Shared_node node);
 
   /*! Determines whether a second pass is required. A second pass is typically
    * required to render the transparent objects.

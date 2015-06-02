@@ -132,8 +132,13 @@ public:
 
   // virtual Attribute_list get_attributes();
 
+  /*! Traverse the children of the group.
+   * \param[in] action The traversal action record.
+   */
+  virtual Action::Trav_directive traverse(Action* action);
+
   /*! Draw the node while traversing the scene graph.
-   * \param draw_action The drawing action record.
+   * \param[in] draw_action The drawing action record.
    */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
 

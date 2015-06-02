@@ -35,6 +35,8 @@ class Node;
 #pragma warning( disable: 4251 )
 #endif
 
+/*! \class Volume_action Volume_action.hpp
+ */
 class SGAL_SGAL_DECL Volume_action : public Action {
 public:
   /*! Construct default.
@@ -47,7 +49,7 @@ public:
   /*! Apply the action to a given node.
    * \param[in] node  the node to apply the action on.
    */
-  virtual Trav_directive apply(Node* node);
+  virtual Trav_directive apply(Shared_node node);
 
   /*! Add some volume to the accumulated volume.
    * \param[in] the volume to add.

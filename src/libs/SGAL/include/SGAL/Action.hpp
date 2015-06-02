@@ -19,9 +19,7 @@
 #ifndef SGAL_ACTION_HPP
 #define SGAL_ACTION_HPP
 
-/*! \file
- *
- */
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -29,31 +27,32 @@
 SGAL_BEGIN_NAMESPACE
 
 class Node;
-class Context;
 
+/*! \class Action Action.hpp
+ */
 class SGAL_SGAL_DECL Action {
 public:
   typedef enum {TRAV_CONT = 0, TRAV_PRUNE = 1, TRAV_STOP = 2} Trav_directive;
 
-  /*! Constructor. */
-  Action() : m_context(nullptr) {}
+  typedef boost::shared_ptr<Node>                       Shared_node;
 
-  /*! Destructor. */
-  virtual ~Action() {}
+  /*! Construct. */
+  Action();
 
-  /*! Set the context. */
-  virtual void set_context(Context* context) { m_context = context; }
+  /*! Destruct. */
+  virtual ~Action();
 
-  /*! Obtain the context. */
-  Context* get_context() { return m_context; }
-
-  /*! Apply node. */
-  virtual Trav_directive apply(Node* node) = 0;
-
-protected:
-  /*! The current context. */
-  Context* m_context;
+  /*! Apply the action to a node.
+   * \param[in] node the node to apply the action to.
+   */
+  virtual Trav_directive apply(Shared_node node) = 0;
 };
+
+//! \brief constructs.
+inline Action::Action() {}
+
+//! \brief destructs.
+inline Action::~Action() {}
 
 SGAL_END_NAMESPACE
 

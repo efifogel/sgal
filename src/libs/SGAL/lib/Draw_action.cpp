@@ -28,7 +28,7 @@ SGAL_BEGIN_NAMESPACE
 
 //! \brief constructor.
 Draw_action::Draw_action(Configuration* config) :
-  Action(),
+  Contexted_action(),
   m_pass_no(0),
   m_second_pass_required(false),
   m_current_lod(-1),    // Negative lod force choosing max level.
@@ -42,17 +42,17 @@ Draw_action::Draw_action(Configuration* config) :
 Draw_action::~Draw_action() {}
 
 //! \brief applies the draw action to a given node.
-Action::Trav_directive Draw_action::apply(Node* node)
+Action::Trav_directive Draw_action::apply(Shared_node node)
 {
-  if (node) {
-    // Ignore some nodes:
-    if ((dynamic_cast<Transform*>(node) == 0) &&
-        (dynamic_cast<Light*>(node) == 0))
-    {
-      node->draw(this);
-    }
+  if (!node) return TRAV_CONT;
+
+  // Ignore some nodes:
+  if (!boost::dynamic_pointer_cast<Transform>(node) &&
+      !boost::dynamic_pointer_cast<Light>(node))
+  {
+    node->draw(this);
   }
-  return Action::TRAV_CONT;
+  return TRAV_CONT;
 }
 
 //! \brief determines whether a second pass is required.

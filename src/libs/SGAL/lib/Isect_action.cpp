@@ -20,7 +20,6 @@
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Color_map.hpp"
-#include "SGAL/Group.hpp"
 #include "SGAL/Trace.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -31,13 +30,11 @@ Isect_action::Isect_action() : m_current_id(0) {}
 //! \brief destructs.
 Isect_action::~Isect_action() {}
 
-/*! \brief applies the draw action for selection on a given node.
- * \param node (in) a pointer to the node to draw in selection mode.
- */
-Action::Trav_directive Isect_action::apply(Node* node)
+//! \brief applies the draw action for selection on a given node.
+Action::Trav_directive Isect_action::apply(Shared_node node)
 {
   node->isect(this);
-  return Action::TRAV_CONT;
+  return TRAV_CONT;
 }
 
 /*! \brief sets the context in the action and initializes the colormap used
@@ -45,7 +42,7 @@ Action::Trav_directive Isect_action::apply(Node* node)
  */
 void Isect_action::set_context(Context* context)
 {
-  Action::set_context(context);
+  Contexted_action::set_context(context);
   m_color_map.init(context);
 }
 

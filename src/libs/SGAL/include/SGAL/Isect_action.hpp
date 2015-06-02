@@ -19,7 +19,16 @@
 #ifndef SGAL_ISECT_ACTION_HPP
 #define SGAL_ISECT_ACTION_HPP
 
-/*! \file
+#include "SGAL/basic.hpp"
+#include "SGAL/Contexted_action.hpp"
+#include "SGAL/Color_map.hpp"
+
+SGAL_BEGIN_NAMESPACE
+
+class Context;
+class Node;
+
+/*! \class Isect_action Isect_action.hpp
  * Isect_action is a class used while traversing the scene graph for selection.
  * It holds information about the current group color used to identify the
  * object.
@@ -34,17 +43,7 @@
  * buffer and check the ids of the objects stored in pixels. While rendering,
  * lighting, texturing, blending operations, etc. must be disabled.
  */
-
-#include "SGAL/basic.hpp"
-#include "SGAL/Action.hpp"
-#include "SGAL/Color_map.hpp"
-
-SGAL_BEGIN_NAMESPACE
-
-class Context;
-class Node;
-
-class SGAL_SGAL_DECL Isect_action : public Action {
+class SGAL_SGAL_DECL Isect_action : public Contexted_action {
 public:
   /*! Constructor */
   Isect_action();
@@ -53,7 +52,7 @@ public:
   virtual ~Isect_action();
 
   /*! Apply the draw action on a given node. */
-  virtual Trav_directive apply(Node* node);
+  virtual Trav_directive apply(Shared_node node);
 
   //virtual void begin(Node* /* node */) {};
 

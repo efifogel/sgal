@@ -64,7 +64,16 @@ void Switch::cull(Cull_context& cull_context)
   if (!is_visible())  return;
 
   auto node = boost::dynamic_pointer_cast<Node>(get_choice());
- if (node) node->cull(cull_context);
+  if (node) node->cull(cull_context);
+}
+
+//! \brief traverses the selected child of the switch node.
+Action::Trav_directive Switch::traverse(Action* action)
+{
+  if (!is_visible())  return Action::TRAV_CONT;
+  auto node = boost::dynamic_pointer_cast<Node>(get_choice());
+  if (!node) return Action::TRAV_CONT;
+  return action->apply(node);
 }
 
 //! \brief applies drawing on the choosen node, ignores the rest.
@@ -72,7 +81,7 @@ Action::Trav_directive Switch::draw(Draw_action* draw_action)
 {
   if (!is_visible())  return Action::TRAV_CONT;
   auto node = boost::dynamic_pointer_cast<Node>(get_choice());
-  if (node) draw_action->apply(&*node);
+  if (node) draw_action->apply(node);
   return Action::TRAV_CONT;
 }
 
@@ -99,11 +108,11 @@ void Switch::isect(Isect_action* isect_action)
     m_touch_sensor->set_selection_ids(m_start_selection_id,
                                       m_num_selection_ids);
   }
-  if (m_start_selection_id == 0) isect_action->apply(&*node);
+  if (m_start_selection_id == 0) isect_action->apply(node);
   else {
     Uint save_id = isect_action->get_id();                // save the id
     isect_action->set_id(m_start_selection_id);
-    isect_action->apply(&*node);
+    isect_action->apply(node);
     isect_action->set_id(save_id);                        // restore the id
   }
 }

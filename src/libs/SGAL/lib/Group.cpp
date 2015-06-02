@@ -149,18 +149,34 @@ void Group::remove_child(Shared_container node)
   field_changed(field_info);
 }
 
+//! \brief traverses the children of the group.
+Action::Trav_directive Group::traverse(Action* action)
+{
+  if (!is_visible() || (action == 0)) return Action::TRAV_CONT;
+  for (auto it = m_childs.begin(); it != m_childs.end(); ++it) {
+    auto node = boost::dynamic_pointer_cast<Node>(*it);
+    if (!node) continue;
+    auto traversal_directive = action->apply(node);
+    if (Action::TRAV_STOP == traversal_directive) return traversal_directive;
+  }
+  return Action::TRAV_CONT;
+}
+
 //! \brief draws the children of the group.
 Action::Trav_directive Group::draw(Draw_action* draw_action)
 {
   if (!is_visible() || (draw_action == 0) || (draw_action->get_context() == 0))
     return Action::TRAV_CONT;
   if (has_lights()) draw_action->get_context()->push_lights();
+  Action::Trav_directive traversal_directive = Action::TRAV_CONT;
   for (auto it = m_childs.begin(); it != m_childs.end(); ++it) {
     auto node = boost::dynamic_pointer_cast<Node>(*it);
-    if (node) draw_action->apply(&*(node));
+    if (!node) continue;
+    traversal_directive = draw_action->apply(node);
+    if (Action::TRAV_STOP == traversal_directive) break;
   }
   if (has_lights()) draw_action->get_context()->pop_lights();
-  return Action::TRAV_CONT;
+  return traversal_directive;
 }
 
 /*! \brief culls the node if invisible; otherwise culls the children of the
@@ -211,7 +227,7 @@ void Group::isect(Isect_action* isect_action)
   if (m_start_selection_id == 0) {
     for (auto it = m_childs.begin(); it != m_childs.end(); ++it) {
       auto node = boost::dynamic_pointer_cast<Node>(*it);
-      if (node) isect_action->apply(&*(node));
+      if (node) isect_action->apply(node);
     }
   }
   else {
@@ -221,7 +237,7 @@ void Group::isect(Isect_action* isect_action)
       auto node = boost::dynamic_pointer_cast<Node>(*it);
       if (node) {
         isect_action->set_id(selection_id);
-        isect_action->apply(&*(node));
+        isect_action->apply(node);
       }
       ++selection_id;
     }

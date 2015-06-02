@@ -23,17 +23,19 @@
 
 SGAL_BEGIN_NAMESPACE
 
-//! \brief applies the draw action to a given node.
-Action::Trav_directive Volume_action::apply(Node* node)
+//! \brief applies the volume action to a given node.
+Action::Trav_directive Volume_action::apply(Shared_node node)
 {
   if (!node) return TRAV_CONT;
 
-  // auto* shape = dynamic_cast<Shape*>(node);
-  // if (shape) {
-  //   const auto geometry = shape->get_geometry();
-  //   const auto ifs = dynamic_cast<Indexed_face_set*>(geometry);
-  //   if (ifs) add(ifs->volume());
-  // }
+  auto shape = boost::dynamic_pointer_cast<Shape>(node);
+  if (!shape) return node->traverse(this);
+
+  const auto geometry = shape->get_geometry();
+  const auto ifs = boost::dynamic_pointer_cast<Indexed_face_set>(geometry);
+  if (!ifs) return TRAV_CONT;
+
+  add(ifs->volume());
 
   return TRAV_CONT;
 }

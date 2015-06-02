@@ -92,6 +92,11 @@ public:
 
   // virtual Attribute_list get_attributes();
 
+  /*! Traverse the selected child of the switch node.
+   * \param[in] action The traversal action record.
+   */
+  virtual Action::Trav_directive traverse(Action* action);
+
   /*! Draw the node while traversing the scene graph.
    */
   virtual Action::Trav_directive draw(Draw_action* action);
