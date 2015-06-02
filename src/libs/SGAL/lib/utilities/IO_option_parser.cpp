@@ -28,7 +28,10 @@ SGAL_BEGIN_NAMESPACE
 
 //! \brief constructor.
 IO_option_parser::IO_option_parser() :
-  m_io_opts("SGAL IO options")
+  m_io_opts("SGAL IO options"),
+  m_snapshot(false),
+  m_export(false),
+  m_interactive(true)
 {
   typedef std::vector<std::string> vs;
 
