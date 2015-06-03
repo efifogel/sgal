@@ -232,7 +232,7 @@ private:
   /*! Indicates whether bump mapping is supported */
   Boolean m_bump_map_supported;
 
-  /*! Indicates whether vertex buffer is supported */
+  /*! Indicates whether vertex buffer object is supported */
   Boolean m_vertex_buffer_object_supported;
 
   /*! Indicates whether packed depth-stencil is supported */
@@ -244,7 +244,8 @@ private:
   /*! Indicates whether seamless cube map is supported. */
   Boolean m_seamless_cube_map_supported;
 
-  static Gfx_conf* m_instance;
+  /*! The instance of the Graphics configuration record. */
+  static Gfx_conf* s_instance;
 
   /*! The vendor names */
   static const char* s_vendors[];
