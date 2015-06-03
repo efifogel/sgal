@@ -346,7 +346,7 @@ void Camera::draw()
 //! \brief sets the attributes of the object extracted from the input file.
 void Camera::set_attributes(Element* elem)
 {
-  Container::set_attributes(elem);
+  Bindable_node::set_attributes(elem);
   m_frustum.set_attributes(elem);
 
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
@@ -398,58 +398,8 @@ void Camera::set_attributes(Element* elem)
 void Camera::add_to_scene(Scene_graph* sg)
 {
   set_scene_graph(sg);
-
-  // Push this bindable Navigation_info node onto the respective stack:
   insert_stack(this);
 }
-
-#if 0
-Attribute_list Camera::get_attributes()
-{
-  Attribute_list attribs;
-  Attribue attrib;
-  char buf[32];
-
-  attribs = Container::get_attributes();
-
-  if (m_field_of_view != s_def_field_of_view) {
-    attrib.first = "field_of_view";
-    sprintf(buf, "%g",   m_field_of_view);
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (m_orientation != s_def_orientation) {
-    attrib.first = "orientation";
-    attrib.second = get_orientation().get_text();
-    attribs.push_back(attrib);
-  }
-
-  if (m_position != s_def_position) {
-    attrib.first = "position";
-    attrib.second = get_position().get_text();
-    attribs.push_back(attrib);
-  }
-
-  if (m_description != s_def_description) {
-    attrib.first = "description";
-    attrib.second = m_description;
-    attribs.push_back(attrib);
-  }
-
-  return attribs;
-}
-
-//! \brief
-void Camera::add_to_scene(Scene_graph* sg, XML_entity* parent)
-{
-  Container::add_to_scene(sg, parent);
-  m_camera_pool = sg->get_camera_pool();
-
-  if (m_camera_pool) m_camera_pool->add_camera(this);
-  if (sg) init(sg->get_context());
-}
-#endif
 
 //! \brief obtains the bindable stack.
 Bindable_stack* Camera::get_stack()
@@ -459,7 +409,7 @@ Bindable_stack* Camera::get_stack()
 void Camera::enable()
 {
   utilize();
-  const Context* context = m_scene_graph->get_context();
+  const auto* context = m_scene_graph->get_context();
   init(context);
 }
 
