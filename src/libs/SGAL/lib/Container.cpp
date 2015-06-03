@@ -110,7 +110,10 @@ Field* Container::add_field(const Field_info* field_info)
 
 //! \brief obtains a field info by id.
 Field_info* Container::get_field_info(Uint id)
-{ return (get_prototype()) ? get_prototype()->get_field_info(id) : NULL; }
+{
+  auto* prototype = get_prototype();
+  return (prototype) ? prototype->get_field_info(id) : nullptr;
+}
 
 //! \brief obtains a field info by name.
 Field_info* Container::get_field_info(const std::string& name)
