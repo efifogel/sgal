@@ -37,7 +37,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Background::s_tag = "Background";
-Container_proto* Background::s_prototype(NULL);
+Container_proto* Background::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Background, "Background");
 
@@ -104,7 +104,7 @@ void Background::init_prototype()
 void Background::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the protoype.
