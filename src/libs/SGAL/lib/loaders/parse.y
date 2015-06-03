@@ -262,6 +262,7 @@ Start           : VRML vrmlScene
                   ifs->set_coord_indices_from_range($2.second->begin(),
                                                     $2.second->end());
                   ifs->collapse_identical_coordinates();
+                  ifs->add_to_scene(scene_graph);
                   shape->set_geometry(ifs);
 
                   /* Clear */
