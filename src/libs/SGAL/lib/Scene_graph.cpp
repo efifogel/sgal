@@ -57,7 +57,6 @@
 #include "SGAL/Bindable_stack.hpp"
 #include "SGAL/Camera.hpp"
 #include "SGAL/Simulation.hpp"
-#include "SGAL/Key_sensor.hpp"
 #include "SGAL/Accumulation.hpp"
 #include "SGAL/Multisample.hpp"
 #include "SGAL/Gl_wrapper.hpp"
@@ -67,6 +66,7 @@
 #include "SGAL/Group.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Image.hpp"
+#include "SGAL/Key_sensor.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -79,8 +79,10 @@ unsigned int Scene_graph::s_min_redraw_period = 500;
  * is created and rendered by two different threads
  */
 Scene_graph::Scene_graph(bool syncronize) :
+  m_configuration(nullptr),
   m_camera(nullptr),
   m_navigation_info(nullptr),
+  m_background(nullptr),
   m_context(nullptr),
   m_is_scene_done(!syncronize),
   m_does_have_lights(false),
@@ -88,7 +90,6 @@ Scene_graph::Scene_graph(bool syncronize) :
   m_isect_action(nullptr),
   m_execution_coordinator(nullptr),
   m_default_event_filter(nullptr),
-  m_configuration(nullptr),
   // m_view_sensor(nullptr),
   m_active_key_sensor(nullptr),
   m_fps(0),
@@ -99,8 +100,9 @@ Scene_graph::Scene_graph(bool syncronize) :
   m_is_isect_required(true),
   m_is_camera_in_focus(false),
   m_owned_configuration(false),
-  m_owned_navigation_info(false),
   m_owned_camera(false),
+  m_owned_navigation_info(false),
+  m_owned_background(false),
   m_input_format_id(File_format_3d::NONE)
 {
   m_isect_action = new Isect_action();
@@ -118,7 +120,7 @@ Scene_graph::~Scene_graph()
   delete m_execution_coordinator;
   //! \todo delete m_text_screen;
 
-  Navigation_info* nav = get_active_navigation_info();
+  auto* nav = get_active_navigation_info();
   if (nav) nav->unregister_events();
 
   destroy_defaults();
@@ -157,9 +159,10 @@ void Scene_graph::init_context()
   // Activate seamless cube map if supported.
   // \todo The GL_TEXTURE_CUBE_MAP_SEAMLESS state should be handled by the
   //       context.
-  SGAL_assertion(m_configuration);
+  const auto* configuration = get_configuration();
+  SGAL_assertion(configuration);
   if (Gfx_conf::get_instance()->is_seamless_cube_map_supported() &&
-      m_configuration->is_seamless_cube_map())
+      configuration->is_seamless_cube_map())
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 #if 0
@@ -198,7 +201,7 @@ void Scene_graph::draw(Draw_action* draw_action)
   Boolean accumulation_enabled = true;
   Configuration::Shared_accumulation acc;
   Gfx::Poly_mode poly_mode = Gfx::FILL_PMODE;
-  Configuration* config = draw_action->get_configuration();
+  auto* config = draw_action->get_configuration();
   if (config) {
     poly_mode = config->get_poly_mode();
     m_context->set_poly_mode(poly_mode);
@@ -284,7 +287,7 @@ void Scene_graph::initialize_rendering(Draw_action* draw_action)
   draw_action->reset_pass_no();
   m_context->make_current();
 
-  Camera* camera = get_active_camera();
+  auto* camera = get_active_camera();
   m_context->set_active_camera(camera);
 
 #if 0
@@ -299,7 +302,7 @@ void Scene_graph::initialize_rendering(Draw_action* draw_action)
   set_head_light(draw_action->get_configuration());
 
   if (draw_action->get_clear()) {
-    Background* bg = get_active_background();
+    auto bg = get_active_background();
     if (bg) bg->draw(draw_action);
     else m_context->clear(draw_action->get_clear());
   }
@@ -327,10 +330,10 @@ void Scene_graph::render_scene_graph(Draw_action* draw_action)
   */
 
   //! \todo m_execution_coordinator->inc_frame_counter();
-  Camera* act_camera = get_active_camera();
+  auto* camera = get_active_camera();
   Cull_context cull_context;
   cull_context.set_head_light(get_head_light());
-  cull_context.cull(&*m_root, act_camera);
+  cull_context.cull(&*m_root, camera);
   cull_context.draw(draw_action);
 
 #if 0
@@ -354,7 +357,7 @@ void Scene_graph::isect(Uint x, Uint y)
   m_is_isect_required = false;
   if (!m_is_scene_done || !m_context) return;
 
-  Camera* act_camera = get_active_camera();
+  auto* camera = get_active_camera();
   /*! \todo this is all wrong!
    * Instead of the scene graph calling Camera::draw(Isect_action) , the
    * following public functions entry points should be implemented to apply
@@ -373,7 +376,7 @@ void Scene_graph::isect(Uint x, Uint y)
    *
    * This currently works, because the action is not used in Camera::draw()
    */
-  act_camera->draw(m_isect_action);
+  camera->draw(m_isect_action);
 
   Uint x0 = 0, y0 = 0, width = 0, height = 0;
   m_context->get_viewport(x0, y0, width, height);
@@ -476,7 +479,7 @@ void Scene_graph::add_touch_sensor(Touch_sensor* touch_sensor)
  */
 Uint Scene_graph::allocate_selection_ids(Uint num)
 {
-  Selection_id_interval_iter it = m_free_selection_ids.begin();
+  auto it = m_free_selection_ids.begin();
   for (; it != m_free_selection_ids.end(); ++it) {
     Selection_id_interval& interval = *it;
     if (num > interval.second) continue;
@@ -595,17 +598,6 @@ void Scene_graph::route_navigation_info(Navigation_info* nav,
   }
 }
 
-//! \brief sets the scene configuration container.
-void Scene_graph::set_configuration(Configuration* config)
-{
-  if (m_owned_configuration) {
-    if (m_configuration) delete m_configuration;
-    m_owned_configuration = false;
-  }
-  m_configuration = config;
-  //! \todo m_execution_coordinator->set_min_frame_rate(sconfig->get_min_frame_rate());
-}
-
 //! \brief obtains a container by its instance name.
 Scene_graph::Shared_container
 Scene_graph::get_container(const std::string& name)
@@ -696,14 +688,6 @@ void Scene_graph::destroy_defaults()
     m_owned_configuration = false;
   }
 
-  if (m_owned_navigation_info) {
-    if (m_navigation_info) {
-      delete m_navigation_info;
-      m_navigation_info = nullptr;
-    }
-    m_owned_navigation_info = false;
-  }
-
   if (m_owned_camera) {
     if (m_camera) {
       delete m_camera;
@@ -711,23 +695,31 @@ void Scene_graph::destroy_defaults()
     }
     m_owned_camera = false;
   }
+
+  if (m_owned_navigation_info) {
+    if (m_navigation_info) {
+      delete m_navigation_info;
+      m_navigation_info = nullptr;
+    }
+    m_owned_navigation_info = false;
+  }
 }
 
 //! \brief creates default nodes and route them appropriately.
 void Scene_graph::create_defaults()
 {
   // The default Configuration container:
-  if (!m_configuration) {
-    m_configuration = new Configuration();
+  if (!get_configuration()) {
+    m_configuration = new Configuration;
     SGAL_assertion(m_configuration);
-    m_owned_configuration = true;
+    m_configuration->set_scene_graph(this);
+    m_configuration_stack.insert(m_configuration);
   }
 
   // The default navaigation info:
   if (!get_active_navigation_info()) {
     m_navigation_info = new Navigation_info;
     SGAL_assertion(m_navigation_info);
-    m_owned_navigation_info = true;
     m_navigation_info->set_scene_graph(this);
     m_navigation_info_stack.insert(m_navigation_info);
     route_navigation_info(m_navigation_info, EXAMINE);
@@ -737,30 +729,28 @@ void Scene_graph::create_defaults()
   if (!get_active_camera()) {
     m_camera = new Camera;
     SGAL_assertion(m_camera);
-    m_owned_camera = true;
     m_camera->set_scene_graph(this);
     m_camera_stack.insert(m_camera);
   }
 
   // The default light:
   if (!does_have_lights()) {
-    m_head_light = Shared_point_light(new Point_light);
+    m_head_light.reset(new Point_light);
     SGAL_assertion(m_head_light);
-    set_head_light(m_configuration);
+    set_head_light(get_configuration());
     m_head_light->set_ambient_intensity(1);
     get_root()->add_child(m_head_light);
     set_have_lights(true);
   }
 
   // Zoom distance:
-  Field* sc_mzd_field =
-    m_configuration->get_field(Configuration::MIN_ZOOM_DISTANCE);
+  auto* configuration = get_configuration();
+  auto* sc_mzd_field = configuration->get_field(Configuration::MIN_ZOOM_DISTANCE);
   if (!sc_mzd_field)
-    sc_mzd_field = m_configuration->add_field(Configuration::MIN_ZOOM_DISTANCE);
+    sc_mzd_field = configuration->add_field(Configuration::MIN_ZOOM_DISTANCE);
 
   // Connect the Configuration fields:
-  Field* sg_mzd_field =
-    m_configuration->get_field(Configuration::MIN_ZOOM_DISTANCE);
+  auto* sg_mzd_field = configuration->get_field(Configuration::MIN_ZOOM_DISTANCE);
   SGAL_assertion(sg_mzd_field);
 
   sg_mzd_field->connect(sc_mzd_field);
@@ -781,6 +771,7 @@ void Scene_graph::create_defaults()
 //! \brief binds the bindable nodes and activate the key_sensor.
 void Scene_graph::bind()
 {
+  m_configuration_stack.bind_top();
   m_navigation_info_stack.bind_top();
   m_camera_stack.bind_top();
   m_background_stack.bind_top();
@@ -825,9 +816,10 @@ void Scene_graph::add_text_string(const std::string& /* str */)
 float Scene_graph::compute_speed_factor() const
 {
   SGAL_assertion(m_navigation_root);
-  const Sphere_bound& sb = m_navigation_root->get_sphere_bound();
-  SGAL_assertion(m_configuration);
-  float speed_factor = m_configuration->get_speed_factor();
+  const auto& sb = m_navigation_root->get_sphere_bound();
+  const auto* configuration = get_configuration();
+  SGAL_assertion(configuration);
+  float speed_factor = configuration->get_speed_factor();
   return (sb.get_radius() / speed_factor);
 }
 
@@ -877,21 +869,40 @@ bool Scene_graph::route(Shared_container src_node, const char* src_field_name,
   return true;
 }
 
-//! \brief obtains the active navigation-info node.
-Navigation_info* Scene_graph::get_active_navigation_info()
-{ return static_cast<Navigation_info*>(m_navigation_info_stack.top()); }
+//! \brief obtains the mutable active configuration.
+Configuration* Scene_graph::get_configuration()
+{ return static_cast<Configuration*>(m_configuration_stack.top()); }
 
-//! \brief obtains the active camera.
+//! \brief obtains the const active configuration.
+const Configuration* Scene_graph::get_configuration() const
+{ return static_cast<const Configuration*>(m_configuration_stack.top()); }
+
+//! \brief obtains the mutable active camera.
 Camera* Scene_graph::get_active_camera()
 { return static_cast<Camera*>(m_camera_stack.top()); }
 
-//! \brief obtains the active background.
+//! \brief obtains the const active camera.
+const Camera* Scene_graph::get_active_camera() const
+{ return static_cast<const Camera*>(m_camera_stack.top()); }
+
+//! \brief obtains the mutable active navigation-info node.
+Navigation_info* Scene_graph::get_active_navigation_info()
+{ return static_cast<Navigation_info*>(m_navigation_info_stack.top()); }
+
+//! \brief obtains the const active navigation-info node.
+const Navigation_info* Scene_graph::get_active_navigation_info() const
+{ return static_cast<const Navigation_info*>(m_navigation_info_stack.top()); }
+
+//! \brief obtains the mutable active background.
 Background* Scene_graph::get_active_background()
 { return static_cast<Background*>(m_background_stack.top()); }
 
+//! \brief obtains the const active background.
+const Background* Scene_graph::get_active_background() const
+{ return static_cast<const Background*>(m_background_stack.top()); }
+
 //! \brief exports the scene to a file in a given format.
-void Scene_graph::write(const std::string& filename,
-                        File_format_3d::Id format_id)
+void Scene_graph::write(const std::string& filename, File_format_3d::Id format_id)
 {
   if (filename.empty()) write(filename, std::cout, format_id);
   else {

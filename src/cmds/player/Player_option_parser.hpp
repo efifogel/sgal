@@ -37,10 +37,10 @@ class Player_option_parser : public SGAL::Option_parser,
                              public SGAL::Window_option_parser
 {
 public:
-  /*! Constructor. */
+  /*! Construct. */
   Player_option_parser();
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Player_option_parser() {}
 
   /*! Initialize. */
@@ -56,13 +56,16 @@ public:
    */
   void apply();
 
-  /*! Configure the window manager and the scene graph.
-   * \param window_manage The window manager.
-   * \param scene_graph The scene graph.
+  /*! Configure the scene graph.
+   * \param[in] scene_graph The scene graph.
    */
-  template <typename Window_manager>
-  void configure(Window_manager* window_manage,
-                 SGAL::Scene_graph* scene_graph);
+  void configure_scene_graph(SGAL::Scene_graph* scene_graph);
+
+  /*! Configure the window manager
+   * \param[in] window_manage The window manager.
+   */
+  template <typename WindowManager>
+  void configure_window_manager(WindowManager* window_manage);
 
   /*! Obtain the number of names of input files.
    * \return the number of names of input files.
@@ -118,13 +121,15 @@ protected:
   SGAL::Uint m_sub_index_buffer_size;
 };
 
+//! \brief configures the scene graph.
+inline void
+Player_option_parser::configure_scene_graph(SGAL::Scene_graph* scene_graph)
+{ Option_parser::configure(scene_graph); }
+
 //! \brief configures the window manager.
-template <typename Window_manager>
-void Player_option_parser::configure(Window_manager* window_manager,
-                                     SGAL::Scene_graph* scene_graph)
-{
-  Window_option_parser::configure(m_variable_map, window_manager);
-  Option_parser::configure(scene_graph);
-}
+template <typename WindowManager>
+void
+Player_option_parser::configure_window_manager(WindowManager* window_manager)
+{ Window_option_parser::configure(m_variable_map, window_manager); }
 
 #endif

@@ -31,7 +31,6 @@
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Normal_array.hpp"
 #include "SGAL/Tex_coord_array.hpp"
-#include "SGAL/Gfx_conf.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 
@@ -2621,9 +2620,7 @@ void Boundary_set::draw_FAPV_VAYE()
   };
 
 #if defined(GL_ARB_vertex_buffer_object)
-  if ((Gfx_conf::get_instance()->is_vertex_buffer_object_supported()) &&
-      (m_coord_buffer_id != 0))
-  {
+  if (use_vertex_buffer_object() && (m_coord_buffer_id != 0)) {
     if (resolve_fragment_source() == FS_NORMAL) {
       if (m_normal_buffer_id != 0) {
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_normal_buffer_id);
@@ -2691,8 +2688,7 @@ void Boundary_set::draw_FAPV_VAYE()
   glDisableClientState(GL_VERTEX_ARRAY);
 
 #if defined(GL_ARB_vertex_buffer_object)
-  if (Gfx_conf::get_instance()->is_vertex_buffer_object_supported())
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+  if (use_vertex_buffer_object()) glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 #endif
 }
 

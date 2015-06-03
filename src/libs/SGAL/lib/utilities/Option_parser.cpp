@@ -88,7 +88,7 @@ void validate(boost::any& v, const std::vector<std::string>& values,
 #endif
 }
 
-//! \brief constructor.
+//! \brief constructs.
 Option_parser::Option_parser() :
   m_config_opts("SGAL configuration options"),
   m_hidden_opts("SGAL hidden options"),
@@ -194,8 +194,8 @@ void Option_parser::apply()
 //! \brief configures the scene graph.
 void Option_parser::configure(Scene_graph* scene_graph)
 {
-if (!scene_graph) return;
-  SGAL::Configuration* conf = scene_graph->get_configuration();
+  if (!scene_graph) return;
+  auto* conf = scene_graph->get_configuration();
   if (conf) Conf_option_parser::configure(conf);
 }
 

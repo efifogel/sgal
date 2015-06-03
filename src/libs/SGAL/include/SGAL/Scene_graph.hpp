@@ -48,6 +48,7 @@
 
 #include <list>
 #include <vector>
+#include <map>
 
 #include <boost/filesystem/path.hpp>
 #include <boost/shared_ptr.hpp>
@@ -68,6 +69,7 @@ class Isolate;
 
 SGAL_BEGIN_NAMESPACE
 
+class Container;
 class Navigation_info;
 class Geometry;
 class Camera;
@@ -86,13 +88,14 @@ class Stream;
 class Draw_action;
 class Execution_coordinator;
 class Configuration;
-// class View_sensor;
 class Text_screen;
 class Event_filter;
 class Route;
 class Isect_action;
 class Simulation;
 class Snapshotter;
+class Key_sensor;
+// class View_sensor;
 
 #if (defined _MSC_VER)
 #pragma warning( push )
@@ -252,6 +255,9 @@ public:
 
   /*! Bindable node manipulations. */
 
+  /*! Obtain the configuration stack. */
+  Bindable_stack* get_configuration_stack();
+
   /*! Obtain the navigation info binable stack. */
   Bindable_stack* get_navigation_info_stack();
 
@@ -267,17 +273,29 @@ public:
   /*! Set the context. */
   void set_context(Context* context);
 
-  /*! \breif sets the Configuration node. */
-  void set_configuration(Configuration* sconfig);
+  /*! Obtain the mutable active configuration. */
+  Configuration* get_configuration();
 
-  /*! \breif obtains the Configuration node. */
-  Configuration* get_configuration() const;
+  /*! Obtain the const active configuration. */
+  const Configuration* get_configuration() const;
 
-  /*! Obtain the active camera. */
+  /*! Obtain the mutable active camera. */
   Camera* get_active_camera();
 
-  /*! Obtain the active background. */
+  /*! Obtain the const active camera. */
+  const Camera* get_active_camera() const;
+
+  /*! Obtain the mutable active navigation-info node. */
+  Navigation_info* get_active_navigation_info();
+
+  /*! Obtain the const active navigation-info node. */
+  const Navigation_info* get_active_navigation_info() const;
+
+  /*! Obtain the mutable active background. */
   Background* get_active_background();
+
+  /*! Obtain the const active background. */
+  const Background* get_active_background() const;
 
   /*! Obtain the root of the scene graph.
    * \return the root of the scene graph.
@@ -352,9 +370,9 @@ public:
   // Clear all text lines.
   void clear_text_screen();
 
-  void put_text_string(int line,const std::string & str);
+  void put_text_string(int line,const std::string& str);
 
-  void add_text_string(const std::string & str);
+  void add_text_string(const std::string& str);
 
   /*! Obtain the head light. */
   Shared_point_light get_head_light() const { return m_head_light; };
@@ -375,13 +393,13 @@ public:
              Route* route);
 
   /*! Add a directory to the directory-search list */
-  void add_data_dir(const fi::path & dir) { m_data_dirs.push_back(dir); }
+  void add_data_dir(const fi::path& dir) { m_data_dirs.push_back(dir); }
 
   /*! Set the directory-search structure */
-  void set_data_dirs(const Path_list & dirs) { m_data_dirs = dirs; }
+  void set_data_dirs(const Path_list& dirs) { m_data_dirs = dirs; }
 
   /*! Obtain the directory-search structure */
-  const Path_list & get_data_dirs() const { return m_data_dirs; }
+  const Path_list& get_data_dirs() const { return m_data_dirs; }
 
   /*! Find containers of a particular type and inserts them into a given
    * container
@@ -473,6 +491,9 @@ private:
   /*! The fog stack */
   Bindable_stack m_fog_stack;
 
+ /*! The configuration stack */
+  Bindable_stack m_configuration_stack;
+
   /*! The camera stack */
   Bindable_stack m_camera_stack;
 
@@ -485,11 +506,17 @@ private:
   /*! the default light. */
   Shared_point_light m_head_light;
 
+  /*! The default configuration */
+  Configuration* m_configuration;
+
   /*! The default camera */
   Camera* m_camera;
 
   /*! The default navigation info */
   Navigation_info* m_navigation_info;
+
+  /*! The default background */
+  Background* m_background;
 
   /*! A list of objects that are children of the root of the scene */
   Container_vector m_root_objects;
@@ -547,9 +574,6 @@ private:
    */
   Event_filter* m_default_event_filter;
 
-  /*! a pointer to the configuration object. */
-  Configuration* m_configuration;
-
   /*! a pointer to the view sensor object. */
   // View_sensor* m_view_sensor;
 
@@ -592,11 +616,14 @@ private:
   /*! Indicates whether the configuration node is owned. */
   Boolean m_owned_configuration;
 
+  /*! Indicates whether the camera node is owned. */
+  Boolean m_owned_camera;
+
   /*! Indicates whether the navigation info node is owned. */
   Boolean m_owned_navigation_info;
 
-  /*! Indicates whether the camera node is owned. */
-  Boolean m_owned_camera;
+  /*! Indicates whether the background node is owned. */
+  Boolean m_owned_background;
 
   //! The id of the input format.
   File_format_3d::Id m_input_format_id;
@@ -614,9 +641,6 @@ private:
    */
   void render_scene_graph(Draw_action* draw_action);
 
-  /*! Obtain the active navigation-info node. */
-  Navigation_info* get_active_navigation_info();
-
   /*! Copy constructor. */
   Scene_graph(const Scene_graph &) {}
 };
@@ -625,10 +649,6 @@ private:
 #pragma warning( pop )
 #endif
 
-//! \brief obtains the scene configuration container.
-inline Configuration* Scene_graph::get_configuration() const
-{ return m_configuration; }
-
 //! \brief obtains the navigation info bindable stack.
 inline Bindable_stack* Scene_graph::get_navigation_info_stack()
 { return &m_navigation_info_stack; }
@@ -636,6 +656,10 @@ inline Bindable_stack* Scene_graph::get_navigation_info_stack()
 //! \brief obtains the background bindable stack.
 inline Bindable_stack* Scene_graph::get_background_stack()
 { return &m_background_stack; }
+
+//! \brief obtains the configuration bindable stack.
+inline Bindable_stack* Scene_graph::get_configuration_stack()
+{ return &m_configuration_stack; }
 
 //! \brief obtains the camera bindable stack.
 inline Bindable_stack* Scene_graph::get_camera_stack()

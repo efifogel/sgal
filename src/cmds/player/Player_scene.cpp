@@ -134,6 +134,7 @@ Player_scene::Player_scene() :
   m_offscreen_width(0), m_offscreen_height(0),
   m_isolate(nullptr),
   m_scene_graph(nullptr),
+  m_configuration(nullptr),
   m_context(nullptr),
   m_option_parser(nullptr),
   m_simulate(false)
@@ -250,6 +251,11 @@ void Player_scene::create_scene(char* data, int size)
   m_scene_graph = new SGAL::Scene_graph;
   SGAL_assertion(m_scene_graph);
 
+  m_configuration = new SGAL::Configuration;
+  SGAL_assertion(m_configuration);
+  m_configuration->add_to_scene(m_scene_graph);
+  m_scene_graph->get_configuration_stack()->bind_top();
+
 #if defined(SGAL_USE_V8)
   m_isolate = v8::Isolate::New();
   SGAL_assertion(m_isolate);
@@ -257,6 +263,7 @@ void Player_scene::create_scene(char* data, int size)
 #endif
 
   update_data_dirs();
+  m_option_parser->configure_scene_graph(m_scene_graph);
 
   // Load the buffer.
   if (!data || (size == 0)) {
@@ -295,6 +302,11 @@ void Player_scene::create_scene()
   m_scene_graph = new SGAL::Scene_graph;
   SGAL_assertion(m_scene_graph);
 
+  m_configuration = new SGAL::Configuration();
+  SGAL_assertion(m_configuration);
+  m_configuration->add_to_scene(m_scene_graph);
+  m_scene_graph->get_configuration_stack()->bind_top();
+
 #if defined(SGAL_USE_V8)
   m_isolate = v8::Isolate::New();
   SGAL_assertion(m_isolate);
@@ -302,6 +314,7 @@ void Player_scene::create_scene()
 #endif
 
   update_data_dirs();
+  m_option_parser->configure_scene_graph(m_scene_graph);
 
   // Find the input file full name.
   if (0 == m_option_parser->get_num_input_files()) {
@@ -442,6 +455,12 @@ void Player_scene::export_scene()
 void Player_scene::destroy_scene()
 {
   m_scene_graph->destroy_defaults();
+
+  if (m_configuration) {
+    delete m_configuration;
+    m_configuration = nullptr;
+  }
+
   if (m_scene_graph) {
     delete m_scene_graph;
     m_scene_graph = nullptr;
@@ -584,33 +603,14 @@ void Player_scene::create_window()
 
 //! \brief creates default nodes in the scene graph.
 void Player_scene::create_defaults()
-{
-  m_scene_graph->create_defaults();     // create missing nodes.
-
-  auto* conf = m_scene_graph->get_configuration();
-  SGAL_assertion(conf);
-
-  auto acc = conf->get_accumulation();
-  if (!acc && m_option_parser->get_accumulate()) {
-    auto* tmp = new SGAL::Accumulation;
-    acc.reset(tmp);
-    conf->set_accumulation(acc);
-  }
-
-  //! \todo Introduce a command line option to use multisamples
-  // auto ms = conf->get_multisample();
-  // if (!ms && m_option_parser->get_multisample()) {
-  //   ...;
-  // }
-}
+{ m_scene_graph->create_defaults(); }
 
 //! \brief initializes the secene.
 // Creates all windows; in this case only one.
 void Player_scene::init_scene()
 {
-  // Configure the window manager and the scene graph.
-  m_option_parser->configure(m_window_manager, m_scene_graph);
-  create_window();                      // create a window
+  m_option_parser->configure_window_manager(m_window_manager);
+  create_window();
   indulge_user();
 }
 

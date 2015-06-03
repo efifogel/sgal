@@ -598,6 +598,9 @@ protected:
   /*! The geometry drawing-mode {direct, display list, or vertex array */
   Configuration::Geometry_drawing_mode m_drawing_mode;
 
+  /*! Indicates whether vertex buffer object is supported */
+  Boolean m_use_vertex_buffer_object;
+
   /*! data structures to hold the low level geometry. */
   Uint m_tri_strip_lengths_size;
 
@@ -704,9 +707,13 @@ protected:
   /*! Dispatch the appropriate drawing routine. */
   void draw_dispatch(Draw_action* action);
 
-  /*! Determine whether the conditions allow for the use of openGl vertex array.
+  /*! Determine whether it is possible using openGl vertex array.
    */
   Boolean use_vertex_array() const;
+
+  /*! Determine whether it is possible using openGl vertex buffer object.
+   */
+  Boolean use_vertex_buffer_object() const;
 
   /*! Compute the normalized normal to a triangle.
    * \param j (in) The starting index of the triangular facet in the coord

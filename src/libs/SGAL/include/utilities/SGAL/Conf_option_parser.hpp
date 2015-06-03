@@ -43,8 +43,8 @@ class Configuration;
 
 class SGAL_SGAL_DECL Conf_option_parser {
 public:
-  typedef std::vector<std::string>      Plugin;
-  typedef Plugin::const_iterator        Plugin_const_iterator;
+  typedef std::vector<std::string>              Plugin;
+  typedef Plugin::const_iterator                Plugin_const_iterator;
 
   /*! Constructor. */
   Conf_option_parser();

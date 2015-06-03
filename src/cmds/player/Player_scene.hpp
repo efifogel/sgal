@@ -91,22 +91,22 @@ class CPlayerControlCtrl;
 
 class Player_scene : public SGAL::Scene {
 public:
-  typedef boost::shared_ptr<SGAL::Image>        Shared_image;
+  typedef boost::shared_ptr<SGAL::Image>          Shared_image;
 
 #if (defined SGAL_USE_GLUT)
-  typedef SGAL::Glut_window_manager             Window_manager;
-  typedef SGAL::Glut_window_item                Window_item;
+  typedef SGAL::Glut_window_manager               Window_manager;
+  typedef SGAL::Glut_window_item                  Window_item;
 #elif defined(_WIN32)
 #if defined(PLAYER_CONTROL)
-  typedef CPlayerControlCtrl                    Window_manager;
-  typedef SGAL::Windows_window_item             Window_item;
+  typedef CPlayerControlCtrl                      Window_manager;
+  typedef SGAL::Windows_window_item               Window_item;
 #else
-  typedef SGAL::Windows_window_manager          Window_manager;
-  typedef SGAL::Windows_window_item             Window_item;
+  typedef SGAL::Windows_window_manager            Window_manager;
+  typedef SGAL::Windows_window_item               Window_item;
 #endif
 #else
-  typedef SGAL::X11_window_manager              Window_manager;
-  typedef SGAL::X11_window_item                 Window_item;
+  typedef SGAL::X11_window_manager                Window_manager;
+  typedef SGAL::X11_window_item                   Window_item;
 #endif
 
   /*! Construct default. */
@@ -269,8 +269,11 @@ protected:
   /*! An isolated instance of the V8 engine. */
   v8::Isolate* m_isolate;
 
-  /*! Work space scene graph. */
+  /*! The scene graph. */
   SGAL::Scene_graph* m_scene_graph;
+
+  /*! The configuration. */
+  SGAL::Configuration* m_configuration;
 
   /*! The context. */
   SGAL::Context* m_context;

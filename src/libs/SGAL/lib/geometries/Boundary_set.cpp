@@ -53,6 +53,7 @@
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/GL_error.hpp"
 #include "SGAL/Bounding_box.hpp"
+#include "SGAL/Gfx_conf.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -81,6 +82,8 @@ Boundary_set::Boundary_set(Boolean proto) :
   m_normal_buffer_id(0),
   m_tex_coord_buffer_id(0),
   m_drawing_mode(Configuration::s_def_geometry_drawing_mode),
+  m_use_vertex_buffer_object
+    (Configuration::s_def_use_vertex_buffer_object),
   m_dirty_normal_array(true),
   m_normal_array_cleaned(false),
   m_dirty_tex_coord_array(true),
@@ -1170,9 +1173,7 @@ void Boundary_set::draw_geometry(Draw_action* action)
     break;
 
    case Configuration::GDM_VERTEX_ARRAY:
-    if (use_vertex_array() &&
-        (Gfx_conf::get_instance()->is_vertex_buffer_object_supported()))
-    {
+    if (use_vertex_array()) {
       bool color_normal_condition = (resolve_fragment_source() == FS_COLOR) ?
         ((m_color_attachment == AT_PER_VERTEX) &&
          (m_flat_color_indices.empty() ||
@@ -1464,42 +1465,12 @@ void Boundary_set::set_attributes(Element* elem)
 //! \brief adds the container to a given scene.
 void Boundary_set::add_to_scene(Scene_graph* sg)
 {
-  Configuration* config = sg->get_configuration();
-  if (config) m_drawing_mode = config->get_geometry_drawing_mode();
-}
-
-#if 0
-/*! Obtain a list of atytributes in this object. This method is called only
- * from the Builder side.
- * An Boundary_set is always converted to an ProgIndexedTriSet
- * and therefore any information regarding compressed data is not
- * written out (e.g., coordIndex).
- *
- * \return a list of attributes
- */
-Attribute_list Boundary_set::get_attributes()
-{
-  Attribute_list attribs;
-  Attribute attrib;
-  char buf[32];
-  Vector3f col;
-
-  attribs = Geometry::get_attributes();
-
-  if (m_normal_per_vertex != s_def_normal_per_vertex) {
-    attrib.first = "normalPerVertex";
-    attrib.second = get_normal_per_vertex() ? "TRUE" : "FALSE";
-    attribs.push_back(attrib);
+  const auto* config = sg->get_configuration();
+  if (config) {
+    m_drawing_mode = config->get_geometry_drawing_mode();
+    m_use_vertex_buffer_object = config->do_use_vertex_buffer_object();
   }
-  if (m_color_per_vertex != s_def_color_per_vertex) {
-    attrib.first = "colorPerVertex";
-    attrib.second = get_color_per_vertex() ? "TRUE" : "FALSE";
-    attribs.push_back(attrib);
-  }
-  return attribs;
 }
-
-#endif
 
 //! \brief initializes the container prototype.
 void Boundary_set::init_prototype()
@@ -2252,6 +2223,13 @@ Vector3f& Boundary_set::get_center()
 {
   if (m_dirty_center) clean_center();
   return m_center;
+}
+
+//! \brief determines whether it is possible using openGl vertex buffer object.
+Boolean Boundary_set::use_vertex_buffer_object() const
+{
+  return (m_use_vertex_buffer_object &&
+          Gfx_conf::get_instance()->is_vertex_buffer_object_supported());
 }
 
 SGAL_END_NAMESPACE

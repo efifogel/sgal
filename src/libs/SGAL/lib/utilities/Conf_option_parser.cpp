@@ -26,11 +26,10 @@
 #include "SGAL/Conf_option_parser.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Accumulation.hpp"
-#include "SGAL/Gfx_conf.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-//! \brief constructor.
+//! \brief constructs.
 Conf_option_parser::Conf_option_parser() :
   m_conf_opts("SGAL configuration options"),
   m_accumulate(false),
@@ -67,7 +66,7 @@ Conf_option_parser::Conf_option_parser() :
     ;
 }
 
-//! \brief destructor.
+//! \brief destructs.
 Conf_option_parser::~Conf_option_parser() {}
 
 //! \brief applies the options.
@@ -78,31 +77,31 @@ void Conf_option_parser::configure(Configuration* conf)
 {
   if (!conf) return;
 
-  const po::variables_map& var_map = get_variable_map();
+  const auto& var_map = get_variable_map();
 
   if (var_map.count("accumulate")) {
-    Configuration::Shared_accumulation acc = conf->get_accumulation();
-    if (acc) acc->set_enabled(var_map["accumulate"].as<Boolean>());
+    auto acc = conf->get_accumulation();
+    if (!acc) {
+      acc.reset(new Accumulation);
+      SGAL_assertion(acc);
+      conf->set_accumulation(acc);
+    }
+    acc->set_enabled(var_map["accumulate"].as<Boolean>());
   }
 
-  if (var_map.count("map-texture")) {
+  if (var_map.count("map-texture"))
     conf->set_texture_map(var_map["map-texture"].as<Boolean>());
-  }
 
-  if (var_map.count("use-vertex-array")) {
-    conf->set_display_fps(var_map["use-vertex-array"].as<Boolean>());
-  }
+  if (var_map.count("use-vertex-array"))
+    if (!var_map["use-vertex-array"].as<Boolean>())
+      conf->set_geometry_drawing_mode(Configuration::GDM_DIRECT);
 
-  if (var_map.count("use-vertex-buffer-object")) {
-    SGAL::Gfx_conf* gfx_conf = SGAL::Gfx_conf::get_instance();
-    SGAL_assertion(gfx_conf);
-    if (!var_map["use-vertex-buffer-object"].as<Boolean>())
-      gfx_conf->disable_vertex_buffer_object_support();
-  }
+  if (var_map.count("use-vertex-buffer-object"))
+    conf->set_use_vertex_buffer_object
+      (var_map["use-vertex-buffer-object"].as<Boolean>());
 
-  if (var_map.count("fps-display")) {
+  if (var_map.count("fps-display"))
     conf->set_display_fps(var_map["fps-display"].as<Boolean>());
-  }
 }
 
 SGAL_END_NAMESPACE
