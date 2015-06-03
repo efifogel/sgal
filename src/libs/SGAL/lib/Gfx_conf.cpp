@@ -64,7 +64,7 @@ PFNWGLGETPIXELFORMATATTRIBIVARBPROC wglGetPixelFormatAttribivARB = NULL;
 
 SGAL_BEGIN_NAMESPACE
 
-Gfx_conf* Gfx_conf::m_instance = 0;
+Gfx_conf* Gfx_conf::s_instance(nullptr);
 //! \todo Gfx_conf::Gfx_Conf_destroyer Gfx_conf::m_Gfx_conf_destroyer;
 
 // !!!! NOTE !!!!
@@ -109,11 +109,11 @@ const char* Gfx_conf::s_versions[] = {
 
 Gfx_conf* Gfx_conf::get_instance()
 {
-  if (!m_instance) {
-    m_instance = new Gfx_conf();
+  if (!s_instance) {
+    s_instance = new Gfx_conf();
     //! \todo m_Gfx_confDestroyer.SetSingleton(m_instance);
   }
-  return m_instance;
+  return s_instance;
 }
 
 Gfx_conf::Gfx_conf() :
