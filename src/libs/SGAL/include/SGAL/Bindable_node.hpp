@@ -87,7 +87,7 @@ public:
   Bindable_node* top_stack();
 
   /*! Erase the Navigation_info */
-  void erase_stack(Bindable_node* bindable);
+  void erase_stack(const Bindable_node* bindable);
 
   /*! Pop the Navigation_info at the top of the stack.
    */
@@ -107,7 +107,7 @@ public:
 
   /*! Set the flag that indicates whether this node is bound.
    */
-  void set_is_bound(bool is_bound);
+  void set_is_bound(Boolean is_bound);
 
   /*! Bind or unbinds this node.
    */

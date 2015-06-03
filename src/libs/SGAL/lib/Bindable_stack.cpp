@@ -18,22 +18,23 @@
 
 #include "SGAL/Bindable_stack.hpp"
 #include "SGAL/Bindable_node.hpp"
+#include "SGAL/Accumulation.hpp"
+#include "SGAL/Configuration.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 //! \brief binds the top-stack bindable element.
 void Bindable_stack::bind_top()
 {
-  Bindable_node* bindable = top();
+  auto* bindable = top();
   if (bindable) bindable->bind();
 }
 
 //! \brief erases the bindable.
-void Bindable_stack::erase(Bindable_node* bindable)
+void Bindable_stack::erase(const Bindable_node* bindable)
 {
-  Bindable_iter ni;
-  for (ni = m_bindable_stack.begin(); ni != m_bindable_stack.end(); ++ni)
-    if ((*ni) == bindable) break;
+  auto ni = m_bindable_stack.begin();
+  for (; ni != m_bindable_stack.end(); ++ni) if ((*ni) == bindable) break;
   if (ni != m_bindable_stack.end()) m_bindable_stack.erase(ni);
 }
 

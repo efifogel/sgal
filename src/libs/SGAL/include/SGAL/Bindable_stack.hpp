@@ -19,15 +19,13 @@
 #ifndef SGAL_BINDABLE_STACK_HPP
 #define SGAL_BINDABLE_STACK_HPP
 
-/*! \file
- */
-
 #include <vector>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Bindable_node.hpp"
 
 SGAL_BEGIN_NAMESPACE
+
+class Bindable_node;
 
 #if (defined _MSC_VER)
 #pragma warning( push )
@@ -49,12 +47,16 @@ public:
    */
   void bind_top();
 
-  /*! Obtain the bindable at the top os the stack.
+  /*! Obtain the mutable bindable at the top os the stack.
    */
   Bindable_node* top();
 
+  /*! Obtain the const bindable at the top os the stack.
+   */
+  const Bindable_node* top() const;
+
   /*! Erase the bindable. */
-  void erase(Bindable_node* bindable);
+  void erase(const Bindable_node* bindable);
 
   /*! Pop the bindable at the top of the stack.
    */
@@ -78,8 +80,12 @@ public:
 #pragma warning( pop )
 #endif
 
-//! \brief obtains the bindable at the top os the stack.
+//! \brief obtains the mutable bindable at the top os the stack.
 inline Bindable_node* Bindable_stack::top()
+{ return m_bindable_stack.empty() ? nullptr : m_bindable_stack.back(); }
+
+//! \brief obtains the const bindable at the top os the stack.
+inline const Bindable_node* Bindable_stack::top() const
 { return m_bindable_stack.empty() ? nullptr : m_bindable_stack.back(); }
 
 //! \rief pops the bindable at the top of the stack.

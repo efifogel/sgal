@@ -29,9 +29,9 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Bindable_node::s_tag = "BindableNode";
-Container_proto * Bindable_node::s_prototype(nullptr);
+Container_proto* Bindable_node::s_prototype(nullptr);
 
-//! \brief constructor.
+//! \brief constructs.
 Bindable_node::Bindable_node(Boolean proto) :
   Container(proto),
   m_set_bind(false),
@@ -74,42 +74,33 @@ void Bindable_node::delete_prototype()
 }
 
 //! \brief
-Container_proto * Bindable_node::get_prototype()
+Container_proto* Bindable_node::get_prototype()
 {
   if (!s_prototype) Bindable_node::init_prototype();
   return s_prototype;
 }
 
 //! \brief sets the attributes of this node.
-void Bindable_node::set_attributes(Element * elem)
-{
-  Container::set_attributes(elem);
-}
+void Bindable_node::set_attributes(Element* elem)
+{ Container::set_attributes(elem); }
 
 //! \brief obtains the Navigation_info at the top os the stack.
-Bindable_node * Bindable_node::top_stack() { return get_stack()->top(); }
+Bindable_node* Bindable_node::top_stack() { return get_stack()->top(); }
 
 //! \brief erases the Navigation_info.
-void Bindable_node::erase_stack(Bindable_node * bindable)
-{
-  get_stack()->erase(bindable);
-}
+void Bindable_node::erase_stack(const Bindable_node* bindable)
+{ get_stack()->erase(bindable); }
 
 //! \brief pops the Navigation_info at the top of the stack.
 void Bindable_node::pop_stack() { get_stack()->pop(); }
 
 //! \brief pushes a Navigation_info onto the stack.
-void Bindable_node::push_stack(Bindable_node * bindable)
-{
-  get_stack()->push(bindable);
-}
+void Bindable_node::push_stack(Bindable_node* bindable)
+{ get_stack()->push(bindable); }
 
 //! \brief inserts a Navigation_info at the back of the stack.
-void Bindable_node::insert_stack(Bindable_node * bindable)
-{
-  //! \todo insert(this)????
-  get_stack()->insert(bindable);
-}
+void Bindable_node::insert_stack(Bindable_node* bindable)
+{ get_stack()->insert(bindable); }
 
 //! \brief binds this node (used during initialization).
 void Bindable_node::bind()
@@ -137,7 +128,7 @@ void Bindable_node::set_is_bound(Boolean is_bound)
 void Bindable_node::set_bind(const Field_info * /* field_info */)
 {
   if (m_set_bind) {
-    Bindable_node * top = top_stack();
+    auto top = top_stack();
     if (this == top) return;
     top->set_is_bound(false);
 
@@ -156,7 +147,7 @@ void Bindable_node::set_bind(const Field_info * /* field_info */)
   }
 
   // set_bind is false:
-  Bindable_node * top = top_stack();
+  auto top = top_stack();
   if (this == top) {
     set_is_bound(false);
     pop_stack();
