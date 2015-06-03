@@ -40,6 +40,7 @@ Container_proto* Configuration::s_prototype(nullptr);
 // Default values:
 const Configuration::Geometry_drawing_mode
 Configuration::s_def_geometry_drawing_mode(Configuration::GDM_VERTEX_ARRAY);
+const Boolean Configuration::s_def_use_vertex_buffer_object(true);
 const Boolean Configuration::s_def_are_global_lights_stationary(false);
 const Boolean Configuration::s_def_texture_map(true);
 const Boolean Configuration::s_def_is_fixed_head_light(true);
@@ -67,8 +68,10 @@ REGISTER_TO_FACTORY(Configuration, "Configuration");
 
 //! \brief constructs.
 Configuration::Configuration(Boolean proto) :
-  Container(proto),
+  Bindable_node(proto),
+  m_scene_graph(nullptr),
   m_geometry_drawing_mode(s_def_geometry_drawing_mode),
+  m_use_vertex_buffer_object(s_def_use_vertex_buffer_object),
   m_are_global_lights_stationary(s_def_are_global_lights_stationary),
   m_texture_map(s_def_texture_map),
   m_is_fixed_head_light(s_def_is_fixed_head_light),
@@ -125,7 +128,7 @@ void Configuration::reset(Geometry_drawing_mode def_geometry_drawing_mode,
 void Configuration::init_prototype()
 {
   if (s_prototype) return;
-  s_prototype = new Container_proto(Container::get_prototype());
+  s_prototype = new Container_proto(Bindable_node::get_prototype());
 
   // Add the object fields to the prototype
   Execution_function exec_func;
@@ -252,7 +255,7 @@ Container_proto* Configuration::get_prototype()
 //! \brief sets the attributes of the object.
 void Configuration::set_attributes(Element* elem)
 {
-  Container::set_attributes(elem);
+  Bindable_node::set_attributes(elem);
 
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const auto& name = elem->get_name(ai);
@@ -372,7 +375,7 @@ void Configuration::set_attributes(Element* elem)
   for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
        ++cai)
   {
-    const auto & name = elem->get_name(cai);
+    const auto& name = elem->get_name(cai);
     auto cont = elem->get_value(cai);
     if (name == "accumulation") {
       auto acc = boost::dynamic_pointer_cast<Accumulation>(cont);
@@ -394,7 +397,12 @@ void Configuration::set_attributes(Element* elem)
 
 //! \brief adds the container to a given scene.
 void Configuration::add_to_scene(Scene_graph* sg)
-{ sg->set_configuration(this); }
+{
+  set_scene_graph(sg);
+  auto* top = top_stack();
+  if (top) merge(static_cast<Configuration*>(top));
+  push_stack(this);     // push the new node onto the top of the stack
+}
 
 //! \brief sets the verbosity level.
 void Configuration::set_verbosity_level(Uint level)
@@ -402,6 +410,67 @@ void Configuration::set_verbosity_level(Uint level)
   m_verbosity_level = level;
   SGAL::Field* field = get_field(VERBOSITY_LEVEL);
   if (field) field->cascade();
+}
+
+//! \brief obtains the bindable stack.
+Bindable_stack* Configuration::get_stack()
+{ return m_scene_graph->get_configuration_stack(); }
+
+//! \brief enables the camera---called when the camera is bound.
+void Configuration::enable() {}
+
+//! \brief merges another configuration node.
+// \todo We use a stack of configurations. When a new configuration is introduced,
+//       for every attribte we carry over the value from the previous configuration
+//       if this value is not equal to its default. If the attribute was excplicitly
+//       set with its default value (remaining intact) it is ignored and the
+//       intension to force it's default value is lost. We need to add a Boolean
+//       flag for each attribute indicating whether it was explicitly set.
+void Configuration::merge(const Configuration* other)
+{
+  if (other->m_accumulation) m_accumulation = other->m_accumulation;
+  if (other->m_geometry_drawing_mode != s_def_geometry_drawing_mode)
+    m_geometry_drawing_mode = other->m_geometry_drawing_mode;
+  if (other->m_use_vertex_buffer_object != s_def_use_vertex_buffer_object)
+    m_use_vertex_buffer_object = other->m_use_vertex_buffer_object;
+  if (other->m_are_global_lights_stationary != s_def_are_global_lights_stationary)
+    m_are_global_lights_stationary = other->m_are_global_lights_stationary;
+  if (other->m_texture_map != s_def_texture_map)
+    m_texture_map = other->m_texture_map;
+  if (other->m_is_fixed_head_light != s_def_is_fixed_head_light)
+    m_is_fixed_head_light = other->m_is_fixed_head_light;
+  if (other->m_stencil_bits != s_def_stencil_bits)
+    m_stencil_bits = other->m_stencil_bits;
+  if (other->m_depth_bits != s_def_depth_bits)
+    m_depth_bits = other->m_depth_bits;
+  if (other->m_min_frame_rate != s_def_min_frame_rate)
+    m_min_frame_rate = other->m_min_frame_rate;
+  if (other->m_poly_mode != s_def_poly_mode)
+    m_poly_mode = other->m_poly_mode;
+  if (other->m_display_fps != s_def_display_fps)
+    m_display_fps = other->m_display_fps;
+  if (other->m_min_zoom_distance != s_def_min_zoom_distance)
+    m_min_zoom_distance = other->m_min_zoom_distance;
+  if (other->m_speed_factor != s_def_speed_factor)
+    m_speed_factor = other->m_speed_factor;
+  if (other->m_verbosity_level != s_def_verbose_level)
+    m_verbosity_level = other->m_verbosity_level;
+  if (other->m_seamless_cube_map != s_def_seamless_cube_map)
+    m_seamless_cube_map = other->m_seamless_cube_map;
+  if (other->m_override_material != s_def_override_material)
+    m_override_material = other->m_override_material;
+  if (other->m_override_tex_enable != s_def_override_tex_enable)
+    m_override_tex_enable = other->m_override_tex_enable;
+  if (other->m_override_tex_env != s_def_override_tex_env)
+    m_override_tex_env = other->m_override_tex_env;
+  if (other->m_override_blend_func != s_def_override_blend_func)
+    m_override_blend_func = other->m_override_blend_func;
+  if (other->m_override_light_model != s_def_override_light_model)
+    m_override_light_model = other->m_override_light_model;
+  if (other->m_override_tex_gen != s_def_override_tex_gen)
+    m_override_tex_gen = other->m_override_tex_gen;
+  if (other->m_override_light_enable != s_def_override_light_enable)
+    m_override_light_enable = other->m_override_light_enable;
 }
 
 #if 0

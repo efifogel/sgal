@@ -30,6 +30,7 @@
 #include "SGAL/Types.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Gfx.hpp"
+#include "SGAL/Bindable_node.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -39,13 +40,14 @@ class Element;
 class Scene_graph;
 class Accumulation;
 class Multisample;
+class Bindable_stack;
 
 #if (defined _MSC_VER)
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif
 
-class SGAL_SGAL_DECL Configuration : public Container {
+class SGAL_SGAL_DECL Configuration : public Bindable_node {
   friend class Boundary_set;
   friend class Indexed_face_set;
   friend class Shape;
@@ -54,7 +56,7 @@ class SGAL_SGAL_DECL Configuration : public Container {
 
 public:
   enum {
-    FIRST = Container::LAST - 1,
+    FIRST = Bindable_node::LAST - 1,
     ACCUMULATION,
     POLY_MODE,
     DISPLAY_FPS,
@@ -132,12 +134,30 @@ public:
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
 
-  // virtual Attribute_list get_attributes();
 
   /*! Add the container to a given scene.
    * \param scene_graph the given scene.
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
+
+  /*! Obtain the bindable stack. */
+  virtual Bindable_stack* get_stack();
+
+  /*! Enable the bindable node. */
+  virtual void enable();
+
+  /*! Set the scene graph. */
+  void set_scene_graph(Scene_graph* sg) { m_scene_graph = sg; }
+
+  /*! Set the flag that indiocates whether vertex-buffer object should be used.
+   * \param[in] flag indiocates whether vertex-buffer object should be used.
+   */
+  void set_use_vertex_buffer_object(Boolean flag);
+
+  /*! Determine whether vertex-buffer object extension should be used..
+   * \return true iff vertex-buffer object extension should be used..
+   */
+  Boolean do_use_vertex_buffer_object() const;
 
   /*! */
   void set_global_lights_stationary(Boolean flag);
@@ -274,6 +294,12 @@ public:
              Boolean def_seamless_cube_map = s_def_seamless_cube_map);
 
 protected:
+  /*! The Scene_graph. */
+  Scene_graph* m_scene_graph;
+
+  /*! Merge another configuration node. */
+  void merge(const Configuration* other);
+
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
@@ -292,6 +318,9 @@ private:
 
   /*! The geometry drawing-mode {direct, display list, or vertex array */
   Geometry_drawing_mode m_geometry_drawing_mode;
+
+  /*! Indicates whether vertex buffer object should be used. */
+  Boolean m_use_vertex_buffer_object;
 
   Boolean m_are_global_lights_stationary;
 
@@ -396,6 +425,7 @@ private:
 
   // default values
   static const Geometry_drawing_mode s_def_geometry_drawing_mode;
+  static const Boolean s_def_use_vertex_buffer_object;
   static const Boolean s_def_are_global_lights_stationary;
   static const Boolean s_def_texture_map;
   static const Boolean s_def_is_fixed_head_light;
@@ -527,6 +557,16 @@ Configuration::set_geometry_drawing_mode(Geometry_drawing_mode mode)
 inline Configuration::Geometry_drawing_mode
 Configuration::get_geometry_drawing_mode() const
 { return m_geometry_drawing_mode; }
+
+/*! \brief sets the flag that indiocates whether vertex-buffer object should be
+ * used
+ */
+inline void Configuration::set_use_vertex_buffer_object(Boolean flag)
+{ m_use_vertex_buffer_object = flag; }
+
+//! \brief determines whether vertex-buffer object should be used..
+inline Boolean Configuration::do_use_vertex_buffer_object() const
+{ return m_use_vertex_buffer_object; }
 
 //! \brief sets the accumulation object.
 inline void Configuration::set_accumulation(Shared_accumulation acc)
