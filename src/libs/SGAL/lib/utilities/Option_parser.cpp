@@ -50,8 +50,8 @@ const Char* Option_parser::s_trace_opts[] = {
   "polyhedron",
   "cgm",
   "destructor",
-  "export-2d",
-  "export-3d",
+  "snapshot",
+  "export",
   "font"
 };
 
@@ -115,8 +115,8 @@ Option_parser::Option_parser() :
      "  polyhedron\n"
      "  cgm\n"
      "  destructor\n"
-     "  export-2d\n"
-     "  export-3d\n"
+     "  snapshot\n"
+     "  export\n"
      "  font\n"
      )
     ;
