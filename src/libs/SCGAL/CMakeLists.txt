@@ -62,6 +62,7 @@ if (SGAL_USE_VOS)
 endif()
 
 if (SGAL_USE_POS)
+  add_definitions(-DSGAL_USE_POS)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_of_polygeodesics_on_sphere_base_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_of_polygeodesics_on_sphere_geo.cpp)
 endif()
