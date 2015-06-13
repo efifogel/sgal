@@ -479,6 +479,10 @@ public:
    */
   float volume();
 
+  /*! Compute the accumulated surface area of all polyhedrons.
+   */
+  float surface_area();
+
 private:
   /*! Binadable stacks */
 

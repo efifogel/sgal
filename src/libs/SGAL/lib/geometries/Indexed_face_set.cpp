@@ -62,6 +62,7 @@ REGISTER_TO_FACTORY(Indexed_face_set, "Indexed_face_set");
 Indexed_face_set::Indexed_face_set(Boolean proto) :
   Boundary_set(proto),
   m_dirty_volume(true),
+  m_dirty_surface_area(true),
   m_dirty_coord_array(true),
   m_dirty_polyhedron(true)
 {
@@ -113,6 +114,13 @@ void Indexed_face_set::init_prototype()
     (&Indexed_face_set::volume_handle);
   s_prototype->add_field_info(new SF_float(VOLUME, "volume",
                                            Field_info::RULE_OUT, volume_func));
+
+  // surfaceArea
+  Float_handle_function surface_area_func = static_cast<Float_handle_function>
+    (&Indexed_face_set::surface_area_handle);
+  s_prototype->add_field_info(new SF_float(SURFACE_AREA, "surfaceArea",
+                                           Field_info::RULE_OUT,
+                                           surface_area_func));
 }
 
 //! \brief deletes the container prototype.
@@ -306,6 +314,7 @@ void Indexed_face_set::clean_polyhedron()
 {
   m_dirty_polyhedron = false;
   m_dirty_volume = true;
+  m_dirty_surface_area = true;
 
   auto coords = get_coord_array();
   if (!coords || coords->empty()) return;
@@ -374,6 +383,7 @@ void Indexed_face_set::clear_polyhedron()
 {
   m_dirty_polyhedron = true;
   m_dirty_volume = true;
+  m_dirty_surface_area = true;
   m_polyhedron.clear();
 }
 
@@ -383,6 +393,7 @@ void Indexed_face_set::set_polyhedron(Polyhedron& polyhedron)
   m_polyhedron = polyhedron;
   m_dirty_polyhedron = false;
   m_dirty_volume = true;
+  m_dirty_surface_area = true;
   clear_coord_array();
   clear_coord_indices();
   clear_flat_coord_indices();
@@ -464,15 +475,11 @@ void Indexed_face_set::clean_volume()
 {
   m_dirty_volume = false;
 
-  if (is_polyhedron_empty()) {
-    m_volume = 0;
-    return;
-  }
-
   m_volume = 0;
+  if (is_polyhedron_empty()) return;
+
   Inexact_point_3 origin(CGAL::ORIGIN);
-  // The capture specification (&) is needed only for capturing 'origin' untill
-  // CGAL::volume() is fixed to accept CGAL::ORIGIN as an argument.
+  //! \todo Fix CGAL::volume() to accept CGAL::ORIGIN as an argument.
   std::for_each(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
                 [&](Polyhedron::Facet& facet)
                 {
@@ -485,12 +492,43 @@ void Indexed_face_set::clean_volume()
                 });
 }
 
+//! \brief cleans (compute) the surface area.
+void Indexed_face_set::clean_surface_area()
+{
+  m_dirty_surface_area = false;
+
+  m_surface_area = 0;
+  if (is_polyhedron_empty()) return;
+
+  m_surface_area = 0;
+  std::for_each(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
+                [&](Polyhedron::Facet& facet)
+                {
+                  SGAL_assertion(3 == CGAL::circulator_size(fit->facet_begin()));
+                  auto h = facet.halfedge();
+                  const auto& p1 = h->vertex()->point();
+                  const auto& p2 = h->next()->vertex()->point();
+                  const auto& p3 = h->next()->next()->vertex()->point();
+                  // m_surface_area += CGAL::area(p1, p2, p3);
+                  Kernel::Triangle_3 tri(p1, p2, p3);
+                  m_surface_area += sqrtf(tri.squared_area());
+                });
+}
+
 //! \brief computes the volume of the polyhedron.
 Float Indexed_face_set::volume()
 {
   if (m_dirty_polyhedron) clean_polyhedron();
   if (m_dirty_volume) clean_volume();
   return m_volume;
+}
+
+//! \brief computes the surface area of the polyhedron.
+Float Indexed_face_set::surface_area()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_dirty_surface_area) clean_surface_area();
+  return m_surface_area;
 }
 
 SGAL_END_NAMESPACE

@@ -27,9 +27,6 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Configuration;
-class Node;
-
 #if defined(_MSC_VER)
 #pragma warning( push )
 #pragma warning( disable: 4251 )

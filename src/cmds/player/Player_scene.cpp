@@ -1112,6 +1112,8 @@ void Player_scene::get_view_mat(SGAL::Matrix4f& mat)
 
 //! \brief obtains the accumulated volume of all polyhedrons.
 float Player_scene::volume()
-{
-  return m_scene_graph->volume();
-}
+{ return m_scene_graph->volume(); }
+
+//! \brief obtains the accumulated surface area of all polyhedrons.
+float Player_scene::surface_area()
+{ return m_scene_graph->surface_area(); }

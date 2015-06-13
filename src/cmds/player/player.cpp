@@ -191,6 +191,10 @@ public:
    */
   float volume();
 
+  /*! Obtain the accumulated surface area of all polyhedrons in the scene.
+   */
+  float surface_area();
+
 private:
   void init(int argc, char* argv[]);
 
@@ -377,6 +381,10 @@ int Player::operator()(char* data, int size)
 float Player::volume()
 { return m_scene.volume(); }
 
+//! \brief obtains the accumulated surface area of all polyhedrons in the scene.
+float Player::surface_area()
+{ return m_scene.surface_area(); }
+
 #if defined(SGAL_BUILD_PYBINDINGS)
 
 BOOST_PYTHON_MODULE(player)
@@ -394,6 +402,7 @@ BOOST_PYTHON_MODULE(player)
     .def("visualize", &Player::visualize)
     .def("destroy", &Player::destroy)
     .def("volume", &Player::volume)
+    .def("surface_area", &Player::surface_area)
     ;
 }
 

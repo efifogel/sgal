@@ -41,6 +41,7 @@
 #include "SGAL/Load_int.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Volume_action.hpp"
+#include "SGAL/Surface_area_action.hpp"
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Execution_coordinator.hpp"
 #include "SGAL/Sphere_bound.hpp"
@@ -917,7 +918,7 @@ void Scene_graph::write(const std::string& filename, File_format_3d::Id format_i
 void Scene_graph::write(const std::string& filename, std::ostream& os,
                         File_format_3d::Id format_id)
 {
-  SGAL_TRACE_CODE(Trace::EXPORT_3D,
+  SGAL_TRACE_CODE(Trace::EXPORT,
                   std::cout << "Scene_graph: " << "Format: " << format_id
                   << std::endl;);
   switch (format_id) {
@@ -995,11 +996,19 @@ Scene_graph::Shared_transform Scene_graph::initialize()
 //! \brief computes the total volume of all polyhedrons.
 float Scene_graph::volume()
 {
-  std::cout << "Scene_graph::volume()" << std::endl;
   auto root = get_root();
   Volume_action action;
   root->traverse(&action);
   return action.volume();
+}
+
+//! \brief computes the total surface area of all polyhedrons.
+float Scene_graph::surface_area()
+{
+  auto root = get_root();
+  Surface_area_action action;
+  root->traverse(&action);
+  return action.surface_area();
 }
 
 SGAL_END_NAMESPACE

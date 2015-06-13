@@ -247,6 +247,10 @@ public:
    */
   float volume();
 
+  /*! Obtain the total surface area of all polyhedrons.
+   */
+  float surface_area();
+
 protected:
   /*! The window manager. */
   Window_manager* m_window_manager;

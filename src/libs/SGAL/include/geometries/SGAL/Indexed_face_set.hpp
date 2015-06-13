@@ -52,6 +52,7 @@ public:
   enum {
     FIRST = Boundary_set::LAST - 1,
     VOLUME,
+    SURFACE_AREA,
     LAST
   };
 
@@ -85,6 +86,7 @@ public:
   /// \name field handlers
   //@{
   Float* volume_handle(const Field_info*) { return &m_volume; }
+  Float* surface_area_handle(const Field_info*) { return &m_surface_area; }
   //@}
 
   /*! Sets the attributes of this node extracted from the VRML or X3D file.
@@ -191,13 +193,23 @@ public:
    */
   Float volume();
 
+  /*! Compute the surface area of the polyhedron.
+   */
+  Float surface_area();
+
 protected:
 
   /*! The volume of the polyhedron. */
   Float m_volume;
 
+  /*! The surface area of the polyhedron. */
+  Float m_surface_area;
+
   /*! Indicates whether the volume is dirty and thus must be cleaned. */
   Boolean m_dirty_volume;
+
+  /*! Indicates whether the surface area is dirty and thus must be cleaned. */
+  Boolean m_dirty_surface_area;
 
   /*! Indicates whether the coordinate array has beeen invalidated. */
   Boolean m_dirty_coord_array;
@@ -220,6 +232,10 @@ protected:
   /*! Clean (compute) the volume.
    */
   void clean_volume();
+
+  /*! Clean (compute) the surface area.
+   */
+  void clean_surface_area();
 
 private:
   /*! A functor that calculates the normal of a given facet. */
