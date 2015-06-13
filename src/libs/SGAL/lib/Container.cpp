@@ -201,7 +201,7 @@ void Container::write_fields(Formatter* formatter)
 //! \brief writes this container.
 void Container::write(Formatter* formatter)
 {
-  SGAL_TRACE_CODE(Trace::EXPORT_3D,
+  SGAL_TRACE_CODE(Trace::EXPORT,
                   std::cout << "Container: " << "Tag: " << get_tag()
                   << ", name: " << get_name()
                   << std::endl;);
