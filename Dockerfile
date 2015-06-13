@@ -54,5 +54,8 @@ RUN cmake -DSGAL_USE_V8:BOOL=ON \
           -DSGAL_USE_CGM:BOOL=OFF \
           -DSGAL_USE_LTS:BOOL=OFF \
           -DSGAL_USE_SGM:BOOL=OFF \
+          -DSGAL_BUILD_PYBINDINGS:BOOL=ON \
           -DCGAL_CXX_FLAGS:STRING="-DSGAL_TRACE" .
 RUN make install
+
+# RUN apt-get install -y mesa-utils
