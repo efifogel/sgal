@@ -18,7 +18,7 @@
 
 #include <iostream>
 
-#if (defined _MSC_VER)
+#if defined(_MSC_VER)
 #define NOMINMAX 1
 #include <windows.h>
 #endif
@@ -33,6 +33,10 @@
 #include "SGAL/Tex_coord_array.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Gl_wrapper.hpp"
+
+#if defined(_MSC_VER)
+#include "SGAL/Gfx_conf.hpp"
+#endif
 
 SGAL_BEGIN_NAMESPACE
 
