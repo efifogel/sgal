@@ -221,7 +221,7 @@ Attribute_list Switch::get_attributes()
 //! \brief exports this container.
 void Switch::write(Formatter* formatter)
 {
-  SGAL_TRACE_CODE(Trace::EXPORT_3D,
+  SGAL_TRACE_CODE(Trace::EXPORT,
                   std::cout << "Switch: " << "Tag: " << get_tag()
                   << ", name: " << get_name()
                   << std::endl;);
