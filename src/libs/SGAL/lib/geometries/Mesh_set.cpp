@@ -604,7 +604,7 @@ void Mesh_set::clear_tex_coord_indices()
 //! \brief writes this container.
 void Mesh_set::write(Formatter* formatter)
 {
-  SGAL_TRACE_CODE(Trace::EXPORT_3D,
+  SGAL_TRACE_CODE(Trace::EXPORT,
                   std::cout << "Mesh_set: " << "Tag: " << get_tag()
                   << ", name: " << get_name()
                   << std::endl;);
