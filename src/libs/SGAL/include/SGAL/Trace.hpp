@@ -48,8 +48,8 @@ public:
     POLYHEDRON,
     CUBICAL_GAUSSIAN_MAP,
     DESTRUCTOR,
-    EXPORT_2D,
-    EXPORT_3D,
+    SNAPSHOT,
+    EXPORT,
     FONT,
     NUM_CODES
   };
