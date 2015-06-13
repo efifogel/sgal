@@ -312,7 +312,7 @@ void Field_info::write(Formatter* formatter,
     return;
   }
 
-  SGAL_TRACE_CODE(Trace::EXPORT_3D,
+  SGAL_TRACE_CODE(Trace::EXPORT,
                   std::cout << "Field_info: " << ", name: " << get_name()
                   << ": " << value.size()
                   << std::endl;);
