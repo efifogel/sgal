@@ -34,6 +34,7 @@ RUN apt-get install -y libboost-dev
 RUN apt-get install -y libboost-system-dev
 RUN apt-get install -y libboost-filesystem-dev
 RUN apt-get install -y libboost-program-options-dev
+RUN apt-get install -y libboost-python-dev
 RUN apt-get install -y libmagick++-dev
 RUN apt-get install -y libfreetype6-dev
 # RUN apt-get install -y libv8-dev
