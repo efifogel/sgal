@@ -80,6 +80,12 @@ public:
     LAST
   };
 
+  enum Viewpoint_mode {
+    VM_VIEWING = 0,
+    VM_MODELING,
+    NUM_VIEWPOINT_MODES
+  };
+
   /*! Mutually exclusive modes of drawing geometry */
   enum Geometry_drawing_mode {
     GDM_DIRECT = 0,
@@ -226,6 +232,12 @@ public:
   /*! Obtain the transformation speed scale. */
   Float get_speed_factor() const;
 
+  /*! Set the viewpoint mode. */
+  void set_viewpoint_mode(Viewpoint_mode mode);
+
+  /*! Obtain the viewpoint mode. */
+  Viewpoint_mode get_viewpoint_mode() const;
+
   /*! Set the geometry drawing mode. */
   void set_geometry_drawing_mode(Geometry_drawing_mode mode);
 
@@ -277,7 +289,8 @@ public:
   Boolean is_override_light_enable() const;
 
    /*! Set defualt values. */
-  void reset(Geometry_drawing_mode def_geometry_drawing_mode =
+  void reset(Viewpoint_mode = s_def_viewpoint_mode,
+             Geometry_drawing_mode def_geometry_drawing_mode =
                s_def_geometry_drawing_mode,
              Boolean def_are_global_lights_stationary =
                s_def_are_global_lights_stationary,
@@ -292,6 +305,9 @@ public:
              Float def_min_zoom_distance = s_def_min_zoom_distance,
              Float def_speed_factor = s_def_speed_factor,
              Boolean def_seamless_cube_map = s_def_seamless_cube_map);
+
+  /*! Compare the i-th option to a given option */
+  static Boolean compare_viewpoint_mode_name(size_t i, const Char* opt);
 
 protected:
   /*! The Scene_graph. */
@@ -315,6 +331,9 @@ private:
 
   /*! Multisample object. */
   Shared_multisample m_multisample;
+
+  /*! The viewpoint mode. */
+  Viewpoint_mode m_viewpoint_mode;
 
   /*! The geometry drawing-mode {direct, display list, or vertex array */
   Geometry_drawing_mode m_geometry_drawing_mode;
@@ -424,6 +443,7 @@ private:
   Boolean m_owned_accumulation;
 
   // default values
+  static const Viewpoint_mode s_def_viewpoint_mode;
   static const Geometry_drawing_mode s_def_geometry_drawing_mode;
   static const Boolean s_def_use_vertex_buffer_object;
   static const Boolean s_def_are_global_lights_stationary;
@@ -446,7 +466,11 @@ private:
   static const Boolean s_def_override_tex_gen;
   static const Boolean s_def_override_light_enable;
 
+  /*! Drawing mode names. */
   static const Char* s_geometry_drawing_mode_names[];
+
+  /*! Viewpoint mode names. */
+  static const char* s_viewpoint_mode_names[];
 };
 
 #if (defined _MSC_VER)
@@ -548,6 +572,14 @@ inline void Configuration::set_texture_map(Boolean flag)
 //! \brief obtains the transformation speed scale.
 inline Float Configuration::get_speed_factor() const {return m_speed_factor; }
 
+//! \brief sets the viewpoint mode.
+inline void Configuration::set_viewpoint_mode(Viewpoint_mode mode)
+{ m_viewpoint_mode = mode; }
+
+//! \brief obtains the viewpoint mode.
+inline Configuration::Viewpoint_mode Configuration::get_viewpoint_mode() const
+{ return m_viewpoint_mode; }
+
 //! \brief sets the flag that indicates the drawing mode.
 inline void
 Configuration::set_geometry_drawing_mode(Geometry_drawing_mode mode)
@@ -600,6 +632,11 @@ inline void Configuration::set_seamless_cube_map(Boolean flag)
  */
 inline Boolean Configuration::is_seamless_cube_map() const
 { return m_seamless_cube_map; }
+
+//! \brief compares the i-th option to a given option.
+inline Boolean
+Configuration::compare_viewpoint_mode_name(size_t i, const Char* opt)
+{ return strcmp(s_viewpoint_mode_names[i], opt) == 0; }
 
 SGAL_END_NAMESPACE
 

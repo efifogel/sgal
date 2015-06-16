@@ -50,6 +50,9 @@ class SGAL_SGAL_DECL Option_parser : public Generic_option_parser,
                                      public IO_option_parser
 {
 public:
+  typedef std::vector<std::string>              Plugin;
+  typedef Plugin::const_iterator                Plugin_const_iterator;
+
   /*! Trace id */
   struct Trace_id {
     Trace_id(Uint id) : m_id(id) {}
@@ -63,7 +66,7 @@ public:
     Input_file_missing_error(std::string& str) : error(str) {}
   };
 
-  /*! Default constructor. */
+  /*! Construct default. */
   Option_parser();
 
   /*! Parse the options.
@@ -115,6 +118,19 @@ public:
 
   /*! Obtain the variable map */
   virtual const po::variables_map& get_variable_map() const;
+
+  /*! Obtain the begin iterator of plugins.
+   */
+  Plugin_const_iterator plugins_begin();
+
+  /*! Obtain the pass-the-end iterator of plugins.
+   */
+  Plugin_const_iterator plugins_end();
+
+  /*! Apply a given function object to all plugins.
+   */
+  template <typename UnaryFunction>
+  UnaryFunction for_each_plugin(UnaryFunction func);
 
 protected:
   /*! Command line options */
@@ -187,6 +203,24 @@ inline Boolean Option_parser::compare_trace_opt(Uint i, const Char* opt)
 //! \brief obtains the variable map.
 inline const po::variables_map& Option_parser::get_variable_map() const
 { return m_variable_map; }
+
+//! \brief obtains the begin iterator of input paths.
+inline Option_parser::Plugin_const_iterator
+Option_parser::plugins_begin()
+{ return get_variable_map()["load"].as<Plugin>().begin(); }
+
+//! \broef obtains the pass-the-end iterator of input paths.
+inline Option_parser::Plugin_const_iterator
+Option_parser::plugins_end()
+{ return get_variable_map()["load"].as<Plugin>().end(); }
+
+//! \brief applies a given function object to all input paths.
+template <typename UnaryFunction>
+inline UnaryFunction Option_parser::for_each_plugin(UnaryFunction func)
+{
+  if (!get_variable_map().count("load")) return func;
+  return std::for_each(plugins_begin(), plugins_end(), func);
+}
 
 SGAL_END_NAMESPACE
 

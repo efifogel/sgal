@@ -38,8 +38,10 @@ const std::string Configuration::s_tag = "Configuration";
 Container_proto* Configuration::s_prototype(nullptr);
 
 // Default values:
+const Configuration::Viewpoint_mode
+  Configuration::s_def_viewpoint_mode(VM_VIEWING);
 const Configuration::Geometry_drawing_mode
-Configuration::s_def_geometry_drawing_mode(Configuration::GDM_VERTEX_ARRAY);
+  Configuration::s_def_geometry_drawing_mode(Configuration::GDM_VERTEX_ARRAY);
 const Boolean Configuration::s_def_use_vertex_buffer_object(true);
 const Boolean Configuration::s_def_are_global_lights_stationary(false);
 const Boolean Configuration::s_def_texture_map(true);
@@ -64,12 +66,16 @@ const Boolean Configuration::s_def_override_light_enable(true);
 const Char* Configuration::s_geometry_drawing_mode_names[] =
   { "direct", "displayList", "vertexArray" };
 
+const Char* Configuration::s_viewpoint_mode_names[] =
+  { "viewing", "modeling" };
+
 REGISTER_TO_FACTORY(Configuration, "Configuration");
 
 //! \brief constructs.
 Configuration::Configuration(Boolean proto) :
   Bindable_node(proto),
   m_scene_graph(nullptr),
+  m_viewpoint_mode(s_def_viewpoint_mode),
   m_geometry_drawing_mode(s_def_geometry_drawing_mode),
   m_use_vertex_buffer_object(s_def_use_vertex_buffer_object),
   m_are_global_lights_stationary(s_def_are_global_lights_stationary),
@@ -95,7 +101,8 @@ Configuration::Configuration(Boolean proto) :
 {}
 
 //! \brief sets defualt values.
-void Configuration::reset(Geometry_drawing_mode def_geometry_drawing_mode,
+void Configuration::reset(Viewpoint_mode viewpoint_mode,
+                          Geometry_drawing_mode def_geometry_drawing_mode,
                           Boolean def_are_global_lights_stationary,
                           Boolean def_texture_map,
                           Boolean def_is_fixed_head_light,
@@ -110,6 +117,7 @@ void Configuration::reset(Geometry_drawing_mode def_geometry_drawing_mode,
 {
   if (m_accumulation) m_accumulation->reset();
 
+  m_viewpoint_mode = viewpoint_mode;
   m_geometry_drawing_mode = def_geometry_drawing_mode;
   m_are_global_lights_stationary = def_are_global_lights_stationary;
   m_texture_map = def_texture_map;
@@ -280,6 +288,16 @@ void Configuration::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "viewpointMode") {
+      Uint num = sizeof(s_viewpoint_mode_names) / sizeof(char *);
+      const char** found = std::find(s_viewpoint_mode_names,
+                                     &s_viewpoint_mode_names[num],
+                                     strip_double_quotes(value));
+      Uint index = found - s_viewpoint_mode_names;
+      if (index < num) m_viewpoint_mode = static_cast<Viewpoint_mode>(index);
+      elem->mark_delete(ai);
+      continue;
+    }
     if (name == "geometryDrawingMode") {
       Uint num = sizeof(s_geometry_drawing_mode_names) / sizeof(char *);
       const char** found = std::find(s_geometry_drawing_mode_names,
@@ -429,6 +447,8 @@ void Configuration::enable() {}
 void Configuration::merge(const Configuration* other)
 {
   if (other->m_accumulation) m_accumulation = other->m_accumulation;
+  if (other->m_viewpoint_mode != s_def_viewpoint_mode)
+    m_viewpoint_mode = other->m_viewpoint_mode;
   if (other->m_geometry_drawing_mode != s_def_geometry_drawing_mode)
     m_geometry_drawing_mode = other->m_geometry_drawing_mode;
   if (other->m_use_vertex_buffer_object != s_def_use_vertex_buffer_object)
@@ -472,69 +492,5 @@ void Configuration::merge(const Configuration* other)
   if (other->m_override_light_enable != s_def_override_light_enable)
     m_override_light_enable = other->m_override_light_enable;
 }
-
-#if 0
-//! \brief
-Attribute_list Configuration::get_attributes()
-{
-  Attribute_list attrs;
-  Attribue attrib;
-  char buf[32];
-
-  attrs = Container::get_attributes();
-
-  if (m_min_frame_rate != s_def_min_frame_rate) {
-    attrib.first = "minFrameRate";
-    sprintf(buf, "%g", m_min_frame_rate);
-    attrib.second = buf;
-    attrs.push_back(attrib);
-  }
-  if (m_are_global_lights_stationary != s_def_are_global_lights_stationary) {
-    attrib.first = "globalLightsStationary";
-    attrib.second = TRUE_STR;
-    attrs.push_back(attrib);
-  }
-  if (m_geometry_drawing_mode != s_def_geometry_drawing_mode) {
-    attrib.first = "geometryDrawingMode";
-    attrib.second = s_geometry_drawing_mode_names[m_geometry_drawing_mode]);
-    attrs.push_back(attrib);
-  }
-  if (m_is_fixed_head_light != s_def_is_fixed_head_light) {
-    attrib.first = "fixedHeadLight";
-    attrib.second = FALSE_STR;
-    attrs.push_back(attrib);
-  }
-  if (m_display_fps != s_def_display_fps) {
-    attrib.first = "displayFPS";
-    attrib.second = TRUE_STR;
-    attrs.push_back(attrib);
-  }
-  if (m_min_zoom_distance != s_def_min_zoom_distance) {
-    attrib.first = "minZoomDistance";
-    sprintf(buf, "%g", m_min_zoom_distance);
-    attrib.second = buf;
-    attrs.push_back(attrib);
-  }
-  if (m_poly_mode != s_def_poly_mode) {
-    attrib.first = "polyMode";
-    if (m_poly_mode == Gfx::LINE_PMODE) {
-      attrib.second = "line";
-    } else {
-      attrib.second = "point";
-    }
-    attrs.push_back(attrib);
-  }
-  if (!get_max_model_name().empty()) {
-    attrib.first = "max_model_name";
-    attrib.second = get_max_model_name();
-    attrs.push_back(attrib);
-  }
-
-  if (m_accumulation) m_accumulation->get_attributes();
-  if (m_multisample) m_multisample->get_attributes();
-
-  return attrs;
-}
-#endif
 
 SGAL_END_NAMESPACE

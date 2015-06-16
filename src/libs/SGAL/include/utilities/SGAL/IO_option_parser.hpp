@@ -272,7 +272,7 @@ inline UnaryFunction IO_option_parser::for_each_dir(UnaryFunction func)
   return std::for_each(dirs_begin(), dirs_end(), func);
 }
 
-/*! Extractors of D (graphics) and 2D (image) file format types from the
+/*! Extractors of 3D (graphics) and 2D (image) file format types from the
  * corresponding Id types.
  */
 template <typename T> struct File_format;

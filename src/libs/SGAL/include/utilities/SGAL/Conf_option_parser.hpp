@@ -19,8 +19,6 @@
 #ifndef SGAL_CONF_OPTION_PARSER_HPP
 #define SGAL_CONF_OPTION_PARSER_HPP
 
-#include <string>
-#include <vector>
 #include <algorithm>
 
 #if defined(_MSC_VER)
@@ -34,22 +32,18 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Configuration.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 namespace po = boost::program_options;
 
-class Configuration;
-
 class SGAL_SGAL_DECL Conf_option_parser {
 public:
-  typedef std::vector<std::string>              Plugin;
-  typedef Plugin::const_iterator                Plugin_const_iterator;
-
-  /*! Constructor. */
+  /*! Construct default. */
   Conf_option_parser();
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Conf_option_parser();
 
   /*! Obtain the variable map.
@@ -88,20 +82,7 @@ public:
    */
   Boolean get_display_fps(Boolean& flag);
 
-  /*! Obtain the begin iterator of plugins.
-   */
-  Plugin_const_iterator plugins_begin();
-
-  /*! Obtain the pass-the-end iterator of plugins.
-   */
-  Plugin_const_iterator plugins_end();
-
-  /*! Apply a given function object to all plugins.
-   */
-  template <typename UnaryFunction>
-  UnaryFunction for_each_plugin(UnaryFunction func);
-
- protected:
+protected:
   /*! The conf options. */
   po::options_description m_conf_opts;
 
@@ -152,22 +133,19 @@ inline Boolean Conf_option_parser::get_use_vertex_buffer_object() const
 inline Boolean Conf_option_parser::get_map_texture() const
 { return m_map_texture; }
 
-//! \brief obtains the begin iterator of input paths.
-inline Conf_option_parser::Plugin_const_iterator
-Conf_option_parser::plugins_begin()
-{ return get_variable_map()["load"].as<Plugin>().begin(); }
-
-//! \broef obtains the pass-the-end iterator of input paths.
-inline Conf_option_parser::Plugin_const_iterator
-Conf_option_parser::plugins_end()
-{ return get_variable_map()["load"].as<Plugin>().end(); }
-
-//! \brief applies a given function object to all input paths.
-template <typename UnaryFunction>
-inline UnaryFunction Conf_option_parser::for_each_plugin(UnaryFunction func)
+//! Import 3D (graphics) file formats
+template <typename InputStream>
+InputStream& operator>>(InputStream& in, Configuration::Viewpoint_mode& mode)
 {
-  if (!get_variable_map().count("load")) return func;
-  return std::for_each(plugins_begin(), plugins_end(), func);
+  std::string token;
+  in >> token;
+  for (size_t i = 0; i < Configuration::NUM_VIEWPOINT_MODES; ++i) {
+    if (!Configuration::compare_viewpoint_mode_name(i, token.c_str())) continue;
+    mode = static_cast<Configuration::Viewpoint_mode>(i);
+    return in;
+  }
+  throw po::validation_error(po::validation_error::invalid_option_value);
+  return in;
 }
 
 SGAL_END_NAMESPACE

@@ -119,6 +119,7 @@ Option_parser::Option_parser() :
      "  export\n"
      "  font\n"
      )
+    ("load,L", po::value<vs>()->composing(), "load a library")
     ;
 
   // Options hidden to the user. Allowed only on the command line:

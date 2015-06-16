@@ -31,7 +31,7 @@ SGAL_BEGIN_NAMESPACE
 
 //! \brief constructs.
 Conf_option_parser::Conf_option_parser() :
-  m_conf_opts("SGAL configuration options"),
+  m_conf_opts("Viewing options"),
   m_accumulate(false),
   m_use_vertex_array(true),
   m_use_vertex_buffer_object(true),
@@ -45,8 +45,12 @@ Conf_option_parser::Conf_option_parser() :
    * Don't set the default unless you realy want this default to take effect
    */
   m_conf_opts.add_options()
+    ("viewpoint", po::value<Configuration::Viewpoint_mode>(),
+     "viewpoint options\n"
+     "  viewing\n"
+     "  modeling\n"
+     )
     ("accumulate,A", po::value<Boolean>(&m_accumulate), "accumulate")
-    ("load,L", po::value<vs>()->composing(), "load")
     //("accumulation-delay")
     //("ad")
     //("accumulation-quality")
@@ -102,6 +106,10 @@ void Conf_option_parser::configure(Configuration* conf)
 
   if (var_map.count("fps-display"))
     conf->set_display_fps(var_map["fps-display"].as<Boolean>());
+
+  if (var_map.count("viewpoint"))
+    conf->set_viewpoint_mode(var_map["viewpoint"].
+                             as<Configuration::Viewpoint_mode>());
 }
 
 SGAL_END_NAMESPACE

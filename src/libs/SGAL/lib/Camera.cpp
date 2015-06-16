@@ -48,73 +48,97 @@ const std::string Camera::s_tag = "Viewpoint";
 Container_proto* Camera::s_prototype(nullptr);
 
 // Defaults values:
-const Vector3f Camera::s_def_position(0, 0, 10);
+const Vector3f Camera::s_def_position(0, 0, 0);
 const Rotation Camera::s_def_orientation(0, 0, 1, 0);
 const float Camera::s_def_field_of_view(0.785398f);    // 45 degrees
 Frustum Camera::s_def_frustum;
 const std::string Camera::s_def_description("");
 const Float Camera::s_def_radius_scale(1.1f);
 const Float Camera::s_def_far_plane_scale(64);
+const Vector3f Camera::s_def_line_of_sight(0, 0, 1);
+const Vector3f Camera::s_def_up(0, 1, 0);
 
 REGISTER_TO_FACTORY(Camera, "Camera");
 
-//! \brief constructor
+//! \brief construct.
 Camera::Camera(Boolean proto) :
   Bindable_node(proto),
-  m_scene_graph(0),
+  m_scene_graph(nullptr),
   m_is_dynamic(true),
   m_position(s_def_position),
   m_orientation(s_def_orientation),
+  m_line_of_sight(s_def_line_of_sight),
+  m_up(s_def_up),
+  m_xaxis(1, 0, 0),
+  m_yaxis(0, 1, 0),
+  m_zaxis(0, 0, 1),
   m_view_mat(),
   m_frustum(s_def_frustum),
   m_field_of_view(s_def_field_of_view),
-  m_dirty_matrix(true),
   m_nearest_clipping_plane(0.1f),
   m_radius_scale(s_def_radius_scale),
   m_far_plane_scale(s_def_far_plane_scale),
-  m_position_translation(0,0,0),
+  m_dirty_axes(false),
+  m_dirty_matrix(true),
   m_description("")
 {}
 
-//! \brief destructor
+//! \brief destruct.
 Camera::~Camera() {}
 
-//! \brief sets the camera position.
+//! \brief sets the camera relative position.
 void Camera::set_position(const Vector3f& position)
 {
   m_position = position;
   m_dirty_matrix = true;
 }
 
-//! \brief sets the camera orientation.
+//! \brief sets the camera relative orientation.
 void Camera::set_orientation(const Rotation& orientation)
 {
-  const Vector3f& axis = orientation.get_axis();
-  if ((axis[0] == 0) && (axis[1] == 0) && (axis[2] == 0)) {
-    SGAL_warning_msg(0, "Camera: Invalid orientation!");
-    return;
-  }
+  SGAL_assertion_msg((orientation.get_axis()[0] != 0) ||
+                     (orientation.get_axis()[1] != 0) ||
+                     (orientation.get_axis()[2] != 0),
+                     "Camera: Invalid orientation!");
   m_orientation = orientation;
   m_dirty_matrix = true;
 }
 
-//! \brief
+//! \brief sets The near and far clipping planes of the frustum.
 void Camera::set_clipping_planes(float near_plane, float far_plane)
 {
   m_frustum.set_near(near_plane);
   m_frustum.set_far(far_plane);
 }
 
+//! \brief sets the camera viewing transformation.
+void Camera::look_at(const Vector3f& eye, const Vector3f& target,
+                     const Vector3f& up)
+{
+  m_eye.set(eye);
+  m_zaxis.sub(eye, target);
+  m_zaxis.normalize();
+  m_xaxis.cross(up, m_zaxis);
+  m_xaxis.normalize();
+  m_yaxis.cross(m_zaxis, m_xaxis);
+  m_dirty_matrix = true;
+}
+
+//! \brief sets the camera viewing transformation.
+void Camera::view(const Vector3f& eye, Float yaw, Float pitch)
+{
+  m_dirty_matrix = true;
+}
+
 /*! \brief sets the clipping planes so that the frustum contains the
  * bounding-sphere.
  */
-void Camera::set_clipping_planes(const Vector3f& bb_center, Float bb_radius)
+void Camera::set_clipping_planes(const Vector3f& target, Float bb_radius)
 {
   float radius = bb_radius * m_radius_scale;
   float my_sin = sinf(m_field_of_view / 2);
   float dist = radius / my_sin;
 
-  //! \todo Introduce a user-option that makes the frustum tight
   float near_plane = dist - radius;
   if (near_plane < m_nearest_clipping_plane) {
     near_plane = m_nearest_clipping_plane;
@@ -125,17 +149,15 @@ void Camera::set_clipping_planes(const Vector3f& bb_center, Float bb_radius)
   near_plane = m_nearest_clipping_plane;
   far_plane = dist * m_far_plane_scale;
 
-  Vector3f los(0,0,1);
-  los.scale(dist);
-  m_position.add(bb_center, los);
-  m_position.add(m_position_translation);
+  Vector3f eye;
+  eye.add_scaled(target, dist, m_line_of_sight);
+  look_at(eye, target, m_up);
 
   m_frustum.set_near(near_plane);
   m_frustum.set_far(far_plane);
 }
 
-/*! \brief sets the cliping plane so the the frustum contains the
- * bounding-sphere of the current scene, if the dynamic flag is raised
+/*! \brief sets the camera to view the scene.
  */
 void Camera::set_dynamic_clipping_planes()
 {
@@ -146,24 +168,29 @@ void Camera::set_dynamic_clipping_planes()
   set_clipping_planes(sb.get_center(), sb.get_radius());
 }
 
-//! \brief
+//! \brief sets the frustum field of view angle.
 void Camera::set_field_of_view(float fov)
 {
   m_field_of_view = fov;
   m_frustum.set_fov(m_field_of_view);
+  if (m_is_dynamic) m_dirty_matrix = true;
 }
 
-//! \brief
+//! \brief obtains the field-of-view
 float Camera::get_field_of_view() { return m_field_of_view; }
 
-//! \brief
-void Camera::update_field_of_view(const Field_info* /* info */)
+//! \brief processes change of viewing components.
+void Camera::components_changed(const Field_info* /* info */)
+{ m_dirty_matrix = true; }
+
+//! \brief processes change of field-of-view.
+void Camera::field_of_view_changed(const Field_info* /* info */)
 {
   m_frustum.set_fov(m_field_of_view);
-  set_rendering_required();
+  if (m_is_dynamic) m_dirty_matrix = true;
 }
 
-//! \brief
+//! \brief obtains the camera near and far clipping planes.
 void Camera::get_clipping_planes(float& near_plane, float& far_plane)
 { m_frustum.get_near_far(near_plane, far_plane); }
 
@@ -197,17 +224,6 @@ void Camera::set_aspect_ratio(const Context* context)
   }
 }
 
-//! \brief
-void Camera::update_matrix_requiered(const Field_info* /* info */)
-{
-#if 0
-  m_dirty_matrix = true;
-  set_rendering_required();
-  if (m_is_bound)
-    m_execution_coordinator->set_current_view_calculation_required();
-#endif
-}
-
 //! \brief initializes the container prototype.
 void Camera::init_prototype()
 {
@@ -216,8 +232,7 @@ void Camera::init_prototype()
 
   // Add the object fields to the prototype
   // position
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Camera::update_matrix_requiered);
+  auto exec_func = static_cast<Execution_function>(&Camera::components_changed);
   Vector3f_handle_function position_func =
     static_cast<Vector3f_handle_function>(&Camera::position_handle);
   s_prototype->add_field_info(new SF_vector3f(POSITION, "position",
@@ -226,9 +241,7 @@ void Camera::init_prototype()
                                               exec_func));
 
   // orientation
-  exec_func =
-    static_cast<Execution_function>(&Camera::update_matrix_requiered);
-  Rotation_handle_function orientation_func =
+  auto orientation_func =
     static_cast<Rotation_handle_function>(&Camera::orientation_handle);
   s_prototype->add_field_info(new SF_rotation(ORIENTATION, "orientation",
                                               Field_info::RULE_EXPOSED_FIELD,
@@ -236,8 +249,7 @@ void Camera::init_prototype()
                                               s_def_orientation, exec_func));
 
   // fieldOfView
-  exec_func =
-    static_cast<Execution_function>(&Camera::update_field_of_view);
+  exec_func = static_cast<Execution_function>(&Camera::field_of_view_changed);
   Float_handle_function fov_func =
     static_cast<Float_handle_function>(&Camera::fov_handle);
   s_prototype->add_field_info(new SF_float(FIELDOFVIEW, "fieldOfView",
@@ -246,14 +258,14 @@ void Camera::init_prototype()
                                            exec_func));
 
   // description
-  String_handle_function description_func =
+  auto description_func =
     static_cast<String_handle_function>(&Camera::description_handle);
   s_prototype->add_field_info(new SF_string(DESCRIPTION, "description",
                                             Field_info::RULE_FIELD,
                                             description_func));
 
   // radiusScale
-  Float_handle_function radius_scale_func =
+  auto radius_scale_func =
     static_cast<Float_handle_function>(&Camera::radius_scale_handle);
   s_prototype->add_field_info(new SF_float(RADIUS_SCALE, "radiusScale",
                                            Field_info::RULE_EXPOSED_FIELD,
@@ -278,22 +290,34 @@ Container_proto* Camera::get_prototype()
 //! \brief obtain the camera viewing matrix.
 const Matrix4f& Camera::get_view_mat()
 {
+  if (m_dirty_axes) clean_axes();
   if (m_dirty_matrix) clean_matrix();
   return m_view_mat;
+}
+
+//! \brief cleans the camera viewing axes.
+void Camera::clean_axes()
+{
+  m_dirty_axes = false;
 }
 
 //! \brief cleans the camera viewing matrix.
 void Camera::clean_matrix()
 {
   m_view_mat.make_identity();
+  m_view_mat.set_col(0, m_xaxis);
+  m_view_mat.set_col(1, m_yaxis);
+  m_view_mat.set_col(2, m_zaxis);
 
   // rotation:
   const auto& newz = m_orientation.get_axis();      // asured normalized
   const auto angle = m_orientation.get_angle();
   m_view_mat.post_rot(m_view_mat, newz[0], newz[1], newz[2], -angle);
 
+  // Position
   Vector3f new_pos;
-  new_pos.scale(-1.0f, m_position);
+  new_pos.add(m_eye, m_position);
+  new_pos.scale(-1.0f);
   new_pos.xform_pt(new_pos, m_view_mat);
   m_view_mat.set_row(3, new_pos);
 
@@ -303,7 +327,7 @@ void Camera::clean_matrix()
 //! \brief applies the camera.
 void Camera::draw(Draw_action* action)
 {
-  Configuration* conf = action->get_configuration();
+  const auto* conf = action->get_configuration();
   if (conf) {
     Configuration::Shared_accumulation acc = conf->get_accumulation();
     if (acc && acc->is_enabled() && acc->is_active()) {
@@ -382,12 +406,6 @@ void Camera::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "positionTranslation") {
-      Vector3f vec(value);
-      m_position_translation.set(vec);
-      elem->mark_delete(ai);
-      continue;
-    }
   }
 
   // Remove all the deleted attributes:
@@ -409,16 +427,29 @@ Bindable_stack* Camera::get_stack()
 void Camera::enable()
 {
   utilize();
-  const auto* context = m_scene_graph->get_context();
-  init(context);
+  init();
 }
 
 //! \brief initializes the camera based on the current context.
-void Camera::init(const Context* context)
+void Camera::init()
 {
+  const auto* conf = m_scene_graph->get_configuration();
+  if (Configuration::VM_MODELING == conf->get_viewpoint_mode()) {
+    Vector3f up(0, 0, 1);
+    Vector3f line_of_sight(0, -1, 0);
+    set_viewpoint(line_of_sight, up);
+  }
+  const auto* context = m_scene_graph->get_context();
   set_aspect_ratio(context);
-  // Update the frustum to contain the model:
   set_dynamic_clipping_planes();
+}
+
+//! \brief sets the viewpoint line-of-sight and up default vectors.
+void Camera::set_viewpoint(const Vector3f& line_of_sight, const Vector3f& up)
+{
+  m_line_of_sight.set(line_of_sight);
+  m_up.set(up);
+  m_dirty_matrix = true;
 }
 
 SGAL_END_NAMESPACE
