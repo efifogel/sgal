@@ -76,7 +76,7 @@ bool Bounding_sphere::does_contain(const Vector3f& point) const
  *
  * @param spheres an array of sphere bound objects.
  */
-void Bounding_sphere::set_around(const Bounding_sphere_vector_const& spheres)
+void Bounding_sphere::set_around(const Bounding_sphere_const_vector& spheres)
 {
   if (spheres.size() == 0) {
     m_center.set(0, 0, 0);
