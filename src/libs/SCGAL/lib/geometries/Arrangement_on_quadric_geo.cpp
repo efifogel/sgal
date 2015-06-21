@@ -218,19 +218,19 @@ void Arrangement_on_quadric_geo::clean()
   m_dirty = false;
 }
 
-/*! \brief */
+//! \brief
 void Arrangement_on_quadric_geo::cull(Cull_context& cull_context)
 {
   //! \todo
 }
 
-/*! \brief */
+//! \brief
 void Arrangement_on_quadric_geo::isect(Isect_action* action)
 {
   //! \todo
 }
 
-/*! \brief */
+//! \brief
 Boolean Arrangement_on_quadric_geo::clean_bounding_sphere()
 {
   Boolean changed = false;
@@ -239,19 +239,19 @@ Boolean Arrangement_on_quadric_geo::clean_bounding_sphere()
   return changed;
 }
 
-/*! \brief clears the internal representation and auxiliary data structures. */
+//! \brief clears the internal representation and auxiliary data structures.
 void Arrangement_on_quadric_geo::clear()
 { m_aoq.clear(); }
 
-/*! \brief determines whether the representation is empty. */
+//! \brief determines whether the representation is empty.
 Boolean Arrangement_on_quadric_geo::is_empty() const
 { return m_aoq.is_empty(); }
 
-/*! \brief draws the embedding surface. */
+//! \brief draws the embedding surface.
 void Arrangement_on_quadric_geo::draw_surface(Draw_action* action)
 { m_base_quadric->draw(action); }
 
-/*! \brief draws the arrangement vertices. */
+//! \brief draws the arrangement vertices.
 void Arrangement_on_quadric_geo::draw_aos_vertices(Draw_action* action)
 {
   Aoq_vertex_const_iterator vi;
@@ -268,7 +268,7 @@ void Arrangement_on_quadric_geo::draw_aos_vertices(Draw_action* action)
   }
 }
 
-/*! \brief draws the arrangement edges. */
+//! \brief draws the arrangement edges.
 void Arrangement_on_quadric_geo::draw_aos_edges(Draw_action* action)
 {
 #if 0
@@ -295,11 +295,11 @@ void Arrangement_on_quadric_geo::draw_aos_edges(Draw_action* action)
 #endif
 }
 
-/*! \brief sets the base quadric. */
+//! \brief sets the base quadric.
 void Arrangement_on_quadric_geo::set_base_quadric(Shared_quadric_geo quadric)
 {
   m_base_quadric = quadric;
-  m_is_sphere_bound_dirty = true;
+  m_bounding_sphere_dirty = true;
 }
 
 SGAL_END_NAMESPACE
