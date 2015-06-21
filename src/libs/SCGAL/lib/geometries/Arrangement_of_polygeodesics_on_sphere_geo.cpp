@@ -106,10 +106,8 @@ Container_proto* Arrangement_of_polygeodesics_on_sphere_geo::get_prototype()
 void Arrangement_of_polygeodesics_on_sphere_geo::set_attributes(Element* elem)
 {
   Arrangement_of_polygeodesics_on_sphere_base_geo::set_attributes(elem);
-
-  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
-       ++cai)
-  {
+  auto cai = elem->cont_attrs_begin();
+  for (; cai != elem->cont_attrs_end(); ++cai) {
     const auto& name = elem->get_name(cai);
     auto cont = elem->get_value(cai);
     if (name == "overlay") {
@@ -122,9 +120,8 @@ void Arrangement_of_polygeodesics_on_sphere_geo::set_attributes(Element* elem)
   }
 
   // Sets the multi-container attributes of this node:
-  for (auto mcai = elem->multi_cont_attrs_begin();
-       mcai != elem->multi_cont_attrs_end(); mcai++)
-  {
+  auto mcai = elem->multi_cont_attrs_begin();
+  for (; mcai != elem->multi_cont_attrs_end(); ++mcai) {
     const auto& name = elem->get_name(mcai);
     auto& cont_list = elem->get_value(mcai);
     if (name == "overlay") {
