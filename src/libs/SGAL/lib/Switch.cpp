@@ -124,7 +124,7 @@ void Switch::isect(Isect_action* isect_action)
  */
 void Switch::clean_bounding_sphere()
 {
-  if (m_locked_sphere_bound) {
+  if (m_locked_bounding_sphere) {
     m_dirty_bounding_sphere = false;
     return;
   }

@@ -360,7 +360,7 @@ void Geo_set::tex_coord_indices_changed(const Field_info* /* field_info */) {}
 //! \brief responds to a change in the sphere bound.
 void Geo_set::bounding_sphere_changed(const Field_info* field_info)
 {
-  if (!field_info) field_info = get_field_info(SPHERE_BOUND);
+  if (!field_info) field_info = get_field_info(BOUNDING_SPHERE);
   Geometry::bounding_sphere_changed(field_info);
   Geometry::field_changed(field_info);
 }

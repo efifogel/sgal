@@ -61,7 +61,7 @@ public:
   virtual void cull(Cull_context & cull_context);
   virtual void draw(Draw_action* action);
   virtual void isect(Isect_action* action);
-  virtual Boolean calculate_sphere_bound();
+  virtual Boolean calculate_bounding_sphere();
 
   enum {
     FIRST = Group::LAST - 1,

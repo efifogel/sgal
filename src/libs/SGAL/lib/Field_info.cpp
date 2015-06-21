@@ -149,9 +149,9 @@ void Field_info::write(Formatter* formatter, const Bounding_sphere& value,
                        Boolean declaration) const
 {
   if (declaration)
-    formatter->single_sphere_bound(get_rule_name(), get_type_name(), get_name(),
-                                   default_value);
-  else formatter->single_sphere_bound(get_name(), value, default_value);
+    formatter->single_bounding_sphere(get_rule_name(), get_type_name(),
+                                      get_name(), default_value);
+  else formatter->single_bounding_sphere(get_name(), value, default_value);
 }
 
 //! \brief exports the (single) string field.
@@ -285,9 +285,9 @@ void Field_info::write(Formatter* formatter, const Bounding_sphere_array& value,
                        Boolean declaration) const
 {
   if (declaration)
-    formatter->multi_sphere_bound(get_rule_name(), get_type_name(), get_name(),
-                                  default_value);
-  else formatter->multi_sphere_bound(get_name(), value, default_value);
+    formatter->multi_bounding_sphere(get_rule_name(), get_type_name(),
+                                     get_name(), default_value);
+  else formatter->multi_bounding_sphere(get_name(), value, default_value);
 }
 
 //! \brief exports the multi-string field.

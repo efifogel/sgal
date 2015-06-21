@@ -216,8 +216,6 @@ void Box::set_attributes(Element* elem)
 
   // Remove all the deleted attributes:
   elem->delete_marked();
-
-  // calculate_sphere_bound();
 }
 
 //! \brief initializes the box prototype.

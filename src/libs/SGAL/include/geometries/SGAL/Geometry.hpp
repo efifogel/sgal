@@ -48,7 +48,7 @@ class SGAL_SGAL_DECL Geometry : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,
-    SPHERE_BOUND,
+    BOUNDING_SPHERE,
     BOUND_MODE,
     GENERATE_COLOR,
     GENERATE_TEX_COORD,
@@ -77,7 +77,7 @@ public:
 
   /// \name field handlers
   //@{
-  Bounding_sphere* sphere_bound_handle(const Field_info*)
+  Bounding_sphere* bounding_sphere_handle(const Field_info*)
   { return &m_bounding_sphere; }
   Boolean* generate_color_handle(const Field_info*)
   { return &m_generate_color; }

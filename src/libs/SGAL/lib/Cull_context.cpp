@@ -126,11 +126,11 @@ void Cull_context::draw_node(Draw_action* draw_action, const Render_node& rn)
 float Cull_context::compute_distance(const Cull_context::Render_node& rn)
 {
   // Get world position of node.
-  const Bounding_sphere& sphere_bound = rn.m_shape->get_bounding_sphere();
+  const Bounding_sphere& bounding_sphere = rn.m_shape->get_bounding_sphere();
 
   // the center of the sphere bound in world coordinate system
   Vector3f w_center;
-  w_center.xform_pt(sphere_bound.get_center(), *(rn.m_wtm));
+  w_center.xform_pt(bounding_sphere.get_center(), *(rn.m_wtm));
 
   // Extract the scale factor from the matrix:
   //! \todo Elliminate the calculation of the scale, as the scale
@@ -169,7 +169,7 @@ float Cull_context::compute_distance(const Cull_context::Render_node& rn)
   SGAL_assertion(scale[2]);
 
   float factor = scale.get_max_comp();
-  float radius = factor * sphere_bound.get_radius();
+  float radius = factor * bounding_sphere.get_radius();
 
   // calculate the distance between the camera and the center ofthe object
   Vector3f p;

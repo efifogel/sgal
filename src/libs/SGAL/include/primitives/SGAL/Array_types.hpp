@@ -46,7 +46,7 @@ typedef std::vector<Vector3f>                           Vector3f_array;
 typedef std::vector<Vector3f>                           Vector3f_array;
 typedef std::vector<Vector4f>                           Vector4f_array;
 typedef std::vector<Rotation>                           Rotation_array;
-typedef std::vector<Bounding_sphere>                       Bounding_sphere_array;
+typedef std::vector<Bounding_sphere>                    Bounding_sphere_array;
 typedef std::vector<std::string>                        String_array;
 typedef std::vector<Image>                              Image_array;
 typedef std::vector<Shared_container>                   Shared_container_array;

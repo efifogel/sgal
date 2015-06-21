@@ -95,20 +95,13 @@ void Planar_map_geo::draw(Draw_action * draw_action)
 
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
-
-  return;
 }
 
-/*! */
-void Planar_map_geo::isect(Isect_action * action)
-{
-}
+//!
+void Planar_map_geo::isect(Isect_action * action) {}
 
-/*! */
-Boolean Planar_map_geo::calculate_sphere_bound()
-{
-  return false;
-}
+//!
+Boolean Planar_map_geo::calculate_bounding_sphere() { return false; }
 
 /*! Sets the attributes of the object extracted from the VRML or X3D file.
  * \param elem contains lists of attribute names and values
@@ -117,20 +110,19 @@ Boolean Planar_map_geo::calculate_sphere_bound()
 void Planar_map_geo::set_attributes(Element * elem)
 {
   Geometry::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++) {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ai++) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "coordIndex") {
       elem->mark_delete(ai);
     }
   }
 
-  for (Cont_attr_iter cai = elem->cont_attrs_begin();
+  for (auto cai = elem->cont_attrs_begin();
        cai != elem->cont_attrs_end(); cai++)
   {
-    const std::string & name = elem->get_name(cai);
-    Container * cont = elem->get_value(cai);
+    const auto& name = elem->get_name(cai);
+    auto* cont = elem->get_value(cai);
     if (name == "coord") {
       elem->mark_delete(cai);
     }

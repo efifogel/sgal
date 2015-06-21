@@ -60,7 +60,8 @@ typedef Field_info_template<Vector3f, Field_info::SF_VEC3F>        SF_vector3f;
 typedef Field_info_template<Vector3f, Field_info::SF_COLOR>        SF_color;
 typedef Field_info_template<Vector4f, Field_info::SF_VEC4F>        SF_vector4f;
 typedef Field_info_template<Rotation, Field_info::SF_ROTATION>     SF_rotation;
-typedef Field_info_template<Bounding_sphere, Field_info::SF_SB>       SF_sphere_bound;
+typedef Field_info_template<Bounding_sphere, Field_info::SF_SB>
+  SF_bounding_sphere;
 typedef Field_info_template<std::string, Field_info::SF_STR>       SF_string;
 typedef Field_info_template<Shared_container, Field_info::SF_SHARED_CONTAINER>
                                                        SF_shared_container;
@@ -77,43 +78,45 @@ typedef Field_info_template<Vector3f_array, Field_info::MF_COLOR>  MF_color;
 typedef Field_info_template<Vector4f_array, Field_info::MF_VEC4F>  MF_vector4f;
 typedef Field_info_template<Rotation_array, Field_info::MF_ROTATION>
                                                                    MF_rotation;
-typedef Field_info_template<Bounding_sphere_array, Field_info::MF_SB> MF_sphere_bound;
+typedef Field_info_template<Bounding_sphere_array, Field_info::MF_SB>
+  MF_bounding_sphere;
 typedef Field_info_template<String_array, Field_info::MF_STR>      MF_string;
-typedef Field_info_template<Shared_container_array, Field_info::MF_SHARED_CONTAINER>
-                                                       MF_shared_container;
+typedef Field_info_template<Shared_container_array,
+                            Field_info::MF_SHARED_CONTAINER>
+  MF_shared_container;
 
 // Field handle functions
 // Single field handle functions
-typedef Handle_function<Boolean>::type        Boolean_handle_function;
-typedef Handle_function<Float>::type          Float_handle_function;
-typedef Handle_function<Uint>::type           Uint_handle_function;
-typedef Handle_function<Int32>::type          Int32_handle_function;
-typedef Handle_function<Scene_time>::type     Scene_time_handle_function;
-typedef Handle_function<Vector2f>::type       Vector2f_handle_function;
-typedef Handle_function<Vector3f>::type       Vector3f_handle_function;
-typedef Handle_function<Vector3f>::type       Vector3f_handle_function;
-typedef Handle_function<Vector4f>::type       Vector4f_handle_function;
-typedef Handle_function<Rotation>::type       Rotation_handle_function;
-typedef Handle_function<Bounding_sphere>::type   Bounding_sphere_handle_function;
-typedef Handle_function<std::string>::type    String_handle_function;
+typedef Handle_function<Boolean>::type         Boolean_handle_function;
+typedef Handle_function<Float>::type           Float_handle_function;
+typedef Handle_function<Uint>::type            Uint_handle_function;
+typedef Handle_function<Int32>::type           Int32_handle_function;
+typedef Handle_function<Scene_time>::type      Scene_time_handle_function;
+typedef Handle_function<Vector2f>::type        Vector2f_handle_function;
+typedef Handle_function<Vector3f>::type        Vector3f_handle_function;
+typedef Handle_function<Vector3f>::type        Vector3f_handle_function;
+typedef Handle_function<Vector4f>::type        Vector4f_handle_function;
+typedef Handle_function<Rotation>::type        Rotation_handle_function;
+typedef Handle_function<Bounding_sphere>::type Bounding_sphere_handle_function;
+typedef Handle_function<std::string>::type     String_handle_function;
 typedef Handle_function<Shared_container>::type
-                                              Shared_container_handle_function;
+                                               Shared_container_handle_function;
 
 // Multi field handle functions
-typedef Handle_function<Boolean_array>::type  Boolean_array_handle_function;
-typedef Handle_function<Float_array>::type    Float_array_handle_function;
-typedef Handle_function<Uint_array>::type     Uint_array_handle_function;
-typedef Handle_function<Int32_array>::type    Int32_array_handle_function;
+typedef Handle_function<Boolean_array>::type   Boolean_array_handle_function;
+typedef Handle_function<Float_array>::type     Float_array_handle_function;
+typedef Handle_function<Uint_array>::type      Uint_array_handle_function;
+typedef Handle_function<Int32_array>::type     Int32_array_handle_function;
 typedef Handle_function<Scene_time_array>::type
-                                              Scene_time_array_handle_function;
-typedef Handle_function<Vector2f_array>::type Vector2f_array_handle_function;
-typedef Handle_function<Vector3f_array>::type Vector3f_array_handle_function;
-typedef Handle_function<Vector3f_array>::type Vector3f_array_handle_function;
-typedef Handle_function<Vector4f_array>::type Vector4f_array_handle_function;
-typedef Handle_function<Rotation_array>::type Rotation_array_handle_function;
+                                               Scene_time_array_handle_function;
+typedef Handle_function<Vector2f_array>::type  Vector2f_array_handle_function;
+typedef Handle_function<Vector3f_array>::type  Vector3f_array_handle_function;
+typedef Handle_function<Vector3f_array>::type  Vector3f_array_handle_function;
+typedef Handle_function<Vector4f_array>::type  Vector4f_array_handle_function;
+typedef Handle_function<Rotation_array>::type  Rotation_array_handle_function;
 typedef Handle_function<Bounding_sphere_array>::type
   Bounding_sphere_array_handle_function;
-typedef Handle_function<String_array>::type   String_array_handle_function;
+typedef Handle_function<String_array>::type    String_array_handle_function;
 typedef Handle_function<Shared_container_array>::type
   Shared_container_array_handle_function;
 

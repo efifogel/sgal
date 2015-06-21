@@ -30,7 +30,7 @@ Container_proto* Node::s_prototype(nullptr);
 Node::Node(Boolean proto) :
   Container(proto),
   m_dirty_bounding_sphere(true),
-  m_locked_sphere_bound(false)
+  m_locked_bounding_sphere(false)
 {}
 
 //! \brief initializes the node prototype.
@@ -42,11 +42,12 @@ void Node::init_prototype()
   // Add the field-info records to the prototype:
   // Execution_function exec_func;
   // exec_func = static_cast<Execution_function>(&Transform::parts_changed);
-  Bounding_sphere_handle_function sphere_bound_func =
-    static_cast<Bounding_sphere_handle_function>(&Node::sphere_bound_handle);
-  s_prototype->add_field_info(new SF_sphere_bound(SPHERE_BOUND, "sphereBound",
-                                                  Field_info::RULE_OUT,
-                                                  sphere_bound_func));
+  Bounding_sphere_handle_function bounding_sphere_func =
+    static_cast<Bounding_sphere_handle_function>(&Node::bounding_sphere_handle);
+  s_prototype->add_field_info(new SF_bounding_sphere(BOUNDING_SPHERE,
+                                                     "boundingSphere",
+                                                     Field_info::RULE_OUT,
+                                                     bounding_sphere_func));
 }
 
 //! \brief deletes the node prototype.

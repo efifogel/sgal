@@ -197,9 +197,9 @@ public:
    * \param[in] value The attribute value.
    * \param[in] default_value The attribute default value.
    */
-  virtual void single_sphere_bound(const std::string& /* name */,
-                                   const Bounding_sphere& /* value */,
-                                   const Bounding_sphere& /* default_value */) {}
+  virtual void single_bounding_sphere(const std::string& /* name */,
+                                      const Bounding_sphere& /* value */,
+                                      const Bounding_sphere& /* default_value */) {}
 
   /*! Export a single string field.
    * \param[in] name The attribute name.
@@ -305,9 +305,9 @@ public:
    * \param[in] value The attribute value.
    * \param[in] default_value The attribute default value.
    */
-  virtual void multi_sphere_bound(const std::string& /* name */,
-                                  const std::vector<Bounding_sphere>& /* value */,
-                                  const std::vector<Bounding_sphere>& /* default_value */) {}
+  virtual void multi_bounding_sphere(const std::string& /* name */,
+                                     const std::vector<Bounding_sphere>& /* value */,
+                                     const std::vector<Bounding_sphere>& /* default_value */) {}
 
   /*! Export a multi-string field.
    * \param[in] name The attribute name.
@@ -434,10 +434,10 @@ public:
    * \param[in] value The field value.
    * \param[in] default_value The field default value.
    */
-  virtual void single_sphere_bound(const std::string& /* rule */,
-                                   const std::string& /* type */,
-                                   const std::string& /* name */,
-                                   const Bounding_sphere& /* value */) {}
+  virtual void single_bounding_sphere(const std::string& /* rule */,
+                                      const std::string& /* type */,
+                                      const std::string& /* name */,
+                                      const Bounding_sphere& /* value */) {}
 
   /*! Export a single string field.
    * \param[in] name The field name.
@@ -544,10 +544,10 @@ public:
    * \param[in] value The field value.
    * \param[in] default_value The field default value.
    */
-  virtual void multi_sphere_bound(const std::string& /* rule */,
-                                  const std::string& /* type */,
-                                  const std::string& /* name */,
-                                  const std::vector<Bounding_sphere>& /* value */) {}
+  virtual void multi_bounding_sphere(const std::string& /* rule */,
+                                     const std::string& /* type */,
+                                     const std::string& /* name */,
+                                     const std::vector<Bounding_sphere>& /* value */) {}
 
   /*! Export a multi-string field.
    * \param[in] name The field name.

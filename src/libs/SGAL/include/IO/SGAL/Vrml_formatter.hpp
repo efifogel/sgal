@@ -191,10 +191,10 @@ public:
    * \param value The field value.
    * \param default_value The field default value.
    */
-  virtual void single_sphere_bound(const std::string& rule,
-                                   const std::string&_type,
-                                   const std::string& name,
-                                   const Bounding_sphere& value);
+  virtual void single_bounding_sphere(const std::string& rule,
+                                      const std::string&_type,
+                                      const std::string& name,
+                                      const Bounding_sphere& value);
 
   /*! Export a single string field.
    * \param name The field name.
@@ -292,10 +292,10 @@ public:
    * \param value The field value.
    * \param default_value The field default value.
    */
-  virtual void multi_sphere_bound(const std::string& rule,
-                                  const std::string&_type,
-                                  const std::string& name,
-                                  const std::vector<Bounding_sphere>& value);
+  virtual void multi_bounding_sphere(const std::string& rule,
+                                     const std::string&_type,
+                                     const std::string& name,
+                                     const std::vector<Bounding_sphere>& value);
 
   /*! Export a multi-string field.
    * \param name The field name.
@@ -391,9 +391,9 @@ public:
    * \param value The field value.
    * \param default_value The field default value.
    */
-  virtual void single_sphere_bound(const std::string& name,
-                                   const Bounding_sphere& value,
-                                   const Bounding_sphere& default_value);
+  virtual void single_bounding_sphere(const std::string& name,
+                                      const Bounding_sphere& value,
+                                      const Bounding_sphere& default_value);
 
   /*! Export a single string field.
    * \param name The field name.
@@ -498,9 +498,9 @@ public:
    * \param value The field value.
    * \param default_value The field default value.
    */
-  virtual void multi_sphere_bound(const std::string& name,
-                                  const std::vector<Bounding_sphere>& value,
-                                  const std::vector<Bounding_sphere>& default_value);
+  virtual void multi_bounding_sphere(const std::string& name,
+                                     const std::vector<Bounding_sphere>& value,
+                                     const std::vector<Bounding_sphere>& default_value);
 
   /*! Export a multi-string field.
    * \param name The field name.
@@ -657,10 +657,10 @@ inline void Vrml_formatter::single_rotation(const std::string& rule,
 { single_declaration(rule, type, name, value); }
 
 //! \brief exports a single Bounding_sphere field.
-inline void Vrml_formatter::single_sphere_bound(const std::string& rule,
-                                                const std::string& type,
-                                                const std::string& name,
-                                                const Bounding_sphere& value)
+inline void Vrml_formatter::single_bounding_sphere(const std::string& rule,
+                                                   const std::string& type,
+                                                   const std::string& name,
+                                                   const Bounding_sphere& value)
 { single_declaration(rule, type, name, value); }
 
 //! \brief exports a single string field.
@@ -734,10 +734,10 @@ inline void Vrml_formatter::multi_rotation(const std::string& rule,
 { multi_declaration(rule, type, name, value); }
 
 //! \brief exports a multi-Bounding_sphere field.
-inline void Vrml_formatter::multi_sphere_bound(const std::string& rule,
-                                               const std::string& type,
-                                               const std::string& name,
-                                               const std::vector<Bounding_sphere>& value)
+inline void Vrml_formatter::multi_bounding_sphere(const std::string& rule,
+                                                  const std::string& type,
+                                                  const std::string& name,
+                                                  const std::vector<Bounding_sphere>& value)
 { multi_declaration(rule, type, name, value); }
 
 //! \brief exports a multi-string field.
@@ -795,9 +795,9 @@ inline void Vrml_formatter::single_rotation(const std::string& name,
 
 //! \brief exports a single Bounding_sphere field.
 inline void
-Vrml_formatter::single_sphere_bound(const std::string& name,
-                                    const Bounding_sphere& value,
-                                    const Bounding_sphere& default_value)
+Vrml_formatter::single_bounding_sphere(const std::string& name,
+                                       const Bounding_sphere& value,
+                                       const Bounding_sphere& default_value)
 { single_definition(name, value, default_value); }
 
 // Multi-field
@@ -852,9 +852,9 @@ inline void Vrml_formatter::multi_rotation(const std::string& name,
 
 //! \brief exports a single Bounding_sphere field.
 inline void
-Vrml_formatter::multi_sphere_bound(const std::string& name,
-                                   const std::vector<Bounding_sphere>& value,
-                                   const std::vector<Bounding_sphere>& default_value)
+Vrml_formatter::multi_bounding_sphere(const std::string& name,
+                                      const std::vector<Bounding_sphere>& value,
+                                      const std::vector<Bounding_sphere>& default_value)
 { multi_definition(name, value, default_value); }
 
 SGAL_END_NAMESPACE

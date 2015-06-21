@@ -55,7 +55,7 @@ class SGAL_SGAL_DECL Node : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,
-    SPHERE_BOUND,
+    BOUNDING_SPHERE,
     LAST
   };
 
@@ -81,7 +81,7 @@ public:
 
   /// \name field handlers
   //@{
-  Bounding_sphere* sphere_bound_handle(const Field_info*)
+  Bounding_sphere* bounding_sphere_handle(const Field_info*)
   { return &m_bounding_sphere; }
   //@}
 
@@ -132,7 +132,7 @@ protected:
   Boolean m_dirty_bounding_sphere;
 
   /*! Indicates whether the bounding sphere is locked */
-  Boolean m_locked_sphere_bound;
+  Boolean m_locked_bounding_sphere;
 
 private:
   /*! The container prototype. */

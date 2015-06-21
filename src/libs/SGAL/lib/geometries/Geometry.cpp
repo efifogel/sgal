@@ -53,11 +53,12 @@ void Geometry::init_prototype()
   s_prototype = new Container_proto();
 
   // sphereBound
-  auto sphere_bound_func =
-    static_cast<Bounding_sphere_handle_function>(&Geometry::sphere_bound_handle);
-  s_prototype->add_field_info(new SF_sphere_bound(SPHERE_BOUND, "sphereBound",
-                                                  Field_info::RULE_OUT,
-                                                  sphere_bound_func));
+  auto bounding_sphere_func =
+    static_cast<Bounding_sphere_handle_function>(&Geometry::bounding_sphere_handle);
+  s_prototype->add_field_info(new SF_bounding_sphere(BOUNDING_SPHERE,
+                                                     "boundingSphere",
+                                                     Field_info::RULE_OUT,
+                                                     bounding_sphere_func));
 
   // generatedTexCoord
   auto generate_tex_coord_func =
