@@ -120,11 +120,11 @@ void Power_diagram_on_sphere_geo::init_prototype()
   s_prototype =
     new Container_proto(Geodesic_voronoi_on_sphere_geo::get_prototype());
 
-  Execution_function exec_func = static_cast<Execution_function>
+  auto exec_func = static_cast<Execution_function>
     (&Arrangement_on_surface_geo::renderer_changed);
 
   // siteEnabled
-  Boolean_handle_function site_enabled_func =
+  auto site_enabled_func =
     static_cast<Boolean_handle_function>
     (&Power_diagram_on_sphere_geo::site_enabled_handle);
   s_prototype->add_field_info(new SF_bool(SITE_ENABLED, "siteEnabled",
@@ -132,7 +132,7 @@ void Power_diagram_on_sphere_geo::init_prototype()
                                           site_enabled_func, exec_func));
 
   // siteStyleId
-  Uint_handle_function site_style_func =
+  auto site_style_func =
     reinterpret_cast<Uint_handle_function>
     (&Power_diagram_on_sphere_geo::site_style_handle);
   s_prototype->add_field_info(new SF_uint(SITE_STYLE_ID, "siteStyleId",
@@ -140,7 +140,7 @@ void Power_diagram_on_sphere_geo::init_prototype()
                                           site_style_func, exec_func));
 
   // siteCountId
-  Uint_handle_function site_count_func =
+  auto site_count_func =
     static_cast<Uint_handle_function>
     (&Power_diagram_on_sphere_geo::site_count_handle);
   s_prototype->add_field_info(new SF_uint(SITE_COUNT_ID, "siteCountId",
@@ -148,7 +148,7 @@ void Power_diagram_on_sphere_geo::init_prototype()
                                           site_count_func, exec_func));
 
   // siteDirected
-  Boolean_handle_function site_directed_func =
+  auto site_directed_func =
     static_cast<Boolean_handle_function>
     (&Power_diagram_on_sphere_geo::site_directed_handle);
   s_prototype->add_field_info(new SF_bool(SITE_DIRECTED, "siteDirected",
@@ -178,8 +178,8 @@ Container_proto* Power_diagram_on_sphere_geo::get_prototype()
   typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
   boost::char_separator<char> sep(", \t\n\r");
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "siteEnabled") {
       m_site_enabled = compare_to_true(value);
       elem->mark_delete(ai);
@@ -214,8 +214,8 @@ Container_proto* Power_diagram_on_sphere_geo::get_prototype()
 
   for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
        ++cai) {
-    const std::string& name = elem->get_name(cai);
-    Element::Shared_container cont = elem->get_value(cai);
+    const auto& name = elem->get_name(cai);
+    auto cont = elem->get_value(cai);
     if (name == "plane") {
       Shared_coeff_array coeff_array =
         boost::dynamic_pointer_cast<Coeff_array>(cont);
