@@ -264,7 +264,7 @@ void Group::clean_bounding_sphere()
     return;
   }
 
-  Bounding_sphere_vector_const spheres;
+  Bounding_sphere_const_vector spheres;
   for (auto it = m_childs.begin(); it != m_childs.end(); ++it) {
     auto node = boost::dynamic_pointer_cast<Node>(*it);
     if (node) {
