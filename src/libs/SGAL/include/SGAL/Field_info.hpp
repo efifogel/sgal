@@ -292,8 +292,8 @@ public:
    * \patam[in] declaration Indicates whether the exported statement is a
    *            declaration or a definition.
    */
-  void write(Formatter* formatter, const Sphere_bound& value,
-             const Sphere_bound& default_value,
+  void write(Formatter* formatter, const Bounding_sphere& value,
+             const Bounding_sphere& default_value,
              Boolean declaration = false) const;
 
   /*! Export the (single) Boolean field.
@@ -424,8 +424,8 @@ public:
    * \patam[in] declaration Indicates whether the exported statement is a
    *            declaration or a definition.
    */
-  void write(Formatter* formatter, const Sphere_bound_array& value,
-             const Sphere_bound_array& default_value,
+  void write(Formatter* formatter, const Bounding_sphere_array& value,
+             const Bounding_sphere_array& default_value,
              Boolean declaration = false) const;
 
   /*! Export the multi-string field.

@@ -586,7 +586,7 @@ insert_sgm(Shared_spherical_gaussian_map_colored_geo sgm)
   m_sgm_nodes.push_back(sgm);
   Observer observer(this, get_field_info(GEOMETRIES));
   sgm->register_observer(observer);
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief sets an intermediate polyhedron.
@@ -608,7 +608,7 @@ void Spherical_gaussian_map_colored_geo::
 set_sgm(Spherical_gaussian_map_colored* sgm)
 {
   m_dirty_sgm = false;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
   m_sgm = sgm;
 }
 

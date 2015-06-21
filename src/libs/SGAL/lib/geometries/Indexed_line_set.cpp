@@ -583,15 +583,15 @@ void Indexed_line_set::draw(Draw_action* action)
 void Indexed_line_set::isect(Isect_action* /* action */) { }
 
 //! \brief cleans the sphere bound of the lines.
-void Indexed_line_set::clean_sphere_bound()
+void Indexed_line_set::clean_bounding_sphere()
 {
   if (!m_bb_is_pre_set && m_coord_array) {
     boost::shared_ptr<Coord_array_3d> coord_array =
       boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
     SGAL_assertion(coord_array);
-    m_sphere_bound.set_around(coord_array->begin(), coord_array->end());
+    m_bounding_sphere.set_around(coord_array->begin(), coord_array->end());
   }
-  m_dirty_sphere_bound = false;
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief setss the attributes of the geometry object.
@@ -635,7 +635,7 @@ void Indexed_line_set::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Geo_set::get_prototype());
 
-  Float_handle_function line_width_func =
+  auto line_width_func =
     static_cast<Float_handle_function>(&Indexed_line_set::line_width_handle);
   s_prototype->add_field_info(new SF_float(LINE_WIDTH, "lineWidth",
                                            Field_info::RULE_EXPOSED_FIELD,

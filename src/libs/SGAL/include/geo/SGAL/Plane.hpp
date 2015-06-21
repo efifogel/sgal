@@ -33,7 +33,7 @@
 SGAL_BEGIN_NAMESPACE
 
 class Box_bound;
-class Sphere_bound;
+class Bounding_sphere;
 class Seg;
 class Line;
 
@@ -76,7 +76,7 @@ public:
   // (See Bound::contains().)
   float contains(const Box_bound* box) const;
 
-  float contains(const Sphere_bound* sph) const;
+  float contains(const Bounding_sphere* sph) const;
 
   float contains(const Vector3f& pt) const;
 

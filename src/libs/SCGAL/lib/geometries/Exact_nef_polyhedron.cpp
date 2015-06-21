@@ -233,10 +233,10 @@ void Exact_nef_polyhedron::isect(SGAL::Isect_action* action)
 }
 
 //! \brief cleans the bounding sphere of the nef polyhedron.
-void Exact_nef_polyhedron::clean_sphere_bound_polyhedron()
+void Exact_nef_polyhedron::clean_bounding_sphere_polyhedron()
 {
   if (m_bb_is_pre_set) {
-    m_dirty_sphere_bound = false;
+    m_dirty_bounding_sphere = false;
     return;
   }
 
@@ -253,17 +253,17 @@ void Exact_nef_polyhedron::clean_sphere_bound_polyhedron()
     std::copy(min_sphere.center_cartesian_begin(),
               min_sphere.center_cartesian_end(),
               &center_vec[0]);
-    m_sphere_bound.set_center(center_vec);
-    m_sphere_bound.set_radius(min_sphere.radius());
+    m_bounding_sphere.set_center(center_vec);
+    m_bounding_sphere.set_radius(min_sphere.radius());
   }
-  m_dirty_sphere_bound = false;
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief cleans the bounding sphere of the nef polyhedron.
-void Exact_nef_polyhedron::clean_sphere_bound()
+void Exact_nef_polyhedron::clean_bounding_sphere()
 {
   if (m_bb_is_pre_set) {
-    m_dirty_sphere_bound = false;
+    m_dirty_bounding_sphere = false;
     return;
   }
 
@@ -282,10 +282,10 @@ void Exact_nef_polyhedron::clean_sphere_bound()
     std::copy(min_sphere.center_cartesian_begin(),
               min_sphere.center_cartesian_end(),
               &center_vec[0]);
-    m_sphere_bound.set_center(center_vec);
-    m_sphere_bound.set_radius(min_sphere.radius());
+    m_bounding_sphere.set_center(center_vec);
+    m_bounding_sphere.set_radius(min_sphere.radius());
   }
-  m_dirty_sphere_bound = false;
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief sets the attributes of this node.

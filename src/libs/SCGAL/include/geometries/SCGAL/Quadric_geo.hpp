@@ -101,7 +101,7 @@ typedef QdX::P_quadric_3<AT> Quadric_3;
   virtual void isect(Isect_action* action);
 
   /*! */
-  virtual Boolean clean_sphere_bound();
+  virtual Boolean clean_bounding_sphere();
 
   /*! Draw the geometry
    * \param action

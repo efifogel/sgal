@@ -129,19 +129,19 @@ void Quadric_geo::isect(Isect_action * action)
 }
 
 /*! \brief */
-Boolean Quadric_geo::clean_sphere_bound()
+Boolean Quadric_geo::clean_bounding_sphere()
 {
 #define SQRT_3          1.732f
 
-  if (!m_sphere_bound_dirty) return false;
+  if (!m_bounding_sphere_dirty) return false;
   if (is_dirty()) clean();
   if (m_bb_is_pre_set) return true;
 
   //! \todo calculate the sphere bound
-  m_sphere_bound.set_center(Vector3f(0, 0, 0));
-  m_sphere_bound.set_radius(SQRT_3);
+  m_bounding_sphere.set_center(Vector3f(0, 0, 0));
+  m_bounding_sphere.set_radius(SQRT_3);
 
-  m_sphere_bound_dirty = false;
+  m_bounding_sphere_dirty = false;
 
   return true;
 }

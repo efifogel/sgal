@@ -22,27 +22,27 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Math_defs.hpp"
-#include "SGAL/Sphere_bound.hpp"
+#include "SGAL/Bounding_sphere.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 /*! Parameterless constructor */
-Sphere_bound::Sphere_bound() : m_radius(0.0f) {}
+Bounding_sphere::Bounding_sphere() : m_radius(0.0f) {}
 
 /*! Copy constructor */
-Sphere_bound::Sphere_bound(const Sphere_bound& s)
+Bounding_sphere::Bounding_sphere(const Bounding_sphere& s)
 {
   m_center = s.get_center();
   m_radius = s.get_radius();
 }
 
 /*! Destructor */
-Sphere_bound::~Sphere_bound() {}
+Bounding_sphere::~Bounding_sphere() {}
 
 /*! \brief checks whether the sphere contains another sphere.
  * @return true iff it contains the sphere.
  */
-bool Sphere_bound::does_contain(const Sphere_bound* sphere) const
+bool Bounding_sphere::does_contain(const Bounding_sphere* sphere) const
 {
   float distance =
     m_center.distance(sphere->get_center()) + sphere->get_radius();
@@ -52,7 +52,7 @@ bool Sphere_bound::does_contain(const Sphere_bound* sphere) const
 /*! \brief checks whether the sphere contains a point.
  * @return true iff it contains the point.
  */
-bool Sphere_bound::does_contain(const Vector3f& point) const
+bool Bounding_sphere::does_contain(const Vector3f& point) const
 { return (m_center.sqr_distance(point) < (m_radius* m_radius)); }
 
 /*! \brief sets the bounding sphere to contains all specified spheres.
@@ -76,7 +76,7 @@ bool Sphere_bound::does_contain(const Vector3f& point) const
  *
  * @param spheres an array of sphere bound objects.
  */
-void Sphere_bound::set_around(const Sphere_bound_vector_const& spheres)
+void Bounding_sphere::set_around(const Bounding_sphere_vector_const& spheres)
 {
   if (spheres.size() == 0) {
     m_center.set(0, 0, 0);
@@ -90,7 +90,7 @@ void Sphere_bound::set_around(const Sphere_bound_vector_const& spheres)
     return;
   }
 
-  Sphere_bound current(*spheres[0]);
+  Bounding_sphere current(*spheres[0]);
 
   Vector3f c1, c2;
   float r1 = 0, r2 = 0;

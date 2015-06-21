@@ -101,11 +101,11 @@ void Sphere::init()
 /*! \brief cleans the sphere bound of the sphere.
  * Note that the sphere bound is identical to the sphere itself.
  */
-void Sphere::clean_sphere_bound()
+void Sphere::clean_bounding_sphere()
 {
-  m_sphere_bound.set_radius(m_radius);
-  m_sphere_bound.set_center(m_center);
-  m_dirty_sphere_bound = false;
+  m_bounding_sphere.set_radius(m_radius);
+  m_bounding_sphere.set_center(m_center);
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief sets the attributes of this container.
@@ -145,47 +145,6 @@ void Sphere::set_attributes(Element * elem)
   // calculate_sphere_bound();
 }
 
-#if 0
-/*! Get a list of attributes for the object.
- * The list is of name=value pairs.
- * @return a list of pairs of strings
- */
-Attribute_list Sphere::get_attributes()
-{
-  Attribute_list attribs;
-  // attribs = Geometry::get_attributes();
-  Attribue attrib;
-  char buf[32];
-
-  attribs = Geometry::get_attributes();
-
-  if (m_radius != m_def_radius) {
-    attrib.first = "radius";
-    sprintf(buf, "%g", get_radius());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (m_slices != m_def_slices)
-  {
-    attrib.first = "slices";
-    sprintf(buf, "%d", get_slices());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (m_stacks != m_def_stacks)
-  {
-    attrib.first = "stacks";
-    sprintf(buf, "%d", get_stacks());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  return attribs;
-}
-#endif
-
 //! \brief initilalizes the prototype object in the class.
 void Sphere::init_prototype()
 {
@@ -194,10 +153,9 @@ void Sphere::init_prototype()
 
   // Add the field-info records to the prototype:
   // Bounding sphere changed
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Geometry::sphere_bound_changed);
-  Float_handle_function radius_func =
-    static_cast<Float_handle_function>(&Sphere::radius_handle);
+  auto exec_func =
+    static_cast<Execution_function>(&Geometry::bounding_sphere_changed);
+  auto radius_func = static_cast<Float_handle_function>(&Sphere::radius_handle);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
                                            Field_info::RULE_EXPOSED_FIELD,
                                            radius_func,
@@ -206,14 +164,12 @@ void Sphere::init_prototype()
   // Rendering required
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Uint_handle_function stacks_func =
-    static_cast<Uint_handle_function>(&Sphere::stacks_handle);
+  auto stacks_func = static_cast<Uint_handle_function>(&Sphere::stacks_handle);
   s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           stacks_func));
 
-  Uint_handle_function slices_func =
-    static_cast<Uint_handle_function>(&Sphere::slices_handle);
+  auto slices_func = static_cast<Uint_handle_function>(&Sphere::slices_handle);
   s_prototype->add_field_info(new SF_uint(SLICES, "slices",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           slices_func));

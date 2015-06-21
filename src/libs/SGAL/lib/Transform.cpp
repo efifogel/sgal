@@ -30,7 +30,7 @@
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Isect_action.hpp"
-#include "SGAL/Sphere_bound.hpp"
+#include "SGAL/Bounding_sphere.hpp"
 #include "SGAL/Cull_context.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
@@ -76,7 +76,7 @@ void Transform::set_matrix(const Matrix4f& matrix)
   m_dirty_parts = true;
   m_dirty_matrix = false;
   m_dirty_inverse = true;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief obtains (a const reference to) the matrix.
@@ -304,7 +304,7 @@ void Transform::set_translation(float v0, float v1, float v2)
   m_translation.set(v0, v1, v2);
   m_dirty_matrix = true;
   m_dirty_inverse = true;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief sets the rotation.
@@ -315,7 +315,7 @@ void Transform::set_rotation(float v0, float v1, float v2, float angle)
   m_rotation.set_angle(angle);
   m_dirty_matrix = true;
   m_dirty_inverse = true;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief sets the scale factors.
@@ -327,7 +327,7 @@ void Transform::set_scale(float s0, float s1, float s2)
   m_scale[2] = s2;
   m_dirty_matrix = true;
   m_dirty_inverse = true;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief sets the translation.
@@ -390,7 +390,7 @@ void Transform::set_scale_orientation(float v0, float v1, float v2, float v3)
   m_scale_orientation.set(v0,v1,v2,v3);
   m_dirty_matrix = true;
   m_dirty_inverse = true;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief obtains the scale-orientation.
@@ -426,7 +426,7 @@ void Transform::set_center(float v0, float v1, float v2)
   m_center[2] = v2;
   m_dirty_matrix = true;
   m_dirty_inverse = true;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief obtains the center of rotation.
@@ -456,7 +456,7 @@ void Transform::parts_changed(const Field_info* /* field_info */)
 {
   m_dirty_matrix = true;
   m_dirty_inverse = true;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
   set_rendering_required();
 }
 
@@ -501,28 +501,28 @@ void Transform::reset(const Field_info* /* field_info */)
 
 /*! \brief cleans the bounding sphere of the transformation node.
  * Notice that the a call to clean_matrix() must precede the call to
- * Group::clean_sphere_bound(), cause the former may reset the flag
- * m_dirty_sphere_bound.
+ * Group::clean_bounding_sphere(), cause the former may reset the flag
+ * m_dirty_bounding_sphere.
  */
-void Transform::clean_sphere_bound()
+void Transform::clean_bounding_sphere()
 {
   if (m_locked_sphere_bound) {
-    m_dirty_sphere_bound = false;
+    m_dirty_bounding_sphere = false;
     return;
   }
 
   if (m_dirty_matrix) clean_matrix();
-  Group::clean_sphere_bound();
+  Group::clean_bounding_sphere();
 
   // transform the center of the boundng sphere
   Vector3f new_center;
-  Vector3f current_center = m_sphere_bound.get_center();
+  Vector3f current_center = m_bounding_sphere.get_center();
   new_center.xform_pt(current_center, m_matrix);
-  m_sphere_bound.set_center(new_center);
+  m_bounding_sphere.set_center(new_center);
 
   // multiply the radius by the max scaling factor
   float scale_factor = m_scale.get_max_comp();
-  m_sphere_bound.set_radius(m_sphere_bound.get_radius() * scale_factor);
+  m_bounding_sphere.set_radius(m_bounding_sphere.get_radius() * scale_factor);
 }
 
 //! \brief initializes the node prototype.
@@ -532,11 +532,10 @@ void Transform::init_prototype()
   s_prototype = new Container_proto(Group::get_prototype());
 
   // Add the field-info records to the prototype:
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Transform::parts_changed);
+  auto exec_func = static_cast<Execution_function>(&Transform::parts_changed);
 
   // center
-  Vector3f_handle_function center_func =
+  auto center_func =
     static_cast<Vector3f_handle_function>(&Transform::center_handle);
   s_prototype->add_field_info(new SF_vector3f(CENTER, "center",
                                               Field_info::RULE_EXPOSED_FIELD,
@@ -544,7 +543,7 @@ void Transform::init_prototype()
                                               s_def_center, exec_func));
 
   // translation
-  Vector3f_handle_function translation_func =
+  auto translation_func =
     static_cast<Vector3f_handle_function>(&Transform::translation_handle);
   s_prototype->add_field_info(new SF_vector3f(TRANSLATION, "translation",
                                               Field_info::RULE_EXPOSED_FIELD,
@@ -552,7 +551,7 @@ void Transform::init_prototype()
                                               s_def_translation, exec_func));
 
   // rotation
-  Rotation_handle_function rotation_func =
+  auto rotation_func =
     static_cast<Rotation_handle_function>(&Transform::rotation_handle);
   s_prototype->add_field_info(new SF_rotation(ROTATION, "rotation",
                                               Field_info::RULE_EXPOSED_FIELD,
@@ -560,7 +559,7 @@ void Transform::init_prototype()
                                               exec_func));
 
   // scale
-  Vector3f_handle_function scale_func =
+  auto scale_func =
     static_cast<Vector3f_handle_function>(&Transform::scale_handle);
   s_prototype->add_field_info(new SF_vector3f(SCALE, "scale",
                                               Field_info::RULE_EXPOSED_FIELD,
@@ -569,7 +568,7 @@ void Transform::init_prototype()
 
   // reset
   exec_func = static_cast<Execution_function>(&Transform::reset);
-  Boolean_handle_function reset_func =
+  auto reset_func =
     static_cast<Boolean_handle_function>(&Transform::reset_handle);
   s_prototype->add_field_info(new SF_bool(RESET, "reset",
                                           Field_info::RULE_OUT,
@@ -637,53 +636,6 @@ void Transform::set_attributes(Element* elem)
 }
 
 #if 0
-/*!
- */
-Attribute_list Transform::get_attributes()
-{
-  Attribute_list attribs;
-  Attribue attrib;
-  Vector3f vec;
-  Rotation rot;
-
-  attribs = Group::get_attributes();
-
-  if (m_translation != s_def_translation) {
-    attrib.first = "translation";
-    get_translation(vec);
-    attrib.second = vec.get_text();
-    attribs.push_back(attrib);
-  }
-  if (m_rotation != s_def_rotation) {
-    attrib.first = "rotation";
-    get_rotation(rot);
-    attrib.second = rot.get_text();
-    attribs.push_back(attrib);
-  }
-  if (m_scale != s_def_scale) {
-    attrib.first = "scale";
-    get_scale(vec);
-    attrib.second = vec.get_text();
-    attribs.push_back(attrib);
-  }
-  if (m_scale_orientation != s_def_scale_orientation) {
-    attrib.first = "scale_orientation";
-    get_scale_orientation(rot);
-    attrib.second = rot.get_text();
-    attribs.push_back(attrib);
-  }
-  if (m_center != s_def_center) {
-    attrib.first = "center";
-    get_center(vec);
-    attrib.second = vec.get_text();
-    attribs.push_back(attrib);
-  }
-
-  return attribs;
-}
-#endif
-
-#if 0
 void Transform::pr_transform(Transform_handle Transform)
 {
   if (m_dirty_matrix) clean_matrix();
@@ -722,7 +674,6 @@ const Transform& Transform::operator=(const Transform& xform)
   }
   return *this;
 }
-
 #endif
 
 SGAL_END_NAMESPACE

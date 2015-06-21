@@ -215,7 +215,7 @@ public:
   virtual void draw_geometry(Draw_action* action);
 
   /*! Clean the bounding sphere of the nef polyhedron. */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   /*! Clean the representation. */
   virtual void clean_nef_polyhedron();
@@ -416,7 +416,7 @@ protected:
   void clear_polyhedron();
 
   /*! Calculate the polyhedron spere-bound */
-  void clean_sphere_bound_polyhedron();
+  void clean_bounding_sphere_polyhedron();
 
   /*! Draw the intermediate polyhedron (for debugging purpose) */
   void draw_polyhedron(Draw_action* action);

@@ -109,15 +109,15 @@ void Box::isect(Isect_action* /* action */)
 }
 
 //! \brief clean the bounding sphere of the box.
-void Box::clean_sphere_bound()
+void Box::clean_bounding_sphere()
 {
   float radius = sqrtf(m_size[0] * m_size[0] * 0.25f +
                        m_size[1] * m_size[1] * 0.25f +
                        m_size[2] * m_size[2] * 0.25f);
-  m_sphere_bound.set_radius(radius);
+  m_bounding_sphere.set_radius(radius);
   Vector3f vect(0, 0, 0);
-  m_sphere_bound.set_center(vect);
-  m_dirty_sphere_bound = false;
+  m_bounding_sphere.set_center(vect);
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief initializes the display list that is used to draw the box.
@@ -220,25 +220,6 @@ void Box::set_attributes(Element* elem)
   // calculate_sphere_bound();
 }
 
-#if 0
-//! \brief obtains the attributes of the box.
-Attribute_list Box::get_attributes()
-{
-  Attribute_list attribs;
-  Attribue attrib;
-
-  attribs = Geometry::get_attributes();
-
-  if (m_size != s_def_size) {
-    attrib.first = "size";
-    attrib.second = get_size().get_text();
-    attribs.push_back(attrib);
-  }
-
-  return attribs;
-}
-#endif
-
 //! \brief initializes the box prototype.
 void Box::init_prototype()
 {
@@ -247,10 +228,9 @@ void Box::init_prototype()
 
   // Add the field-info records to the prototype:
   // size
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Geometry::sphere_bound_changed);
-  Vector3f_handle_function size_func =
-    static_cast<Vector3f_handle_function>(&Box::size_handle);
+  auto exec_func =
+    static_cast<Execution_function>(&Geometry::bounding_sphere_changed);
+  auto size_func = static_cast<Vector3f_handle_function>(&Box::size_handle);
   s_prototype->add_field_info(new SF_vector3f(SIZE, "size",
                                               Field_info::RULE_EXPOSED_FIELD,
                                               size_func,

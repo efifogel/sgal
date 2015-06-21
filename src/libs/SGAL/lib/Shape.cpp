@@ -121,7 +121,7 @@ void Shape::set_geometry(Shared_geometry geometry)
   m_geometry = geometry;
   if (m_geometry) m_geometry->register_observer(observer);
   m_dirty = true;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 
   const Field_info* field_info = get_field_info(GEOMETRY);
   field_changed(field_info);
@@ -139,16 +139,16 @@ void Shape::set_geometry(Shared_geometry geometry)
 }
 
 //! \brief cleans the bounding sphere of all geometries in the shape.
-void Shape::clean_sphere_bound()
+void Shape::clean_bounding_sphere()
 {
   if (!is_visible()) {
-    m_sphere_bound.set_radius(0);
-    m_dirty_sphere_bound = false;
+    m_bounding_sphere.set_radius(0);
+    m_dirty_bounding_sphere = false;
     return;
   }
 
-  if (m_geometry) m_sphere_bound = *m_geometry->get_sphere_bound();
-  m_dirty_sphere_bound = false;
+  if (m_geometry) m_bounding_sphere = m_geometry->get_bounding_sphere();
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief draws the appearance and then all the geometries.
@@ -359,24 +359,6 @@ void Shape::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-#if 0
-//! \brief obtains a list of attributes (called in the save process).
-Attribute_list Shape::get_attributes()
-{
-  Attribute_list attrs;
-  attrs = Node::get_attributes();
-  Attribue attrib;
-
-  if (m_is_visible != true) {
-    attrib.first = "visible";
-    attrib.second = "FALSE";
-    attrs.push_back(attrib);
-  }
-
-  return attrs;
-}
-#endif
-
 //! \brief initializes the node prototype.
 void Shape::init_prototype()
 {
@@ -384,9 +366,9 @@ void Shape::init_prototype()
   s_prototype = new Container_proto(Node::get_prototype());
 
   // visible
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Node::sphere_bound_changed);
-  Boolean_handle_function is_visible_func =
+  auto exec_func =
+    static_cast<Execution_function>(&Node::bounding_sphere_changed);
+  auto is_visible_func =
     static_cast<Boolean_handle_function>(&Shape::is_visible_handle);
   s_prototype->add_field_info(new SF_bool(ISVISIBLE,
                                           "visible",
@@ -397,7 +379,7 @@ void Shape::init_prototype()
 
   // geometry
   exec_func = static_cast<Execution_function>(&Shape::geometry_changed);
-  Shared_container_handle_function geometry_func =
+  auto geometry_func =
     reinterpret_cast<Shared_container_handle_function>(&Shape::geometry_handle);
   s_prototype->add_field_info(new SF_shared_container(GEOMETRY,
                                                       "geometry",
@@ -407,7 +389,7 @@ void Shape::init_prototype()
 
   // appearance
   exec_func = static_cast<Execution_function>(&Shape::appearance_changed);
-  Shared_container_handle_function appearance_func =
+  auto appearance_func =
     reinterpret_cast<Shared_container_handle_function>
     (&Shape::appearance_handle);
   s_prototype->add_field_info(new SF_shared_container(APPEARANCE,
@@ -473,7 +455,7 @@ void Shape::geometry_changed(const Field_info* field_info)
     Observer observer(this, field_info);
     if (m_geometry) m_geometry->register_observer(observer);
   }
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
   Container::field_changed(field_info);
 }
 
@@ -484,7 +466,7 @@ void Shape::set_visible()
 {
   if (!m_is_visible) {
     m_is_visible = true;
-    m_dirty_sphere_bound = true;
+    m_dirty_bounding_sphere = true;
   }
 }
 
@@ -495,7 +477,7 @@ void Shape::set_invisible()
 {
   if (m_is_visible) {
     m_is_visible = false;
-    m_dirty_sphere_bound = true;
+    m_dirty_bounding_sphere = true;
   }
 }
 
@@ -504,7 +486,7 @@ void Shape::set_visible(Boolean flag)
 {
   if (flag != m_is_visible) {
     m_is_visible = flag;
-    m_dirty_sphere_bound = true;
+    m_dirty_bounding_sphere = true;
   }
 }
 
@@ -513,7 +495,7 @@ void Shape::field_changed(const Field_info* field_info)
 {
   switch (field_info->get_id()) {
    case GEOMETRY:
-    m_dirty_sphere_bound = true;
+    m_dirty_bounding_sphere = true;
     break;
 
    case APPEARANCE:

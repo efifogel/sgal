@@ -81,28 +81,6 @@ Indexed_face_set::~Indexed_face_set(){}
 void Indexed_face_set::set_attributes(Element* elem)
 { Boundary_set::set_attributes(elem); }
 
-#if 0
-/*! Obtain a list of atytributes in this object. This method is called only
- * from the Builder side.
- * An Indexed_face_set is always converted to an ProgIndexedTriSet
- * and therefore any information regarding compressed data is not
- * written out (e.g., coordIndex).
- *
- * \return a list of attributes
- */
-Attribute_list Indexed_face_set::get_attributes()
-{
-  Attribute_list attribs;
-  Attribute attrib;
-  char buf[32];
-  Vector3f col;
-
-  attribs = Boundary_set::get_attributes();
-  return attribs;
-}
-
-#endif
-
 //! \brief initializes the container prototype.
 void Indexed_face_set::init_prototype()
 {
@@ -110,13 +88,13 @@ void Indexed_face_set::init_prototype()
   s_prototype = new Container_proto(Boundary_set::get_prototype());
 
   // volume
-  Float_handle_function volume_func = static_cast<Float_handle_function>
+  auto volume_func = static_cast<Float_handle_function>
     (&Indexed_face_set::volume_handle);
   s_prototype->add_field_info(new SF_float(VOLUME, "volume",
                                            Field_info::RULE_OUT, volume_func));
 
   // surfaceArea
-  Float_handle_function surface_area_func = static_cast<Float_handle_function>
+  auto surface_area_func = static_cast<Float_handle_function>
     (&Indexed_face_set::surface_area_handle);
   s_prototype->add_field_info(new SF_float(SURFACE_AREA, "surfaceArea",
                                            Field_info::RULE_OUT,
@@ -158,13 +136,13 @@ void Indexed_face_set::isect(Isect_action* action)
 }
 
 //! \brief cleans the sphere bound.
-void Indexed_face_set::clean_sphere_bound()
+void Indexed_face_set::clean_bounding_sphere()
 {
   SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
   if (is_dirty_coord_array() ||
       (is_dirty_coord_indices() && is_dirty_flat_coord_indices()))
     clean_coords();
-  Boundary_set::clean_sphere_bound();
+  Boundary_set::clean_bounding_sphere();
 }
 
 //! \brief cleans the coordinate array and coordinate indices.

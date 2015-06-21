@@ -122,13 +122,13 @@ void Cone::isect(Isect_action* /* action */)
 }
 
 //! \brief cleans the sphere bound of the cone.
-void Cone::clean_sphere_bound()
+void Cone::clean_bounding_sphere()
 {
   float radius = (m_height * m_height + m_bottom_radius * m_bottom_radius) /
     (2 * m_height);
-  m_sphere_bound.set_radius(radius);
-  m_sphere_bound.set_center(Vector3f(0, m_height / 2 - radius, 0));
-  m_dirty_sphere_bound = false;
+  m_bounding_sphere.set_radius(radius);
+  m_bounding_sphere.set_center(Vector3f(0, m_height / 2 - radius, 0));
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief initializes the quadric object.
@@ -193,67 +193,6 @@ void Cone::set_attributes(Element* elem)
   // calculate_sphere_bound();
 }
 
-#if 0
-/**
- * Get a list of attributes for the object.
- * The list is of name=value pairs.
- * @return a list of pairs of strings
- */
-Attribute_list Cone::get_attributes()
-{
-  Attribute_list attribs;
-  // attribs = Geometry::get_attributes();
-  Attribue attrib;
-  char buf[32];
-
-  attribs = Geometry::get_attributes();
-
-  if(get_bottom_radius() != s_def_bottom_radius) {
-    attrib.first = "bottom_radius";
-    sprintf(buf, "%g", get_bottom_radius());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if(get_height() != s_def_height) {
-    attrib.first = "height";
-    sprintf(buf, "%g", get_height());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if(get_slices() != s_def_slices) {
-    attrib.first = "slices";
-    sprintf(buf, "%d", get_slices());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if(get_stacks() != s_def_stacks) {
-    attrib.first = "stacks";
-    sprintf(buf, "%d", get_stacks());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (get_is_side_visible() != s_def_is_side_visible) {
-    attrib.first = "side";
-    if (get_is_side_visible()) attrib.second = TRUE_STR;
-    else attrib.second = FALSE_STR;
-    attribs.push_back(attrib);
-  }
-
-  if (get_is_bottom_visible() != s_def_is_bottom_visible) {
-    attrib.first = "bottom";
-    if (get_is_bottom_visible()) attrib.second = TRUE_STR;
-    else attrib.second = FALSE_STR;
-    attribs.push_back(attrib);
-  }
-
-  return attribs;
-}
-#endif
-
 //! \brief initilalizes the prototype object in the class.
 void Cone::init_prototype()
 {
@@ -263,9 +202,9 @@ void Cone::init_prototype()
   // Add the field-info records to the prototype:
 
   // bottomRadius
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Geometry::sphere_bound_changed);
-  Float_handle_function bottom_radius_func =
+  auto exec_func =
+    static_cast<Execution_function>(&Geometry::bounding_sphere_changed);
+  auto bottom_radius_func =
     static_cast<Float_handle_function>(&Cone::bottom_radius_handle);
   s_prototype->add_field_info(new SF_float(BOTTOM_RADIUS, "bottomRadius",
                                            Field_info::RULE_EXPOSED_FIELD,
@@ -273,15 +212,14 @@ void Cone::init_prototype()
                                            exec_func));
 
   // height
-  Float_handle_function height_func =
-    static_cast<Float_handle_function>(&Cone::height_handle);
+  auto height_func = static_cast<Float_handle_function>(&Cone::height_handle);
   s_prototype->add_field_info(new SF_float(HEIGHT, "height",
                                            Field_info::RULE_EXPOSED_FIELD,
                                            height_func,
                                            exec_func));
 
   // side
-  Boolean_handle_function side_visible_func =
+  auto side_visible_func =
     static_cast<Boolean_handle_function>(&Cone::side_visible_handle);
   s_prototype->add_field_info(new SF_bool(SIDE, "side",
                                           Field_info::RULE_EXPOSED_FIELD,
@@ -289,7 +227,7 @@ void Cone::init_prototype()
                                           exec_func));
 
   // bottom
-  Boolean_handle_function bottom_visible_func =
+  auto bottom_visible_func =
     static_cast<Boolean_handle_function>(&Cone::bottom_visible_handle);
   s_prototype->add_field_info(new SF_bool(BOTTOM, "bottom",
                                           Field_info::RULE_EXPOSED_FIELD,
@@ -299,16 +237,14 @@ void Cone::init_prototype()
   // slices
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Uint_handle_function slices_func =
-    static_cast<Uint_handle_function>(&Cone::slices_handle);
+  auto slices_func = static_cast<Uint_handle_function>(&Cone::slices_handle);
   s_prototype->add_field_info(new SF_uint(SLICES, "slices",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           slices_func,
                                           exec_func));
 
   // stacks
-  Uint_handle_function stacks_func =
-    static_cast<Uint_handle_function>(&Cone::stacks_handle);
+  auto stacks_func = static_cast<Uint_handle_function>(&Cone::stacks_handle);
   s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           stacks_func,

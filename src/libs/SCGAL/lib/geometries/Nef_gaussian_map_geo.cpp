@@ -622,10 +622,10 @@ void Nef_gaussian_map_geo::isect(Isect_action* action)
 }
 
 //! \brief cleans the bounding sphere of the Nef Gaussian map.
-void Nef_gaussian_map_geo::clean_sphere_bound()
+void Nef_gaussian_map_geo::clean_bounding_sphere()
 {
   if (m_bb_is_pre_set) {
-    m_dirty_sphere_bound = false;
+    m_dirty_bounding_sphere = false;
     return;
   }
 
@@ -646,10 +646,10 @@ void Nef_gaussian_map_geo::clean_sphere_bound()
     std::copy(min_sphere.center_cartesian_begin(),
               min_sphere.center_cartesian_end(),
               &center_vec[0]);
-    m_sphere_bound.set_center(center_vec);
-    m_sphere_bound.set_radius(min_sphere.radius());
+    m_bounding_sphere.set_center(center_vec);
+    m_bounding_sphere.set_radius(min_sphere.radius());
   }
-  m_dirty_sphere_bound = false;
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief sets the attributes of this object.
@@ -904,7 +904,7 @@ void Nef_gaussian_map_geo::print_stat()
 void Nef_gaussian_map_geo::draw_changed(const Field_info* /* field_info */)
 {
   m_draw_primal = !m_draw_dual;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 
   if (m_draw_dual) {
     Field* field = get_field(TRUE_DRAW_DUAL);

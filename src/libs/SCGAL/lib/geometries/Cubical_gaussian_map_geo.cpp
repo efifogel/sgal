@@ -363,24 +363,24 @@ void Cubical_gaussian_map_geo::isect(SGAL::Isect_action* action)
 }
 
 //! \brief cleans the bounding sphere of the cubical Gaussian map.
-void Cubical_gaussian_map_geo::clean_sphere_bound()
+void Cubical_gaussian_map_geo::clean_bounding_sphere()
 {
 #define SQRT_3          1.732f
 
   if (m_bb_is_pre_set) {
-    m_dirty_sphere_bound = false;
+    m_dirty_bounding_sphere = false;
     return;
   }
 
   if (is_dirty_cgm()) clean_cgm();
   if (m_draw_aos) {
     if (!m_draw_aos_unfolded) {
-      m_sphere_bound.set_center(Vector3f(0, 0, 0));
-      m_sphere_bound.set_radius(SQRT_3);
+      m_bounding_sphere.set_center(Vector3f(0, 0, 0));
+      m_bounding_sphere.set_radius(SQRT_3);
     }
     else {
-      m_sphere_bound.set_center(Vector3f(5, 4, 0));
-      m_sphere_bound.set_radius(4);
+      m_bounding_sphere.set_center(Vector3f(5, 4, 0));
+      m_bounding_sphere.set_radius(4);
     }
   }
   else {
@@ -411,11 +411,11 @@ void Cubical_gaussian_map_geo::clean_sphere_bound()
       std::copy(min_sphere.center_cartesian_begin(),
                 min_sphere.center_cartesian_end(),
                 &center_vec[0]);
-      m_sphere_bound.set_center(center_vec);
-      m_sphere_bound.set_radius(min_sphere.radius());
+      m_bounding_sphere.set_center(center_vec);
+      m_bounding_sphere.set_radius(min_sphere.radius());
     }
   }
-  m_dirty_sphere_bound = false;
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief sets the attributes of this object.
@@ -669,9 +669,9 @@ void Cubical_gaussian_map_geo::init_prototype()
 
   // Add the object fields to the prototype
   // drawDual
-  Execution_function exec_func =
+  auto exec_func =
     static_cast<Execution_function>(&Cubical_gaussian_map_geo::draw_changed);
-  Boolean_handle_function draw_aos_func =
+  auto draw_aos_func =
     static_cast<Boolean_handle_function>
     (&Cubical_gaussian_map_geo::draw_aos_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL,
@@ -680,7 +680,7 @@ void Cubical_gaussian_map_geo::init_prototype()
                                           draw_aos_func, exec_func));
 
   // drawDualUnfolded
-  Boolean_handle_function draw_aos_unfolded_func =
+  auto draw_aos_unfolded_func =
     static_cast<Boolean_handle_function>
     (&Cubical_gaussian_map_geo::draw_aos_unfolded_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL_UNFOLDED,
@@ -689,7 +689,7 @@ void Cubical_gaussian_map_geo::init_prototype()
                                           draw_aos_unfolded_func, exec_func));
 
   // drawDualOpaque
-  Boolean_handle_function draw_aos_opaque_func =
+  auto draw_aos_opaque_func =
     static_cast<Boolean_handle_function>
     (&Cubical_gaussian_map_geo::draw_aos_opaque_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL_OPAQUE,
@@ -698,7 +698,7 @@ void Cubical_gaussian_map_geo::init_prototype()
                                           draw_aos_opaque_func));
 
   // drawDualHaloed
-  Boolean_handle_function draw_aos_haloed_func =
+  auto draw_aos_haloed_func =
     static_cast<Boolean_handle_function>
     (&Cubical_gaussian_map_geo::draw_aos_haloed_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL_HALOED,
@@ -707,7 +707,7 @@ void Cubical_gaussian_map_geo::init_prototype()
                                           draw_aos_haloed_func));
 
   // drawDualCube
-  Boolean_handle_function draw_aos_surface_func =
+  auto draw_aos_surface_func =
     static_cast<Boolean_handle_function>
     (&Cubical_gaussian_map_geo::draw_aos_surface_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL_CUBE,
@@ -716,7 +716,7 @@ void Cubical_gaussian_map_geo::init_prototype()
                                           draw_aos_surface_func));
 
   // dualLineWidth
-  Float_handle_function aos_edge_line_width_func =
+  auto aos_edge_line_width_func =
     static_cast<Float_handle_function>
     (&Cubical_gaussian_map_geo::aos_edge_line_width_handle);
   s_prototype->add_field_info(new SF_float(DUAL_EDGE_LINE_WIDTH,
@@ -727,7 +727,7 @@ void Cubical_gaussian_map_geo::init_prototype()
   // translated
   exec_func =
     static_cast<Execution_function>(&Cubical_gaussian_map_geo::coord_changed);
-  Boolean_handle_function translated_func =
+  auto translated_func =
     static_cast<Boolean_handle_function>
     (&Cubical_gaussian_map_geo::translated_handle);
   s_prototype->add_field_info(new SF_bool(TRANSLATED,
@@ -736,7 +736,7 @@ void Cubical_gaussian_map_geo::init_prototype()
                                           translated_func, exec_func));
 
   // rotated
-  Boolean_handle_function rotated_func =
+  auto rotated_func =
     static_cast<Boolean_handle_function>
     (&Cubical_gaussian_map_geo::rotated_handle);
   s_prototype->add_field_info(new SF_bool(ROTATED, "rotated",
@@ -744,7 +744,7 @@ void Cubical_gaussian_map_geo::init_prototype()
                                           rotated_func, exec_func));
 
   // trueDrawPrimal
-  Boolean_handle_function draw_primal_func =
+  auto draw_primal_func =
     static_cast<Boolean_handle_function>
     (&Cubical_gaussian_map_geo::draw_primal_handle);
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_PRIMAL,
@@ -773,7 +773,7 @@ void Cubical_gaussian_map_geo::init_prototype()
   // export
   exec_func =
     static_cast<Execution_function>(&Cubical_gaussian_map_geo::output);
-  Boolean_handle_function export_func =
+  auto export_func =
     static_cast<Boolean_handle_function>
     (&Cubical_gaussian_map_geo::export_handle);
   s_prototype->add_field_info(new SF_bool(EXPORT, "export",
@@ -785,7 +785,7 @@ void Cubical_gaussian_map_geo::init_prototype()
   exec_func =
     static_cast<Execution_function>(&Cubical_gaussian_map_geo::
                                     increase_vertex_index);
-  Boolean_handle_function increase_vertex_index_func =
+  auto increase_vertex_index_func =
     static_cast<Boolean_handle_function>
     (&Cubical_gaussian_map_geo::increase_vertex_index_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_VERTEX_INDEX,
@@ -798,7 +798,7 @@ void Cubical_gaussian_map_geo::init_prototype()
   exec_func =
     static_cast<Execution_function>(&Cubical_gaussian_map_geo::
                                     increase_edge_index);
-  Boolean_handle_function increase_edge_index_func =
+  auto increase_edge_index_func =
     static_cast<Boolean_handle_function>
     (&Cubical_gaussian_map_geo::increase_edge_index_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_EDGE_INDEX,
@@ -811,7 +811,7 @@ void Cubical_gaussian_map_geo::init_prototype()
   exec_func =
     static_cast<Execution_function>(&Cubical_gaussian_map_geo::
                                     increase_facet_index);
-  Boolean_handle_function increase_facet_index_func =
+  auto increase_facet_index_func =
     static_cast<Boolean_handle_function>
     (&Cubical_gaussian_map_geo::increase_facet_index_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_FACET_INDEX,
@@ -821,7 +821,7 @@ void Cubical_gaussian_map_geo::init_prototype()
                                           exec_func));
 
   // dualLineColor1
-  Vector3f_handle_function aos_edge_color0_func =
+  auto aos_edge_color0_func =
     static_cast<Vector3f_handle_function>
     (&Cubical_gaussian_map_geo::aos_edge_color1_handle);
   s_prototype->add_field_info(new SF_vector3f(DUAL_EDGE_COLOR1,
@@ -830,7 +830,7 @@ void Cubical_gaussian_map_geo::init_prototype()
                                               aos_edge_color0_func));
 
   // dualLineColor2
-  Vector3f_handle_function aos_edge_color1_func =
+  auto aos_edge_color1_func =
     static_cast<Vector3f_handle_function>
     (&Cubical_gaussian_map_geo::aos_edge_color2_handle);
   s_prototype->add_field_info(new SF_vector3f(DUAL_EDGE_COLOR2,
@@ -839,7 +839,7 @@ void Cubical_gaussian_map_geo::init_prototype()
                                               aos_edge_color1_func));
 
   // geometries
-  Shared_container_array_handle_function cgm_nodes_func =
+  auto cgm_nodes_func =
     reinterpret_cast<Shared_container_array_handle_function>
     (&Cubical_gaussian_map_geo::cgm_nodes_handle);
   s_prototype->add_field_info(new MF_shared_container(GEOMETRIES,
@@ -866,7 +866,7 @@ SGAL::Container_proto* Cubical_gaussian_map_geo::get_prototype()
 void Cubical_gaussian_map_geo::draw_changed(const Field_info* /* field_info */)
 {
   m_draw_primal = !m_draw_aos;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 
   if (m_draw_aos) {
     Field* field = get_field(TRUE_DRAW_DUAL);
@@ -1659,7 +1659,7 @@ void Cubical_gaussian_map_geo::insert_cgm(Shared_cubical_gaussian_map_geo cgm)
   m_cgm_nodes.push_back(cgm);
   Observer observer(this, get_field_info(GEOMETRIES));
   cgm->register_observer(observer);
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief increases the vertex index.

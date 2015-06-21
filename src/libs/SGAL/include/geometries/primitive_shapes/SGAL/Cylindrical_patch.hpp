@@ -110,7 +110,7 @@ public:
   virtual void isect(Isect_action* action);
 
   /*! Clean the bounding sphere of the cylindrical patch */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   /*! Determine whether the geometry has texture coordinates.
    */
@@ -122,7 +122,7 @@ public:
   void set_radius(Float radius)
   {
     m_radius = radius;
-    m_dirty_sphere_bound = true;
+    m_dirty_bounding_sphere = true;
   }
 
   /*! Obtain the radius of the underlying cylinder
@@ -136,7 +136,7 @@ public:
   void set_height(Float height)
   {
     m_height = height;
-    m_dirty_sphere_bound = true;
+    m_dirty_bounding_sphere = true;
   }
 
   /*! Obtain the height of the underlying cylinder

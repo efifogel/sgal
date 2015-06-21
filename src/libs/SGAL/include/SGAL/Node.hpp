@@ -41,7 +41,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Action.hpp"
-#include "SGAL/Sphere_bound.hpp"
+#include "SGAL/Bounding_sphere.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -81,8 +81,8 @@ public:
 
   /// \name field handlers
   //@{
-  Sphere_bound* sphere_bound_handle(const Field_info*)
-  { return &m_sphere_bound; }
+  Bounding_sphere* sphere_bound_handle(const Field_info*)
+  { return &m_bounding_sphere; }
   //@}
 
   /*! Draw the object represented by the node.
@@ -103,15 +103,15 @@ public:
 
   /*! Clean the bounding sphere of the node.
    */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   /*! Determines whether the bounding sphere of the node must be recomputed.
    * \return true iff the bounding sphere must be recomputed.
    */
-  virtual Boolean is_dirty_sphere_bound();
+  virtual Boolean is_dirty_bounding_sphere();
 
   /*! Obtain the sphere bound. */
-  const Sphere_bound& get_sphere_bound();
+  const Bounding_sphere& get_bounding_sphere();
 
   /*! Sets the attributes of this node extracted from the VRML or X3D file.
    * \param elem contains lists of attribute names and values
@@ -122,14 +122,14 @@ public:
   // virtual Attribute_list get_attributes();
 
   /*! Set the flag that indicates that the sphere bound should be cleaned.*/
-  void sphere_bound_changed(const Field_info* field_info = nullptr);
+  void bounding_sphere_changed(const Field_info* field_info = nullptr);
 
 protected:
   /*! The sphere bound of the node. */
-  Sphere_bound m_sphere_bound;
+  Bounding_sphere m_bounding_sphere;
 
   /*! A flag that indicatres whether the bounding sphere is valid */
-  Boolean m_dirty_sphere_bound;
+  Boolean m_dirty_bounding_sphere;
 
   /*! Indicates whether the bounding sphere is locked */
   Boolean m_locked_sphere_bound;
@@ -154,12 +154,12 @@ inline void Node::cull(Cull_context& /* cull_context */) {}
 inline void Node::isect(Isect_action* /* isect_action */) {}
 
 //! \brief cleans the bounding sphere.
-inline void Node::clean_sphere_bound() {}
+inline void Node::clean_bounding_sphere() {}
 
 /*! \brief determines whether the bounding sphere of the node must be
  * recomputed.
  */
-inline Boolean Node::is_dirty_sphere_bound() { return m_dirty_sphere_bound; }
+inline Boolean Node::is_dirty_bounding_sphere() { return m_dirty_bounding_sphere; }
 
 SGAL_END_NAMESPACE
 

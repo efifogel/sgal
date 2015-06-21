@@ -187,7 +187,7 @@ public:
   virtual void delegate_impl(Value_holder<Vector3f>&) = 0;
   virtual void delegate_impl(Value_holder<Vector4f>&) = 0;
   virtual void delegate_impl(Value_holder<Rotation>&) = 0;
-  virtual void delegate_impl(Value_holder<Sphere_bound>&) = 0;
+  virtual void delegate_impl(Value_holder<Bounding_sphere>&) = 0;
   virtual void delegate_impl(Value_holder<std::string>&) = 0;
   virtual void delegate_impl(Value_holder<Shared_container>&) = 0;
 
@@ -201,7 +201,7 @@ public:
   virtual void delegate_impl(Value_holder<Vector3f_array>&) = 0;
   virtual void delegate_impl(Value_holder<Vector4f_array>&) = 0;
   virtual void delegate_impl(Value_holder<Rotation_array>&) = 0;
-  virtual void delegate_impl(Value_holder<Sphere_bound_array>&) = 0;
+  virtual void delegate_impl(Value_holder<Bounding_sphere_array>&) = 0;
   virtual void delegate_impl(Value_holder<String_array>&) = 0;
   virtual void delegate_impl(Value_holder<Shared_container_array>&) = 0;
 };
@@ -481,10 +481,10 @@ public:
     dd(m_value, other.get_value());
   }
 
-  // Sphere_bound
-  void delegate_impl(Value_holder<Sphere_bound>& other)
+  // Bounding_sphere
+  void delegate_impl(Value_holder<Bounding_sphere>& other)
   {
-    Delegate_dispatcher<Value_type, Sphere_bound> dd;
+    Delegate_dispatcher<Value_type, Bounding_sphere> dd;
     dd(m_value, other.get_value());
   }
 
@@ -568,10 +568,10 @@ public:
     dd(m_value, other.get_value());
   }
 
-  // Sphere_bound_array
-  void delegate_impl(Value_holder<Sphere_bound_array>& other)
+  // Bounding_sphere_array
+  void delegate_impl(Value_holder<Bounding_sphere_array>& other)
   {
-    Delegate_dispatcher<Value_type, Sphere_bound_array> dd;
+    Delegate_dispatcher<Value_type, Bounding_sphere_array> dd;
     dd(m_value, other.get_value());
   }
 

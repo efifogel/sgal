@@ -36,7 +36,7 @@ class Vector2f;
 class Vector3f;
 class Vector4f;
 class Rotation;
-class Sphere_bound;
+class Bounding_sphere;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -186,7 +186,7 @@ public:
                                const std::string& name,
                                const Rotation& value);
 
-  /*! Export a single Sphere_bound field.
+  /*! Export a single Bounding_sphere field.
    * \param name The field name.
    * \param value The field value.
    * \param default_value The field default value.
@@ -194,7 +194,7 @@ public:
   virtual void single_sphere_bound(const std::string& rule,
                                    const std::string&_type,
                                    const std::string& name,
-                                   const Sphere_bound& value);
+                                   const Bounding_sphere& value);
 
   /*! Export a single string field.
    * \param name The field name.
@@ -287,7 +287,7 @@ public:
                               const std::string& name,
                               const std::vector<Rotation>& value);
 
-  /*! Export a multi-Sphere_bound field.
+  /*! Export a multi-Bounding_sphere field.
    * \param name The field name.
    * \param value The field value.
    * \param default_value The field default value.
@@ -295,7 +295,7 @@ public:
   virtual void multi_sphere_bound(const std::string& rule,
                                   const std::string&_type,
                                   const std::string& name,
-                                  const std::vector<Sphere_bound>& value);
+                                  const std::vector<Bounding_sphere>& value);
 
   /*! Export a multi-string field.
    * \param name The field name.
@@ -392,8 +392,8 @@ public:
    * \param default_value The field default value.
    */
   virtual void single_sphere_bound(const std::string& name,
-                                   const Sphere_bound& value,
-                                   const Sphere_bound& default_value);
+                                   const Bounding_sphere& value,
+                                   const Bounding_sphere& default_value);
 
   /*! Export a single string field.
    * \param name The field name.
@@ -493,14 +493,14 @@ public:
                               const std::vector<Rotation>& value,
                               const std::vector<Rotation>& default_value);
 
-  /*! Export a multi-Sphere_bound field.
+  /*! Export a multi-Bounding_sphere field.
    * \param name The field name.
    * \param value The field value.
    * \param default_value The field default value.
    */
   virtual void multi_sphere_bound(const std::string& name,
-                                  const std::vector<Sphere_bound>& value,
-                                  const std::vector<Sphere_bound>& default_value);
+                                  const std::vector<Bounding_sphere>& value,
+                                  const std::vector<Bounding_sphere>& default_value);
 
   /*! Export a multi-string field.
    * \param name The field name.
@@ -656,11 +656,11 @@ inline void Vrml_formatter::single_rotation(const std::string& rule,
                                             const Rotation& value)
 { single_declaration(rule, type, name, value); }
 
-//! \brief exports a single Sphere_bound field.
+//! \brief exports a single Bounding_sphere field.
 inline void Vrml_formatter::single_sphere_bound(const std::string& rule,
                                                 const std::string& type,
                                                 const std::string& name,
-                                                const Sphere_bound& value)
+                                                const Bounding_sphere& value)
 { single_declaration(rule, type, name, value); }
 
 //! \brief exports a single string field.
@@ -733,11 +733,11 @@ inline void Vrml_formatter::multi_rotation(const std::string& rule,
                                            const std::vector<Rotation>& value)
 { multi_declaration(rule, type, name, value); }
 
-//! \brief exports a multi-Sphere_bound field.
+//! \brief exports a multi-Bounding_sphere field.
 inline void Vrml_formatter::multi_sphere_bound(const std::string& rule,
                                                const std::string& type,
                                                const std::string& name,
-                                               const std::vector<Sphere_bound>& value)
+                                               const std::vector<Bounding_sphere>& value)
 { multi_declaration(rule, type, name, value); }
 
 //! \brief exports a multi-string field.
@@ -793,11 +793,11 @@ inline void Vrml_formatter::single_rotation(const std::string& name,
                                             const Rotation& default_value)
 { single_definition(name, value, default_value); }
 
-//! \brief exports a single Sphere_bound field.
+//! \brief exports a single Bounding_sphere field.
 inline void
 Vrml_formatter::single_sphere_bound(const std::string& name,
-                                    const Sphere_bound& value,
-                                    const Sphere_bound& default_value)
+                                    const Bounding_sphere& value,
+                                    const Bounding_sphere& default_value)
 { single_definition(name, value, default_value); }
 
 // Multi-field
@@ -850,11 +850,11 @@ inline void Vrml_formatter::multi_rotation(const std::string& name,
                                            const std::vector<Rotation>& default_value)
 { multi_definition(name, value, default_value); }
 
-//! \brief exports a single Sphere_bound field.
+//! \brief exports a single Bounding_sphere field.
 inline void
 Vrml_formatter::multi_sphere_bound(const std::string& name,
-                                   const std::vector<Sphere_bound>& value,
-                                   const std::vector<Sphere_bound>& default_value)
+                                   const std::vector<Bounding_sphere>& value,
+                                   const std::vector<Bounding_sphere>& default_value)
 { multi_definition(name, value, default_value); }
 
 SGAL_END_NAMESPACE

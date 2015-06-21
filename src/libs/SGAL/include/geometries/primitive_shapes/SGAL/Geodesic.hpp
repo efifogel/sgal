@@ -97,7 +97,7 @@ public:
   virtual void isect(Isect_action* action);
 
   /*! Clean the bounding sphere of the geodesic. */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   // virtual void FieldChanged(short fieldId);
 
@@ -234,7 +234,7 @@ inline Container* Geodesic::clone() { return new Geodesic(); }
 inline void Geodesic::set_radius(Float radius)
 {
   m_radius = radius;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 /*! \brief obtains the arc radius. */
@@ -244,7 +244,7 @@ inline Float Geodesic::get_radius() const { return m_radius; }
 inline void Geodesic::set_start(Vector2f start)
 {
   m_start = start;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief obtains the start point of the geodesic.
@@ -254,7 +254,7 @@ inline Vector2f Geodesic::get_start() const { return m_start; }
 inline void Geodesic::set_end(Vector2f end)
 {
   m_end = end;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief obtains the end point of the geodesic.
@@ -282,7 +282,7 @@ inline Boolean Geodesic::is_solid() const { return m_is_solid; }
 inline void Geodesic::set_complement(Boolean complement)
 {
   m_is_complement = complement;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief obtains.

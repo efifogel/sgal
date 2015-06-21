@@ -171,12 +171,12 @@ void Cylindrical_patch::isect(Isect_action* /* action */)
 }
 
 //! \brief cleans the sphere bound of the cylindrical patch.
-void Cylindrical_patch::clean_sphere_bound()
+void Cylindrical_patch::clean_bounding_sphere()
 {
   float radius = sqrtf(m_height * m_height / 4 + m_radius * m_radius);
-  m_sphere_bound.set_radius(radius);
-  m_sphere_bound.set_center(Vector3f(0, 0, 0));
-  m_dirty_sphere_bound = false;
+  m_bounding_sphere.set_radius(radius);
+  m_bounding_sphere.set_center(Vector3f(0, 0, 0));
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief sets the container attributes.
@@ -220,51 +220,6 @@ void Cylindrical_patch::set_attributes(Element* elem)
   // calculate_sphere_bound();
 }
 
-#if 0
-/*! Get a list of attributes for the object.
- * The list is of name=value pairs.
- * \return a list of pairs of strings
- */
-Attribute_list Cylindrical_patch::get_attributes()
-{
-  Attribute_list attribs;
-  // attribs = Geometry::get_attributes();
-  Attribue attrib;
-  char buf[32];
-
-  attribs = Geometry::get_attributes();
-
-  if (m_radius != s_def_radius) {
-    attrib.first = "radius";
-    sprintf(buf, "%g", get_radius());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (m_height != s_def_height) {
-    attrib.first = "height";
-    sprintf(buf, "%g", get_height());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (m_stacks != s_def_stacks) {
-    attrib.first = "stacks";
-    sprintf(buf, "%d", get_stacks());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (get_is_top_visible() != s_def_is_top_visible) {
-    attrib.first = "alpha";
-    attrib.second = get_alpha();
-    attribs.push_back(attrib);
-  }
-
-  return attribs;
-}
-#endif
-
 //! \brief initializes the cylindrical patch prototype.
 void Cylindrical_patch::init_prototype()
 {
@@ -274,9 +229,9 @@ void Cylindrical_patch::init_prototype()
   // Add the field-info records to the prototype:
 
   // radius
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Geometry::sphere_bound_changed);
-  Float_handle_function radius_func =
+  auto exec_func =
+    static_cast<Execution_function>(&Geometry::bounding_sphere_changed);
+  auto radius_func =
     static_cast<Float_handle_function>(&Cylindrical_patch::radius_handle);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
                                            Field_info::RULE_EXPOSED_FIELD,
@@ -284,7 +239,7 @@ void Cylindrical_patch::init_prototype()
                                            exec_func));
 
   // height
-  Float_handle_function height_func =
+  auto height_func =
     static_cast<Float_handle_function>(&Cylindrical_patch::height_handle);
   s_prototype->add_field_info(new SF_float(HEIGHT, "height",
                                            Field_info::RULE_EXPOSED_FIELD,
@@ -294,7 +249,7 @@ void Cylindrical_patch::init_prototype()
   // slices
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Uint_handle_function slices_func =
+  auto slices_func =
     static_cast<Uint_handle_function>(&Cylindrical_patch::slices_handle);
   s_prototype->add_field_info(new SF_uint(SLICES, "slices",
                                           Field_info::RULE_EXPOSED_FIELD,
@@ -304,7 +259,7 @@ void Cylindrical_patch::init_prototype()
   // alpha
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Float_handle_function alpha_func =
+  auto alpha_func =
     static_cast<Float_handle_function>(&Cylindrical_patch::alpha_handle);
   s_prototype->add_field_info(new SF_float(ALPHA, "alpha",
                                            Field_info::RULE_EXPOSED_FIELD,
@@ -314,7 +269,7 @@ void Cylindrical_patch::init_prototype()
   // beta
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Float_handle_function beta_func =
+  auto beta_func =
     static_cast<Float_handle_function>(&Cylindrical_patch::beta_handle);
   s_prototype->add_field_info(new SF_float(BETA, "beta",
                                            Field_info::RULE_EXPOSED_FIELD,

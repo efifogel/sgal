@@ -99,7 +99,7 @@ public:
   virtual void isect(Isect_action* action);
 
   /*! Clean the bounding sphere of the cone. */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   /*! Determine whether the geometry has texture coordinates.
    */
@@ -202,7 +202,7 @@ inline Container* Cone::clone() { return new Cone(); }
 inline void Cone::set_bottom_radius(Float radius)
 {
   m_bottom_radius = radius;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief obtains the radius of the bottom disk.
@@ -212,7 +212,7 @@ inline Float Cone::get_bottom_radius() const { return m_bottom_radius; }
 inline void Cone::set_height(Float height)
 {
   m_height = height;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief obtains the height.

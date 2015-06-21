@@ -227,7 +227,7 @@ void Spherical_gaussian_map_geo::init_prototype()
     new Container_proto(Spherical_gaussian_map_base_geo::get_prototype());
 
   // geometries
-  Shared_container_array_handle_function sgm_nodes_func =
+  auto sgm_nodes_func =
     reinterpret_cast<Shared_container_array_handle_function>
     (&Spherical_gaussian_map_geo::sgm_nodes_handle);
   s_prototype->add_field_info(new MF_shared_container(GEOMETRIES, "geometries",
@@ -525,14 +525,14 @@ insert_sgm(Shared_spherical_gaussian_map_geo sgm)
   m_sgm_nodes.push_back(sgm);
   Observer observer(this, get_field_info(GEOMETRIES));
   sgm->register_observer(observer);
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief obrains the Gaussian map.
 Spherical_gaussian_map* Spherical_gaussian_map_geo::get_sgm()
 {
   if (m_dirty_sgm) clean_sgm();
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
   return m_sgm;
 }
 

@@ -93,7 +93,7 @@ public:
   virtual void isect(Isect_action* isect_action);
 
   /*! Clean the bounding sphere of the transformation node. */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   /*! Set the axis used to perform the rotation.
    * \param axis_of_rotation (in) the axis or rotation.

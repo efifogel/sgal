@@ -457,9 +457,9 @@ void Exact_polyhedron_geo::isect(Isect_action* action)
 }
 
 //! \brief cleans the sphere bound.
-void Exact_polyhedron_geo::clean_sphere_bound()
+void Exact_polyhedron_geo::clean_bounding_sphere()
 {
-  m_dirty_sphere_bound = false;
+  m_dirty_bounding_sphere = false;
   if (m_bb_is_pre_set) return;
 
   SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
@@ -470,13 +470,13 @@ void Exact_polyhedron_geo::clean_sphere_bound()
 
   if (m_coord_array) {
     auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-    if (coords) m_sphere_bound.set_around(coords->begin(), coords->end());
+    if (coords) m_bounding_sphere.set_around(coords->begin(), coords->end());
     else {
       auto exact_coords =
         boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
       SGAL_assertion(exact_coords);
       const auto& vecs = exact_coords->get_inexact_coords();
-      m_sphere_bound.set_around(vecs.begin(), vecs.end());
+      m_bounding_sphere.set_around(vecs.begin(), vecs.end());
     }
   }
 }

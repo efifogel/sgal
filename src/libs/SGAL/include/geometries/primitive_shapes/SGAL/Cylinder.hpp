@@ -109,7 +109,7 @@ public:
   virtual void isect(Isect_action* action);
 
   /*! Clean the bounding sphere of the cylinder. */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   /*! Determine whether the geometry has texture coordinates.
    */
@@ -230,7 +230,7 @@ inline Container* Cylinder::clone() { return new Cylinder(); }
 inline void Cylinder::set_radius(Float radius)
 {
   m_radius = radius;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief obtains the radius of the cylinder.
@@ -240,7 +240,7 @@ inline Float Cylinder::get_radius() const { return m_radius; }
 inline void Cylinder::set_height(Float height)
 {
   m_height = height;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief obtains the height of the cylinder.

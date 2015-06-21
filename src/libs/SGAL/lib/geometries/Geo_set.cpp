@@ -79,7 +79,7 @@ void Geo_set::init_prototype()
 
   // coord
   exec_func = static_cast<Execution_function>(&Geo_set::coord_changed);
-  Shared_container_handle_function coord_array_func =
+  auto coord_array_func =
     reinterpret_cast<Shared_container_handle_function>
     (&Geo_set::coord_array_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD_ARRAY, "coord",
@@ -89,7 +89,7 @@ void Geo_set::init_prototype()
 
   // normal
   exec_func = static_cast<Execution_function>(&Geo_set::normal_changed);
-  Shared_container_handle_function normal_array_func =
+  auto normal_array_func =
     reinterpret_cast<Shared_container_handle_function>
     (&Geo_set::normal_array_handle);
   s_prototype->add_field_info(new SF_shared_container(NORMAL_ARRAY, "normal",
@@ -99,7 +99,7 @@ void Geo_set::init_prototype()
 
   // color
   exec_func = static_cast<Execution_function>(&Geo_set::color_changed);
-  Shared_container_handle_function color_array_func =
+  auto color_array_func =
     reinterpret_cast<Shared_container_handle_function>
     (&Geo_set::color_array_handle);
   s_prototype->add_field_info(new SF_shared_container(COLOR_ARRAY, "color",
@@ -329,7 +329,7 @@ void Geo_set::set_attributes(Element* elem)
 void Geo_set::coord_content_changed(const Field_info* field_info)
 {
   if (!field_info) field_info = get_field_info(COORD_ARRAY);
-  sphere_bound_changed(field_info);
+  bounding_sphere_changed(field_info);
 }
 
 //! \brief responds to a change in the normal array.
@@ -345,7 +345,7 @@ void Geo_set::tex_coord_content_changed(const Field_info* /* field_info */) {}
 void Geo_set::coord_indices_changed(const Field_info* field_info)
 {
   if (!field_info) field_info = get_field_info(COORD_INDEX_ARRAY);
-  sphere_bound_changed(field_info);
+  bounding_sphere_changed(field_info);
 }
 
 //! \brief responds to a change in the normal-index array.
@@ -358,10 +358,10 @@ void Geo_set::color_indices_changed(const Field_info* /* field_info */) {}
 void Geo_set::tex_coord_indices_changed(const Field_info* /* field_info */) {}
 
 //! \brief responds to a change in the sphere bound.
-void Geo_set::sphere_bound_changed(const Field_info* field_info)
+void Geo_set::bounding_sphere_changed(const Field_info* field_info)
 {
   if (!field_info) field_info = get_field_info(SPHERE_BOUND);
-  Geometry::sphere_bound_changed(field_info);
+  Geometry::bounding_sphere_changed(field_info);
   Geometry::field_changed(field_info);
 }
 
@@ -488,15 +488,15 @@ const Vector3f& Geo_set::get_coord_3d(Uint i) const
 }
 
 //! \brief cleans the sphere bound of the geometry set.
-void Geo_set::clean_sphere_bound()
+void Geo_set::clean_bounding_sphere()
 {
-  m_dirty_sphere_bound = false;
+  m_dirty_bounding_sphere = false;
 
   if (m_bb_is_pre_set) return;
   if (!m_coord_array || m_coord_array->empty()) return;
   auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
   if (!coords) return;
-  m_sphere_bound.set_around(coords->begin(), coords->end());
+  m_bounding_sphere.set_around(coords->begin(), coords->end());
 }
 
 //! \brief obtains the bounding box.

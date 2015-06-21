@@ -115,7 +115,7 @@ public:
   virtual void isect(Isect_action* isect_action);
 
   /*! Clean the bounding sphere of the transformation node. */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   /*! Set the translation.
    * \param translation (in) the new translation.

@@ -35,7 +35,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Transform.hpp"
-#include "SGAL/Sphere_bound.hpp"
+#include "SGAL/Bounding_sphere.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Accumulation.hpp"
@@ -164,7 +164,7 @@ void Camera::set_dynamic_clipping_planes()
   if (!m_is_dynamic) return;
 
   Scene_graph::Shared_transform nav_root = m_scene_graph->get_navigation_root();
-  const Sphere_bound& sb = nav_root->get_sphere_bound();
+  const Bounding_sphere& sb = nav_root->get_bounding_sphere();
   set_clipping_planes(sb.get_center(), sb.get_radius());
 }
 
@@ -233,7 +233,7 @@ void Camera::init_prototype()
   // Add the object fields to the prototype
   // position
   auto exec_func = static_cast<Execution_function>(&Camera::components_changed);
-  Vector3f_handle_function position_func =
+  auto position_func =
     static_cast<Vector3f_handle_function>(&Camera::position_handle);
   s_prototype->add_field_info(new SF_vector3f(POSITION, "position",
                                               Field_info::RULE_EXPOSED_FIELD,
@@ -250,8 +250,7 @@ void Camera::init_prototype()
 
   // fieldOfView
   exec_func = static_cast<Execution_function>(&Camera::field_of_view_changed);
-  Float_handle_function fov_func =
-    static_cast<Float_handle_function>(&Camera::fov_handle);
+  auto fov_func = static_cast<Float_handle_function>(&Camera::fov_handle);
   s_prototype->add_field_info(new SF_float(FIELDOFVIEW, "fieldOfView",
                                            Field_info::RULE_EXPOSED_FIELD,
                                            fov_func, s_def_field_of_view,

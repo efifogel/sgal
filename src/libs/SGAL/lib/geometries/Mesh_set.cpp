@@ -86,36 +86,39 @@ void Mesh_set::init_prototype()
 
   // Add the field-info records to the prototype:
   // ccw
-  Execution_function exec_func =
+  auto exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Boolean_handle_function is_ccw_func =
+  auto is_ccw_func =
     static_cast<Boolean_handle_function>(&Mesh_set::is_ccw_handle);
-  s_prototype->add_field_info(new SF_bool(CCW, "ccw", Field_info::RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_bool(CCW, "ccw",
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           is_ccw_func,
                                           s_def_is_ccw, exec_func));
 
   // solid
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Boolean_handle_function is_solid_func =
+  auto is_solid_func =
     static_cast<Boolean_handle_function>(&Mesh_set::is_solid_handle);
-  s_prototype->add_field_info(new SF_bool(SOLID, "solid", Field_info::RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_bool(SOLID, "solid",
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           is_solid_func,
                                           s_def_is_solid, exec_func));
 
   // convex
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Boolean_handle_function is_convex_func =
+  auto is_convex_func =
     static_cast<Boolean_handle_function>(&Mesh_set::is_convex_handle);
-  s_prototype->add_field_info(new SF_bool(CONVEX, "convex", Field_info::RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_bool(CONVEX, "convex",
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           is_convex_func,
                                           s_def_is_convex, exec_func));
 
   // creaseAngle
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Float_handle_function crease_angle_func =
+  auto crease_angle_func =
     static_cast<Float_handle_function>(&Mesh_set::crease_angle_handle);
   s_prototype->add_field_info(new SF_float(CREASE_ANGLE, "creaseAngle",
                                            Field_info::RULE_EXPOSED_FIELD,
@@ -287,16 +290,16 @@ void Mesh_set::tex_coord_indices_changed(const Field_info* field_info)
 }
 
 //! \brief calculates the sphere bound.
-void Mesh_set::clean_sphere_bound()
+void Mesh_set::clean_bounding_sphere()
 {
   if (m_bb_is_pre_set) {
-    m_dirty_sphere_bound = false;
+    m_dirty_bounding_sphere = false;
     return;
   }
 
   // No need to clean the indices yet, cause the call bellow only uses the
   // coordinates.
-  Geo_set::clean_sphere_bound();
+  Geo_set::clean_bounding_sphere();
 }
 
 //! \brief obtains the flat coordinate-index array.

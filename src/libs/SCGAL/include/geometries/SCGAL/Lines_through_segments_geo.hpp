@@ -136,7 +136,7 @@ public:
   virtual void isect(Isect_action* action);
 
   /*! Clean the bounding sphere of the geometry container. */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   /*! Draw the geometry */
   virtual void draw(Draw_action* action);

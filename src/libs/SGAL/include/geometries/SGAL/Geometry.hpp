@@ -34,7 +34,7 @@
 #include "SGAL/Vector4f.hpp"
 #include "SGAL/Matrix4f.hpp"
 #include "SGAL/Math_defs.hpp"
-#include "SGAL/Sphere_bound.hpp"
+#include "SGAL/Bounding_sphere.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -77,8 +77,8 @@ public:
 
   /// \name field handlers
   //@{
-  Sphere_bound* sphere_bound_handle(const Field_info*)
-  { return &m_sphere_bound; }
+  Bounding_sphere* sphere_bound_handle(const Field_info*)
+  { return &m_bounding_sphere; }
   Boolean* generate_color_handle(const Field_info*)
   { return &m_generate_color; }
   Boolean* generate_tex_coord_handle(const Field_info*)
@@ -100,15 +100,10 @@ public:
   virtual void isect(Isect_action* action) = 0;
 
   /*! Clean the bounding sphere of the geometry. */
-  virtual void clean_sphere_bound() = 0;
-
-  /*! Obtain the bounding sphere of the geometry.
-   * \return the bounding sphere of the geometry.
-   */
-  virtual const Sphere_bound* get_sphere_bound();
+  virtual void clean_bounding_sphere() = 0;
 
   /*! Set the flag that indicates that the sphere bound should be cleaned. */
-  virtual void sphere_bound_changed(const Field_info* field_info = nullptr);
+  virtual void bounding_sphere_changed(const Field_info* field_info = nullptr);
 
   /*! Return true if the current matrix contains scaling.
    * \todo has_scale() doesn't belong to Geometry!
@@ -125,6 +120,11 @@ public:
    * \return true if the geometry has color and false otherwise.
    */
   virtual Boolean has_color();
+
+  /*! Obtain the bounding sphere of the geometry.
+   * \return the bounding sphere of the geometry.
+   */
+  const Bounding_sphere& get_bounding_sphere();
 
   /*! Determine whether color should be generated.
    * Most geometries cannot generate color; thus, this is rarely used.
@@ -145,10 +145,10 @@ public:
 
 protected:
   /*! The sphere bound of the node. */
-  Sphere_bound m_sphere_bound;
+  Bounding_sphere m_bounding_sphere;
 
   /*! Indicatres whether the bounding sphere is valid. */
-  Boolean m_dirty_sphere_bound;
+  Boolean m_dirty_bounding_sphere;
 
   /*! Indicates whether the bounding box is pewviously set. */
   Boolean m_bb_is_pre_set;

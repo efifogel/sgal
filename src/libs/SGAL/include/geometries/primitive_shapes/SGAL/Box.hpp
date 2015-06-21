@@ -89,7 +89,7 @@ public:
   virtual void isect(Isect_action* action);
 
   /*! Clean the bounding sphere of the box. */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   /*! Determine whether the geometry has texture coordinates.
    */
@@ -143,7 +143,7 @@ inline Container* Box::clone() { return new Box(); }
 inline void Box::set_size(const Vector3f& size)
 {
   m_size = size;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief gets the size of the box.

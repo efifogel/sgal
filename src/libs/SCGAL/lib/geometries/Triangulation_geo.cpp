@@ -216,10 +216,10 @@ void Triangulation_geo::draw_geometry(SGAL::Draw_action* action)
 void Triangulation_geo::isect(SGAL::Isect_action* /* action */) {}
 
 //! \brief cleans the bounding sphere of the triangulation.
-void Triangulation_geo::clean_sphere_bound()
+void Triangulation_geo::clean_bounding_sphere()
 {
   if (m_bb_is_pre_set) {
-    m_dirty_sphere_bound = false;
+    m_dirty_bounding_sphere = false;
     return;
   }
 
@@ -238,10 +238,10 @@ void Triangulation_geo::clean_sphere_bound()
     std::copy(min_sphere.center_cartesian_begin(),
               min_sphere.center_cartesian_end(),
               &center_vec[0]);
-    m_sphere_bound.set_center(center_vec);
-    m_sphere_bound.set_radius(min_sphere.radius());
+    m_bounding_sphere.set_center(center_vec);
+    m_bounding_sphere.set_radius(min_sphere.radius());
   }
-  m_dirty_sphere_bound = false;
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief sets the attributes of the object.
@@ -300,9 +300,9 @@ void Triangulation_geo::init_prototype()
   s_prototype = new Container_proto(Geometry::get_prototype());
 
   // coord
-  Execution_function exec_func =
+  auto exec_func =
     static_cast<Execution_function>(&Triangulation_geo::coord_changed);
-  Shared_container_handle_function coord_array_func =
+  auto coord_array_func =
     reinterpret_cast<Shared_container_handle_function>
     (&Triangulation_geo::coord_array_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD,
@@ -312,7 +312,7 @@ void Triangulation_geo::init_prototype()
                                                       exec_func));
 
   // lineWidth
-  Float_handle_function line_width_func =
+  auto line_width_func =
     static_cast<Float_handle_function>(&Triangulation_geo::line_width_handle);
   s_prototype->add_field_info(new SF_float(LINE_WIDTH,
                                            "lineWidth",
@@ -320,7 +320,7 @@ void Triangulation_geo::init_prototype()
                                            line_width_func));
 
   // drawHaloed
-  Boolean_handle_function draw_haloed_func =
+  auto draw_haloed_func =
     static_cast<Boolean_handle_function>
     (&Triangulation_geo::draw_haloed_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_HALOED,

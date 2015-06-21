@@ -117,7 +117,7 @@ public:
 
   /*! Clean the sphere bound.
    */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   /*! Clean the coordinate array and coordinate indices.
    */

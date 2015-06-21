@@ -216,14 +216,14 @@ void Arrangement_on_sphere_base_geo::isect(Isect_action* action)
 }
 
 //! \brief cleans the bounding sphere of the arrangement node.
-void Arrangement_on_sphere_base_geo::clean_sphere_bound()
+void Arrangement_on_sphere_base_geo::clean_bounding_sphere()
 {
   if (is_dirty()) clean();
   if (m_bb_is_pre_set) return;
 
-  m_sphere_bound.set_center(Vector3f(0, 0, 0));
-  m_sphere_bound.set_radius(1);
-  m_dirty_sphere_bound = false;
+  m_bounding_sphere.set_center(Vector3f(0, 0, 0));
+  m_bounding_sphere.set_radius(1);
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief sets the coordinate array.
@@ -231,7 +231,7 @@ void Arrangement_on_sphere_base_geo::
 set_coord_array(Shared_coord_array coord_array)
 {
   m_coord_array = coord_array;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief sets the coordinate array.

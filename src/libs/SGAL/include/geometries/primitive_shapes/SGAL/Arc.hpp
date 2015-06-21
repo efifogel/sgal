@@ -110,7 +110,7 @@ public:
   virtual void isect(Isect_action* action);
 
   /*! Clean the bounding sphere of the arc */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   /*! Determine whether the geometry has texture coordinates. */
   virtual Boolean has_tex_coord();

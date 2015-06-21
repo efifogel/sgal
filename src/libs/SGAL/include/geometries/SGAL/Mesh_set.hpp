@@ -206,7 +206,7 @@ public:
   void clean_tex_coord_indices();
 
   /*! Clean the bounding sphere of the mesh set. */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
   //@}
 
   /// \name Clearers

@@ -29,7 +29,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Sphere_bound;
+class Bounding_sphere;
 class Box_bound;
 class Element;
 
@@ -167,7 +167,7 @@ public:
                   Float near_dist, Float far_dist);
 
   unsigned int contains(const Vector3f& pt) const;
-  unsigned int contains(const Sphere_bound* sphere) const;
+  unsigned int contains(const Bounding_sphere* sphere) const;
   unsigned int contains(const Box_bound* box) const;
 
   void apply();

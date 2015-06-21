@@ -288,11 +288,11 @@ void Geodesic::isect(Isect_action* /* action */)
 }
 
 //! \brief cleans the sphere bound of the geodesic.
-void Geodesic::clean_sphere_bound()
+void Geodesic::clean_bounding_sphere()
 {
-  m_sphere_bound.set_radius(m_radius);
-  m_sphere_bound.set_center(Vector3f(0, 0, 0));
-  m_dirty_sphere_bound = false;
+  m_bounding_sphere.set_radius(m_radius);
+  m_bounding_sphere.set_center(Vector3f(0, 0, 0));
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief sets the attributes of the object extracted from the input file.
@@ -345,64 +345,6 @@ void Geodesic::set_attributes(Element * elem)
   elem->delete_marked();
 }
 
-#if 0
-/*! Get a list of attributes for the object.
- * The list is of name=value pairs.
- * \return a list of pairs of strings
- */
-Attribute_list Geodesic::get_attributes()
-{
-  Attribute_list attribs;
-  // attribs = Geometry::get_attributes();
-  Attribue attrib;
-  char buf[32];
-
-  attribs = Geometry::get_attributes();
-  if (m_radius != s_def_radius) {
-    attrib.first = "radius";
-    sprintf(buf, "%g", get_radius());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (m_start != s_def_start) {
-    attrib.first = "start";
-    sprintf(buf, "%g", get_start());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (m_end != s_def_end) {
-    attrib.first = "end";
-    sprintf(buf, "%g", get_end());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (m_breaks != s_def_breaks) {
-    attrib.first = "breaks";
-    sprintf(buf, "%d", get_breaks());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (m_stacks != s_def_stacks) {
-    attrib.first = "stacks";
-    sprintf(buf, "%d", get_stacks());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (m_complement != s_def_complement) {
-    attrib.first = "complement";
-    sprintf(buf, "%d", is_complement());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-  return attribs;
-}
-#endif
-
 //! \brief initializes the geodesic prototype.
 void Geodesic::init_prototype()
 {
@@ -411,16 +353,17 @@ void Geodesic::init_prototype()
 
   // Add the field-info records to the prototype:
   // radius
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Geometry::sphere_bound_changed);
-  Float_handle_function radius_func =
+  auto exec_func =
+    static_cast<Execution_function>(&Geometry::bounding_sphere_changed);
+  auto radius_func =
     static_cast<Float_handle_function>(&Geodesic::radius_handle);
-  s_prototype->add_field_info(new SF_float(RADIUS, "radius", Field_info::RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_float(RADIUS, "radius",
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            radius_func,
                                            exec_func));
 
   // start
-  Vector2f_handle_function start_func =
+  auto start_func =
     static_cast<Vector2f_handle_function>(&Geodesic::start_handle);
   s_prototype->add_field_info(new SF_vector2f(START, "start",
                                               Field_info::RULE_EXPOSED_FIELD,
@@ -428,34 +371,37 @@ void Geodesic::init_prototype()
                                               exec_func));
 
   // end
-  Vector2f_handle_function end_func =
+  auto end_func =
     static_cast<Vector2f_handle_function>(&Geodesic::end_handle);
-  s_prototype->add_field_info(new SF_vector2f(END, "end", Field_info::RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_vector2f(END, "end",
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               end_func,
                                               exec_func));
 
   // stacks
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Uint_handle_function stacks_func =
+  auto stacks_func =
     static_cast<Uint_handle_function>(&Geodesic::stacks_handle);
-  s_prototype->add_field_info(new SF_uint(STACKS, "stacks", Field_info::RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           stacks_func,
                                           exec_func));
 
   // breaks
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Uint_handle_function breaks_func =
+  auto breaks_func =
     static_cast<Uint_handle_function>(&Geodesic::breaks_handle);
-  s_prototype->add_field_info(new SF_uint(BREAKS, "breaks", Field_info::RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_uint(BREAKS, "breaks",
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           breaks_func,
                                           exec_func));
 
   // complement
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Boolean_handle_function is_complement_func =
+  auto is_complement_func =
     static_cast<Boolean_handle_function>(&Geodesic::is_complement_handle);
   s_prototype->add_field_info(new SF_bool(COMPLEMENT, "complement",
                                           Field_info::RULE_EXPOSED_FIELD,

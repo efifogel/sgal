@@ -86,7 +86,7 @@ void Lines_through_segments_geo::clear()
 {
   m_in_segments.clear();
   m_in_segments_dirty = true;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
   m_out_lines.clear();
   m_dirty = true;
 }
@@ -523,13 +523,13 @@ void Lines_through_segments_geo::isect(Isect_action* action)
 }
 
 //! \brief cleans the bounding sphere of the geometry container.
-void Lines_through_segments_geo::clean_sphere_bound()
+void Lines_through_segments_geo::clean_bounding_sphere()
 {
   if (is_dirty()) clean();
 
   // TODO: calculate the sphere bound
 
-  m_dirty_sphere_bound = false;
+  m_dirty_bounding_sphere = false;
 }
 
 //! \biref sets the segments.

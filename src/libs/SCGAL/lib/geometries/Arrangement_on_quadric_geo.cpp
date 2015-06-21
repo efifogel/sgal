@@ -67,18 +67,18 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Arrangement_on_quadric_geo::s_tag = "ArrangementOnQuadric";
-Container_proto* Arrangement_on_quadric_geo::s_prototype(NULL);
+Container_proto* Arrangement_on_quadric_geo::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Arrangement_on_quadric_geo, "Arrangement_on_quadric_geo");
 
-/*! Constructor */
+//! \brief constructs.
 Arrangement_on_quadric_geo::
 Arrangement_on_quadric_geo(Boolean proto) : Arrangement_on_surface_geo(proto) {}
 
-/*! Destructor */
+//! \brief destructs.
 Arrangement_on_quadric_geo::~Arrangement_on_quadric_geo() { clear(); }
 
-/*! \brief initializes the container prototype. */
+//! \brief initializes the container prototype.
 void Arrangement_on_quadric_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -86,21 +86,21 @@ void Arrangement_on_quadric_geo::init_prototype()
     new Container_proto(Arrangement_on_surface_geo::get_prototype());
 }
 
-/*! \brief deletes the container prototype. */
+//! \brief deletes the container prototype.
 void Arrangement_on_quadric_geo::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the container prototype. */
+//! \brief obtains the container prototype.
 Container_proto* Arrangement_on_quadric_geo::get_prototype()
 {
   if (!s_prototype) Arrangement_on_quadric_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the container attributes. */
+//! \brief sets the container attributes.
  void Arrangement_on_quadric_geo::set_attributes(Element* elem)
 {
   Arrangement_on_surface_geo::set_attributes(elem);
@@ -157,7 +157,7 @@ Container_proto* Arrangement_on_quadric_geo::get_prototype()
   elem->delete_marked();
 }
 
-/*! \brief cleans the representation. */
+//! \brief cleans the representation.
 void Arrangement_on_quadric_geo::clean()
 {
   typedef NiX::Arithmetic_traits AT;
@@ -167,9 +167,6 @@ void Arrangement_on_quadric_geo::clean()
   typedef QdX::P_quadric_3<AT> Quadric_3;
 #endif
 
-  // Iterate over the quadric nodes:
-  Quadric_node_iter it;
-
   if (m_base_quadric->is_dirty()) m_base_quadric->clean();
   const Quadric_3& base_quadric = m_base_quadric->get_quadric();
 
@@ -177,7 +174,8 @@ void Arrangement_on_quadric_geo::clean()
   std::vector<X_monotone_curve> segments_3;
   std::vector<Point> points_3;
 
-  for (it = m_quadric_nodes.begin(); it != m_quadric_nodes.end(); ++it) {
+  // Iterate over the quadric nodes:
+  for (auto it = m_quadric_nodes.begin(); it != m_quadric_nodes.end(); ++it) {
     std::vector< X_monotone_curve::Projected_segment_2 > lower_2, upper_2;
     Quadric_geo* qg = *it;
     if (qg->is_dirty()) qg->clean();
@@ -233,11 +231,11 @@ void Arrangement_on_quadric_geo::isect(Isect_action* action)
 }
 
 /*! \brief */
-Boolean Arrangement_on_quadric_geo::clean_sphere_bound()
+Boolean Arrangement_on_quadric_geo::clean_bounding_sphere()
 {
   Boolean changed = false;
   if (m_base_quadric)
-    m_sphere_bound = *m_base_quadric->get_sphere_bound(changed);
+    m_bounding_sphere = *m_base_quadric->get_bounding_sphere(changed);
   return changed;
 }
 

@@ -1021,7 +1021,7 @@ public:
   virtual void draw_geometry(Draw_action* action);
 
   /*! Clean the bounding sphere of the cubical Gaussian map. */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   /*! Clean the representation. */
   virtual void clean_cgm();

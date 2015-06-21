@@ -115,7 +115,7 @@ void Group::add_child(Shared_container node)
   }
 
   m_childs.push_back(node);
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
   const auto* field_info = get_field_info(SPHERE_BOUND);
   Observer observer(this, field_info);
   node->register_observer(observer);
@@ -142,7 +142,7 @@ void Group::remove_child(Shared_container node)
   const auto* field_info = get_field_info(SPHERE_BOUND);
   Observer observer(this, field_info);
   node->unregister_observer(observer);
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
   m_childs.erase(std::remove(m_childs.begin(), m_childs.end(), node),
                  m_childs.end());
 
@@ -247,36 +247,36 @@ void Group::isect(Isect_action* isect_action)
 
 /*! \brief cleans the bounding sphere of the group.
  * Computes the sphere that bounds all bounding spheres of all child nodes.
- * Notice that the m_dirty_sphere_bound flag must be set right before the
- * return statement and not earlier, cause the calls to clean_sphere_bound()
- * and get_sphere_bound() may reset it.
+ * Notice that the m_dirty_bounding_sphere flag must be set right before the
+ * return statement and not earlier, cause the calls to clean_bounding_sphere()
+ * and get_bounding_sphere() may reset it.
  */
-void Group::clean_sphere_bound()
+void Group::clean_bounding_sphere()
 {
   if (m_locked_sphere_bound) {
-    m_dirty_sphere_bound = false;
+    m_dirty_bounding_sphere = false;
     return;
   }
 
   if (!is_visible()) {
-    m_sphere_bound.set_radius(0);
-    m_dirty_sphere_bound = false;
+    m_bounding_sphere.set_radius(0);
+    m_dirty_bounding_sphere = false;
     return;
   }
 
-  Sphere_bound_vector_const spheres;
+  Bounding_sphere_vector_const spheres;
   for (auto it = m_childs.begin(); it != m_childs.end(); ++it) {
     auto node = boost::dynamic_pointer_cast<Node>(*it);
     if (node) {
-      if (node->is_dirty_sphere_bound()) node->clean_sphere_bound();
-      const Sphere_bound& sb = node->get_sphere_bound();
+      if (node->is_dirty_bounding_sphere()) node->clean_bounding_sphere();
+      const Bounding_sphere& sb = node->get_bounding_sphere();
       if (sb.get_radius() == 0) continue;
       spheres.push_back(&sb);
     }
   }
 
-  m_sphere_bound.set_around(spheres);
-  m_dirty_sphere_bound = false;
+  m_bounding_sphere.set_around(spheres);
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief sets the attributes of the group.
@@ -293,8 +293,8 @@ void Group::set_attributes(Element* elem)
       elem->mark_delete(ai);
     }
     if (name == "bboxCenter") {
-      m_sphere_bound.set_center(value);
-      m_dirty_sphere_bound = false;
+      m_bounding_sphere.set_center(value);
+      m_dirty_bounding_sphere = false;
       m_locked_sphere_bound = true;
       elem->mark_delete(ai);
       continue;
@@ -302,8 +302,8 @@ void Group::set_attributes(Element* elem)
     if (name == "bboxSize") {
       Vector3f vec(value);
       float radius = vec.length();
-      m_sphere_bound.set_radius(radius);
-      m_dirty_sphere_bound = false;
+      m_bounding_sphere.set_radius(radius);
+      m_dirty_bounding_sphere = false;
       m_locked_sphere_bound = true;
       elem->mark_delete(ai);
       continue;
@@ -341,24 +341,6 @@ void Group::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-#if 0
-//! \brief gets the attributes of the object.
-Attribute_list Group::get_attributes()
-{
-  Attribute_list attrs;
-  attrs = Node::get_attributes();
-  Attribue attrib;
-
-  if (m_is_visible != true) {
-    attrib.first = "visible";
-    attrib.second = "FALSE";
-    attrs.push_back(attrib);
-  }
-
-  return attrs;
-}
-#endif
-
 //! \brief initializes the node prototype.
 void Group::init_prototype()
 {
@@ -366,18 +348,18 @@ void Group::init_prototype()
   s_prototype = new Container_proto(Node::get_prototype());
 
   // Add the object fields to the prototype
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Node::sphere_bound_changed);
+  auto exec_func =
+    static_cast<Execution_function>(&Node::bounding_sphere_changed);
 
   // visible
-  Boolean_handle_function is_visible_func =
+  auto is_visible_func =
     static_cast<Boolean_handle_function>(&Group::is_visible_handle);
   s_prototype->add_field_info(new SF_bool(IS_VISIBLE, "visible",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           is_visible_func, true, exec_func));
 
   // children
-  Shared_container_array_handle_function childs_func =
+  auto childs_func =
     reinterpret_cast<Shared_container_array_handle_function>
     (&Group::childs_handle);
   s_prototype->add_field_info(new MF_shared_container(CHILDREN, "children",
@@ -440,7 +422,7 @@ void Group::set_visible()
 {
   if (!m_is_visible) {
     m_is_visible = true;
-    m_dirty_sphere_bound = true;
+    m_dirty_bounding_sphere = true;
   }
 }
 
@@ -451,7 +433,7 @@ void Group::set_invisible()
 {
   if (m_is_visible) {
     m_is_visible = false;
-    m_dirty_sphere_bound = true;
+    m_dirty_bounding_sphere = true;
   }
 }
 
@@ -460,7 +442,7 @@ void Group::set_visible(Boolean flag)
 {
   if (flag != m_is_visible) {
     m_is_visible = flag;
-    m_dirty_sphere_bound = true;
+    m_dirty_bounding_sphere = true;
   }
 }
 
@@ -504,7 +486,7 @@ void Group::field_changed(const Field_info* field_info)
 {
   switch (field_info->get_id()) {
    case SPHERE_BOUND:
-    m_dirty_sphere_bound = true;
+    m_dirty_bounding_sphere = true;
     break;
    default: break;
   }

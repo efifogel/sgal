@@ -36,7 +36,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Sphere_bound.hpp"
+#include "SGAL/Bounding_sphere.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Material.hpp"

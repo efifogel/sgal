@@ -33,7 +33,7 @@
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Vector4f.hpp"
 #include "SGAL/Rotation.hpp"
-#include "SGAL/Sphere_bound.hpp"
+#include "SGAL/Bounding_sphere.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Field_info.hpp"
 
@@ -192,14 +192,14 @@ public:
                                const Rotation& /* value */,
                                const Rotation& /* default_value */) {}
 
-  /*! Export a single Sphere_bound field.
+  /*! Export a single Bounding_sphere field.
    * \param[in] name The attribute name.
    * \param[in] value The attribute value.
    * \param[in] default_value The attribute default value.
    */
   virtual void single_sphere_bound(const std::string& /* name */,
-                                   const Sphere_bound& /* value */,
-                                   const Sphere_bound& /* default_value */) {}
+                                   const Bounding_sphere& /* value */,
+                                   const Bounding_sphere& /* default_value */) {}
 
   /*! Export a single string field.
    * \param[in] name The attribute name.
@@ -300,14 +300,14 @@ public:
                               const std::vector<Rotation>& /* value */,
                               const std::vector<Rotation>& /* default_value */) {}
 
-  /*! Export a multi-Sphere_bound field.
+  /*! Export a multi-Bounding_sphere field.
    * \param[in] name The attribute name.
    * \param[in] value The attribute value.
    * \param[in] default_value The attribute default value.
    */
   virtual void multi_sphere_bound(const std::string& /* name */,
-                                  const std::vector<Sphere_bound>& /* value */,
-                                  const std::vector<Sphere_bound>& /* default_value */) {}
+                                  const std::vector<Bounding_sphere>& /* value */,
+                                  const std::vector<Bounding_sphere>& /* default_value */) {}
 
   /*! Export a multi-string field.
    * \param[in] name The attribute name.
@@ -429,7 +429,7 @@ public:
                                const std::string& /* name */,
                                const Rotation& /* value */) {}
 
-  /*! Export a single Sphere_bound field.
+  /*! Export a single Bounding_sphere field.
    * \param[in] name The field name.
    * \param[in] value The field value.
    * \param[in] default_value The field default value.
@@ -437,7 +437,7 @@ public:
   virtual void single_sphere_bound(const std::string& /* rule */,
                                    const std::string& /* type */,
                                    const std::string& /* name */,
-                                   const Sphere_bound& /* value */) {}
+                                   const Bounding_sphere& /* value */) {}
 
   /*! Export a single string field.
    * \param[in] name The field name.
@@ -539,7 +539,7 @@ public:
                               const std::string& /* name */,
                               const std::vector<Rotation>& /* value */) {}
 
-  /*! Export a multi-Sphere_bound field.
+  /*! Export a multi-Bounding_sphere field.
    * \param[in] name The field name.
    * \param[in] value The field value.
    * \param[in] default_value The field default value.
@@ -547,7 +547,7 @@ public:
   virtual void multi_sphere_bound(const std::string& /* rule */,
                                   const std::string& /* type */,
                                   const std::string& /* name */,
-                                  const std::vector<Sphere_bound>& /* value */) {}
+                                  const std::vector<Bounding_sphere>& /* value */) {}
 
   /*! Export a multi-string field.
    * \param[in] name The field name.

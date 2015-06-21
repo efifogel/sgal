@@ -157,7 +157,7 @@ public:
   virtual void isect(Isect_action* action);
 
   /*! Clean the bounding sphere of the triangulation. */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
  /*! Print statistics */
   void print_stat();

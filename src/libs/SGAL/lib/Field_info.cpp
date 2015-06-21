@@ -144,8 +144,8 @@ void Field_info::write(Formatter* formatter, const Rotation& value,
 }
 
 //! \brief exports the (single) sphere-bound field.
-void Field_info::write(Formatter* formatter, const Sphere_bound& value,
-                       const Sphere_bound& default_value,
+void Field_info::write(Formatter* formatter, const Bounding_sphere& value,
+                       const Bounding_sphere& default_value,
                        Boolean declaration) const
 {
   if (declaration)
@@ -279,9 +279,9 @@ void Field_info::write(Formatter* formatter, const Rotation_array& value,
   else formatter->multi_rotation(get_name(), value, default_value);
 }
 
-//! \brief exports the multi-Sphere_bound field.
-void Field_info::write(Formatter* formatter, const Sphere_bound_array& value,
-                       const Sphere_bound_array& default_value,
+//! \brief exports the multi-Bounding_sphere field.
+void Field_info::write(Formatter* formatter, const Bounding_sphere_array& value,
+                       const Bounding_sphere_array& default_value,
                        Boolean declaration) const
 {
   if (declaration)

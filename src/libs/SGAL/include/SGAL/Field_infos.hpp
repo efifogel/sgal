@@ -37,7 +37,7 @@
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Vector4f.hpp"
 #include "SGAL/Rotation.hpp"
-#include "SGAL/Sphere_bound.hpp"
+#include "SGAL/Bounding_sphere.hpp"
 #include "SGAL/Field_info_template.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Array_types.hpp"
@@ -60,7 +60,7 @@ typedef Field_info_template<Vector3f, Field_info::SF_VEC3F>        SF_vector3f;
 typedef Field_info_template<Vector3f, Field_info::SF_COLOR>        SF_color;
 typedef Field_info_template<Vector4f, Field_info::SF_VEC4F>        SF_vector4f;
 typedef Field_info_template<Rotation, Field_info::SF_ROTATION>     SF_rotation;
-typedef Field_info_template<Sphere_bound, Field_info::SF_SB>       SF_sphere_bound;
+typedef Field_info_template<Bounding_sphere, Field_info::SF_SB>       SF_sphere_bound;
 typedef Field_info_template<std::string, Field_info::SF_STR>       SF_string;
 typedef Field_info_template<Shared_container, Field_info::SF_SHARED_CONTAINER>
                                                        SF_shared_container;
@@ -77,7 +77,7 @@ typedef Field_info_template<Vector3f_array, Field_info::MF_COLOR>  MF_color;
 typedef Field_info_template<Vector4f_array, Field_info::MF_VEC4F>  MF_vector4f;
 typedef Field_info_template<Rotation_array, Field_info::MF_ROTATION>
                                                                    MF_rotation;
-typedef Field_info_template<Sphere_bound_array, Field_info::MF_SB> MF_sphere_bound;
+typedef Field_info_template<Bounding_sphere_array, Field_info::MF_SB> MF_sphere_bound;
 typedef Field_info_template<String_array, Field_info::MF_STR>      MF_string;
 typedef Field_info_template<Shared_container_array, Field_info::MF_SHARED_CONTAINER>
                                                        MF_shared_container;
@@ -94,7 +94,7 @@ typedef Handle_function<Vector3f>::type       Vector3f_handle_function;
 typedef Handle_function<Vector3f>::type       Vector3f_handle_function;
 typedef Handle_function<Vector4f>::type       Vector4f_handle_function;
 typedef Handle_function<Rotation>::type       Rotation_handle_function;
-typedef Handle_function<Sphere_bound>::type   Sphere_bound_handle_function;
+typedef Handle_function<Bounding_sphere>::type   Bounding_sphere_handle_function;
 typedef Handle_function<std::string>::type    String_handle_function;
 typedef Handle_function<Shared_container>::type
                                               Shared_container_handle_function;
@@ -111,8 +111,8 @@ typedef Handle_function<Vector3f_array>::type Vector3f_array_handle_function;
 typedef Handle_function<Vector3f_array>::type Vector3f_array_handle_function;
 typedef Handle_function<Vector4f_array>::type Vector4f_array_handle_function;
 typedef Handle_function<Rotation_array>::type Rotation_array_handle_function;
-typedef Handle_function<Sphere_bound_array>::type
-  Sphere_bound_array_handle_function;
+typedef Handle_function<Bounding_sphere_array>::type
+  Bounding_sphere_array_handle_function;
 typedef Handle_function<String_array>::type   String_array_handle_function;
 typedef Handle_function<Shared_container_array>::type
   Shared_container_array_handle_function;

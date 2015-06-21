@@ -112,7 +112,7 @@ public:
   virtual void isect(Isect_action* action);
 
   /*! Clean the sphere bound of the lines. */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   /* Set the flag that indicates whether normals are bound per vertex
    * or per line.

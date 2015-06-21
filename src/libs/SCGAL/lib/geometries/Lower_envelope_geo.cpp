@@ -84,7 +84,7 @@ void Lower_envelope_geo::draw(Draw_action* action)
 }
 
 //! \brief cleans the bounding sphere of the lower envelope.
-void Lower_envelope_geo::clean_sphere_bound()
+void Lower_envelope_geo::clean_bounding_sphere()
 {
   if (m_dirty) clean();
   if (is_empty()) return;
@@ -97,11 +97,11 @@ void Lower_envelope_geo::clean_sphere_bound()
     std::copy(min_sphere.center_cartesian_begin(),
               min_sphere.center_cartesian_end(),
               &center_vec[0]);
-    m_sphere_bound.set_center(center_vec);
-    m_sphere_bound.set_radius(min_sphere.radius());
+    m_bounding_sphere.set_center(center_vec);
+    m_bounding_sphere.set_radius(min_sphere.radius());
   }
 
-  m_dirty_sphere_bound = false;
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief sets the attributes of the object extracted from an input file.
@@ -142,21 +142,16 @@ void Lower_envelope_geo::set_attributes(SGAL::Element* elem)
     }
   }
 
-  typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
-  typedef Element::Cont_list              Cont_list;
-  typedef Element::Cont_iter              Cont_iter;
-
   // Sets the multi-container attributes of this node:
-  Multi_cont_attr_iter mcai;
-  for (mcai = elem->multi_cont_attrs_begin();
+  for (auto mcai = elem->multi_cont_attrs_begin();
        mcai != elem->multi_cont_attrs_end(); ++mcai)
   {
-    const std::string& name = elem->get_name(mcai);
-    Cont_list& cont_list = elem->get_value(mcai);
+    const auto& name = elem->get_name(mcai);
+    auto& cont_list = elem->get_value(mcai);
     if (name == "surfaces") {
-      for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
-        Element::Shared_container cont = *ci;
-        Shared_node node = boost::dynamic_pointer_cast<Node>(cont);
+      for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++) {
+        auto cont = *ci;
+        auto node = boost::dynamic_pointer_cast<Node>(cont);
         if (node) add_surface(node);
       }
       elem->mark_delete(mcai);

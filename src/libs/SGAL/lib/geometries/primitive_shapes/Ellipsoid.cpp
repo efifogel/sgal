@@ -247,17 +247,16 @@ void Ellipsoid::init_prototype()
 
   // Add the field-info records to the prototype:
   // width
-  Execution_function exec_func =
+  auto exec_func =
     static_cast<Execution_function>(&Ellipsoid::structure_changed);
-  Float_handle_function width_func =
-    static_cast<Float_handle_function>(&Ellipsoid::width_handle);
+  auto width_func = static_cast<Float_handle_function>(&Ellipsoid::width_handle);
   s_prototype->add_field_info(new SF_float(WIDTH, "width",
                                            Field_info::RULE_EXPOSED_FIELD,
                                            width_func,
                                            s_def_width, exec_func));
 
   // height
-  Float_handle_function height_func =
+  auto height_func =
     static_cast<Float_handle_function>(&Ellipsoid::height_handle);
   s_prototype->add_field_info(new SF_float(HEIGHT, "height",
                                            Field_info::RULE_EXPOSED_FIELD,
@@ -265,15 +264,14 @@ void Ellipsoid::init_prototype()
                                            s_def_height, exec_func));
 
   // depth
-  Float_handle_function depth_func =
-    static_cast<Float_handle_function>(&Ellipsoid::depth_handle);
+  auto depth_func = static_cast<Float_handle_function>(&Ellipsoid::depth_handle);
   s_prototype->add_field_info(new SF_float(DEPTH, "depth",
                                            Field_info::RULE_EXPOSED_FIELD,
                                            depth_func,
                                            s_def_depth, exec_func));
 
   // slices
-  Uint_handle_function slices_func =
+  auto slices_func =
     static_cast<Uint_handle_function>(&Ellipsoid::slices_handle);
   s_prototype->add_field_info(new SF_uint(SLICES, "slices",
                                           Field_info::RULE_EXPOSED_FIELD,
@@ -281,7 +279,7 @@ void Ellipsoid::init_prototype()
                                           s_def_slices, exec_func));
 
   // stacks
-  Uint_handle_function stacks_func =
+  auto stacks_func =
     static_cast<Uint_handle_function>(&Ellipsoid::stacks_handle);
   s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
                                           Field_info::RULE_EXPOSED_FIELD,
@@ -307,7 +305,7 @@ Container_proto* Ellipsoid::get_prototype()
 void Ellipsoid::set_width(Float width)
 {
   m_width = width;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
   structure_changed(get_field_info(WIDTH));
 }
 
@@ -315,7 +313,7 @@ void Ellipsoid::set_width(Float width)
 void Ellipsoid::set_height(Float height)
 {
   m_height = height;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
   structure_changed(get_field_info(HEIGHT));
 }
 
@@ -323,7 +321,7 @@ void Ellipsoid::set_height(Float height)
 void Ellipsoid::set_depth(Float depth)
 {
   m_depth = depth;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
   structure_changed(get_field_info(DEPTH));
 }
 

@@ -25,14 +25,14 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! \brief sets the plane with the content of another plane. */
+//! \brief sets the plane with the content of another plane.
 void Plane::set(const Plane& plane)
 {
   m_normal.set(plane.get_normal());
   m_offset = get_offset();
 }
 
-/*! \brief */
+//! \brief
 float Plane::contains(const Box_bound* box) const
 {
   (void) box;
@@ -40,25 +40,25 @@ float Plane::contains(const Box_bound* box) const
   return 0;
 }
 
-/* \brief tests whether a given point is on the positive side of the plane */
+//! \brief tests whether a given point is on the positive side of the plane.
 float Plane::contains(const Vector3f& pt) const
 { return (pt.dot(m_normal) - m_offset); }
 
-/*! \brief */
-float Plane::contains(const Sphere_bound*) const
+//! \brief
+float Plane::contains(const Bounding_sphere*) const
 {
   SGAL_assertion(0);
   return 0;
 }
 
-/*! \brief */
+//! \brief
 Uint Plane::isect(const Seg*, Float*) const
 {
   SGAL_assertion(0);
   return 0;
 }
 
-/*! \brief */
+//! \brief
 Uint Plane::isect(const Seg *, Float *, float *) const
 {
   SGAL_assertion(0);
@@ -88,8 +88,7 @@ void Plane::make_pts(const Vector3f& p1, const Vector3f& p2,
   m_offset = p2.dot(m_normal);
 }
 
-/*! \brief stores the normal-point representation of the plane in norm and point.
- */
+//! \brief stores the normal-point representation of the plane in norm and point.
 void Plane::make_norm_pt(const Vector3f& norm, const Vector3f& pos)
 {
   m_normal.set(norm);
@@ -97,14 +96,14 @@ void Plane::make_norm_pt(const Vector3f& norm, const Vector3f& pos)
   m_offset = pos.dot(m_normal);
 }
 
-/*! \brief stores in <dst> the point on this plane closest to <pt>. */
+//! \brief stores in <dst> the point on this plane closest to <pt>.
 void Plane::closest_pt_on(const Vector3f& pt, Vector3f& dst) const
 {
   float scale = -m_normal.dot(pt) - m_offset;
   dst.add_scaled(pt, scale, m_normal);
 }
 
-/*! \brief computes the intersection of the plane with a given line. */
+//! \brief computes the intersection of the plane with a given line.
 bool Plane::intersect(const Line& line, Vector3f& point) const
 {
   const Vector3f& ldirection = line.get_direction();

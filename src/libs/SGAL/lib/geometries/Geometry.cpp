@@ -40,7 +40,7 @@ const Boolean Geometry::s_def_generate_tex_coord(true);
 //! \brief constructor.
 Geometry::Geometry(Boolean proto) :
   Container(proto),
-  m_dirty_sphere_bound(true),
+  m_dirty_bounding_sphere(true),
   m_bb_is_pre_set(false),
   m_generate_color(s_def_generate_color),
   m_generate_tex_coord(s_def_generate_tex_coord)
@@ -53,14 +53,14 @@ void Geometry::init_prototype()
   s_prototype = new Container_proto();
 
   // sphereBound
-  Sphere_bound_handle_function sphere_bound_func =
-    static_cast<Sphere_bound_handle_function>(&Geometry::sphere_bound_handle);
+  auto sphere_bound_func =
+    static_cast<Bounding_sphere_handle_function>(&Geometry::sphere_bound_handle);
   s_prototype->add_field_info(new SF_sphere_bound(SPHERE_BOUND, "sphereBound",
                                                   Field_info::RULE_OUT,
                                                   sphere_bound_func));
 
   // generatedTexCoord
-  Boolean_handle_function generate_tex_coord_func =
+  auto generate_tex_coord_func =
     static_cast<Boolean_handle_function>
     (&Geometry::generate_tex_coord_handle);
   s_prototype->add_field_info(new SF_bool(GENERATE_TEX_COORD,
@@ -93,14 +93,14 @@ void Geometry::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "bboxCenter") {
-      m_sphere_bound.set_center(value);
+      m_bounding_sphere.set_center(value);
       elem->mark_delete(ai);
       continue;
     }
     if (name == "bboxSize") {
       Vector3f vec(value);
       float radius = vec.length();
-      m_sphere_bound.set_radius(radius);
+      m_bounding_sphere.set_radius(radius);
       m_bb_is_pre_set = true;
       elem->mark_delete(ai);
       continue;
@@ -119,37 +119,16 @@ void Geometry::set_attributes(Element* elem)
 /*! \brief sets the flag that indicates that the sphere bound should be
  * cleaned.
  */
-void Geometry::sphere_bound_changed(const Field_info* /* field_info */)
-{ m_dirty_sphere_bound = true; }
+void Geometry::bounding_sphere_changed(const Field_info* /* field_info */)
+{ m_dirty_bounding_sphere = true; }
 
 
 //! \brief obtains bounding sphere of the geometry.
-const Sphere_bound* Geometry::get_sphere_bound()
+const Bounding_sphere& Geometry::get_bounding_sphere()
 {
-  if (m_dirty_sphere_bound) clean_sphere_bound();
-  return &m_sphere_bound;
+  if (m_dirty_bounding_sphere) clean_bounding_sphere();
+  return m_bounding_sphere;
 }
-
-#if 0
-//! \brief obtains the attributes of the box.
-Attribute_list Geometry::get_attributes()
-{
-  Attribute_list attribs;
-  attribs = Container::get_attributes();
-  return attribs;
-}
-
-//! \brief obtains the parent node from the scene graph and add the geometry.
-void Geometry::add_to_scene(Scene_graph* sg)
-{
-  Container::add_to_scene(sg, parent);
-  Shape* shape = dynamic_cast<Shape*>(parent);
-  if (shape) shape->set_geometry(this);
-
-  // insert the geometry to the geometry pool
-  sg->add_container(this);
-}
-#endif
 
 /*! \brief returns true if the current matrix contains scaling.
  * We get the current matrix from the matrix stack, multiply it

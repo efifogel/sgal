@@ -1004,7 +1004,7 @@ void Boundary_set::clean_tex_coords_2d()
   SGAL_assertion(coords);
 
   // Compute bounding box
-  Bounding_box bbox = bounding_box();;
+  Bounding_box bbox = bounding_box();
 
   // Allocate space for texture coordinates and texture cordinate indices
   Uint size = (m_coord_indices_flat) ?
@@ -1480,9 +1480,9 @@ void Boundary_set::init_prototype()
 
   // Add the field-info records to the prototype:
   // normalPerVertex
-  Execution_function exec_func =
+  auto exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Boolean_handle_function normal_per_vertex_func =
+  auto normal_per_vertex_func =
     static_cast<Boolean_handle_function>
     (&Boundary_set::normal_per_vertex_handle);
   s_prototype->add_field_info(new SF_bool(NORMAL_PER_VERTEX,
@@ -1492,7 +1492,7 @@ void Boundary_set::init_prototype()
                                           s_def_normal_per_vertex, exec_func));
 
   // colorPerVertex
-  Boolean_handle_function color_per_vertex_func =
+  auto color_per_vertex_func =
     static_cast<Boolean_handle_function>
     (&Boundary_set::color_per_vertex_handle);
   s_prototype->add_field_info(new SF_bool(COLOR_PER_VERTEX,
@@ -1506,13 +1506,13 @@ void Boundary_set::init_prototype()
 void Boundary_set::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the container prototype.
 Container_proto* Boundary_set::get_prototype()
 {
-  if (s_prototype == NULL) Boundary_set::init_prototype();
+  if (s_prototype == nullptr) Boundary_set::init_prototype();
   return s_prototype;
 }
 

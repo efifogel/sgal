@@ -1164,7 +1164,7 @@ insert_sgm(Shared_spherical_gaussian_map_marked_geo sgm)
   m_sgm_nodes.push_back(sgm);
   Observer observer(this, get_field_info(GEOMETRIES));
   sgm->register_observer(observer);
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief obrains a reference to the cubical Gaussian map.
@@ -1179,7 +1179,7 @@ void Spherical_gaussian_map_marked_geo::
 set_sgm(Spherical_gaussian_map_marked* sgm)
 {
   m_dirty_sgm = false;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
   m_sgm = sgm;
 }
 

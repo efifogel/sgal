@@ -126,7 +126,7 @@ void Cull_context::draw_node(Draw_action* draw_action, const Render_node& rn)
 float Cull_context::compute_distance(const Cull_context::Render_node& rn)
 {
   // Get world position of node.
-  const Sphere_bound& sphere_bound = rn.m_shape->get_sphere_bound();
+  const Bounding_sphere& sphere_bound = rn.m_shape->get_bounding_sphere();
 
   // the center of the sphere bound in world coordinate system
   Vector3f w_center;

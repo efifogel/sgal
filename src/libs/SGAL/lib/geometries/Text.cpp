@@ -78,10 +78,9 @@ void Text::init_prototype()
 
   // Add the field-info records to the prototype:
   // string
-  Execution_function exec_func =
+  auto exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  String_handle_function string_func =
-    static_cast<String_handle_function>(&Text::string_handle);
+  auto string_func = static_cast<String_handle_function>(&Text::string_handle);
   s_prototype->add_field_info(new SF_string(STRING, "string",
                                             Field_info::RULE_EXPOSED_FIELD,
                                             string_func,
@@ -135,36 +134,15 @@ void Text::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-#if 0
-Attribute_list Text::get_attributes()
-{
-  Attribute_list attribs;
-  Attribue attrib;
-  Vector3f vec;
-  Rotation rot;
-
-  attribs = Geometry::get_attributes();
-
-  if (!m_string.empty())
-  {
-    attrib.first = "string";
-    attrib.second = m_string;
-    attribs.push_back(attrib);
-  }
-
-  return attribs;
-}
-#endif
-
 //! \brief sets the font style.
 void Text::set_font_style(Shared_font_style font_style)
 {
   m_font_style = font_style;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief cleans the sphere bound of the text.
-void Text::clean_sphere_bound()
+void Text::clean_bounding_sphere()
 {
   if (!m_font_style) {
     m_default_font_style = Shared_font_style(new Font_style());
@@ -176,9 +154,9 @@ void Text::clean_sphere_bound()
   //! \todo Assume the origin is in the center
   Float radius =  (width < height) ? height : width;
   Vector3f center(0,0,0);
-  m_sphere_bound.set_center(center);
-  m_sphere_bound.set_radius(radius);
-  m_dirty_sphere_bound = false;
+  m_bounding_sphere.set_center(center);
+  m_bounding_sphere.set_radius(radius);
+  m_dirty_bounding_sphere = false;
 }
 
 SGAL_END_NAMESPACE

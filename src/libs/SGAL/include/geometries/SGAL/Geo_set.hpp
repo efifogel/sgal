@@ -357,7 +357,7 @@ public:
    * \param field_info (in) the information record of the field that caused
    *                   the change.
    */
-  virtual void sphere_bound_changed(const Field_info* field_info = nullptr);
+  virtual void bounding_sphere_changed(const Field_info* field_info = nullptr);
   //@}
 
   /*! Calculate the sphere bound.
@@ -365,7 +365,7 @@ public:
    * type Coord_array_3d. If this is not the case, this virtual member
    * function must be overriden!
    */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   /*! Determine whether the geometry has color.
    */

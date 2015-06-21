@@ -267,7 +267,7 @@ public:
   virtual void draw_geometry(Draw_action* action);
 
   /*! Clean the bounding sphere of the Nef Gaussian map. */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
@@ -605,7 +605,7 @@ inline void Nef_gaussian_map_geo::insert_ngm(Shared_nef_gaussian_map_geo ngm)
   m_ngm_nodes.push_back(ngm);
   Observer observer(this, get_field_info(GEOMETRIES));
   ngm->register_observer(observer);
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 /*! \brief sets the flag that indicates whether to draw the sphere. */

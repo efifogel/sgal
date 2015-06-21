@@ -273,11 +273,11 @@ void Arc::isect(Isect_action* /* action */)
 }
 
 //! \brief cleans the sphere bound of the arc.
-void Arc::clean_sphere_bound()
+void Arc::clean_bounding_sphere()
 {
-  m_sphere_bound.set_radius(m_radius);
-  m_sphere_bound.set_center(Vector3f(0, 0, 0));
-  m_dirty_sphere_bound = false;
+  m_bounding_sphere.set_radius(m_radius);
+  m_bounding_sphere.set_center(Vector3f(0, 0, 0));
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief sets the attributes of this container.
@@ -334,73 +334,6 @@ void Arc::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-#if 0
-/*! \brief obtains a list of attributes for the container.
- * The list is of name=value pairs.
- * \return a list of pairs of strings
- */
-Attribute_list Arc::get_attributes()
-{
-  Attribute_list attribs;
-  // attribs = Geometry::get_attributes();
-  Attribue attrib;
-  char buf[32];
-
-  attribs = Geometry::get_attributes();
-
-  if (m_radius != s_def_radius) {
-    attrib.first = "radius";
-    sprintf(buf, "%g", get_radius());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (m_slices != s_def_slices) {
-    attrib.first = "slices";
-    sprintf(buf, "%d", get_slices());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (m_stacks != s_def_stacks) {
-    attrib.first = "stacks";
-    sprintf(buf, "%d", get_stacks());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (m_alpha != s_def_alpha) {
-    attrib.first = "alpha";
-    sprintf(buf, "%f", get_alpha());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (m_beta != s_def_beta) {
-    attrib.first = "beta";
-    sprintf(buf, "%f", get_beta());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (m_gamma != s_def_gamma) {
-    attrib.first = "gamma";
-    sprintf(buf, "%f", get_gamma());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (m_delta != s_def_delta) {
-    attrib.first = "delta";
-    sprintf(buf, "%f", get_delta());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  return attribs;
-}
-#endif
-
 //! \brief initializes the arc prototype.
 void Arc::init_prototype()
 {
@@ -409,10 +342,9 @@ void Arc::init_prototype()
 
   // Add the field-info records to the prototype:
   // radius
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Geometry::sphere_bound_changed);
-  Float_handle_function radius_func =
-    static_cast<Float_handle_function>(&Arc::radius_handle);
+  auto exec_func =
+    static_cast<Execution_function>(&Geometry::bounding_sphere_changed);
+  auto radius_func = static_cast<Float_handle_function>(&Arc::radius_handle);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
                                            Field_info::RULE_EXPOSED_FIELD,
                                            radius_func,
@@ -421,8 +353,7 @@ void Arc::init_prototype()
   // stacks
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Uint_handle_function stacks_func =
-    static_cast<Uint_handle_function>(&Arc::stacks_handle);
+  auto stacks_func = static_cast<Uint_handle_function>(&Arc::stacks_handle);
   s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           stacks_func,
@@ -431,8 +362,7 @@ void Arc::init_prototype()
   // slices
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Uint_handle_function slices_func =
-    static_cast<Uint_handle_function>(&Arc::slices_handle);
+  auto slices_func = static_cast<Uint_handle_function>(&Arc::slices_handle);
   s_prototype->add_field_info(new SF_uint(SLICES, "slices",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           slices_func,
@@ -441,8 +371,7 @@ void Arc::init_prototype()
   // alpha
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Float_handle_function alpha_func =
-    static_cast<Float_handle_function>(&Arc::alpha_handle);
+  auto alpha_func = static_cast<Float_handle_function>(&Arc::alpha_handle);
   s_prototype->add_field_info(new SF_float(ALPHA, "alpha",
                                            Field_info::RULE_EXPOSED_FIELD,
                                            alpha_func,
@@ -451,8 +380,7 @@ void Arc::init_prototype()
   // beta
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Float_handle_function beta_func =
-    static_cast<Float_handle_function>(&Arc::beta_handle);
+  auto beta_func = static_cast<Float_handle_function>(&Arc::beta_handle);
   s_prototype->add_field_info(new SF_float(BETA, "beta",
                                            Field_info::RULE_EXPOSED_FIELD,
                                            beta_func,
@@ -461,8 +389,7 @@ void Arc::init_prototype()
   // gamma
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Float_handle_function gamma_func =
-    static_cast<Float_handle_function>(&Arc::gamma_handle);
+  auto gamma_func = static_cast<Float_handle_function>(&Arc::gamma_handle);
   s_prototype->add_field_info(new SF_float(GAMMA, "gamma",
                                            Field_info::RULE_EXPOSED_FIELD,
                                            gamma_func,
@@ -471,8 +398,7 @@ void Arc::init_prototype()
   // delta
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Float_handle_function delta_func =
-    static_cast<Float_handle_function>(&Arc::delta_handle);
+  auto delta_func = static_cast<Float_handle_function>(&Arc::delta_handle);
   s_prototype->add_field_info(new SF_float(DELTA, "delta",
                                            Field_info::RULE_EXPOSED_FIELD,
                                            delta_func,
@@ -497,7 +423,7 @@ Container_proto* Arc::get_prototype()
 void Arc::set_radius(Float radius)
 {
   m_radius = radius;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 SGAL_END_NAMESPACE

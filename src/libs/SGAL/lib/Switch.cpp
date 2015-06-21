@@ -118,31 +118,31 @@ void Switch::isect(Isect_action* isect_action)
 }
 
 /*! \brief cleans the sphere bound of the group based on all child objects.
- * Notice that the m_dirty_sphere_bound flag must be set right before the
- * return statement and not earlier, cause the calls to clean_sphere_bound()
- * and get_sphere_bound() may reset it.
+ * Notice that the m_dirty_bounding_sphere flag must be set right before the
+ * return statement and not earlier, cause the calls to clean_bounding_sphere()
+ * and get_bounding_sphere() may reset it.
  */
-void Switch::clean_sphere_bound()
+void Switch::clean_bounding_sphere()
 {
   if (m_locked_sphere_bound) {
-    m_dirty_sphere_bound = false;
+    m_dirty_bounding_sphere = false;
     return;
   }
 
   if (!is_visible()) {
-    m_sphere_bound.set_radius(0);
-    m_dirty_sphere_bound = false;
+    m_bounding_sphere.set_radius(0);
+    m_dirty_bounding_sphere = false;
     return;
   }
 
   auto node = boost::dynamic_pointer_cast<Node>(get_choice());
-  if (node && node->is_dirty_sphere_bound()) {
-    const auto& sb = node->get_sphere_bound();
-    m_sphere_bound.set_center(sb.get_center());
-    m_sphere_bound.set_radius(sb.get_radius());
+  if (node && node->is_dirty_bounding_sphere()) {
+    const auto& sb = node->get_bounding_sphere();
+    m_bounding_sphere.set_center(sb.get_center());
+    m_bounding_sphere.set_radius(sb.get_radius());
   }
 
-  m_dirty_sphere_bound = false;
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief initializes the node prototype.
@@ -154,7 +154,7 @@ void Switch::init_prototype()
   // Add the field-info records to the prototype:
   // whichChoice
   Execution_function exec_func =
-    static_cast<Execution_function>(&Node::sphere_bound_changed);
+    static_cast<Execution_function>(&Node::bounding_sphere_changed);
   Uint_handle_function which_choice_func =
     static_cast<Uint_handle_function>(&Switch::which_choice_handle);
   s_prototype->add_field_info(new SF_uint(WHICH_CHOICE, "whichChoice",

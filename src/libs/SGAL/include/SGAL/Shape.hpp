@@ -121,7 +121,7 @@ public:
   // virtual Attribute_list get_attributes();
 
   /*! Clean the bounding sphere of the shape. */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   virtual void cull(Cull_context& cull_context);
 

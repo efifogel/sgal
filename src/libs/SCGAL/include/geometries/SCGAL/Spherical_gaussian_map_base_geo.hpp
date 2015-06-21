@@ -457,7 +457,7 @@ public:
   virtual void isect(Isect_action* action);
 
   /*! Clean the bounding sphere of the spherical Gaussian map. */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   /*! Draw the geometry internal representation.
    */

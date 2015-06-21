@@ -473,7 +473,7 @@ Uint Frustum::contains(const Vector3f& /* pt */) const
 }
 
 //! \brief
-Uint Frustum::contains(const Sphere_bound* /* sphere */) const
+Uint Frustum::contains(const Bounding_sphere* /* sphere */) const
 {
   assert(0);
   return 0;

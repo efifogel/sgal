@@ -96,7 +96,7 @@ public:
   virtual void isect(Isect_action* action);
 
   /*! Clean the bounding sphere of the sphere. */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   /*! Determine whether the geometry has texture coordinates. */
   virtual Boolean has_tex_coord();
@@ -181,7 +181,7 @@ inline Container* Sphere::clone() { return new Sphere(); }
 inline void Sphere::set_center(const Vector3f& center)
 {
   m_center = center;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 /*! \brief obtains the sphere center. */
@@ -191,7 +191,7 @@ inline const Vector3f& Sphere::get_center() const { return m_center; }
 inline void Sphere::set_radius(Float radius)
 {
   m_radius = radius;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief obtains the sphere radius.

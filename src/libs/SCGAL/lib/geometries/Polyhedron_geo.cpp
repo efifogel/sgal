@@ -157,10 +157,10 @@ void Polyhedron_geo::isect(Isect_action* /* action */)
 }
 
 //! \brief cleans the sphere bound.
-void Polyhedron_geo::clean_sphere_bound()
+void Polyhedron_geo::clean_bounding_sphere()
 {
   if (m_bb_is_pre_set) {
-    m_dirty_sphere_bound = false;
+    m_dirty_bounding_sphere = false;
     return;
   }
 
@@ -181,7 +181,7 @@ void Polyhedron_geo::clean_sphere_bound()
     std::copy(min_sphere.center_cartesian_begin(),
               min_sphere.center_cartesian_end(),
               &center_vec[0]);
-    m_sphere_bound.set_radius(min_sphere.radius());
+    m_bounding_sphere.set_radius(min_sphere.radius());
 #else
     Min_sphere min_sphere(m_polyhedron.points_begin(),
                           m_polyhedron.points_end());
@@ -189,12 +189,12 @@ void Polyhedron_geo::clean_sphere_bound()
     center_vec[0] = center.x();
     center_vec[1] = center.y();
     center_vec[2] = center.z();
-    m_sphere_bound.set_radius(squarerootf(min_sphere.squared_radius()));
+    m_bounding_sphere.set_radius(squarerootf(min_sphere.squared_radius()));
 #endif
 
-    m_sphere_bound.set_center(center_vec);
+    m_bounding_sphere.set_center(center_vec);
   }
-  m_dirty_sphere_bound = false;
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief sets the attributes of this object.

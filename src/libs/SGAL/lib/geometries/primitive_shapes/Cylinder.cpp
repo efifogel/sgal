@@ -167,12 +167,12 @@ void Cylinder::clean()
 }
 
 //! \brief cleans (recalculate) the bounding sphere of the cylinder.
-void Cylinder::clean_sphere_bound()
+void Cylinder::clean_bounding_sphere()
 {
   float radius = sqrtf(m_height * m_height / 4 + m_radius * m_radius);
-  m_sphere_bound.set_radius(radius);
-  m_sphere_bound.set_center(Vector3f(0, 0, 0));
-  m_dirty_sphere_bound = false;
+  m_bounding_sphere.set_radius(radius);
+  m_bounding_sphere.set_center(Vector3f(0, 0, 0));
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief sets the attributes of the cylinder.
@@ -224,70 +224,6 @@ void Cylinder::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-#if 0
-/*! Get a list of attributes for the object.
- * The list is of name=value pairs.
- * @return a list of pairs of strings
- */
-Attribute_list Cylinder::get_attributes()
-{
-  Attribute_list attribs;
-  // attribs = Geometry::get_attributes();
-  Attribue attrib;
-  char buf[32];
-
-  attribs = Geometry::get_attributes();
-
-  if (m_radius != s_def_radius) {
-    attrib.first = "radius";
-    sprintf(buf, "%g", get_radius());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (m_height != s_def_height) {
-    attrib.first = "height";
-    sprintf(buf, "%g", get_height());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (m_slices != s_def_slices) {
-    attrib.first = "slices";
-    sprintf(buf, "%d", get_slices());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (m_stacks != s_def_stacks) {
-    attrib.first = "stacks";
-    sprintf(buf, "%d", get_stacks());
-    attrib.second = buf;
-    attribs.push_back(attrib);
-  }
-
-  if (get_is_bottom_visible() != s_def_is_bottom_visible) {
-    attrib.first = "bottom";
-    attrib.second = (get_is_bottom_visible()) ? TRUE_STR : FALSE_STR;
-    attribs.push_back(attrib);
-  }
-
-  if (get_is_body_visible() != s_def_is_body_visible) {
-    attrib.first = "side";
-    attrib.second = (get_is_body_visible()) ? TRUE_STR : FALSE_STR;
-    attribs.push_back(attrib);
-  }
-
-  if (get_is_top_visible() != s_def_is_top_visible) {
-    attrib.first = "top";
-    attrib.second = (get_is_top_visible()) ? TRUE_STR: FALSE_STR;
-    attribs.push_back(attrib);
-  }
-
-  return attribs;
-}
-#endif
-
 //! \brief initializes the cylinder prototype.
 void Cylinder::init_prototype()
 {
@@ -296,9 +232,9 @@ void Cylinder::init_prototype()
 
   // Add the field-info records to the prototype:
   // radius
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Geometry::sphere_bound_changed);
-  Float_handle_function radius_func =
+  auto exec_func =
+    static_cast<Execution_function>(&Geometry::bounding_sphere_changed);
+  auto radius_func =
     static_cast<Float_handle_function>(&Cylinder::radius_handle);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
                                            Field_info::RULE_EXPOSED_FIELD,
@@ -306,7 +242,7 @@ void Cylinder::init_prototype()
                                            exec_func));
 
   // height
-  Float_handle_function height_func =
+  auto height_func =
     static_cast<Float_handle_function>(&Cylinder::height_handle);
   s_prototype->add_field_info(new SF_float(HEIGHT, "height",
                                            Field_info::RULE_EXPOSED_FIELD,
@@ -314,7 +250,7 @@ void Cylinder::init_prototype()
                                            exec_func));
 
   // side
-  Boolean_handle_function is_body_visible_func =
+  auto is_body_visible_func =
     static_cast<Boolean_handle_function>(&Cylinder::is_body_visible_handle);
   s_prototype->add_field_info(new SF_bool(SIDE, "side",
                                           Field_info::RULE_EXPOSED_FIELD,
@@ -322,7 +258,7 @@ void Cylinder::init_prototype()
                                           exec_func));
 
   // bottom
-  Boolean_handle_function is_bottom_visible_func =
+  auto is_bottom_visible_func =
     static_cast<Boolean_handle_function>
     (&Cylinder::is_bottom_visible_handle);
   s_prototype->add_field_info(new SF_bool(BOTTOM, "bottom",
@@ -332,7 +268,7 @@ void Cylinder::init_prototype()
   // Rendering required
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Boolean_handle_function is_top_visible_func =
+  auto is_top_visible_func =
     static_cast<Boolean_handle_function>(&Cylinder::is_top_visible_handle);
   s_prototype->add_field_info(new SF_bool(TOP, "top",
                                           Field_info::RULE_EXPOSED_FIELD,
@@ -342,7 +278,7 @@ void Cylinder::init_prototype()
   // slices
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Uint_handle_function slices_func =
+  auto slices_func =
     static_cast<Uint_handle_function>(&Cylinder::slices_handle);
   s_prototype->add_field_info(new SF_uint(SLICES, "slices",
                                           Field_info::RULE_EXPOSED_FIELD,
@@ -352,7 +288,7 @@ void Cylinder::init_prototype()
   // stacks
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Uint_handle_function stacks_func =
+  auto stacks_func =
     static_cast<Uint_handle_function>(&Cylinder::stacks_handle);
   s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
                                           Field_info::RULE_EXPOSED_FIELD,

@@ -57,11 +57,11 @@ void Billboard::init_prototype()
   s_prototype = new Container_proto(Group::get_prototype());
 
   // Add the field-info records to the prototype:
-  Execution_function exec_func =
+  auto exec_func =
     static_cast<Execution_function>(&Billboard::axis_of_rotation_changed);
 
   // center
-  Vector3f_handle_function axis_of_rotation_func =
+  auto axis_of_rotation_func =
     static_cast<Vector3f_handle_function>(&Billboard::axis_of_rotation_handle);
   s_prototype->add_field_info(new SF_vector3f(AXIS_OF_ROTATION,
                                               "axis_of_rotation",
@@ -143,8 +143,8 @@ void Billboard::isect(Isect_action* isect_action)
 }
 
 //! \brief cleans the bounding sphere of the billboard node.
-void Billboard::clean_sphere_bound()
-{ return Group::clean_sphere_bound(); }
+void Billboard::clean_bounding_sphere()
+{ return Group::clean_bounding_sphere(); }
 
 //! \brief processes change of axis of rotation.
 void Billboard::axis_of_rotation_changed(const Field_info* field_info)

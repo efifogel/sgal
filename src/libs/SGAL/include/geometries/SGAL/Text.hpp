@@ -90,7 +90,7 @@ public:
   virtual void isect(Isect_action* /* isect_action */) {}
 
   /*! Clean the sphere bound */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   /*! Set the font style */
   void set_font_style(Shared_font_style font_style);

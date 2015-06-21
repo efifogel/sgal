@@ -89,7 +89,7 @@ public:
   virtual void isect(Isect_action* action);
 
   /*! Clean the sphere bound of the mesh. */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   virtual void set_color_array(Shared_color_array color_array);
 

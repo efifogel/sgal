@@ -29,7 +29,7 @@ Container_proto* Node::s_prototype(nullptr);
 //! Constructor.
 Node::Node(Boolean proto) :
   Container(proto),
-  m_dirty_sphere_bound(true),
+  m_dirty_bounding_sphere(true),
   m_locked_sphere_bound(false)
 {}
 
@@ -42,8 +42,8 @@ void Node::init_prototype()
   // Add the field-info records to the prototype:
   // Execution_function exec_func;
   // exec_func = static_cast<Execution_function>(&Transform::parts_changed);
-  Sphere_bound_handle_function sphere_bound_func =
-    static_cast<Sphere_bound_handle_function>(&Node::sphere_bound_handle);
+  Bounding_sphere_handle_function sphere_bound_func =
+    static_cast<Bounding_sphere_handle_function>(&Node::sphere_bound_handle);
   s_prototype->add_field_info(new SF_sphere_bound(SPHERE_BOUND, "sphereBound",
                                                   Field_info::RULE_OUT,
                                                   sphere_bound_func));
@@ -64,14 +64,14 @@ Container_proto* Node::get_prototype()
 }
 
 //! \brief sets the flag that indicates that the sphere bound should be cleaned.
-void Node::sphere_bound_changed(const Field_info* /* field_info */)
-{ m_dirty_sphere_bound = true; }
+void Node::bounding_sphere_changed(const Field_info* /* field_info */)
+{ m_dirty_bounding_sphere = true; }
 
 //! \brief obtains the sphere bound.
-const Sphere_bound& Node::get_sphere_bound()
+const Bounding_sphere& Node::get_bounding_sphere()
 {
-  if (m_dirty_sphere_bound) clean_sphere_bound();
-  return m_sphere_bound;
+  if (m_dirty_bounding_sphere) clean_bounding_sphere();
+  return m_bounding_sphere;
 }
 
 //! \brief sets the attributes of the node.

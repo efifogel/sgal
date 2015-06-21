@@ -145,7 +145,7 @@ void Elevation_grid::init_prototype()
   // heightMap
   exec_func =
     static_cast<Execution_function>(&Elevation_grid::height_map_changed);
-  Shared_container_handle_function height_map_func =
+  auto height_map_func =
     reinterpret_cast<Shared_container_handle_function>
     (&Elevation_grid::height_map_handle);
   s_prototype->add_field_info(new SF_shared_container(HEIGHT_MAP,
@@ -157,7 +157,7 @@ void Elevation_grid::init_prototype()
   // xDimension
   exec_func =
     static_cast<Execution_function>(&Elevation_grid::structure_changed);
-  Uint_handle_function x_dimension_func =
+  auto x_dimension_func =
     static_cast<Uint_handle_function>(&Elevation_grid::x_dimension_handle);
   s_prototype->add_field_info(new SF_uint(X_DIMENSION, "xDimension",
                                           Field_info::RULE_EXPOSED_FIELD,
@@ -166,7 +166,7 @@ void Elevation_grid::init_prototype()
 
 
   // xSpacing
-  Float_handle_function x_spacing_func =
+  auto x_spacing_func =
     static_cast<Float_handle_function>(&Elevation_grid::x_spacing_handle);
   s_prototype->add_field_info(new SF_float(X_SPACING, "xSpacing",
                                            Field_info::RULE_EXPOSED_FIELD,
@@ -174,7 +174,7 @@ void Elevation_grid::init_prototype()
                                            exec_func));
 
   // zDimension
-  Uint_handle_function z_dimension_func =
+  auto z_dimension_func =
     static_cast<Uint_handle_function>(&Elevation_grid::z_dimension_handle);
   s_prototype->add_field_info(new SF_uint(Z_DIMENSION, "zDimension",
                                           Field_info::RULE_EXPOSED_FIELD,
@@ -182,7 +182,7 @@ void Elevation_grid::init_prototype()
                                           exec_func));
 
   // zSpacing
-  Float_handle_function z_spacing_func =
+  auto z_spacing_func =
     static_cast<Float_handle_function>(&Elevation_grid::z_spacing_handle);
   s_prototype->add_field_info(new SF_float(Z_SPACING, "zSpacing",
                                            Field_info::RULE_EXPOSED_FIELD,
@@ -190,7 +190,7 @@ void Elevation_grid::init_prototype()
                                            exec_func));
 
   // is closed
-  Boolean_handle_function is_closed_func =
+  auto is_closed_func =
     static_cast<Boolean_handle_function>(&Elevation_grid::is_closed_handle);
   s_prototype->add_field_info(new SF_bool(IS_CLOSED, "closed",
                                           Field_info::RULE_EXPOSED_FIELD,
@@ -199,7 +199,7 @@ void Elevation_grid::init_prototype()
                                           exec_func));
 
   // baseHeight
-  Float_handle_function base_height_func =
+  auto base_height_func =
     static_cast<Float_handle_function>(&Elevation_grid::base_height_handle);
   s_prototype->add_field_info(new SF_float(BASE_HEIGHT, "baseHeight",
                                            Field_info::RULE_EXPOSED_FIELD,
@@ -485,7 +485,7 @@ void Elevation_grid::structure_changed(const Field_info* field_info)
 {
   clear_coord_array();
   clear_flat_coord_indices();
-  sphere_bound_changed(field_info);
+  bounding_sphere_changed(field_info);
 }
 
 //! \brief obtain the (const) 2D array that represents the height above a grid.

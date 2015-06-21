@@ -106,7 +106,7 @@ public:
   virtual void isect(Isect_action* isect_action);
 
   /*! Clean the sphere bound of the group. */
-  virtual void clean_sphere_bound();
+  virtual void clean_bounding_sphere();
 
   /*! Export this container.
    * \param[in] formatter the formatter to use for exporting; e.g., VRML.
@@ -158,7 +158,7 @@ inline Switch::Container* Switch::clone() { return new Switch(); }
 inline void Switch::set_which_choice(Uint index)
 {
   m_which_choice = index;
-  m_dirty_sphere_bound = true;
+  m_dirty_bounding_sphere = true;
 }
 
 //! \brief  obtains the index of the child to traverse.
