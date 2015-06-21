@@ -66,6 +66,7 @@ class Indexed_face_set;
 class Box;
 class Image;
 class Matrix4f;
+class Polyhedron_attributes_array;
 
 #if (defined SGAL_USE_GLUT)
 class Glut_window_manager;
@@ -250,6 +251,12 @@ public:
   /*! Obtain the total surface area of all polyhedrons.
    */
   float surface_area();
+
+  /*! Obtain the attributes of all polyhedrons.
+   */
+  void
+  process_polyhedron_attributes_array(SGAL::Polyhedron_attributes_array& array)
+    const;
 
 protected:
   /*! The window manager. */

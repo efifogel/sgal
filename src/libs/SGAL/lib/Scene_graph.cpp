@@ -42,9 +42,10 @@
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Volume_action.hpp"
 #include "SGAL/Surface_area_action.hpp"
+#include "SGAL/Polyhedron_attributes_action.hpp"
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Execution_coordinator.hpp"
-#include "SGAL/Sphere_bound.hpp"
+#include "SGAL/Bounding_sphere.hpp"
 #include "SGAL/Touch_sensor.hpp"
 #include "SGAL/Time_sensor.hpp"
 #include "SGAL/Configuration.hpp"
@@ -68,6 +69,7 @@
 #include "SGAL/Node.hpp"
 #include "SGAL/Image.hpp"
 #include "SGAL/Key_sensor.hpp"
+#include "SGAL/Polyhedron_attributes_array.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -294,7 +296,7 @@ void Scene_graph::initialize_rendering(Draw_action* draw_action)
 #if 0
   // Set the clipping planes around the bounding sphere.
   if (!m_is_camera_in_focus && camera->get_is_dynamic()) {
-    const Sphere_bound& sb = m_navigation_root->get_sphere_bound();
+    const Bounding_sphere& sb = m_navigation_root->get_bounding_sphere();
     camera->set_dynamic_clipping_planes(sb.get_center(), sb.get_radius());
     m_is_camera_in_focus = true;
   }
@@ -657,7 +659,7 @@ void Scene_graph::set_head_light(Configuration* config)
   if (!m_head_light || (config && !config->is_fixed_head_light())) return;
 
 #if 0
-  const Sphere_bound& sb = m_navigation_root->get_sphere_bound();
+  const Bounding_sphere& sb = m_navigation_root->get_bounding_sphere();
   const Vector3f& center = sb.get_center();
 
   Vector3f org;
@@ -757,13 +759,13 @@ void Scene_graph::create_defaults()
   sg_mzd_field->connect(sc_mzd_field);
 
   // Set the default center of rotation:
-  const Sphere_bound& sb = m_navigation_root->get_sphere_bound();
+  const Bounding_sphere& sb = m_navigation_root->get_bounding_sphere();
   m_navigation_root->set_center(sb.get_center());
 
 #if 0
   //! \todo Execution_coordinator* ec = get_execution_coordinator();
   if (ec) {
-    const Sphere_bound& sb = m_navigation_root->get_sphere_bound();
+    const Bounding_sphere& sb = m_navigation_root->get_bounding_sphere();
     ec->set_scene_bounding_sphere_radius(sb.get_radius());
   }
 #endif
@@ -817,7 +819,7 @@ void Scene_graph::add_text_string(const std::string& /* str */)
 float Scene_graph::compute_speed_factor() const
 {
   SGAL_assertion(m_navigation_root);
-  const auto& sb = m_navigation_root->get_sphere_bound();
+  const auto& sb = m_navigation_root->get_bounding_sphere();
   const auto* configuration = get_configuration();
   SGAL_assertion(configuration);
   float speed_factor = configuration->get_speed_factor();
@@ -1009,6 +1011,15 @@ float Scene_graph::surface_area()
   Surface_area_action action;
   root->traverse(&action);
   return action.surface_area();
+}
+
+//! \brief collects the attributes of all polyhedrons.
+void Scene_graph::
+process_polyhedron_attributes_array(Polyhedron_attributes_array& array) const
+{
+  auto root = get_root();
+  Polyhedron_attributes_action action(array);
+  root->traverse(&action);
 }
 
 SGAL_END_NAMESPACE

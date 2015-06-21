@@ -17,16 +17,14 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
- * A class representing a sphere bound to a node/geometry in the scene graph.
- * A sphere bound in represented by its center point and its radius.
+ * A class representing a sphere bound of a node or a geometry container in the
+ * scene graph.
+ * A Bounding sphere in represented by its center point and its radius.
  *
  * When an animations is running or an asyncronious update occurs, the bounding
- * bounding sphere has to be updated. For that purpose there is a dirty flag in
- * each class that contains a bounding sphere to indicate whether the sphere
- * should be recalculated.
- *
- * @author: Tali Zvi
- * @date: 4/10/2000
+ * sphere has to be updated. For that purpose there is a dirty flag in
+ * each class that contains a bounding sphere to indicate whether the bounding
+ * sphere should be recalculated.
  */
 
 #ifndef SGAL_SPHERE_BOUND_HPP
@@ -40,20 +38,19 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_SGAL_DECL Sphere_bound;
-typedef std::vector<Sphere_bound *>             Sphere_bound_vector;
-typedef std::vector<const Sphere_bound *>       Sphere_bound_vector_const;
+class SGAL_SGAL_DECL Bounding_sphere;
+typedef std::vector<const Bounding_sphere*>       Bounding_sphere_const_vector;
 
-class Sphere_bound {
+class Bounding_sphere {
 public:
-  /*! Constructor. */
-  Sphere_bound();
+  /*! Construct. */
+  Bounding_sphere();
 
-  /*! Copy constructor. */
-  Sphere_bound(const Sphere_bound& sb);
+  /*! Copy construct. */
+  Bounding_sphere(const Bounding_sphere& sb);
 
   /*! Destructor. */
-  virtual ~Sphere_bound();
+  virtual ~Bounding_sphere();
 
   /*! Obtain the center.
    * \return The center.
@@ -61,14 +58,14 @@ public:
   const Vector3f& get_center() const;
 
   /*! Set the center.
-   * \param center (in) the center.
+   * \param[in] center the center.
    */
   void set_center(const Vector3f& center);
 
   /*! Set the center.
-   * \param x (in) the x-coordinate of the center.
-   * \param y (in) the y-coordinate of the center.
-   * \param z (in) the z-coordinate of the center.
+   * \param[in] x the x-coordinate of the center.
+   * \param[in] y the y-coordinate of the center.
+   * \param[in] z the z-coordinate of the center.
    */
   void set_center(Float x, Float y, Float z);
 
@@ -78,20 +75,20 @@ public:
   float get_radius() const;
 
   /*! Set the radius.
-   * \param radius (in) the radius.
+   * \param[in] radius the radius.
    */
   void set_radius(float radius);
 
   /*! Compare the sphere bound with another.
-   * \param other The other sphere bound.
+   * \param[in] other The other sphere bound.
    */
-  Boolean operator==(const Sphere_bound& other) const;
+  Boolean operator==(const Bounding_sphere& other) const;
 
-  Boolean does_contain(const Sphere_bound* sphere) const;
+  Boolean does_contain(const Bounding_sphere* sphere) const;
 
   Boolean does_contain(const Vector3f& point) const;
 
-  void set_around(const Sphere_bound_vector_const& spheres);
+  void set_around(const Bounding_sphere_const_vector& spheres);
 
   template <class Vector3f_iterator>
   void set_around(Vector3f_iterator begin, Vector3f_iterator end)
@@ -137,7 +134,7 @@ public:
   }
 
   /*! Assignment operator */
-  Sphere_bound& operator=(const Sphere_bound& s);
+  Bounding_sphere& operator=(const Bounding_sphere& s);
 
 private:
   /*! The center point of the sphere. */
@@ -148,40 +145,39 @@ private:
 };
 
 //! \brief obtains the center.
-inline const Vector3f& Sphere_bound::get_center() const { return m_center; }
+inline const Vector3f& Bounding_sphere::get_center() const { return m_center; }
 
 //! \brief sets the center.
-inline void Sphere_bound::set_center(const Vector3f& center)
+inline void Bounding_sphere::set_center(const Vector3f& center)
 { m_center = center; }
 
 //! \brief sets the center.
-inline void Sphere_bound::set_center(Float x, Float y, Float z)
+inline void Bounding_sphere::set_center(Float x, Float y, Float z)
 { m_center.set(x, y, z); }
 
 //! \brief obtains the radius.
-inline float Sphere_bound::get_radius() const { return m_radius; }
+inline float Bounding_sphere::get_radius() const { return m_radius; }
 
 //! \brief sets the radius.
-inline void Sphere_bound::set_radius(float radius) { m_radius = radius; }
+inline void Bounding_sphere::set_radius(float radius) { m_radius = radius; }
 
 //! \brief compares the sphere bound with another.
-inline Boolean Sphere_bound::operator==(const Sphere_bound& other) const
+inline Boolean Bounding_sphere::operator==(const Bounding_sphere& other) const
 {
   return ((get_radius() == other.get_radius()) &&
           (get_center() == other.get_center()));
 }
 
-/*! \brief assignment operator */
-inline Sphere_bound& Sphere_bound::operator=(const Sphere_bound& s)
+//! \brief assignment operator.
+inline Bounding_sphere& Bounding_sphere::operator=(const Bounding_sphere& s)
 {
   m_center = s.get_center();
   m_radius = s.get_radius();
   return *this;
 }
 
-/*!
- */
-inline std::ostream& operator<<(std::ostream& os, const Sphere_bound& sb)
+//! \brief
+inline std::ostream& operator<<(std::ostream& os, const Bounding_sphere& sb)
 {
   os << sb.get_center() << ", " << sb.get_radius();
   return os;

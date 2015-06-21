@@ -95,6 +95,7 @@ class Isect_action;
 class Simulation;
 class Snapshotter;
 class Key_sensor;
+class Polyhedron_attributes_array;
 // class View_sensor;
 
 #if (defined _MSC_VER)
@@ -482,6 +483,11 @@ public:
   /*! Compute the accumulated surface area of all polyhedrons.
    */
   float surface_area();
+
+  /*! Collect the attributes of all polyhedrons.
+   */
+  void process_polyhedron_attributes_array(Polyhedron_attributes_array& array)
+    const;
 
 private:
   /*! Binadable stacks */

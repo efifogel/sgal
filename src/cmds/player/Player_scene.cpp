@@ -1117,3 +1117,8 @@ float Player_scene::volume()
 //! \brief obtains the accumulated surface area of all polyhedrons.
 float Player_scene::surface_area()
 { return m_scene_graph->surface_area(); }
+
+//! \brief obtain the attributes of all polyhedrons.
+void Player_scene::process_polyhedron_attributes_array
+(SGAL::Polyhedron_attributes_array& array) const
+{ m_scene_graph->process_polyhedron_attributes_array(array); }

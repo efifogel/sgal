@@ -47,6 +47,9 @@
 #else
 #include "SGAL/X11_window_manager.hpp"
 #endif
+#include "SGAL/Polyhedron_attributes_array.hpp"
+#include "SGAL/Bounding_box.hpp"
+#include "SGAL/Bounding_sphere.hpp"
 
 #include "Player_scene.hpp"
 #include "Player_option_parser.hpp"
@@ -195,11 +198,21 @@ public:
    */
   float surface_area();
 
+  /*! Obtain the attributes of all polyhedrons.
+   */
+  const SGAL::Polyhedron_attributes_array& get_polyhedron_attributes_array();
+
 private:
   void init(int argc, char* argv[]);
 
+  /*! The scene. */
   Player_scene m_scene;
+
+  /*! The option parser. */
   Player_option_parser* m_option_parser;
+
+  /*! The construct that holds the attributes of all polyhedrons. */
+  SGAL::Polyhedron_attributes_array m_polyhedron_attributes_array;
 };
 
 int Player::visualize()
@@ -385,6 +398,14 @@ float Player::volume()
 float Player::surface_area()
 { return m_scene.surface_area(); }
 
+//! \brief obtains the attributes of all polyhedrons.
+const SGAL::Polyhedron_attributes_array&
+Player::get_polyhedron_attributes_array()
+{
+  m_scene.process_polyhedron_attributes_array(m_polyhedron_attributes_array);
+  return m_polyhedron_attributes_array;
+}
+
 #if defined(SGAL_BUILD_PYBINDINGS)
 
 BOOST_PYTHON_MODULE(player)
@@ -396,13 +417,38 @@ BOOST_PYTHON_MODULE(player)
 
   class_<Player>("Player", init<Player::Arguments>())
     .def("__call__", static_cast<int(Player::*)()>(&Player::operator()))
-    .def("__call__", static_cast<int(Player::*)(char*, int)>(&Player::operator()))
+    .def("__call__",
+         static_cast<int(Player::*)(char*, int)>(&Player::operator()))
     .def("create", static_cast<int(Player::*)()>(&Player::create))
-    .def("createFromData", static_cast<int(Player::*)(char*, int)>(&Player::create))
+    .def("createFromData",
+         static_cast<int(Player::*)(char*, int)>(&Player::create))
     .def("visualize", &Player::visualize)
     .def("destroy", &Player::destroy)
     .def("volume", &Player::volume)
     .def("surface_area", &Player::surface_area)
+    .def("get_polyhedron_attributes_array",
+         &Player::get_polyhedron_attributes_array,
+         return_value_policy<reference_existing_object>())
+    ;
+
+  class_<SGAL::Polyhedron_attributes_array>("Polyhedron_attributes_array")
+    .def("number_of_vertices",
+         &SGAL::Polyhedron_attributes_array::number_of_vertices)
+    .def("number_of_facets",
+         &SGAL::Polyhedron_attributes_array::number_of_facets)
+    .def("volume", &SGAL::Polyhedron_attributes_array::volume)
+    .def("surface_area", &SGAL::Polyhedron_attributes_array::surface_area)
+    .def("bounding_box", &SGAL::Polyhedron_attributes_array::bounding_box)
+    .def("bounding_sphere", &SGAL::Polyhedron_attributes_array::bounding_sphere)
+    ;
+
+  class_<SGAL::Bounding_box>("Bounding_box")
+    .def("xmin", &SGAL::Bounding_box::xmin)
+    .def("ymin", &SGAL::Bounding_box::ymin)
+    .def("zmin", &SGAL::Bounding_box::zmin)
+    .def("xmax", &SGAL::Bounding_box::xmax)
+    .def("ymax", &SGAL::Bounding_box::ymax)
+    .def("zmax", &SGAL::Bounding_box::zmax)
     ;
 }
 
