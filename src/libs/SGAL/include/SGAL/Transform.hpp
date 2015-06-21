@@ -170,23 +170,23 @@ public:
 
   void set_translation(Float v0, Float v1, Float v2);
 
-  void get_translation(Float* v0, Float* v1, Float* v2);
+  void get_translation(Float& v0, Float& v1, Float& v2);
 
   void set_rotation(Float v0, Float v1, Float v2, Float v3);
 
-  void get_rotation(Float* v0, Float* v1, Float* v2, Float* v3);
+  void get_rotation(Float& v0, Float& v1, Float& v2, Float& v3);
 
   void set_scale(Float v0, Float v1, Float v2);
 
-  void get_scale(Float* v0, Float* v1, Float* v2);
+  void get_scale(Float& v0, Float& v1, Float& v2);
 
   void set_scale_orientation(Float v0, Float v1, Float v2, Float v3);
 
-  void get_scale_orientation(Float* v0, Float* v1, Float* v2, Float* v3);
+  void get_scale_orientation(Float& v0, Float& v1, Float& v2, Float& v3);
 
   void set_center(Float v0, Float v1, Float v2);
 
-  void get_center(Float* v0, Float* v1, Float* v2);
+  void get_center(Float& v0, Float& v1, Float& v2);
 
   /*! Set the flag that indicates whether the transformation took place.
    * \param transformed (in) indicates whether transformation took place.

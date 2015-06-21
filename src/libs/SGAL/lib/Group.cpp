@@ -75,7 +75,7 @@ Group::Group(const Group& other) :
 Group::~Group()
 {
   // Unregister observers
-  Observer observer(this, get_field_info(SPHERE_BOUND));
+  Observer observer(this, get_field_info(BOUNDING_SPHERE));
   for (auto it = m_childs.begin(); it != m_childs.end(); ++it)
     (*it)->unregister_observer(observer);
 
@@ -116,7 +116,7 @@ void Group::add_child(Shared_container node)
 
   m_childs.push_back(node);
   m_dirty_bounding_sphere = true;
-  const auto* field_info = get_field_info(SPHERE_BOUND);
+  const auto* field_info = get_field_info(BOUNDING_SPHERE);
   Observer observer(this, field_info);
   node->register_observer(observer);
 
@@ -139,7 +139,7 @@ void Group::remove_child(Shared_container node)
     return;
   }
 
-  const auto* field_info = get_field_info(SPHERE_BOUND);
+  const auto* field_info = get_field_info(BOUNDING_SPHERE);
   Observer observer(this, field_info);
   node->unregister_observer(observer);
   m_dirty_bounding_sphere = true;
@@ -253,7 +253,7 @@ void Group::isect(Isect_action* isect_action)
  */
 void Group::clean_bounding_sphere()
 {
-  if (m_locked_sphere_bound) {
+  if (m_locked_bounding_sphere) {
     m_dirty_bounding_sphere = false;
     return;
   }
@@ -264,7 +264,7 @@ void Group::clean_bounding_sphere()
     return;
   }
 
-  Bounding_sphere_const_vector spheres;
+  std::vector<const Bounding_sphere*> spheres;
   for (auto it = m_childs.begin(); it != m_childs.end(); ++it) {
     auto node = boost::dynamic_pointer_cast<Node>(*it);
     if (node) {
@@ -275,7 +275,7 @@ void Group::clean_bounding_sphere()
     }
   }
 
-  m_bounding_sphere.set_around(spheres);
+  m_bounding_sphere.set_around(spheres.begin(), spheres.end());
   m_dirty_bounding_sphere = false;
 }
 
@@ -295,7 +295,7 @@ void Group::set_attributes(Element* elem)
     if (name == "bboxCenter") {
       m_bounding_sphere.set_center(value);
       m_dirty_bounding_sphere = false;
-      m_locked_sphere_bound = true;
+      m_locked_bounding_sphere = true;
       elem->mark_delete(ai);
       continue;
     }
@@ -304,7 +304,7 @@ void Group::set_attributes(Element* elem)
       float radius = vec.length();
       m_bounding_sphere.set_radius(radius);
       m_dirty_bounding_sphere = false;
-      m_locked_sphere_bound = true;
+      m_locked_bounding_sphere = true;
       elem->mark_delete(ai);
       continue;
     }
@@ -485,7 +485,7 @@ void Group::remove_touch_sensor(Shared_touch_sensor touch_sensor)
 void Group::field_changed(const Field_info* field_info)
 {
   switch (field_info->get_id()) {
-   case SPHERE_BOUND:
+   case BOUNDING_SPHERE:
     m_dirty_bounding_sphere = true;
     break;
    default: break;

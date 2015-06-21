@@ -26,22 +26,20 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Parameterless constructor */
+//! \brief constructs default.
 Bounding_sphere::Bounding_sphere() : m_radius(0.0f) {}
 
-/*! Copy constructor */
+//! \brief constructs copt.
 Bounding_sphere::Bounding_sphere(const Bounding_sphere& s)
 {
   m_center = s.get_center();
   m_radius = s.get_radius();
 }
 
-/*! Destructor */
+//! \brief destructs.
 Bounding_sphere::~Bounding_sphere() {}
 
-/*! \brief checks whether the sphere contains another sphere.
- * @return true iff it contains the sphere.
- */
+//! \brief determines whether the sphere contains another sphere.
 bool Bounding_sphere::does_contain(const Bounding_sphere* sphere) const
 {
   float distance =
@@ -49,13 +47,11 @@ bool Bounding_sphere::does_contain(const Bounding_sphere* sphere) const
   return (distance < m_radius);
 }
 
-/*! \brief checks whether the sphere contains a point.
- * @return true iff it contains the point.
- */
+//! \brief determines whether the sphere contains a point.
 bool Bounding_sphere::does_contain(const Vector3f& point) const
 { return (m_center.sqr_distance(point) < (m_radius* m_radius)); }
 
-/*! \brief sets the bounding sphere to contains all specified spheres.
+/*! \brief sets the bounding sphere to contains a range of spheres.
  * If only one sphere is given, it becomes the bounding sphere.
  * Otherwise we do the following:
  *
@@ -76,55 +72,8 @@ bool Bounding_sphere::does_contain(const Vector3f& point) const
  *
  * @param spheres an array of sphere bound objects.
  */
-void Bounding_sphere::set_around(const Bounding_sphere_const_vector& spheres)
-{
-  if (spheres.size() == 0) {
-    m_center.set(0, 0, 0);
-    m_radius = 0.0f;
-    return;
-  }
-
-  if (spheres.size() == 1) {
-    m_center.set(spheres[0]->get_center());
-    m_radius = spheres[0]->get_radius();
-    return;
-  }
-
-  Bounding_sphere current(*spheres[0]);
-
-  Vector3f c1, c2;
-  float r1 = 0, r2 = 0;
-  float d = 0;          // the distance between the two centers
-  float R = 0;          // the radius of the new sphere
-  Vector3f v;           // the vector pointing from one center point to another
-  Vector3f center;      // the center of the new sphere
-  int num = spheres.size();
-  for (int i = 1 ; i < num ; ++i) {
-    if (current.does_contain(spheres[i])) continue;
-    if (spheres[i]->does_contain(&current)) {
-      current = *spheres[i];
-      continue;
-    }
-    c1 = current.get_center();
-    c2 = spheres[i]->get_center();
-    r1 = current.get_radius();
-    r2 = spheres[i]->get_radius();
-    d = c1.distance(c2);
-    R = (d + r1 + r2)/2;
-
-    v = c2;
-    v.sub(c1);
-    v.normalize();
-    v.scale(R - r1);
-    center = c1;
-    center.add(v);
-
-    current.set_center(center);
-    current.set_radius(R);
-  }
-
-  m_radius = current.get_radius();
-  m_center = current.get_center();
-}
+// void Bounding_sphere::set_around(const Bounding_sphere_const_vector& spheres)
+// {
+// }
 
 SGAL_END_NAMESPACE

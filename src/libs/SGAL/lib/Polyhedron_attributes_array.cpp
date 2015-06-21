@@ -91,8 +91,18 @@ const Bounding_box Polyhedron_attributes_array::bounding_box() const
 //! \brief Obtain the number of vertices of all polyhedrons.
 const Bounding_sphere Polyhedron_attributes_array::bounding_sphere() const
 {
-  Bounding_sphere bsphere;
-  return bsphere;
+  std::vector<const Bounding_sphere*> spheres;
+  std::for_each(m_array.begin(), m_array.end(),
+                  [&](const Polyhedron_attributes& attrs)
+                  {
+                    const auto& bs = attrs.get_bounding_sphere();
+                    if (bs.get_radius() == 0) return;
+                    spheres.push_back(&bs);
+                  });
+
+  Bounding_sphere bs;
+  bs.set_around(spheres.begin(), spheres.end());
+  return bs;
 }
 
 SGAL_END_NAMESPACE

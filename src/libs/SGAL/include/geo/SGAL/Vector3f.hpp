@@ -39,28 +39,32 @@ private:
   Float m_vector[3];
 
 public:
-  /*! Default constructor. */
+  /*! Construct default. */
   Vector3f();
 
-  /*! constructor. */
-  Vector3f(Float a, Float b, Float c);
+  /*! Construct from elements. */
+  Vector3f(Float x, Float y, Float z);
 
-  /*! Constructor from string. */
+  /*! Construct from string. */
   Vector3f (const std::string& str);
 
-  /*! Copy constructor. */
+  /*! Construct copy. */
   Vector3f(const Vector3f& other);
 
   /*! Initialize the vector. */
   void init();
 
-  void set(Float a, Float b, Float c);
-  void get(Float* a, Float* b, Float* c)  const;
+  void set(Float x, Float y, Float z);
+  void get(Float& x, Float& y, Float& z)  const;
   void set(int i, Float f);
   Float get(int i) const;
   void set(const Vector3f& v);
   void get(Vector3f& v) const;
   std::string get_text();
+
+  Float x() const;
+  Float y() const;
+  Float z() const;
 
   Float get_max_comp();
   Boolean equal(const Vector3f&  v) const;
@@ -120,6 +124,15 @@ public:
                            const Vector3f& p3);
 };
 
+//! \brief obtains the first coordinate.
+inline Float Vector3f::x() const { return m_vector[0]; }
+
+//! \brief obtains the second coordinate.
+inline Float Vector3f::y() const { return m_vector[1]; }
+
+//! \brief obtains the third coordinate.
+inline Float Vector3f::z() const { return m_vector[2]; }
+
 //! \brief
 inline Float& Vector3f::operator[](int i) { return m_vector[i]; }
 
@@ -127,19 +140,19 @@ inline Float& Vector3f::operator[](int i) { return m_vector[i]; }
 inline Float Vector3f::operator[](int i) const { return m_vector[i]; }
 
 //! \brief
-inline void Vector3f::set(Float a, Float b, Float c)
+inline void Vector3f::set(Float x, Float y, Float z)
 {
-  m_vector[0] = a;
-  m_vector[1] = b;
-  m_vector[2] = c;
+  m_vector[0] = x;
+  m_vector[1] = y;
+  m_vector[2] = z;
 }
 
 //! \brief
-inline void Vector3f::get(Float* a, Float* b, Float* c)  const
+inline void Vector3f::get(Float& x, Float& y, Float& z)  const
 {
-  *a = m_vector[0];
-  *b = m_vector[1];
-  *c = m_vector[2];
+  x = m_vector[0];
+  y = m_vector[1];
+  z = m_vector[2];
 }
 
 //! \brief

@@ -286,12 +286,12 @@ void Transform::clean_parts()
 }
 
 //! \brief sets the translation.
-void Transform::get_translation(float* v0, float* v1, float* v2)
+void Transform::get_translation(float& v0, float& v1, float& v2)
 {
   if (m_dirty_parts) {
-    *v0 = m_matrix[3][0];
-    *v1 = m_matrix[3][1];
-    *v2 = m_matrix[3][2];
+    v0 = m_matrix[3][0];
+    v1 = m_matrix[3][1];
+    v2 = m_matrix[3][2];
     return;
   }
   m_translation.get(v0, v1, v2);
@@ -350,10 +350,10 @@ void Transform::set_rotation(const Rotation& rotation)
 { set_rotation(rotation[0], rotation[1], rotation[2], rotation.get_angle()); }
 
 //! \brief obtains the rotation.
-void Transform::get_rotation(float* v0, float* v1, float* v2, float* v3)
+void Transform::get_rotation(float& v0, float& v1, float& v2, float& v3)
 {
   if (m_dirty_parts) clean_parts();
-  m_rotation.get(v0,v1,v2,v3);
+  m_rotation.get(v0, v1, v2, v3);
 }
 
 //! \brief obtains the (non-const) rotation.
@@ -364,12 +364,12 @@ const Rotation& Transform::get_rotation()
 }
 
 //! \brief obtains the scale factors.
-void Transform::get_scale(float* v0, float* v1, float* v2)
+void Transform::get_scale(float& v0, float& v1, float& v2)
 {
   if (m_dirty_parts) clean_parts();
-  *v0 = m_scale[0];
-  *v1 = m_scale[1];
-  *v2 = m_scale[2];
+  v0 = m_scale[0];
+  v1 = m_scale[1];
+  v2 = m_scale[2];
 }
 
 //! \brief sets the scale.
@@ -387,7 +387,7 @@ const Vector3f& Transform::get_scale()
 void Transform::set_scale_orientation(float v0, float v1, float v2, float v3)
 {
   if (m_dirty_parts) clean_parts();
-  m_scale_orientation.set(v0,v1,v2,v3);
+  m_scale_orientation.set(v0, v1, v2, v3);
   m_dirty_matrix = true;
   m_dirty_inverse = true;
   m_dirty_bounding_sphere = true;
@@ -395,10 +395,10 @@ void Transform::set_scale_orientation(float v0, float v1, float v2, float v3)
 
 //! \brief obtains the scale-orientation.
 void
-Transform::get_scale_orientation(float* v0, float* v1, float* v2, float* v3)
+Transform::get_scale_orientation(float& v0, float& v1, float& v2, float& v3)
 {
   if (m_dirty_parts) clean_parts();
-  m_scale_orientation.get(v0,v1,v2,v3);
+  m_scale_orientation.get(v0, v1, v2, v3);
 }
 
 //! \brief sets the scale-orientation.
@@ -430,12 +430,12 @@ void Transform::set_center(float v0, float v1, float v2)
 }
 
 //! \brief obtains the center of rotation.
-void Transform::get_center(float* v0, float* v1, float* v2)
+void Transform::get_center(float& v0, float& v1, float& v2)
 {
   if (m_dirty_parts) clean_parts();
-  *v0 = m_center[0];
-  *v1 = m_center[1];
-  *v2 = m_center[2];
+  v0 = m_center[0];
+  v1 = m_center[1];
+  v2 = m_center[2];
 }
 
 //! \brief sets the center of rotation.
@@ -506,7 +506,7 @@ void Transform::reset(const Field_info* /* field_info */)
  */
 void Transform::clean_bounding_sphere()
 {
-  if (m_locked_sphere_bound) {
+  if (m_locked_bounding_sphere) {
     m_dirty_bounding_sphere = false;
     return;
   }

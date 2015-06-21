@@ -50,6 +50,7 @@
 #include "SGAL/Polyhedron_attributes_array.hpp"
 #include "SGAL/Bounding_box.hpp"
 #include "SGAL/Bounding_sphere.hpp"
+#include "SGAL/Vector3f.hpp"
 
 #include "Player_scene.hpp"
 #include "Player_option_parser.hpp"
@@ -450,6 +451,19 @@ BOOST_PYTHON_MODULE(player)
     .def("ymax", &SGAL::Bounding_box::ymax)
     .def("zmax", &SGAL::Bounding_box::zmax)
     ;
+
+  class_<SGAL::Bounding_sphere>("Bounding_sphere")
+    .def("radius", &SGAL::Bounding_sphere::get_radius)
+    .def("center", &SGAL::Bounding_sphere::get_center,
+         return_value_policy<reference_existing_object>())
+    ;
+
+  class_<SGAL::Vector3f>("Vector3f")
+    .def("x", &SGAL::Vector3f::x)
+    .def("y", &SGAL::Vector3f::y)
+    .def("z", &SGAL::Vector3f::z)
+    ;
+
 }
 
 #else

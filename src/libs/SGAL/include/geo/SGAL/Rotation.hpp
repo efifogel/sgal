@@ -123,7 +123,7 @@ public:
    * \param z (out) the rotation axis z-coordinate.
    * \param angle (out) the rotation angle in radians.
    */
-  void get(Float* x, Float* y, Float* z, Float* angle) const;
+  void get(Float& x, Float& y, Float& z, Float& angle) const;
 
   std::string get_text();
 
@@ -205,12 +205,12 @@ inline void Rotation::set(const Vector3f& axis, Float angle)
 }
 
 //! \brief obtain the rotation.
-inline void Rotation::get(Float* x, Float* y, Float* z, Float* angle) const
+inline void Rotation::get(Float& x, Float& y, Float& z, Float& angle) const
 {
-  *x = m_axis[0];
-  *y = m_axis[1];
-  *z = m_axis[2];
-  *angle = m_angle;
+  x = m_axis[0];
+  y = m_axis[1];
+  z = m_axis[2];
+  angle = m_angle;
 }
 
 //! \brief set the rotation angle.
