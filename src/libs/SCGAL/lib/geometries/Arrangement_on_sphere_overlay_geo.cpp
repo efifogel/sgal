@@ -61,7 +61,7 @@ Arrangement_on_sphere_overlay_geo::
 Arrangement_on_sphere_overlay_geo(Boolean proto) :
   Arrangement_on_sphere_base_geo(proto),
   m_owned_aos(false),
-  m_aos(NULL)
+  m_aos(nullptr)
 {
   if (!proto) create_renderers();
 }
@@ -73,7 +73,7 @@ Arrangement_on_sphere_overlay_geo::~Arrangement_on_sphere_overlay_geo()
   if (m_owned_aos) {
     if (m_aos) {
       delete m_aos;
-      m_aos = NULL;
+      m_aos = nullptr;
     }
     m_owned_aos = false;
   }
@@ -91,7 +91,7 @@ void Arrangement_on_sphere_overlay_geo::init_prototype()
 void Arrangement_on_sphere_overlay_geo::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the container prototype.
@@ -106,11 +106,10 @@ void Arrangement_on_sphere_overlay_geo::set_attributes(Element* elem)
 {
   Arrangement_on_sphere_base_geo::set_attributes(elem);
 
-  typedef Element::Cont_attr_iter       Cont_attr_iter;
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
-    const std::string& name = elem->get_name(cai);
-    Element::Shared_container cont = elem->get_value(cai);
+  auto cai = elem->cont_attrs_begin();
+  for (; cai != elem->cont_attrs_end(); ++cai) {
+    const auto& name = elem->get_name(cai);
+    auto cont = elem->get_value(cai);
     if (name == "overlay") {
       Shared_arrangement_on_sphere_overlay_geo aos_geo =
         boost::dynamic_pointer_cast<Arrangement_on_sphere_overlay_geo>(cont);
@@ -120,20 +119,15 @@ void Arrangement_on_sphere_overlay_geo::set_attributes(Element* elem)
     }
   }
 
-  typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
-  typedef Element::Cont_list              Cont_list;
-  typedef Element::Cont_iter              Cont_iter;
-
   // Sets the multi-container attributes of this node:
-  for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
-       mcai != elem->multi_cont_attrs_end(); mcai++)
-  {
-    const std::string& name = elem->get_name(mcai);
-    Cont_list& cont_list = elem->get_value(mcai);
+  auto mcai = elem->multi_cont_attrs_begin();
+  for (; mcai != elem->multi_cont_attrs_end(); ++mcai) {
+    const auto& name = elem->get_name(mcai);
+    auto& cont_list = elem->get_value(mcai);
     if (name == "overlay") {
-      for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
-        Element::Shared_container cont = *ci;
-        Shared_arrangement_on_sphere_overlay_geo aos_geo =
+      for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++) {
+        auto cont = *ci;
+        auto aos_geo =
           boost::dynamic_pointer_cast<Arrangement_on_sphere_overlay_geo>(cont);
         if (aos_geo) add_aos_geo(aos_geo);
       }
