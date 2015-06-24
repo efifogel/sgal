@@ -31,7 +31,8 @@ IO_option_parser::IO_option_parser() :
   m_io_opts("SGAL IO options"),
   m_snapshot(false),
   m_export(false),
-  m_interactive(true)
+  m_interactive(true),
+  m_binary(true)
 {
   typedef std::vector<std::string> vs;
 
@@ -55,6 +56,7 @@ IO_option_parser::IO_option_parser() :
      "run in interactive mode.")
     ("output-file", po::value<std::string>(&m_output_file), "output file")
     ("output-path", po::value<std::string>(&m_output_path)->default_value("."), "output path")
+    ("binary", po::value<Boolean>(&m_binary)->default_value(true), "binary")
     ;
 }
 

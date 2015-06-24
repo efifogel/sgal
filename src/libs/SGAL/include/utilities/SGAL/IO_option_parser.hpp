@@ -127,6 +127,11 @@ public:
    */
   Boolean is_interactive_defaulted() const;
 
+  /*! Determine whether the output file format is binary.
+   * \return true if the output file format is binary.
+   */
+  Boolean is_binary() const;
+
   /*! Obtain the output-file name.
    * \return The output-file name.
    */
@@ -173,6 +178,9 @@ protected:
 
   /*! Indicates whether the operation is interactive. */
   Boolean m_interactive;
+
+  /*! Indicates whether the output file format is binary. */
+  Boolean m_binary;
 
   /*! Output file name. */
   std::string m_output_file;
@@ -237,6 +245,9 @@ inline Boolean IO_option_parser::do_export() const { return m_export; }
 //! \brief determines whether the operation is interactive.
 inline Boolean IO_option_parser::is_interactive() const
 { return m_interactive; }
+
+//! \brief determines whether to save to output files.
+inline Boolean IO_option_parser::is_binary() const { return m_binary; }
 
 //! \brief determines whether the interactive option has not been specified.
 inline Boolean IO_option_parser::is_interactive_defaulted() const

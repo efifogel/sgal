@@ -47,6 +47,7 @@
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Stl_formatter.hpp"
+#include "SGAL/Stl_binary_formatter.hpp"
 #include "SGAL/Obj_formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -516,8 +517,9 @@ void Shape::write(Formatter* formatter)
                   << std::endl;);
   if (m_dirty) clean();
   auto* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
+  auto* stl_binary_formatter = dynamic_cast<Stl_formatter*>(formatter);
   auto* obj_formatter = dynamic_cast<Obj_formatter*>(formatter);
-  if (stl_formatter || obj_formatter) {
+  if (stl_formatter || stl_binary_formatter || obj_formatter) {
     if (!is_visible()) return;
     if (obj_formatter) obj_formatter->set_visible(true);
   }

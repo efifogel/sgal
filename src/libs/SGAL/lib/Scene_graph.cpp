@@ -65,6 +65,7 @@
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Obj_formatter.hpp"
 #include "SGAL/Stl_formatter.hpp"
+#include "SGAL/Stl_binary_formatter.hpp"
 #include "SGAL/Group.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Image.hpp"
@@ -905,20 +906,23 @@ const Background* Scene_graph::get_active_background() const
 { return static_cast<const Background*>(m_background_stack.top()); }
 
 //! \brief exports the scene to a file in a given format.
-void Scene_graph::write(const std::string& filename, File_format_3d::Id format_id)
+void Scene_graph::write(const std::string& filename,
+                        File_format_3d::Id format_id, Boolean is_binary)
 {
-  if (filename.empty()) write(filename, std::cout, format_id);
+  if (filename.empty()) write(filename, std::cout, format_id, is_binary);
   else {
-    std::ofstream os(filename);
+    std::ios_base::openmode mode = (is_binary) ?
+      (std::ios_base::out | std::ios_base::binary) : std::ios_base::out;
+    std::ofstream os(filename, mode);
     if (!os.is_open()) return;
-    write(filename, os, format_id);
+    write(filename, os, format_id, is_binary);
     os.close();
   }
 }
 
 //! \brief exports the scene to an output stream in a given format.
 void Scene_graph::write(const std::string& filename, std::ostream& os,
-                        File_format_3d::Id format_id)
+                        File_format_3d::Id format_id, Boolean is_binary)
 {
   SGAL_TRACE_CODE(Trace::EXPORT,
                   std::cout << "Scene_graph: " << "Format: " << format_id
@@ -926,7 +930,7 @@ void Scene_graph::write(const std::string& filename, std::ostream& os,
   switch (format_id) {
    case File_format_3d::ID_WRL: write_vrml(filename, os); break;
    case File_format_3d::ID_X3D: break;
-   case File_format_3d::ID_STL: write_stl(filename, os); break;
+   case File_format_3d::ID_STL: write_stl(filename, os, is_binary); break;
    case File_format_3d::ID_OBJ: write_obj(filename, os);break;
    case File_format_3d::NONE:
    case File_format_3d::NUM_IDS: return;
@@ -950,19 +954,24 @@ void Scene_graph::write_vrml(const std::string& filename, std::ostream& os)
 }
 
 //! \brief exports the scene to an output stream in the STL format.
-void Scene_graph::write_stl(const std::string& filename, std::ostream& os)
+void Scene_graph::write_stl(const std::string& filename, std::ostream& os,
+                            Boolean is_binary)
 {
-  Stl_formatter formatter(filename, os);
-  formatter.begin();
+  Formatter* formatter = (is_binary) ?
+    static_cast<Formatter*>(new Stl_binary_formatter(filename, os)) :
+    static_cast<Formatter*>(new Stl_formatter(filename, os));
+
+  formatter->begin();
   auto root = get_root();
   for (auto it1 = root->children_begin(); it1 != root->children_end(); ++it1) {
     auto transform = boost::dynamic_pointer_cast<Transform>(*it1);
     if (!transform) continue;
     SGAL_assertion(transform->get_name().compare(g_navigation_root_name) == 0);
     auto it2 = transform->children_begin();
-    for (; it2 != transform->children_end(); ++it2) formatter.write(*it2);
+    for (; it2 != transform->children_end(); ++it2) formatter->write(*it2);
   }
-  formatter.end();
+  formatter->end();
+  delete formatter;
 }
 
 //! \brief exports the scene to an output stream in the OBJ format.

@@ -35,6 +35,7 @@
 #include "SGAL/Formatter.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Stl_formatter.hpp"
+#include "SGAL/Stl_binary_formatter.hpp"
 #include "SGAL/Obj_formatter.hpp"
 #include "SGAL/Trace.hpp"
 
@@ -406,9 +407,10 @@ void Group::write(Formatter* formatter)
                   std::cout << "Group: " << "Tag: " << get_tag()
                   << ", name: " << get_name()
                   << std::endl;);
+  auto* stl_binary_formatter = dynamic_cast<Stl_binary_formatter*>(formatter);
   auto* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
   auto* obj_formatter = dynamic_cast<Obj_formatter*>(formatter);
-  if (stl_formatter || obj_formatter) {
+  if (stl_formatter || stl_binary_formatter || obj_formatter) {
     if (!is_visible()) return;
   }
 

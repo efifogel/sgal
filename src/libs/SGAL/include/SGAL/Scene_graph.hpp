@@ -437,7 +437,8 @@ public:
    * \param[in] filename The file name.
    * \param[in] format_id The id of the given format.
    */
-  void write(const std::string& filename, File_format_3d::Id format_id);
+  void write(const std::string& filename, File_format_3d::Id format_id,
+             Boolean is_binary = false);
 
   /*! Export the scene to an output stream in a given format.
    * \param[in] filename The file name.
@@ -445,7 +446,7 @@ public:
    * \param[in] format_id The id of the given format.
    */
   void write(const std::string& filename, std::ostream& os,
-             File_format_3d::Id format_id);
+             File_format_3d::Id format_id, Boolean is_binary = false);
 
   /*! Export the scene to an output stream in VRML format.
    * \param[in] filename The file name.
@@ -457,7 +458,8 @@ public:
    * \param[in] filename The file name.
    * \param[in] os The output stream.
    */
-  void write_stl(const std::string& filename, std::ostream& os);
+  void write_stl(const std::string& filename, std::ostream& os,
+                 Boolean is_binary = false);
 
   /*! Export the scene to an output stream in OBJ format.
    * \param[in] filename The file name.

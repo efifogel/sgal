@@ -434,7 +434,8 @@ void Player_scene::export_scene()
     }
     if (file_path.is_relative() && !parent_path.empty())
       file_path = parent_path / file_path;
-    m_scene_graph->write(file_path.string(), input_format_id);
+    m_scene_graph->write(file_path.string(), input_format_id,
+                         m_option_parser->is_binary());
     return;
   }
 
@@ -447,7 +448,8 @@ void Player_scene::export_scene()
     file_path.replace_extension(new_extension);
     if (file_path.is_relative() && !parent_path.empty())
       file_path = parent_path / file_path;
-    m_scene_graph->write(file_path.string(), format_id);
+    m_scene_graph->write(file_path.string(), format_id,
+                         m_option_parser->is_binary());
   }
 }
 

@@ -324,10 +324,12 @@ source_group(src\\interpolators FILES ${SGAL_INTERPOLATORS_SOURCE_FILES} ${SGAL_
 
 #IO
 set(SGAL_IO_SOURCE_FILES ${SGAL_IO_SOURCE_FILES} lib/IO/Obj_formatter.cpp)
+set(SGAL_IO_SOURCE_FILES ${SGAL_IO_SOURCE_FILES} lib/IO/Stl_binary_formatter.cpp)
 set(SGAL_IO_SOURCE_FILES ${SGAL_IO_SOURCE_FILES} lib/IO/Stl_formatter.cpp)
 set(SGAL_IO_SOURCE_FILES ${SGAL_IO_SOURCE_FILES} lib/IO/Text_formatter.cpp)
 set(SGAL_IO_SOURCE_FILES ${SGAL_IO_SOURCE_FILES} lib/IO/Vrml_formatter.cpp)
 set(SGAL_IO_HEADER_FILES ${SGAL_IO_HEADER_FILES} include/IO/SGAL/Formatter.hpp)
+set(SGAL_IO_HEADER_FILES ${SGAL_IO_HEADER_FILES} include/IO/SGAL/Stl_binary_formatter.hpp)
 set(SGAL_IO_HEADER_FILES ${SGAL_IO_HEADER_FILES} include/IO/SGAL/Stl_formatter.hpp)
 set(SGAL_IO_HEADER_FILES ${SGAL_IO_HEADER_FILES} include/IO/SGAL/Obj_formatter.hpp)
 set(SGAL_IO_HEADER_FILES ${SGAL_IO_HEADER_FILES} include/IO/SGAL/Text_formatter.hpp)
