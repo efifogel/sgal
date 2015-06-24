@@ -52,7 +52,7 @@ Stl_formatter::~Stl_formatter() { m_matrices.pop(); }
 //! \brief writes the begin statement.
 void Stl_formatter::begin()
 {
-  SGAL_assertion(m_out != NULL);
+  SGAL_assertion(m_out != nullptr);
   // m_old_out_mode = get_mode(*m_out);
   // set_ascii_mode(*m_out);
 
@@ -109,7 +109,7 @@ void Stl_formatter::facet(const Vector3f& p1, const Vector3f& p2,
   vertex(p1);
   vertex(p2);
   vertex(p3);
-  facet_end();;
+  facet_end();
 }
 
 //! \brief writes a scene-graph container.
