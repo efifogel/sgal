@@ -229,7 +229,7 @@ Loader::Return_code Loader::read_stl(std::istream& stl_stream,
 
   Int32 total_num_tris;
   stl_stream.read((char*)&total_num_tris, sizeof(Int32));
-  std::cout << "# triangles: " << total_num_tris << std::endl;
+  // std::cout << "# triangles: " << total_num_tris << std::endl;
   Uint total_num_vertices = total_num_tris * 3;
 
   Boolean new_shape(true);
