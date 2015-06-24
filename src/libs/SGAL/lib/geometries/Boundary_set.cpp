@@ -19,7 +19,6 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
-#include <tuple>
 
 #if (defined _MSC_VER)
 #define NOMINMAX 1
