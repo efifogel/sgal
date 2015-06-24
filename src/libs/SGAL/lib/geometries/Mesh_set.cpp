@@ -693,7 +693,6 @@ void Mesh_set::write(Formatter* formatter)
       if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
       if (m_flat_coord_indices.empty()) return;
 
-      Vector3f vert;
       const auto& indices = get_flat_coord_indices();
       Uint j = 0;
       for (Uint i = 0; i < get_num_primitives(); ++i) {
