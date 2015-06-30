@@ -38,27 +38,42 @@ private:
   Float m_z_max;
 
 public:
-  /*! Constructor. */
+  /*! Construct default. */
   Bounding_box();
 
-  /*! Constructor from elements. */
+  /*! Construct from elements. */
   Bounding_box(Float x_min, Float y_min, Float z_min,
                Float x_max, Float y_max, Float z_max);
 
+  /*! Set */
   void set(Float x_min, Float y_min, Float z_min,
-            Float x_max, Float y_max, Float z_max);
+           Float x_max, Float y_max, Float z_max);
 
+  /*! Obtain min x. */
   Float xmin() const;
+
+  /*! Obtain min y. */
   Float ymin() const;
+
+  /*! Obtain min z. */
   Float zmin() const;
+
+  /*! Obtain max x. */
   Float xmax() const;
+
+  /*! Obtain max y. */
   Float ymax() const;
+
+  /*! Obtain max z. */
   Float zmax() const;
 
+  /*! Obtain min. */
   Float min(Uint dim) const;
+
+  /*! Obtain max. */
   Float max(Uint dim) const;
 
-    /*! Obtain a bounding box of the current bounding box and a given one.
+  /*! Obtain a bounding box of the current bounding box and a given one.
    * \param bb (in) the given boundng box.
    */
   Bounding_box operator+(const Bounding_box& bb) const;
@@ -76,7 +91,7 @@ public:
   boost::tuple<Uint, Uint, Uint> get_longest_dimensions() const;
 };
 
-//! \brief constructor.
+//! \brief construct.
 inline Bounding_box::Bounding_box() :
   m_x_min(0), m_y_min(0), m_z_min(0),
   m_x_max(0), m_y_max(0), m_z_max(0)

@@ -22,6 +22,11 @@
 #include <boost/python/def.hpp>
 #include <boost/python/implicit.hpp>
 
+#include "SGAL/sgal.hpp"
+#include "SGAL/Bounding_box.hpp"
+#include "SGAL/Bounding_sphere.hpp"
+#include "SGAL/Vector3f.hpp"
+
 #include "Player.hpp"
 
 BOOST_PYTHON_MODULE(player)
