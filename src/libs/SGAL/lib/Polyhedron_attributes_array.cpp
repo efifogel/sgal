@@ -81,8 +81,9 @@ Float Polyhedron_attributes_array::surface_area() const
 //! \brief Obtain the number of vertices of all polyhedrons.
 const Bounding_box Polyhedron_attributes_array::bounding_box() const
 {
-  Bounding_box bbox;
-  std::for_each(m_array.begin(), m_array.end(),
+  auto it = m_array.begin();
+  Bounding_box bbox(it++->get_bounding_box());
+  std::for_each(it, m_array.end(),
                   [&](const Polyhedron_attributes& attrs)
                   { bbox += attrs.get_bounding_box(); });
   return bbox;
