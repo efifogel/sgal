@@ -19,6 +19,7 @@
 #ifndef SCGAL_POLYHEDRON_GEO_BUILDER_HPP
 #define SCGAL_POLYHEDRON_GEO_BUILDER_HPP
 
+#include <stdexcept>
 #include <boost/type_traits.hpp>
 
 #include <CGAL/basic.h>
@@ -87,11 +88,15 @@ protected:
    */
   Uint insert_triangle(CGAL::Polyhedron_incremental_builder_3<HDS>& B, Uint j)
   {
-    B.begin_facet();
-    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j));
-    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+1));
-    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+2));
-    typename HDS::Halfedge_handle he = B.end_facet();
+    size_t indices[] = {
+      m_mesh_set->get_flat_coord_index(j),
+      m_mesh_set->get_flat_coord_index(j+1),
+      m_mesh_set->get_flat_coord_index(j+2)
+    };
+    if (!B.test_facet(&indices[0], &indices[3]))
+      throw(std::runtime_error("Error: inconsistent mesh!"));
+    auto he = B.add_facet(&indices[0], &indices[3]);
+    SGAL_assertion(B.error());
     he->m_index = j;
     he->next()->m_index = j+1;
     he->next()->next()->m_index = j+2;
@@ -104,7 +109,7 @@ protected:
    */
   void insert_triangles(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
-    unsigned int num_facets = m_mesh_set->get_num_primitives();
+    auto num_facets = m_mesh_set->get_num_primitives();
     Uint j = 0;
     for (Uint i = 0; i < num_facets; ++i) j = insert_triangle(B, j);
   }
@@ -116,12 +121,15 @@ protected:
    */
   Uint insert_quad(CGAL::Polyhedron_incremental_builder_3<HDS>& B, Uint j)
   {
-    B.begin_facet();
-    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j));
-    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+1));
-    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+2));
-    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+3));
-    typename HDS::Halfedge_handle he = B.end_facet();
+    size_t indices[] = {
+      m_mesh_set->get_flat_coord_index(j),
+      m_mesh_set->get_flat_coord_index(j+1),
+      m_mesh_set->get_flat_coord_index(j+2),
+      m_mesh_set->get_flat_coord_index(j+3)
+    };
+    if (!B.test_facet(&indices[0], &indices[4]))
+      throw(std::runtime_error("Error: inconsistent mesh!"));
+    auto he = B.add_facet(&indices[0], &indices[4]);
     he->m_index = j;
     he->next()->m_index = j+1;
     he->next()->next()->m_index = j+2;
@@ -135,7 +143,7 @@ protected:
    */
   void insert_quads(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
-    unsigned int num_facets = m_mesh_set->get_num_primitives();
+    auto num_facets = m_mesh_set->get_num_primitives();
     Uint j = 0;
     for (Uint i = 0; i < num_facets; ++i) j = insert_quad(B, j);
   }
@@ -147,13 +155,15 @@ protected:
    */
   Uint insert_polygon(CGAL::Polyhedron_incremental_builder_3<HDS>& B, Uint j)
   {
-    Uint k = j;
-    B.begin_facet();
+    std::vector<size_t> indices;
+    auto k = j;
     for (; m_mesh_set->get_coord_index(j) != (Uint) -1; ++j)
-      B.add_vertex_to_facet(m_mesh_set->get_coord_index(j));
+      indices.push_back(m_mesh_set->get_coord_index(j));
     ++j;
-    typename HDS::Halfedge_handle he = B.end_facet();
-    typename HDS::Halfedge_handle start_he = he;
+    if (!B.test_facet(indices.begin(), indices.end()))
+      throw(std::runtime_error("Error: inconsistent mesh!"));
+    auto he = B.add_facet(indices.begin(), indices.end());
+    auto start_he = he;
     do {
       he->m_index = k++;
       he = he->next();
@@ -166,7 +176,7 @@ protected:
    */
   void insert_polygons(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
-    unsigned int num_facets = m_mesh_set->get_num_primitives();
+    auto num_facets = m_mesh_set->get_num_primitives();
     Uint j = 0;
     for (Uint i = 0; i < num_facets; ++i) j = insert_polygon(B, j);
   }
@@ -180,7 +190,7 @@ public:
   void set_mesh_set(Mesh_set* mesh_set) { m_mesh_set = mesh_set; }
 
   /*! Build the polyhedral surface.
-   * \param hds (out) the halfedge data structure, which stores the incidence
+   * \param[out] hds the halfedge data structure, which stores the incidence
    *            relations between the cells of the polyhedral surface.
    */
   void operator()(HDS& hds)
@@ -189,9 +199,15 @@ public:
     CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
     B.begin_surface(m_mesh_set->get_coord_array()->size(),
                     m_mesh_set->get_num_primitives());
-    insert_vertices(B);
-    insert_faces(B);
-    B.end_surface();
+    try {
+      insert_vertices(B);
+      insert_faces(B);
+      B.end_surface();
+    }
+    catch (std::exception& e) {
+      std::cerr << e.what() << std::endl;
+      B.rollback();
+    }
   }
 };
 
