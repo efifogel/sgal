@@ -167,8 +167,8 @@ void Option_parser::operator()(Int32 argc, Char* argv[])
   }
   if (ifs.is_open()) {
     po::store(po::parse_config_file(ifs, m_config_file_opts), m_variable_map);
-    po::notify(m_variable_map);
   }
+  po::notify(m_variable_map);
 
   // std::pair<Char*,Char*> Option_parser::s_env_var_option_names[] = {
   // {"SGAL_QUITE", "quite"},
