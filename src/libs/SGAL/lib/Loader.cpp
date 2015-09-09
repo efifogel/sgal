@@ -236,10 +236,16 @@ Loader::Return_code Loader::read_stl(std::istream& stl_stream,
   Vector3f last_color(color);
 
   // read first triangle
+  Int32 i(0);
+
   Vector3f v0, v1, v2;
   Ushort spacer = 0;
-  auto rc = read_triangle(stl_stream, v0, v1, v2, spacer);
-  if (rc < 0) return rc;
+  // Discard collinear faces:
+  do {
+    auto rc = read_triangle(stl_stream, v0, v1, v2, spacer);
+    if (rc < 0) return rc;
+    ++i;
+  } while (Vector3f::collinear(v0, v1, v2));
   Boolean colored = spacer & 0x0001;
   if (colored) {
     Float red = static_cast<Float>((spacer >> 1) & 0x001f) / 31.0f;
@@ -293,6 +299,8 @@ Loader::Return_code Loader::read_stl(std::istream& stl_stream,
     shape->set_geometry(ifs);
     transform->add_child(shape);
 
+    Uint num_tris(0);
+
     (*coords)[coord_index].set(v0);
     if (use_colors) color_indices[coord_index] = color_index;
     indices[coord_index] = coord_index++;
@@ -305,10 +313,15 @@ Loader::Return_code Loader::read_stl(std::istream& stl_stream,
     if (use_colors) color_indices[coord_index] = color_index;
     indices[coord_index] = coord_index++;
 
-    Int32 i(1);
-    for (; i < total_num_tris; ++i) {
-      auto rc = read_triangle(stl_stream, v0, v1, v2, spacer);
-      if (rc < 0) return rc;
+    ++num_tris;
+
+    while (i < total_num_tris) {
+      // Discard collinear faces:
+      do {
+        auto rc = read_triangle(stl_stream, v0, v1, v2, spacer);
+        if (rc < 0) return rc;
+        ++i;
+      } while (Vector3f::collinear(v0, v1, v2));
       Float red = color[0];
       Float green = color[1];
       Float blue = color[2];
@@ -339,11 +352,12 @@ Loader::Return_code Loader::read_stl(std::istream& stl_stream,
       (*coords)[coord_index].set(v2);
       if (use_colors) color_indices[coord_index] = color_index;
       indices[coord_index] = coord_index++;
+
+      ++num_tris;
     }
 
     if (use_colors) colors->resize(++color_index);
-    Uint num_tris = i;
-    Uint num_vertices = num_tris * 3;
+    Uint num_vertices = coord_index;
     if (num_vertices != total_num_vertices) {
       coords->resize(num_vertices);
       indices.resize(num_vertices);
@@ -351,8 +365,8 @@ Loader::Return_code Loader::read_stl(std::istream& stl_stream,
     }
     ifs->set_num_primitives(num_tris);
     ifs->collapse_identical_coordinates();
-    total_num_tris -= num_tris;
-    total_num_vertices -= num_vertices;
+    total_num_tris -= i;
+    total_num_vertices -= 3 * i;
   }
 
   if (!stl_stream) return ERROR_READ;

@@ -291,23 +291,41 @@ facets          : /* empty */
                 | facets facet
                 {
                   std::swap($$, $1);
-
-                  /* Splice coordinates */
-                  Shared_coord_array_3d coords =
-                    boost::dynamic_pointer_cast<Coord_array_3d>($$.first->get_coord_array());
                   std::vector<Vector3f>& vertices = *$2;
-                  Uint size = coords->size();
-                  coords->resize(size + vertices.size());
-                  std::copy(vertices.begin(), vertices.end(),
-                            coords->begin() + size);
 
-                  /* Insert vertex number */
-                  $$.second->push_back(vertices.size());
+                  // Determine wwhether the face is collinear
+                  Boolean col = true;
+                  auto it = vertices.begin();
+                  auto v0 = it++;
+                  auto v1 = it++;
+                  for (; it != vertices.end(); ++it) {
+                    auto v2 = it;
+                    if (! Vector3f::collinear(*v0, *v1, *v2)) {
+                      col = false;
+                      break;
+                    }
+                    v0 = v1;
+                    v1 = v2;
+                  }
+
+                  // Discard collinear face
+                  if (!col) {
+                    /* Splice coordinates */
+                    Shared_coord_array_3d coords =
+                      boost::dynamic_pointer_cast<Coord_array_3d>($$.first->get_coord_array());
+                    Uint size = coords->size();
+                    coords->resize(size + vertices.size());
+                    std::copy(vertices.begin(), vertices.end(),
+                              coords->begin() + size);
+
+                    /* Insert vertex number */
+                    $$.second->push_back(vertices.size());
+                  }
 
                   /* Clear */
                   $2->clear();
                   delete $2;
-                  $2 = NULL;
+                  $2 = nullptr;
                 }
                 ;
 
