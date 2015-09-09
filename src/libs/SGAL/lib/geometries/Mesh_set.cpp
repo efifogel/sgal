@@ -798,7 +798,7 @@ void Mesh_set::collapse_identical_coordinates(Index_array& indices)
   typedef std::pair<const Vector3f*, Uint>      Coord_index_pair;
   if (indices.empty()) return;
 
-  // Construct a vector of pairs of item, where each item is a point and the
+  // Construct a vector of pairs of items, where each item is a point and the
   // index into the indices array where the point was indexed.
   std::vector<Coord_index_pair> vec(indices.size());
   std::vector<Coord_index_pair>::iterator it;
