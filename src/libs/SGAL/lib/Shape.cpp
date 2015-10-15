@@ -515,11 +515,18 @@ void Shape::write(Formatter* formatter)
                   std::cout << "Shape: " << "Tag: " << get_tag()
                   << ", name: " << get_name()
                   << std::endl;);
+
+  /* The STL binary formatter must count all triangles and write the number
+   * before writting any triangles. Therefore, the STL binary formatter
+   * intercept the writing of shapes. As a consequence, this function should
+   * never be invoked with the STL binary formatter.
+   */
+  SGAL_assertion(!dynamic_cast<Stl_binary_formatter*>(formatter));
+
   if (m_dirty) clean();
   auto* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
-  auto* stl_binary_formatter = dynamic_cast<Stl_formatter*>(formatter);
   auto* obj_formatter = dynamic_cast<Obj_formatter*>(formatter);
-  if (stl_formatter || stl_binary_formatter || obj_formatter) {
+  if (stl_formatter || obj_formatter) {
     if (!is_visible()) return;
     if (obj_formatter) obj_formatter->set_visible(true);
   }
