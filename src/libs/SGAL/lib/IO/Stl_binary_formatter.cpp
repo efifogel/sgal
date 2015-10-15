@@ -236,7 +236,8 @@ void Stl_binary_formatter::write(Shared_container container)
   }
   auto shape = boost::dynamic_pointer_cast<Shape>(container);
   if (shape) {
-    m_shapes.push_back(std::make_pair(shape, m_matrices.top()));
+    if (shape->is_visible())
+        m_shapes.push_back(std::make_pair(shape, m_matrices.top()));
     return;
   }
   container->write(this);
