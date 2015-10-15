@@ -30,6 +30,7 @@
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Formatter.hpp"
 #include "SGAL/Stl_formatter.hpp"
+#include "SGAL/Stl_binary_formatter.hpp"
 #include "SGAL/Obj_formatter.hpp"
 #include "SGAL/Trace.hpp"
 
@@ -225,11 +226,17 @@ void Switch::write(Formatter* formatter)
                   std::cout << "Switch: " << "Tag: " << get_tag()
                   << ", name: " << get_name()
                   << std::endl;);
-  Stl_formatter* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
-  Obj_formatter* obj_formatter = dynamic_cast<Obj_formatter*>(formatter);
+  auto* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
+  auto* obj_formatter = dynamic_cast<Obj_formatter*>(formatter);
   if (stl_formatter || obj_formatter) {
     Shared_node node = boost::dynamic_pointer_cast<Node>(get_choice());
     if (node) node->write(formatter);
+    return;
+  }
+  auto* stl_binary_formatter = dynamic_cast<Stl_binary_formatter*>(formatter);
+  if (stl_binary_formatter) {
+    Shared_node node = boost::dynamic_pointer_cast<Node>(get_choice());
+    if (node) stl_binary_formatter->write(node);
     return;
   }
 
