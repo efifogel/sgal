@@ -29,9 +29,9 @@ endif
 $(PREFIX)lint $(PREFIX)tags $(PREFIX)force $(PREFIX)all
 
 $(PREFIX)default:: $(PREFIX)all
-$(PREFIX)all:: $(TARGET0) $(TARGET1) $(TARGET2)
+$(PREFIX)all:: $(TARGET0) $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6) $(TARGET7)
 $(PREFIX)install:: $(PREFIX)default $(INSTFILE)
-$(INSTFILE):: $(TARGET0) $(TARGET1) $(TARGET2) $(FORCEINST)
+$(INSTFILE):: $(TARGET0) $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6) $(TARGET7) $(FORCEINST)
 ifneq ($(NOINSTALL), 1)
 	$(INST) -d $(INSTALLDIR0)
 	$(INST) $(TARGET0) $(INSTALLDIR0)
@@ -47,8 +47,39 @@ ifdef INSTALLDIR2
 	$(INST) $(TARGET2) $(INSTALLDIR2)
 endif
 endif
+ifdef TARGET3
+ifdef INSTALLDIR3
+	$(INST) -d $(INSTALLDIR3)
+	$(INST) $(TARGET3) $(INSTALLDIR3)
+endif
+endif
+ifdef TARGET4
+ifdef INSTALLDIR4
+	$(INST) -d $(INSTALLDIR4)
+	$(INST) $(TARGET4) $(INSTALLDIR4)
+endif
+endif
+ifdef TARGET5
+ifdef INSTALLDIR5
+	$(INST) -d $(INSTALLDIR5)
+	$(INST) $(TARGET5) $(INSTALLDIR5)
+endif
+endif
+ifdef TARGET6
+ifdef INSTALLDIR6
+	$(INST) -d $(INSTALLDIR6)
+	$(INST) $(TARGET6) $(INSTALLDIR6)
+endif
+endif
+ifdef TARGET7
+ifdef INSTALLDIR7
+	$(INST) -d $(INSTALLDIR7)
+	$(INST) $(TARGET7) $(INSTALLDIR7)
+endif
+endif
 	@touch $(INSTFILE)
 endif
+
 endif
 endif
 endif
@@ -65,7 +96,7 @@ ifdef DIRT
 endif
 
 $(PREFIX)clobber:: $(PREFIX)clean
-	rm -rf $(TARGET0) $(TARGET1) $(TARGET2) $(INSTFILE)
+	rm -rf $(TARGET0) $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6) $(TARGET7) $(INSTFILE)
 
 $(BUILDDIR):
 	@mkdir -p $(BUILDDIR)
