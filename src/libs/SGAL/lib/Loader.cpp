@@ -47,8 +47,8 @@ SGAL_BEGIN_NAMESPACE
 Loader::Loader() : m_multiple_shapes(false) {}
 
 //! \brief loads a scene graph from an input stream.
-Loader::Return_code Loader::load_stl(std::istream& stl_stream, Scene_graph* sg,
-                                     bool force)
+Loader::Return_code Loader::load_stl(std::istream& stl_stream, size_t size,
+                                     Scene_graph* sg, bool force)
 {
   char str[81];
   stl_stream.read(str, 80);
@@ -66,7 +66,7 @@ Loader::Return_code Loader::load_stl(std::istream& stl_stream, Scene_graph* sg,
       Float alpha = static_cast<Float>(static_cast<Uchar>(str[pos+3])) / 255.0f;
       color.set(red, green, blue);
     }
-    auto rc = read_stl(stl_stream, sg, color);
+    auto rc = read_stl(stl_stream, size, sg, color);
     if (rc < 0) return rc;
     return SUCCESS;
   }
@@ -79,7 +79,7 @@ Loader::Return_code Loader::load_stl(char* data, size_t size,
 {
   boost::interprocess::bufferstream stl_stream(data, size);
   if (!stl_stream.good()) return ERROR_OVERFLOW;
-  return load_stl(stl_stream, sg, force);
+  return load_stl(stl_stream, size, sg, force);
 }
 
 //! \brief loads a scene graph from an stl file.
@@ -88,8 +88,11 @@ Loader::Return_code Loader::load_stl(const char* filename, Scene_graph* sg,
 {
   std::ifstream stl_stream(filename, std::ios::in|std::ios::binary);
   if (!stl_stream.good()) return ERROR_OPEN;
+  stl_stream.seekg(0, stl_stream.end);
+  size_t size = stl_stream.tellg();
+  stl_stream.seekg(0, stl_stream.beg);
 
-  auto rc = load_stl(stl_stream, sg, force);
+  auto rc = load_stl(stl_stream, size, sg, force);
   stl_stream.close();
   return rc;
 }
@@ -195,7 +198,7 @@ Loader::Return_code Loader::read_triangle(std::istream& stl_stream,
   stl_stream.read((char*)&z, sizeof(Float));
   v1.set(x, y, z);
 
-  // Read vertex 2:
+  // Read vertex 3:
   stl_stream.read((char*)&x, sizeof(Float));
   stl_stream.read((char*)&y, sizeof(Float));
   stl_stream.read((char*)&z, sizeof(Float));
@@ -209,7 +212,7 @@ Loader::Return_code Loader::read_triangle(std::istream& stl_stream,
 }
 
 //! \brief reads a scene graph from a stream in the STL binary format.
-Loader::Return_code Loader::read_stl(std::istream& stl_stream,
+Loader::Return_code Loader::read_stl(std::istream& stl_stream, size_t size,
                                      Scene_graph* scene_graph,
                                      const Vector3f& color)
 {
@@ -229,7 +232,14 @@ Loader::Return_code Loader::read_stl(std::istream& stl_stream,
 
   Int32 total_num_tris;
   stl_stream.read((char*)&total_num_tris, sizeof(Int32));
+  // std::cout << "# size: " << size << std::endl;
   // std::cout << "# triangles: " << total_num_tris << std::endl;
+  // Header---80
+  // # triangles---4
+  // Triangle---50
+  //   normal,v0,v1,v2---12*4
+  //   spacer--2
+  if (size != 84 + total_num_tris * 50) return ERROR_INCONSISTENT;
   Uint total_num_vertices = total_num_tris * 3;
 
   Boolean new_shape(true);

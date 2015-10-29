@@ -29,7 +29,8 @@ class Scene_graph;
 class SGAL_SGAL_DECL Loader {
 public:
   enum Return_code {
-    ERROR_PARSE = -4,
+    ERROR_PARSE = -5,
+    ERROR_INCONSISTENT = -4,
     ERROR_OVERFLOW = -3,
     ERROR_READ = -2,
     ERROR_OPEN = -1,
@@ -65,7 +66,7 @@ public:
    *            file is in the STL binary format. (Do not check whether the
    *            file starts with the token "solid".)
    */
-  Return_code load_stl(std::istream& stl_stream, Scene_graph* sg,
+  Return_code load_stl(std::istream& stl_stream, size_t size, Scene_graph* sg,
                        bool force = false);
 
   /*! Load a scene graph from an stl buffer.
@@ -91,7 +92,7 @@ public:
 
   /*! Read a scene graph from a file in the STL binary format.
    */
-  Return_code read_stl(std::istream& stl_stream, Scene_graph* sg,
+  Return_code read_stl(std::istream& stl_stream, size_t size, Scene_graph* sg,
                        const Vector3f& color);
 
   /*! Read a traingle (1 normal and 3 vertices)
