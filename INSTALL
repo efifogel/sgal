@@ -50,7 +50,7 @@ You need to register and obtain a user account. You also need to add an
 ssh key for every machine you would like to access the repository from
 via the clone command below.
 
-  git clone git@bitbucket.org:efogel/sgal.git
+  git clone git@bitbucket.org:efifogel/sgal.git
 
 If you are on Windows you may not download and run SGAL-1.0-Setup.exe, as
 such an installer does not exist (yet).
@@ -58,6 +58,7 @@ such an installer does not exist (yet).
 Directory Content
 --------- -------
 bison     a submodule for the bison sources; see Section 2.5.2.
+v8        a submodule for the v8 sources; see Section 2.5.4.
 data      data files
 docs      documents
 figs      figures
