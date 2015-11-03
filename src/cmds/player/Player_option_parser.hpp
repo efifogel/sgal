@@ -92,6 +92,11 @@ public:
   SGAL::Boolean get_display_geometry_info() const
   { return m_display_geometry_info; }
 
+  /*! Determines whether to display polyhedra information.
+   */
+  SGAL::Boolean get_display_polyhedra_info() const
+  { return m_display_polyhedra_info; }
+
   /*! Determines whether to perform a benchmark.
    */
   SGAL::Boolean get_bench() const { return m_bench; }
@@ -113,6 +118,9 @@ protected:
 
   /*! Indicates whether to display geometry information. */
   SGAL::Boolean m_display_geometry_info;
+
+  /*! Indicates whether to display polyhedra information. */
+  SGAL::Boolean m_display_polyhedra_info;
 
   /*! Indicate whether to perform a benchmark. */
   SGAL::Boolean m_bench;

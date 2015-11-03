@@ -49,6 +49,9 @@ Player_option_parser::Player_option_parser() :
     ("display-geometry-info",
      po::value<SGAL::Boolean>(&m_display_geometry_info)->default_value(false),
      "display geometry information")
+    ("display-polyhedra-into",
+     po::value<SGAL::Boolean>(&m_display_polyhedra_info)->default_value(false),
+     "display polyhedra information")
      ("bench", po::value<SGAL::Boolean>(&m_bench)->default_value(false),
       "bench")
     ;

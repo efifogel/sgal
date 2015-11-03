@@ -85,6 +85,7 @@
 #include "SGAL/Snapshotter.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Camera.hpp"
+#include "SGAL/Polyhedron_attributes_array.hpp"
 
 #if (defined SGAL_USE_GLUT)
 #include "SGLUT/Glut_window_item.hpp"
@@ -125,6 +126,17 @@
 #include "SCGAL/Nef_gaussian_map_geo.hpp"
 #endif
 #endif
+
+// /*! The allocator below is used by the recent version of V8, which is not
+//  * yet in use.
+//  * Why doesn't it have a default? beats me.
+//  */
+// struct array_buffer_allocator : v8::ArrayBuffer::Allocator {
+//   void* Allocate(size_t length) { return calloc(length, 1); }
+//   void* AllocateUninitialized(size_t length) { return malloc(length); }
+//   void Free(void* data, size_t length) { free(data); }
+// };
+// static array_buffer_allocator array_buffer_allocator_;
 
 //! \brief constructs default.
 Player_scene::Player_scene() :
@@ -257,7 +269,13 @@ void Player_scene::create_scene(char* data, int size)
   m_scene_graph->get_configuration_stack()->bind_top();
 
 #if defined(SGAL_USE_V8)
+#if 0
+  v8::Isolate::CreateParams params;
+  params.array_buffer_allocator = &array_buffer_allocator_;
+  m_isolate = v8::Isolate::New(params);
+#else
   m_isolate = v8::Isolate::New();
+#endif
   SGAL_assertion(m_isolate);
   m_scene_graph->set_isolate(m_isolate);
 #endif
@@ -334,7 +352,13 @@ void Player_scene::create_scene()
   m_scene_graph->get_configuration_stack()->bind_top();
 
 #if defined(SGAL_USE_V8)
+#if 0
+  v8::Isolate::CreateParams params;
+  params.array_buffer_allocator = &array_buffer_allocator_;
+  m_isolate = v8::Isolate::New(params);
+#else
   m_isolate = v8::Isolate::New();
+#endif
   SGAL_assertion(m_isolate);
   m_scene_graph->set_isolate(m_isolate);
 #endif
@@ -379,6 +403,22 @@ void Player_scene::create_scene()
     return;
   }
   print_stat();
+
+  // dump
+  // {
+  //   std::cout << m_fullname.c_str();
+  //   std::ifstream is(m_fullname.c_str(), std::ios::binary);
+  //   std::vector<unsigned char>
+  //     v((std::istreambuf_iterator<char>(is)),
+  //       std::istreambuf_iterator<char>());
+  //   std::cout << " " << v.size() << '\n';
+  //   // std::copy(v.begin(), v.end(),
+  //   //           std::ostream_iterator<unsigned char>(std::cout, ","));
+  //   for (auto it = v.begin(); it != v.end(); ++it)
+  //     std::cout << std::hex << (unsigned int) *it << ",";
+  //   std::cout << '\n';
+  //   is.close();
+  // }
 
   create_defaults();
   if (m_option_parser->do_snapshot()) snapshot_scene();
@@ -705,6 +745,13 @@ void Player_scene::indulge_user()
       auto box = boost::dynamic_pointer_cast<SGAL::Box>(cont);
       if (box) print_geometry_info(&*box);
     }
+  }
+
+  if (m_option_parser->get_display_polyhedra_info()) {
+    SGAL::Polyhedron_attributes_array attrs_array;
+    process_polyhedron_attributes_array(attrs_array);
+    std::cout << "Polyhedron Attributes" << std::endl;
+    std::cout << "Volume: " << attrs_array.volume() << std::endl;
   }
 
 #if 0
