@@ -9,10 +9,10 @@ FROM ubuntu:14.04
 
 # ubuntu:14.04 comes with V8 engine version 3.14.5.8. This version is too old.
 # First, compile a suitable version of the V8 engine.
-# He V8 has gone through some changes recently. For example, it now resides in
+# V8 has gone through some changes recently. For example, it now resides in
 # a git repository and there is no easy way to build from a tarball.
-# I've picked 3.26.13, which on the hand is sufficiently recent, and on the
-# other still uses "make dependencies" (which uses subversion...
+# I've picked 3.26.13, which on the one hand is sufficiently recent, but on
+# the other still uses "make dependencies" (which uses subversion...
 
 ENV V8_VERSION 3.26.13
 

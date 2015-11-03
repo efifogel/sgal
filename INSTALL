@@ -58,7 +58,6 @@ such an installer does not exist (yet).
 Directory Content
 --------- -------
 bison     a submodule for the bison sources; see Section 2.5.2.
-v8        a submodule for the v8 sources; see Section 2.5.4.
 data      data files
 docs      documents
 figs      figures
@@ -194,8 +193,8 @@ Assuming you are in the main SGAL directory, issue the following command:
 
   git submodule update
 
-The command above will populate the files in the bison submodule as well
-as in the v8 submodule; see Section 2.5.4.
+The command above will populate the files in the bison submodule; see
+Section 2.5.2.
 
 If, for some reason, you want the latest bison sources, issue the
 following command:
@@ -255,22 +254,30 @@ bitmap images; see http://www.imagemagick.org/
 
 2.5.4. V8
 V8 is Google's open source JavaScript engine. Ubuntu distribution includes
-a development package. However, the code of SGAL is using the most recent
+a development package. However, the code of SGAL is using a recent
 API, which is different than the API of the precompiled library object
 included in the standard distribution. Thus, you need to build v8 from
-sources of a certain version or later both in Linux and in Windows. For
-that purpose v8 is made a submodule of the SGAL git repository. You need
-to populate the sources of the submodule; see Section 2.5.2.1. Then, build
-the engine.
+sources of a certain version both in Linux and in Windows. You need
+to obtain the sources; then, build the engine.
 
 You must install python before you start the build, as the build tool uses
 python.
 
 2.5.4.1. Linux
-Install subversion (apt-get install subversion). Then:
 
-  make dependencies
-  make library=shared native # automatically build in release mode for the host architecture
+ubuntu:14.04, for example, comes with V8 engine version 3.14.5.8. This
+version is too old. V8 has gone through some changes recently. For
+example, it now resides in a git repository and there is no easy way
+to build from a tarball. I've picked 3.26.13, which on the one hand
+is sufficiently recent, but on the other still uses "make dependencies"
+(which uses subversion...
+
+To obtain v8 and build, type:
+
+  export V8_VERSION=3.26.13
+  curl -SL https://github.com/v8/v8/archive/$V8_VERSION.tar.gz | tar -xzC .
+  cd v8-$V8_VERSION && make dependencies
+  cd v8-$V8_VERSION && make library=shared native
 
 For some reason, the v8 has no "make install". Therefore, if you want the code to work out of the box,
 just copy all files under ./v8/out/native/lib.target/ to /usr/local/lib and copy ./v8/include/v8.h
