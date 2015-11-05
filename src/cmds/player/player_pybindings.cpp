@@ -16,11 +16,14 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include <exception>
+
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/module.hpp>
 #include <boost/python/def.hpp>
 #include <boost/python/implicit.hpp>
+#include <boost/python/exception_translator.hpp>
 
 #include "SGAL/sgal.hpp"
 #include "SGAL/Bounding_box.hpp"
@@ -29,20 +32,28 @@
 
 #include "Player.hpp"
 
+void translate(std::exception const& e)
+{
+    // Use the Python 'C' API to set up an exception object
+    PyErr_SetString(PyExc_RuntimeError, e.what());
+}
+
 BOOST_PYTHON_MODULE(player)
 {
   using namespace boost::python;
+
+  register_exception_translator<std::exception>(&translate);
 
   class_<Player::Arguments>("Arguments")
     .def(vector_indexing_suite<Player::Arguments>() );
 
   class_<Player>("Player", init<Player::Arguments>())
-    .def("__call__", static_cast<int(Player::*)()>(&Player::operator()))
+    .def("__call__", static_cast<void(Player::*)()>(&Player::operator()))
     .def("__call__",
-         static_cast<int(Player::*)(char*, int)>(&Player::operator()))
-    .def("create", static_cast<int(Player::*)()>(&Player::create))
+         static_cast<void(Player::*)(char*, int)>(&Player::operator()))
+    .def("create", static_cast<void(Player::*)()>(&Player::create))
     .def("createFromData",
-         static_cast<int(Player::*)(char*, int)>(&Player::create))
+         static_cast<void(Player::*)(char*, int)>(&Player::create))
     .def("visualize", &Player::visualize)
     .def("destroy", &Player::destroy)
     .def("volume", &Player::volume)

@@ -31,6 +31,9 @@ class Player {
 public:
   typedef std::vector<std::string>      Arguments;
 
+  /*! Construct default. */
+  Player();
+
   /*! Construct. */
   Player(int argc, char* argv[]);
 
@@ -40,15 +43,18 @@ public:
   /*! Destruct. */
   ~Player();
 
-  /*! Operator */
-  int operator()();
+  /*! Initialize the player. */
+  void init(int argc, char* argv[]);
 
   /*! Operator */
-  int operator()(char* data, int size);
+  void operator()();
 
-  int create();
-  int create(char* data, int size);
-  int visualize();
+  /*! Operator */
+  void operator()(char* data, int size);
+
+  void create();
+  void create(char* data, int size);
+  void visualize();
   void destroy();
 
   /*! Obtain the accumulated volume of all polyhedrons in the scene.
@@ -64,8 +70,6 @@ public:
   const SGAL::Polyhedron_attributes_array& get_polyhedron_attributes_array();
 
 private:
-  void init(int argc, char* argv[]);
-
   /*! The scene. */
   Player_scene m_scene;
 

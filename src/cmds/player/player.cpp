@@ -19,6 +19,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <exception>
 
 #include <boost/function.hpp>
 #include <boost/algorithm/string.hpp>
@@ -156,7 +157,7 @@ int main(int argc, char* argv[])
 #endif
 
 /*! Player type. */
-int Player::visualize()
+void Player::visualize()
 {
   // Create a window manager:
 #if (defined SGAL_USE_GLUT)
@@ -170,20 +171,16 @@ int Player::visualize()
   m_scene.set_window_manager(wm);
   wm->set_scene(&m_scene);
 
-  try {
-    wm->init();
-    m_scene.init_scene();
-  }
-  catch(std::exception& e) {
-    std::cerr << e.what() << std::endl;
-    return -1;
-  }
+  wm->init();
+  m_scene.init_scene();
+
   wm->event_loop(m_scene.is_simulating());
   wm->clear();
   m_scene.clear_scene();
-
-  return 0;
 }
+
+//! \brief constructs default
+Player::Player() : m_option_parser(nullptr) {}
 
 //! \brief constructs
 Player::Player(int argc, char* argv[]) :
@@ -250,31 +247,17 @@ void Player::init(int argc, char* argv[])
 }
 
 //! \brief creates
-int Player::create()
+void Player::create()
 {
   m_scene.set(m_option_parser);
-  try {
-    m_scene.create_scene();
-  }
-  catch (std::exception& e) {
-    std::cerr << e.what() << std::endl;
-    return -1;
-  }
-  return 0;
+  m_scene.create_scene();
 }
 
 //! \brief creates
-int Player::create(char* data, int size)
+void Player::create(char* data, int size)
 {
   m_scene.set(m_option_parser);
-  try {
-    m_scene.create_scene(data, size);
-  }
-  catch (std::exception& e) {
-    std::cerr << e.what() << std::endl;
-    return -1;
-  }
-  return 0;
+  m_scene.create_scene(data, size);
 }
 
 //! \brief destroys
@@ -284,47 +267,19 @@ void Player::destroy()
 }
 
 //! operator()
-int Player::operator()()
+void Player::operator()()
 {
-  // Create the scene:
-  int rc = create();
-  if (rc < 0) return rc;
-
-  // Visualize the scene:
-  if (m_scene.do_have_visual()) {
-    rc = visualize();
-    if (rc < 0) {
-      m_scene.destroy_scene();
-      return rc;
-    }
-  }
-
-  // Destroy the scene
-  destroy();
-
-  return 0;
+  create();                                     // create the scene
+  if (m_scene.do_have_visual()) visualize();    // visualize the scene
+  destroy();                                    // destroy the scene
 }
 
 /*! Operator */
-int Player::operator()(char* data, int size)
+void Player::operator()(char* data, int size)
 {
-  // Create the scene:
-  int rc = create(data, size);
-  if (rc < 0) return rc;
-
-  // Visualize the scene:
-  if (m_scene.do_have_visual()) {
-    rc = visualize();
-    if (rc < 0) {
-      m_scene.destroy_scene();
-      return rc;
-    }
-  }
-
-  // Destroy the scene
-  destroy();
-
-  return 0;
+  create(data, size);                           // create the scene
+  if (m_scene.do_have_visual()) visualize();    // visualize the scene
+  destroy();                                    // destroy the scene
 }
 
 //! \brief obtains the accumulated volume of all polyhedrons in the scene.
@@ -346,9 +301,9 @@ Player::get_polyhedron_attributes_array()
 //! \brief main entry.
 int main(int argc, char* argv[])
 {
+  Player player;
   try {
-    Player player(argc, argv);
-    return player();
+    player.init(argc, argv);
   }
   catch(Player_option_parser::Generic_option_exception& /* e */) {
     return 0;
@@ -357,5 +312,14 @@ int main(int argc, char* argv[])
     std::cerr << e.what() << std::endl;
     return -1;
   }
+  try {
+    player();
+  }
+  catch(std::exception& e) {
+    player.destroy();
+    std::cerr << e.what() << std::endl;
+    return -1;
+  }
+
   return 0;
 }
