@@ -294,43 +294,11 @@ void Player_scene::create_scene(char* data, int size)
   if (0 < m_option_parser->get_num_input_files()) {
     const auto& filename = m_option_parser->get_input_file(0);
     auto rc = loader.load(data, size, filename.c_str(), m_scene_graph);
-    if (rc < 0) {
-      std::string msg;
-      switch(rc) {
-       case SGAL::Loader::ERROR_PARSE:
-        msg.assign("Error: Failed to parse file");
-        break;
-       case SGAL::Loader::
-         ERROR_INCONSISTENT: msg.assign("Error: File content is inconsistent");
-        break;
-       case SGAL::Loader::
-         ERROR_READ: msg.assign("Error: Failed to read file");
-        break;
-       case SGAL::Loader::ERROR_OPEN:
-        msg.assign("Error: Failed to open file");
-        break;
-       default: msg.assign("Error: Unknown error"); break;
-      }
-      throw Illegal_input(UNABLE_TO_LOAD, msg, filename);
-      return;
-    }
+    if (rc < 0) return;
   }
   else {
     auto rc = loader.load(data, size, m_scene_graph);
-    if (rc < 0) {
-      std::string msg;
-      switch(rc) {
-       case SGAL::Loader::ERROR_INCONSISTENT:
-        msg.assign("Error: data is inconsistent");
-        break;
-       case SGAL::Loader::ERROR_READ:
-        msg.assign("Error: Failed to read data");
-        break;
-       default: msg.assign("Error: Unknown error"); break;
-      }
-      throw Illegal_input(UNABLE_TO_LOAD, "Cannot load buffer");
-      return;
-    }
+    if (rc < 0) return;
   }
   print_stat();
 
@@ -382,26 +350,7 @@ void Player_scene::create_scene()
   // Load the input file.
   SGAL::Loader loader;
   auto rc = loader.load(m_fullname.c_str(), m_scene_graph);
-  if (rc < 0) {
-    std::string msg;
-    switch(rc) {
-     case SGAL::Loader::ERROR_PARSE:
-      msg.assign("Error: Failed to parse file");
-      break;
-     case SGAL::Loader::
-       ERROR_INCONSISTENT: msg.assign("Error: File content is inconsistent");
-      break;
-     case SGAL::Loader::
-       ERROR_READ: msg.assign("Error: Failed to read file");
-      break;
-     case SGAL::Loader::ERROR_OPEN:
-      msg.assign("Error: Failed to open file");
-      break;
-     default: msg.assign("Error: Unknown error"); break;
-    }
-    throw Illegal_input(UNABLE_TO_LOAD, msg, filename);
-    return;
-  }
+  if (rc < 0) return;
   print_stat();
 
   // dump

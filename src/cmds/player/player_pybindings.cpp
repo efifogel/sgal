@@ -29,23 +29,41 @@
 #include "SGAL/Bounding_box.hpp"
 #include "SGAL/Bounding_sphere.hpp"
 #include "SGAL/Vector3f.hpp"
+#include "SGAL/Loader_errors.hpp"
 
 #include "Player.hpp"
 
-void translate(std::exception const& e)
+PyObject* exception_type = nullptr;
+
+void translate_exception(std::exception const& e)
+{ PyErr_SetString(PyExc_RuntimeError, e.what()); }
+
+void translate_loader_error_exception(SGAL::Loader_error const& e)
 {
-    // Use the Python 'C' API to set up an exception object
-    PyErr_SetString(PyExc_RuntimeError, e.what());
+  boost::python::object python_exception_instance(e);
+  PyErr_SetObject(exception_type, python_exception_instance.ptr());
 }
 
 BOOST_PYTHON_MODULE(player)
 {
   using namespace boost::python;
 
-  register_exception_translator<std::exception>(&translate);
+  register_exception_translator<std::exception>(&translate_exception);
+
+  class_<SGAL::Loader_error> loader_error_class("Loader_error",
+                                                init<const std::string&,
+                                                     const std::string&>());
+  exception_type = loader_error_class.ptr();
+  register_exception_translator<SGAL::Loader_error>(&translate_loader_error_exception);
+  loader_error_class
+    .def("filename", &SGAL::Loader_error::filename,
+         return_value_policy<copy_const_reference>())
+    .def("what", &SGAL::Loader_error::what)
+    ;
 
   class_<Player::Arguments>("Arguments")
-    .def(vector_indexing_suite<Player::Arguments>() );
+    .def(vector_indexing_suite<Player::Arguments>() )
+    ;
 
   class_<Player>("Player", init<Player::Arguments>())
     .def("__call__", static_cast<void(Player::*)()>(&Player::operator()))
@@ -94,5 +112,4 @@ BOOST_PYTHON_MODULE(player)
     .def("y", &SGAL::Vector3f::y)
     .def("z", &SGAL::Vector3f::z)
     ;
-
 }

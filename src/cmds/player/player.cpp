@@ -32,6 +32,7 @@
 #include <boost/extension/shared_library.hpp>
 
 #include "SGAL/sgal.hpp"
+#include "SGAL/Loader_errors.hpp"
 
 #if (defined SGAL_USE_GLUT)
 #include "SGLUT/Glut_window_manager.hpp"
@@ -314,6 +315,13 @@ int main(int argc, char* argv[])
   }
   try {
     player();
+  }
+  catch(SGAL::Loader_error& e) {
+    player.destroy();
+    std::cerr << e.what();
+    if (!e.filename().empty()) std::cerr << " (" << e.filename() << ")";
+    std::cerr << std::endl;
+    return -1;
   }
   catch(std::exception& e) {
     player.destroy();

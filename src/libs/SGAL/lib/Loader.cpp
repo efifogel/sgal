@@ -53,7 +53,10 @@ Loader::Return_code Loader::load_stl(std::istream& stl_stream, size_t size,
   char str[81];
   stl_stream.read(str, 80);
   std::string title(str);
-  if (!stl_stream) return ERROR_READ;
+  if (!stl_stream) {
+    throw Read_error(m_filename);
+    return FAILURE;
+  }
 
   if (force || (0 != title.compare(0, 5, "solid"))) {
     Vector3f color;
@@ -78,7 +81,10 @@ Loader::Return_code Loader::load_stl(char* data, size_t size,
                                      Scene_graph* sg, bool force)
 {
   boost::interprocess::bufferstream stl_stream(data, size);
-  if (!stl_stream.good()) return ERROR_OVERFLOW;
+  if (!stl_stream.good()) {
+    throw Overflow_error(m_filename);
+    return FAILURE;
+  }
   return load_stl(stl_stream, size, sg, force);
 }
 
@@ -86,8 +92,14 @@ Loader::Return_code Loader::load_stl(char* data, size_t size,
 Loader::Return_code Loader::load_stl(const char* filename, Scene_graph* sg,
                                      bool force)
 {
+  // Record the filename
+  m_filename = filename ? filename : std::string();
+
   std::ifstream stl_stream(filename, std::ios::in|std::ios::binary);
-  if (!stl_stream.good()) return ERROR_OPEN;
+  if (!stl_stream.good()) {
+    throw Open_file_error(m_filename);
+    return FAILURE;
+  }
   stl_stream.seekg(0, stl_stream.end);
   size_t size = stl_stream.tellg();
   stl_stream.seekg(0, stl_stream.beg);
@@ -98,7 +110,7 @@ Loader::Return_code Loader::load_stl(const char* filename, Scene_graph* sg,
 }
 
 //! \brief load a scene graph from a stream.
-Loader::Return_code  Loader::load(std::istream& src_stream, Scene_graph* sg)
+Loader::Return_code Loader::load(std::istream& src_stream, Scene_graph* sg)
 {
   Vrml_scanner scanner(&src_stream);
   // scanner.set_debug(1);
@@ -108,7 +120,8 @@ Loader::Return_code  Loader::load(std::istream& src_stream, Scene_graph* sg)
   Vrml_parser parser(scanner, sg, maybe_binary_stl);
   if (parser.parse()) {
     if (maybe_binary_stl) return RETRY;
-    return ERROR_PARSE;
+    throw Parse_error(m_filename);
+    return FAILURE;
   }
   return SUCCESS;
 }
@@ -132,7 +145,10 @@ Loader::Return_code Loader::load(char* data, size_t size,
 Loader::Return_code Loader::load(char* data, size_t size, Scene_graph* sg)
 {
   boost::interprocess::bufferstream src_stream(data, size);
-  if (!src_stream.good()) return ERROR_OVERFLOW;
+  if (!src_stream.good()) {
+    throw Overflow_error(m_filename);
+    return FAILURE;
+  }
 
   auto rc = load(src_stream, sg);
   if (rc < 0) {
@@ -149,6 +165,9 @@ Loader::Return_code Loader::load(char* data, size_t size, Scene_graph* sg)
 //! \brief loads a scene graph from a file.
 Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
 {
+  // Record the filename
+  m_filename = filename ? filename : std::string();
+
   // Try to determine the file type from its extension.
   SGAL_assertion(filename);
   std::string file_extension = boost::filesystem::extension(filename);
@@ -159,7 +178,10 @@ Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
 
   // Open source file:
   std::ifstream src_stream(filename);
-  if (!src_stream.good()) return ERROR_OPEN;
+  if (!src_stream.good()) {
+    throw Open_file_error(m_filename);
+    return FAILURE;
+  }
 
   auto rc = load(src_stream, sg);
   if (rc < 0) {
@@ -207,7 +229,10 @@ Loader::Return_code Loader::read_triangle(std::istream& stl_stream,
   stl_stream.read((char*)&spacer, sizeof(unsigned short));
   //std::cout << std::hex << spacer << std::endl;
 
-  if (!stl_stream) return ERROR_READ;
+  if (!stl_stream) {
+    throw Read_error(m_filename);
+    return FAILURE;
+  }
   return SUCCESS;
 }
 
@@ -239,7 +264,10 @@ Loader::Return_code Loader::read_stl(std::istream& stl_stream, size_t size,
   // Triangle---50
   //   normal,v0,v1,v2---12*4
   //   spacer--2
-  if (size != 84 + total_num_tris * 50) return ERROR_INCONSISTENT;
+  if (size != 84 + total_num_tris * 50) {
+    throw Inconsistent_error(m_filename);
+    return FAILURE;
+  }
   Uint total_num_vertices = total_num_tris * 3;
 
   Boolean new_shape(true);
@@ -379,7 +407,10 @@ Loader::Return_code Loader::read_stl(std::istream& stl_stream, size_t size,
     total_num_vertices -= 3 * i;
   }
 
-  if (!stl_stream) return ERROR_READ;
+  if (!stl_stream) {
+    throw Read_error(m_filename);
+    return FAILURE;
+  }
   return SUCCESS;
 }
 

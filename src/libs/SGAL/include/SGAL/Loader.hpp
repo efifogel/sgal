@@ -20,6 +20,7 @@
 #define SGAL_LOADER_HPP
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Loader_errors.hpp"
 #include "SGAL/Vector3f.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -28,15 +29,7 @@ class Scene_graph;
 
 class SGAL_SGAL_DECL Loader {
 public:
-  enum Return_code {
-    ERROR_PARSE = -5,
-    ERROR_INCONSISTENT = -4,
-    ERROR_OVERFLOW = -3,
-    ERROR_READ = -2,
-    ERROR_OPEN = -1,
-    SUCCESS = 0,
-    RETRY = 1
-  };
+  enum Return_code {RETRY = 1, SUCCESS = 0, FAILURE = -1};
 
   /*! Construct */
   Loader();
@@ -112,6 +105,9 @@ private:
    * \todo use a shader to combine the colors, when present, and phong shading.
    */
   Boolean m_multiple_shapes;
+
+  /*! The filename if exists. */
+  std::string m_filename;
 };
 
 SGAL_END_NAMESPACE
