@@ -106,4 +106,12 @@ const Bounding_sphere Polyhedron_attributes_array::bounding_sphere() const
   return bs;
 }
 
+//! \brief determines wheather all polyhedra are valid.
+Boolean Polyhedron_attributes_array::is_valid() const
+{
+  for (auto it = m_array.begin(); it != m_array.end(); ++it)
+    if (!(it->is_valid())) return false;
+  return true;
+}
+
 SGAL_END_NAMESPACE

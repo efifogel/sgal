@@ -63,7 +63,8 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   m_dirty_volume(true),
   m_dirty_surface_area(true),
   m_dirty_coord_array(true),
-  m_dirty_polyhedron(true)
+  m_dirty_polyhedron(true),
+  m_consistent(true)
 {
   if (proto) return;
   m_surface.set_mesh_set(this);
@@ -292,6 +293,7 @@ void Indexed_face_set::clean_polyhedron()
   m_dirty_polyhedron = false;
   m_dirty_volume = true;
   m_dirty_surface_area = true;
+  m_consistent = true;
 
   auto coords = get_coord_array();
   if (!coords || coords->empty()) return;
@@ -334,6 +336,8 @@ void Indexed_face_set::clean_polyhedron()
 //     points.clear();
 //   }
   m_polyhedron.delegate(m_surface);           // create the polyhedral surface
+  if (!m_surface.is_consistent()) m_consistent = false;
+
 #if 0
   if (!m_polyhedron.normalized_border_is_valid()) {
     m_polyhedron.normalize_border();
@@ -506,6 +510,13 @@ Float Indexed_face_set::surface_area()
   if (m_dirty_polyhedron) clean_polyhedron();
   if (m_dirty_surface_area) clean_surface_area();
   return m_surface_area;
+}
+
+//! \brief determines wheather the mesh is consistent.
+Boolean Indexed_face_set::is_consistent()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  return m_consistent;
 }
 
 SGAL_END_NAMESPACE

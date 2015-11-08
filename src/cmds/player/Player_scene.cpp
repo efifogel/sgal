@@ -700,7 +700,10 @@ void Player_scene::indulge_user()
     SGAL::Polyhedron_attributes_array attrs_array;
     process_polyhedron_attributes_array(attrs_array);
     std::cout << "Polyhedron Attributes" << std::endl;
-    std::cout << "Volume: " << attrs_array.volume() << std::endl;
+    if (!attrs_array.is_valid())
+      std::cerr << "Error: the polyhedron is invalid!\n";
+    else std::cout << "Volume: " << attrs_array.volume() << std::endl;
+    std::cout << "BBox: " << attrs_array.bounding_box() << std::endl;
   }
 
 #if 0

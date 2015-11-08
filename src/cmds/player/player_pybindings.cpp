@@ -90,6 +90,7 @@ BOOST_PYTHON_MODULE(player)
     .def("surface_area", &SGAL::Polyhedron_attributes_array::surface_area)
     .def("bounding_box", &SGAL::Polyhedron_attributes_array::bounding_box)
     .def("bounding_sphere", &SGAL::Polyhedron_attributes_array::bounding_sphere)
+    .def("is_valid", &SGAL::Polyhedron_attributes_array::is_valid)
     ;
 
   class_<SGAL::Bounding_box>("Bounding_box")

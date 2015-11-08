@@ -35,6 +35,10 @@ SGAL_BEGIN_NAMESPACE
 
 template <typename HDS>
 class Polyhedron_geo_builder : public CGAL::Modifier_base<HDS> {
+private:
+  /*! Indicates wheather the mesh is a consistent. */
+  Boolean m_consistent;
+
 protected:
   /*! The mesh for which a polyhedron data structure is constructed.
    * It is defined as const, because the array of indices of the mesh  may
@@ -195,6 +199,8 @@ public:
    */
   void operator()(HDS& hds)
   {
+    m_consistent = true;
+
     // Postcondition: `hds' is a valid polyhedral surface.
     CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
     B.begin_surface(m_mesh_set->get_coord_array()->size(),
@@ -205,11 +211,22 @@ public:
       B.end_surface();
     }
     catch (std::exception& e) {
-      std::cerr << e.what() << std::endl;
+      m_consistent = false;
+      // std::cerr << e.what() << std::endl;
       B.rollback();
     }
   }
+
+  /*! Determine wheather the mesh is consistent.
+   * \return true if the the mesh is consistent and false otherwise.
+   */
+  Boolean is_consistent();
 };
+
+//! \brief determines wheather the mesh is consistent.
+template <typename HDS>
+inline Boolean Polyhedron_geo_builder<HDS>::is_consistent()
+{ return m_consistent; }
 
 SGAL_END_NAMESPACE
 

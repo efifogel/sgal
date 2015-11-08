@@ -197,8 +197,12 @@ public:
    */
   Float surface_area();
 
-protected:
+  /*! Determine wheather the mesh is consistent.
+   * \return true if the the mesh is consistent and false otherwise.
+   */
+  Boolean is_consistent();
 
+protected:
   /*! The volume of the polyhedron. */
   Float m_volume;
 
@@ -221,6 +225,9 @@ protected:
    * cleaned.
    */
   Boolean m_dirty_polyhedron;
+
+  /*! Indicates wheather the mesh is consistent. */
+  Boolean m_consistent;
 
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }

@@ -72,6 +72,11 @@ public:
    */
   const Bounding_sphere bounding_sphere() const;
 
+  /*! Determine wheather all polyhedra are valid.
+   * \return true if all polyhedra valid and false otherwise.
+   */
+  Boolean is_valid() const;
+
 private:
   /*! The attributes of the polyhedrons. */
   std::vector<Polyhedron_attributes> m_array;
