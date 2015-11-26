@@ -25,7 +25,6 @@
 #include "SGAL/version.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Transform.hpp"
-#include "SGAL/Mesh_set.hpp"
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Stl_formatter.hpp"
 
