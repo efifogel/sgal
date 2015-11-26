@@ -10,138 +10,169 @@ Viewpoint {
 }
 Transform {
   rotation 1 0 0 .78539816
+  scale 8 8 8
   children [
-Transform {
-  rotation 0 1 0 .78539816
-  children [
-    DEF ORANGE_TRANS Transform {
-      translation 7, 8, 9
+    Transform {
+      rotation 0 1 0 .78539816
       children [
-	TouchSensor {}
-	DEF ORANGE Shape {
-	  appearance Appearance {
-	    material Material {
-	      diffuseColor 1, 0.65, 0
-	    }
-	  }
-	  geometry Piece {
-	    width 7
-	    height 5
-	    depth 1
-	    composition [
-			 1 1 1 1 1 1 1 1 0 0 0 0 0 1 1 1 0 0 0 1 1 1 0 0 0 0 0 1 1 1 0 1 1 1 1
-			]
-	  }
-	}
+        Switch {
+          whichChoice 0
+          children [
+            DEF ORANGE_TRANS Transform {
+              translation 7, 8, 9
+              children [
+                TouchSensor {}
+                DEF ORANGE Shape {
+                  appearance Appearance {
+                    material Material {
+                      diffuseColor 1, 0.65, 0
+                    }
+                  }
+                  geometry Piece {
+                    width 7
+                    height 5
+                    depth 1
+                    composition [
+                                 1 1 1 1 1 1 1 1 0 0 0 0 0 1 1 1 0 0 0 1 1 1 0 0 0 0 0 1 1 1 0 1 1 1 1
+                                ]
+                  }
+                }
+               ]
+            }
+           ]
+        }
+        Switch {
+          whichChoice 0
+          children [
+            DEF BLUE_TRANS Transform {
+              translation 7, 8, 11
+              children [
+                TouchSensor {}
+                DEF BLUE Shape {
+                  appearance Appearance {
+                    material Material {
+                      diffuseColor 0, 0, 1
+                    }
+                  }
+                  geometry Piece {
+                    width 7
+                    height 5
+                    depth 1
+                    composition [
+                                 1 1 1 1 1 1 1 1 0 0 0 0 0 1 1 1 0 0 0 1 1 1 0 1 0 0 0 1 1 1 1 1 0 1 1
+                                ]
+                  }
+                }
+               ]
+            }
+           ]
+        }
+        Switch {
+          whichChoice 0
+          children [
+            DEF RED_TRANS Transform {
+              translation 8, 9, 7
+              children [
+                TouchSensor {}
+                DEF RED Shape {
+                  appearance Appearance {
+                    material Material {
+                      diffuseColor 1, 0, 0
+                    }
+                  }
+                  geometry DEF RED_PIECE Piece {
+                    width 5
+                    height 1
+                    depth 7
+                    composition [
+                                 1 1 1 1 1 1 0 1 0 1 0 0 1 0 1 1 1 1 0 1 0 0 1 0 0 1 0 1 0 1 1 1 1 1 1
+                                ]
+                  }
+                }
+               ]
+            }
+           ]
+        }
+        Switch {
+          whichChoice 0
+          children [
+            DEF YELLOW_TRANS Transform {
+              translation 8, 11, 7
+              children [
+                TouchSensor {}
+                DEF YELLOW Shape {
+                  appearance Appearance {
+                    material Material {
+                      diffuseColor 1, 1, 0
+                    }
+                  }
+                  geometry Piece {
+                    width 5
+                    height 1
+                    depth 7
+                    composition [
+                                 1 1 1 1 1 1 0 1 0 1 0 0 0 0 1 1 0 1 0 1 1 0 1 0 1 1 0 1 0 1 1 1 1 1 1
+                                ]
+                  }
+                }
+               ]
+            }
+           ]
+        }
+        Switch {
+          whichChoice 0
+          children [
+            DEF PURPLE_TRANS Transform {
+              translation 9, 7, 8
+              children [
+                TouchSensor {}
+                DEF PURPLE Shape {
+                  appearance Appearance {
+                    material Material {
+                      diffuseColor 0.7, 0, 0.7
+                    }
+                  }
+                  geometry Piece {
+                    width 1
+                    height 7
+                    depth 5
+                    composition [
+                                 1 1 1 1 1 1 1 1 0 0 0 0 0 1 1 1 0 0 0 1 1 1 0 0 0 0 0 1 1 1 1 1 0 1 1
+                                ]
+                  }
+                }
+               ]
+            }
+           ]
+        }
+        Switch {
+          whichChoice 0
+          children [
+            DEF GREEN_TRANS Transform {
+              translation 11, 7, 8
+              children [
+                TouchSensor {}
+                DEF GREEN Shape {
+                  appearance Appearance {
+                    material Material {
+                      diffuseColor 0, 1, 0
+                    }
+                  }
+                  geometry Piece {
+                    width 1
+                    height 7
+                    depth 5
+                    composition [
+                                 1 1 1 1 1 1 1 1 0 0 0 0 0 1 1 1 1 1 1 1 1 1 0 0 0 0 0 1 1 1 1 1 1 1 1
+                                ]
+                  }
+                }
+               ]
+            }
+           ]
+        }
        ]
     }
-    DEF BLUE_TRANS Transform {
-      translation 7, 8, 11
-      children [
-	TouchSensor {}
-	DEF BLUE Shape {
-	  appearance Appearance {
-	    material Material {
-	      diffuseColor 0, 0, 1
-	    }
-	  }
-	  geometry Piece {
-	    width 7
-	    height 5
-	    depth 1
-	    composition [
-			 1 1 1 1 1 1 1 1 0 0 0 0 0 1 1 1 0 0 0 1 1 1 0 1 0 0 0 1 1 1 1 1 0 1 1
-			]
-	  }
-	}
-       ]
-    }
-    DEF RED_TRANS Transform {
-      translation 8, 9, 7
-      children [
-	TouchSensor {}
-	DEF RED Shape {
-	  appearance Appearance {
-	    material Material {
-	      diffuseColor 1, 0, 0
-	    }
-	  }
-	  geometry Piece {
-	    width 5
-	    height 1
-	    depth 7
-	    composition [
-			 1 1 1 1 1 1 0 1 0 1 0 0 1 0 1 1 1 1 0 1 0 0 1 0 0 1 0 1 0 1 1 1 1 1 1
-			]
-	  }
-	}
-       ]
-    }
-    DEF YELLOW_TRANS Transform {
-      translation 8, 11, 7
-      children [
-	TouchSensor {}
-	DEF YELLOW Shape {
-	  appearance Appearance {
-	    material Material {
-	      diffuseColor 1, 1, 0
-	    }
-	  }
-	  geometry Piece {
-	    width 5
-	    height 1
-	    depth 7
-	    composition [
-			 1 1 1 1 1 1 0 1 0 1 0 0 0 0 1 1 0 1 0 1 1 0 1 0 1 1 0 1 0 1 1 1 1 1 1
-			]
-	  }
-	}
-       ]
-    }
-    DEF PURPLE_TRANS Transform {
-      translation 9, 7, 8
-      children [
-	TouchSensor {}
-	DEF PURPLE Shape {
-	  appearance Appearance {
-	    material Material {
-	      diffuseColor 0.7, 0, 0.7
-	    }
-	  }
-	  geometry Piece {
-	    width 1
-	    height 7
-	    depth 5
-	    composition [
-			 1 1 1 1 1 1 1 1 0 0 0 0 0 1 1 1 0 0 0 1 1 1 0 0 0 0 0 1 1 1 1 1 0 1 1
-			]
-	  }
-	}
-       ]
-    }
-    DEF GREEN_TRANS Transform {
-      translation 11, 7, 8
-      children [
-	TouchSensor {}
-	DEF GREEN Shape {
-	  appearance Appearance {
-	    material Material {
-	      diffuseColor 0, 1, 0
-	    }
-	  }
-	  geometry Piece {
-	    width 1
-	    height 7
-	    depth 5
-	    composition [
-			 1 1 1 1 1 1 1 1 0 0 0 0 0 1 1 1 1 1 1 1 1 1 0 0 0 0 0 1 1 1 1 1 1 1 1
-			]
-	  }
-	}
-       ]
-    }
-   ]
-}
    ]
 }
 
