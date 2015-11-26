@@ -612,6 +612,9 @@ void Mesh_set::write(Formatter* formatter)
                   << ", name: " << get_name()
                   << std::endl;);
 
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (m_coord_indices.empty() && m_flat_coord_indices.empty()) return;
+
   auto* obj_formatter = dynamic_cast<Obj_formatter*>(formatter);
   if (obj_formatter) {
     // Apply the active (top) transform matrix to the coordinates.
@@ -627,7 +630,6 @@ void Mesh_set::write(Formatter* formatter)
     if ((PT_TRIANGLES == get_primitive_type()) ||
         (PT_QUADS == get_primitive_type()))
     {
-      if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
       if (m_flat_coord_indices.empty()) return;
 
       //! \todo use the following:
@@ -690,7 +692,6 @@ void Mesh_set::write(Formatter* formatter)
     if ((PT_TRIANGLES == get_primitive_type()) ||
         (PT_QUADS == get_primitive_type()))
     {
-      if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
       if (m_flat_coord_indices.empty()) return;
 
       const auto& indices = get_flat_coord_indices();

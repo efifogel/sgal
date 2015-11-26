@@ -100,6 +100,10 @@ private:
    */
   void write(const Vector3f& v);
 
+  /*! Transform a shape.
+   */
+  void clean(Shared_shape shape);
+
   /*! Write a shape.
    */
   void write(Shared_shape shape, Shared_matrix4f matrix);

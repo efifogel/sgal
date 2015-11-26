@@ -59,7 +59,15 @@ void Stl_binary_formatter::begin()
 //! \brief writes the end statement.
 void Stl_binary_formatter::end()
 {
+  // Clean the shapes
+  std::for_each(m_shapes.begin(), m_shapes.end(),
+                [&](const World_shape& ws)
+                { clean(ws.first); });
+
+  // Obtain the number of triangles
   auto num_tris = number_of_triangles();
+
+  // Write the shapes
   write(static_cast<Int32>(num_tris));
   std::for_each(m_shapes.begin(), m_shapes.end(),
                 [&](const World_shape& ws)
@@ -166,6 +174,21 @@ void Stl_binary_formatter::write_facet(const Vector3f& p1, const Vector3f& p2,
   }
 }
 
+//! \bried cleans a shape.
+void Stl_binary_formatter::clean(Shared_shape shape)
+{
+  auto geometry = shape->get_geometry();
+  auto mesh = boost::dynamic_pointer_cast<Mesh_set>(geometry);
+  auto coords = mesh->get_coord_array();
+  if (!coords || (coords->size() == 0)) return;
+
+  if (mesh->is_dirty_flat_coord_indices()) mesh->clean_flat_coord_indices();
+  auto type = mesh->get_primitive_type();
+  if ((Geo_set::PT_TRIANGLES != type) && (Geo_set::PT_QUADS != type)) {
+    if (mesh->is_dirty_coord_indices()) mesh->clean_coord_indices();
+  }
+}
+
 //! \brief writes a shape.
 void Stl_binary_formatter::write(Shared_shape shape, Shared_matrix4f matrix)
 {
@@ -181,9 +204,9 @@ void Stl_binary_formatter::write(Shared_shape shape, Shared_matrix4f matrix)
     it->xform_pt(mesh->get_coord_3d(i++), *matrix);
 
   // Export the facets.
+  if (mesh->is_dirty_flat_coord_indices()) mesh->clean_flat_coord_indices();
   auto type = mesh->get_primitive_type();
   if ((Geo_set::PT_TRIANGLES == type) || (Geo_set::PT_QUADS == type)) {
-    if (mesh->is_dirty_flat_coord_indices()) mesh->clean_flat_coord_indices();
     const auto& indices = mesh->get_flat_coord_indices();
     if (indices.empty()) return;
 
