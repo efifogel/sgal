@@ -107,9 +107,9 @@ public:
    */
   virtual void clean_coords();
 
-  /*! Clean the flat coordinate indices.
+  /*! Clean the facet coordinate indices.
    */
-  virtual void clean_flat_coord_indices();
+  virtual void clean_facet_coord_indices();
 
   /*! Calculate the default 2D texture-mapping oordinates.
    */

@@ -19,6 +19,8 @@
 #ifndef SGAL_LOADER_HPP
 #define SGAL_LOADER_HPP
 
+#include <boost/shared_ptr.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Loader_errors.hpp"
 #include "SGAL/Vector3f.hpp"
@@ -26,9 +28,32 @@
 SGAL_BEGIN_NAMESPACE
 
 class Scene_graph;
+class Transform;
+class Shape;
+class Indexed_face_set;
+class Coord_array_3d;
+class Color_array;
+class Appearance;
+class Material;
 
 class SGAL_SGAL_DECL Loader {
 public:
+  class Triangle {
+  public:
+    Triangle() : spacer(0) {}
+    Boolean is_colored() const { return spacer & 0x0001; }
+    void set_color(Vector3f& color) const
+    {
+      auto red = static_cast<Float>((spacer >> 1) & 0x001f) / 31.0f;
+      auto green = static_cast<Float>((spacer >> 6) & 0x001f) / 31.0f;
+      auto blue = static_cast<Float>((spacer >> 11) & 0x001f) / 31.0f;
+      color.set(red, green, blue);
+    }
+
+    Vector3f v0, v1, v2;
+    Ushort spacer;
+  };
+
   enum Return_code {RETRY = 1, SUCCESS = 0, FAILURE = -1};
 
   /*! Construct */
@@ -90,11 +115,17 @@ public:
 
   /*! Read a traingle (1 normal and 3 vertices)
    */
-  Return_code read_triangle(std::istream& stl_stream,
-                            Vector3f& v0, Vector3f& v1, Vector3f& v2,
-                            Ushort& spacer);
+  Return_code read_triangle(std::istream& stl_stream, Triangle& triangle);
 
 private:
+  typedef boost::shared_ptr<Transform>              Shared_transform;
+  typedef boost::shared_ptr<Shape>                  Shared_shape;
+  typedef boost::shared_ptr<Indexed_face_set>       Shared_indexed_face_set;
+  typedef boost::shared_ptr<Coord_array_3d>         Shared_coord_array_3d;
+  typedef boost::shared_ptr<Color_array>            Shared_color_array;
+  typedef boost::shared_ptr<Appearance>             Shared_appearance;
+  typedef boost::shared_ptr<Material>               Shared_material;
+
   /*! Indicates whether multiple shape nodes should represent the entire mesh
    * when colors are present. When colors are not present this flag has no
    * effect.
@@ -108,6 +139,26 @@ private:
 
   /*! The filename if exists. */
   std::string m_filename;
+
+  /*! Compute a new Indexed Face Set container. */
+  Shared_indexed_face_set compute_ifs(size_t count,
+                                      std::list<Triangle>::const_iterator begin,
+                                      std::list<Triangle>::const_iterator end);
+
+  /*! Add a shape node to the scene. */
+  Shared_shape compute_shape(Scene_graph* scene_graph,
+                             Shared_transform transform,
+                             const Vector3f& color);
+
+  /*! Add a shape for every sub sequence of triangles with a distinguish color.
+   */
+  void add_shapes(Scene_graph* scene_graph, Shared_transform transform,
+                  std::list<Triangle>& triangles, const Vector3f& color);
+
+  /*! Add a colored shape.
+   */
+  void add_colored_shape(Scene_graph* scene_graph, Shared_transform transform,
+                         std::list<Triangle>& triangles, const Vector3f& color);
 };
 
 SGAL_END_NAMESPACE

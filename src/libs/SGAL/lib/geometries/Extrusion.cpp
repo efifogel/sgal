@@ -355,7 +355,7 @@ void Extrusion::set_scale(std::vector<Vector2f>& scale)
 void Extrusion::set_begin_cap(Boolean begin_cap)
 {
   m_begin_cap = begin_cap;
-  clear_flat_coord_indices();
+  clear_facet_coord_indices();
   field_changed(get_field_info(BEGIN_CAP));
 }
 
@@ -365,7 +365,7 @@ void Extrusion::set_begin_cap(Boolean begin_cap)
 void Extrusion::set_end_cap(Boolean end_cap)
 {
   m_end_cap = end_cap;
-  clear_flat_coord_indices();
+  clear_facet_coord_indices();
   field_changed(get_field_info(END_CAP));
 }
 
@@ -380,7 +380,7 @@ Container_proto* Extrusion::get_prototype()
 void Extrusion::structure_changed(const Field_info* field_info)
 {
   clear_coord_array();
-  clear_flat_coord_indices();
+  clear_facet_coord_indices();
   field_changed(field_info);
 }
 
@@ -574,24 +574,25 @@ void Extrusion::clean_coords()
 }
 
 //! \brief adds triangle indices given four points that form a quad.
-size_t Extrusion::add_triangle_indices(size_t k, std::vector<Uint>& indices,
+size_t Extrusion::add_triangle_indices(size_t k, Triangle_indices& indices,
                                        Uint ll, Uint lr, Uint ur, Uint ul)
 {
-  indices[k++] = ll;
-  indices[k++] = lr;
-  indices[k++] = ur;
-  indices[k++] = ll;
-  indices[k++] = ur;
-  indices[k++] = ul;
+  indices[k][0] = ll;
+  indices[k][1] = lr;
+  indices[k][2] = ur;
+  ++k;
+  indices[k][0] = ll;
+  indices[k][1] = ur;
+  indices[k][2] = ul;
+  ++k;
   return k;
 }
 
 //! \brief cleans the coordinate indices.
-void Extrusion::clean_flat_coord_indices()
+void Extrusion::clean_facet_coord_indices()
 {
   m_dirty_coord_indices = true;
-  m_dirty_flat_coord_indices = false;
-  m_coord_indices_flat = true;
+  m_dirty_facet_coord_indices = false;
 
   Boolean cross_section_loop =
     m_cross_section.front() == m_cross_section.back();
@@ -608,10 +609,10 @@ void Extrusion::clean_flat_coord_indices()
   // Caps are always closed
   if (m_begin_cap) m_num_primitives += cross_section_size - 2;
   if (m_end_cap) m_num_primitives += cross_section_size - 2;
-  Uint size = m_num_primitives * 4;
 
   // Generate:
-  m_flat_coord_indices.resize(size);
+  auto& coord_indices = empty_triangle_coord_indices();
+  coord_indices.resize(m_num_primitives);
   size_t j, i, k = 0;
   for (j = 0; j < m_spine.size() - 1; ++j) {
     Uint start = j * cross_section_size;
@@ -620,7 +621,7 @@ void Extrusion::clean_flat_coord_indices()
       Uint ul = ll + cross_section_size;
       Uint lr = ll + 1;
       Uint ur = ul + 1;
-      k = add_triangle_indices(k, m_flat_coord_indices, ll, lr, ur, ul);
+      k = add_triangle_indices(k, coord_indices, ll, lr, ur, ul);
     }
     Uint ll = start + i;
     Uint ul = ll + cross_section_size;
@@ -633,7 +634,7 @@ void Extrusion::clean_flat_coord_indices()
       lr = ll + 1;
       ur = ul + 1;
     }
-    k = add_triangle_indices(k, m_flat_coord_indices, ll, lr, ur, ul);
+    k = add_triangle_indices(k, coord_indices, ll, lr, ur, ul);
   }
 
   if (m_loop) {
@@ -643,7 +644,7 @@ void Extrusion::clean_flat_coord_indices()
       Uint ul = i;
       Uint lr = ll + 1;
       Uint ur = ul + 1;
-      k = add_triangle_indices(k, m_flat_coord_indices, ll, lr, ur, ul);
+      k = add_triangle_indices(k, coord_indices, ll, lr, ur, ul);
     }
     Uint ll = start + i;
     Uint ul = i;
@@ -656,16 +657,17 @@ void Extrusion::clean_flat_coord_indices()
       lr = ll + 1;
       ur = ul + 1;
     }
-    k = add_triangle_indices(k, m_flat_coord_indices, ll, lr, ur, ul);
+    k = add_triangle_indices(k, coord_indices, ll, lr, ur, ul);
   }
 
   // Generate caps:
   if (m_begin_cap) {
     Uint anchor = 0;
     for (i = 0; i < cross_section_size-2; ++i) {
-      m_flat_coord_indices[k++] = anchor;
-      m_flat_coord_indices[k++] = anchor + cross_section_size - i - 1;
-      m_flat_coord_indices[k++] = anchor + cross_section_size - i - 2;
+      coord_indices[k][0] = anchor;
+      coord_indices[k][1] = anchor + cross_section_size - i - 1;
+      coord_indices[k][2] = anchor + cross_section_size - i - 2;
+      ++k;
     }
   }
 
@@ -673,9 +675,10 @@ void Extrusion::clean_flat_coord_indices()
     Uint offset = cross_section_size * (m_spine.size() - 1);
     Uint anchor = offset;
     for (i = 0; i < cross_section_size-2; ++i) {
-      m_flat_coord_indices[k++] = anchor;
-      m_flat_coord_indices[k++] = anchor + i + 1;
-      m_flat_coord_indices[k++] = anchor + i + 2;
+      coord_indices[k][0] = anchor;
+      coord_indices[k][1] = anchor + i + 1;
+      coord_indices[k][2] = anchor + i + 2;
+      ++k;
     }
   }
 }
@@ -747,11 +750,10 @@ void Extrusion::clean_tex_coord_array_2d()
 }
 
 //! Generate the texture coordinate indices.
-void Extrusion::clean_flat_tex_coord_indices()
+void Extrusion::clean_facet_tex_coord_indices()
 {
   m_dirty_tex_coord_indices = true;
-  m_dirty_flat_tex_coord_indices = false;
-  m_tex_coord_indices_flat = true;
+  m_dirty_facet_tex_coord_indices = false;
 
   Boolean cross_section_loop =
     m_cross_section.front() == m_cross_section.back();
@@ -763,7 +765,8 @@ void Extrusion::clean_flat_tex_coord_indices()
     cross_section_size : cross_section_size + 1;
   size_t stacks = (m_loop) ? m_spine.size() : m_spine.size() - 1;
 
-  m_flat_tex_coord_indices.resize(m_flat_coord_indices.size());
+  auto& tex_coord_indices = empty_triangle_tex_coord_indices();
+  tex_coord_indices.resize(m_num_primitives);
   size_t i, j, k = 0;
 
   for (j = 0; j < stacks; ++j) {
@@ -773,7 +776,7 @@ void Extrusion::clean_flat_tex_coord_indices()
       Uint ul = ll + (slices + 1);
       Uint lr = ll + 1;
       Uint ur = ul + 1;
-      k = add_triangle_indices(k, m_flat_tex_coord_indices, ll, lr, ur, ul);
+      k = add_triangle_indices(k, tex_coord_indices, ll, lr, ur, ul);
     }
   }
 
@@ -782,18 +785,20 @@ void Extrusion::clean_flat_tex_coord_indices()
   if (m_begin_cap) {
     Uint anchor = offset;
     for (i = 0; i < cross_section_size-2; ++i) {
-      m_flat_tex_coord_indices[k++] = anchor;
-      m_flat_tex_coord_indices[k++] = anchor + cross_section_size - i - 1;
-      m_flat_tex_coord_indices[k++] = anchor + cross_section_size - i - 2;
+      tex_coord_indices[k][0] = anchor;
+      tex_coord_indices[k][1] = anchor + cross_section_size - i - 1;
+      tex_coord_indices[k][2] = anchor + cross_section_size - i - 2;
+      ++k;
     }
   }
 
   if (m_end_cap) {
     Uint anchor = offset;
     for (i = 0; i < cross_section_size-2; ++i) {
-      m_flat_tex_coord_indices[k++] = anchor;
-      m_flat_tex_coord_indices[k++] = anchor + i + 1;
-      m_flat_tex_coord_indices[k++] = anchor + i + 2;
+      tex_coord_indices[k][0] = anchor;
+      tex_coord_indices[k][1] = anchor + i + 1;
+      tex_coord_indices[k][2] = anchor + i + 2;
+      ++k;
     }
   }
 }

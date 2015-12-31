@@ -68,10 +68,10 @@ Polyhedron_geo::~Polyhedron_geo() { clear(); }
 //! \brief draws the geometry.
 void Polyhedron_geo::draw(Draw_action* action)
 {
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
-  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
-  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  if (is_dirty_facet_normal_indices()) clean_facet_normal_indices();
+  if (is_dirty_facet_color_indices()) clean_facet_color_indices();
+  if (is_dirty_facet_tex_coord_indices()) clean_facet_tex_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();
   if (m_dirty_facets) clean_facets();
   if (is_empty()) return;
@@ -137,7 +137,7 @@ void Polyhedron_geo::draw_geometry(Draw_action* /* action */)
 //! \brief
 void Polyhedron_geo::isect(Isect_action* /* action */)
 {
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();
   if (m_dirty_facets) clean_facets();
   if (is_empty()) return;
@@ -164,7 +164,7 @@ void Polyhedron_geo::clean_bounding_sphere()
     return;
   }
 
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();
 
   if (!m_polyhedron.empty()) {
@@ -227,7 +227,7 @@ Container_proto* Polyhedron_geo::get_prototype()
 //! \brief obtains the polyhedron data-structure.
 Polyhedron_geo::Polyhedron& Polyhedron_geo::get_polyhedron()
 {
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();
   return m_polyhedron;
 }

@@ -19,6 +19,9 @@
 #ifndef SGAL_MESH_SET_HPP
 #define SGAL_MESH_SET_HPP
 
+#include <vector>
+#include <boost/variant.hpp>
+#
 #include "SGAL/basic.hpp"
 #include "SGAL/Geo_set.hpp"
 
@@ -49,8 +52,15 @@ public:
    * Arrays of such type are used as arguments in OpenGL calls, where the
    * type of the index, namely unsigned int, is hard coded.
    */
-  typedef unsigned int                                  Index_type;
-  typedef std::vector<Index_type>                       Index_array;
+  typedef uint32_t                                          Index_type;
+  typedef std::vector<Index_type>                           Index_array;
+
+  typedef std::vector<std::array<Index_type, 3> >           Triangle_indices;
+  typedef std::vector<std::array<Index_type, 4> >           Quad_indices;
+  typedef std::vector<std::vector<Index_type> >             Polygon_indices;
+  typedef std::vector<Index_type>                           Flat_indices;
+  typedef boost::variant<Triangle_indices, Quad_indices, Polygon_indices,
+                         Flat_indices>                      Facet_indices;
 
   /*! Constructor.
    */
@@ -255,190 +265,624 @@ public:
   Boolean is_dirty_tex_coord_indices() const;
   //@}
 
-  /// \name Flat Index Arrays
+  /// \name Obtain const vectors of facet indices
   //@{
-  /*! Obtain the flat coordinate-index array.
+  /*! Obtain the facet coordinate-index array.
    */
-  Index_array& get_flat_coord_indices();
+  const Facet_indices& get_facet_coord_indices();
 
-  /*! Obtain the flat normal-index array.
+  /*! Obtain the facet normal-index array.
    */
-  Index_array& get_flat_normal_indices();
+  const Facet_indices& get_facet_normal_indices();
 
-  /*! Obtain the flat color-index array.
+  /*! Obtain the facet color-index array.
    */
-  Index_array& get_flat_color_indices();
+  const Facet_indices& get_facet_color_indices();
 
-  /*! Obtain the flat texture coordinate-index array.
+  /*! Obtain the facet texture coordinate-index array.
    */
-  Index_array& get_flat_tex_coord_indices();
+  const Facet_indices& get_facet_tex_coord_indices();
+  //@}
 
-  /*! Set the flat coordinate-index array.
+  /// \name Facet Index Arrays
+  //@{
+  /*! Set the facet coordinate-index array.
    */
-  void set_flat_coord_indices(const Index_array& indices);
+  void set_facet_coord_indices(const Facet_indices& indices);
 
-  /*! Set the flat normal-index array.
+  /*! Set the facet normal-index array.
    */
-  void set_flat_normal_indices(const Index_array& indices);
+  void set_facet_normal_indices(const Facet_indices& indices);
 
-  /*! Set the flat color-index array.
+  /*! Set the facet color-index array.
    */
-  void set_flat_color_indices(const Index_array& indices);
+  void set_facet_color_indices(const Facet_indices& indices);
 
-  /*! Set the flat texture coordinate-index array.
+  /*! Set the facet texture coordinate-index array.
    */
-  void set_flat_tex_coord_indices(const Index_array& indices);
+  void set_facet_tex_coord_indices(const Facet_indices& indices);
 
-   /*! Validate (clean) the flat coordinate-index array.
+   /*! Validate (clean) the facet coordinate-index array.
    * In case of triangles or quads, remove the '-1' end-of-polygon indication
    * from the index array. This operation changes the structure of the
    * index array, and must be reflected in the drawing routines.
    */
-  virtual void clean_flat_coord_indices();
+  virtual void clean_facet_coord_indices();
 
-  /*! Validate (clean) the flat normal-index array.
+  /*! Validate (clean) the facet normal-index array.
    * In case of triangles or quads, remove the '-1' end-of-polygon indication
    * from the index array. This operation changes the structure of the
    * index array, and must be reflected in the drawing routines.
    */
-  virtual void clean_flat_normal_indices();
+  virtual void clean_facet_normal_indices();
 
-  /*! Validate (clean) the flat color-index array.
+  /*! Validate (clean) the facet color-index array.
    * In case of triangles or quads, remove the '-1' end-of-polygon indication
    * from the index array. This operation changes the structure of the
    * index array, and must be reflected in the drawing routines.
    */
-  virtual void clean_flat_color_indices();
+  virtual void clean_facet_color_indices();
 
-  /*! Validate (clean) the flat texture coord-index array.
+  /*! Validate (clean) the facet texture coord-index array.
    * In case of triangles or quads, remove the '-1' end-of-polygon indication
    * from the index array. This operation changes the structure of the
    * index array, and must be reflected in the drawing routines.
    */
-  virtual void clean_flat_tex_coord_indices();
+  virtual void clean_facet_tex_coord_indices();
 
-  /*! Invalidate (clear) the flat index arrays, i.e., coordinate-index array,
+  /*! Invalidate (clear) the facet index arrays, i.e., coordinate-index array,
    * normal-index array, color-index array, and texture coordinate index arrays.
    */
-  void clear_flat_indices();
+  void clear_facet_indices();
 
-  /*! Invalidate (clear) the flat cordinate-index array.
+  /*! Invalidate (clear) the facet cordinate-index array.
    */
-  void clear_flat_coord_indices();
+  void clear_facet_coord_indices();
 
-  /*! Invalidate (clear) the flat normal-index array.
+  /*! Invalidate (clear) the facet normal-index array.
    */
-  void clear_flat_normal_indices();
+  void clear_facet_normal_indices();
 
-  /*! Invalidate (clear) the flat color-index array.
+  /*! Invalidate (clear) the facet color-index array.
    */
-  void clear_flat_color_indices();
+  void clear_facet_color_indices();
 
-  /*! Invalidate (clear) the flat texture cordinate-index array.
+  /*! Invalidate (clear) the facet texture cordinate-index array.
    */
-  void clear_flat_tex_coord_indices();
+  void clear_facet_tex_coord_indices();
 
   /*! Determine whether the coordinate-index array has been invalidated
    * (is dirty) and thus must be cleaned.
    */
-  Boolean is_dirty_flat_coord_indices() const;
+  Boolean is_dirty_facet_coord_indices() const;
 
   /*! Determine whether the normal-index array has been invalidated (is dirty)
    * thus must be cleaned.
    */
-  Boolean is_dirty_flat_normal_indices() const;
+  Boolean is_dirty_facet_normal_indices() const;
 
   /*! Determine whether the color-index array has been invalidated (is dirty)
    * and thus must be cleaned.
    */
-  Boolean is_dirty_flat_color_indices() const;
+  Boolean is_dirty_facet_color_indices() const;
 
   /*! Determine whether the texture coordinate-index array has been
    * invalidated (is dirty) and thus must be cleaned.
    */
-  Boolean is_dirty_flat_tex_coord_indices() const;
+  Boolean is_dirty_facet_tex_coord_indices() const;
+
+  /*! Init facet indices visitor */
+  class Init_facet_indices_visitor : public boost::static_visitor<> {
+  public:
+    Facet_indices& m_target;
+    Boolean m_assign;
+
+    Init_facet_indices_visitor(Facet_indices& target, Boolean assign = true) :
+      m_target(target), m_assign(assign) {}
+
+    void operator()(const Triangle_indices& source)
+    {
+      m_target = Triangle_indices();
+      auto& indices = boost::get<Triangle_indices>(m_target);
+      indices.resize(source.size());
+      if (!m_assign) return;
+      Index_type k(0);
+      for (auto it = indices.begin(); it != indices.end(); ++it) {
+        (*it)[0] = k++;
+        (*it)[1] = k++;
+        (*it)[2] = k++;
+      }
+    }
+
+    void operator()(const Quad_indices& source)
+    {
+      m_target = Quad_indices();
+      auto& indices = boost::get<Quad_indices>(m_target);
+      indices.resize(source.size());
+      if (!m_assign) return;
+      Index_type k(0);
+      for (auto it = indices.begin(); it != indices.end(); ++it) {
+        (*it)[0] = k++;
+        (*it)[1] = k++;
+        (*it)[2] = k++;
+        (*it)[3] = k++;
+      }
+    }
+
+    void operator()(const Polygon_indices& source)
+    {
+      m_target = Polygon_indices();
+      auto& indices = boost::get<Polygon_indices>(m_target);
+      indices.resize(source.size());
+      Index_type k(0);
+      auto tit = indices.begin();
+      for (auto sit = source.begin(); sit != source.end(); ++sit, ++tit) {
+        tit->resize(sit->size());
+        if (!m_assign) continue;
+        for (auto it = tit->begin(); it != tit->end(); ++it) *it = k++;
+      }
+    }
+
+    void operator()(const Flat_indices& source)
+    {
+      m_target = Flat_indices();
+      auto& indices = boost::get<Flat_indices>(m_target);
+      indices.resize(source.size());
+      if (!m_assign) return;
+      Index_type k(0);
+      for (auto it = indices.begin(); it != indices.end(); ++it) *it++ = k++;
+    }
+  };
+
+  /*! Init */
+  void init_facet_indices(Facet_indices& target, const Facet_indices& source,
+                          Boolean assign = true);
+
+  /*! Set index facet indices visitor */
+  class Set_index_facet_indices_visitor : public boost::static_visitor<> {
+  public:
+    size_t m_address;
+    Index_type m_value;
+
+    Set_index_facet_indices_visitor(size_t address, Index_type value) :
+      m_address(address), m_value(value) {}
+
+    void operator()(Triangle_indices& indices)
+    {
+      auto res = std::div(m_address, 3);
+      indices[res.quot][res.rem] = m_value;
+    }
+
+    void operator()(Quad_indices& indices)
+    {
+      auto res = std::div(m_address, 4);
+      indices[res.quot][res.rem] = m_value;
+    }
+
+    void operator()(Polygon_indices& indices)
+    {
+      size_t i(0);
+      size_t j(0);
+      for (auto it = indices.begin(); it != indices.end(); ++it) {
+        if (m_address < it->size()) {
+          j = m_address;
+          break;
+        }
+        m_address -= it->size();
+      }
+      indices[i][j] = m_value;
+    }
+
+    void operator()(Flat_indices& indices)
+    { indices[m_address] = m_value; }
+  };
+
+  /*! Set an index. */
+  void set_index_facet_indices(Facet_indices& indices, size_t address,
+                               Index_type value);
+
+  /*! Clear facet indices visitor. */
+  class Clear_facet_indices_visitor : public boost::static_visitor<> {
+  public:
+    // It is prohibited to specialize a function in non-namespace scope.
+
+    template<typename T> struct Identity { typedef T type; };
+
+    template <typename Indices>
+    void operator()(Indices& indices)
+    { operator()(indices, Identity<Indices>()); }
+
+  private:
+    template <typename Indices>
+    void operator()(Indices& indices, Identity<Indices>) { indices.clear(); }
+
+    void operator()(Polygon_indices& indices, Identity<Polygon_indices>)
+    {
+      for (auto it = indices.begin(); it != indices.end(); ++it) it->clear();
+      indices.clear();
+    }
+    // void operator()(Triangle_indices& indices) { indices.clear(); }
+
+    // void operator()(Quad_indices& indices) { indices.clear(); }
+
+    // void operator()(Polygon_indices& indices)
+    // {
+    //   for (auto it = indices.begin(); it != indices.end(); ++it) it->clear();
+    //   indices.clear();
+    // }
+
+    // void operator()(Flat_indices& indices) { indices.clear(); }
+  };
+
+  /*! Clear */
+  void clear_facet_indices(Facet_indices& indices);
+
+  /*! Equal facet indices visitor */
+  class Equal_facet_indices_visitor : public boost::static_visitor<bool> {
+  public:
+    template <typename T, typename U>
+    bool operator()(const T&, const U&) const { return false; }
+
+    template <typename T>
+    bool operator()(const T& lhs, const T& rhs) const { return lhs == rhs; }
+  };
+
+  /*! Equal */
+  Boolean equal_facet_indices(const Facet_indices& target,
+                              const Facet_indices& source);
+
+  /*! Empty facet indices visitor */
+  class Empty_facet_indices_visitor : public boost::static_visitor<> {
+  public:
+    Boolean m_result;
+
+    Empty_facet_indices_visitor() : m_result(true) {}
+
+    template <typename Indices>
+    void operator()(const Indices& indices)
+    { m_result = indices.empty(); }
+  };
+
+  /*! Etermines whether the given index vector is empty. */
+  Boolean empty_facet_indices(const Facet_indices& indices);
+
+  /*! Size facet indices visitor */
+  class Size_facet_indices_visitor : public boost::static_visitor<> {
+  public:
+    size_t m_size;
+
+    Size_facet_indices_visitor() : m_size(0) {}
+
+    void operator()(const Triangle_indices& indices)
+    { m_size = 3 * indices.size(); }
+
+    void operator()(const Quad_indices& indices)
+    { m_size = 4 * indices.size(); }
+
+    void operator()(const Polygon_indices& indices)
+    {
+      m_size = 0;
+      for (auto it = indices.begin(); it != indices.end(); ++it)
+        m_size += it->size();
+    }
+
+    void operator()(const Flat_indices& indices) { m_size = indices.size(); }
+  };
+
+  /*! Obtain the number of indices.
+   */
+  size_t size_facet_indices(const Facet_indices& indices);
+
+  /*! */
+  class Facet_indices_const_iterator {
+  public:
+    boost::variant<Triangle_indices::const_iterator,
+                   Quad_indices::const_iterator,
+                   Polygon_indices::const_iterator,
+                   Flat_indices::const_iterator> m_it;
+
+    std::array<Index_type, 3>::const_iterator m_tri_it;
+    std::array<Index_type, 4>::const_iterator m_quad_it;
+    std::vector<Index_type>::const_iterator m_poly_it;
+
+    Triangle_indices::const_iterator m_tri_end;
+    Quad_indices::const_iterator m_quad_end;
+    Polygon_indices::const_iterator m_poly_end;
+
+    /*! Construct default. */
+    Facet_indices_const_iterator();
+
+    /*! Construct */
+    Facet_indices_const_iterator(Triangle_indices::const_iterator it,
+                                 Triangle_indices::const_iterator end);
+
+    /*! Construct */
+    Facet_indices_const_iterator(Quad_indices::const_iterator it,
+                                 Quad_indices::const_iterator end);
+
+    /*! Construct */
+    Facet_indices_const_iterator(Polygon_indices::const_iterator it,
+                                 Polygon_indices::const_iterator end);
+
+    /*! Construct */
+    Facet_indices_const_iterator(Triangle_indices::const_iterator end);
+
+    /*! Construct */
+    Facet_indices_const_iterator(Quad_indices::const_iterator end);
+
+    /*! Construct */
+    Facet_indices_const_iterator(Polygon_indices::const_iterator end);
+
+    /*! Construct */
+    Facet_indices_const_iterator(Flat_indices::const_iterator it);
+
+    const Index_type& operator*();
+
+    Facet_indices_const_iterator operator++();
+
+    Boolean operator==(Facet_indices_const_iterator other);
+
+    Boolean operator!=(Facet_indices_const_iterator other)
+    { return ! operator==(other); }
+  };
+
+  /*! Visitor */
+  class Reference_visitor : public boost::static_visitor<> {
+  public:
+    Facet_indices_const_iterator& m_it;
+    const Index_type* m_reference;
+
+    Reference_visitor(Facet_indices_const_iterator& it) :
+      m_it(it), m_reference(nullptr) {}
+
+    void operator()(Triangle_indices::const_iterator& it)
+    { m_reference = &(*(m_it.m_tri_it)); }
+
+    void operator()(Quad_indices::const_iterator& it)
+    { m_reference = &(*(m_it.m_quad_it)); }
+
+    void operator()(Polygon_indices::const_iterator& it)
+    { m_reference = &(*(m_it.m_poly_it)); }
+
+    void operator()(Flat_indices::const_iterator& it)
+    { m_reference = &(*it); }
+  };
+
+  /*! Visitor */
+  class Incerement_visitor : public boost::static_visitor<> {
+  public:
+    Facet_indices_const_iterator& m_it;
+
+    Incerement_visitor(Facet_indices_const_iterator& it) : m_it(it) {}
+
+    void operator()(Triangle_indices::const_iterator& it)
+    {
+      ++(m_it.m_tri_it);
+      if (m_it.m_tri_it == it->end()) {
+        ++it;
+        if (it != m_it.m_tri_end) m_it.m_tri_it = it->begin();
+      }
+    }
+
+    void operator()(Quad_indices::const_iterator& it)
+    {
+      ++(m_it.m_quad_it);
+      if (m_it.m_quad_it == it->end()) {
+        ++it;
+        if (it != m_it.m_quad_end) m_it.m_quad_it = it->begin();
+      }
+    }
+
+    void operator()(Polygon_indices::const_iterator& it)
+    {
+      ++(m_it.m_poly_it);
+      if (m_it.m_poly_it == it->end()) {
+        ++it;
+        if (it != m_it.m_poly_end) m_it.m_poly_it = it->begin();
+      }
+    }
+
+    void operator()(Flat_indices::const_iterator& it) { ++it; }
+  };
+
+  /*! Visitor */
+  class Compare_visitor : public boost::static_visitor<> {
+  public:
+    Facet_indices_const_iterator& m_it;
+    Facet_indices_const_iterator& m_other;
+    Boolean m_result;
+
+    Compare_visitor(Facet_indices_const_iterator& it,
+                    Facet_indices_const_iterator& other) :
+      m_it(it), m_other(other), m_result(false) {}
+
+    void operator()(Triangle_indices::const_iterator& it)
+    {
+      auto& other = boost::get<Triangle_indices::const_iterator>(m_other.m_it);
+      m_result = (it == other) &&
+        ((m_it.m_tri_it == m_other.m_tri_it) || (it == m_it.m_tri_end));
+    }
+
+    void operator()(Quad_indices::const_iterator& it)
+    {
+      auto& other = boost::get<Quad_indices::const_iterator>(m_other.m_it);
+      m_result = (it == other) &&
+        ((m_it.m_quad_it == m_other.m_quad_it) || (it == m_it.m_quad_end));
+    }
+
+    void operator()(Polygon_indices::const_iterator& it)
+    {
+      auto& other = boost::get<Polygon_indices::const_iterator>(m_other.m_it);
+      m_result = (it == other) &&
+        ((m_it.m_poly_it == m_other.m_poly_it) || (it == m_it.m_poly_end));
+    }
+
+    void operator()(Flat_indices::const_iterator& it)
+    {
+      auto& other = boost::get<Flat_indices::const_iterator>(m_other.m_it);
+      m_result = (it == other);
+    }
+  };
+
+  /*! Begin facet indices visitor */
+  class Begin_facet_indices_visitor : public boost::static_visitor<> {
+  public:
+    Facet_indices_const_iterator m_begin;
+
+    void operator()(const Triangle_indices& indices)
+    { m_begin = Facet_indices_const_iterator(indices.begin(), indices.end()); }
+
+   void operator()(const Quad_indices& indices)
+    { m_begin = Facet_indices_const_iterator(indices.begin(), indices.end()); }
+
+   void operator()(const Polygon_indices& indices)
+    { m_begin = Facet_indices_const_iterator(indices.begin(), indices.end()); }
+
+   void operator()(const Flat_indices& indices)
+    { m_begin = Facet_indices_const_iterator(indices.begin()); }
+  };
+
+  /*! End facet indices visitor */
+  class End_facet_indices_visitor : public boost::static_visitor<> {
+  public:
+    Facet_indices_const_iterator m_end;
+
+    template <typename Indices>
+    void operator()(const Indices& indices)
+    { m_end = Facet_indices_const_iterator(indices.end()); }
+  };
+
+  /*! Obtain a begin iterator. */
+  Facet_indices_const_iterator begin_facet_indices(const Facet_indices& indices);
+
+  /*! Obtain a past-the-end iterator. */
+  Facet_indices_const_iterator end_facet_indices(const Facet_indices& indices);
+
+  /*! Clean facet indices visitor */
+  class Clean_facet_indices_visitor : public boost::static_visitor<> {
+  public:
+    std::vector<Int32>& m_indices;
+
+    Clean_facet_indices_visitor(std::vector<Int32>& indices) :
+      m_indices(indices) {}
+
+    void operator()(const Triangle_indices& triangles)
+    {
+      m_indices.resize(4 * triangles.size());
+      size_t k(0);
+      for (size_t i = 0; i < triangles.size(); ++i) {
+        m_indices[k++] = triangles[i][0];
+        m_indices[k++] = triangles[i][1];
+        m_indices[k++] = triangles[i][2];
+        m_indices[k++] = -1;
+      }
+    }
+
+    void operator()(const Quad_indices& quads)
+    {
+      m_indices.resize(5 * quads.size());
+      size_t k(0);
+      for (size_t i = 0; i < quads.size(); ++i) {
+        m_indices[k++] = quads[i][0];
+        m_indices[k++] = quads[i][1];
+        m_indices[k++] = quads[i][2];
+        m_indices[k++] = quads[i][3];
+        m_indices[k++] = -1;
+      }
+    }
+
+    void operator()(const Polygon_indices& polygons)
+    {
+      size_t size(0);
+      for (size_t i = 0; i < polygons.size(); ++i) size += polygons[i].size();
+      m_indices.resize(size);
+      size_t k(0);
+      for (size_t i = 0; i < polygons.size(); ++i) {
+        for (size_t j = 0; j < polygons[i].size(); ++j)
+          m_indices[k++] = polygons[i][j];
+        m_indices[k++] = -1;
+      }
+    }
+
+    void operator()(const Flat_indices& flats)
+    {
+      if (flats.empty()) return;
+      m_indices.resize(flats.size() + 1);
+      size_t i = 0;
+      for (; i < flats.size(); ++i) m_indices[i] = flats[i];
+      m_indices[i] = -1;
+    }
+  };
+
+  /*! Clean an indices array from a facet indices structure. */
+  void clean_facet_indices(std::vector<Int32>& indices,
+                           const Facet_indices& source);
+
+  /*! Reverse facet indices visitor */
+  class Reverse_facet_indices_visitor : public boost::static_visitor<> {
+  public:
+    Facet_indices& m_target;
+
+    Reverse_facet_indices_visitor(Facet_indices& target) : m_target(target) {}
+
+    void operator()(const Triangle_indices& source)
+    {
+      auto& indices = boost::get<Triangle_indices>(m_target);
+      indices.resize(source.size());
+      for (size_t i = 0; i < source.size(); ++i) {
+        indices[i][0] = source[i][2];
+        indices[i][1] = source[i][1];
+        indices[i][2] = source[i][0];
+      }
+    }
+
+    void operator()(const Quad_indices& source)
+    {
+      auto& indices = boost::get<Quad_indices>(m_target);
+      indices.resize(source.size());
+      for (size_t i = 0; i < source.size(); ++i) {
+        indices[i][0] = source[i][3];
+        indices[i][1] = source[i][3];
+        indices[i][2] = source[i][1];
+        indices[i][3] = source[i][0];
+      }
+    }
+
+    void operator()(const Polygon_indices& source)
+    {
+      auto& indices = boost::get<Polygon_indices>(m_target);
+      indices.resize(source.size());
+      for (size_t i = 0; i < source.size(); ++i) {
+        size_t j(0);
+        for (auto it = source[i].rbegin(); it != source[i].rend(); ++it)
+          indices[i][j++] = *it;
+      }
+    }
+
+    void operator()(const Flat_indices& source)
+    {
+      auto& indices = boost::get<Flat_indices>(m_target);
+      indices.resize(source.size());
+      size_t j(0);
+      for (auto it = source.rbegin(); it != source.rend(); ++it)
+        indices[j++] = *it;
+    }
+  };
+
+  /*! Reverse indices. */
+  void reverse_facet_indices(Facet_indices& indices,
+                             const Facet_indices& source);
   //@}
-
-  /*! Set the flag that indicates whether the coordinate-index array is "flat".
-   * \param flag indicates whether the coordinate-index array is "flat".
-   */
-  void set_coord_indices_flat(Boolean flag);
-
-  /*! Determine whether the coordinate-index array is "flat".
-   */
-  Boolean are_coord_indices_flat() const;
 
   /*! Assign the coord indices with the reverse of given indices.
    * \param indices the indices to reverse.
    */
-  void set_reverse_coord_indices(const std::vector<Int32>& indices);
+  void reverse_coord_indices(const std::vector<Int32>& indices);
 
-  /*! Assign the flat coord indices with the reverse of given indices.
+  /*! Assign the polygon coord indices with the reverse of given indices.
    * \param indices the indices to reverse.
    */
-  void set_reverse_flat_coord_indices(const Index_array& indices);
-
-  /*! Determine whether the normal-index array is "flat".
-   */
-  Boolean are_normal_indices_flat() const;
-
-  /*! Set the flag that indicates whether the color-index array is "flat".
-   * \param flag indicates whether the color-index array is "flat".
-   */
-  void set_color_indices_flat(Boolean flag);
-
-  /*! Determine whether the color-index array is "flat".
-   */
-  Boolean are_color_indices_flat() const;
-
-  /*! Set the flag that indicates whether the normal-index array is "flat".
-   * \param flag indicates whether the normal-index array is "flat".
-   */
-  void set_normal_indices_flat(Boolean flag);
-
-  /*! Set the flag that indicates whether the textuture coordinate-index array
-   * is "flat".
-   * \param flag indicates whether the texture coordinate-index array is "flat".
-   */
-  void set_tex_coord_indices_flat(Boolean flag);
-
-  /*! Determine whether the texture coordinate-index array is "flat".
-   */
-  Boolean are_tex_coord_indices_flat() const;
-
-  /*! Convert non-flat indices (VRML style) to flat indices.
-   * \param src the non-flat indices.
-   * \param dst the flat indices.
-   * \pre the primitive type is either triangle or quad.
-   */
-  void flatten_indices(const std::vector<Int32>& src, Index_array& dst);
-
-  /*! Convert flat indices to flat non-indices (VRML style).
-   * \param dst the non-flat indices.
-   * \param src the flat indices.
-   * \pre the primitive type is either triangle or quad.
-   */
-  void  deflatten_indices(const Index_array& src, std::vector<Int32>& dst);
-
-  /*! Obtain the ith flat coord index.
-   * \return the ith flat coord index.
-   */
-  Index_type get_flat_coord_index(Uint i) const;
-
-  /*! Obtain the ith flat normal index.
-   * \return the ith flat normal index.
-   */
-  Index_type get_flat_normal_index(Uint i) const;
-
-  /*! Obtain the ith flat color index.
-   * \return the ith flat color index.
-   */
-  Index_type get_flat_color_index(Uint i) const;
-
-  /*! Obtain the ith flat tex-coord index.
-   * \return the ith flat tex-coord index.
-   */
-  Index_type get_flat_tex_coord_index(Uint i) const;
+  void reverse_coord_indices(const Facet_indices& indices);
 
   /*! Set the coordinate indices from a range of elements that counts
    * the number of vertices per primitive.
@@ -452,21 +896,95 @@ public:
    */
   void collapse_identical_coordinates();
 
-  /*! Obtain a pointer to an element through the coord indices. */
-  template <typename Vector_T>
-  const GLfloat* get_by_flat_coord_index(Vector_T array, Index_type i) const;
+  /// \name Obtain empty index vectors
+  //@{
+  /*! Obtain the triangle coord indices. */
+  Triangle_indices& empty_triangle_coord_indices();
 
-  /*! Obtain apointer to an element through the normal indices. */
-  template <typename Vector_T>
-  const GLfloat* get_by_flat_normal_index(Vector_T array, Index_type i) const;
+  /*! Obtain the quad coord indices. */
+  Quad_indices& empty_quad_coord_indices();
 
-  /*! Obtain a pointer to an element through the color indices. */
-  template <typename Vector_T>
-  const GLfloat* get_by_flat_color_index(Vector_T array, Index_type i) const;
+  /*! Obtain the polygon coord indices. */
+  Polygon_indices& empty_polygon_coord_indices();
 
-  /*! Obtain a pointer to an element through the tex. coord indices. */
-  template <typename Vector_T>
-  const GLfloat* get_by_flat_tex_coord_index(Vector_T array, Index_type i) const;
+  /*! Obtain the triangle normal indices. */
+  Triangle_indices& empty_triangle_normal_indices();
+
+  /*! Obtain the quad normal indices. */
+  Quad_indices& empty_quad_normal_indices();
+
+  /*! Obtain the polygon normal indices. */
+  Polygon_indices& empty_polygon_normal_indices();
+
+  /*! Obtain the flat normal indices. */
+  Flat_indices& empty_flat_normal_indices();
+
+  /*! Obtain the triangle color indices. */
+  Triangle_indices& empty_triangle_color_indices();
+
+  /*! Obtain the quad color indices. */
+  Quad_indices& empty_quad_color_indices();
+
+  /*! Obtain the polygon color indices. */
+  Polygon_indices& empty_polygon_color_indices();
+
+  /*! Obtain the flat color indices. */
+  Flat_indices& empty_flat_color_indices();
+
+  /*! Obtain the triangle tex-coord indices. */
+  Triangle_indices& empty_triangle_tex_coord_indices();
+
+  /*! Obtain the quad tex-coord indices. */
+  Quad_indices& empty_quad_tex_coord_indices();
+
+  /*! Obtain the polygon tex-coord indices. */
+  Polygon_indices& empty_polygon_tex_coord_indices();
+  //@}
+
+  /// \name Obtain const index vectors
+  //@{
+  /*! Obtain the triangle coord indices. */
+  const Triangle_indices& triangle_coord_indices() const;
+
+  /*! Obtain the quad coord indices. */
+  const Quad_indices& quad_coord_indices() const;
+
+  /*! Obtain the polygon coord indices. */
+  const Polygon_indices& polygon_coord_indices() const;
+
+  /*! Obtain the triangle normal indices. */
+  const Triangle_indices& triangle_normal_indices() const;
+
+  /*! Obtain the quad normal indices. */
+  const Quad_indices& quad_normal_indices() const;
+
+  /*! Obtain the polygon normal indices. */
+  const Polygon_indices& polygon_normal_indices() const;
+
+  /*! Obtain the flat normal indices. */
+  const Flat_indices& flat_normal_indices() const;
+
+  /*! Obtain the triangle color indices. */
+  const Triangle_indices& triangle_color_indices() const;
+
+  /*! Obtain the quad color indices. */
+  const Quad_indices& quad_color_indices() const;
+
+  /*! Obtain the polygon color indices. */
+  const Polygon_indices& polygon_color_indices() const;
+
+  /*! Obtain the flat color indices. */
+  const Flat_indices& flat_color_indices() const;
+
+  /*! Obtain the triangle tex-coord indices. */
+  const Triangle_indices& triangle_tex_coord_indices() const;
+
+  /*! Obtain the quad tex-coord indices. */
+  const Quad_indices& quad_tex_coord_indices() const;
+
+  /*! Obtain the polygon tex-coord indices. */
+  const Polygon_indices& polygon_tex_coord_indices() const;
+  //@}
 
 protected:
   /*! Indicates the direction of the vertices in a face. The default is
@@ -489,50 +1007,30 @@ protected:
   Float m_polygon_offset_factor;
 
   /*! An array of indices into the vertex-coordinate array. */
-  Index_array m_flat_coord_indices;
+  Facet_indices m_facet_coord_indices;
 
   /*! An array of indices into the vertex-texture-coordinate array. */
-  Index_array m_flat_normal_indices;
+  Facet_indices m_facet_normal_indices;
 
   /*! An array of indices into the vertex-color array. */
-  Index_array m_flat_color_indices;
+  Facet_indices m_facet_color_indices;
 
   /*! An array of indices into the vertex-normal array. */
-  Index_array m_flat_tex_coord_indices;
+  Facet_indices m_facet_tex_coord_indices;
 
-  /*! Indicates whether the flat coordinate-index array should be cleaned. */
-  Boolean m_dirty_flat_coord_indices;
+  /*! Indicates whether the facet coordinate-index array should be cleaned. */
+  Boolean m_dirty_facet_coord_indices;
 
-  /*! Indicates whether the flat normal-index array should be cleaned. */
-  Boolean m_dirty_flat_normal_indices;
+  /*! Indicates whether the facet normal-index array should be cleaned. */
+  Boolean m_dirty_facet_normal_indices;
 
-  /*! Indicates whether the flat color-index array should be cleaned. */
-  Boolean m_dirty_flat_color_indices;
+  /*! Indicates whether the facet color-index array should be cleaned. */
+  Boolean m_dirty_facet_color_indices;
 
-  /*! Indicates whether the flat texture coordinate-index array should be
+  /*! Indicates whether the facet texture coordinate-index array should be
    * cleaned.
    */
-  Boolean m_dirty_flat_tex_coord_indices;
-
-  /*! Indicates whether the coordinate index array is "flat". In a "flat"
-   * representation, in case of triangles and quads, the no -1 end-of-face
-   * markers are not present. The number of indices is (m_num_primitives * 3)
-   * or (m_num_primitives * 4) respectively. It is illegal to have a mixture
-   * of flat and non-flat index arrays. Either all indices are flat or none is.
-   */
-  Boolean m_coord_indices_flat;
-
-  /*! Indicates whether the normal index array is "flat".
-   */
-  Boolean m_normal_indices_flat;
-
-  /*! Indicates whether the color index array is "flat".
-   */
-  Boolean m_color_indices_flat;
-
-  /*! Indicates whether the texture coordinate index array is "flat".
-   */
-  Boolean m_tex_coord_indices_flat;
+  Boolean m_dirty_facet_tex_coord_indices;
 
   /*! Indicates whether the coordinate-index array should be cleaned. */
   Boolean m_dirty_coord_indices;
@@ -552,7 +1050,7 @@ protected:
 
   /*! Colapse identical coordinates.
    */
-  void collapse_identical_coordinates(Index_array& indices);
+  void collapse_identical_coordinates(Facet_indices& indices);
 
   /*! Export a triangular facet.
    * \param[in] p1 the point of the first vertex.
@@ -573,6 +1071,21 @@ protected:
   void write_facet(const Vector3f& p1, const Vector3f& p2,
                    const Vector3f& p3, const Vector3f& p4,
                    Formatter* formatter);
+
+  /// \name Clean index vectors
+  //@{
+  /*! Clean a triangle index vector. */
+  void clean_triangle_indices(Triangle_indices& triangles,
+                              const std::vector<Int32>& indices);
+
+  /*! Clean a quad index vector. */
+  void clean_quad_indices(Quad_indices& quads,
+                          const std::vector<Int32>& indices);
+
+  /*! Clean a polygon index vector. */
+  void clean_polygon_indices(Polygon_indices& polygons,
+                             const std::vector<Int32>& indices);
+  //@}
 
 private:
   /*! The node prototype. */
@@ -615,100 +1128,21 @@ inline void Mesh_set::set_crease_angle(Float crease_angle)
 //! \brief obtains the creas_angle.
 inline Float Mesh_set::get_crease_angle() const { return m_crease_angle; }
 
-//! \brief determines whether the flat coordinate-index array is dirty.
-inline Boolean Mesh_set::is_dirty_flat_coord_indices() const
-{ return m_dirty_flat_coord_indices; }
+//! \brief determines whether the facet coordinate-index array is dirty.
+inline Boolean Mesh_set::is_dirty_facet_coord_indices() const
+{ return m_dirty_facet_coord_indices; }
 
-//! \brief determines whether the flat normal-index array is dirty.
-inline Boolean Mesh_set::is_dirty_flat_normal_indices() const
-{ return m_dirty_flat_normal_indices; }
+//! \brief determines whether the facet normal-index array is dirty.
+inline Boolean Mesh_set::is_dirty_facet_normal_indices() const
+{ return m_dirty_facet_normal_indices; }
 
-//! \brief determines whether the flat color-index array is dirty.
-inline Boolean Mesh_set::is_dirty_flat_color_indices() const
-{ return m_dirty_flat_color_indices; }
+//! \brief determines whether the facet color-index array is dirty.
+inline Boolean Mesh_set::is_dirty_facet_color_indices() const
+{ return m_dirty_facet_color_indices; }
 
-//! \brief determines whether the flat texture coordinate-index array is dirty.
-inline Boolean Mesh_set::is_dirty_flat_tex_coord_indices() const
-{ return m_dirty_flat_tex_coord_indices; }
-
-//! \brief determines whether the coordinate index array is "flat".
-inline Boolean Mesh_set::are_coord_indices_flat() const
-{ return m_coord_indices_flat; }
-
-//! \brief determines whether the normal index array is "flat".
-inline Boolean Mesh_set::are_normal_indices_flat() const
-{ return m_normal_indices_flat; }
-
-//! \brief determines whether the color index array is "flat".
-inline Boolean Mesh_set::are_color_indices_flat() const
-{ return m_color_indices_flat; }
-
-//! \brief determines whether the texture coordinate index array is "flat".
-inline Boolean Mesh_set::are_tex_coord_indices_flat() const
-{ return m_tex_coord_indices_flat; }
-
-/*! \brief sets the flag that indicates whether the coordinate index array is
- * "flat".
- */
-inline void Mesh_set::set_coord_indices_flat(Boolean flag)
-{ m_coord_indices_flat = flag; }
-
-/*! \brief sets the flag that indicates whether the normal index array is
- * "flat".
- */
-inline void Mesh_set::set_normal_indices_flat(Boolean flag)
-{ m_normal_indices_flat = flag; }
-
-//! \brief sets the flag that indicates whether the color index array is "flat".
-inline void Mesh_set::set_color_indices_flat(Boolean flag)
-{ m_color_indices_flat = flag; }
-
-/*! \brief sets the flag that indicates whether the texture coordinate index
- * array is "flat".
- */
-inline void Mesh_set::set_tex_coord_indices_flat(Boolean flag)
-{ m_tex_coord_indices_flat = flag; }
-
-//! \brief obtains a pointer to an element through the coord indices.
-template <typename Vector_T>
-inline const GLfloat*
-Mesh_set::get_by_flat_coord_index(Vector_T array, Index_type i) const
-{ return array->datum(m_flat_coord_indices[i]); }
-
-/*! \brief obtains a pointer to an element through the normal indices. */
-template <typename Vector_T>
-inline const GLfloat*
-Mesh_set::get_by_flat_normal_index(Vector_T array, Index_type i)
-  const
-{ return array->datum(m_flat_normal_indices[i]); }
-
-//! \brief obtains a pointer to an element through the color indices.
-template <typename Vector_T>
-inline const GLfloat*
-Mesh_set::get_by_flat_color_index(Vector_T array, Index_type i) const
-{ return array->datum(m_flat_color_indices[i]); }
-
-//! \brief obtains a pointer to an element through the tex. coord indices.
-template <typename Vector_T>
-inline const GLfloat*
-Mesh_set::get_by_flat_tex_coord_index(Vector_T array, Index_type i) const
-{ return array->datum(m_flat_tex_coord_indices[i]); }
-
-//! \brief obtains the ith flat coord index.
-inline Mesh_set::Index_type Mesh_set::get_flat_coord_index(Uint i) const
-{ return m_flat_coord_indices[i]; }
-
-//! \brief obtains the ith flat normal index.
-inline Mesh_set::Index_type Mesh_set::get_flat_normal_index(Uint i) const
-{ return m_flat_normal_indices[i]; }
-
-//! \brief obtains the ith flat color index.
-inline Mesh_set::Index_type Mesh_set::get_flat_color_index(Uint i) const
-{ return m_flat_color_indices[i]; }
-
-//! \brief obtains the ith flat tex-coord index.
-inline Mesh_set::Index_type Mesh_set::get_flat_tex_coord_index(Uint i) const
-{ return m_flat_tex_coord_indices[i]; }
+//! \brief determines whether the facet texture coordinate-index array is dirty.
+inline Boolean Mesh_set::is_dirty_facet_tex_coord_indices() const
+{ return m_dirty_facet_tex_coord_indices; }
 
 /*! \brief set the coordinate indices from a range of elements that counts
  * the number of vertices per primitive.
@@ -717,46 +1151,58 @@ template <typename InputIterator>
 void Mesh_set::set_coord_indices_from_range(InputIterator begin,
                                             InputIterator end)
 {
-  Boolean tris(true);
-  Boolean quads(true);
+  Boolean is_tris(true);
+  Boolean is_quads(true);
   Uint size = 0;
   Uint num = 0;
   for (auto it = begin; it != end; ++it) {
     ++num;
     size += *it;
-    if (*it == 3) quads = false;
-    else if (*it == 4) tris = false;
+    if (*it == 3) is_quads = false;
+    else if (*it == 4) is_tris = false;
     else {
-      quads = false;
-      tris = false;
+      is_quads = false;
+      is_tris = false;
     }
   }
-  SGAL_assertion(tris && quads);
+  SGAL_assertion(is_tris && is_quads);
 
-  if (tris || quads) {
-    if (tris)
-      set_primitive_type(Geo_set::PT_TRIANGLES);
-    else // quads
-      set_primitive_type(Geo_set::PT_QUADS);
-    m_flat_coord_indices.resize(size);
-    for (Uint i = 0; i < size; ++i) m_flat_coord_indices[i] = i;
-    set_coord_indices_flat(true);
-    m_dirty_coord_indices = true;
+  if (is_tris) {
+    set_primitive_type(Geo_set::PT_TRIANGLES);
+    auto& tris = empty_triangle_coord_indices();
+    tris.resize(num);
+    Index_type j(0);
+    for (size_t i = 0; i < num; ++i) {
+      tris[i][0] = j++;
+      tris[i][1] = j++;
+      tris[i][2] = j++;
+    }
+  }
+  else if (is_quads) {
+    set_primitive_type(Geo_set::PT_TRIANGLES);
+    auto& quads = empty_quad_coord_indices();
+    quads.resize(num);
+    Index_type j(0);
+    for (size_t i = 0; i < num; ++i) {
+      quads[i][0] = j++;
+      quads[i][1] = j++;
+      quads[i][2] = j++;
+      quads[i][3] = j++;
+    }
   }
   else {
     set_primitive_type(Geo_set::PT_POLYGONS);
-    size += num;
-    m_coord_indices.resize(size);
-    Uint i = 0;
-    Uint index = 0;
-    for (auto it = begin; it != end; ++it) {
-      for (Uint j = 0; j < *it; ++j) m_coord_indices[i++] = index++;
-      m_coord_indices[i++] = -1;
+    auto& polys = empty_polygon_coord_indices();
+    polys.resize(num);
+    Index_type k(0);
+    auto it = begin;
+    for (size_t i = 0; i < num; ++i, ++it) {
+      for (size_t j = 0; j < *it; ++j) polys[i][j] = k++;
     }
-    set_coord_indices_flat(false);
   }
   set_num_primitives(num);
-  m_dirty_flat_coord_indices = false;
+  m_dirty_facet_coord_indices = false;
+  m_dirty_coord_indices = true;
 }
 
 //! \brief determines whether the coordinate-index array is dirty.
@@ -774,6 +1220,132 @@ inline Boolean Mesh_set::is_dirty_color_indices() const
 //! \brief determines whether the texture coordinate-index array is dirty.
 inline Boolean Mesh_set::is_dirty_tex_coord_indices() const
 { return m_dirty_tex_coord_indices; }
+
+//! \brief obtains the triangle coord indices.
+inline const Mesh_set::Triangle_indices& Mesh_set::triangle_coord_indices()
+  const
+{ return boost::get<Triangle_indices>(m_facet_coord_indices); }
+
+//! \brief obtains the quad coord indices.
+inline const Mesh_set::Quad_indices& Mesh_set::quad_coord_indices() const
+{ return boost::get<Quad_indices>(m_facet_coord_indices); }
+
+//! \brief obtains the polygon coord indices.
+inline const Mesh_set::Polygon_indices& Mesh_set::polygon_coord_indices() const
+{ return boost::get<Polygon_indices>(m_facet_coord_indices); }
+
+//! \brief obtains the triangle normal indices.
+inline const Mesh_set::Triangle_indices& Mesh_set::triangle_normal_indices()
+  const
+{ return boost::get<Triangle_indices>(m_facet_normal_indices); }
+
+//! \brief obtains the quad normal indices.
+inline const Mesh_set::Quad_indices& Mesh_set::quad_normal_indices() const
+{ return boost::get<Quad_indices>(m_facet_normal_indices); }
+
+//! \brief obtains the polygon normal indices.
+inline const Mesh_set::Polygon_indices& Mesh_set::polygon_normal_indices() const
+{ return boost::get<Polygon_indices>(m_facet_normal_indices); }
+
+//! \brief Obtain the flat normal indices.
+inline const Mesh_set::Flat_indices& Mesh_set::flat_normal_indices() const
+{ return boost::get<Flat_indices>(m_facet_normal_indices); }
+
+//! \brief obtains the triangle color indices.
+inline const Mesh_set::Triangle_indices& Mesh_set::triangle_color_indices()
+  const
+{ return boost::get<Triangle_indices>(m_facet_color_indices); }
+
+//! \brief obtains the quad normal indices.
+inline const Mesh_set::Quad_indices& Mesh_set::quad_color_indices() const
+{ return boost::get<Quad_indices>(m_facet_color_indices); }
+
+//! \brief obtains the polygon normal indices.
+inline const Mesh_set::Polygon_indices& Mesh_set::polygon_color_indices() const
+{ return boost::get<Polygon_indices>(m_facet_color_indices); }
+
+//! \brief obtains the flat color indices.
+inline const Mesh_set::Flat_indices& Mesh_set::flat_color_indices() const
+{ return boost::get<Flat_indices>(m_facet_color_indices); }
+
+//! \brief obtains the triangle tex-coord indices.
+inline const Mesh_set::Triangle_indices& Mesh_set::triangle_tex_coord_indices()
+  const
+{ return boost::get<Triangle_indices>(m_facet_tex_coord_indices); }
+
+//! \brief obtains the quad tex-coord indices.
+inline const Mesh_set::Quad_indices& Mesh_set::quad_tex_coord_indices() const
+{ return boost::get<Quad_indices>(m_facet_tex_coord_indices); }
+
+//! \brief obtains the polygon tex-coord indices.
+inline const Mesh_set::Polygon_indices& Mesh_set::polygon_tex_coord_indices()
+  const
+{ return boost::get<Polygon_indices>(m_facet_tex_coord_indices); }
+
+//! \brief constructs default.
+inline Mesh_set::Facet_indices_const_iterator::
+Facet_indices_const_iterator() : m_it() {}
+
+//! \brief constructs.
+inline Mesh_set::Facet_indices_const_iterator::
+Facet_indices_const_iterator(Triangle_indices::const_iterator end) :
+  m_it(end), m_tri_end(end) {}
+
+//! \brief constructs.
+inline Mesh_set::Facet_indices_const_iterator::
+Facet_indices_const_iterator(Quad_indices::const_iterator end) :
+  m_it(end), m_quad_end(end) {}
+
+//! \brief constructs.
+inline Mesh_set::Facet_indices_const_iterator::
+Facet_indices_const_iterator(Polygon_indices::const_iterator end) :
+  m_it(end), m_poly_end(end) {}
+
+//! \brief constructs.
+inline Mesh_set::Facet_indices_const_iterator::
+Facet_indices_const_iterator(Triangle_indices::const_iterator it,
+                             Triangle_indices::const_iterator end) :
+  m_it(it), m_tri_it(it->begin()), m_tri_end(end) {}
+
+//! \brief constructs.
+inline Mesh_set::Facet_indices_const_iterator::
+Facet_indices_const_iterator(Quad_indices::const_iterator it,
+                             Quad_indices::const_iterator end) :
+  m_it(it), m_quad_it(it->begin()), m_quad_end(end) {}
+
+//! \brief constructs.
+inline Mesh_set::Facet_indices_const_iterator::
+Facet_indices_const_iterator(Polygon_indices::const_iterator it,
+                             Polygon_indices::const_iterator end) :
+  m_it(it), m_poly_it(it->begin()), m_poly_end(end) {}
+
+//! \brief construct.
+inline Mesh_set::Facet_indices_const_iterator::
+Facet_indices_const_iterator(Flat_indices::const_iterator it) : m_it(it) {}
+
+inline const Mesh_set::Index_type&
+Mesh_set::Facet_indices_const_iterator::operator*()
+{
+  Reference_visitor visitor(*this);
+  boost::apply_visitor(visitor, m_it);
+  return *(visitor.m_reference);
+}
+
+inline Mesh_set::Facet_indices_const_iterator
+Mesh_set::Facet_indices_const_iterator::operator++()
+{
+  Incerement_visitor visitor(*this);
+  boost::apply_visitor(visitor, m_it);
+  return visitor.m_it;
+}
+
+inline Boolean Mesh_set::Facet_indices_const_iterator::
+operator==(Facet_indices_const_iterator other)
+{
+  Compare_visitor visitor(*this, other);
+  boost::apply_visitor(visitor, m_it);
+  return visitor.m_result;
+}
 
 SGAL_END_NAMESPACE
 

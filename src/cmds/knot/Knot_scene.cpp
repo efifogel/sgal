@@ -470,7 +470,7 @@ void Knot_scene::init_animation()
 void Knot_scene::update(const State state)
 {
   m_volume->clear_coord_array();
-  m_volume->clear_flat_coord_indices();
+  m_volume->clear_facet_coord_indices();
   Uint_array& volume_composition = m_volume->get_composition();
   Uint* volume_vec = &(*(volume_composition.begin()));
   memset(volume_vec, 0, volume_composition.size() * sizeof(Uint));

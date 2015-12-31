@@ -24,6 +24,7 @@
 #include <string>
 #include <iostream>
 #include <boost/shared_ptr.hpp>
+#include <boost/variant.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Formatter.hpp"
@@ -132,6 +133,39 @@ private:
 
   /*! The sequence of shapes and their world transformations. */
   std::vector<World_shape> m_shapes;
+
+  /*! Export facet indices visitor */
+  class Export_facet_visitor : public boost::static_visitor<> {
+  public:
+    typedef uint32_t                                    Index_type;
+    typedef std::vector<std::array<Index_type, 3> >     Triangle_indices;
+    typedef std::vector<std::array<Index_type, 4> >     Quad_indices;
+    typedef std::vector<std::vector<Index_type> >       Polygon_indices;
+    typedef std::vector<Index_type>                     Flat_indices;
+
+  typedef boost::shared_ptr<Mesh_set>               Shared_mesh_set;
+
+    Shared_mesh_set m_mesh;
+    const std::vector<Vector3f>& m_world_coords;
+    Stl_binary_formatter& m_formater;
+
+    Export_facet_visitor(Shared_mesh_set mesh,
+                         const std::vector<Vector3f>& world_coords,
+                         Stl_binary_formatter& formater) :
+      m_mesh(mesh),
+      m_world_coords(world_coords),
+      m_formater(formater)
+    {}
+
+    void operator()(const Triangle_indices& indices);
+
+    void operator()(const Quad_indices& indices);
+
+    void operator()(const Polygon_indices& indices);
+
+    void operator()(const Flat_indices& /* indices */)
+    { SGAL_error(); }
+  };
 };
 
 //! \brief Destructor

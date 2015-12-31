@@ -180,7 +180,7 @@ void Exact_polyhedron_geo::convex_hull()
 
   m_dirty_polyhedron = false;
   m_dirty_coord_indices = true;
-  m_dirty_flat_coord_indices = true;
+  m_dirty_facet_coord_indices = true;
 }
 
 //! \brief cleans the coordinate array and the coordinate indices.
@@ -259,7 +259,7 @@ void Exact_polyhedron_geo::clean_coord_indices()
 {
   if (m_polyhedron.empty()) {
     m_dirty_coord_indices = false;
-    m_dirty_flat_coord_indices = false;
+    m_dirty_facet_coord_indices = false;
     return;
   }
 
@@ -280,43 +280,59 @@ void Exact_polyhedron_geo::clean_coord_indices()
   SGAL_assertion(triangles && quads);
 
   Uint index = 0;
-  if (triangles || quads) {
-    m_flat_coord_indices.resize(size);
-    set_primitive_type(quads ? PT_QUADS : PT_TRIANGLES);
-    auto iit = m_flat_coord_indices.begin();
+  if (triangles) {
+    set_primitive_type(PT_TRIANGLES);
+    auto& coord_indices = empty_triangle_coord_indices();
+    coord_indices.resize(get_num_primitives());
+    size_t i(0);
     for (auto fit = m_polyhedron.facets_begin();
-         fit != m_polyhedron.facets_end(); ++fit)
+         fit != m_polyhedron.facets_end(); ++fit, ++i)
     {
       Exact_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
+      size_t j(0);
       do {
-        *iit++ = hh->vertex()->m_index;
+        coord_indices[i][j++] = hh->vertex()->m_index;
         hh->m_index = index++;
       } while (++hh != fit->facet_begin());
     }
-    m_dirty_coord_indices = true;
-    m_dirty_flat_coord_indices = false;
-    m_normal_indices_flat = true;
+  }
+  else if (quads) {
+    set_primitive_type(PT_QUADS);
+    auto& coord_indices = empty_quad_coord_indices();
+    coord_indices.resize(get_num_primitives());
+    size_t i(0);
+    for (auto fit = m_polyhedron.facets_begin();
+         fit != m_polyhedron.facets_end(); ++fit, ++i)
+    {
+      Exact_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
+      size_t j(0);
+      do {
+        coord_indices[i][j++] = hh->vertex()->m_index;
+        hh->m_index = index++;
+      } while (++hh != fit->facet_begin());
+    }
   }
   else {
-    size += m_polyhedron.size_of_facets();
-    m_coord_indices.resize(size);
     set_primitive_type(PT_POLYGONS);
-    auto iit = m_coord_indices.begin();
+    auto& coord_indices = empty_polygon_coord_indices();
+    coord_indices.resize(get_num_primitives());
+    size_t i(0);
     for (auto fit = m_polyhedron.facets_begin();
-         fit != m_polyhedron.facets_end(); ++fit)
+         fit != m_polyhedron.facets_end(); ++fit, ++i)
     {
       Exact_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
+      size_t circ_size = CGAL::circulator_size(hh);
+      coord_indices[i].resize(circ_size);
+      size_t j(0);
       do {
-        *iit++ = hh->vertex()->m_index;
+        coord_indices[i][j++] = hh->vertex()->m_index;
         hh->m_index = index++;
       } while (++hh != fit->facet_begin());
-      *iit++ = (Uint) -1;
-      ++index;
     }
-    m_dirty_coord_indices = false;
-    m_dirty_flat_coord_indices = true;
-    m_normal_indices_flat = false;
   }
+
+  m_dirty_coord_indices = true;
+  m_dirty_facet_coord_indices = false;
 }
 
 //! \brief cleans the normal array and the normal indices.
@@ -326,12 +342,13 @@ void Exact_polyhedron_geo::clean_normals()
     if (m_dirty_polyhedron) clean_polyhedron();
     if (m_dirty_polyhedron_facets) clean_polyhedron_facets();
     if (m_dirty_polyhedron_edges) clean_polyhedron_edges();
+
     if (m_smooth) calculate_single_normal_per_vertex();
-    else if (m_creased) calculate_normal_per_polygon();
+    else if (m_creased) calculate_normal_per_facet();
     else calculate_multiple_normals_per_vertex();
   }
   else if (m_crease_angle >= SGAL_PI) calculate_single_normal_per_vertex();
-  else if (m_crease_angle == 0) calculate_normal_per_polygon();
+  else if (m_crease_angle == 0) calculate_normal_per_facet();
   else SGAL_error();
   m_dirty_normal_array = false;
   m_normal_array_cleaned = true;
@@ -349,7 +366,7 @@ void Exact_polyhedron_geo::clean_polyhedron()
   clock_t start_time = clock();
   if (m_convex_hull) convex_hull();
   else {
-    if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
     m_polyhedron.delegate(m_surface);
 #if 0
     if (!m_polyhedron.normalized_border_is_valid())
@@ -440,7 +457,7 @@ void Exact_polyhedron_geo::draw(Draw_action* action)
   SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
   if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
   if (is_dirty_coord_array() ||
-      (is_dirty_coord_indices() && is_dirty_flat_coord_indices()))
+      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
     clean_coords();
   Boundary_set::draw(action);
 }
@@ -451,7 +468,7 @@ void Exact_polyhedron_geo::isect(Isect_action* action)
   SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
   if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
   if (is_dirty_coord_array() ||
-      (is_dirty_coord_indices() && is_dirty_flat_coord_indices()))
+      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
     clean_coords();
   Boundary_set::isect(action);
 }
@@ -465,7 +482,7 @@ void Exact_polyhedron_geo::clean_bounding_sphere()
   SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
   if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
   if (is_dirty_coord_array()  ||
-      (is_dirty_coord_indices() && is_dirty_flat_coord_indices()))
+      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
     clean_coords();
 
   if (m_coord_array) {
@@ -513,7 +530,7 @@ void Exact_polyhedron_geo::set_polyhedron(Exact_polyhedron& polyhedron)
   m_dirty_polyhedron = false;
   clear_coord_array();
   clear_coord_indices();
-  clear_flat_coord_indices();
+  clear_facet_coord_indices();
 }
 
 /*! \brief Sets the flag that indicates whether to compute the convex hull
@@ -549,24 +566,23 @@ const Vector3f& Exact_polyhedron_geo::get_coord_3d(Uint i) const
 //! \brief calculates multiple normals per vertex for all vertices.
 void Exact_polyhedron_geo::calculate_multiple_normals_per_vertex()
 {
-  m_flat_normal_indices.resize(m_flat_coord_indices.size());
+  init_facet_indices(m_facet_normal_indices, m_facet_coord_indices, false);
   if (!m_normal_array) {
     m_normal_array.reset(new Normal_array());
     SGAL_assertion(m_normal_array);
   }
   else m_normal_array->clear();
 
-  SGAL::calculate_multiple_normals_per_vertex(m_polyhedron,
-                                              m_normal_array,
-                                              m_flat_normal_indices);
+  SGAL::calculate_multiple_normals_per_vertex(m_polyhedron, m_normal_array,
+                                              m_facet_normal_indices);
   m_dirty_normal_indices = true;
-  m_dirty_flat_normal_indices = false;
+  m_dirty_facet_normal_indices = false;
 }
 
 //! \brief determines whether the polyhedron is closed.
 Boolean Exact_polyhedron_geo::is_closed()
 {
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();
   return m_polyhedron.is_closed();
 }
@@ -633,7 +649,7 @@ void Exact_polyhedron_geo::print_stat()
   SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
   if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
   if (is_dirty_coord_array() ||
-      (is_dirty_coord_indices() && is_dirty_flat_coord_indices()))
+      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
     clean_coords();
 
   std::cout << "Container name: " << get_name() << std::endl;
@@ -657,7 +673,7 @@ void Exact_polyhedron_geo::write(Formatter* formatter)
   SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
   if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
   if (is_dirty_coord_array() ||
-      (is_dirty_coord_indices() && is_dirty_flat_coord_indices()))
+      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
     clean_coords();
   Boundary_set::write(formatter);
 }

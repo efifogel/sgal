@@ -255,30 +255,17 @@ void Cubical_gaussian_map_geo::clean_cgm()
     cgm_initializer.set_marked_edge_index(m_marked_edge_index);
     cgm_initializer.set_marked_facet_index(m_marked_facet_index);
 
-    Uint num_vertices_per_facet = 0;
-    if (are_coord_indices_flat())
-      num_vertices_per_facet =
-        (m_primitive_type == PT_TRIANGLES) ? 3 :
-        (m_primitive_type == PT_QUADS) ? 4 : 0;
-
     boost::shared_ptr<Exact_coord_array_3d> exact_coord_array =
       boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
+    const auto& indices = get_facet_coord_indices();
     if (exact_coord_array) {
       if (!exact_coord_array->empty()) {
-        if (are_coord_indices_flat()) {
-          const std::vector<Uint>& indices = get_flat_coord_indices();
-          cgm_initializer(exact_coord_array->begin(), exact_coord_array->end(),
-                          exact_coord_array->size(),
-                          &(*(indices.begin())), &(*(indices.end())),
-                          m_num_primitives, num_vertices_per_facet, &visitor);
-        }
-        else {
-          const std::vector<Int32>& indices = get_coord_indices();
-          cgm_initializer(exact_coord_array->begin(), exact_coord_array->end(),
-                          exact_coord_array->size(),
-                          &(*(indices.begin())), &(*(indices.end())),
-                          m_num_primitives, num_vertices_per_facet, &visitor);
-        }
+#if 0
+        cgm_initializer(exact_coord_array->begin(), exact_coord_array->end(),
+                        exact_coord_array->size(),
+                        begin_facet_indices(indices), end_facet_indices(indices),
+                        m_num_primitives, &visitor);
+#endif
       }
     }
     else {
@@ -286,20 +273,13 @@ void Cubical_gaussian_map_geo::clean_cgm()
         boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
       if (coord_array) {
         if (!coord_array->empty()) {
-          if (are_coord_indices_flat()) {
-            auto& indices = get_flat_coord_indices();
-            cgm_initializer(coord_array->begin(), coord_array->end(),
-                            coord_array->size(),
-                            &(*(indices.begin())), &(*(indices.end())),
-                            m_num_primitives, num_vertices_per_facet, &visitor);
-          }
-          else {
-            auto& indices = get_coord_indices();
-            cgm_initializer(coord_array->begin(), coord_array->end(),
-                            coord_array->size(),
-                            &(*(indices.begin())), &(*(indices.end())),
-                            m_num_primitives, num_vertices_per_facet, &visitor);
-          }
+#if 0
+          cgm_initializer(coord_array->begin(), coord_array->end(),
+                          coord_array->size(),
+                          begin_facet_indices(indices),
+                          end_facet_indices(indices),
+                          m_num_primitives, &visitor);
+#endif
         }
       }
       else SGAL_error();
@@ -1623,7 +1603,7 @@ void Cubical_gaussian_map_geo::draw_projection(SGAL::Draw_action* action,
 void Cubical_gaussian_map_geo::print_stat()
 {
   std::cout << "Information for " << get_name() << ":\n";
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
   if (is_dirty_cgm()) clean_cgm();
 
   if (m_minkowski_sum)
@@ -1971,10 +1951,10 @@ void Cubical_gaussian_map_geo::coord_changed(const Field_info* field_info)
 //! \brief draws the geometry.
 void Cubical_gaussian_map_geo::draw(Draw_action* action)
 {
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
-  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
-  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  if (is_dirty_facet_normal_indices()) clean_facet_normal_indices();
+  if (is_dirty_facet_color_indices()) clean_facet_color_indices();
+  if (is_dirty_facet_tex_coord_indices()) clean_facet_tex_coord_indices();
   if (is_dirty_cgm()) clean_cgm();
   if (is_cgm_empty()) return;
 

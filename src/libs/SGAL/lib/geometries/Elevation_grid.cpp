@@ -360,18 +360,17 @@ void Elevation_grid::clean_coords()
 }
 
 //! \brief generates the coordinate indices.
-void Elevation_grid::clean_flat_coord_indices()
+void Elevation_grid::clean_facet_coord_indices()
 {
   m_dirty_coord_indices = true;
-  m_dirty_flat_coord_indices = false;
-  m_coord_indices_flat = true;
+  m_dirty_facet_coord_indices = false;
 
   if ((m_x_dimension == 0) || (m_z_dimension == 0)) return;
 
   m_num_primitives = (m_x_dimension - 1) * (m_z_dimension - 1) * 2;
   if (is_closed()) m_num_primitives += (m_z_dimension + m_x_dimension) * 2 + 2;
-  Uint size = m_num_primitives * 3;
-  m_flat_coord_indices.resize(size);
+  auto& indices = empty_triangle_coord_indices();
+  indices.resize(m_num_primitives);
 
   // Generate:
   size_t k(0);
@@ -381,12 +380,14 @@ void Elevation_grid::clean_flat_coord_indices()
       Uint lr = ll + 1;
       Uint ur = lr + m_z_dimension;
       Uint ul = ll + m_z_dimension;
-      m_flat_coord_indices[k++] = ul;
-      m_flat_coord_indices[k++] = ur;
-      m_flat_coord_indices[k++] = lr;
-      m_flat_coord_indices[k++] = ul;
-      m_flat_coord_indices[k++] = lr;
-      m_flat_coord_indices[k++] = ll;
+      indices[k][0] = ul;
+      indices[k][1] = ur;
+      indices[k][2] = lr;
+      ++k;
+      indices[k][0] = ul;
+      indices[k][1] = lr;
+      indices[k][2] = ll;
+      ++k;
     }
   }
   if (is_closed()) {
@@ -394,57 +395,67 @@ void Elevation_grid::clean_flat_coord_indices()
     size_t anckor = m_x_dimension * m_z_dimension;
     size_t base = m_x_dimension-1;
     for (size_t i = 0; i < m_x_dimension-1; ++i) {
-      m_flat_coord_indices[k++] = anckor;
-      m_flat_coord_indices[k++] = i;
-      m_flat_coord_indices[k++] = i+1;
+      indices[k][0] = anckor;
+      indices[k][1] = i;
+      indices[k][2] = i+1;
+      ++k;
     }
-    m_flat_coord_indices[k++] = anckor;
-    m_flat_coord_indices[k++] = base;
-    m_flat_coord_indices[k++] = anckor+1;
+    indices[k][0] = anckor;
+    indices[k][1] = base;
+    indices[k][2] = anckor+1;
+    ++k;
 
     // right
     ++anckor;
     base = m_x_dimension * m_z_dimension - 1;
     for (size_t j = 0; j < m_z_dimension-1; ++j) {
-      m_flat_coord_indices[k++] = anckor;
-      m_flat_coord_indices[k++] = m_x_dimension*(j+1)-1;
-      m_flat_coord_indices[k++] = m_x_dimension*(j+2)-1;
+      indices[k][0] = anckor;
+      indices[k][1] = m_x_dimension*(j+1)-1;
+      indices[k][2] = m_x_dimension*(j+2)-1;
+      ++k;
     }
-    m_flat_coord_indices[k++] = anckor;
-    m_flat_coord_indices[k++] = m_x_dimension * m_z_dimension - 1;
-    m_flat_coord_indices[k++] = anckor+1;
+    indices[k][0] = anckor;
+    indices[k][1] = m_x_dimension * m_z_dimension - 1;
+    indices[k][2] = anckor+1;
+    ++k;
 
     // // back
     ++anckor;
     base = m_x_dimension * (m_z_dimension - 1);
     for (size_t i = 0; i < m_x_dimension-1; ++i) {
-      m_flat_coord_indices[k++] = anckor;
-      m_flat_coord_indices[k++] = base + i + 1;
-      m_flat_coord_indices[k++] = base + i;
+      indices[k][0] = anckor;
+      indices[k][1] = base + i + 1;
+      indices[k][2] = base + i;
+      ++k;
     }
-    m_flat_coord_indices[k++] = anckor;
-    m_flat_coord_indices[k++] = base;
-    m_flat_coord_indices[k++] = anckor+1;
+    indices[k][0] = anckor;
+    indices[k][1] = base;
+    indices[k][2] = anckor+1;
+    ++k;
 
     // left
     ++anckor;
     for (size_t j = 0; j < m_z_dimension-1; ++j) {
-      m_flat_coord_indices[k++] = anckor;
-      m_flat_coord_indices[k++] = m_x_dimension*(j+1);
-      m_flat_coord_indices[k++] = m_x_dimension*j;
+      indices[k][0] = anckor;
+      indices[k][1] = m_x_dimension*(j+1);
+      indices[k][2] = m_x_dimension*j;
+      ++k;
     }
-    m_flat_coord_indices[k++] = anckor;
-    m_flat_coord_indices[k++] = 0;
-    m_flat_coord_indices[k++] = anckor-3;
+    indices[k][0] = anckor;
+    indices[k][1] = 0;
+    indices[k][2] = anckor-3;
+    ++k;
 
     // bottom
     anckor = m_x_dimension * m_z_dimension;
-    m_flat_coord_indices[k++] = anckor;
-    m_flat_coord_indices[k++] = anckor+1;
-    m_flat_coord_indices[k++] = anckor+2;
-    m_flat_coord_indices[k++] = anckor;
-    m_flat_coord_indices[k++] = anckor+2;
-    m_flat_coord_indices[k++] = anckor+3;
+    indices[k][0] = anckor;
+    indices[k][1] = anckor+1;
+    indices[k][2] = anckor+2;
+    ++k;
+    indices[k][0] = anckor;
+    indices[k][1] = anckor+2;
+    indices[k][2] = anckor+3;
+    ++k;
   }
 
   set_primitive_type(PT_TRIANGLES);
@@ -484,7 +495,7 @@ void Elevation_grid::height_map_changed(const Field_info* field_info)
 void Elevation_grid::structure_changed(const Field_info* field_info)
 {
   clear_coord_array();
-  clear_flat_coord_indices();
+  clear_facet_coord_indices();
   bounding_sphere_changed(field_info);
 }
 

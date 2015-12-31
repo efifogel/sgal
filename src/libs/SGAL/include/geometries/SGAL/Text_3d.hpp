@@ -119,7 +119,7 @@ public:
 
   /*! Clean the coordinate indices.
    */
-  virtual void clean_flat_coord_indices();
+  virtual void clean_facet_coord_indices();
 
   /*! Calculate the default 2D texture-mapping oordinates.
    */
@@ -127,7 +127,7 @@ public:
 
   /*! Clean the texture coordinate indices.
    */
-  void clean_flat_tex_coord_indices();
+  void clean_facet_tex_coord_indices();
 
   /*! Process change of structure.
    */
@@ -227,7 +227,8 @@ private:
 
   /*! Create a quadrilateral.
    */
-  size_t create_quad(Uint a, Uint b, Uint c, Uint d, size_t k);
+  size_t create_quad(Triangle_indices& indices, Uint a, Uint b, Uint c, Uint d,
+                     size_t k);
 
   /*! Clean the fixed-length encodings of the strings. */
   void clean_ucs4_strings();

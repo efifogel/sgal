@@ -21,6 +21,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <list>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/interprocess/streams/bufferstream.hpp>
@@ -197,9 +198,7 @@ Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
 
 //! \bried read a traingle (1 normal and 3 vertices)
 Loader::Return_code Loader::read_triangle(std::istream& stl_stream,
-                                          Vector3f& v0, Vector3f& v1,
-                                          Vector3f& v2,
-                                          Ushort& spacer)
+                                          Triangle& triangle)
 {
   Float x, y, z;
 
@@ -212,21 +211,21 @@ Loader::Return_code Loader::read_triangle(std::istream& stl_stream,
   stl_stream.read((char*)&x, sizeof(Float));
   stl_stream.read((char*)&y, sizeof(Float));
   stl_stream.read((char*)&z, sizeof(Float));
-  v0.set(x, y, z);
+  triangle.v0.set(x, y, z);
 
   // Read vertex 2:
   stl_stream.read((char*)&x, sizeof(Float));
   stl_stream.read((char*)&y, sizeof(Float));
   stl_stream.read((char*)&z, sizeof(Float));
-  v1.set(x, y, z);
+  triangle.v1.set(x, y, z);
 
   // Read vertex 3:
   stl_stream.read((char*)&x, sizeof(Float));
   stl_stream.read((char*)&y, sizeof(Float));
   stl_stream.read((char*)&z, sizeof(Float));
-  v2.set(x, y, z);
+  triangle.v2.set(x, y, z);
 
-  stl_stream.read((char*)&spacer, sizeof(unsigned short));
+  stl_stream.read((char*)&(triangle.spacer), sizeof(unsigned short));
   //std::cout << std::hex << spacer << std::endl;
 
   if (!stl_stream) {
@@ -236,22 +235,157 @@ Loader::Return_code Loader::read_triangle(std::istream& stl_stream,
   return SUCCESS;
 }
 
+//! \brief computes a new Indexed Face Set container.
+Loader::Shared_indexed_face_set
+Loader::compute_ifs(size_t count,
+                    std::list<Triangle>::const_iterator begin,
+                    std::list<Triangle>::const_iterator end)
+{
+  Shared_indexed_face_set ifs(new Indexed_face_set);
+  SGAL_assertion(ifs);
+  ifs->set_primitive_type(Geo_set::PT_TRIANGLES);
+  ifs->set_num_primitives(count);
+  Uint num_vertices = 3 * count;
+  Coord_array_3d* coords = new Coord_array_3d(num_vertices);
+  Shared_coord_array_3d shared_coords(coords);
+  ifs->set_coord_array(shared_coords);
+  auto& indices = ifs->empty_triangle_coord_indices();
+  indices.resize(count);
+
+  size_t i(0);
+  Uint coord_index(0);
+  for (auto it = begin; it != end; ++it) {
+    auto& triangle = *it;
+    (*coords)[coord_index].set(triangle.v0);
+    indices[i][0] = coord_index++;
+    (*coords)[coord_index].set(triangle.v1);
+    indices[i][1] = coord_index++;
+    (*coords)[coord_index].set(triangle.v2);
+    indices[i][2] = coord_index++;
+    ++i;
+  }
+  // ifs->collapse_identical_coordinates();
+
+  return ifs;
+}
+
+//! \brief adds a shape node to the scene.
+Loader::Shared_shape
+Loader::compute_shape(Scene_graph* scene_graph, Shared_transform transform,
+                      const Vector3f& color)
+{
+  Shared_shape shape(new Shape);
+  SGAL_assertion(shape);
+  scene_graph->add_container(shape);
+  shape->add_to_scene(scene_graph);
+  transform->add_child(shape);
+  Shared_appearance appearance(new Appearance);
+  SGAL_assertion(appearance);
+  shape->set_appearance(appearance);
+  Shared_material material(new Material);
+  SGAL_assertion(material);
+  appearance->set_material(material);
+  material->set_emissive_color(color);
+  material->set_ambient_intensity(0.0f);
+  return shape;
+}
+
+/*! \brief adds a shape for every sub sequence of triangles with a distinguish
+ * color.
+ */
+void Loader::add_shapes(Scene_graph* scene_graph, Shared_transform transform,
+                        std::list<Triangle>& triangles, const Vector3f& color)
+{
+  auto it = triangles.begin();
+  auto first = it;
+  Triangle& triangle = *it++;
+  size_t count(1);
+
+  Vector3f last_color(color);
+  if (triangle.is_colored()) triangle.set_color(last_color);
+
+  while (it != triangles.end()) {
+    triangle = *it;
+
+    Vector3f tmp_color(color);
+    if (triangle.is_colored()) triangle.set_color(tmp_color);
+
+    if (tmp_color != last_color) {
+      auto shape = compute_shape(scene_graph, transform, last_color);
+      auto ifs = compute_ifs(count, first, it);
+      shape->set_geometry(ifs);
+
+      first = it;
+      count = 0;
+      last_color.set(tmp_color);
+    }
+    ++it;
+    ++count;
+  }
+  auto shape = compute_shape(scene_graph, transform, last_color);
+  auto ifs = compute_ifs(count, first, triangles.end());
+  shape->set_geometry(ifs);
+}
+
+//! \brief adds a colored shape.
+void Loader::add_colored_shape(Scene_graph* scene_graph,
+                               Shared_transform transform,
+                               std::list<Triangle>& triangles,
+                               const Vector3f& color)
+{
+  Uint count = triangles.size();
+
+  Shared_indexed_face_set ifs(new Indexed_face_set);
+  SGAL_assertion(ifs);
+  ifs->set_primitive_type(Geo_set::PT_TRIANGLES);
+  ifs->set_num_primitives(count);
+
+  Uint num_vertices = 3 * count;
+  Coord_array_3d* coords = new Coord_array_3d(num_vertices);
+  Shared_coord_array_3d shared_coords(coords);
+  ifs->set_coord_array(shared_coords);
+  auto& indices = ifs->empty_triangle_coord_indices();
+  indices.resize(count);
+
+  Color_array* colors = new Color_array(count);
+  Shared_color_array shared_colors(colors);
+  ifs->set_color_array(shared_colors);
+  auto& color_indices = ifs->empty_triangle_color_indices();
+  color_indices.resize(count);
+
+  ifs->set_color_per_vertex(true);
+
+  size_t i(0);
+  Uint j(0);
+
+  for (auto &triangle: triangles) {
+    Vector3f use_color(color);
+    if (triangle.is_colored()) triangle.set_color(use_color);
+    (*colors)[i].set(use_color);
+
+    (*coords)[j].set(triangle.v0);
+    color_indices[i][0] = i;
+    indices[i][0] = j++;
+
+    (*coords)[j].set(triangle.v1);
+    color_indices[i][1] = i;
+    indices[i][1] = j++;
+
+    (*coords)[j].set(triangle.v2);
+    color_indices[i][2] = i;
+    indices[i][2] = j++;
+
+    ++i;
+  }
+  auto shape = compute_shape(scene_graph, transform, color);
+  shape->set_geometry(ifs);
+}
+
 //! \brief reads a scene graph from a stream in the STL binary format.
 Loader::Return_code Loader::read_stl(std::istream& stl_stream, size_t size,
                                      Scene_graph* scene_graph,
                                      const Vector3f& color)
 {
-  Boolean use_colors((color[0] != .0f) || (color[1] != .0f) ||
-                     (color[2] != .0f));
-  if (use_colors && m_multiple_shapes) use_colors = false;
-
-  typedef boost::shared_ptr<Shape>                Shared_shape;
-  typedef boost::shared_ptr<Indexed_face_set>     Shared_indexed_face_set;
-  typedef boost::shared_ptr<Coord_array_3d>       Shared_coord_array_3d;
-  typedef boost::shared_ptr<Color_array>          Shared_color_array;
-  typedef boost::shared_ptr<Appearance>           Shared_appearance;
-  typedef boost::shared_ptr<Material>             Shared_material;
-
   scene_graph->set_input_format_id(File_format_3d::ID_STL);
   auto transform = scene_graph->initialize();       // initialize
 
@@ -268,149 +402,32 @@ Loader::Return_code Loader::read_stl(std::istream& stl_stream, size_t size,
     throw Inconsistent_error(m_filename);
     return FAILURE;
   }
-  Uint total_num_vertices = total_num_tris * 3;
 
-  Boolean new_shape(true);
-  Vector3f last_color(color);
-
-  // read first triangle
-  Int32 i(0);
-
-  Vector3f v0, v1, v2;
-  Ushort spacer = 0;
-  // Discard collinear faces:
-  do {
-    auto rc = read_triangle(stl_stream, v0, v1, v2, spacer);
-    if (rc < 0) return rc;
-    ++i;
-  } while (Vector3f::collinear(v0, v1, v2));
-  Boolean colored = spacer & 0x0001;
-  if (colored) {
-    Float red = static_cast<Float>((spacer >> 1) & 0x001f) / 31.0f;
-    Float green = static_cast<Float>((spacer >> 6) & 0x001f) / 31.0f;
-    Float blue = static_cast<Float>((spacer >> 11) & 0x001f) / 31.0f;
-    last_color.set(red, green, blue);
+  // Read all triangles while discarding collinear triangles.
+  std::list<Triangle> triangles;
+  size_t i(0);
+  while (i != total_num_tris) {
+    Triangle triangle;
+    do {
+      auto rc = read_triangle(stl_stream, triangle);
+      if (rc < 0) return rc;
+      ++i;
+    } while (Vector3f::collinear(triangle.v0, triangle.v1, triangle.v2));
+    triangles.push_back(triangle);
   }
-
-  while (new_shape) {
-    new_shape = false;
-    Uint coord_index(0);
-    Uint color_index(0);
-
-    Shared_shape shape(new Shape);
-    SGAL_assertion(shape);
-    scene_graph->add_container(shape);
-    shape->add_to_scene(scene_graph);
-    Shared_indexed_face_set ifs(new Indexed_face_set);
-    SGAL_assertion(ifs);
-    Shared_appearance appearance(new Appearance);
-    SGAL_assertion(appearance);
-    Shared_material material(new Material);
-    SGAL_assertion(material);
-
-    ifs->set_primitive_type(Geo_set::PT_TRIANGLES);
-    Coord_array_3d* coords = new Coord_array_3d(total_num_vertices);
-    Shared_coord_array_3d shared_coords(coords);
-    auto& indices = ifs->get_flat_coord_indices();
-    indices.resize(total_num_vertices);
-    ifs->set_coord_indices_flat(true);
-
-    Shared_color_array colors;
-    auto& color_indices = ifs->get_flat_color_indices();
-    if (use_colors) {
-      colors.reset(new Color_array(total_num_vertices));
-      color_indices.resize(total_num_vertices);
-      ifs->set_color_indices_flat(true);
-      ifs->set_color_per_vertex(true);
-      ifs->set_color_array(colors);
-
-      (*colors)[color_index].set(last_color);
-    }
-    else {
-      material->set_emissive_color(last_color);
-      material->set_ambient_intensity(0.0f);
-    }
-
-    ifs->set_coord_array(shared_coords);
-    appearance->set_material(material);
-    shape->set_appearance(appearance);
-    shape->set_geometry(ifs);
-    transform->add_child(shape);
-
-    Uint num_tris(0);
-
-    (*coords)[coord_index].set(v0);
-    if (use_colors) color_indices[coord_index] = color_index;
-    indices[coord_index] = coord_index++;
-
-    (*coords)[coord_index].set(v1);
-    if (use_colors) color_indices[coord_index] = color_index;
-    indices[coord_index] = coord_index++;
-
-    (*coords)[coord_index].set(v2);
-    if (use_colors) color_indices[coord_index] = color_index;
-    indices[coord_index] = coord_index++;
-
-    ++num_tris;
-
-    while (i < total_num_tris) {
-      // Discard collinear faces:
-      do {
-        auto rc = read_triangle(stl_stream, v0, v1, v2, spacer);
-        if (rc < 0) return rc;
-        ++i;
-      } while (Vector3f::collinear(v0, v1, v2));
-      Float red = color[0];
-      Float green = color[1];
-      Float blue = color[2];
-      Boolean colored = spacer & 0x0001;
-      if (colored) {
-        red = static_cast<Float>((spacer >> 1) & 0x001f) / 31.0f;
-        green = static_cast<Float>((spacer >> 6) & 0x001f) / 31.0f;
-        blue = static_cast<Float>((spacer >> 11) & 0x001f) / 31.0f;
-      }
-      if ((red != last_color[0]) || (green != last_color[1]) ||
-          (blue != last_color[2]))
-      {
-        last_color.set(red, green, blue);
-        if (!use_colors) {
-          new_shape = true;
-          break;
-        }
-        (*colors)[++color_index].set(last_color);
-      }
-      (*coords)[coord_index].set(v0);
-      if (use_colors) color_indices[coord_index] = color_index;
-      indices[coord_index] = coord_index++;
-
-      (*coords)[coord_index].set(v1);
-      if (use_colors) color_indices[coord_index] = color_index;
-      indices[coord_index] = coord_index++;
-
-      (*coords)[coord_index].set(v2);
-      if (use_colors) color_indices[coord_index] = color_index;
-      indices[coord_index] = coord_index++;
-
-      ++num_tris;
-    }
-
-    if (use_colors) colors->resize(++color_index);
-    Uint num_vertices = coord_index;
-    if (num_vertices != total_num_vertices) {
-      coords->resize(num_vertices);
-      indices.resize(num_vertices);
-      if (use_colors) color_indices.resize(num_vertices);
-    }
-    ifs->set_num_primitives(num_tris);
-    ifs->collapse_identical_coordinates();
-    total_num_tris -= i;
-    total_num_vertices -= 3 * i;
-  }
-
+  // Check end condition:
   if (!stl_stream) {
     throw Read_error(m_filename);
     return FAILURE;
   }
+
+  // Construct shape nodes
+  bool use_colors((color[0] != .0f) || (color[1] != .0f) ||(color[2] != .0f));
+  if (use_colors && m_multiple_shapes) use_colors = false;
+
+  if (! use_colors) add_shapes(scene_graph, transform, triangles, color);
+  else add_colored_shape(scene_graph, transform, triangles, color);
+
   return SUCCESS;
 }
 

@@ -210,12 +210,12 @@ void Piece::clean_coords()
 void Piece::clean_flat_coord_indices()
 {
   m_dirty_coord_indices = true;
-  m_dirty_flat_coord_indices = false;
-  m_coord_indices_flat = true;
+  m_dirty_facet_coord_indices = false;
 
   set_primitive_type(PT_QUADS);
 
-  m_flat_coord_indices.resize(m_num_primitives * 4);
+  auto& coord_indices = empty_quad_coord_indices();
+  coord_indices.resize(m_num_primitives);
   Uint width = m_width + 1;
   Uint height = m_height + 1;
   Uint offset = height * width;
@@ -227,41 +227,47 @@ void Piece::clean_flat_coord_indices()
         if (m_composition[l]) {
           Uint start = i + width * (j + height * k);
           if ((k == 0) || (!m_composition[l - m_width * m_height])) {
-            m_flat_coord_indices[m++] = start;
-            m_flat_coord_indices[m++] = start + width;
-            m_flat_coord_indices[m++] = start + width + 1;
-            m_flat_coord_indices[m++] = start + 1;
+            coord_indices[m][0] = start;
+            coord_indices[m][1] = start + width;
+            coord_indices[m][2] = start + width + 1;
+            coord_indices[m][3] = start + 1;
+            ++m;
           }
           if ((k == (m_depth - 1)) || (!m_composition[l + m_width * m_height]))
           {
-            m_flat_coord_indices[m++] = offset + start;
-            m_flat_coord_indices[m++] = offset + start + 1;
-            m_flat_coord_indices[m++] = offset + start + width + 1;
-            m_flat_coord_indices[m++] = offset + start + width;
+            coord_indices[m][0] = offset + start;
+            coord_indices[m][1] = offset + start + 1;
+            coord_indices[m][2] = offset + start + width + 1;
+            coord_indices[m][3] = offset + start + width;
+            ++m;
           }
           if ((j == 0) || (!m_composition[l - m_width])) {
-            m_flat_coord_indices[m++] = start;
-            m_flat_coord_indices[m++] = start + 1;
-            m_flat_coord_indices[m++] = offset + start + 1;
-            m_flat_coord_indices[m++] = offset + start;
+            coord_indices[m][0] = start;
+            coord_indices[m][1] = start + 1;
+            coord_indices[m][2] = offset + start + 1;
+            coord_indices[m][3] = offset + start;
+            ++m;
           }
           if ((j == (m_height - 1)) || (!m_composition[l + m_width])) {
-            m_flat_coord_indices[m++] = start + width;
-            m_flat_coord_indices[m++] = offset + start + width;
-            m_flat_coord_indices[m++] = offset + start + width + 1;
-            m_flat_coord_indices[m++] = start + width + 1;
+            coord_indices[m][0] = start + width;
+            coord_indices[m][1] = offset + start + width;
+            coord_indices[m][2] = offset + start + width + 1;
+            coord_indices[m][3] = start + width + 1;
+            ++m;
           }
           if ((i == 0) || (!m_composition[l - 1])) {
-            m_flat_coord_indices[m++] = start;
-            m_flat_coord_indices[m++] = offset + start;
-            m_flat_coord_indices[m++] = offset + start + width;
-            m_flat_coord_indices[m++] = start + width;
+            coord_indices[m][0] = start;
+            coord_indices[m][1] = offset + start;
+            coord_indices[m][2] = offset + start + width;
+            coord_indices[m][3] = start + width;
+            ++m;
           }
           if ((i == (m_width - 1)) || (!m_composition[l + 1])) {
-            m_flat_coord_indices[m++] = start + 1;
-            m_flat_coord_indices[m++] = start + 1 + width;
-            m_flat_coord_indices[m++] = offset + start + 1 + width;
-            m_flat_coord_indices[m++] = offset + start + 1;
+            coord_indices[m][0] = start + 1;
+            coord_indices[m][1] = start + 1 + width;
+            coord_indices[m][2] = offset + start + 1 + width;
+            coord_indices[m][3] = offset + start + 1;
+            ++m;
           }
         }
         ++l;
@@ -274,7 +280,7 @@ void Piece::clean_flat_coord_indices()
 void Piece::structure_changed(const Field_info* field_info)
 {
   clear_coord_array();
-  clear_flat_coord_indices();
+  clear_facet_coord_indices();
   field_changed(field_info);
 }
 

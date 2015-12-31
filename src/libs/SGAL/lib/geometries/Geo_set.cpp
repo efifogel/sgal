@@ -468,7 +468,7 @@ void Geo_set::field_changed(const Field_info* field_info)
 }
 
 //! \brief assigns the coord indices with the reverse of given indices.
-void Geo_set::set_reverse_coord_indices(const std::vector<Int32>& indices)
+void Geo_set::reverse_coord_indices(const std::vector<Int32>& indices)
 {
   m_coord_indices.resize(indices.size());
   Uint i = 0;

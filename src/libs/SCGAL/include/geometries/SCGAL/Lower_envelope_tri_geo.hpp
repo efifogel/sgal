@@ -186,12 +186,15 @@ OutputIterator Lower_envelope_tri_geo::get_triangles(OutputIterator oi)
       boost::dynamic_pointer_cast<Coord_array_3d>(ifs->get_coord_array());
     SGAL_assertion(coord_array);
 
-    const std::vector<Uint>& coord_indices = ifs->get_flat_coord_indices();
-    Uint j = 0;
+    const auto& facet_indices = ifs->get_facet_coord_indices();
+    //! \todo use a visitor instead of the following statement.
+    const auto& coord_indices =
+      boost::get<Mesh_set::Triangle_indices>(facet_indices);
+
     for (Uint i = 0; i < ifs->get_num_primitives(); ++i) {
-      const Vector3f& v1 = (*coord_array)[coord_indices[j++]];
-      const Vector3f& v2 = (*coord_array)[coord_indices[j++]];
-      const Vector3f& v3 = (*coord_array)[coord_indices[j++]];
+      const Vector3f& v1 = (*coord_array)[coord_indices[i][0]];
+      const Vector3f& v2 = (*coord_array)[coord_indices[i][1]];
+      const Vector3f& v3 = (*coord_array)[coord_indices[i][2]];
 
       Exact_point_3 p1(v1[0], v1[1], v1[2]);
       Exact_point_3 p2(v2[0], v2[1], v2[2]);

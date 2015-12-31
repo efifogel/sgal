@@ -105,17 +105,12 @@ Boolean_operation::get_geometry(Shared_mesh_set operand) const
   if (geometry) return geometry;
   geometry.reset(new Exact_polyhedron_geo);
   geometry->set_coord_array(operand->get_coord_array());
-  auto& indices = operand->get_flat_coord_indices();
+  auto& indices = operand->get_facet_coord_indices();
   /* Observe that the call to get_flat_coord_indices() may trigger the
    * "cleaning" of the coord indices. Thus, the following query must succeed
    * the previous statement.
    */
-  if (operand->are_coord_indices_flat())
-    geometry->set_flat_coord_indices(indices);
-  else {
-    const auto& indices = operand->get_coord_indices();
-    geometry->set_coord_indices(indices);
-  }
+  geometry->set_facet_coord_indices(indices);
   geometry->set_num_primitives(operand->get_num_primitives());
   geometry->set_primitive_type(operand->get_primitive_type());
   return geometry;

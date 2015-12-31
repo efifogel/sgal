@@ -465,9 +465,9 @@ Boundary_set::Boundary_set(Boolean proto) :
     &Boundary_set::draw_FAPV_VAYE;
 
   m_draws[SGAL_FSNO_FINO_FAPT_TEYE_TINO_MOTR_VAYE] =
-    &Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOTR_VANO;
+    &Boundary_set::draw_FAPV_VAYE;
   m_draws[SGAL_FSCO_FINO_FAPT_TEYE_TINO_MOTR_VAYE] =
-    &Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOTR_VANO;
+    &Boundary_set::draw_FAPV_VAYE;
   m_draws[SGAL_FSNO_FIYE_FAPT_TEYE_TINO_MOTR_VAYE] =
     &Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOTR_VANO;
   m_draws[SGAL_FSCO_FIYE_FAPT_TEYE_TINO_MOTR_VAYE] =
@@ -527,9 +527,9 @@ Boundary_set::Boundary_set(Boolean proto) :
     &Boundary_set::draw_FAPV_VAYE;
 
   m_draws[SGAL_FSNO_FINO_FAPT_TEYE_TINO_MOQU_VAYE] =
-    &Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOQU_VANO;
+    &Boundary_set::draw_FAPV_VAYE;
   m_draws[SGAL_FSCO_FINO_FAPT_TEYE_TINO_MOQU_VAYE] =
-    &Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOQU_VANO;
+    &Boundary_set::draw_FAPV_VAYE;
   m_draws[SGAL_FSNO_FIYE_FAPT_TEYE_TINO_MOQU_VAYE] =
     &Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOQU_VANO;
   m_draws[SGAL_FSCO_FIYE_FAPT_TEYE_TINO_MOQU_VAYE] =
@@ -701,7 +701,7 @@ void Boundary_set::clean_normals()
 {
   if (m_normal_attachment == AT_PER_VERTEX)
     calculate_single_normal_per_vertex();
-  else calculate_normal_per_polygon();
+  else calculate_normal_per_facet();
   m_dirty_normal_array = false;
   m_normal_array_cleaned = true;
   m_dirty_normal_buffer = true;
@@ -714,133 +714,72 @@ Boundary_set::Shared_normal_array Boundary_set::get_normal_array()
   return m_normal_array;
 }
 
-//! \brief computes the normalized normal to a triangle.
-void Boundary_set::compute_triangle_normal(Uint j, Vector3f& n) const
-{
-  const Vector3f& v0 = get_coord_3d(m_flat_coord_indices[j]);
-  const Vector3f& v1 = get_coord_3d(m_flat_coord_indices[j+1]);
-  const Vector3f& v2 = get_coord_3d(m_flat_coord_indices[j+2]);
-  if (is_ccw()) n.normal(v0, v1, v2);
-  else n.normal(v2, v1, v0);
-}
-
-//! \brief computes the center point of a triangle.
-void Boundary_set::compute_triangle_center(Uint j, Vector3f& center) const
-{
-  center.add(get_coord_3d(m_flat_coord_indices[j+0]));
-  center.add(get_coord_3d(m_flat_coord_indices[j+1]));
-  center.add(get_coord_3d(m_flat_coord_indices[j+2]));
-  center.scale(1.0f / 3);
-}
-
-/*! \brief computes the vertex information for the three vertices of a
- * triangule.
- */
-void Boundary_set::
-compute_triangle_vertex_info(Uint j, Uint facet_index,
-                             const Vector3f& center,
-                             Vertices_info& vertices_info) const
-{
-  Uint vertex_index = m_flat_coord_indices[j+0];
-  compute_vertex_info(vertex_index, facet_index, center,
-                      std::back_inserter(vertices_info[vertex_index]));
-  vertex_index = m_flat_coord_indices[j+1];
-  compute_vertex_info(vertex_index, facet_index, center,
-                      std::back_inserter(vertices_info[vertex_index]));
-  vertex_index = m_flat_coord_indices[j+2];
-  compute_vertex_info(vertex_index, facet_index, center,
-                      std::back_inserter(vertices_info[vertex_index]));
-}
-
-/*! \brief computes the normalized normal to a quadrilateral.
- * This implementation assumes that 3 (out of the 4) vertices might be
- * collinear.
- */
-void Boundary_set::compute_quad_normal(Uint j, Vector3f& n) const
-{
-  const Vector3f& v0 = get_coord_3d(m_flat_coord_indices[j]);
-  const Vector3f& v1 = get_coord_3d(m_flat_coord_indices[j+1]);
-  const Vector3f& v2 = get_coord_3d(m_flat_coord_indices[j+2]);
-  if (!v0.collinear(v0, v1, v2)) {
-    if (is_ccw()) n.normal(v0, v1, v2);
-    else n.normal(v2, v1, v0);
-    return;
-  }
-  const Vector3f& v3 = get_coord_3d(m_flat_coord_indices[j+3]);
-  SGAL_assertion(!v0.collinear(v0, v1, v3));
-  if (is_ccw()) n.normal(v0, v1, v3);
-  else n.normal(v3, v1, v0);
-}
-
-//! \brief computes the center point of a quadrilateral.
-void Boundary_set::compute_quad_center(Uint j, Vector3f& center) const
-{
-  center.add(get_coord_3d(m_flat_coord_indices[j+0]));
-  center.add(get_coord_3d(m_flat_coord_indices[j+1]));
-  center.add(get_coord_3d(m_flat_coord_indices[j+2]));
-  center.add(get_coord_3d(m_flat_coord_indices[j+3]));
-  center.scale(1.0f / 4);
-}
-
-/*! \brief computes the vertex information for the four vertices of a
- * quadrilateral.
- */
+//! \brief Calculate vertex information per triangle for all triangles. */
 void
-Boundary_set::compute_quad_vertex_info(Uint j, Uint facet_index,
-                                           const Vector3f& center,
-                                           Vertices_info& vertices_info) const
+Boundary_set::calculate_vertex_info_per_triangle(Vertices_info& vertices_info)
 {
-  Uint vertex_index = m_flat_coord_indices[j+0];
-  compute_vertex_info(vertex_index, facet_index, center,
-                      std::back_inserter(vertices_info[vertex_index]));
-  vertex_index = m_flat_coord_indices[j+1];
-  compute_vertex_info(vertex_index, facet_index, center,
-                      std::back_inserter(vertices_info[vertex_index]));
-  vertex_index = m_flat_coord_indices[j+2];
-  compute_vertex_info(vertex_index, facet_index, center,
-                      std::back_inserter(vertices_info[vertex_index]));
-  vertex_index = m_flat_coord_indices[j+3];
-  compute_vertex_info(vertex_index, facet_index, center,
-                      std::back_inserter(vertices_info[vertex_index]));
-}
-
-/*! \brief computes the normalized normal to a polygon.
- * This implementation assumes that consecuitive vertices might be collinear.
- */
-void Boundary_set::compute_polygon_normal(Uint j, Vector3f& n) const
-{
-  const Vector3f& v0 = get_coord_3d(m_coord_indices[j]);
-  const Vector3f& v1 = get_coord_3d(m_coord_indices[j+1]);
-  for (Uint k = 2; m_coord_indices[j+k] != (Uint) -1; ++k) {
-    const Vector3f& v2 = get_coord_3d(m_coord_indices[j+k]);
-    if (v0.collinear(v0, v1, v2)) continue;
-    if (is_ccw()) n.normal(v0, v1, v2);
-    else n.normal(v2, v1, v0);
-    return;
+  const auto& tris = triangle_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    auto index0 = tris[i][0];
+    auto index1 = tris[i][1];
+    auto index2 = tris[i][2];
+    Vector3f center;
+    center.add(get_coord_3d(index0));
+    center.add(get_coord_3d(index1));
+    center.add(get_coord_3d(index2));
+    center.scale(1.0f / 3);
+    compute_vertex_info(index0, i, center,
+                        std::back_inserter(vertices_info[index0]));
+    compute_vertex_info(index1, i, center,
+                        std::back_inserter(vertices_info[index1]));
+    compute_vertex_info(index2, i, center,
+                        std::back_inserter(vertices_info[index2]));
   }
-  SGAL_assertion_msg(0, "All vertices are collinear!");
 }
 
-//! \brief computes the center point of a polygon.
-Uint Boundary_set::compute_polygon_center(Uint j, Vector3f& center) const
+//! \brief Calculate vertex information per quad for all quads. */
+void Boundary_set::calculate_vertex_info_per_quad(Vertices_info& vertices_info)
 {
-  Uint k;
-  for (k = 0; m_coord_indices[j+k] != (Uint) -1; ++k)
-    center.add(get_coord_3d(m_coord_indices[j+k]));
-  center.scale(1.0f / k);
-  return k;
+  const auto& quads = quad_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    auto index0 = quads[i][0];
+    auto index1 = quads[i][1];
+    auto index2 = quads[i][2];
+    auto index3 = quads[i][3];
+    Vector3f center;
+    center.add(get_coord_3d(index0));
+    center.add(get_coord_3d(index1));
+    center.add(get_coord_3d(index2));
+    center.add(get_coord_3d(index3));
+    center.scale(1.0f / 4);
+    compute_vertex_info(index0, i, center,
+                        std::back_inserter(vertices_info[index0]));
+    compute_vertex_info(index1, i, center,
+                        std::back_inserter(vertices_info[index1]));
+    compute_vertex_info(index2, i, center,
+                        std::back_inserter(vertices_info[index2]));
+    compute_vertex_info(index3, i, center,
+                        std::back_inserter(vertices_info[index3]));
+  }
 }
 
-//! \brief computes the vertex information for the all vertices of a polygon.
-void Boundary_set::
-compute_polygon_vertex_info(Uint j, Uint facet_index, Uint k,
-                            const Vector3f& center,
-                            Vertices_info& vertices_info) const
+//! \brief Calculate vertex information per polygon for all polygons. */
+void
+Boundary_set::calculate_vertex_info_per_polygon(Vertices_info& vertices_info)
 {
-  for (Uint l = 0; l < k; ++l) {
-    Uint vertex_index = m_coord_indices[j+l];
-    compute_vertex_info(vertex_index, facet_index, center,
-                        back_inserter(vertices_info[vertex_index]));
+  const auto& polygons = polygon_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    Vector3f center;
+    size_t j;
+    for (j = 0; j < polygons[i].size(); ++j)
+      center.add(get_coord_3d(polygons[i][j]));
+    center.scale(1.0f / polygons[i].size());
+
+    for (j = 0; j < polygons[i].size(); ++j) {
+      Uint index = polygons[i][j];
+      compute_vertex_info(index, i, center,
+                          back_inserter(vertices_info[index]));
+    }
   }
 }
 
@@ -854,32 +793,9 @@ void Boundary_set::calculate_vertices_info(Vertices_info& vertices_info)
   Uint i, j = 0;
   // Assume that the facet is planar, and compute its normal:
   switch (m_primitive_type) {
-   case PT_TRIANGLES:
-    for (i = 0; i < m_num_primitives; ++i) {
-      Vector3f center;
-      compute_triangle_center(j, center);
-      compute_triangle_vertex_info(j, i, center, vertices_info);
-      j += 3;
-    }
-    break;
-
-   case PT_QUADS:
-    for (i = 0; i < m_num_primitives; ++i) {
-      Vector3f center;
-      compute_quad_center(j, center);
-      compute_quad_vertex_info(j, i, center, vertices_info);
-      j += 4;
-    }
-    break;
-
-   case PT_POLYGONS:
-    for (i = 0; i < m_num_primitives; ++i) {
-      Vector3f center;
-      Uint k = compute_polygon_center(j, center);
-      compute_polygon_vertex_info(j, i, k, center, vertices_info);
-      j += k + 1;       // skip the end-of-face marker
-    }
-    break;
+   case PT_TRIANGLES: calculate_vertex_info_per_triangle(vertices_info); break;
+   case PT_QUADS: calculate_vertex_info_per_quad(vertices_info); break;
+   case PT_POLYGONS: calculate_vertex_info_per_polygon(vertices_info); break;
 
    case PT_TRIANGLE_STRIP:
    case PT_TRIANGLE_FAN:
@@ -910,42 +826,80 @@ Boolean Boundary_set::is_smooth(const Vector3f& normal1,
   return (angle > m_crease_angle);
 }
 
-//! \brief calculates a single normal per polygon for all polygons.
+//! \brief calculates a single normal per triangle for all triangles. */
+void Boundary_set::calculate_normal_per_triangle(Normal_array& normals)
+{
+  const auto& tris = triangle_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    const Vector3f& v0 = get_coord_3d(tris[i][0]);
+    const Vector3f& v1 = get_coord_3d(tris[i][1]);
+    const Vector3f& v2 = get_coord_3d(tris[i][2]);
+    if (is_ccw()) normals[i].normal(v0, v1, v2);
+    else normals[i].normal(v2, v1, v0);
+  }
+}
+
+//! \brief calculates a single normal per quad for all quads. */
+void Boundary_set::calculate_normal_per_quad(Normal_array& normals)
+{
+  const auto& quads = quad_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    const Vector3f& v0 = get_coord_3d(quads[i][0]);
+    const Vector3f& v1 = get_coord_3d(quads[i][1]);
+    const Vector3f& v2 = get_coord_3d(quads[i][2]);
+
+    if (!v0.collinear(v0, v1, v2)) {
+      if (is_ccw()) normals[i].normal(v0, v1, v2);
+      else normals[i].normal(v2, v1, v0);
+      return;
+    }
+    const Vector3f& v3 = get_coord_3d(quads[i][3]);
+    SGAL_assertion(!v0.collinear(v0, v1, v3));
+    if (is_ccw()) normals[i].normal(v0, v1, v3);
+    else normals[i].normal(v3, v1, v0);
+  }
+}
+
+//! \brief Calculate a single normal per polygon for all polygons. */
 void Boundary_set::calculate_normal_per_polygon(Normal_array& normals)
 {
-  SGAL_assertion(normals.size() == m_num_primitives);
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    Vector3f normal;
-
-    switch (m_primitive_type) {
-     case PT_TRIANGLES:
-      compute_triangle_normal(j, normals[i]);
-      j += 3;
+  const auto& polygons = polygon_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    const Vector3f& v0 = get_coord_3d(polygons[i][0]);
+    const Vector3f& v1 = get_coord_3d(polygons[i][1]);
+    Boolean collinear(true);
+    for (size_t j = 2; j < polygons[i].size(); ++j) {
+      const Vector3f& v2 = get_coord_3d(polygons[i][j]);
+      if (v0.collinear(v0, v1, v2)) continue;
+      collinear = false;
+      if (is_ccw()) normals[i].normal(v0, v1, v2);
+      else normals[i].normal(v2, v1, v0);
       break;
-
-     case PT_QUADS:
-      compute_quad_normal(j, normals[i]);
-      j += 4;
-      break;
-
-     case PT_POLYGONS:
-      compute_polygon_normal(j, normals[i]);
-      for (; m_coord_indices[j] != (Uint) -1; ++j);     // advance to end
-      ++j;                                      // skip the end-of-face marker
-      break;
-
-     case PT_TRIANGLE_STRIP: break;
-     case PT_TRIANGLE_FAN: break;
-     case PT_QUAD_STRIP:
-     default: SGAL_assertion(0); break;
     }
+    SGAL_assertion_msg(collinear, "All vertices are collinear!");
   }
-  clear_flat_normal_indices();
 }
 
 //! \brief calculates a single normal per polygon for all polygons.
-void Boundary_set::calculate_normal_per_polygon()
+void Boundary_set::calculate_normal_per_facet(Normal_array& normals)
+{
+  SGAL_assertion(normals.size() == m_num_primitives);
+  switch (m_primitive_type) {
+   case PT_TRIANGLES: calculate_normal_per_triangle(normals); break;
+   case PT_QUADS: calculate_normal_per_quad(normals); break;
+   case PT_POLYGONS: calculate_normal_per_polygon(normals); break;
+
+   case PT_TRIANGLE_STRIP: break;
+   case PT_TRIANGLE_FAN: break;
+   case PT_QUAD_STRIP:
+   default: SGAL_assertion(0); break;
+  }
+
+  clear_facet_normal_indices();
+}
+
+//! \brief calculates a single normal per polygon for all polygons.
+void Boundary_set::calculate_normal_per_facet()
 {
   auto coords = get_coord_array();
   SGAL_assertion(coords);
@@ -954,7 +908,7 @@ void Boundary_set::calculate_normal_per_polygon()
     SGAL_assertion(m_normal_array);
   }
   else m_normal_array->resize(m_num_primitives);
-  calculate_normal_per_polygon(*m_normal_array);
+  calculate_normal_per_facet(*m_normal_array);
   set_normal_per_vertex(false);
 }
 
@@ -1006,8 +960,7 @@ void Boundary_set::clean_tex_coords_2d()
   Bounding_box bbox = bounding_box();
 
   // Allocate space for texture coordinates and texture cordinate indices
-  Uint size = (m_coord_indices_flat) ?
-    m_flat_coord_indices.size() : m_coord_indices.size() - m_num_primitives;
+  Uint size = size_facet_indices(m_facet_coord_indices);
 
   if (m_tex_coord_array) m_tex_coord_array->resize(size);
   else {
@@ -1018,29 +971,11 @@ void Boundary_set::clean_tex_coords_2d()
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
 
-  // Generate indices
-  if (m_coord_indices_flat) {
-    Uint k(0);
-    m_flat_tex_coord_indices.resize(size);
-    auto it = m_flat_tex_coord_indices.begin();
-    for (; it != m_flat_tex_coord_indices.end(); ++it) *it = k++;
-    m_tex_coord_indices_flat = true;
-    m_dirty_flat_tex_coord_indices = false;
-    m_dirty_tex_coord_indices = true;
-  }
-  else {
-    m_tex_coord_indices.resize(size + m_num_primitives);
-    Uint j(0);
-    Uint k(0);
-    for (Uint i = 0; i < m_num_primitives; ++i) {
-      while (m_coord_indices[j] != (Uint) -1)
-        m_tex_coord_indices[j++] = k++;
-      m_tex_coord_indices[j++] = (Uint) -1;
-    }
-    m_tex_coord_indices_flat = false;
-    m_dirty_flat_tex_coord_indices = true;
-    m_dirty_tex_coord_indices = false;
-  }
+  // Generate indices from 0 to size-1
+  init_facet_indices(m_facet_tex_coord_indices, m_facet_coord_indices);
+
+  m_dirty_facet_tex_coord_indices = false;
+  m_dirty_tex_coord_indices = true;
 
   // Generate coordinates
   auto dims = bbox.get_longest_dimensions();
@@ -1049,43 +984,52 @@ void Boundary_set::clean_tex_coords_2d()
   Vector3f range(bbox.xmax() - bbox.xmin(),
                  bbox.ymax() - bbox.ymin(),
                  bbox.zmax() - bbox.zmin());
-  size_t j(0);
-  size_t k(0);
   switch (m_primitive_type) {
    case PT_TRIANGLES:
-    for (Uint i = 0; i < m_num_primitives; ++i) {
-      for (size_t l = 0; l < 3; ++l) {
-        const Vector3f& v = get_coord_3d(m_flat_coord_indices[j++]);
-        auto s = (v[d0] - bbox.min(d0)) / range[d0];
-        auto t = (v[d1] - bbox.min(d1)) / range[d0];
-        Vector2f tex_vec(s, t);
-        (*tex_coord_array)[k++] = tex_vec;
-      }
+    {
+     const auto& tris = triangle_coord_indices();
+     size_t k(0);
+     for (size_t i = 0; i < m_num_primitives; ++i) {
+       for (size_t j = 0; j < 3; ++j) {
+         const Vector3f& v = get_coord_3d(tris[i][j]);
+         auto s = (v[d0] - bbox.min(d0)) / range[d0];
+         auto t = (v[d1] - bbox.min(d1)) / range[d0];
+         Vector2f tex_vec(s, t);
+         (*tex_coord_array)[k++] = tex_vec;
+       }
+     }
     }
     break;
 
    case PT_QUADS:
-    for (Uint i = 0; i < m_num_primitives; ++i) {
-      for (size_t l = 0; l < 4; ++l) {
-        const Vector3f& v = get_coord_3d(m_flat_coord_indices[j++]);
-        auto s = (v[d0] - bbox.min(d0)) / range[d0];
-        auto t = (v[d1] - bbox.min(d1)) / range[d0];
-        Vector2f tex_vec(s, t);
-        (*tex_coord_array)[k++] = tex_vec;
-      }
+    {
+     const auto& quads = quad_coord_indices();
+     size_t k(0);
+     for (Uint i = 0; i < m_num_primitives; ++i) {
+       for (size_t j = 0; j < 4; ++j) {
+         const Vector3f& v = get_coord_3d(quads[i][j]);
+         auto s = (v[d0] - bbox.min(d0)) / range[d0];
+         auto t = (v[d1] - bbox.min(d1)) / range[d0];
+         Vector2f tex_vec(s, t);
+         (*tex_coord_array)[k++] = tex_vec;
+       }
+     }
     }
     break;
 
    case PT_POLYGONS:
-    for (Uint i = 0; i < m_num_primitives; ++i) {
-      while (m_coord_indices[j] != (Uint) -1) {
-        const Vector3f& v = get_coord_3d(m_coord_indices[j++]);
-        auto s = (v[d0] - bbox.min(d0)) / range[d0];
-        auto t = (v[d1] - bbox.min(d1)) / range[d0];
-        Vector2f tex_vec(s, t);
-        (*tex_coord_array)[k++] = tex_vec;
-      }
-      ++j;
+    {
+     const auto& polys = polygon_coord_indices();
+     size_t k(0);
+     for (auto pit = polys.begin(); pit != polys.end(); ++pit) {
+       for (auto vit = pit->begin(); vit != pit->end(); ++vit) {
+         const Vector3f& v = get_coord_3d(*vit);
+         auto s = (v[d0] - bbox.min(d0)) / range[d0];
+         auto t = (v[d1] - bbox.min(d1)) / range[d0];
+         Vector2f tex_vec(s, t);
+         (*tex_coord_array)[k++] = tex_vec;
+       }
+     }
     }
     break;
 
@@ -1120,8 +1064,8 @@ void Boundary_set::clean_tex_coords_3d()
 //! \brief draws the mesh conditionaly.
 void Boundary_set::draw(Draw_action* action)
 {
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (m_coord_indices.empty() && m_flat_coord_indices.empty()) return;
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  if (empty_facet_indices(m_facet_coord_indices)) return;
   if (!m_coord_array || m_coord_array->empty()) return;
 
   // Clean the center
@@ -1131,10 +1075,10 @@ void Boundary_set::draw(Draw_action* action)
   //! \todo clean the nromals only if lighting is enabled.
   if (resolve_fragment_source() == FS_NORMAL) {
     if (m_dirty_normal_array) clean_normals();
-    if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
+    if (is_dirty_facet_normal_indices()) clean_facet_normal_indices();
   }
   else {
-    if (is_dirty_flat_color_indices()) clean_flat_color_indices();
+    if (is_dirty_facet_color_indices()) clean_facet_color_indices();
   }
 
   // Clean the tex coordinates.
@@ -1150,7 +1094,7 @@ void Boundary_set::draw(Draw_action* action)
       // coordinate as last resort.
       clean_tex_coords(target);
     }
-    if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
+    if (is_dirty_facet_tex_coord_indices()) clean_facet_tex_coord_indices();
   }
 
   draw_mesh(action);
@@ -1175,20 +1119,15 @@ void Boundary_set::draw_geometry(Draw_action* action)
     if (use_vertex_array()) {
       bool color_normal_condition = (resolve_fragment_source() == FS_COLOR) ?
         ((m_color_attachment == AT_PER_VERTEX) &&
-         (m_flat_color_indices.empty() ||
-         (std::equal(m_flat_coord_indices.begin(),
-                     m_flat_coord_indices.end(),
-                     m_flat_color_indices.begin())))) :
+         (empty_facet_indices(m_facet_color_indices) ||
+         (equal_facet_indices(m_facet_coord_indices, m_facet_color_indices)))) :
         ((m_normal_attachment == AT_PER_VERTEX) &&
-         (m_flat_normal_indices.empty() ||
-         (std::equal(m_flat_coord_indices.begin(),
-                     m_flat_coord_indices.end(),
-                     m_flat_normal_indices.begin()))));
+         (empty_facet_indices(m_facet_normal_indices) ||
+         (equal_facet_indices(m_facet_coord_indices, m_facet_normal_indices))));
+
       bool tex_coord_condition =
-        (m_flat_tex_coord_indices.empty() ||
-         (std::equal(m_flat_coord_indices.begin(),
-                     m_flat_coord_indices.end(),
-                     m_flat_tex_coord_indices.begin())));
+        (empty_facet_indices(m_facet_tex_coord_indices) ||
+         (equal_facet_indices(m_facet_coord_indices, m_facet_tex_coord_indices)));
 
       //! \todo Add a try() and catch() to catch errors.
       // If an error is cought, call destroy_vertex_buffers()
@@ -1296,27 +1235,30 @@ void Boundary_set::draw_geometry(Draw_action* action)
 /*! \brief dispatches the appropriate drawing routine. */
 void Boundary_set::draw_dispatch(Draw_action* /* action */)
 {
-   // When using vertex array, the index arrays must be flat:
   Boolean va = use_vertex_array();
-  SGAL_assertion(!va || m_coord_indices_flat);
 
   Fragment_source fragment_source = resolve_fragment_source();
-  Boolean fragment_indexed = va ? false :
-    ((fragment_source == FS_NORMAL) ?
-     (m_flat_normal_indices.size() ? true : false) :
-     (m_flat_color_indices.size() ? true : false));
+  Boolean fragment_indexed = (fragment_source == FS_NORMAL) ?
+    (!empty_facet_indices(m_facet_normal_indices)) :
+    (!empty_facet_indices(m_facet_color_indices));
   Attachment fragment_attached = (fragment_source == FS_NORMAL) ?
     m_normal_attachment  : m_color_attachment;
   Boolean texture_enbaled = m_tex_coord_array ? true : false;
-  Boolean texture_indexed = va ? false :
-    (!m_flat_tex_coord_indices.empty() || !m_tex_coord_indices.empty());
+  Boolean texture_indexed = !empty_facet_indices(m_facet_tex_coord_indices) ||
+    !m_tex_coord_indices.empty();
 
   // std::cout << "fragment_source: " << fragment_source << std::endl;
   // std::cout << "fragment_indexed: " << fragment_indexed << std::endl;
   // std::cout << "fragment_attached: " << fragment_attached << std::endl;
+  // std::cout << "texture_enbaled: " << texture_enbaled << std::endl;
   // std::cout << "texture_indexed: " << texture_indexed << std::endl;
   // std::cout << "m_primitive_type: " << m_primitive_type << std::endl;
   // std::cout << "va: " << va << std::endl;
+
+  if (va) {
+    Boundary_set::draw_FAPV_VAYE();
+    return;
+  }
 
   Uint mask =
     SGAL_SET(SGAL_BO_FRAG_SOURCE,SGAL_BO_FRAG_SOURCE_,fragment_source,
@@ -1335,67 +1277,74 @@ void Boundary_set::isect_direct()
 {
   if (!m_coord_array || m_coord_array->empty()) return;
 
-  Uint i, j;
   switch (m_primitive_type) {
    case PT_TRIANGLE_STRIP:
-    {
-      int num_tri_strips = m_tri_strip_lengths[0];
-      int index = 0;
-      for (int strip = 0; strip < num_tri_strips; ++strip) {
-        int tmp = strip + 1;
-        glBegin(GL_TRIANGLE_STRIP);
-        for (Uint i = 0 ; i < m_tri_strip_lengths[tmp]; ++i)
-          glVertex3fv(m_coord_array->datum(m_flat_coord_indices[index++]));
-        glEnd();
-      }
-    }
+    // {
+    //   int num_tri_strips = m_tri_strip_lengths[0];
+    //   int index = 0;
+    //   for (int strip = 0; strip < num_tri_strips; ++strip) {
+    //     int tmp = strip + 1;
+    //     glBegin(GL_TRIANGLE_STRIP);
+    //     for (Uint i = 0 ; i < m_tri_strip_lengths[tmp]; ++i)
+    //       glVertex3fv(m_coord_array->datum(m_flat_coord_indices[index++]));
+    //     glEnd();
+    //   }
+    // }
+    SGAL_assertion_msg(0, "Not implemented yet!");
     return;
 
    case PT_TRIANGLES:
-    glBegin(GL_TRIANGLES);
-    for (i = 0, j = 0; i < m_num_primitives; ++i) {
-      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
-      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
-      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
+    {
+     glBegin(GL_TRIANGLES);
+     const auto& tris = triangle_coord_indices();
+     for (size_t i = 0; i < m_num_primitives; ++i) {
+       glVertex3fv(m_coord_array->datum(tris[i][0]));
+       glVertex3fv(m_coord_array->datum(tris[i][1]));
+       glVertex3fv(m_coord_array->datum(tris[i][2]));
+     }
+     glEnd();
     }
-    glEnd();
     return;
 
    case PT_QUADS:
-    glBegin(GL_QUADS);
-    for (i = 0, j = 0; i < m_num_primitives; ++i) {
-      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
-      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
-      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
-      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
+    {
+     glBegin(GL_QUADS);
+     const auto& quads = quad_coord_indices();
+     for (size_t i = 0; i < m_num_primitives; ++i) {
+       glVertex3fv(m_coord_array->datum(quads[i][0]));
+       glVertex3fv(m_coord_array->datum(quads[i][1]));
+       glVertex3fv(m_coord_array->datum(quads[i][2]));
+       glVertex3fv(m_coord_array->datum(quads[i][3]));
+     }
+     glEnd();
     }
-    glEnd();
     return;
 
    case PT_POLYGONS:
-    for (i = 0, j = 0; i < m_num_primitives; ++i) {
-      glBegin(GL_POLYGON);
-      for (; m_coord_indices[j] != (Uint) -1; ++j)
-        glVertex3fv(m_coord_array->datum(m_coord_indices[j]));
-      glEnd();
-      ++j;
+    {
+     const auto& polygons = polygon_coord_indices();
+     for (size_t i = 0; i < m_num_primitives; ++i) {
+       glBegin(GL_POLYGON);
+       for (size_t j = 0; j < polygons[i].size(); ++j)
+         glVertex3fv(m_coord_array->datum(polygons[i][j]));
+       glEnd();
+     }
     }
     return;
 
    case PT_TRIANGLE_FAN:
    case PT_QUAD_STRIP:
+   default:
     SGAL_assertion_msg(0, "Not implemented yet!");
     return;
-
-   default: ;
   }
 }
 
 //! \brief draws the mesh in selection mode.
 void Boundary_set::isect(Isect_action* action)
 {
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (m_coord_indices.empty() && m_flat_coord_indices.empty()) return;
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  if (empty_facet_indices(m_facet_coord_indices)) return;
 
   Context* context = action->get_context();
   if (!m_is_solid && context) context->draw_cull_face(Gfx::NO_CULL);
@@ -1573,7 +1522,7 @@ calculate_single_normal_per_vertex(Shared_normal_array normals)
   SGAL_assertion(normals->size() == get_coord_array()->size());
   // Calculate the normals of all facets.
   Normal_array per_polygon_normals(m_num_primitives);
-  calculate_normal_per_polygon(per_polygon_normals);
+  calculate_normal_per_facet(per_polygon_normals);
 
   // Initialize the weights:
   Vertices_info vertices_info;
@@ -1603,7 +1552,7 @@ calculate_single_normal_per_vertex(Shared_normal_array normals)
   for (j = 0; j < vertices_info.size(); j++) vertices_info[j].clear();
   vertices_info.clear();
 
-  clear_flat_normal_indices();
+  clear_facet_normal_indices();
 }
 
 //! \brief cleans the data structure of the vertex coordinate buffer object.
@@ -1703,45 +1652,46 @@ void Boundary_set::clean_vertex_tex_coord_buffer(Uint size,
 }
 
 //! \brief computes flat indices for the normals or for the colors.
-void Boundary_set::compute_flat_indices(Index_array& in_indices,
-                                        Index_array& out_indices)
+void Boundary_set::compute_flat_indices(const Facet_indices& indices,
+                                        Flat_indices& target)
 {
-  if (in_indices.empty()) {
+  if (empty_facet_indices(indices)) {
     if (PT_TRIANGLES == m_primitive_type) {
-      Uint j = 0;
-      for (Uint i = 0; i < get_num_primitives(); ++i) {
-        out_indices[j++] = i;
-        out_indices[j++] = i;
-        out_indices[j++] = i;
+      size_t j(0);
+      for (size_t i = 0; i < get_num_primitives(); ++i) {
+        target[j++] = i;
+        target[j++] = i;
+        target[j++] = i;
       }
       return;
     }
     SGAL_assertion(PT_QUADS == m_primitive_type);
-    Uint j = 0;
-    for (Uint i = 0; i < get_num_primitives(); ++i) {
-      out_indices[j++] = i;
-      out_indices[j++] = i;
-      out_indices[j++] = i;
-      out_indices[j++] = i;
+    size_t j(0);
+    for (size_t i = 0; i < get_num_primitives(); ++i) {
+      target[j++] = i;
+      target[j++] = i;
+      target[j++] = i;
+      target[j++] = i;
     }
     return;
   }
+  auto& source = boost::get<Flat_indices>(indices);
   if (PT_TRIANGLES == m_primitive_type) {
-    Uint j = 0;
-    for (Uint i = 0; i < get_num_primitives(); ++i) {
-      out_indices[j++] = in_indices[i];
-      out_indices[j++] = in_indices[i];
-      out_indices[j++] = in_indices[i];
+    size_t j(0);
+    for (size_t i = 0; i < get_num_primitives(); ++i) {
+      target[j++] = source[i];
+      target[j++] = source[i];
+      target[j++] = source[i];
     }
     return;
   }
   SGAL_assertion(PT_QUADS == m_primitive_type);
-  Uint j = 0;
-  for (Uint i = 0; i < get_num_primitives(); ++i) {
-    out_indices[j++] = in_indices[i];
-    out_indices[j++] = in_indices[i];
-    out_indices[j++] = in_indices[i];
-    out_indices[j++] = in_indices[i];
+  size_t j(0);
+  for (size_t i = 0; i < get_num_primitives(); ++i) {
+    target[j++] = source[i];
+    target[j++] = source[i];
+    target[j++] = source[i];
+    target[j++] = source[i];
   }
 }
 
@@ -1751,27 +1701,31 @@ void Boundary_set::clean_local_cnc_vertex_buffers()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_color_array);
 
-  Index_array tmp_normal_indices;
+  Facet_indices tmp_facet_normal_indices = Flat_indices();
+  auto& tmp_normal_indices = boost::get<Flat_indices>(tmp_facet_normal_indices);
   if (m_normal_attachment == AT_PER_PRIMITIVE) {
-    auto size = m_flat_coord_indices.size();
+    auto size = size_facet_indices(m_facet_coord_indices);
     tmp_normal_indices.resize(size);
-    compute_flat_indices(m_flat_normal_indices, tmp_normal_indices);
+    compute_flat_indices(m_facet_normal_indices, tmp_normal_indices);
   }
-  Index_array tmp_color_indices;
+  Facet_indices tmp_facet_color_indices = Flat_indices();
+  auto& tmp_color_indices = boost::get<Flat_indices>(tmp_facet_color_indices);
   if (m_color_attachment == AT_PER_PRIMITIVE) {
-    auto size = m_flat_coord_indices.size();
+    auto size = size_facet_indices(m_facet_coord_indices);
     tmp_color_indices.resize(size);
-    compute_flat_indices(m_flat_color_indices, tmp_color_indices);
+    compute_flat_indices(m_facet_color_indices, tmp_color_indices);
   }
 
   auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
-    tmp_normal_indices.begin() :
-    (m_flat_normal_indices.empty() ?
-     m_flat_coord_indices.begin() : m_flat_normal_indices.begin());
+    begin_facet_indices(tmp_facet_normal_indices) :
+    (empty_facet_indices(m_facet_normal_indices) ?
+     begin_facet_indices(m_facet_coord_indices) :
+     begin_facet_indices(m_facet_normal_indices));
   auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
-    tmp_color_indices.begin() :
-    (m_flat_color_indices.empty() ?
-     m_flat_coord_indices.begin() : m_flat_color_indices.begin());
+    begin_facet_indices(tmp_facet_color_indices) :
+    (empty_facet_indices(m_facet_color_indices) ?
+     begin_facet_indices(m_facet_coord_indices) :
+     begin_facet_indices(m_facet_color_indices));
   SGAL_assertion(normal_indices_begin != color_indices_begin);
   clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
                                 normal_indices_begin,
@@ -1794,29 +1748,35 @@ void Boundary_set::clean_local_cnct2_vertex_buffers()
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
 
-  Index_array tmp_normal_indices;
+  Facet_indices tmp_facet_normal_indices = Flat_indices();
+  auto& tmp_normal_indices = boost::get<Flat_indices>(tmp_facet_normal_indices);
   if (m_normal_attachment == AT_PER_PRIMITIVE) {
-    auto size = m_flat_coord_indices.size();
+    auto size = size_facet_indices(m_facet_coord_indices);
     tmp_normal_indices.resize(size);
-    compute_flat_indices(m_flat_normal_indices, tmp_normal_indices);
+    compute_flat_indices(m_facet_normal_indices, tmp_normal_indices);
   }
-  Index_array tmp_color_indices;
+  Facet_indices tmp_facet_color_indices = Flat_indices();
+  auto& tmp_color_indices = boost::get<Flat_indices>(tmp_facet_color_indices);
   if (m_color_attachment == AT_PER_PRIMITIVE) {
-    auto size = m_flat_coord_indices.size();
+    auto size = size_facet_indices(m_facet_coord_indices);
     tmp_color_indices.resize(size);
-    compute_flat_indices(m_flat_color_indices, tmp_color_indices);
+    compute_flat_indices(m_facet_color_indices, tmp_color_indices);
   }
 
   auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
-    tmp_normal_indices.begin() :
-    (m_flat_normal_indices.empty() ?
-     m_flat_coord_indices.begin() : m_flat_normal_indices.begin());
+    begin_facet_indices(tmp_facet_normal_indices) :
+    (empty_facet_indices(m_facet_normal_indices) ?
+     begin_facet_indices(m_facet_coord_indices) :
+     begin_facet_indices(m_facet_normal_indices));
   auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
-    tmp_color_indices.begin() :
-    (m_flat_color_indices.empty() ?
-     m_flat_coord_indices.begin() : m_flat_color_indices.begin());
-  auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+    begin_facet_indices(tmp_facet_color_indices) :
+    (empty_facet_indices(m_facet_color_indices) ?
+     begin_facet_indices(m_facet_coord_indices) :
+     begin_facet_indices(m_facet_color_indices));
+  auto tex_coord_indices_begin =
+    empty_facet_indices(m_facet_tex_coord_indices) ?
+    begin_facet_indices(m_facet_coord_indices) :
+    begin_facet_indices(m_facet_tex_coord_indices);
   SGAL_assertion((normal_indices_begin != color_indices_begin) ||
                  (color_indices_begin != tex_coord_indices_begin));
   clean_local_4d_vertex_buffers(m_normal_array, m_local_normal_buffer,
@@ -1843,27 +1803,35 @@ void Boundary_set::clean_local_cnct3_vertex_buffers()
     boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
 
-  Index_array tmp_normal_indices;
+  Facet_indices tmp_facet_normal_indices = Flat_indices();
+  auto& tmp_normal_indices = boost::get<Flat_indices>(tmp_facet_normal_indices);
   if (m_normal_attachment == AT_PER_PRIMITIVE) {
-    auto size = m_flat_coord_indices.size();
+    auto size = size_facet_indices(m_facet_coord_indices);
     tmp_normal_indices.resize(size);
-    compute_flat_indices(m_flat_normal_indices, tmp_normal_indices);
+    compute_flat_indices(m_facet_normal_indices, tmp_normal_indices);
   }
-  Index_array tmp_color_indices;
+  Facet_indices tmp_facet_color_indices = Flat_indices();
+  auto& tmp_color_indices = boost::get<Flat_indices>(tmp_facet_color_indices);
   if (m_color_attachment == AT_PER_PRIMITIVE) {
-    auto size = m_flat_coord_indices.size();
+    auto size = size_facet_indices(m_facet_coord_indices);
     tmp_color_indices.resize(size);
-    compute_flat_indices(m_flat_color_indices, tmp_color_indices);
+    compute_flat_indices(m_facet_color_indices, tmp_color_indices);
   }
 
   auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
-    tmp_normal_indices.begin() :
-    (m_flat_normal_indices.empty() ?
-     m_flat_coord_indices.begin() : m_flat_normal_indices.begin());
-  auto color_indices_begin = m_flat_color_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_color_indices.begin();
-  auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+    begin_facet_indices(tmp_facet_normal_indices) :
+    (empty_facet_indices(m_facet_normal_indices) ?
+     begin_facet_indices(m_facet_coord_indices) :
+     begin_facet_indices(m_facet_normal_indices));
+  auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
+    begin_facet_indices(tmp_facet_color_indices) :
+    (empty_facet_indices(m_facet_color_indices) ?
+     begin_facet_indices(m_facet_coord_indices) :
+     begin_facet_indices(m_facet_color_indices));
+  auto tex_coord_indices_begin =
+    empty_facet_indices(m_facet_tex_coord_indices) ?
+    begin_facet_indices(m_facet_coord_indices) :
+    begin_facet_indices(m_facet_tex_coord_indices);
   SGAL_assertion((normal_indices_begin != color_indices_begin) ||
                  (color_indices_begin != tex_coord_indices_begin));
   clean_local_4d_vertex_buffers(m_normal_array, m_local_normal_buffer,
@@ -1892,29 +1860,36 @@ void Boundary_set::clean_local_cnct4_vertex_buffers()
     boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
 
-  Index_array tmp_normal_indices;
+  Facet_indices tmp_facet_normal_indices = Flat_indices();
+  auto& tmp_normal_indices = boost::get<Flat_indices>(tmp_facet_normal_indices);
   if (m_normal_attachment == AT_PER_PRIMITIVE) {
-    auto size = m_flat_coord_indices.size();
+    auto size = size_facet_indices(m_facet_coord_indices);
     tmp_normal_indices.resize(size);
-    compute_flat_indices(m_flat_normal_indices, tmp_normal_indices);
+    compute_flat_indices(m_facet_normal_indices, tmp_normal_indices);
   }
-  Index_array tmp_color_indices;
+
+  Facet_indices tmp_facet_color_indices = Flat_indices();
+  auto& tmp_color_indices = boost::get<Flat_indices>(tmp_facet_color_indices);
   if (m_color_attachment == AT_PER_PRIMITIVE) {
-    auto size = m_flat_coord_indices.size();
+    auto size = size_facet_indices(m_facet_coord_indices);
     tmp_color_indices.resize(size);
-    compute_flat_indices(m_flat_color_indices, tmp_color_indices);
+    compute_flat_indices(m_facet_color_indices, tmp_color_indices);
   }
 
   auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
-    tmp_normal_indices.begin() :
-    (m_flat_normal_indices.empty() ?
-     m_flat_coord_indices.begin() : m_flat_normal_indices.begin());
+    begin_facet_indices(tmp_facet_normal_indices) :
+    (empty_facet_indices(m_facet_normal_indices) ?
+     begin_facet_indices(m_facet_coord_indices) :
+     begin_facet_indices(m_facet_normal_indices));
   auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
-    tmp_color_indices.begin() :
-    (m_flat_color_indices.empty() ?
-     m_flat_coord_indices.begin() : m_flat_color_indices.begin());
-  auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+    begin_facet_indices(tmp_facet_color_indices) :
+    (empty_facet_indices(m_facet_color_indices) ?
+     begin_facet_indices(m_facet_coord_indices) :
+     begin_facet_indices(m_facet_color_indices));
+  auto tex_coord_indices_begin =
+    empty_facet_indices(m_facet_tex_coord_indices) ?
+    begin_facet_indices(m_facet_coord_indices) :
+    begin_facet_indices(m_facet_tex_coord_indices);
   SGAL_assertion((normal_indices_begin != color_indices_begin) ||
                  (color_indices_begin != tex_coord_indices_begin));
   clean_local_4d_vertex_buffers(m_normal_array, m_local_normal_buffer,
@@ -1935,16 +1910,19 @@ void Boundary_set::clean_local_cnct4_vertex_buffers()
 void Boundary_set::clean_local_cn_vertex_buffers()
 {
   SGAL_assertion(m_normal_array);
-  Index_array tmp_normal_indices;
+  Facet_indices tmp_facet_normal_indices = Flat_indices();
+  auto& tmp_normal_indices = boost::get<Flat_indices>(tmp_facet_normal_indices);
   if (m_normal_attachment == AT_PER_PRIMITIVE) {
-    auto size = m_flat_coord_indices.size();
+    auto size = size_facet_indices(m_facet_coord_indices);
     tmp_normal_indices.resize(size);
-    compute_flat_indices(m_flat_normal_indices, tmp_normal_indices);
+    compute_flat_indices(m_facet_normal_indices, tmp_normal_indices);
   }
   auto normal_indices_begin =
-    (m_normal_attachment == AT_PER_PRIMITIVE) ? tmp_normal_indices.begin() :
-    (m_flat_normal_indices.empty() ?
-     m_flat_coord_indices.begin() : m_flat_normal_indices.begin());
+    (m_normal_attachment == AT_PER_PRIMITIVE) ?
+    begin_facet_indices(tmp_facet_normal_indices) :
+    (empty_facet_indices(m_facet_normal_indices) ?
+     begin_facet_indices(m_facet_coord_indices) :
+     begin_facet_indices(m_facet_normal_indices));
   clean_local_2d_vertex_buffers(m_normal_array, m_local_normal_buffer,
                                 normal_indices_begin);
   tmp_normal_indices.clear();
@@ -1961,19 +1939,23 @@ void Boundary_set::clean_local_cnt2_vertex_buffers()
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
 
-  Index_array tmp_normal_indices;
+  Facet_indices tmp_facet_normal_indices = Flat_indices();
+  auto& tmp_normal_indices = boost::get<Flat_indices>(tmp_facet_normal_indices);
   if (m_normal_attachment == AT_PER_PRIMITIVE) {
-    auto size = m_flat_coord_indices.size();
+    auto size = size_facet_indices(m_facet_coord_indices);
     tmp_normal_indices.resize(size);
-    compute_flat_indices(m_flat_normal_indices, tmp_normal_indices);
+    compute_flat_indices(m_facet_normal_indices, tmp_normal_indices);
   }
 
   auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
-    tmp_normal_indices.begin() :
-    (m_flat_normal_indices.empty() ?
-     m_flat_coord_indices.begin() : m_flat_normal_indices.begin());
-  auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+    begin_facet_indices(tmp_facet_normal_indices) :
+    (empty_facet_indices(m_facet_normal_indices) ?
+     begin_facet_indices(m_facet_coord_indices) :
+     begin_facet_indices(m_facet_normal_indices));
+  auto tex_coord_indices_begin =
+    empty_facet_indices(m_facet_tex_coord_indices) ?
+    begin_facet_indices(m_facet_coord_indices) :
+    begin_facet_indices(m_facet_tex_coord_indices);
   SGAL_assertion(normal_indices_begin != tex_coord_indices_begin);
   clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
                                 normal_indices_begin,
@@ -1994,19 +1976,23 @@ void Boundary_set::clean_local_cnt3_vertex_buffers()
     boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
 
-  Index_array tmp_normal_indices;
+  Facet_indices tmp_facet_normal_indices = Flat_indices();
+  auto& tmp_normal_indices = boost::get<Flat_indices>(tmp_facet_normal_indices);
   if (m_normal_attachment == AT_PER_PRIMITIVE) {
-    auto size = m_flat_coord_indices.size();
+    auto size = size_facet_indices(m_facet_coord_indices);
     tmp_normal_indices.resize(size);
-    compute_flat_indices(m_flat_normal_indices, tmp_normal_indices);
+    compute_flat_indices(m_facet_normal_indices, tmp_normal_indices);
   }
 
   auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
-    tmp_normal_indices.begin() :
-    (m_flat_normal_indices.empty() ?
-     m_flat_coord_indices.begin() : m_flat_normal_indices.begin());
-  auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+    begin_facet_indices(tmp_facet_normal_indices) :
+    (empty_facet_indices(m_facet_normal_indices) ?
+     begin_facet_indices(m_facet_coord_indices) :
+     begin_facet_indices(m_facet_normal_indices));
+  auto tex_coord_indices_begin =
+    empty_facet_indices(m_facet_tex_coord_indices) ?
+    begin_facet_indices(m_facet_coord_indices) :
+    begin_facet_indices(m_facet_tex_coord_indices);
   SGAL_assertion(normal_indices_begin != tex_coord_indices_begin);
   clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
                                 normal_indices_begin,
@@ -2028,19 +2014,23 @@ void Boundary_set::clean_local_cnt4_vertex_buffers()
     boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
 
-  Index_array tmp_normal_indices;
+  Facet_indices tmp_facet_normal_indices = Flat_indices();
+  auto& tmp_normal_indices = boost::get<Flat_indices>(tmp_facet_normal_indices);
   if (m_normal_attachment == AT_PER_PRIMITIVE) {
-    auto size = m_flat_coord_indices.size();
+    auto size = size_facet_indices(m_facet_coord_indices);
     tmp_normal_indices.resize(size);
-    compute_flat_indices(m_flat_normal_indices, tmp_normal_indices);
+    compute_flat_indices(m_facet_normal_indices, tmp_normal_indices);
   }
 
   auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
-    tmp_normal_indices.begin() :
-    (m_flat_normal_indices.empty() ?
-     m_flat_coord_indices.begin() : m_flat_normal_indices.begin());
-  auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+    begin_facet_indices(tmp_facet_normal_indices) :
+    (empty_facet_indices(m_facet_normal_indices) ?
+     begin_facet_indices(m_facet_coord_indices) :
+     begin_facet_indices(m_facet_normal_indices));
+  auto tex_coord_indices_begin =
+    empty_facet_indices(m_facet_tex_coord_indices) ?
+    begin_facet_indices(m_facet_coord_indices) :
+    begin_facet_indices(m_facet_tex_coord_indices);
   SGAL_assertion(normal_indices_begin != tex_coord_indices_begin);
   clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
                                 normal_indices_begin,
@@ -2055,17 +2045,20 @@ void Boundary_set::clean_local_cnt4_vertex_buffers()
 void Boundary_set::clean_local_cc_vertex_buffers()
 {
   SGAL_assertion(m_color_array);
-  Index_array tmp_color_indices;
+
+  Facet_indices tmp_facet_color_indices = Flat_indices();
+  auto& tmp_color_indices = boost::get<Flat_indices>(tmp_facet_color_indices);
   if (m_color_attachment == AT_PER_PRIMITIVE) {
-    auto size = m_flat_coord_indices.size();
+    auto size = size_facet_indices(m_facet_coord_indices);
     tmp_color_indices.resize(size);
-    compute_flat_indices(m_flat_color_indices, tmp_color_indices);
+    compute_flat_indices(m_facet_color_indices, tmp_color_indices);
   }
 
   auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
-    tmp_color_indices.begin() :
-    (m_flat_color_indices.empty() ?
-     m_flat_coord_indices.begin() : m_flat_color_indices.begin());
+    begin_facet_indices(tmp_facet_color_indices) :
+    (empty_facet_indices(m_facet_color_indices) ?
+     begin_facet_indices(m_facet_coord_indices) :
+     begin_facet_indices(m_facet_color_indices));
   clean_local_2d_vertex_buffers(m_color_array, m_local_color_buffer,
                                 color_indices_begin);
 
@@ -2082,19 +2075,24 @@ void Boundary_set::clean_local_cct2_vertex_buffers()
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
-  auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+  auto tex_coord_indices_begin =
+    empty_facet_indices(m_facet_tex_coord_indices) ?
+    begin_facet_indices(m_facet_coord_indices) :
+    begin_facet_indices(m_facet_tex_coord_indices);
 
-  Index_array tmp_color_indices;
+  Facet_indices tmp_facet_color_indices = Flat_indices();
+  auto& tmp_color_indices = boost::get<Flat_indices>(tmp_facet_color_indices);
   if (m_color_attachment == AT_PER_PRIMITIVE) {
-    auto size = m_flat_coord_indices.size();
+    auto size = size_facet_indices(m_facet_coord_indices);
     tmp_color_indices.resize(size);
-    compute_flat_indices(m_flat_color_indices, tmp_color_indices);
+    compute_flat_indices(m_facet_color_indices, tmp_color_indices);
   }
+
   auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
-    tmp_color_indices.begin() :
-    (m_flat_color_indices.empty() ?
-     m_flat_coord_indices.begin() : m_flat_color_indices.begin());
+    begin_facet_indices(tmp_facet_color_indices) :
+    (empty_facet_indices(m_facet_color_indices) ?
+     begin_facet_indices(m_facet_coord_indices) :
+     begin_facet_indices(m_facet_color_indices));
   SGAL_assertion(color_indices_begin != tex_coord_indices_begin);
   clean_local_3d_vertex_buffers(m_color_array, m_local_color_buffer,
                                 color_indices_begin,
@@ -2113,18 +2111,23 @@ void Boundary_set::clean_local_cct3_vertex_buffers()
     boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
 
-  Index_array tmp_color_indices;
+  Facet_indices tmp_facet_color_indices = Flat_indices();
+  auto& tmp_color_indices = boost::get<Flat_indices>(tmp_facet_color_indices);
   if (m_color_attachment == AT_PER_PRIMITIVE) {
-    auto size = m_flat_coord_indices.size();
+    auto size = size_facet_indices(m_facet_coord_indices);
     tmp_color_indices.resize(size);
-    compute_flat_indices(m_flat_color_indices, tmp_color_indices);
+    compute_flat_indices(m_facet_color_indices, tmp_color_indices);
   }
+
   auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
-    tmp_color_indices.begin() :
-    (m_flat_color_indices.empty() ?
-     m_flat_coord_indices.begin() : m_flat_color_indices.begin());
-  auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+    begin_facet_indices(tmp_facet_color_indices) :
+    (empty_facet_indices(m_facet_color_indices) ?
+     begin_facet_indices(m_facet_coord_indices) :
+     begin_facet_indices(m_facet_color_indices));
+  auto tex_coord_indices_begin =
+    empty_facet_indices(m_facet_tex_coord_indices) ?
+    begin_facet_indices(m_facet_coord_indices) :
+    begin_facet_indices(m_facet_tex_coord_indices);
   SGAL_assertion(color_indices_begin != tex_coord_indices_begin);
   clean_local_3d_vertex_buffers(m_color_array, m_local_color_buffer,
                                 color_indices_begin,
@@ -2144,18 +2147,23 @@ void Boundary_set::clean_local_cct4_vertex_buffers()
     boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
 
-  Index_array tmp_color_indices;
+  Facet_indices tmp_facet_color_indices = Flat_indices();
+  auto& tmp_color_indices = boost::get<Flat_indices>(tmp_facet_color_indices);
   if (m_color_attachment == AT_PER_PRIMITIVE) {
-    auto size = m_flat_coord_indices.size();
+    auto size = size_facet_indices(m_facet_coord_indices);
     tmp_color_indices.resize(size);
-    compute_flat_indices(m_flat_color_indices, tmp_color_indices);
+    compute_flat_indices(m_facet_color_indices, tmp_color_indices);
   }
+
   auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
-    tmp_color_indices.begin() :
-    (m_flat_color_indices.empty() ?
-     m_flat_coord_indices.begin() : m_flat_color_indices.begin());
-  auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+    begin_facet_indices(tmp_facet_color_indices) :
+    (empty_facet_indices(m_facet_color_indices) ?
+     begin_facet_indices(m_facet_coord_indices) :
+     begin_facet_indices(m_facet_color_indices));
+  auto tex_coord_indices_begin =
+    empty_facet_indices(m_facet_tex_coord_indices) ?
+    begin_facet_indices(m_facet_coord_indices) :
+    begin_facet_indices(m_facet_tex_coord_indices);
   SGAL_assertion(color_indices_begin != tex_coord_indices_begin);
   clean_local_3d_vertex_buffers(m_color_array, m_local_color_buffer,
                                 color_indices_begin,
@@ -2173,8 +2181,10 @@ void Boundary_set::clean_local_ct2_vertex_buffers()
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
-  auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+  auto tex_coord_indices_begin =
+    empty_facet_indices(m_facet_tex_coord_indices) ?
+    begin_facet_indices(m_facet_coord_indices) :
+    begin_facet_indices(m_facet_tex_coord_indices);
   clean_local_2d_vertex_buffers(tex_coord_array, m_local_tex_coord_buffer_2d,
                                 tex_coord_indices_begin);
   m_dirty_tex_coord_buffer = true;
@@ -2186,7 +2196,7 @@ void Boundary_set::clean_local_ct3_vertex_buffers()
     boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
   clean_local_2d_vertex_buffers(tex_coord_array, m_local_tex_coord_buffer_3d,
-                                m_flat_tex_coord_indices.begin());
+                                begin_facet_indices(m_facet_tex_coord_indices));
   m_dirty_tex_coord_buffer = true;
 }
 
@@ -2196,8 +2206,10 @@ void Boundary_set::clean_local_ct4_vertex_buffers()
   boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
-  auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+  auto tex_coord_indices_begin =
+    empty_facet_indices(m_facet_tex_coord_indices) ?
+    begin_facet_indices(m_facet_coord_indices) :
+    begin_facet_indices(m_facet_tex_coord_indices);
   clean_local_2d_vertex_buffers(tex_coord_array, m_local_tex_coord_buffer_4d,
                                 tex_coord_indices_begin);
   m_dirty_tex_coord_buffer = true;

@@ -78,6 +78,7 @@ void Stl_binary_formatter::end()
 //! \brief obtains the number of triangles of a mesh.
 size_t Stl_binary_formatter::number_of_triangles(Shared_mesh_set mesh)
 {
+  SGAL_assertion(mesh);
   auto type = mesh->get_primitive_type();
   if ((type == Geo_set::PT_TRIANGLES) || (type == Geo_set::PT_QUADS)) {
     auto num = mesh->get_num_primitives();
@@ -106,8 +107,9 @@ size_t Stl_binary_formatter::number_of_triangles()
                 [&](const World_shape& ws)
                 {
                   auto geometry = ws.first->get_geometry();
+                  if (!geometry) return;
                   auto mesh = boost::dynamic_pointer_cast<Mesh_set>(geometry);
-                  if (mesh) num_triangles += number_of_triangles(mesh);
+                  num_triangles += number_of_triangles(mesh);
                 });
   return num_triangles;
 }
@@ -178,64 +180,36 @@ void Stl_binary_formatter::write_facet(const Vector3f& p1, const Vector3f& p2,
 void Stl_binary_formatter::clean(Shared_shape shape)
 {
   auto geometry = shape->get_geometry();
+  if (!geometry) return;
   auto mesh = boost::dynamic_pointer_cast<Mesh_set>(geometry);
+  if (! mesh) std::cout << "NOT MESH!!!!!!!!!!!!!!!\n";
   auto coords = mesh->get_coord_array();
   if (!coords || (coords->size() == 0)) return;
 
-  if (mesh->is_dirty_flat_coord_indices()) mesh->clean_flat_coord_indices();
-  auto type = mesh->get_primitive_type();
-  if ((Geo_set::PT_TRIANGLES != type) && (Geo_set::PT_QUADS != type)) {
-    if (mesh->is_dirty_coord_indices()) mesh->clean_coord_indices();
-  }
+  if (mesh->is_dirty_facet_coord_indices()) mesh->clean_facet_coord_indices();
 }
 
 //! \brief writes a shape.
 void Stl_binary_formatter::write(Shared_shape shape, Shared_matrix4f matrix)
 {
   auto geometry = shape->get_geometry();
+  if (!geometry) return;
   auto mesh = boost::dynamic_pointer_cast<Mesh_set>(geometry);
   auto coords = mesh->get_coord_array();
   if (!coords || (coords->size() == 0)) return;
 
   std::vector<Vector3f> world_coords(coords->size());
-  std::vector<Vector3f>::iterator it;
   Uint i(0);
-  for (it = world_coords.begin(); it != world_coords.end(); ++it)
+  for (auto it = world_coords.begin(); it != world_coords.end(); ++it)
     it->xform_pt(mesh->get_coord_3d(i++), *matrix);
 
   // Export the facets.
-  if (mesh->is_dirty_flat_coord_indices()) mesh->clean_flat_coord_indices();
-  auto type = mesh->get_primitive_type();
-  if ((Geo_set::PT_TRIANGLES == type) || (Geo_set::PT_QUADS == type)) {
-    const auto& indices = mesh->get_flat_coord_indices();
-    if (indices.empty()) return;
+  if (mesh->is_dirty_facet_coord_indices()) mesh->clean_facet_coord_indices();
+  const auto& indices = mesh->get_facet_coord_indices();
+  Export_facet_visitor visitor(mesh, world_coords, *this);
+  boost::apply_visitor(visitor, indices);
 
-    Uint j(0);
-    for (Uint i = 0; i < mesh->get_num_primitives(); ++i) {
-      const Vector3f& v1 = world_coords[indices[j++]];
-      const Vector3f& v2 = world_coords[indices[j++]];
-      const Vector3f& v3 = world_coords[indices[j++]];
-      //! \todo fill spacer with color if required.
-      Ushort spacer;
-      if (Geo_set::PT_TRIANGLES == type) {
-        if (mesh->is_ccw()) write_facet(v1, v2, v3, spacer);
-        else write_facet(v3, v2, v1, spacer);
-      }
-      else {
-        const Vector3f& v4 = world_coords[indices[j++]];
-        SGAL_assertion(PT_QUADS == get_primitive_type());
-        if (mesh->is_ccw()) write_facet(v1, v2, v3, v4, spacer);
-        else write_facet(v4, v3, v2, v1, spacer);
-      }
-    }
-  }
-  else {
-    if (mesh->is_dirty_coord_indices()) mesh->clean_coord_indices();
-    const auto& indices = mesh->get_coord_indices();
-    if (indices.empty()) return;
-    //! \todo triangulate and export.
-    SGAL_error_msg("Not impelmented yet!");
-  }
+  world_coords.clear();
 }
 
 //! \brief writes a scene-graph container.
@@ -264,6 +238,50 @@ void Stl_binary_formatter::write(Shared_container container)
     return;
   }
   container->write(this);
+}
+
+//! \brief export triangles.
+void Stl_binary_formatter::Export_facet_visitor::
+operator()(const Triangle_indices& indices)
+{
+  SGAL_assertion (Geo_set::PT_TRIANGLES == m_mesh->get_primitive_type());
+  if (indices.empty()) return;
+  for (size_t i = 0; i < indices.size(); ++i) {
+    const Vector3f& v1 = m_world_coords[indices[i][0]];
+    const Vector3f& v2 = m_world_coords[indices[i][1]];
+    const Vector3f& v3 = m_world_coords[indices[i][2]];
+    //! \todo fill spacer with color if required.
+    Ushort spacer;
+    if (m_mesh->is_ccw()) m_formater.write_facet(v1, v2, v3, spacer);
+    else m_formater.write_facet(v3, v2, v1, spacer);
+  }
+}
+
+//! \brief export quads.
+void Stl_binary_formatter::Export_facet_visitor::
+operator()(const Quad_indices& indices)
+{
+  SGAL_assertion (Geo_set::PT_QUADS == m_mesh->get_primitive_type());
+  if (indices.empty()) return;
+  for (size_t i = 0; i < indices.size(); ++i) {
+    const Vector3f& v1 = m_world_coords[indices[i][0]];
+    const Vector3f& v2 = m_world_coords[indices[i][1]];
+    const Vector3f& v3 = m_world_coords[indices[i][2]];
+    const Vector3f& v4 = m_world_coords[indices[i][3]];
+    Ushort spacer;
+    if (m_mesh->is_ccw()) m_formater.write_facet(v1, v2, v3, v4, spacer);
+    else m_formater.write_facet(v4, v3, v2, v1, spacer);
+  }
+}
+
+//! \brief export polygons.
+void Stl_binary_formatter::Export_facet_visitor::
+operator()(const Polygon_indices& indices)
+{
+  SGAL_assertion(Geo_set::PT_POLYGONS == m_mesh->get_primitive_type());
+  if (indices.empty()) return;
+  //! \todo triangulate and export.
+  SGAL_error_msg("Not impelmented yet!");
 }
 
 SGAL_END_NAMESPACE

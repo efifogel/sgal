@@ -320,10 +320,10 @@ public:
   void calculate_single_normal_per_vertex();
 
   /*! Calculate a single normal per polygon for all polygons. */
-  void calculate_normal_per_polygon();
+  void calculate_normal_per_facet();
 
   /*! Calculate a single normal per polygon for all polygons. */
-  void calculate_normal_per_polygon(Normal_array& normals);
+  void calculate_normal_per_facet(Normal_array& normals);
 
   /* Set the flag that indicates whether normals are bound per vertex or per
    * face.
@@ -715,82 +715,100 @@ protected:
    */
   Boolean use_vertex_buffer_object() const;
 
-  /*! Compute the normalized normal to a triangle.
-   * \param j (in) The starting index of the triangular facet in the coord
-              indices array.
-   * \param normal The resulting normal.
-   */
-  void compute_triangle_normal(Uint j, Vector3f& normal) const;
+  /*! Calculate a single normal per triangle for all triangles. */
+  void calculate_normal_per_triangle(Normal_array& normals);
 
-  /*! Compute the center point of a triangle.
-   * \param j The starting index of the triangular facet in the coord indices
-   *     array.
-   * \param center The resulting center.
-   */
-  void compute_triangle_center(Uint j, Vector3f& center) const;
+  /*! Calculate a single normal per quad for all quads. */
+  void calculate_normal_per_quad(Normal_array& normals);
 
-  /*! Compute the vertex information for the three vertices of a triangule
-   * \param j The starting index of the triangular facet in the coord
-   *     indices array.
-   * \param center The triangle center.
-   * \param normal The triangle normal.
-   * \param vertices_info The vertex information array.
-   */
-  void compute_triangle_vertex_info(Uint j, Uint facet_index,
-                                    const Vector3f& center,
-                                    Vertices_info& vertices_info) const;
+  /*! Calculate a single normal per polygon for all polygons. */
+  void calculate_normal_per_polygon(Normal_array& normals);
 
-  /*! Compute the normalized normal to a quadrilateral.
-   * \param j (in) The starting index of the quadrilateral facet in the coord
-   *          indices array.
-   * \param normal The resulting normal
-   */
-  void compute_quad_normal(Uint j, Vector3f& normal) const;
+  /*! Calculate vertex information per triangle for all triangles. */
+  void calculate_vertex_info_per_triangle(Vertices_info& vertices_info);
 
-  /*! Compute the center point of a quadrilateral.
-   * \param j The starting index of the quadrilateral facet in the coord
-   *     indices array.
-   * \param center The resulting center
-   */
-  void compute_quad_center(Uint j, Vector3f& center) const;
+  /*! Calculate vertex information per quad for all quads. */
+  void calculate_vertex_info_per_quad(Vertices_info& vertices_info);
 
-  /*! Compute the vertex information for the four vertices of a quadrilateral
-   * \param j The starting index of the quadrilateral facet in the coord
-   *     indices array.
-   * \param center The triangle center.
-   * \param normal The triangle normal.
-   * \param vertices_info The vertex information array.
-   */
-  void compute_quad_vertex_info(Uint j, Uint facet_index,
-                                const Vector3f& center,
-                                Vertices_info& vertices_info) const;
+  /*! Calculate vertex information per polygon for all polygons. */
+  void calculate_vertex_info_per_polygon(Vertices_info& vertices_info);
 
-  /*! Compute the normalized normal to a polygon.
-   * \param j (in) The starting index of the polygonal facet in the coord
-   *          indices array.
-   * \param normal The resulting normal
-   */
-  void compute_polygon_normal(Uint j, Vector3f& normal) const;
+  // /*! Compute the normalized normal to a triangle.
+  //  * \param j (in) The starting index of the triangular facet in the coord
+  //             indices array.
+  //  * \param normal The resulting normal.
+  //  */
+  // void compute_triangle_normal(Uint j, Vector3f& normal) const;
 
-  /*! Compute the center point of a polygon.
-   * \param j The starting index of the polygonal facet in the coord indices
-   *    array.
-   * \param center the resulting center
-   * \return the number of vertices of the polygon
-   */
-  Uint compute_polygon_center(Uint j, Vector3f& center) const;
+  // /*! Compute the center point of a triangle.
+  //  * \param j The starting index of the triangular facet in the coord indices
+  //  *     array.
+  //  * \param center The resulting center.
+  //  */
+  // void compute_triangle_center(Uint j, Vector3f& center) const;
 
-  /*! Compute the vertex information for the all vertices of a polygon
-   * \param j The starting index of the polygonal facet in the coord
-   *     indices array.
-   * \param k The number of vertices of the polygon
-   * \param center The polygon center.
-   * \param normal The polygon normal.
-   * \param vertices_info The vertex information array.
-   */
-  void compute_polygon_vertex_info(Uint j, Uint facet_index, Uint k,
-                                   const Vector3f& center,
-                                   Vertices_info& vertices_info) const;
+  // /*! Compute the vertex information for the three vertices of a triangule
+  //  * \param j The starting index of the triangular facet in the coord
+  //  *     indices array.
+  //  * \param center The triangle center.
+  //  * \param normal The triangle normal.
+  //  * \param vertices_info The vertex information array.
+  //  */
+  // void compute_triangle_vertex_info(Uint j, Uint facet_index,
+  //                                   const Vector3f& center,
+  //                                   Vertices_info& vertices_info) const;
+
+  // /*! Compute the normalized normal to a quadrilateral.
+  //  * \param j (in) The starting index of the quadrilateral facet in the coord
+  //  *          indices array.
+  //  * \param normal The resulting normal
+  //  */
+  // void compute_quad_normal(Uint j, Vector3f& normal) const;
+
+  // /*! Compute the center point of a quadrilateral.
+  //  * \param j The starting index of the quadrilateral facet in the coord
+  //  *     indices array.
+  //  * \param center The resulting center
+  //  */
+  // void compute_quad_center(Uint j, Vector3f& center) const;
+
+  // /*! Compute the vertex information for the four vertices of a quadrilateral
+  //  * \param j The starting index of the quadrilateral facet in the coord
+  //  *     indices array.
+  //  * \param center The triangle center.
+  //  * \param normal The triangle normal.
+  //  * \param vertices_info The vertex information array.
+  //  */
+  // void compute_quad_vertex_info(Uint j, Uint facet_index,
+  //                               const Vector3f& center,
+  //                               Vertices_info& vertices_info) const;
+
+  // /*! Compute the normalized normal to a polygon.
+  //  * \param j (in) The starting index of the polygonal facet in the coord
+  //  *          indices array.
+  //  * \param normal The resulting normal
+  //  */
+  // void compute_polygon_normal(Uint j, Vector3f& normal) const;
+
+  // /*! Compute the center point of a polygon.
+  //  * \param j The starting index of the polygonal facet in the coord indices
+  //  *    array.
+  //  * \param center the resulting center
+  //  * \return the number of vertices of the polygon
+  //  */
+  // Uint compute_polygon_center(Uint j, Vector3f& center) const;
+
+  // /*! Compute the vertex information for the all vertices of a polygon
+  //  * \param j The starting index of the polygonal facet in the coord
+  //  *     indices array.
+  //  * \param k The number of vertices of the polygon
+  //  * \param center The polygon center.
+  //  * \param normal The polygon normal.
+  //  * \param vertices_info The vertex information array.
+  //  */
+  // void compute_polygon_vertex_info(Uint j, Uint facet_index, Uint k,
+  //                                  const Vector3f& center,
+  //                                  Vertices_info& vertices_info) const;
 
   /*! Compute the vertex information for a facet vertex
    * \param vertex_index The vertex index
@@ -859,10 +877,31 @@ protected:
    */
   const GLvoid* local_indices_data() const;
 
-  /*! Obtain the flat coordinate indices data.
-   * \return the flat coordinate indices data.
+  /*! Visitor */
+  class Data_visitor : public boost::static_visitor<> {
+  public:
+    GLvoid* data;
+
+    /*! Constructor. */
+    Data_visitor() : data(NULL) {}
+
+    void operator()(const Triangle_indices& indices)
+    { data = (GLvoid*) &indices[0][0]; }
+
+    void operator()(const Quad_indices& indices)
+    { data = (GLvoid*) &indices[0][0]; }
+
+    void operator()(const Polygon_indices& indices)
+    { data = (GLvoid*) &indices[0][0]; }
+
+    void operator()(const Flat_indices& indices)
+    { data = (GLvoid*) &indices[0]; }
+  };
+
+  /*! Obtain the facet coordinate indices data.
+   * \return the facet coordinate indices data.
    */
-  const GLvoid* flat_coord_indicaes_data() const;
+  const GLvoid* facet_coord_indicaes_data() const;
 
   /*! Obtain coordinate data.
    * \return coordinate data.
@@ -902,7 +941,7 @@ protected:
   /*! Compute flat indices for the normals or for the colors.
    * This function is invoked when the attachment is not per-vertex.
    */
-  void compute_flat_indices(Index_array& in_indices, Index_array& indices);
+  void compute_flat_indices(const Facet_indices& source, Flat_indices& target);
 
   void compute_flat_tex_coords_2d(size_t num_verts);
   void compute_polygon_tex_coords_2d();
@@ -997,15 +1036,15 @@ private:
     m_local_coord_buffer.clear();
     buffer2.clear();
 
-    m_local_indices.resize(m_flat_coord_indices.size());
+    m_local_indices.resize(size_facet_indices(m_facet_coord_indices));
 
     Id_map_2d id_map;
     Uint id1 = 0;
     Uint id2 = 0;
 
-    auto it1 = m_flat_coord_indices.begin();
+    auto it1 = begin_facet_indices(m_facet_coord_indices);
     size_t index = 0;
-    for (; it1 != m_flat_coord_indices.end(); ++it1, ++it2) {
+    for (; it1 != end_facet_indices(m_facet_coord_indices); ++it1, ++it2) {
       id1 = *it1;
       id2 = *it2;
       auto key = std::make_tuple(id1, id2);
@@ -1039,16 +1078,17 @@ private:
     buffer2.clear();
     buffer3.clear();
 
-    m_local_indices.resize(m_flat_coord_indices.size());
+    m_local_indices.resize(size_facet_indices(m_facet_coord_indices));
 
     Id_map_3d id_map;
     Uint id1 = 0;
     Uint id2 = 0;
     Uint id3 = 0;
 
-    auto it1 = m_flat_coord_indices.begin();
+    auto it1 = begin_facet_indices(m_facet_coord_indices);
     size_t index = 0;
-    for (; it1 != m_flat_coord_indices.end(); ++it1, ++it2, ++it3) {
+    for (; it1 != end_facet_indices(m_facet_coord_indices); ++it1, ++it2, ++it3)
+    {
       id1 = *it1;
       id2 = *it2;
       id3 = *it3;
@@ -1088,7 +1128,7 @@ private:
     buffer3.clear();
     buffer4.clear();
 
-    m_local_indices.resize(m_flat_coord_indices.size());
+    m_local_indices.resize(size_facet_indices(m_facet_coord_indices));
 
     Id_map_4d id_map;
     Uint id1 = 0;
@@ -1096,9 +1136,10 @@ private:
     Uint id3 = 0;
     Uint id4 = 0;
 
-    auto it1 = m_flat_coord_indices.begin();
+    auto it1 = begin_facet_indices(m_facet_coord_indices);
     size_t index = 0;
-    for (; it1 != m_flat_coord_indices.end(); ++it1, ++it2, ++it3, ++it4) {
+    for (; it1 != end_facet_indices(m_facet_coord_indices); ++it1, ++it2, ++it3, ++it4)
+    {
       id1 = *it1;
       id2 = *it2;
       id3 = *it3;
@@ -1214,8 +1255,12 @@ inline const GLvoid* Boundary_set::local_indices_data() const
 }
 
 //! Obtain the flat coordinate indices data.
-inline const GLvoid* Boundary_set::flat_coord_indicaes_data() const
-{ return (GLvoid*)(&(*(m_flat_coord_indices.begin()))); }
+inline const GLvoid* Boundary_set::facet_coord_indicaes_data() const
+{
+  Data_visitor visitor;
+  boost::apply_visitor(visitor, m_facet_coord_indices);
+  return visitor.data;
+}
 
 //! \brief obtains coordinate data..
 inline const GLfloat* Boundary_set::coord_data() const
@@ -1264,7 +1309,7 @@ inline Uint Boundary_set::tex_coord_data_size() const
 //! Obtain the indices.
 inline const GLvoid* Boundary_set::indices_data() const
 {
-  return m_local_indices.empty() ? flat_coord_indicaes_data() :
+  return m_local_indices.empty() ? facet_coord_indicaes_data() :
     local_indices_data();
 }
 

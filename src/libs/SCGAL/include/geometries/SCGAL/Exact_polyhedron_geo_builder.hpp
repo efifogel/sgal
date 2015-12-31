@@ -74,19 +74,19 @@ protected:
   void insert_faces(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
     // Add the faces:
-    if (m_mesh_set->are_coord_indices_flat()) {
-      if (m_mesh_set->get_primitive_type() == Geo_set::PT_TRIANGLES) {
-        insert_triangles(B);
-        return;
-      }
-      if (m_mesh_set->get_primitive_type() == Geo_set::PT_QUADS) {
-        insert_quads(B);
-        return;
-      }
-      SGAL_error();
-      return;
+    if (m_mesh_set->is_dirty_facet_coord_indices())
+      m_mesh_set->clean_facet_coord_indices();
+
+    switch (m_mesh_set->get_primitive_type()) {
+     case Geo_set::PT_TRIANGLES: insert_triangles(B); break;
+     case Geo_set::PT_QUADS: insert_quads(B); break;
+     case Geo_set::PT_POLYGONS: insert_polygons(B); break;
+
+     case Geo_set::PT_TRIANGLE_STRIP:
+     case Geo_set::PT_TRIANGLE_FAN:
+     case Geo_set::PT_QUAD_STRIP:
+     default: break;
     }
-    insert_polygons(B);
   }
 
   /*! Insert a triangle.
@@ -95,18 +95,17 @@ protected:
    *          the counterclockwise order. In other words, the first point is
    *          coords[indices[j]].
    */
-  Uint insert_triangle(CGAL::Polyhedron_incremental_builder_3<HDS>& B, Uint j)
+  template <typename InputIterator>
+  Uint insert_triangle(CGAL::Polyhedron_incremental_builder_3<HDS>& B,
+                       InputIterator begin, InputIterator end, Uint j)
   {
-    B.begin_facet();
-    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j));
-    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+1));
-    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+2));
-    typename HDS::Halfedge_handle he = B.end_facet();
+    if (!B.test_facet(begin, end))
+      throw(std::runtime_error("Error: inconsistent mesh!"));
+    auto he = B.add_facet(begin, end);
     he->m_index = j;
     he->next()->m_index = j+1;
     he->next()->next()->m_index = j+2;
-    j += 3;
-    return j;
+    return j+3;
   }
 
   /*! Insert triangles.
@@ -114,9 +113,11 @@ protected:
    */
   void insert_triangles(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
-    unsigned int num_facets = m_mesh_set->get_num_primitives();
-    Uint j = 0;
-    for (Uint i = 0; i < num_facets; ++i) j = insert_triangle(B, j);
+    const auto& facet_indices = m_mesh_set->get_facet_coord_indices();
+    const auto& indices = boost::get<Mesh_set::Triangle_indices>(facet_indices);
+    size_t j(0);
+    for (size_t i = 0; i < indices.size(); ++i)
+      j = insert_triangle(B, indices[i].begin(), indices[i].end(), j);
   }
 
   /*! Insert a quadrilateral.
@@ -125,20 +126,18 @@ protected:
    *          the counterclockwise order. In other words, the first point is
    *          coords[indices[j]].
    */
-  Uint insert_quad(CGAL::Polyhedron_incremental_builder_3<HDS>& B, Uint j)
+  template <typename InputIterator>
+  Uint insert_quad(CGAL::Polyhedron_incremental_builder_3<HDS>& B,
+                   InputIterator begin, InputIterator end, Uint j)
   {
-    B.begin_facet();
-    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j));
-    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+1));
-    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+2));
-    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+3));
-    typename HDS::Halfedge_handle he = B.end_facet();
+    if (!B.test_facet(begin, end))
+      throw(std::runtime_error("Error: inconsistent mesh!"));
+    auto he = B.add_facet(begin, end);
     he->m_index = j;
     he->next()->m_index = j+1;
     he->next()->next()->m_index = j+2;
     he->next()->next()->next()->m_index = j+3;
-    j += 4;
-    return j;
+    return j+4;
   }
 
   /*! Insert quadrilaterals.
@@ -146,9 +145,11 @@ protected:
    */
   void insert_quads(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
-    unsigned int num_facets = m_mesh_set->get_num_primitives();
-    Uint j = 0;
-    for (Uint i = 0; i < num_facets; ++i) j = insert_quad(B, j);
+    const auto& facet_indices = m_mesh_set->get_facet_coord_indices();
+    const auto& indices = boost::get<Mesh_set::Quad_indices>(facet_indices);
+    size_t j(0);
+    for (Uint i = 0; i < indices.size(); ++i)
+      j = insert_quad(B, indices[i].begin(), indices[i].end(), j);
   }
 
   /*! Insert a polygon.
@@ -157,17 +158,16 @@ protected:
    *          the counterclockwise order. In other words, the first point is
    *          coords[indices[j]].
    */
-  Uint insert_polygon(CGAL::Polyhedron_incremental_builder_3<HDS>& B, Uint j)
+  template <typename InputIterator>
+  Uint insert_polygon(CGAL::Polyhedron_incremental_builder_3<HDS>& B,
+                      InputIterator begin, InputIterator end, Uint j)
   {
-    Uint k = j;
-    B.begin_facet();
-    for (; m_mesh_set->get_coord_index(j) != (Uint) -1; ++j)
-      B.add_vertex_to_facet(m_mesh_set->get_coord_index(j));
-    ++j;
-    typename HDS::Halfedge_handle he = B.end_facet();
-    typename HDS::Halfedge_handle start_he = he;
+    if (!B.test_facet(begin, end))
+      throw(std::runtime_error("Error: inconsistent mesh!"));
+    auto he = B.add_facet(begin, end);
+    auto start_he = he;
     do {
-      he->m_index = k++;
+      he->m_index = j++;
       he = he->next();
     } while (he != start_he);
     return j;
@@ -178,9 +178,11 @@ protected:
    */
   void insert_polygons(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
-    unsigned int num_facets = m_mesh_set->get_num_primitives();
-    Uint j = 0;
-    for (Uint i = 0; i < num_facets; ++i) j = insert_polygon(B, j);
+    const auto& facet_indices = m_mesh_set->get_facet_coord_indices();
+    const auto& indices = boost::get<Mesh_set::Polygon_indices>(facet_indices);
+    size_t j(0);
+    for (size_t i = 0; i < indices.size(); ++i)
+      j = insert_polygon(B, indices[i].begin(), indices[i].end(), j);
   }
 
 public:

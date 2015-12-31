@@ -152,10 +152,10 @@ void Exact_nef_polyhedron::draw_polyhedron(Draw_action * action)
 //! \brief draws the nef polyhedron representation.
 void Exact_nef_polyhedron::draw(Draw_action* action)
 {
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
-  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
-  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  if (is_dirty_facet_normal_indices()) clean_facet_normal_indices();
+  if (is_dirty_facet_color_indices()) clean_facet_color_indices();
+  if (is_dirty_facet_tex_coord_indices()) clean_facet_tex_coord_indices();
   if (is_dirty_nef_polyhedron()) clean_nef_polyhedron();
   if (is_nef_polyhedron_empty()) return;
 

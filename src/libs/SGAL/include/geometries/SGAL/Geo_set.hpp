@@ -465,7 +465,7 @@ public:
   /*! Assign the coord indices with the reverse of given indices.
    * \param indices the indices to reverse.
    */
-  void set_reverse_coord_indices(const std::vector<Int32>& indices);
+  void reverse_coord_indices(const std::vector<Int32>& indices);
 
 protected:
   /*! The number of primitives in this Geo_set. */

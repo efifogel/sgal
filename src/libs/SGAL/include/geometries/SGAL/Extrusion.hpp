@@ -204,7 +204,7 @@ public:
 
   /*! Clean the coordinate indices.
    */
-  virtual void clean_flat_coord_indices();
+  virtual void clean_facet_coord_indices();
 
   /*! Calculate the default 2D texture-mapping oordinates.
    */
@@ -212,7 +212,7 @@ public:
 
   /*! Clean the texture coordinate indices.
    */
-  void clean_flat_tex_coord_indices();
+  virtual void clean_facet_tex_coord_indices();
 
   /*! Process change of structure.
    */
@@ -281,7 +281,7 @@ private:
    * \param ul (in) upper left corner.
    * \return the size of the coordinate indices array after the addition.
    */
-  size_t add_triangle_indices(size_t k, std::vector<Uint>& indices,
+  size_t add_triangle_indices(size_t k, Triangle_indices& indices,
                               Uint ll, Uint lr, Uint ur, Uint ul);
 };
 

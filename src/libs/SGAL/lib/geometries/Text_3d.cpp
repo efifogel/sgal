@@ -186,19 +186,22 @@ void Text_3d::set_attributes(Element* elem)
 void Text_3d::structure_changed(const Field_info* field_info)
 {
   clear_coord_array();
-  clear_flat_coord_indices();
+  clear_facet_coord_indices();
   field_changed(field_info);
 }
 
 //! \brief create a quadrilateral.
-size_t Text_3d::create_quad(Uint a, Uint b, Uint c, Uint d, size_t k)
+size_t Text_3d::create_quad(Triangle_indices& indices,
+                            Uint a, Uint b, Uint c, Uint d, size_t k)
 {
-  m_flat_coord_indices[k++] = a;
-  m_flat_coord_indices[k++] = b;
-  m_flat_coord_indices[k++] = c;
-  m_flat_coord_indices[k++] = a;
-  m_flat_coord_indices[k++] = c;
-  m_flat_coord_indices[k++] = d;
+  indices[k][0] = a;
+  indices[k][1] = b;
+  indices[k][2] = c;
+  ++k;
+  indices[k][0] = a;
+  indices[k][1] = c;
+  indices[k][2] = d;
+  ++k;
   return k;
 }
 
@@ -416,7 +419,8 @@ void Text_3d::clean_coords()
   }
 
   // Compute the indices
-  m_flat_coord_indices.resize(num_primitives * 3);
+  auto& coord_indices = empty_triangle_coord_indices();
+  coord_indices.resize(num_primitives);
   size_t i(0);
   Uint base(0);
   for (auto tit = m_text_geometry.begin(); tit != m_text_geometry.end(); ++tit)
@@ -431,18 +435,20 @@ void Text_3d::clean_coords()
            ++it)
       {
         if (! it->info().in_domain()) continue;
-        m_flat_coord_indices[i++] = it->vertex(2)->info() + base;
-        m_flat_coord_indices[i++] = it->vertex(1)->info() + base;
-        m_flat_coord_indices[i++] = it->vertex(0)->info() + base;
+        coord_indices[i][0] = it->vertex(2)->info() + base;
+        coord_indices[i][1] = it->vertex(1)->info() + base;
+        coord_indices[i][2] = it->vertex(0)->info() + base;
+        ++i;
       }
       // Set the back indices
       for (auto it = tri.finite_faces_begin(); it != tri.finite_faces_end();
            ++it)
       {
         if (! it->info().in_domain()) continue;
-        m_flat_coord_indices[i++] = it->vertex(0)->info() + base + size;
-        m_flat_coord_indices[i++] = it->vertex(1)->info() + base + size;
-        m_flat_coord_indices[i++] = it->vertex(2)->info() + base + size;
+        coord_indices[i][0] = it->vertex(0)->info() + base + size;
+        coord_indices[i][1] = it->vertex(1)->info() + base + size;
+        coord_indices[i][2] = it->vertex(2)->info() + base + size;
+        ++i;
       }
 
       // Set the side indices
@@ -456,14 +462,14 @@ void Text_3d::clean_coords()
           auto b = f1->vertex(f1->cw(it->second))->info() + base;
           auto c = b + size;
           auto d = a + size;
-          i = create_quad(a, b, c, d, i);
+          i = create_quad(coord_indices, a, b, c, d, i);
         }
         else if (f2->info().in_domain() && !f1->info().in_domain()) {
           auto a = f1->vertex(f1->cw(it->second))->info() + base;
           auto b = f1->vertex(f1->ccw(it->second))->info() + base;
           auto c = b + size;
           auto d = a + size;
-          i = create_quad(a, b, c, d, i);
+          i = create_quad(coord_indices, a, b, c, d, i);
         }
       }
       base += 2 * size;
@@ -477,12 +483,11 @@ void Text_3d::clean_coords()
   coord_content_changed(get_field_info(COORD_ARRAY));
 
   m_dirty_coord_indices = true;
-  m_dirty_flat_coord_indices = false;
-  m_coord_indices_flat = true;
+  m_dirty_facet_coord_indices = false;
 }
 
 //! \brief cleans the coordinate indices.
-void Text_3d::clean_flat_coord_indices()
+void Text_3d::clean_facet_coord_indices()
 {
 }
 
@@ -493,11 +498,10 @@ void Text_3d::clean_tex_coord_array_2d()
 }
 
 //! Generate the texture coordinate indices.
-void Text_3d::clean_flat_tex_coord_indices()
+void Text_3d::clean_facet_tex_coord_indices()
 {
   m_dirty_tex_coord_indices = true;
-  m_dirty_flat_tex_coord_indices = false;
-  m_tex_coord_indices_flat = true;
+  m_dirty_facet_tex_coord_indices = false;
 }
 
 //! \brief sets the text strings.

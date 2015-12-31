@@ -244,6 +244,23 @@ protected:
    */
   void clean_surface_area();
 
+  template <typename InputIterator_, typename Polyhedron_>
+  void compute_coord_indices(InputIterator_ begin, InputIterator_ end_,
+                             Polyhedron_& polyhedron)
+  {
+    Uint index = 0;
+    auto it = begin;
+    auto fit = polyhedron.facets_begin();
+    for (; fit != polyhedron.facets_end(); ++fit, ++it) {
+      auto hh = fit->facet_begin();
+      size_t j(0);
+      do {
+        // (*it)[j++] = hh->vertex()->m_index;
+        hh->m_index = index++;
+      } while (++hh != fit->facet_begin());
+    }
+  }
+
 private:
   /*! A functor that calculates the normal of a given facet. */
   struct Facet_normal_calculator {
