@@ -207,7 +207,7 @@ void Piece::clean_coords()
 }
 
 //! \brief cleans the flat coordinate index array.
-void Piece::clean_flat_coord_indices()
+void Piece::clean_facet_coord_indices()
 {
   m_dirty_coord_indices = true;
   m_dirty_facet_coord_indices = false;

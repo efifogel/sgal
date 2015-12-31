@@ -581,10 +581,10 @@ void Nef_gaussian_map_geo::draw_primal(Draw_action* action)
 //! \brief draws the geometry.
 void Nef_gaussian_map_geo::draw(Draw_action* action)
 {
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
-  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
-  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  if (is_dirty_facet_normal_indices()) clean_facet_normal_indices();
+  if (is_dirty_facet_color_indices()) clean_facet_color_indices();
+  if (is_dirty_facet_tex_coord_indices()) clean_facet_tex_coord_indices();
   if (is_dirty_ngm()) clean_ngm();
   if (is_ngm_empty()) return;
 
@@ -601,7 +601,7 @@ void Nef_gaussian_map_geo::draw_geometry(Draw_action* action)
 //! \brief
 void Nef_gaussian_map_geo::isect(Isect_action* action)
 {
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
   if (m_dirty_ngm) clean_ngm();
 
   for (Facet_iterator i = m_polyhedron.facets_begin();
@@ -629,7 +629,7 @@ void Nef_gaussian_map_geo::clean_bounding_sphere()
     return;
   }
 
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
   if (m_dirty_ngm) clean_ngm();
 
   Inexact_sphere_vector spheres;

@@ -91,7 +91,7 @@ public:
   virtual void clean_coords();
 
   /*! Clean the (flat) coordinate index array. */
-  virtual void clean_flat_coord_indices();
+  virtual void clean_facet_coord_indices();
 
   /*! Set the width. */
   void set_width(Uint width);

@@ -814,7 +814,7 @@ public:
     }
   };
 
-  /*! Clean an indices array from a facet indices structure. */
+  /*! Clean an index array from a facet indices structure. */
   void clean_facet_indices(std::vector<Int32>& indices,
                            const Facet_indices& source);
 

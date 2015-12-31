@@ -851,7 +851,7 @@ void Boundary_set::calculate_normal_per_quad(Normal_array& normals)
     if (!v0.collinear(v0, v1, v2)) {
       if (is_ccw()) normals[i].normal(v0, v1, v2);
       else normals[i].normal(v2, v1, v0);
-      return;
+      continue;
     }
     const Vector3f& v3 = get_coord_3d(quads[i][3]);
     SGAL_assertion(!v0.collinear(v0, v1, v3));
