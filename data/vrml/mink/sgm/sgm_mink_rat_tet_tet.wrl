@@ -263,12 +263,12 @@ Transform {
 	}
        ]
     }
-    Transform {
-      translation 2 0 0
-      children [
-        USE SHAPE
-       ]
-    }
+    # Transform {
+    #   translation 2 0 0
+    #   children [
+    #     USE SHAPE
+    #    ]
+    # }
    ]
 }
 
