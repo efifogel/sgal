@@ -371,27 +371,19 @@ public:
    */
   Boolean is_dirty_facet_tex_coord_indices() const;
 
-  /*! Init facet indices visitor */
-  class Init_facet_indices_visitor : public boost::static_visitor<> {
-  public:
+  /*! Resize facet indices visitor */
+  class Resize_facet_indices_visitor : public boost::static_visitor<> {
+  private:
     Facet_indices& m_target;
-    Boolean m_assign;
 
-    Init_facet_indices_visitor(Facet_indices& target, Boolean assign = true) :
-      m_target(target), m_assign(assign) {}
+  public:
+    Resize_facet_indices_visitor(Facet_indices& target) : m_target(target) {}
 
     void operator()(const Triangle_indices& source)
     {
       m_target = Triangle_indices();
       auto& indices = boost::get<Triangle_indices>(m_target);
       indices.resize(source.size());
-      if (!m_assign) return;
-      Index_type k(0);
-      for (auto it = indices.begin(); it != indices.end(); ++it) {
-        (*it)[0] = k++;
-        (*it)[1] = k++;
-        (*it)[2] = k++;
-      }
     }
 
     void operator()(const Quad_indices& source)
@@ -399,14 +391,6 @@ public:
       m_target = Quad_indices();
       auto& indices = boost::get<Quad_indices>(m_target);
       indices.resize(source.size());
-      if (!m_assign) return;
-      Index_type k(0);
-      for (auto it = indices.begin(); it != indices.end(); ++it) {
-        (*it)[0] = k++;
-        (*it)[1] = k++;
-        (*it)[2] = k++;
-        (*it)[3] = k++;
-      }
     }
 
     void operator()(const Polygon_indices& source)
@@ -414,13 +398,9 @@ public:
       m_target = Polygon_indices();
       auto& indices = boost::get<Polygon_indices>(m_target);
       indices.resize(source.size());
-      Index_type k(0);
       auto tit = indices.begin();
-      for (auto sit = source.begin(); sit != source.end(); ++sit, ++tit) {
+      for (auto sit = source.begin(); sit != source.end(); ++sit, ++tit)
         tit->resize(sit->size());
-        if (!m_assign) continue;
-        for (auto it = tit->begin(); it != tit->end(); ++it) *it = k++;
-      }
     }
 
     void operator()(const Flat_indices& source)
@@ -428,103 +408,180 @@ public:
       m_target = Flat_indices();
       auto& indices = boost::get<Flat_indices>(m_target);
       indices.resize(source.size());
-      if (!m_assign) return;
-      Index_type k(0);
-      for (auto it = indices.begin(); it != indices.end(); ++it) *it++ = k++;
     }
   };
 
-  /*! Init */
-  void init_facet_indices(Facet_indices& target, const Facet_indices& source,
-                          Boolean assign = true);
+  /*! Resize a facet indices structure with the same size as another.
+   */
+  void resize_facet_indices(Facet_indices& target, const Facet_indices& source);
 
-  /*! Set index facet indices visitor */
-  class Set_index_facet_indices_visitor : public boost::static_visitor<> {
+  /*! Sequence facet indices visitor */
+  class Sequence_facet_indices_visitor : public boost::static_visitor<> {
   public:
+    void operator()(Triangle_indices& indices) const
+    {
+      Index_type k(0);
+      for (auto& tri: indices) {
+        tri[0] = k++;
+        tri[1] = k++;
+        tri[2] = k++;
+      }
+    }
+
+    void operator()(Quad_indices& indices) const
+    {
+      Index_type k(0);
+      for (auto& quad: indices) {
+        quad[0] = k++;
+        quad[1] = k++;
+        quad[2] = k++;
+        quad[3] = k++;
+      }
+    }
+
+    void operator()(Polygon_indices& indices) const
+    {
+      Index_type k(0);
+      for (auto& polygon: indices) {
+        for (auto &index: polygon) index = k++;
+      }
+    }
+
+    void operator()(Flat_indices& indices) const
+    {
+      Index_type k(0);
+      for (auto& index: indices) index = k++;
+    }
+  };
+
+  /*! Assign a facet indices structure with a sequence of indices starting at 0.
+   */
+  void sequence_facet_indices(Facet_indices& indices);
+
+  /*! Set index facet indices visitor. */
+  class Set_index_facet_indices_visitor : public boost::static_visitor<> {
+  private:
     size_t m_address;
     Index_type m_value;
 
+  public:
     Set_index_facet_indices_visitor(size_t address, Index_type value) :
       m_address(address), m_value(value) {}
 
-    void operator()(Triangle_indices& indices)
+    void operator()(Triangle_indices& indices) const
     {
       auto res = std::div(m_address, 3);
       indices[res.quot][res.rem] = m_value;
     }
 
-    void operator()(Quad_indices& indices)
+    void operator()(Quad_indices& indices) const
     {
       auto res = std::div(m_address, 4);
       indices[res.quot][res.rem] = m_value;
     }
 
-    void operator()(Polygon_indices& indices)
+    void operator()(Polygon_indices& indices) const
     {
+      auto address = m_address;
       size_t i(0);
       size_t j(0);
       for (auto it = indices.begin(); it != indices.end(); ++it) {
-        if (m_address < it->size()) {
-          j = m_address;
+        if (address < it->size()) {
+          j = address;
           break;
         }
-        m_address -= it->size();
+        address -= it->size();
       }
       indices[i][j] = m_value;
     }
 
-    void operator()(Flat_indices& indices)
+    void operator()(Flat_indices& indices) const
     { indices[m_address] = m_value; }
   };
 
-  /*! Set an index. */
+  /*! Set the value of an entry in a facet indices structure. */
   void set_index_facet_indices(Facet_indices& indices, size_t address,
                                Index_type value);
+
+  /*! Get index facet indices visitor. */
+  class Get_index_facet_indices_visitor :
+    public boost::static_visitor<Index_type>
+  {
+  public:
+    size_t m_address;
+
+    Get_index_facet_indices_visitor(size_t address) : m_address(address) {}
+
+    Index_type  operator()(const Triangle_indices& indices) const
+    {
+      auto res = std::div(m_address, 3);
+      return indices[res.quot][res.rem];
+    }
+
+    Index_type operator()(const Quad_indices& indices) const
+    {
+      auto res = std::div(m_address, 4);
+      return indices[res.quot][res.rem];
+    }
+
+    Index_type operator()(const Polygon_indices& indices) const
+    {
+      auto address = m_address;
+      size_t i(0);
+      size_t j(0);
+      for (auto it = indices.begin(); it != indices.end(); ++it) {
+        if (address < it->size()) {
+          j = address;
+          break;
+        }
+        address -= it->size();
+      }
+      return indices[i][j];
+    }
+
+    Index_type operator()(const Flat_indices& indices) const
+    { return indices[m_address]; }
+  };
+
+  /*! Get the value of an entry in a facet indices structure. */
+  Index_type get_index_facet_indices(const Facet_indices& indices,
+                                     size_t address);
 
   /*! Clear facet indices visitor. */
   class Clear_facet_indices_visitor : public boost::static_visitor<> {
   public:
     // It is prohibited to specialize a function in non-namespace scope.
+    // Instead, we we dispatch the appropriate function.
 
     template<typename T> struct Identity { typedef T type; };
 
     template <typename Indices>
-    void operator()(Indices& indices)
+    void operator()(Indices& indices) const
     { operator()(indices, Identity<Indices>()); }
 
   private:
     template <typename Indices>
-    void operator()(Indices& indices, Identity<Indices>) { indices.clear(); }
+    void operator()(Indices& indices, Identity<Indices>) const
+    { indices.clear(); }
 
-    void operator()(Polygon_indices& indices, Identity<Polygon_indices>)
+    void operator()(Polygon_indices& indices, Identity<Polygon_indices>) const
     {
       for (auto it = indices.begin(); it != indices.end(); ++it) it->clear();
       indices.clear();
     }
-    // void operator()(Triangle_indices& indices) { indices.clear(); }
-
-    // void operator()(Quad_indices& indices) { indices.clear(); }
-
-    // void operator()(Polygon_indices& indices)
-    // {
-    //   for (auto it = indices.begin(); it != indices.end(); ++it) it->clear();
-    //   indices.clear();
-    // }
-
-    // void operator()(Flat_indices& indices) { indices.clear(); }
   };
 
   /*! Clear */
   void clear_facet_indices(Facet_indices& indices);
 
   /*! Equal facet indices visitor */
-  class Equal_facet_indices_visitor : public boost::static_visitor<bool> {
+  class Equal_facet_indices_visitor : public boost::static_visitor<Boolean> {
   public:
     template <typename T, typename U>
-    bool operator()(const T&, const U&) const { return false; }
+    Boolean operator()(const T&, const U&) const { return false; }
 
     template <typename T>
-    bool operator()(const T& lhs, const T& rhs) const { return lhs == rhs; }
+    Boolean operator()(const T& lhs, const T& rhs) const { return lhs == rhs; }
   };
 
   /*! Equal */
@@ -532,41 +589,33 @@ public:
                               const Facet_indices& source);
 
   /*! Empty facet indices visitor */
-  class Empty_facet_indices_visitor : public boost::static_visitor<> {
+  class Empty_facet_indices_visitor : public boost::static_visitor<Boolean> {
   public:
-    Boolean m_result;
-
-    Empty_facet_indices_visitor() : m_result(true) {}
-
     template <typename Indices>
-    void operator()(const Indices& indices)
-    { m_result = indices.empty(); }
+    Boolean operator()(const Indices& indices) const { return indices.empty(); }
   };
 
   /*! Etermines whether the given index vector is empty. */
   Boolean empty_facet_indices(const Facet_indices& indices);
 
   /*! Size facet indices visitor */
-  class Size_facet_indices_visitor : public boost::static_visitor<> {
+  class Size_facet_indices_visitor : public boost::static_visitor<size_t> {
   public:
-    size_t m_size;
+    size_t operator()(const Triangle_indices& indices) const
+    { return 3 * indices.size(); }
 
-    Size_facet_indices_visitor() : m_size(0) {}
+    size_t operator()(const Quad_indices& indices) const
+    { return 4 * indices.size(); }
 
-    void operator()(const Triangle_indices& indices)
-    { m_size = 3 * indices.size(); }
-
-    void operator()(const Quad_indices& indices)
-    { m_size = 4 * indices.size(); }
-
-    void operator()(const Polygon_indices& indices)
+    size_t operator()(const Polygon_indices& indices) const
     {
-      m_size = 0;
-      for (auto it = indices.begin(); it != indices.end(); ++it)
-        m_size += it->size();
+      size_t size(0);
+      for (auto& polygon: indices) size += polygon.size();
+      return size;
     }
 
-    void operator()(const Flat_indices& indices) { m_size = indices.size(); }
+    size_t operator()(const Flat_indices& indices) const
+    { return indices.size(); }
   };
 
   /*! Obtain the number of indices.
@@ -589,70 +638,81 @@ public:
     Quad_indices::const_iterator m_quad_end;
     Polygon_indices::const_iterator m_poly_end;
 
+  public:
     /*! Construct default. */
     Facet_indices_const_iterator();
 
-    /*! Construct */
-    Facet_indices_const_iterator(Triangle_indices::const_iterator it,
+    /*! Construct a begin iterator from triangle iterators.
+     */
+    Facet_indices_const_iterator(Triangle_indices::const_iterator begin,
                                  Triangle_indices::const_iterator end);
 
-    /*! Construct */
-    Facet_indices_const_iterator(Quad_indices::const_iterator it,
+    /*! Construct a begin iterator from quad iterators.
+     */
+    Facet_indices_const_iterator(Quad_indices::const_iterator begin,
                                  Quad_indices::const_iterator end);
 
-    /*! Construct */
-    Facet_indices_const_iterator(Polygon_indices::const_iterator it,
+    /*! Construct a begin iterator from polygon iterators.
+     */
+    Facet_indices_const_iterator(Polygon_indices::const_iterator begin,
                                  Polygon_indices::const_iterator end);
 
-    /*! Construct */
+    /*! Construct a past-the-end iterator from a triangle past-the-end iterator.
+     */
     Facet_indices_const_iterator(Triangle_indices::const_iterator end);
 
-    /*! Construct */
+    /*! Construct a past-the-end iterator from a quad past-the-end iterator.
+     */
     Facet_indices_const_iterator(Quad_indices::const_iterator end);
 
-    /*! Construct */
+    /*! Construct a past-the-end iterator from a polygon past-the-end iterator.
+     */
     Facet_indices_const_iterator(Polygon_indices::const_iterator end);
 
-    /*! Construct */
-    Facet_indices_const_iterator(Flat_indices::const_iterator it);
+    /*! Construct an iterator from a flat iterator. */
+    Facet_indices_const_iterator(Flat_indices::const_iterator begin);
 
+    /*! Obtain a reference. */
     const Index_type& operator*();
 
+    /*! Post increment. */
     Facet_indices_const_iterator operator++();
 
+    /*! Test equality with amother iterator. */
     Boolean operator==(Facet_indices_const_iterator other);
 
+    /*! Test inequality amother iterator. */
     Boolean operator!=(Facet_indices_const_iterator other)
     { return ! operator==(other); }
   };
 
-  /*! Visitor */
-  class Reference_visitor : public boost::static_visitor<> {
-  public:
+  /*! Reference visitor. */
+  class Reference_visitor : public boost::static_visitor<const Index_type&> {
+  private:
     Facet_indices_const_iterator& m_it;
-    const Index_type* m_reference;
 
-    Reference_visitor(Facet_indices_const_iterator& it) :
-      m_it(it), m_reference(nullptr) {}
+  public:
+    Reference_visitor(Facet_indices_const_iterator& it) : m_it(it) {}
 
-    void operator()(Triangle_indices::const_iterator& it)
-    { m_reference = &(*(m_it.m_tri_it)); }
+    const Index_type& operator()(Triangle_indices::const_iterator& it) const
+    { return *(m_it.m_tri_it); }
 
-    void operator()(Quad_indices::const_iterator& it)
-    { m_reference = &(*(m_it.m_quad_it)); }
+    const Index_type& operator()(Quad_indices::const_iterator& it) const
+    { return *(m_it.m_quad_it); }
 
-    void operator()(Polygon_indices::const_iterator& it)
-    { m_reference = &(*(m_it.m_poly_it)); }
+    const Index_type& operator()(Polygon_indices::const_iterator& it) const
+    { return *(m_it.m_poly_it); }
 
-    void operator()(Flat_indices::const_iterator& it)
-    { m_reference = &(*it); }
+    const Index_type& operator()(Flat_indices::const_iterator& it) const
+    { return *it; }
   };
 
-  /*! Visitor */
+  /*! Post increment visitor. */
   class Incerement_visitor : public boost::static_visitor<> {
-  public:
+  private:
     Facet_indices_const_iterator& m_it;
 
+  public:
     Incerement_visitor(Facet_indices_const_iterator& it) : m_it(it) {}
 
     void operator()(Triangle_indices::const_iterator& it)
@@ -685,77 +745,78 @@ public:
     void operator()(Flat_indices::const_iterator& it) { ++it; }
   };
 
-  /*! Visitor */
-  class Compare_visitor : public boost::static_visitor<> {
-  public:
+  /*! Compare visitor. */
+  class Compare_visitor : public boost::static_visitor<Boolean> {
+  private:
     Facet_indices_const_iterator& m_it;
     Facet_indices_const_iterator& m_other;
-    Boolean m_result;
 
+  public:
     Compare_visitor(Facet_indices_const_iterator& it,
                     Facet_indices_const_iterator& other) :
-      m_it(it), m_other(other), m_result(false) {}
+      m_it(it), m_other(other) {}
 
-    void operator()(Triangle_indices::const_iterator& it)
+    template <typename T, typename U>
+    Boolean operator()(const T&, const U&) const { return false; }
+
+    Boolean operator()(Triangle_indices::const_iterator& it,
+                       Triangle_indices::const_iterator& other)
     {
-      auto& other = boost::get<Triangle_indices::const_iterator>(m_other.m_it);
-      m_result = (it == other) &&
+      return (it == other) &&
         ((m_it.m_tri_it == m_other.m_tri_it) || (it == m_it.m_tri_end));
     }
 
-    void operator()(Quad_indices::const_iterator& it)
+    Boolean operator()(Quad_indices::const_iterator& it,
+                       Quad_indices::const_iterator& other)
     {
-      auto& other = boost::get<Quad_indices::const_iterator>(m_other.m_it);
-      m_result = (it == other) &&
+      return (it == other) &&
         ((m_it.m_quad_it == m_other.m_quad_it) || (it == m_it.m_quad_end));
     }
 
-    void operator()(Polygon_indices::const_iterator& it)
+    Boolean operator()(Polygon_indices::const_iterator& it,
+                       Polygon_indices::const_iterator& other)
     {
-      auto& other = boost::get<Polygon_indices::const_iterator>(m_other.m_it);
-      m_result = (it == other) &&
+      return (it == other) &&
         ((m_it.m_poly_it == m_other.m_poly_it) || (it == m_it.m_poly_end));
     }
 
-    void operator()(Flat_indices::const_iterator& it)
-    {
-      auto& other = boost::get<Flat_indices::const_iterator>(m_other.m_it);
-      m_result = (it == other);
-    }
+    Boolean operator()(Flat_indices::const_iterator& it,
+                       Flat_indices::const_iterator& other)
+    { return it == other; }
   };
 
   /*! Begin facet indices visitor */
-  class Begin_facet_indices_visitor : public boost::static_visitor<> {
+  class Begin_facet_indices_visitor :
+    public boost::static_visitor<Facet_indices_const_iterator> {
   public:
-    Facet_indices_const_iterator m_begin;
+    Facet_indices_const_iterator operator()(const Triangle_indices& indices)
+      const
+    { return Facet_indices_const_iterator(indices.begin(), indices.end()); }
 
-    void operator()(const Triangle_indices& indices)
-    { m_begin = Facet_indices_const_iterator(indices.begin(), indices.end()); }
+   Facet_indices_const_iterator operator()(const Quad_indices& indices) const
+    { return Facet_indices_const_iterator(indices.begin(), indices.end()); }
 
-   void operator()(const Quad_indices& indices)
-    { m_begin = Facet_indices_const_iterator(indices.begin(), indices.end()); }
+   Facet_indices_const_iterator operator()(const Polygon_indices& indices) const
+    { return Facet_indices_const_iterator(indices.begin(), indices.end()); }
 
-   void operator()(const Polygon_indices& indices)
-    { m_begin = Facet_indices_const_iterator(indices.begin(), indices.end()); }
-
-   void operator()(const Flat_indices& indices)
-    { m_begin = Facet_indices_const_iterator(indices.begin()); }
+   Facet_indices_const_iterator operator()(const Flat_indices& indices) const
+    { return Facet_indices_const_iterator(indices.begin()); }
   };
 
   /*! End facet indices visitor */
-  class End_facet_indices_visitor : public boost::static_visitor<> {
+  class End_facet_indices_visitor :
+    public boost::static_visitor<Facet_indices_const_iterator>
+  {
   public:
-    Facet_indices_const_iterator m_end;
-
     template <typename Indices>
-    void operator()(const Indices& indices)
-    { m_end = Facet_indices_const_iterator(indices.end()); }
+    Facet_indices_const_iterator operator()(const Indices& indices) const
+    { return Facet_indices_const_iterator(indices.end()); }
   };
 
-  /*! Obtain a begin iterator. */
+  /*! Obtain a begin iterator of a facet indices structure. */
   Facet_indices_const_iterator begin_facet_indices(const Facet_indices& indices);
 
-  /*! Obtain a past-the-end iterator. */
+  /*! Obtain a past-the-end iterator of a facet indices structure. */
   Facet_indices_const_iterator end_facet_indices(const Facet_indices& indices);
 
   /*! Clean facet indices visitor */
@@ -827,6 +888,7 @@ public:
 
     void operator()(const Triangle_indices& source)
     {
+      m_target = Triangle_indices();
       auto& indices = boost::get<Triangle_indices>(m_target);
       indices.resize(source.size());
       for (size_t i = 0; i < source.size(); ++i) {
@@ -838,6 +900,7 @@ public:
 
     void operator()(const Quad_indices& source)
     {
+      m_target = Quad_indices();
       auto& indices = boost::get<Quad_indices>(m_target);
       indices.resize(source.size());
       for (size_t i = 0; i < source.size(); ++i) {
@@ -850,6 +913,7 @@ public:
 
     void operator()(const Polygon_indices& source)
     {
+      m_target = Polygon_indices();
       auto& indices = boost::get<Polygon_indices>(m_target);
       indices.resize(source.size());
       for (size_t i = 0; i < source.size(); ++i) {
@@ -861,6 +925,7 @@ public:
 
     void operator()(const Flat_indices& source)
     {
+      m_target = Flat_indices();
       auto& indices = boost::get<Flat_indices>(m_target);
       indices.resize(source.size());
       size_t j(0);
@@ -1286,40 +1351,44 @@ inline const Mesh_set::Polygon_indices& Mesh_set::polygon_tex_coord_indices()
 inline Mesh_set::Facet_indices_const_iterator::
 Facet_indices_const_iterator() : m_it() {}
 
-//! \brief constructs.
-inline Mesh_set::Facet_indices_const_iterator::
-Facet_indices_const_iterator(Triangle_indices::const_iterator end) :
-  m_it(end), m_tri_end(end) {}
-
-//! \brief constructs.
-inline Mesh_set::Facet_indices_const_iterator::
-Facet_indices_const_iterator(Quad_indices::const_iterator end) :
-  m_it(end), m_quad_end(end) {}
-
-//! \brief constructs.
-inline Mesh_set::Facet_indices_const_iterator::
-Facet_indices_const_iterator(Polygon_indices::const_iterator end) :
-  m_it(end), m_poly_end(end) {}
-
-//! \brief constructs.
+//! \brief constructs a begin iterator from triangle iterators.
 inline Mesh_set::Facet_indices_const_iterator::
 Facet_indices_const_iterator(Triangle_indices::const_iterator it,
                              Triangle_indices::const_iterator end) :
   m_it(it), m_tri_it(it->begin()), m_tri_end(end) {}
 
-//! \brief constructs.
+//! \brief constructs a begin iterator from quad iterators.
 inline Mesh_set::Facet_indices_const_iterator::
 Facet_indices_const_iterator(Quad_indices::const_iterator it,
                              Quad_indices::const_iterator end) :
   m_it(it), m_quad_it(it->begin()), m_quad_end(end) {}
 
-//! \brief constructs.
+//! \brief constructs a begin iterator from polygon iterators.
 inline Mesh_set::Facet_indices_const_iterator::
 Facet_indices_const_iterator(Polygon_indices::const_iterator it,
                              Polygon_indices::const_iterator end) :
   m_it(it), m_poly_it(it->begin()), m_poly_end(end) {}
 
-//! \brief construct.
+/*! \brief constructs a past-the-end iterator from a triangle past-the-end
+ * iterator.
+ */
+inline Mesh_set::Facet_indices_const_iterator::
+Facet_indices_const_iterator(Triangle_indices::const_iterator end) :
+  m_it(end), m_tri_end(end) {}
+
+//! \brief constructs a past-the-end iterator from a quad past-the-end iterator.
+inline Mesh_set::Facet_indices_const_iterator::
+Facet_indices_const_iterator(Quad_indices::const_iterator end) :
+  m_it(end), m_quad_end(end) {}
+
+/*! \brief constructs a past-the-end iterator from a polygon past-the-end
+ * iterator.
+ */
+inline Mesh_set::Facet_indices_const_iterator::
+Facet_indices_const_iterator(Polygon_indices::const_iterator end) :
+  m_it(end), m_poly_end(end) {}
+
+//! \brief construct an iterator from a flat iterator.
 inline Mesh_set::Facet_indices_const_iterator::
 Facet_indices_const_iterator(Flat_indices::const_iterator it) : m_it(it) {}
 
@@ -1327,8 +1396,7 @@ inline const Mesh_set::Index_type&
 Mesh_set::Facet_indices_const_iterator::operator*()
 {
   Reference_visitor visitor(*this);
-  boost::apply_visitor(visitor, m_it);
-  return *(visitor.m_reference);
+  return boost::apply_visitor(visitor, m_it);
 }
 
 inline Mesh_set::Facet_indices_const_iterator
@@ -1336,15 +1404,14 @@ Mesh_set::Facet_indices_const_iterator::operator++()
 {
   Incerement_visitor visitor(*this);
   boost::apply_visitor(visitor, m_it);
-  return visitor.m_it;
+  return *this;
 }
 
 inline Boolean Mesh_set::Facet_indices_const_iterator::
 operator==(Facet_indices_const_iterator other)
 {
   Compare_visitor visitor(*this, other);
-  boost::apply_visitor(visitor, m_it);
-  return visitor.m_result;
+  return boost::apply_visitor(visitor, m_it, other.m_it);
 }
 
 SGAL_END_NAMESPACE

@@ -972,7 +972,8 @@ void Boundary_set::clean_tex_coords_2d()
   SGAL_assertion(tex_coord_array);
 
   // Generate indices from 0 to size-1
-  init_facet_indices(m_facet_tex_coord_indices, m_facet_coord_indices);
+  resize_facet_indices(m_facet_tex_coord_indices, m_facet_coord_indices);
+  sequence_facet_indices(m_facet_tex_coord_indices);
 
   m_dirty_facet_tex_coord_indices = false;
   m_dirty_tex_coord_indices = true;

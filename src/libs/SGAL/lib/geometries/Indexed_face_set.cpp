@@ -400,7 +400,7 @@ Boolean Indexed_face_set::is_smooth(const Vector3f& normal1,
 //! \brief calculates multiple normals per vertex for all vertices.
 void Indexed_face_set::calculate_multiple_normals_per_vertex()
 {
-  init_facet_indices(m_facet_normal_indices, m_facet_coord_indices, false);
+  resize_facet_indices(m_facet_normal_indices, m_facet_coord_indices);
   if (!m_normal_array) {
     m_normal_array.reset(new Normal_array());
     SGAL_assertion(m_normal_array);

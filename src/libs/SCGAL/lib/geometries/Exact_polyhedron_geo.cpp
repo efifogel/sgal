@@ -566,7 +566,7 @@ const Vector3f& Exact_polyhedron_geo::get_coord_3d(Uint i) const
 //! \brief calculates multiple normals per vertex for all vertices.
 void Exact_polyhedron_geo::calculate_multiple_normals_per_vertex()
 {
-  init_facet_indices(m_facet_normal_indices, m_facet_coord_indices, false);
+  resize_facet_indices(m_facet_normal_indices, m_facet_coord_indices);
   if (!m_normal_array) {
     m_normal_array.reset(new Normal_array());
     SGAL_assertion(m_normal_array);

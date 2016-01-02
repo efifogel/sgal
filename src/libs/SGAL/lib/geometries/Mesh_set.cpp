@@ -990,13 +990,21 @@ Bounding_box Mesh_set::bounding_box()
   return bbox;
 }
 
-//! \brief initializes a facet indices structure.
-void Mesh_set::init_facet_indices(Facet_indices& target,
-                                  const Facet_indices& source,
-                                  Boolean assign)
+//! \brief resizes a facet indices structure with the same size as another.
+void Mesh_set::resize_facet_indices(Facet_indices& target,
+                                  const Facet_indices& source)
 {
-  Init_facet_indices_visitor visitor(target, assign);
+  Resize_facet_indices_visitor visitor(target);
   boost::apply_visitor(visitor, source);
+}
+
+/*! \brief assigns a facet indices structure with a sequence of indices
+ * starting at 0.
+ */
+void Mesh_set::sequence_facet_indices(Facet_indices& indices)
+{
+  Sequence_facet_indices_visitor visitor;
+  return boost::apply_visitor(visitor, indices);
 }
 
 //! \brief tests for equality two facet indices structures.
@@ -1011,34 +1019,30 @@ Boolean Mesh_set::equal_facet_indices(const Facet_indices& other,
 Boolean Mesh_set::empty_facet_indices(const Facet_indices& indices)
 {
   Empty_facet_indices_visitor visitor;
-  boost::apply_visitor(visitor, indices);
-  return visitor.m_result;
+  return boost::apply_visitor(visitor, indices);
 }
 
 //! \brief obtains the number of entries in a facet indices structure.
 size_t Mesh_set::size_facet_indices(const Facet_indices& indices)
 {
   Size_facet_indices_visitor visitor;
-  boost::apply_visitor(visitor, indices);
-  return visitor.m_size;
+  return boost::apply_visitor(visitor, indices);
 }
 
-//! \brief obtain a begin iterator for facet indices structure.
+//! \brief obtain a begin iterator of a facet indices structure.
 Mesh_set::Facet_indices_const_iterator
 Mesh_set::begin_facet_indices(const Facet_indices& indices)
 {
   Begin_facet_indices_visitor visitor;
-  boost::apply_visitor(visitor, indices);
-  return visitor.m_begin;
+  return boost::apply_visitor(visitor, indices);
 }
 
-//! \brief obtains a past-the-end iterator for facet indices structure.
+//! \brief obtains a past-the-end iterator of a facet indices structure.
 Mesh_set::Facet_indices_const_iterator
 Mesh_set::end_facet_indices(const Facet_indices& indices)
 {
   End_facet_indices_visitor visitor;
-  boost::apply_visitor(visitor, indices);
-  return visitor.m_end;
+  return boost::apply_visitor(visitor, indices);
 }
 
 //! \brief clears a facet indices structure.
@@ -1064,12 +1068,20 @@ void Mesh_set::reverse_facet_indices(Facet_indices& indices,
   boost::apply_visitor(visitor, source);
 }
 
-//! \brief sets an entry in a facet indices structure.
+//! \brief sets the value of an entry in a facet indices structure.
 void Mesh_set::set_index_facet_indices(Facet_indices& indices, size_t address,
                                        Index_type value)
 {
   Set_index_facet_indices_visitor visitor(address, value);
   boost::apply_visitor(visitor, indices);
+}
+
+//! \brief gets the value of an entry in a facet indices structure.
+Mesh_set::Index_type
+Mesh_set::get_index_facet_indices(const Facet_indices& indices, size_t address)
+{
+  Get_index_facet_indices_visitor visitor(address);
+  return boost::apply_visitor(visitor, indices);
 }
 
 SGAL_END_NAMESPACE
