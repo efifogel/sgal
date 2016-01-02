@@ -71,7 +71,7 @@ Mesh_set::Mesh_set(Boolean proto) :
   m_dirty_tex_coord_indices(false)
 {}
 
-//! Destructor.
+//! destruct.
 Mesh_set::~Mesh_set() { clear_facet_indices(); }
 
 //! \brief sets the attributes of this node.
@@ -534,7 +534,8 @@ void Mesh_set::clean_facet_normal_indices()
     if (m_normal_attachment == AT_PER_VERTEX) {
       switch (m_primitive_type) {
        case PT_TRIANGLES:
-        clean_triangle_indices(empty_triangle_normal_indices(), m_normal_indices);
+        clean_triangle_indices(empty_triangle_normal_indices(),
+                               m_normal_indices);
         break;
 
        case PT_QUADS:
@@ -589,7 +590,8 @@ void Mesh_set::clean_facet_tex_coord_indices()
   if (!m_tex_coord_indices.empty()) {
     switch (m_primitive_type) {
      case PT_TRIANGLES:
-      clean_triangle_indices(empty_triangle_tex_coord_indices(), m_tex_coord_indices);
+      clean_triangle_indices(empty_triangle_tex_coord_indices(),
+                             m_tex_coord_indices);
       break;
 
      case PT_QUADS:
@@ -597,7 +599,8 @@ void Mesh_set::clean_facet_tex_coord_indices()
       break;
 
      case PT_POLYGONS:
-      clean_polygon_indices(empty_polygon_tex_coord_indices(), m_tex_coord_indices);
+      clean_polygon_indices(empty_polygon_tex_coord_indices(),
+                            m_tex_coord_indices);
       break;
 
      case PT_TRIANGLE_STRIP:
@@ -879,7 +882,6 @@ void Mesh_set::collapse_identical_coordinates(std::vector<Int32>& indices)
 //! \brief colapses identical coordinates.
 void Mesh_set::collapse_identical_coordinates(Facet_indices& indices)
 {
-#if 0
   typedef std::pair<const Vector3f*, Uint>      Coord_index_pair;
   if (empty_facet_indices(indices)) return;
 
@@ -890,7 +892,8 @@ void Mesh_set::collapse_identical_coordinates(Facet_indices& indices)
   std::vector<Coord_index_pair>::iterator it;
   Index_type i(0);
   for (it = vec.begin(); it != vec.end(); ++it) {
-    const Vector3f& vecf = get_coord_3d(m_flat_coord_indices[i]);
+    auto index = get_index_facet_indices(m_facet_coord_indices, i);
+    const Vector3f& vecf = get_coord_3d(index);
     *it = std::make_pair(&vecf, i++);
   }
 
@@ -923,18 +926,17 @@ void Mesh_set::collapse_identical_coordinates(Facet_indices& indices)
   prev = it->first;
   Uint index = it->second;
   (*coords)[i] = *prev;
-  indices[index] = i;
+  set_index_facet_indices(m_facet_coord_indices, index, i);
   for (++it; it != vec.end(); ++it) {
     const Vector3f* curr = it->first;
     index = it->second;
     if ((*curr) != (*prev)) (*coords)[++i] = *curr;
-    indices[index] = i;
+    set_index_facet_indices(m_facet_coord_indices, index, i);
     prev = curr;
   }
   Shared_coord_array old_shared_coord = get_coord_array();
   old_shared_coord->clear();
   set_coord_array(shared_coords);
-#endif
 }
 
 //! \brief writes a triangular facet.

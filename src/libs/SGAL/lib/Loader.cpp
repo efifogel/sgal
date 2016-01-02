@@ -264,7 +264,7 @@ Loader::compute_ifs(size_t count,
     indices[i][2] = coord_index++;
     ++i;
   }
-  // ifs->collapse_identical_coordinates();
+  ifs->collapse_identical_coordinates();
 
   return ifs;
 }
@@ -298,14 +298,14 @@ void Loader::add_shapes(Scene_graph* scene_graph, Shared_transform transform,
 {
   auto it = triangles.begin();
   auto first = it;
-  Triangle& triangle = *it++;
+  const Triangle& triangle = *it++;
   size_t count(1);
 
   Vector3f last_color(color);
   if (triangle.is_colored()) triangle.set_color(last_color);
 
   while (it != triangles.end()) {
-    triangle = *it;
+    const Triangle& triangle = *it;
 
     Vector3f tmp_color(color);
     if (triangle.is_colored()) triangle.set_color(tmp_color);
@@ -378,6 +378,7 @@ void Loader::add_colored_shape(Scene_graph* scene_graph,
     ++i;
   }
   auto shape = compute_shape(scene_graph, transform, color);
+  ifs->collapse_identical_coordinates();
   shape->set_geometry(ifs);
 }
 
