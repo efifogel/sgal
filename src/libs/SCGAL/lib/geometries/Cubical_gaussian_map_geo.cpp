@@ -248,38 +248,30 @@ void Cubical_gaussian_map_geo::clean_cgm()
     m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
   }
   else {
+    typedef boost::shared_ptr<Exact_coord_array_3d>
+      Shared_exact_coord_array_3d;
     clock_t start_time = clock();
-    CGAL::Polyhedral_cgm_initializer<Cgm> cgm_initializer(m_cgm);
-    Cgm_geo_initializer_visitor visitor;
-    cgm_initializer.set_marked_vertex_index(m_marked_vertex_index);
-    cgm_initializer.set_marked_edge_index(m_marked_edge_index);
-    cgm_initializer.set_marked_facet_index(m_marked_facet_index);
-
-    boost::shared_ptr<Exact_coord_array_3d> exact_coord_array =
-      boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
-    const auto& indices = get_facet_coord_indices();
+    auto exact_coord_array =
+      boost::dynamic_pointer_cast<Exact_coord_array_3d>(get_coord_array());
     if (exact_coord_array) {
       if (!exact_coord_array->empty()) {
-#if 0
-        cgm_initializer(exact_coord_array->begin(), exact_coord_array->end(),
-                        exact_coord_array->size(),
-                        begin_facet_indices(indices), end_facet_indices(indices),
-                        m_num_primitives, &visitor);
-#endif
+        Cleaner_visitor<Shared_exact_coord_array_3d>
+          cleaner_visitor(this, exact_coord_array);
+        const auto& indices = get_facet_coord_indices();
+        boost::apply_visitor(cleaner_visitor, indices);
       }
     }
     else {
-      boost::shared_ptr<Coord_array_3d> coord_array =
+      typedef boost::shared_ptr<Coord_array_3d>
+        Shared_coord_array_3d;
+      auto coord_array =
         boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
       if (coord_array) {
         if (!coord_array->empty()) {
-#if 0
-          cgm_initializer(coord_array->begin(), coord_array->end(),
-                          coord_array->size(),
-                          begin_facet_indices(indices),
-                          end_facet_indices(indices),
-                          m_num_primitives, &visitor);
-#endif
+          Cleaner_visitor<Shared_coord_array_3d>
+            cleaner_visitor(this, coord_array);
+          const auto& indices = get_facet_coord_indices();
+          boost::apply_visitor(cleaner_visitor, indices);
         }
       }
       else SGAL_error();

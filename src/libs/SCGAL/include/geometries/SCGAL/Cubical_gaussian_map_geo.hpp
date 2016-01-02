@@ -64,6 +64,7 @@ class Draw_action;
 class Scene_graph;
 class Sphere;
 class Cylinder;
+class Exact_coord_array_3d;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -72,6 +73,8 @@ class Cylinder;
 
 class SGAL_SCGAL_DECL Cubical_gaussian_map_geo : public SGAL::Mesh_set {
 public:
+  friend class Cleaner_visitor;
+
   typedef boost::shared_ptr<Cubical_gaussian_map_geo>
     Shared_cubical_gaussian_map_geo;
 
@@ -115,7 +118,35 @@ public:
   typedef Kernel::Aff_transformation_3                Aff_transformation_3;
 
 private:
-  /*! Extend the planar-map vertex */
+  template <typename CoordArray>
+  class Cleaner_visitor : public boost::static_visitor<> {
+  private:
+    Cubical_gaussian_map_geo* m_cgm_geo;
+    CoordArray m_coord_array;
+
+  public:
+    Cleaner_visitor(Cubical_gaussian_map_geo* cgm_geo, CoordArray coord_array) :
+      m_cgm_geo(cgm_geo), m_coord_array(coord_array) {}
+
+    template <typename Indices>
+    void operator()(const Indices& indices)
+    {
+      CGAL::Polyhedral_cgm_initializer<Cgm> cgm_initializer(m_cgm_geo->m_cgm);
+      Cgm_geo_initializer_visitor visitor;
+      cgm_initializer.set_marked_vertex_index(m_cgm_geo->m_marked_vertex_index);
+      cgm_initializer.set_marked_edge_index(m_cgm_geo->m_marked_edge_index);
+      cgm_initializer.set_marked_facet_index(m_cgm_geo->m_marked_facet_index);
+      cgm_initializer(m_coord_array->begin(), m_coord_array->end(),
+                      m_coord_array->size(),
+                      indices.begin(), indices.end(),
+                      m_cgm_geo->get_num_primitives(), &visitor);
+    }
+
+    /*! The operator() should never be invoked with flat indices. */
+    void operator()(const Flat_indices& indices) { SGAL_error(); }
+  };
+
+  /*! Extend the planar-map vertex. */
   template <typename Point_2>
   class My_arr_vertex : public CGAL::Polyhedral_cgm_arr_vertex<Point_2> {
   private:
