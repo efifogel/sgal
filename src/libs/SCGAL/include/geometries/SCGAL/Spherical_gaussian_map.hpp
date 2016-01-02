@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Spherical_gaussian_map.hpp 13463 2012-06-04 15:22:36Z efif $
-// $Revision: 13463 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_SPHERICAL_GAUSSIAN_MAP_HPP
@@ -66,7 +63,7 @@ public:
   /*! Constructor */
   Sgm_arr_halfedge() {}
 };
-  
+
 /*! Extend the arrangement face */
 class Sgm_arr_face : public CGAL::Arr_polyhedral_sgm_arr_face<Exact_point_3> {
 private:
@@ -114,7 +111,7 @@ typedef Spherical_gaussian_map::Vertex_const_handle     Sgm_vertex_const_handle;
 typedef Spherical_gaussian_map::Halfedge_const_handle
   Sgm_halfedge_const_handle;
 typedef Spherical_gaussian_map::Face_const_handle       Sgm_face_const_handle;
-  
+
 typedef Spherical_gaussian_map::Vertex_iterator         Sgm_vertex_iterator;
 typedef Spherical_gaussian_map::Halfedge_iterator       Sgm_halfedge_iterator;
 typedef Spherical_gaussian_map::Edge_iterator           Sgm_edge_iterator;
