@@ -202,6 +202,11 @@ public:
    */
   Boolean is_consistent();
 
+  /*! Determine whether the mesh has singular vertices.
+    * \return true if the the mesh has singular vertices and false otherwise.
+   */
+  Boolean has_singular_vertices();
+
 protected:
   /*! The volume of the polyhedron. */
   Float m_volume;
@@ -228,6 +233,9 @@ protected:
 
   /*! Indicates wheather the mesh is consistent. */
   Boolean m_consistent;
+
+  /*! Indicates wheather the mesh has_singular vertices. */
+  Boolean m_has_singular_vertices;
 
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }

@@ -28,6 +28,7 @@
 #include <GL/glext.h>
 
 #include <CGAL/basic.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Indexed_face_set.hpp"
@@ -47,6 +48,7 @@
 #include "SGAL/GL_error.hpp"
 #include "SGAL/calculate_multiple_normals_per_vertex.hpp"
 #include "SGAL/Vrml_formatter.hpp"
+#include "SGAL/Field_info.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -64,7 +66,8 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   m_dirty_surface_area(true),
   m_dirty_coord_array(true),
   m_dirty_polyhedron(true),
-  m_consistent(true)
+  m_consistent(true),
+  m_has_singular_vertices(false)
 {
   if (proto) return;
   m_surface.set_mesh_set(this);
@@ -292,42 +295,14 @@ void Indexed_face_set::clean_polyhedron()
   if (!coords || coords->empty()) return;
   if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
 
-  //! \todo temporary solution
-//   if (false) {
-//     typedef Inexact_kernel::Point_3     Inexact_point_3;
-//     boost::shared_ptr<Coord_array_3d> coord_array =
-//       boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-//     std::vector<Inexact_point_3> points(coord_array->size());
-//     std::transform(coord_array->begin(), coord_array->end(),
-//                    points.begin(),
-//                    [](const Vector3f& vec)
-//                    { return Inexact_point_3(vec[0], vec[1], vec[2]); });
-//     std::vector<std::vector<std::size_t> > polygons(get_num_primitives());
-//     size_t i = 0;
-//     for (auto it = polygons.begin(); it != polygons.end(); ++it) {
-//       auto& polygon = *it;
-//       polygon.resize(3);
-//       polygon[0] = m_flat_coord_indices[i++];
-//       polygon[1] = m_flat_coord_indices[i++];
-//       polygon[2] = m_flat_coord_indices[i++];
-//     }
+  auto& indices = boost::get<Triangle_indices>(m_facet_coord_indices);
+  auto coord_array =
+    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  auto* field_info = get_field_info(Coord_array_3d::POINT);
+  auto& points = *(coord_array->array_handle(field_info));
+  m_has_singular_vertices =
+    !CGAL::Polygon_mesh_processing::orient_polygon_soup(points, indices);
 
-//     bool oriented = CGAL::orient_polygon_soup(points, polygons);
-//     std::cout << (oriented ? "Oriented." : "Not orientabled.") << std::endl;
-//     std::cout << points.size() << ", " << coord_array->size() << std::endl;
-//     std::cout << polygons.size() << ", " << get_num_primitives() << std::endl;
-
-//     polygons.clear();
-//     i = 0;
-//     for (auto it = polygons.begin(); it != polygons.end(); ++it) {
-//       auto& polygon = *it;
-//       m_flat_coord_indices[i++] = polygon[0];
-//       m_flat_coord_indices[i++] = polygon[1];
-//       m_flat_coord_indices[i++] = polygon[2];
-//     }
-//     for (auto it = polygons.begin(); it != polygons.end(); ++it) it->clear();
-//     points.clear();
-//   }
   m_polyhedron.delegate(m_surface);           // create the polyhedral surface
   if (!m_surface.is_consistent()) m_consistent = false;
 
@@ -509,6 +484,13 @@ Boolean Indexed_face_set::is_consistent()
 {
   if (m_dirty_polyhedron) clean_polyhedron();
   return m_consistent;
+}
+
+//! \brief determines whether the mesh has singular vertices.
+Boolean Indexed_face_set::has_singular_vertices()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  return m_has_singular_vertices;
 }
 
 SGAL_END_NAMESPACE
