@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Arrangement_mark_dcel.hpp 7232 2009-02-19 01:30:44Z ophirset $
-// $Revision: 7232 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_ARRANGEMENT_MARK_DCEL_HPP
@@ -24,7 +21,7 @@
 
 /*! \file
  * An arrangement DCEL, the vertex, halfedge, and face of which are extended
- * each with an (unsigned int) mark. 
+ * each with an (unsigned int) mark.
  */
 
 #include <CGAL/basic.h>
@@ -66,7 +63,7 @@ public:
 /*! Extend the arrangement halfedge */
 template <typename X_monotone_curve_2>
 class Arrangement_mark_halfedge :
-  public CGAL::Arr_halfedge_base<X_monotone_curve_2> {
+  public CGAL::Gps_halfedge_base<X_monotone_curve_2> {
 private:
   /*! An arbitrary mark */
   Boolean m_mark;
@@ -90,7 +87,7 @@ public:
     m_mark = he.m_mark;
   }
 };
-  
+
 /*! Extend the arrangement face */
 //  We use Gps_face_base as the base of our face so we could use Boolean
 //  set operations in the node Polygon_set_on_sphere_geo and still have
@@ -103,21 +100,21 @@ class Arrangement_mark_face : public CGAL::Gps_face_base {
 private:
   /*! An arbitrary mark */
   // Boolean m_mark;
-    
+
 public:
   /*! Constructor */
   Arrangement_mark_face() //: m_mark(0)
   {}
 
   /*! Obtain the "mark" flag */
-  Boolean mark() const { 
+  Boolean mark() const {
     // return m_mark;
-    return contained() ? true : false; 
+    return contained() ? true : false;
   }
 
   /*! Set the mark */
-  void set_mark(Boolean mark) { 
-    // m_mark = mark; 
+  void set_mark(Boolean mark) {
+    // m_mark = mark;
     (mark == true) ? set_contained(true) : set_contained(false);
   }
 
