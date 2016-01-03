@@ -42,6 +42,18 @@ RUN apt-get install -y libgl1-mesa-dev libglu1-mesa-dev
 RUN apt-get install -y libcgal-dev
 RUN apt-get install -y bison flex
 
+RUN mkdir /usr/src/cgal
+RUN curl -SL http://github.com/CGAL/cgal/archive/master.tar.gz | tar -xzC /usr/src/cgal
+WORKDIR /usr/src/cgal
+RUN cmake -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_CXX_FLAGS=-frounding-math -Wall \
+          -DWITH_CGAL_PDB=OFF \
+          -DWITH_GMP=true \
+          -DWITH_CGAL_Qt3=OFF \
+          -DWITH_CGAL_Qt5=OFF \
+          cgal-master
+RUN make install
+
 RUN mkdir /usr/src/sgal
 WORKDIR /usr/src/sgal
 COPY ./CMakeLists.txt ./

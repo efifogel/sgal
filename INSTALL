@@ -345,8 +345,8 @@ used to develope relevant CGAL features.
   git merge origin/Cubical_gaussian_map-efif
   git merge origin/Envelope_voronoi_2-ophirset
   git merge origin/Lines_through_segments-pmoeller
+  git merge origin/Aos_2-boundary_objects-efic
   git merge origin/Aos_2-flatgeodesics_on_torus-tau
-  git merge origin/Aos-Polycurve_tests-wkhan
 
 2.5.7. GMP and MPFR
 The SGAL library SCGAL requires CGAL with unlimited precision, and
