@@ -186,7 +186,7 @@ protected:
     typedef typename Geom_traits::X_monotone_curve_2    X_monotone_curve;
 
     const Geom_traits* traits = aos->geometry_traits();
-    const auto* seg_traits = traits->segment_traits_2();
+    const auto* seg_traits = traits->subcurve_traits_2();
     auto cmp_endpoints = traits->compare_endpoints_xy_2_object();
     auto ctr_min_vertex = traits->construct_min_vertex_2_object();
     auto ctr_max_vertex = traits->construct_max_vertex_2_object();
@@ -195,9 +195,10 @@ protected:
     Edge_const_iterator hei;
     for (hei = aos->edges_begin(); hei != aos->edges_end(); ++hei) {
       const X_monotone_curve& curve = hei->curve();
-      auto last = curve.end_segments();
+      auto last = curve.end_subcurves();
       --last;
-      for (auto it = curve.begin_segments(); it != curve.end_segments(); ++it) {
+      for (auto it = curve.begin_subcurves(); it != curve.end_subcurves(); ++it)
+      {
         const auto& seg = *it;
         /*! The following code uses member functions of the curve type that are
          * not in the concept, and thus are not guaranteed to be supported.
@@ -246,7 +247,7 @@ protected:
      InputIterator& it,
      const GeomTraits* traits)
   {
-    const auto* seg_traits = traits->segment_traits_2();
+    const auto* seg_traits = traits->subcurve_traits_2();
     Exact_kernel::Construct_direction_3 ctr_direction =
       seg_traits->construct_direction_3_object();
     Exact_kernel::Construct_vector_3 ctr_vector =
@@ -292,7 +293,7 @@ protected:
      InputIterator& it,
      const GeomTraits* traits)
   {
-    const auto* seg_traits = traits->segment_traits_2();
+    const auto* seg_traits = traits->subcurve_traits_2();
     Exact_kernel::Construct_direction_3 ctr_direction =
       seg_traits->construct_direction_3_object();
     Exact_kernel::Construct_vector_3 ctr_vector =
@@ -340,7 +341,7 @@ protected:
 
     if (exact_coord_array && (exact_coord_array->size() > 0)) {
       const Geom_traits* traits = aos->geometry_traits();
-      const auto* seg_traits = traits->segment_traits_2();
+      const auto* seg_traits = traits->subcurve_traits_2();
       Exact_kernel::Construct_direction_3 ctr_direction =
         seg_traits->construct_direction_3_object();
       Exact_kernel::Construct_vector_3 ctr_vector =
