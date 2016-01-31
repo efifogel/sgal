@@ -1,11 +1,9 @@
 # Start with a stable version of Ubuntu, namely ubuntu:14.04
-# Version 14.04 comes with CGAL version 4,2, which is a bit old, but for
-# now will do.
-# Version 15:04, while comes with a more recent version of CGAL, namely 4.5,
-# is not stable. Some problems occur when compiling sources that depend on
+# Version 15.04 comes with CGAL version 4,5, which is too old
+# Version 15:04 has some problems when compiling sources that depend on
 # ImageMagick.
 
-FROM ubuntu:14.04
+FROM ubuntu:15.04
 
 # ubuntu:14.04 comes with V8 engine version 3.14.5.8. This version is too old.
 # First, compile a suitable version of the V8 engine.
