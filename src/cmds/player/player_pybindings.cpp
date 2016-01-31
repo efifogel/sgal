@@ -44,21 +44,41 @@ void translate_loader_error_exception(SGAL::Loader_error const& e)
   PyErr_SetObject(exception_type, python_exception_instance.ptr());
 }
 
+void translate_empty_error_exception(SGAL::Empty_error const& e)
+{
+  boost::python::object python_exception_instance(e);
+  PyErr_SetObject(exception_type, python_exception_instance.ptr());
+}
+
 BOOST_PYTHON_MODULE(player)
 {
   using namespace boost::python;
 
   register_exception_translator<std::exception>(&translate_exception);
 
+  // Loader_error
   class_<SGAL::Loader_error> loader_error_class("Loader_error",
                                                 init<const std::string&,
                                                      const std::string&>());
   exception_type = loader_error_class.ptr();
-  register_exception_translator<SGAL::Loader_error>(&translate_loader_error_exception);
+  register_exception_translator<SGAL::Loader_error>
+    (&translate_loader_error_exception);
   loader_error_class
     .def("filename", &SGAL::Loader_error::filename,
          return_value_policy<copy_const_reference>())
     .def("what", &SGAL::Loader_error::what)
+    ;
+
+  // Empty error
+  class_<SGAL::Empty_error> empty_error_class("Empty_error",
+                                              init<const std::string&>());
+  exception_type = empty_error_class.ptr();
+  register_exception_translator<SGAL::Empty_error>
+    (&translate_empty_error_exception);
+  empty_error_class
+    .def("filename", &SGAL::Empty_error::filename,
+         return_value_policy<copy_const_reference>())
+    .def("what", &SGAL::Empty_error::what)
     ;
 
   class_<Player::Arguments>("Arguments")
