@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1308 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_ASSERTIONS_HPP
@@ -29,7 +26,9 @@ SGAL_BEGIN_NAMESPACE
 // types
 // =====
 
-enum Failure_behaviour { ABORT, EXIT, EXIT_WITH_SUCCESS, CONTINUE };
+enum Failure_behaviour {
+  ABORT, EXIT, EXIT_WITH_SUCCESS, CONTINUE, THROW_EXCEPTION
+};
 
 // function declarations
 // =====================

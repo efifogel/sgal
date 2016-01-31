@@ -20,8 +20,9 @@
 #include <iostream>
 #include <cassert>
 
-#include "SGAL/assertions.hpp"
 #include "SGAL/config.hpp"
+#include "SGAL/assertions.hpp"
+#include "SGAL/exceptions.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -35,7 +36,7 @@ void not_implemented()
 // static behaviour variables
 // --------------------------
 
-static Failure_behaviour _error_behaviour   = ABORT;
+static Failure_behaviour _error_behaviour   = THROW_EXCEPTION;
 static Failure_behaviour _warning_behaviour = CONTINUE;
 
 // standard error handlers
@@ -44,12 +45,16 @@ static void _standard_error_handler(const char* what, const char* expr,
                                     const char* file, int line,
                                     const char* msg)
 {
-  std::cerr << "SGAL error: " << what << " violation!" << std::endl
+#if defined(__GNUG__) && !defined(__llvm__)
+    // After g++ 3.4, std::terminate defaults to printing to std::cerr itself.
+    if (_error_behaviour == THROW_EXCEPTION) return;
+#endif
+  std::cerr << "SGAL Error: " << what << " violation!" << std::endl
             << "Expr: " << expr << std::endl
             << "File: " << file << std::endl
             << "Line: " << line << std::endl;
   if (msg != 0)
-    std::cerr << "Explanation:" << msg << std::endl;
+    std::cerr << "Explanation: " << msg << std::endl;
 }
 
 // standard warning handler
@@ -58,7 +63,11 @@ static void _standard_warning_handler(const char*, const char* expr,
                                       const char* file, int line,
                                       const char* msg)
 {
-  std::cerr << "SGAL warning: check violation!" << std::endl
+#if defined(__GNUG__) && !defined(__llvm__)
+    // After g++ 3.4, std::terminate defaults to printing to std::cerr itself.
+    if (_warning_behaviour == THROW_EXCEPTION) return;
+#endif
+  std::cerr << "SGAL Warning: check violation!" << std::endl
             << "Expr: " << expr << std::endl
             << "File: " << file << std::endl
             << "Line: " << line << std::endl;
@@ -82,7 +91,9 @@ void assertion_fail(const char* expr, const char* file, int line,
    case ABORT: abort();
    case EXIT: exit(1);  // EXIT_FAILURE
    case EXIT_WITH_SUCCESS: exit(0);  // EXIT_SUCCESS
-   case CONTINUE: ;
+   case CONTINUE:
+   case THROW_EXCEPTION:
+   default: throw Assertion_exception("SGAL", expr, file, line, msg);
   }
 }
 
@@ -95,6 +106,8 @@ void precondition_fail(const char* expr, const char* file, int line,
    case EXIT: exit(1);  // EXIT_FAILURE
    case EXIT_WITH_SUCCESS: exit(0);  // EXIT_SUCCESS
    case CONTINUE: ;
+   case THROW_EXCEPTION:
+   default: throw Precondition_exception("SGAL", expr, file, line, msg);
   }
 }
 
@@ -106,7 +119,9 @@ void postcondition_fail(const char* expr, const char* file, int line,
    case ABORT: abort();
    case EXIT: exit(1);  // EXIT_FAILURE
    case EXIT_WITH_SUCCESS: exit(0);  // EXIT_SUCCESS
-   case CONTINUE: ;
+   case CONTINUE:
+   case THROW_EXCEPTION:
+   default: throw Postcondition_exception("SGAL", expr, file, line, msg);
   }
 }
 
@@ -120,6 +135,7 @@ void warning_fail(const char* expr, const char* file, int line,
    case ABORT: abort();
    case EXIT: exit(1);  // EXIT_FAILURE
    case EXIT_WITH_SUCCESS: exit(0);  // EXIT_SUCCESS
+   case THROW_EXCEPTION: throw Warning_exception("SGAL", expr, file, line, msg);
    case CONTINUE: ;
   }
 }
