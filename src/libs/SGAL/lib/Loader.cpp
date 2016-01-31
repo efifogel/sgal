@@ -51,14 +51,18 @@ Loader::Loader() : m_multiple_shapes(false) {}
 Loader::Return_code Loader::load_stl(std::istream& stl_stream, size_t size,
                                      Scene_graph* sg, bool force)
 {
+  if (stl_stream.peek() == std::char_traits<char>::eof()) {
+    throw Empty_error(m_filename);
+    return FAILURE;
+  }
   char str[81];
   stl_stream.read(str, 80);
-  std::string title(str);
   if (!stl_stream) {
     throw Read_error(m_filename);
     return FAILURE;
   }
 
+  std::string title(str);
   if (force || (0 != title.compare(0, 5, "solid"))) {
     Vector3f color;
     auto pos = title.find("COLOR=");

@@ -78,6 +78,14 @@ class SGAL_SGAL_DECL Open_file_error : public Loader_error {
   ~Open_file_error() SGAL_NOTHROW {}
 };
 
+/*! Class thrown when the opening of an empty file. */
+class SGAL_SGAL_DECL Empty_error : public Loader_error {
+ public:
+  Empty_error(const std::string& filename) :
+    Loader_error(std::string("Error: Empty"), filename) {}
+  ~Empty_error() SGAL_NOTHROW {}
+};
+
 SGAL_END_NAMESPACE
 
 #endif
