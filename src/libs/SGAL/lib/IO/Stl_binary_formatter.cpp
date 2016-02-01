@@ -318,14 +318,11 @@ operator()(const Polygon_indices& indices)
   for (const auto& polygon: indices) {
     std::vector<Inexact_point_3> polyline;
     polyline.reserve(polygon.size());
-    std::cout << polyline.size() << std::endl;
     for (auto& index: polygon) {
       const Vector3f& v = m_world_coords[index];
       auto pit = polyline.begin();
       polyline.emplace(pit++, v[0], v[1], v[2]);
     }
-    std::copy(polyline.begin(), polyline.end(),
-              std::ostream_iterator<Inexact_point_3>(std::cout, "\n"));
     std::vector<Triangle> patch;
     patch.reserve(polyline.size() -2);
     CGAL::Polygon_mesh_processing::
