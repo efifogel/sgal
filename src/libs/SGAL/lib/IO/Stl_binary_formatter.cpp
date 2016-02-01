@@ -16,12 +16,21 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include <vector>
+#include <iterator>
+
+#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#include <CGAL/utility.h>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Stl_binary_formatter.hpp"
 #include "SGAL/Transform.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Coord_array.hpp"
+#include "SGAL/Inexact_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -75,30 +84,6 @@ void Stl_binary_formatter::end()
   m_shapes.clear();
 }
 
-//! \brief obtains the number of triangles of a mesh.
-size_t Stl_binary_formatter::number_of_triangles(Shared_mesh_set mesh)
-{
-  SGAL_assertion(mesh);
-  auto type = mesh->get_primitive_type();
-  if ((type == Geo_set::PT_TRIANGLES) || (type == Geo_set::PT_QUADS)) {
-    auto num = mesh->get_num_primitives();
-    return (type == Geo_set::PT_TRIANGLES) ? num : 2 * num;
-  }
-
-  size_t num_triangles(0);
-  size_t num_vertices(0);
-  const auto& indices = mesh->get_coord_indices();
-  std::for_each(indices.begin(), indices.end(),
-                [&](Uint index){
-                  if (index == static_cast<Uint>(-1)) {
-                    num_triangles += num_vertices - 3;
-                    num_vertices = 0;
-                  }
-                  else ++num_vertices;
-                });
-  return num_triangles;
-}
-
 //! \brief obtains the total number of triangles.
 size_t Stl_binary_formatter::number_of_triangles()
 {
@@ -109,7 +94,10 @@ size_t Stl_binary_formatter::number_of_triangles()
                   auto geometry = ws.first->get_geometry();
                   if (!geometry) return;
                   auto mesh = boost::dynamic_pointer_cast<Mesh_set>(geometry);
-                  num_triangles += number_of_triangles(mesh);
+
+                  const auto& indices = mesh->get_facet_coord_indices();
+                  Count_triangles_visitor visitor;
+                  num_triangles += boost::apply_visitor(visitor, indices);
                 });
   return num_triangles;
 }
@@ -240,6 +228,51 @@ void Stl_binary_formatter::write(Shared_container container)
   container->write(this);
 }
 
+//! \brief obtains the number of triangles.
+size_t Stl_binary_formatter::Count_triangles_visitor::
+operator()(const Triangle_indices& indices)
+{
+  SGAL_assertion (Geo_set::PT_TRIANGLES == m_mesh->get_primitive_type());
+  return indices.size();
+}
+
+//! \brief obtains the number of triangles.
+size_t Stl_binary_formatter::Count_triangles_visitor::
+operator()(const Quad_indices& indices)
+{
+  SGAL_assertion (Geo_set::PT_QUADS == m_mesh->get_primitive_type());
+  return 2 * indices.size();
+}
+
+//! \brief obtains the number of triangles.
+size_t Stl_binary_formatter::Count_triangles_visitor::
+operator()(const Polygon_indices& indices)
+{
+  SGAL_assertion(Geo_set::PT_POLYGONS == m_mesh->get_primitive_type());
+  size_t count(0);
+  for (const auto& polygon: indices) {
+    count += polygon.size() - 2;
+  }
+  return count;
+}
+
+//! \brief obtains the number of triangles.
+size_t Stl_binary_formatter::Count_triangles_visitor::
+operator()(const Flat_indices& indices)
+{
+  size_t num_triangles(0);
+  size_t num_vertices(0);
+  std::for_each(indices.begin(), indices.end(),
+                [&](Uint index){
+                  if (index == static_cast<Uint>(-1)) {
+                    num_triangles += num_vertices - 3;
+                    num_vertices = 0;
+                  }
+                  else ++num_vertices;
+                });
+  return num_triangles;
+}
+
 //! \brief export triangles.
 void Stl_binary_formatter::Export_facet_visitor::
 operator()(const Triangle_indices& indices)
@@ -280,8 +313,32 @@ operator()(const Polygon_indices& indices)
 {
   SGAL_assertion(Geo_set::PT_POLYGONS == m_mesh->get_primitive_type());
   if (indices.empty()) return;
-  //! \todo triangulate and export.
-  SGAL_error_msg("Not impelmented yet!");
+
+  typedef CGAL::Triple<size_t, size_t, size_t> Triangle;
+  for (const auto& polygon: indices) {
+    std::vector<Inexact_point_3> polyline;
+    polyline.reserve(polygon.size());
+    std::cout << polyline.size() << std::endl;
+    for (auto& index: polygon) {
+      const Vector3f& v = m_world_coords[index];
+      auto pit = polyline.begin();
+      polyline.emplace(pit++, v[0], v[1], v[2]);
+    }
+    std::copy(polyline.begin(), polyline.end(),
+              std::ostream_iterator<Inexact_point_3>(std::cout, "\n"));
+    std::vector<Triangle> patch;
+    patch.reserve(polyline.size() -2);
+    CGAL::Polygon_mesh_processing::
+      triangulate_hole_polyline(polyline, std::back_inserter(patch));
+    for (const auto& triangle: patch) {
+      Ushort spacer;
+      const auto& v1 = m_world_coords[polygon[triangle.first]];
+      const auto& v2 = m_world_coords[polygon[triangle.second]];
+      const auto& v3 = m_world_coords[polygon[triangle.third]];
+      if (m_mesh->is_ccw()) m_formater.write_facet(v1, v2, v3, spacer);
+      else m_formater.write_facet(v3, v2, v1, spacer);
+    }
+  }
 }
 
 SGAL_END_NAMESPACE
