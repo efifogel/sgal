@@ -21,6 +21,9 @@
 
 #include <vector>
 
+#include <CGAL/basic.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Boundary_set.hpp"
 #include "SGAL/Vector3f.hpp"
@@ -207,6 +210,38 @@ public:
    */
   Boolean has_singular_vertices();
 
+  /*! Set the flag that determine whether the mesh has singular vertices.
+   * \param[in] flag the flag that determine whether the mesh has singular
+   *            vertices.
+   */
+  Boolean set_has_singular_vertices(Boolean flag);
+
+  /*! Orient polygon soup visitor. */
+  class Orient_polygon_soup_visitor : public boost::static_visitor<Boolean> {
+  private:
+    typedef boost::shared_ptr<Coord_array_3d>         Shared_coord_array_3d;
+
+    const Shared_coord_array_3d m_coord_array;
+
+  public:
+    //! Construct
+    Orient_polygon_soup_visitor(Shared_coord_array_3d coord_array) :
+      m_coord_array(coord_array) {}
+
+    template <typename Indices>
+    Boolean operator()(Indices& indices) const
+    {
+      auto* field_info = m_coord_array->get_field_info(Coord_array_3d::POINT);
+      auto& points = *(m_coord_array->array_handle(field_info));
+      auto has_singular_vertices =
+        !CGAL::Polygon_mesh_processing::orient_polygon_soup(points, indices);
+      return has_singular_vertices;
+    }
+
+    Boolean operator()(Flat_indices& indices) const
+    { SGAL_error(); return false; }
+  };
+
 protected:
   /*! The volume of the polyhedron. */
   Float m_volume;
@@ -372,6 +407,10 @@ inline Boolean Indexed_face_set::is_dirty_polyhedron() const
 //! \brief determines whether the polyhedron representation is empty.
 inline bool Indexed_face_set::is_polyhedron_empty() const
 { return m_polyhedron.empty(); }
+
+//! brief sets the flag that determine whether the mesh has singular vertices.
+inline Boolean Indexed_face_set::set_has_singular_vertices(Boolean flag)
+{ m_has_singular_vertices = flag; }
 
 SGAL_END_NAMESPACE
 

@@ -27,9 +27,6 @@
 #include <GL/gl.h>
 #include <GL/glext.h>
 
-#include <CGAL/basic.h>
-#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
-
 #include "SGAL/basic.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Coord_array_3d.hpp"
@@ -295,13 +292,9 @@ void Indexed_face_set::clean_polyhedron()
   if (!coords || coords->empty()) return;
   if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
 
-  auto& indices = boost::get<Triangle_indices>(m_facet_coord_indices);
-  auto coord_array =
-    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-  auto* field_info = get_field_info(Coord_array_3d::POINT);
-  auto& points = *(coord_array->array_handle(field_info));
-  m_has_singular_vertices =
-    !CGAL::Polygon_mesh_processing::orient_polygon_soup(points, indices);
+  auto coord_array = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  Orient_polygon_soup_visitor visitor(coord_array);
+  m_has_singular_vertices = boost::apply_visitor(visitor, m_facet_coord_indices);
 
   m_polyhedron.delegate(m_surface);           // create the polyhedral surface
   if (!m_surface.is_consistent()) m_consistent = false;
