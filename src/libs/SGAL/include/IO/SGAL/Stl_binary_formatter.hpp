@@ -167,7 +167,7 @@ private:
 
     typedef boost::shared_ptr<Mesh_set>                 Shared_mesh_set;
 
-    const Shared_mesh_set& m_mesh;
+    const Shared_mesh_set m_mesh;
     const std::vector<Vector3f>& m_world_coords;
     Stl_binary_formatter& m_formater;
 
