@@ -216,6 +216,10 @@ public:
    */
   Boolean set_has_singular_vertices(Boolean flag);
 
+  /*! Obtain the number of border edges.
+   */
+  size_t get_number_of_border_edges();
+
   /*! Orient polygon soup visitor. */
   class Orient_polygon_soup_visitor : public boost::static_visitor<Boolean> {
   private:
@@ -266,7 +270,10 @@ protected:
    */
   Boolean m_dirty_polyhedron;
 
-  /*! Indicates wheather the mesh is consistent. */
+  /*! Indicates wheather the mesh is consistent.
+   * \return true if the mesh is consistent and false otherwise. An mesh is
+   * inconsistent iff the construction of the polyderal surface failed.
+   */
   Boolean m_consistent;
 
   /*! Indicates wheather the mesh has_singular vertices. */

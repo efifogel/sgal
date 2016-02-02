@@ -486,4 +486,11 @@ Boolean Indexed_face_set::has_singular_vertices()
   return m_has_singular_vertices;
 }
 
+//! \brief obtains the number of border edges.
+size_t Indexed_face_set::get_number_of_border_edges()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  return m_polyhedron.size_of_border_edges();
+}
+
 SGAL_END_NAMESPACE
