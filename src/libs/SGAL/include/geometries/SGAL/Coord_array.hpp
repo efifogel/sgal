@@ -39,6 +39,7 @@ class SGAL_SGAL_DECL Coord_array : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,
+    POINT,
     LAST
   };
 

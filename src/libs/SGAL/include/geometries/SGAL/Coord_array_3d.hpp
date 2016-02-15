@@ -52,7 +52,6 @@ class SGAL_SGAL_DECL Coord_array_3d : public Coord_array {
 public:
   enum {
     FIRST = Coord_array::LAST - 1,
-    POINT,
     LAST
   };
 
