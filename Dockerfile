@@ -1,7 +1,7 @@
 # Start with a stable version of Ubuntu, namely ubuntu:14.04
 # Version 15:04 has some problems when compiling sources that depend on
 # ImageMagick.
-# Version 15.04 comes with CGAL version 4,5, which is too old anyway.
+# Version 15.04 comes with CGAL version 4.5, which is too old anyway.
 
 FROM ubuntu:14.04
 
@@ -58,7 +58,8 @@ COPY ./CMakeLists.txt ./
 ADD ./src ./src
 ADD ./cmake ./cmake
 
-RUN cmake -DSGAL_USE_V8:BOOL=ON \
+RUN cmake -DCMAKE_BUILD_TYPE=Release \
+          -DSGAL_USE_V8:BOOL=ON \
           -DSGAL_USE_SCGAL:BOOL=ON \
           -DSGAL_USE_POS:BOOL=OFF \
           -DSGAL_USE_VOS:BOOL=OFF \
