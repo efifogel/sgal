@@ -51,15 +51,15 @@ public:
   typedef std::vector<Vector4f>::iterator       iterator;
   typedef std::vector<Vector4f>::const_iterator const_iterator;
 
-  /*! Constructor.
+  /*! Construct.
    * \param proto (in) determines whether to construct a prototype.
    */
   Tex_coord_array_4d(Boolean proto = false);
 
-  /*! Constructor. */
-  Tex_coord_array_4d(Uint n);
+  /*! Construct. */
+  Tex_coord_array_4d(Size n);
 
-  /*! Destructor */
+  /*! Destruct. */
   ~Tex_coord_array_4d();
 
   /* Construct the prototype.
@@ -98,10 +98,10 @@ public:
   /*! Obtain the array size.
    * \retun the array size.
    */
-  virtual Uint size() const;
+  virtual Size size() const;
 
   /*! Resize the array capacity. */
-  virtual void resize(Uint n);
+  virtual void resize(Size n);
 
   /*! Clear the array. */
   virtual void clear();
@@ -109,12 +109,12 @@ public:
   /*! Obtain the number of texture coordinate dimensions.
    * \return the number of texture coordinate dimensions.
    */
-  virtual Uint num_coordinates() const;
+  virtual Size num_coordinates() const;
 
   /*! Obtain the data size.
    * \retun the data size.
    */
-  virtual Uint data_size() const;
+  virtual Size data_size() const;
 
   /*! Obtain the data.
    * \return the data.
@@ -169,10 +169,10 @@ inline Container* Tex_coord_array_4d::clone()
 { return new Tex_coord_array_4d(); }
 
 //! \brief obtains the array size.
-inline Uint Tex_coord_array_4d::size() const { return m_array.size(); }
+inline Size Tex_coord_array_4d::size() const { return m_array.size(); }
 
 //! \brief Resize the array capacity.
-inline void Tex_coord_array_4d::resize(Uint n) { m_array.resize(n); }
+inline void Tex_coord_array_4d::resize(Size n) { m_array.resize(n); }
 
 //! \brief Clear the array.
 inline void Tex_coord_array_4d::clear() { m_array.clear(); }
@@ -201,10 +201,10 @@ inline const Vector4f& Tex_coord_array_4d::operator[](Uint n) const
 { return m_array[n]; }
 
 //! \brief obtains the number of texture coordinate dimensions.
-inline Uint Tex_coord_array_4d::num_coordinates() const { return 4; }
+inline Size Tex_coord_array_4d::num_coordinates() const { return 4; }
 
 //! \brief obtain the data size.
-inline Uint Tex_coord_array_4d::data_size() const
+inline Size Tex_coord_array_4d::data_size() const
 { return m_array.size() * sizeof(Vector4f); }
 
 //! \brief obtains the data.

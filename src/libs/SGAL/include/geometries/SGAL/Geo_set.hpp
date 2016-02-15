@@ -106,10 +106,10 @@ public:
   typedef boost::shared_ptr<Color_array>                Shared_color_array;
   typedef boost::shared_ptr<Tex_coord_array>            Shared_tex_coord_array;
 
-  /*! Constructor. */
+  /*! Construct. */
   Geo_set(Boolean proto = false);
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Geo_set();
 
   /*! Initialize the node prototype. */
@@ -144,7 +144,7 @@ public:
   //@}
 
   /*! Set the attributes of the object extracted from the VRML or X3D file.
-   * \param elem contains lists of attribute names and values.
+   * \param[in] elem contains lists of attribute names and values.
    */
   virtual void set_attributes(Element* elem);
 
@@ -152,22 +152,22 @@ public:
   // A setter calls a virtual function, so it doesn't need to be virtual as well.
   //@{
   /*! Set the coordinate array.
-   * \param coord_array (in) a pointer to a coordinate array
+   * \param[in] coord_array a pointer to a coordinate array
    */
   void set_coord_array(Shared_coord_array coord_array);
 
   /*! Set the normal array.
-   * \param normal_array (in) the normal array.
+   * \param[in] normal_array the normal array.
    */
   void set_normal_array(Shared_normal_array normal_array);
 
   /*! Set the color field.
-   * \param color_array (in) a pointer to a color array
+   * \param[in] color_array a pointer to a color array
    */
   void set_color_array(Shared_color_array color_array);
 
   /*! Set the texture-coordinate array.
-   * \param tex_coord_array (in) the texture coordinate array.
+   * \param[in] tex_coord_array the texture coordinate array.
    */
   void set_tex_coord_array(Shared_tex_coord_array tex_coord_array);
 
@@ -196,22 +196,22 @@ public:
   // A setter calls a virtual function, so it doesn't need to be virtual as well.
   //@{
   /*! Set the coordinate-index array.
-   * \param indices (in)
+   * \param[in] indices
    */
   void set_coord_indices(const std::vector<Int32>& indices);
 
   /*! Set the normal-index array.
-   * \param indices (in)
+   * \param[in] indices
    */
   void set_normal_indices(const std::vector<Int32>& indices);
 
   /*! Set the color-index array.
-   * \param indices (in)
+   * \param[in] indices
    */
   void set_color_indices(const std::vector<Int32>& indices);
 
   /*! Set the texture_coordinate-index array.
-   * \param indices (in)
+   * \param[in] indices
    */
   void set_tex_coord_indices(const std::vector<Int32>& indices);
 
@@ -302,50 +302,50 @@ public:
   /// \name Change Recators
   //@{
   /*! Respond to a change in the coordinate array.
-   * \param field_info (in) the information record of the field that caused
-   *                   the change.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
    */
   virtual void coord_content_changed(const Field_info* field_info = nullptr);
 
   /*! Respond to a change in the normal array.
-   * \param field_info (in) the information record of the field that caused
-   *                   the change.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
    */
   virtual void normal_content_changed(const Field_info* field_info = nullptr);
 
   /*! Respond to a change in the color array.
-   * \param field_info (in) the information record of the field that caused
-   *                   the change.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
    */
   virtual void color_content_changed(const Field_info* field_info = nullptr);
 
   /*! Respond to a change in the texture coordinate array.
-   * \param field_info (in) the information record of the field that caused
-   *                   the change.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
    */
   virtual void tex_coord_content_changed(const Field_info* field_info = nullptr);
 
   /*! Respond to a change in the coordinate-index array.
-   * \param field_info (in) the information record of the field that caused
-   *                   the change.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
    */
   virtual void coord_indices_changed(const Field_info* field_info = nullptr);
 
   /*! Respond to a change in the normal-index array.
-   * \param field_info (in) the information record of the field that caused
-   *                   the change.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
    */
   virtual void normal_indices_changed(const Field_info* field_info = nullptr);
 
   /*! Respond to a change in the color-index array.
-   * \param field_info (in) the information record of the field that caused
-   *                   the change.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
    */
   virtual void color_indices_changed(const Field_info* field_info = nullptr);
 
   /*! Respond to a change in the texture-coordinate index array.
-   * \param field_info (in) the information record of the field that caused
-   *                   the change.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
    */
   virtual void tex_coord_indices_changed(const Field_info* field_info = nullptr);
 
@@ -354,8 +354,8 @@ public:
    *      corresponding member of the base class).
    * (ii) Indicate the change in the parent nodes (through a call to
    *      field_changed(), which in turn applies the observers).
-   * \param field_info (in) the information record of the field that caused
-   *                   the change.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
    */
   virtual void bounding_sphere_changed(const Field_info* field_info = nullptr);
   //@}
@@ -414,10 +414,10 @@ public:
   Primitive_type get_primitive_type() const;
 
   /*! Obtain the number of primitives. */
-  Uint get_num_primitives() const;
+  Size get_num_primitives() const;
 
   /*! Set the number of primitives. */
-  void set_num_primitives(Uint num);
+  void set_num_primitives(Size num);
 
   /*! Draw the geometry. */
   virtual void draw(Draw_action* action) = 0;
@@ -463,13 +463,13 @@ public:
   virtual void field_changed(const Field_info* field_info);
 
   /*! Assign the coord indices with the reverse of given indices.
-   * \param indices the indices to reverse.
+   * \param[in] indices the indices to reverse.
    */
   void reverse_coord_indices(const std::vector<Int32>& indices);
 
 protected:
   /*! The number of primitives in this Geo_set. */
-  Uint m_num_primitives;
+  Size m_num_primitives;
 
   /*! Indicates how normals are bound.
    * By default, normals are bound per primitive (e.g., polygon, triangle,
@@ -673,10 +673,10 @@ inline Geo_set::Primitive_type Geo_set::get_primitive_type() const
 { return m_primitive_type; }
 
 //! \brief obtains the number of primitives.
-inline Uint Geo_set::get_num_primitives() const { return m_num_primitives; }
+inline Size Geo_set::get_num_primitives() const { return m_num_primitives; }
 
 //! \brief sets the number of primitives.
-inline void Geo_set::set_num_primitives(Uint num) { m_num_primitives = num; }
+inline void Geo_set::set_num_primitives(Size num) { m_num_primitives = num; }
 
 SGAL_END_NAMESPACE
 

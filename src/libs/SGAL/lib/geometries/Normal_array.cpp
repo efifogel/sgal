@@ -50,13 +50,13 @@ void Normal_array::init_prototype()
 void Normal_array::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the node prototype.
 Container_proto* Normal_array::get_prototype()
 {
-  if (s_prototype == NULL) Normal_array::init_prototype();
+  if (s_prototype == nullptr) Normal_array::init_prototype();
   return s_prototype;
 }
 
@@ -65,18 +65,16 @@ void Normal_array::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "vector") {
-      Uint num_values = get_num_tokens(value);
-      Uint size = num_values / 3;
+      auto num_values = get_num_tokens(value);
+      auto size = num_values / 3;
       m_array.resize(size);
       //! svalue.seekg(0); why this doesn't work?
       std::istringstream svalue(value, std::istringstream::in);
-      for (Uint i = 0; i < size; ++i)
+      for (auto i = 0; i < size; ++i)
         svalue >> m_array[i][0] >> m_array[i][1] >> m_array[i][2];
       elem->mark_delete(ai);
     }

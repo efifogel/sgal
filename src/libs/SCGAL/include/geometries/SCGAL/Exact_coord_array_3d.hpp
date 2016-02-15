@@ -55,17 +55,17 @@ public:
     LAST
   };
 
-  /*! Constructor.
-   * \param proto (in) determines whether to construct a prototype.
+  /*! Construct.
+   * \param[in] proto determines whether to construct a prototype.
    */
   Exact_coord_array_3d(Boolean proto = false);
 
-  /*! Constructor.
-   * \param n (in) the initial size of the array.
+  /*! Construct.
+   * \param[in] n the initial size of the array.
    */
-  Exact_coord_array_3d(Uint n);
+  Exact_coord_array_3d(Size n);
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Exact_coord_array_3d();
 
   /* Construct the prototype. */
@@ -96,12 +96,12 @@ public:
 
   /*! Obtain the size.
    */
-  virtual Uint size() const;
+  virtual Size size() const;
 
   /*! Resize.
    * \param n (in) the new size.
    */
-  virtual void resize(Uint n);
+  virtual void resize(Size n);
 
   /*! Clear the array */
   virtual void clear();
@@ -109,12 +109,12 @@ public:
   /*! Obtain the number of coordinate dimensions.
    * \return the number of coordinate dimensions.
    */
-  virtual Uint num_coordinates() const;
+  virtual Size num_coordinates() const;
 
   /*! Obtain the data size.
     \return the data size.
    */
-  virtual Uint data_size() const;
+  virtual Size data_size() const;
 
   /*! Obtain the data.
    * \return the data.
@@ -186,7 +186,7 @@ private:
 #pragma warning( pop )
 #endif
 
-//! \brief destructor.
+//! \brief destruct.
 inline Exact_coord_array_3d::~Exact_coord_array_3d() { clear(); }
 
 //! \brief constructs the prototype.
@@ -198,13 +198,13 @@ inline Container* Exact_coord_array_3d::clone()
 { return new Exact_coord_array_3d(); }
 
 //! \brief obtains the size.
-inline Uint  Exact_coord_array_3d::size() const { return m_array.size(); }
+inline Size  Exact_coord_array_3d::size() const { return m_array.size(); }
 
 //! \brief resizes. */
-inline void  Exact_coord_array_3d::resize(Uint n) { m_array.resize(n); }
+inline void  Exact_coord_array_3d::resize(Size n) { m_array.resize(n); }
 
 //! \brief obtains the number of coordinate dimensions.
-inline Uint Exact_coord_array_3d::num_coordinates() const { return 3; }
+inline Size Exact_coord_array_3d::num_coordinates() const { return 3; }
 
 //! \brief obtains the begin iterator.
 inline Exact_coord_array_3d::Exact_point_iter Exact_coord_array_3d::begin()

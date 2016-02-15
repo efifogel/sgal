@@ -378,7 +378,7 @@ void Assembly::construct_reflected_sgms()
       Sgm_geo::Shared_coord_array tmp = sgm_geo->get_coord_array();
       auto coord_array = boost::dynamic_pointer_cast<Exact_coord_array_3d>(tmp);
       if (coord_array) {
-        Uint size = coord_array->size();
+        auto size = coord_array->size();
         Shared_exact_coord_array_3d
           inverse_coord_array(new Exact_coord_array_3d(size));
         Exact_coord_array_3d::Exact_point_iter itt =

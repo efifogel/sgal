@@ -44,18 +44,18 @@ Container_proto* Exact_coord_array_2d::s_prototype(nullptr);
 //! Register to the container factory.
 REGISTER_TO_FACTORY(Exact_coord_array_2d, "Exact_coord_array_2d");
 
-//! \brief constructor.
+//! \brief constructs.
 Exact_coord_array_2d::Exact_coord_array_2d(Boolean proto) :
   Coord_array(proto),
   m_dirty_inexact_coords(true)
 {}
 
-//! \brief constructor.
-Exact_coord_array_2d::Exact_coord_array_2d(Uint n) :
+//! \brief constructs.
+Exact_coord_array_2d::Exact_coord_array_2d(Size n) :
   m_dirty_inexact_coords(true)
 { m_array.resize(n); }
 
-//! \brief destructor.
+//! \brief destructs.
 Exact_coord_array_2d::~Exact_coord_array_2d() { clear(); }
 
 //! \brief initializes the node prototype.
@@ -86,18 +86,16 @@ void Exact_coord_array_2d::set_attributes(Element* elem)
 
   Coord_array::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai = elem->str_attrs_begin();
-  for (; ai != elem->str_attrs_end(); ai++) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ai++) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "point") {
-      Uint num_values = get_num_tokens(value);
-      Uint size = num_values / 3;
+      auto num_values = get_num_tokens(value);
+      auto size = num_values / 3;
       std::istringstream svalue(value, std::istringstream::in);
       m_array.resize(size);
       //! svalue.seekg(0); why this doesn't work?
-      for (Uint i = 0; i < size; i++) {
+      for (auto i = 0; i < size; i++) {
         float x, y, z;
         svalue >> x >> y >> z;
 #if SCGAL_KERNEL == SCGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL
@@ -121,12 +119,12 @@ void Exact_coord_array_2d::set_attributes(Element* elem)
     }
 
     if (name == "polarPoint") {
-      Uint num_values = get_num_tokens(value);
-      Uint size = num_values / 2;
+      auto num_values = get_num_tokens(value);
+      auto size = num_values / 2;
       std::istringstream svalue(value, std::istringstream::in);
       m_array.resize(size);
       //! svalue.seekg(0); why this doesn't work?
-      for (Uint i = 0; i < size; i++) {
+      for (auto i = 0; i < size; i++) {
         float u, v;
         svalue >> u >> v;
 
@@ -167,12 +165,12 @@ void Exact_coord_array_2d::set_attributes(Element* elem)
     }
 
     if (name == "exactPoint") {
-      Uint num_values = get_num_values<Exact_FT>(value);
-      Uint size = num_values / 2;
+      auto num_values = get_num_values<Exact_FT>(value);
+      auto size = num_values / 2;
       m_array.resize(size);
       std::istringstream svalue(value, std::istringstream::in);
       //! svalue.seekg(0); why this doesn't work?
-      for (Uint i = 0; i < size; ++i) svalue >> m_array[i];
+      for (auto i = 0; i < size; ++i) svalue >> m_array[i];
       //! \todo sg->get_stats().AddNumVertices(size);
       elem->mark_delete(ai);
     }
@@ -183,7 +181,7 @@ void Exact_coord_array_2d::set_attributes(Element* elem)
 }
 
 //! Obtain the data size.
-Uint Exact_coord_array_2d::data_size() const
+Size Exact_coord_array_2d::data_size() const
 { return size() * sizeof(Vector2f); }
 
 //! \brief obtains the data.

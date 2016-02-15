@@ -291,7 +291,7 @@ void Smallest_stabbing_cube::execute(const Field_info* /* field_info */)
   //auto dist = CGAL::to_double(s.objective_value());
 
   if ((s.status() == CGAL::QP_INFEASIBLE) || (dist <= 0)) {
-    Coord_array_3d* coords = new Coord_array_3d((Uint)4);
+    Coord_array_3d* coords = new Coord_array_3d(static_cast<Size>(4));
     m_result = Shared_coord_array(coords);
     (*coords)[0].set(0, 0, 0);
     (*coords)[1].set(0.01f, 0, 0);
@@ -299,7 +299,7 @@ void Smallest_stabbing_cube::execute(const Field_info* /* field_info */)
     (*coords)[3].set(0, 0, 0.01f);
   }
   else {
-    Coord_array_3d* coords = new Coord_array_3d((Uint)8);
+    Coord_array_3d* coords = new Coord_array_3d(static_cast<Size>(8));
     m_result = Shared_coord_array(coords);
     Float xplus = static_cast<Float>(x + dist);
     Float xminus = static_cast<Float>(x - dist);
@@ -540,17 +540,5 @@ void Smallest_stabbing_cube::addConstraints(const Polyhedron& minkCube1,
     ++count;
   }
 }
-
-/* \brief constructs the prototype. */
-Smallest_stabbing_cube* Smallest_stabbing_cube::prototype()
-{ return new Smallest_stabbing_cube(true); }
-
-/*! \brief clones. */
-Container* Smallest_stabbing_cube::clone()
-{ return new Smallest_stabbing_cube(); }
-
-/*! \brief obtains the tag (type) of the container. */
-const std::string& Smallest_stabbing_cube::get_tag() const
-{ return s_tag; }
 
 SGAL_END_NAMESPACE

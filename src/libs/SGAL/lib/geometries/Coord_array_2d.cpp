@@ -39,16 +39,16 @@ Container_proto* Coord_array_2d::s_prototype(nullptr);
 //! Register to the container factory.
 REGISTER_TO_FACTORY(Coord_array_2d, "Coord_array_2d");
 
-//! \brief constructor.
+//! \brief constructs.
 Coord_array_2d::Coord_array_2d(Boolean proto) : Coord_array(proto) {}
 
-//! \brief constructor.
-Coord_array_2d::Coord_array_2d(Uint n) { m_array.resize(n); }
+//! \brief constructs.
+Coord_array_2d::Coord_array_2d(Size n) { m_array.resize(n); }
 
-//! \brief destructor.
+//! \brief destructs.
 Coord_array_2d::~Coord_array_2d() { clear(); }
 
-//! Initialize the node prototype.
+//! \brief initializes the node prototype.
 void Coord_array_2d::init_prototype()
 {
   if (s_prototype) return;
@@ -85,18 +85,16 @@ void Coord_array_2d::set_attributes(Element* elem)
 {
   Coord_array::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "point") {
-      Uint num_values = get_num_tokens(value);
-      Uint size = num_values / 3;
+      auto num_values = get_num_tokens(value);
+      auto size = num_values / 3;
       m_array.resize(size);
       //! svalue.seekg(0); why this doesn't work?
       std::istringstream svalue(value, std::istringstream::in);
-      for (Uint i = 0; i < size; ++i)
+      for (auto i = 0; i < size; ++i)
         svalue >> m_array[i][0] >> m_array[i][1] >> m_array[i][2];
       elem->mark_delete(ai);
     }

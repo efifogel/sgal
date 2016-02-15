@@ -52,7 +52,7 @@ const Uint Extrusion::s_def_cross_section_slices(32);
 
 REGISTER_TO_FACTORY(Extrusion, "Extrusion");
 
-//! \brief constructor.
+//! \brief constructs.
 Extrusion::Extrusion(Boolean proto) :
   Indexed_face_set(proto),
   m_begin_cap(s_def_begin_cap),
@@ -63,7 +63,7 @@ Extrusion::Extrusion(Boolean proto) :
   m_cross_section_slices(s_def_cross_section_slices)
 {}
 
-//! \brief destructor.
+//! \brief destructs.
 Extrusion::~Extrusion()
 {
   m_cross_section.clear();
@@ -133,12 +133,12 @@ void Extrusion::set_attributes(Element* elem)
       continue;
     }
     if (name == "scale") {
-      Uint num_values = get_num_tokens(value);
-      Uint size = num_values / 2;
+      auto num_values = get_num_tokens(value);
+      auto size = num_values / 2;
       m_scale.resize(size);
       //! svalue.seekg(0); why this doesn't work?
       std::istringstream svalue(value, std::istringstream::in);
-      for (Uint i = 0; i < size; i++) svalue >> m_scale[i][0] >> m_scale[i][1];
+      for (auto i = 0; i < size; i++) svalue >> m_scale[i][0] >> m_scale[i][1];
       elem->mark_delete(ai);
       continue;
     }
@@ -699,7 +699,7 @@ void Extrusion::clean_tex_coord_array_2d()
   size_t stacks = (m_loop) ? m_spine.size() : m_spine.size() - 1;
 
   // Texture coordinates
-  Uint num_tex_coords = (slices + 1) * (stacks + 1);
+  auto num_tex_coords = (slices + 1) * (stacks + 1);
   if (m_begin_cap || m_end_cap) num_tex_coords += cross_section_size;
 
   if (m_tex_coord_array) m_tex_coord_array->resize(num_tex_coords);

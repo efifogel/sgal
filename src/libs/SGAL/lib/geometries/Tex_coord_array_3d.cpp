@@ -36,17 +36,17 @@ Container_proto* Tex_coord_array_3d::s_prototype(nullptr);
  */
 REGISTER_TO_FACTORY(Tex_coord_array_3d, "Tex_coord_array_3d");
 
-//! \brief constructor.
+//! \brief constructs.
 Tex_coord_array_3d::Tex_coord_array_3d(Boolean proto) : Tex_coord_array(proto)
 {}
 
-//! \brief constructor.
-Tex_coord_array_3d::Tex_coord_array_3d(Uint n) { m_array.resize(n); }
+//! \brief constructs.
+Tex_coord_array_3d::Tex_coord_array_3d(Size n) { m_array.resize(n); }
 
-//! \brief destructor.
+//! \brief destructs.
 Tex_coord_array_3d::~Tex_coord_array_3d() {}
 
-/*! Initialize the node prototype */
+//! \brief initializes the node prototype.
 void Tex_coord_array_3d::init_prototype()
 {
   if (s_prototype) return;
@@ -65,13 +65,13 @@ void Tex_coord_array_3d::init_prototype()
 void Tex_coord_array_3d::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the node prototype.
 Container_proto* Tex_coord_array_3d::get_prototype()
 {
-  if (s_prototype == NULL) Tex_coord_array_3d::init_prototype();
+  if (s_prototype == nullptr) Tex_coord_array_3d::init_prototype();
   return s_prototype;
 }
 
@@ -80,18 +80,16 @@ void Tex_coord_array_3d::set_attributes(Element* elem)
 {
   Tex_coord_array::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "point") {
-      Uint num_values = get_num_tokens(value);
-      Uint size = num_values / 3;
+      auto num_values = get_num_tokens(value);
+      auto size = num_values / 3;
       m_array.resize(size);
       //! svalue.seekg(0); why this doesn't work?
       std::istringstream svalue(value, std::istringstream::in);
-      for (Uint i = 0; i < size; ++i)
+      for (auto i = 0; i < size; ++i)
         svalue >> m_array[i][0] >> m_array[i][1] >> m_array[i][2];
       elem->mark_delete(ai);
     }

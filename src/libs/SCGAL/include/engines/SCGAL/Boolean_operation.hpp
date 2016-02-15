@@ -75,13 +75,13 @@ public:
   typedef boost::shared_ptr<Exact_polyhedron_geo>   Shared_exact_polyhedron_geo;
   typedef boost::shared_ptr<Mesh_set>               Shared_mesh_set;
 
-  /*! Constructor */
+  /*! Construct. */
   Boolean_operation(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destruct. */
   virtual ~Boolean_operation();
 
-  /* Construct the prototype */
+  /* Construct the prototype. */
   static Boolean_operation* prototype();
 
   /*! Clone. */
@@ -137,7 +137,7 @@ public:
   Bso::Boolean_operation_tag get_operation_tag() const;
 
   /*! Set the 1st operand.
-   * \param operand the operand.
+   * \param[in] operand the operand.
    */
   void set_operand1(Shared_mesh_set operand);
 

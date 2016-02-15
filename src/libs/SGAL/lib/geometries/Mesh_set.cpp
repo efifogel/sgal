@@ -53,7 +53,7 @@ const Boolean Mesh_set::s_def_is_ccw(true);
 const Float Mesh_set::s_def_crease_angle(0);
 const Float Mesh_set::s_def_polygon_offset_factor(0);
 
-//! \brief constructor from prototype.
+//! \brief constructs from prototype.
 Mesh_set::Mesh_set(Boolean proto) :
   Geo_set(proto),
   m_is_ccw(s_def_is_ccw),
@@ -71,7 +71,7 @@ Mesh_set::Mesh_set(Boolean proto) :
   m_dirty_tex_coord_indices(false)
 {}
 
-//! destruct.
+//! \brief destructs.
 Mesh_set::~Mesh_set() { clear_facet_indices(); }
 
 //! \brief sets the attributes of this node.
@@ -907,7 +907,7 @@ void Mesh_set::collapse_identical_coordinates(Facet_indices& indices)
             });
 
   // Count the number of distinct points.
-  Uint num = 1;
+  size_t num = 1;
   it = vec.begin();
   const Vector3f* prev = it->first;
   for (++it; it != vec.end(); ++it) {

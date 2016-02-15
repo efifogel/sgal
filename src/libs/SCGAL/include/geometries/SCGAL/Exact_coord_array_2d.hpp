@@ -56,15 +56,15 @@ public:
     LAST
   };
 
-  /*! Constructor. */
+  /*! Construct. */
   Exact_coord_array_2d(Boolean proto = false);
 
-  /*! Constructor.
+  /*! Construct.
    * \param n (in) the initial size of the array.
    */
-  Exact_coord_array_2d(Uint n);
+  Exact_coord_array_2d(Size n);
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Exact_coord_array_2d();
 
   /* Construct the prototype. */
@@ -95,12 +95,12 @@ public:
 
   /*! Obtain the size.
    */
-  virtual Uint size() const;
+  virtual Size size() const;
 
   /*! Resize.
    * \param n (in) the new size.
    */
-  virtual void resize(Uint n);
+  virtual void resize(Size n);
 
   /*! Clear the array */
   virtual void clear();
@@ -108,12 +108,12 @@ public:
   /*! Obtain the number of coordinate dimensions.
    * \return the number of coordinate dimensions.
    */
-  virtual Uint num_coordinates() const;
+  virtual Size num_coordinates() const;
 
   /*! Obtain the data size.
     \return the data size.
    */
-  virtual Uint data_size() const;
+  virtual Size data_size() const;
 
   /*! Obtain the data.
    * \return the data.
@@ -189,13 +189,13 @@ inline Container* Exact_coord_array_2d::clone()
 { return new Exact_coord_array_2d(); }
 
 //! \brief obtains the size.
-inline Uint  Exact_coord_array_2d::size() const { return m_array.size(); }
+inline Size  Exact_coord_array_2d::size() const { return m_array.size(); }
 
 //! \brief resizes. */
-inline void  Exact_coord_array_2d::resize(Uint n) { m_array.resize(n); }
+inline void  Exact_coord_array_2d::resize(Size n) { m_array.resize(n); }
 
 //! \brief obtains the number of coordinate dimensions.
-inline Uint Exact_coord_array_2d::num_coordinates() const { return 2; }
+inline Size Exact_coord_array_2d::num_coordinates() const { return 2; }
 
 //! \brief obtains the begin iterator.
 inline Exact_coord_array_2d::Exact_point_iter Exact_coord_array_2d::begin()

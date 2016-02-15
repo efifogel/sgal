@@ -69,7 +69,7 @@ Boolean Boundary_set::m_draws_initialized(false);
 
 REGISTER_TO_FACTORY(Boundary_set, "Boundary_set");
 
-//! \brief constructor.
+//! \brief constructs.
 Boundary_set::Boundary_set(Boolean proto) :
   Mesh_set(proto),
   m_normal_per_vertex(s_def_normal_per_vertex),
@@ -626,7 +626,7 @@ Boundary_set::Boundary_set(Boolean proto) :
     &Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VANO;
 }
 
-//! \brief destructor.
+//! \brief destructs.
 Boundary_set::~Boundary_set()
 {
   clear_local_vertex_buffers();
@@ -960,7 +960,7 @@ void Boundary_set::clean_tex_coords_2d()
   Bounding_box bbox = bounding_box();
 
   // Allocate space for texture coordinates and texture cordinate indices
-  Uint size = size_facet_indices(m_facet_coord_indices);
+  auto size = size_facet_indices(m_facet_coord_indices);
 
   if (m_tex_coord_array) m_tex_coord_array->resize(size);
   else {
@@ -1046,7 +1046,7 @@ void Boundary_set::clean_tex_coords_3d()
 {
   auto coords = get_coord_array();
   SGAL_assertion(coords);
-  Uint num_coords = coords->size();
+  auto num_coords = coords->size();
   if (m_tex_coord_array) m_tex_coord_array->resize(num_coords);
   else {
     m_tex_coord_array.reset(new Tex_coord_array_3d(num_coords));
@@ -1056,7 +1056,7 @@ void Boundary_set::clean_tex_coords_3d()
     boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
   SGAL_assertion(tex_coords);
 
-  for (Uint k = 0; k < tex_coords->size(); ++k) {
+  for (auto k = 0; k < tex_coords->size(); ++k) {
     (*tex_coords)[k].sub(get_coord_3d(k), m_center);
     (*tex_coords)[k].normalize();
   }

@@ -64,15 +64,15 @@ void Color_array::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "color") {
       auto num_values = get_num_tokens(value);
       auto size = num_values / 3;
       m_array.resize(size);
       //! svalue.seekg(0); why this doesn't work?
       std::istringstream svalue(value, std::istringstream::in);
-      for (Uint i = 0; i < size; ++i)
+      for (auto i = 0; i < size; ++i)
         svalue >> m_array[i][0] >> m_array[i][1] >> m_array[i][2];
       elem->mark_delete(ai);
     }

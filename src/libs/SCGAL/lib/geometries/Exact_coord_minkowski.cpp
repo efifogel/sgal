@@ -44,7 +44,7 @@ const Boolean Exact_coord_minkowski::s_def_enabled(true);
 
 REGISTER_TO_FACTORY(Exact_coord_minkowski, "Exact_coord_minkowski");
 
-//! \brief constructor.
+//! \brief constructs.
 Exact_coord_minkowski::Exact_coord_minkowski(Boolean proto) :
   Container(proto),
   m_enabled(s_def_enabled),
@@ -159,9 +159,9 @@ void Exact_coord_minkowski::execute(const Field_info* field_info)
     boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array2);
   SGAL_assertion(exact_coord_array2);
 
-  Uint size1 = exact_coord_array1->size();
-  Uint size2 = exact_coord_array2->size();
-  Uint size = size1 * size2;
+  auto size1 = exact_coord_array1->size();
+  auto size2 = exact_coord_array2->size();
+  auto size = size1 * size2;
 
   if (!m_coord_array_changed) {
     m_coord_array_changed.reset(new Exact_coord_array_3d(size));

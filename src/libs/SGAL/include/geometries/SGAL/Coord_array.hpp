@@ -42,12 +42,12 @@ public:
     LAST
   };
 
-  /*! Constructor.
-   * \param proto (in) determines whether to construct a prototype.
+  /*! Construct.
+   * \param[in] proto determines whether to construct a prototype.
    */
   Coord_array(Boolean proto = false);
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Coord_array();
 
   /// \name Protoype handling
@@ -67,20 +67,20 @@ public:
   //@}
 
   /*! Set the attributes of this container.
-   * \param elem (in) contains lists of attribute names and values.
+   * \param[in] elem contains lists of attribute names and values.
    */
   virtual void set_attributes(Element* elem);
 
   /*! Obtain the array size.
    * \return the array size.
    */
-  virtual Uint size() const = 0;
+  virtual Size size() const = 0;
 
   /*! Determine whether the array is empty. */
   Boolean empty() const;
 
   /*! Resize the array capacity. */
-  virtual void resize(Uint n) = 0;
+  virtual void resize(Size n) = 0;
 
   /*! Clear the array. */
   virtual void clear() = 0;
@@ -88,12 +88,12 @@ public:
   /*! Obtain the number of coordinate dimensions.
    * \return the number of coordinate dimensions.
    */
-  virtual Uint num_coordinates() const = 0;
+  virtual Size num_coordinates() const = 0;
 
   /*! Obtain the data size.
     \return the data size.
    */
-  virtual Uint data_size() const = 0;
+  virtual Size data_size() const = 0;
 
   /*! Obtain the data.
    * \return the data.
@@ -101,13 +101,13 @@ public:
   virtual const GLfloat* data() const = 0;
 
   /*! Obtain the datum at a given index.
-   * \param i (in) the index of the obtained datum.
+   * \param[in] i the index of the obtained datum.
    * \return the datum at a given index.
    */
   virtual const GLfloat* datum(Uint i) const = 0;
 
   /*! Process change of points.
-   * \param field_info
+   * \param[in] field_info
    */
   void point_changed(const Field_info* field_info);
 
@@ -116,10 +116,10 @@ private:
   static Container_proto* s_prototype;
 };
 
-//! \brief constructor.
+//! \brief constructs.
 inline Coord_array::Coord_array(Boolean proto) : Container(proto) {}
 
-//! \brief destructor.
+//! \brief destructs.
 inline Coord_array::~Coord_array() {}
 
 //! \brief determines whether the array is empty.

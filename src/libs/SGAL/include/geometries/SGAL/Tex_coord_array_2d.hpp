@@ -50,15 +50,15 @@ public:
   typedef std::vector<Vector2f>::iterator       iterator;
   typedef std::vector<Vector2f>::const_iterator const_iterator;
 
-  /*! Constructor.
+  /*! Construct.
    * \param proto (in) determines whether to construct a prototype.
    */
   Tex_coord_array_2d(Boolean proto = false);
 
-  /*! Constructor. */
-  Tex_coord_array_2d(Uint n);
+  /*! Construct. */
+  Tex_coord_array_2d(Size n);
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Tex_coord_array_2d();
 
   /* Construct the prototype.
@@ -95,10 +95,10 @@ public:
   //! \todo virtual Attribute_list get_attributes();
 
   /*! Obtain the array size. */
-  virtual Uint size() const;
+  virtual Size size() const;
 
   /*! Resize the array capacity .*/
-  virtual void resize(Uint n);
+  virtual void resize(Size n);
 
   /*! Clear the array. */
   virtual void clear();
@@ -106,12 +106,12 @@ public:
   /*! Obtain the number of texture coordinate dimensions.
    * \return the number of texture coordinate dimensions.
    */
-  virtual Uint num_coordinates() const;
+  virtual Size num_coordinates() const;
 
   /*! Obtain the data size.
    * \retun the data size.
    */
-  virtual Uint data_size() const;
+  virtual Size data_size() const;
 
   /*! Obtain the data.
    * \return the data.
@@ -171,10 +171,10 @@ inline Container* Tex_coord_array_2d::clone()
 { return new Tex_coord_array_2d(); }
 
 //! \brief obtains the array size.
-inline Uint Tex_coord_array_2d::size() const { return m_array.size(); }
+inline Size Tex_coord_array_2d::size() const { return m_array.size(); }
 
 //! \brief resizes the array capacity.
-inline void Tex_coord_array_2d::resize(Uint n) { m_array.resize(n); }
+inline void Tex_coord_array_2d::resize(Size n) { m_array.resize(n); }
 
 //! \brief clears the array.
 inline void Tex_coord_array_2d::clear() { m_array.clear(); }
@@ -205,10 +205,10 @@ inline const Vector2f& Tex_coord_array_2d::operator[](Uint n) const
 { return m_array[n]; }
 
 //! \brief obtains the number of texture coordinate dimensions.
-inline Uint Tex_coord_array_2d::num_coordinates() const { return 2; }
+inline Size Tex_coord_array_2d::num_coordinates() const { return 2; }
 
 //! \brief obtain the data size.
-inline Uint Tex_coord_array_2d::data_size() const
+inline Size Tex_coord_array_2d::data_size() const
 { return m_array.size() * sizeof(Vector2f); }
 
 //! \brief obtains the data.

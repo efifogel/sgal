@@ -39,16 +39,16 @@ Container_proto* Coord_array_1d::s_prototype(nullptr);
 //! Register to the container factory.
 REGISTER_TO_FACTORY(Coord_array_1d, "Coord_array_1d");
 
-//! \brief constructor.
+//! \brief constructs.
 Coord_array_1d::Coord_array_1d(Boolean proto) : Coord_array(proto) {}
 
-//! \brief constructor.
-Coord_array_1d::Coord_array_1d(Uint n) { m_array.resize(n); }
+//! \brief constructs.
+Coord_array_1d::Coord_array_1d(Size n) { m_array.resize(n); }
 
-//! \brief destructor.
+//! \brief destructs.
 Coord_array_1d::~Coord_array_1d() { clear(); }
 
-//! Initialize the node prototype.
+//! \brief initializes the node prototype.
 void Coord_array_1d::init_prototype()
 {
   if (s_prototype) return;
@@ -92,7 +92,7 @@ void Coord_array_1d::set_attributes(Element* elem)
       auto size = get_num_tokens(value);
       m_array.resize(size);
       std::istringstream svalue(value, std::istringstream::in);
-      for (size_t i = 0; i < size; ++i) svalue >> m_array[i];
+      for (auto i = 0; i < size; ++i) svalue >> m_array[i];
       elem->mark_delete(ai);
     }
   }

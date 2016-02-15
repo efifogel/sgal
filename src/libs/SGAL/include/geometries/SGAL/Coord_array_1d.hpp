@@ -59,15 +59,15 @@ public:
   typedef Float_array::iterator       iterator;
   typedef Float_array::const_iterator const_iterator;
 
-  /*! Constructor.
-   * \param proto (in) determines whether to construct a prototype.
+  /*! Construct.
+   * \param[in] proto determines whether to construct a prototype.
    */
   Coord_array_1d(Boolean proto = false);
 
-  /*! Constructor. */
-  Coord_array_1d(Uint n);
+  /*! Construct. */
+  Coord_array_1d(Size n);
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Coord_array_1d();
 
   /* Construct the prototype.
@@ -98,7 +98,7 @@ public:
   //@}
 
   /*! Set the attributes of this node.
-   * \param elem contains lists of attribute names and values.
+   * \param[in] elem contains lists of attribute names and values.
    */
   virtual void set_attributes(Element* elem);
 
@@ -120,10 +120,10 @@ public:
   Float_array& get_array();
 
   /*! Obtain the array size. */
-  virtual Uint size() const;
+  virtual Size size() const;
 
   /*! Resize the array capacity. */
-  virtual void resize(Uint n);
+  virtual void resize(Size n);
 
   /*! Clear the array. */
   virtual void clear();
@@ -131,12 +131,12 @@ public:
   /*! Obtain the number of coordinate dimensions.
    * \return the number of coordinate dimensions.
    */
-  virtual Uint num_coordinates() const;
+  virtual Size num_coordinates() const;
 
   /*! Obtain the data size.
     \return the data size.
    */
-  virtual Uint data_size() const;
+  virtual Size data_size() const;
 
   /*! Obtain the data.
    * \return the data.
@@ -144,7 +144,7 @@ public:
   virtual const GLfloat* data() const;
 
   /*! Obtain the datum at a given index.
-   * \param i (in) the index of the obtained datum.
+   * \param[in] i the index of the obtained datum.
    * \return the datum at a given index.
    */
   virtual const GLfloat* datum(Uint i) const;
@@ -200,10 +200,10 @@ inline const Float_array& Coord_array_1d::get_array() const {return m_array; }
 inline Float_array& Coord_array_1d::get_array() {return m_array; }
 
 //! \brief obtains the array size.
-inline Uint Coord_array_1d::size() const { return m_array.size(); }
+inline Size Coord_array_1d::size() const { return m_array.size(); }
 
 //! \brief resizes the array capacity.
-inline void Coord_array_1d::resize(Uint n) { m_array.resize(n); }
+inline void Coord_array_1d::resize(Size n) { m_array.resize(n); }
 
 //! \brief clears the array.
 inline void Coord_array_1d::clear() { m_array.clear(); }
@@ -223,7 +223,7 @@ inline Float_array::iterator Coord_array_1d::end()
 inline const Float_array::const_iterator Coord_array_1d::end() const
 { return m_array.end(); }
 
-/*! \brief pushes a new element at the back */
+//! \brief pushes a new element at the back.
 inline void Coord_array_1d::push_back(Float val)
 { m_array.push_back(val); }
 
@@ -231,10 +231,10 @@ inline void Coord_array_1d::push_back(Float val)
 inline Float Coord_array_1d::operator[](Uint n) const { return m_array[n]; }
 
 //! \brief obtains the number of texture coordinate dimensions.
-inline Uint Coord_array_1d::num_coordinates() const { return 2; }
+inline Size Coord_array_1d::num_coordinates() const { return 2; }
 
 //! \brief obtain the data size.
-inline Uint Coord_array_1d::data_size() const
+inline Size Coord_array_1d::data_size() const
 { return m_array.size() * sizeof(Float); }
 
 //! \brief obtains the datum at a given index.

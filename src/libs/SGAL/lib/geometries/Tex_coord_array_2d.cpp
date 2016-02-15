@@ -37,14 +37,14 @@ Container_proto* Tex_coord_array_2d::s_prototype(nullptr);
  */
 REGISTER_TO_FACTORY(Tex_coord_array_2d, "Tex_coord_array_2d");
 
-//! \brief Constructor.
+//! \brief Constructs.
 Tex_coord_array_2d::Tex_coord_array_2d(Boolean proto) : Tex_coord_array(proto)
 {}
 
-//! \brief Constructor.
-Tex_coord_array_2d::Tex_coord_array_2d(Uint n) { m_array.resize(n); }
+//! \brief Constructs.
+Tex_coord_array_2d::Tex_coord_array_2d(Size n) { m_array.resize(n); }
 
-//! \brief Destructor.
+//! \brief Destructs.
 Tex_coord_array_2d::~Tex_coord_array_2d() {}
 
 //! \brief initializes the node prototype.
@@ -81,18 +81,16 @@ void Tex_coord_array_2d::set_attributes(Element* elem)
 {
   Tex_coord_array::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "point") {
-      Uint num_values = get_num_tokens(value);
-      Uint size = num_values / 2;
+      auto num_values = get_num_tokens(value);
+      auto size = num_values / 2;
       m_array.resize(size);
       //! svalue.seekg(0); why this doesn't work?
       std::istringstream svalue(value, std::istringstream::in);
-      for (Uint i = 0; i < size; ++i) svalue >> m_array[i][0] >> m_array[i][1];
+      for (auto i = 0; i < size; ++i) svalue >> m_array[i][0] >> m_array[i][1];
       elem->mark_delete(ai);
     }
   }

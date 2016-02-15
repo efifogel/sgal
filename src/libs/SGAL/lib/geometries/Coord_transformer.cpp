@@ -59,7 +59,7 @@ const Boolean Coord_transformer::s_def_enabled = true;
  */
 REGISTER_TO_FACTORY(Coord_transformer, "Coord_transformer");
 
-//! \brief constructor.
+//! \brief constructs.
 Coord_transformer::Coord_transformer(Boolean proto) :
   Container(proto),
   m_enabled(s_def_enabled),
@@ -300,7 +300,7 @@ void Coord_transformer::execute(const Field_info* /* field_info */)
 {
   if (!m_enabled) return;
 
-  Uint size = m_coord_array->size();
+  auto size = m_coord_array->size();
   if (!m_coord_array_changed) {
     m_coord_array_changed.reset(new Coord_array_3d(size));
     SGAL_assertion(m_coord_array_changed);
@@ -309,11 +309,11 @@ void Coord_transformer::execute(const Field_info* /* field_info */)
 
   apply();
 
-  Field* coord_changed_field = get_field(COORD_CHANGED);
+  auto* coord_changed_field = get_field(COORD_CHANGED);
   if (coord_changed_field) coord_changed_field->cascade();
 
   m_changed = true;
-  Field* changed_field = get_field(CHANGED);
+  auto* changed_field = get_field(CHANGED);
   if (changed_field) changed_field->cascade();
 
   m_coord_array_changed->process_content_changed();

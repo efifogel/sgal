@@ -59,15 +59,15 @@ public:
   typedef std::vector<Vector3f>::iterator       iterator;
   typedef std::vector<Vector3f>::const_iterator const_iterator;
 
-  /*! Constructor.
-   * \param proto (in) determines whether to construct a prototype.
+  /*! Construct.
+   * \param[in] proto determines whether to construct a prototype.
    */
   Coord_array_3d(Boolean proto = false);
 
-  /*! Constructor. */
-  Coord_array_3d(Uint n);
+  /*! Construct. */
+  Coord_array_3d(Size n);
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Coord_array_3d();
 
   /* Construct the prototype.
@@ -98,17 +98,17 @@ public:
   //@}
 
   /*! Set the attributes of this node.
-   * \param elem contains lists of attribute names and values.
+   * \param[in] elem contains lists of attribute names and values.
    */
   virtual void set_attributes(Element* elem);
 
   //! \todo virtual Attribute_list get_attributes();
 
   /*! Obtain the array size. */
-  virtual Uint size() const;
+  virtual Size size() const;
 
   /*! Resize the array capacity. */
-  virtual void resize(Uint n);
+  virtual void resize(Size n);
 
   /*! Clear the array. */
   virtual void clear();
@@ -116,12 +116,12 @@ public:
   /*! Obtain the number of texture coordinate dimensions.
    * \return the number of texture coordinate dimensions.
    */
-  virtual Uint num_coordinates() const;
+  virtual Size num_coordinates() const;
 
   /*! Obtain the data size.
     \return the data size.
    */
-  virtual Uint data_size() const;
+  virtual Size data_size() const;
 
   /*! Obtain the data.
    * \return the data.
@@ -129,7 +129,7 @@ public:
   virtual const GLfloat* data() const;
 
   /*! Obtain the datum at a given index.
-   * \param i (in) the index of the obtained datum.
+   * \param[in] i the index of the obtained datum.
    * \return the datum at a given index.
    */
   virtual const GLfloat* datum(Uint i) const;
@@ -180,10 +180,10 @@ inline Coord_array_3d* Coord_array_3d::prototype()
 inline Container* Coord_array_3d::clone() { return new Coord_array_3d(); }
 
 //! \brief obtains the array size.
-inline Uint Coord_array_3d::size() const { return m_array.size(); }
+inline Size Coord_array_3d::size() const { return m_array.size(); }
 
 //! \brief resizes the array capacity.
-inline void Coord_array_3d::resize(Uint n) { m_array.resize(n); }
+inline void Coord_array_3d::resize(Size n) { m_array.resize(n); }
 
 //! \brief clears the array.
 inline void Coord_array_3d::clear() { m_array.clear(); }
@@ -214,10 +214,10 @@ inline const Vector3f& Coord_array_3d::operator[](Uint n) const
 { return m_array[n]; }
 
 //! \brief obtains the number of texture coordinate dimensions.
-inline Uint Coord_array_3d::num_coordinates() const { return 3; }
+inline Size Coord_array_3d::num_coordinates() const { return 3; }
 
 //! \brief obtain the data size.
-inline Uint Coord_array_3d::data_size() const
+inline Size Coord_array_3d::data_size() const
 { return m_array.size() * sizeof(Vector3f); }
 
 //! \brief obtains the data.

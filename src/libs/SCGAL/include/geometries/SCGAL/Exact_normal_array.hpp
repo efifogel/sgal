@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_EXACT_NORMAL_ARRAY_HPP
@@ -58,75 +55,75 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  /*! Construct. */
   Exact_normal_array(Boolean proto = false) : Normal_array(proto) {}
 
-  /*! Constructor */
-  Exact_normal_array(Uint n) { m_array.resize(n); }
+  /*! Construct. */
+  Exact_normal_array(Size n) { m_array.resize(n); }
 
-  /*! Destructor */
+  /*! Destruct. */
   virtual ~Exact_normal_array() { clear(); }
 
-  /* Construct the prototype */
+  /* Construct the prototype. */
   static Exact_normal_array* prototype();
 
-  /*! Clone */
+  /*! Clone. */
   virtual Container* clone();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */
+  /*! Obtains the node prototype. */
   virtual Container_proto* get_prototype();
 
   /// \name field handlers
   //@{
   //@}
 
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
   /*! Obain the size. */
-  Uint size() const;
+  Size size() const;
 
   /*! Resize. */
-  void resize(Uint n);
+  void resize(Size n);
 
-  /*! Clear the array */
+  /*! Clear the array. */
   void clear();
 
-  /*! Begin */
+  /*! Begin. */
   Exact_vector_iter begin();
   Exact_vector_const_iter begin() const;
 
-  /*! End */
+  /*! End. */
   Exact_vector_iter end();
   Exact_vector_const_iter end() const;
 
-  /*! Array indexing operator */
+  /*! Array indexing operator. */
   Exact_vector_3& operator[](Uint n);
 
-  /*! Array indexing operator */
+  /*! Array indexing operator. */
   const Exact_vector_3& operator[](Uint n) const;
 
-  /*! Inserts a new element at the end */
+  /*! Inserts a new element at the end. */
   void push_back(const Exact_vector_3& p);
 
 protected:
-  /*! Obtain the tag (type) of the container */
+  /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto* s_prototype;
 
-  /*! The exact normal array */
+  /*! The exact normal array. */
   Exact_vector_vector m_array;
 };
 
@@ -143,10 +140,10 @@ inline Container* Exact_normal_array::clone()
 { return new Exact_normal_array(); }
 
 /*! \brief obains the size. */
-inline Uint Exact_normal_array::size() const { return m_array.size(); }
+inline Size Exact_normal_array::size() const { return m_array.size(); }
 
 /*! \brief resizes. */
-inline void Exact_normal_array::resize(Uint n) { m_array.resize(n); }
+inline void Exact_normal_array::resize(Size n) { m_array.resize(n); }
 
 /*! \brief clears the array */
 inline void Exact_normal_array::clear() { m_array.clear(); }

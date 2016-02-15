@@ -56,7 +56,7 @@ Container_proto* Indexed_face_set::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Indexed_face_set, "Indexed_face_set");
 
-//! \brief constructor.
+//! \brief constructs from proto.
 Indexed_face_set::Indexed_face_set(Boolean proto) :
   Boundary_set(proto),
   m_dirty_volume(true),
@@ -74,7 +74,7 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   set_color_per_vertex(true);
 }
 
-//! \brief destructor.
+//! \brief destructs.
 Indexed_face_set::~Indexed_face_set(){}
 
 //! \brief sets the attributes of the object.
@@ -154,7 +154,7 @@ void Indexed_face_set::clean_coords()
   if (m_polyhedron.empty()) return;
 
   if (!m_coord_array) {
-    Uint size = m_polyhedron.size_of_vertices();
+    auto size = m_polyhedron.size_of_vertices();
     m_coord_array.reset(new Coord_array_3d(size));
     SGAL_assertion(m_coord_array);
   }
@@ -306,6 +306,8 @@ void Indexed_face_set::clean_polyhedron()
 #else
   m_polyhedron.normalize_border();
 #endif
+
+  // std::cout << "# border edges: " << get_number_of_border_edges() << std::endl;
 
   // Clean the facets
   std::transform(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),

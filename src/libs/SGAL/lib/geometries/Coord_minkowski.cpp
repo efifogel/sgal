@@ -45,23 +45,21 @@ Boolean Coord_minkowski::s_def_enabled(true);
  */
 REGISTER_TO_FACTORY(Coord_minkowski, "Coord_minkowski");
 
-/*! A parameter-less constructor. */
+//! constructs from proto.
 Coord_minkowski::Coord_minkowski(Boolean proto) :
   Container(proto),
   m_enabled(s_def_enabled),
   m_execute(false)
 {}
 
-/*! \brief Sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Coord_minkowski::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "enabled") {
       m_enabled = compare_to_true(value);
       elem->mark_delete(ai);
@@ -69,21 +67,18 @@ void Coord_minkowski::set_attributes(Element* elem)
     }
   }
 
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
-    const std::string& name = elem->get_name(cai);
+  auto cai = elem->cont_attrs_begin();
+  for (; cai != elem->cont_attrs_end(); ++cai) {
+    const auto& name = elem->get_name(cai);
     Shared_container cont = elem->get_value(cai);
     if (name == "coord1") {
-      Shared_coord_array coord_array =
-        boost::dynamic_pointer_cast<Coord_array>(cont);
+      auto coord_array = boost::dynamic_pointer_cast<Coord_array>(cont);
       set_coord_array1(coord_array);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "coord2") {
-      Shared_coord_array coord_array =
-        boost::dynamic_pointer_cast<Coord_array>(cont);
+      auto coord_array = boost::dynamic_pointer_cast<Coord_array>(cont);
       set_coord_array2(coord_array);
       elem->mark_delete(cai);
       continue;
@@ -94,7 +89,7 @@ void Coord_minkowski::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief sets the attributes of this node. */
+//! \brief sets the attributes of this node.
 void Coord_minkowski::init_prototype()
 {
   if (s_prototype) return;
@@ -145,14 +140,14 @@ void Coord_minkowski::init_prototype()
                                                       coord_changed_func));
 }
 
-/*! \brief deletes the node prototype. */
+//! \brief deletes the node prototype.
 void Coord_minkowski::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the node prototype. */
+//! \brief obtains the node prototype.
 Container_proto* Coord_minkowski::get_prototype()
 {
   if (!s_prototype) init_prototype();
@@ -168,9 +163,9 @@ void Coord_minkowski::execute(const Field_info* /* field_info */)
   if (!m_coord_array1) return;
   if (!m_coord_array2) return;
 
-  unsigned int size1 = m_coord_array1->size();
-  unsigned int size2 = m_coord_array2->size();
-  unsigned int size = size1 * size2;
+  auto size1 = m_coord_array1->size();
+  auto size2 = m_coord_array2->size();
+  auto size = size1 * size2;
 
   if (!m_coord_array_changed) {
     m_coord_array_changed.reset(new Coord_array_3d(size));
@@ -188,9 +183,9 @@ void Coord_minkowski::execute(const Field_info* /* field_info */)
     boost::static_pointer_cast<Coord_array_3d>(m_coord_array2);
   SGAL_assertion(coord_array2);
 
-  Uint k = 0;
-  for (Uint i = 0; i < size1; ++i) {
-    for (Uint j = 0; j < size2; ++j) {
+  size_t k(0);
+  for (auto i = 0; i < size1; ++i) {
+    for (auto j = 0; j < size2; ++j) {
       (*coord_array_changed)[k++].add((*coord_array1)[i], (*coord_array2)[j]);
     }
   }

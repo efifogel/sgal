@@ -55,15 +55,15 @@ public:
   typedef std::vector<Vector3f>::iterator       iterator;
   typedef std::vector<Vector3f>::const_iterator const_iterator;
 
-  /*! Constructor.
-   * \param proto (in) determines whether to construct a prototype.
+  /*! Construct.
+   * \param[in] proto determines whether to construct a prototype.
    */
   Color_array(Boolean proto = false);
 
-  /*! Constructor. */
-  Color_array(Uint n);
+  /*! Construct. */
+  Color_array(Size n);
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Color_array();
 
   /*! Construct the prototype.
@@ -104,13 +104,13 @@ public:
   /*! Obtain the array size.
    * \return the array size.
    */
-  Uint size() const;
+  Size size() const;
 
   /*! Determine whether the array is empty. */
   Boolean empty() const;
 
   /*! Resize the array capacity. */
-  void resize(Uint n);
+  void resize(Size n);
 
   /*! Clear the array. */
   void clear();
@@ -128,7 +128,7 @@ public:
   const std::vector<Vector3f>::const_iterator end() const ;
 
   /*! Push a new element at the back.
-   * \param val (in) the new element.
+   * \param[in] val the new element.
    */
   void push_back(const Vector3f& val);
 
@@ -141,7 +141,7 @@ public:
   /*! Obtain the data size.
    * \return the data size.
    */
-  Uint data_size() const;
+  Size data_size() const;
 
   /*! Obtain the data.
    * \return the data.
@@ -149,7 +149,7 @@ public:
   const GLfloat* data() const;
 
   /*! Obtain the datum at a given index.
-   * \param i (in) the index of the obtained datum.
+   * \param[in] i the index of the obtained datum.
    * \return the datum at a given index.
    */
   virtual const GLfloat* datum(Uint i) const;
@@ -177,7 +177,7 @@ private:
 inline Color_array::Color_array(Boolean proto) : Container(proto) {}
 
 //!\brief constructor.
-inline Color_array::Color_array(Uint n) { m_array.resize(n); }
+inline Color_array::Color_array(Size n) { m_array.resize(n); }
 
 //! \brief destructor.
 inline Color_array::~Color_array() {}
@@ -189,10 +189,10 @@ inline Color_array* Color_array::prototype() { return new Color_array(true); }
 inline Container* Color_array::clone() { return new Color_array(); }
 
 //! \brief obtains the array size.
-inline Uint Color_array::size() const { return m_array.size(); }
+inline Size Color_array::size() const { return m_array.size(); }
 
 //! \brief resizes the array capacity.
-inline void Color_array::resize(Uint n) { m_array.resize(n); }
+inline void Color_array::resize(Size n) { m_array.resize(n); }
 
 //! \brief clears the array.
 inline void Color_array::clear() { m_array.clear(); }
@@ -225,7 +225,7 @@ inline const Vector3f& Color_array::operator[](Uint n) const
 { return m_array[n]; }
 
 //! \brief obtain the data size.
-inline Uint Color_array::data_size() const
+inline Size Color_array::data_size() const
 { return m_array.size() * sizeof(Vector3f); }
 
 //! \brief obtains the data.

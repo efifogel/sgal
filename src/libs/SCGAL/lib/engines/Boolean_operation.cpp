@@ -79,14 +79,14 @@ Boolean_operation::s_operation_tags[] = {
 // Default values:
 REGISTER_TO_FACTORY(Boolean_operation, "Boolean_operation");
 
-//! \brief constructor.
+//! \brief constructs.
 Boolean_operation::Boolean_operation(Boolean proto) :
   Node(proto),
   m_operation(OP_UNION),
   m_trigger(false)
 {}
 
-//! \brief destructor.
+//! \brief destructs.
 Boolean_operation::~Boolean_operation() {}
 
 /*! \brief triggers the execution of the engine as a response to change in one
@@ -200,8 +200,8 @@ void Boolean_operation::set_attributes(Element* elem)
   Node::set_attributes(elem);
 
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "operation") {
       Uint num = sizeof(s_operation_names) / sizeof(char*);
       const char** found = std::find(s_operation_names,

@@ -66,14 +66,14 @@ public:
   typedef std::vector<Vector3f>::const_iterator const_iterator;
 
   /*! Constructor.
-   * \param proto (in) determines whether to construct a prototype.
+   * \param[in] proto determines whether to construct a prototype.
    */
   Normal_array(Boolean proto = false);
 
-  /*! Constructor. */
-  Normal_array(Uint n);
+  /*! Construct. */
+  Normal_array(Size n);
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Normal_array();
 
   /* Construct the prototype.
@@ -113,13 +113,13 @@ public:
   /*! Obtain the array size.
    * \return the size.
    */
-  Uint size() const;
+  Size size() const;
 
   /*! Determine whether the array is empty. */
   Boolean empty() const;
 
   /*! Resize the array capacity. */
-  void resize(Uint n);
+  void resize(Size n);
 
   /*! Clear the array. */
   void clear();
@@ -135,7 +135,7 @@ public:
   const std::vector<Vector3f>::const_iterator end() const;
 
   /*! Push a new normal at the back.
-   * \param val (in) the new normal.
+   * \param[in] val the new normal.
    */
   void push_back(const Vector3f& val);
 
@@ -148,7 +148,7 @@ public:
   /*! Obtain the data size.
    * \return the data size.
    */
-  Uint data_size() const;
+  Size data_size() const;
 
   /*! Obtain the data.
    * \return the data.
@@ -156,7 +156,7 @@ public:
   const GLfloat* data() const;
 
   /*! Obtain the datum at a given index.
-   * \param i (in) the index of the obtained datum.
+   * \param[in] i the index of the obtained datum.
    * \return the datum at a given index.
    */
   virtual const GLfloat* datum(Uint i) const;
@@ -180,13 +180,13 @@ private:
 #pragma warning( pop )
 #endif
 
-//! \brief constructor.
+//! \brief constructs.
 inline Normal_array::Normal_array(Boolean proto) : Container(proto) {}
 
-//! \brief constructor.
-inline Normal_array::Normal_array(Uint n) { m_array.resize(n); }
+//! \brief constructs.
+inline Normal_array::Normal_array(Size n) { m_array.resize(n); }
 
-//! \brief destructor.
+//! \brief destructs.
 inline Normal_array::~Normal_array() {}
 
 //! \brief constructs the prototype.
@@ -197,10 +197,10 @@ inline Normal_array* Normal_array::prototype()
 inline Container* Normal_array::clone() { return new Normal_array(); }
 
 //! \brief obtains the array size.
-inline Uint Normal_array::size() const { return m_array.size(); }
+inline Size Normal_array::size() const { return m_array.size(); }
 
 //! \brief resizes the array capacity.
-inline void Normal_array::resize(Uint n) { m_array.resize(n); }
+inline void Normal_array::resize(Size n) { m_array.resize(n); }
 
 //! \brief clears the array.
 inline void Normal_array::clear() { m_array.clear(); }
@@ -231,7 +231,7 @@ inline const Vector3f& Normal_array::operator[](Uint n) const
 { return m_array[n]; }
 
 //! \brief obtain the data size.
-inline Uint Normal_array::data_size() const
+inline Size Normal_array::data_size() const
 { return m_array.size() * sizeof(Vector3f); }
 
 //! \brief obtains the data.

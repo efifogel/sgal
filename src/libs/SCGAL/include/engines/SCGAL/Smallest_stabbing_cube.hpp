@@ -89,7 +89,7 @@ public:
   typedef boost::shared_ptr<Coord_transformer>        Shared_Coord_transformer;
   typedef std::vector<Shared_Coord_transformer>       Coord_node_array;
 
-  /*! Constructor. */
+  /*! Construct. */
   Smallest_stabbing_cube(Boolean proto = false);
 
   /* Construct the prototype. */
@@ -162,6 +162,18 @@ private:
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief constructs the prototype.
+inline Smallest_stabbing_cube* Smallest_stabbing_cube::prototype()
+{ return new Smallest_stabbing_cube(true); }
+
+//! \brief clones.
+inline Container* Smallest_stabbing_cube::clone()
+{ return new Smallest_stabbing_cube(); }
+
+//! \brief obtains the tag (type) of the container.
+inline const std::string& Smallest_stabbing_cube::get_tag() const
+{ return s_tag; }
 
 SGAL_END_NAMESPACE
 

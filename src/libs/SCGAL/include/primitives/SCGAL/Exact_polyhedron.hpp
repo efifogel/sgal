@@ -59,7 +59,7 @@ struct My_vertex :
  */
 template <typename Refs>
 struct My_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
-  /*! Default constructor */
+  /*! Construct default. */
   My_halfedge() : m_creased(false) {}
 
   /*! Obtain the index of the index of the incident vertex.
@@ -67,10 +67,19 @@ struct My_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
    */
   Uint get_index() const { return m_index; }
 
+  /*! Set the all-purpose flag. */
+  void set_flag(Boolean flag) const { m_flag = flag; }
+
+  /*! Obtain the all-purpose flag. */
+  Boolean get_flag() const { return m_flag; }
+
   /*! The index of the index of the points of the facets. */
   Uint m_index;
 
   Boolean m_creased;
+
+  /*! An all-purpose Boolean flag. */
+  mutable Boolean m_flag;
 };
 
 /*! A face type with the face normal data member */

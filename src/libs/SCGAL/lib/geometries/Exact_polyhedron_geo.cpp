@@ -74,7 +74,7 @@ Container_proto* Exact_polyhedron_geo::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Exact_polyhedron_geo, "Exact_polyhedron_geo");
 
-//! \brief constructor.
+//! \brief constructs.
 Exact_polyhedron_geo::Exact_polyhedron_geo(Boolean proto) :
   Boundary_set(proto),
   m_convex_hull(false),
@@ -92,7 +92,7 @@ Exact_polyhedron_geo::Exact_polyhedron_geo(Boolean proto) :
   set_color_per_vertex(true);
 }
 
-//! \brief destructor.
+//! \brief destructs.
 Exact_polyhedron_geo::~Exact_polyhedron_geo() {}
 
 //! \brief sets the attributes of this object.
@@ -192,7 +192,7 @@ void Exact_polyhedron_geo::clean_coords()
   if (m_polyhedron.empty()) return;
 
   if (!m_coord_array) {
-    Uint size = m_polyhedron.size_of_vertices();
+    auto size = m_polyhedron.size_of_vertices();
     m_coord_array.reset(new Coord_array_3d(size));
     SGAL_assertion(m_coord_array);
   }

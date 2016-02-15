@@ -51,6 +51,7 @@ typedef unsigned char   Ubyte;
 typedef unsigned char   Uchar;
 typedef unsigned short  Ushort;
 typedef unsigned int    Uint;
+typedef size_t          Size;
 typedef unsigned long   Ulong;
 typedef float           Float;
 typedef double          Double;

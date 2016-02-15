@@ -249,7 +249,7 @@ Loader::compute_ifs(size_t count,
   SGAL_assertion(ifs);
   ifs->set_primitive_type(Geo_set::PT_TRIANGLES);
   ifs->set_num_primitives(count);
-  Uint num_vertices = 3 * count;
+  auto num_vertices = count * 3;
   Coord_array_3d* coords = new Coord_array_3d(num_vertices);
   Shared_coord_array_3d shared_coords(coords);
   ifs->set_coord_array(shared_coords);
@@ -337,14 +337,14 @@ void Loader::add_colored_shape(Scene_graph* scene_graph,
                                std::list<Triangle>& triangles,
                                const Vector3f& color)
 {
-  Uint count = triangles.size();
+  auto count = triangles.size();
 
   Shared_indexed_face_set ifs(new Indexed_face_set);
   SGAL_assertion(ifs);
   ifs->set_primitive_type(Geo_set::PT_TRIANGLES);
   ifs->set_num_primitives(count);
 
-  Uint num_vertices = 3 * count;
+  auto num_vertices = count * 3;
   Coord_array_3d* coords = new Coord_array_3d(num_vertices);
   Shared_coord_array_3d shared_coords(coords);
   ifs->set_coord_array(shared_coords);

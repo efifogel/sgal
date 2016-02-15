@@ -71,21 +71,17 @@ void Exact_normal_array::set_attributes(Element* elem)
 
   Normal_array::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ai++) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "fltVector") {
-      Uint num_values = get_num_tokens(value);
-      Uint size = num_values / 3;
+      auto num_values = get_num_tokens(value);
+      auto size = num_values / 3;
       std::istringstream svalue(value, std::istringstream::in);
-      int old_size = m_array.size();
+      auto old_size = m_array.size();
       m_array.resize(old_size + size);
       //! svalue.seekg(0); why this doesn't work?
-      for (Uint i = 0; i < size; i++) {
+      for (auto i = 0; i < size; i++) {
         float x, y, z;
         svalue >> x >> y >> z;
 #if SCGAL_KERNEL == SCGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL
@@ -113,13 +109,13 @@ void Exact_normal_array::set_attributes(Element* elem)
     }
 
     if (name == "exactVector") {
-      Uint num_values = get_num_values<Exact_FT>(value);
-      Uint size = num_values / 3;
-      int old_size = m_array.size();
+      auto num_values = get_num_values<Exact_FT>(value);
+      auto size = num_values / 3;
+      auto old_size = m_array.size();
       m_array.resize(old_size + size);
       std::istringstream svalue(value, std::istringstream::in);
       //! svalue.seekg(0); why this doesn't work?
-      for (Uint i = 0; i < size; ++i) svalue >> m_array[old_size + i];
+      for (auto i = 0; i < size; ++i) svalue >> m_array[old_size + i];
       //! \todo sg->get_stats().AddNumVertices(size);
       elem->mark_delete(ai);
     }
