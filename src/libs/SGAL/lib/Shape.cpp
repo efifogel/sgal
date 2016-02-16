@@ -177,31 +177,32 @@ void Shape::cull(Cull_context& cull_context)
 //! \brief draws the geometry.
 void Shape::draw_geometry(Draw_action* action)
 {
-  if (m_geometry) {
-    Context* context = action->get_context();
-    if (!m_draw_depth) context->draw_depth_mask(false);
-    if (!m_test_depth) context->draw_depth_enable(false);
-    if (m_depth_range != s_def_depth_range)
-      glDepthRange(m_depth_range[0], m_depth_range[1]);
-    if (m_depth_function != s_def_depth_function)
-      context->draw_depth_func(m_depth_function);
-    if (m_color_mask != s_def_color_mask)
-      context->draw_color_mask(m_color_mask);
-    if (m_cull_face != s_def_cull_face)
-      context->draw_cull_face(m_cull_face);
+  if (!m_geometry) return;
 
-    m_geometry->draw(action);
+  Context* context = action->get_context();
+  if (!m_draw_depth) context->draw_depth_mask(false);
+  if (!m_test_depth) context->draw_depth_enable(false);
+  if (m_depth_range != s_def_depth_range)
+    glDepthRange(m_depth_range[0], m_depth_range[1]);
+  if (m_depth_function != s_def_depth_function)
+    context->draw_depth_func(m_depth_function);
+  if (m_color_mask != s_def_color_mask)
+    context->draw_color_mask(m_color_mask);
+  if (m_cull_face != s_def_cull_face)
+    context->draw_cull_face(m_cull_face);
 
-    if (m_cull_face != s_def_cull_face)
-      context->draw_cull_face(s_def_cull_face);
-    if (m_color_mask != s_def_color_mask)
-      context->draw_color_mask(s_def_color_mask);
-    if (m_depth_function != s_def_depth_function)
-      context->draw_depth_func(s_def_depth_function);
-    if (m_depth_range != s_def_depth_range)
-      glDepthRange(s_def_depth_range[0], s_def_depth_range[1]);
-    if (!m_test_depth) context->draw_depth_enable(true);
-    if (!m_draw_depth) context->draw_depth_mask(true);  }
+  m_geometry->draw(action);
+
+  if (m_cull_face != s_def_cull_face)
+    context->draw_cull_face(s_def_cull_face);
+  if (m_color_mask != s_def_color_mask)
+    context->draw_color_mask(s_def_color_mask);
+  if (m_depth_function != s_def_depth_function)
+    context->draw_depth_func(s_def_depth_function);
+  if (m_depth_range != s_def_depth_range)
+    glDepthRange(s_def_depth_range[0], s_def_depth_range[1]);
+  if (!m_test_depth) context->draw_depth_enable(true);
+  if (!m_draw_depth) context->draw_depth_mask(true);
 }
 
 //! \brief draws the shape for selection.
