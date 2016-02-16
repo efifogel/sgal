@@ -67,18 +67,22 @@ struct My_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
    */
   Uint get_index() const { return m_index; }
 
-  /*! Set the all-purpose flag. */
+  /*! Set the general-purpose flag.
+   * \param[in] flag the new Boolean value of the flag.
+   */
   void set_flag(Boolean flag) const { m_flag = flag; }
 
-  /*! Obtain the all-purpose flag. */
-  Boolean get_flag() const { return m_flag; }
+  /*! Obtain the general-purpose flag.
+   * \return the Boolean value of the flag.
+   */
+  Boolean is_flag() const { return m_flag; }
 
   /*! The index of the index of the points of the facets. */
   Uint m_index;
 
   Boolean m_creased;
 
-  /*! An all-purpose Boolean flag. */
+  /*! A general-purpose Boolean flag. */
   mutable Boolean m_flag;
 };
 
