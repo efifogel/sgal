@@ -39,9 +39,9 @@ Polyhedron_attributes_array::get_array() const
 { return m_array; }
 
 //! \brief obtains the number of vertices of all polyhedrons.
-size_t Polyhedron_attributes_array::number_of_vertices() const
+Size Polyhedron_attributes_array::number_of_vertices() const
 {
-  size_t sum(0);
+  Size sum(0);
   std::for_each(m_array.begin(), m_array.end(),
                   [&](const Polyhedron_attributes& attrs)
                   { sum += attrs.get_number_of_vertices(); });
@@ -49,9 +49,9 @@ size_t Polyhedron_attributes_array::number_of_vertices() const
 }
 
 //! \brief Obtain the number of facets of all polyhedrons.
-size_t Polyhedron_attributes_array::number_of_facets() const
+Size Polyhedron_attributes_array::number_of_facets() const
 {
-  size_t sum(0);
+  Size sum(0);
   std::for_each(m_array.begin(), m_array.end(),
                   [&](const Polyhedron_attributes& attrs)
                   { sum += attrs.get_number_of_facets(); });
@@ -75,6 +75,16 @@ Float Polyhedron_attributes_array::surface_area() const
   std::for_each(m_array.begin(), m_array.end(),
                   [&](const Polyhedron_attributes& attrs)
                   { sum += attrs.get_surface_area(); });
+  return sum;
+}
+
+//! \brief Obtain the number of connected components of all polyhedrons.
+Size Polyhedron_attributes_array::number_of_connected_components() const
+{
+  Size sum(0);
+  std::for_each(m_array.begin(), m_array.end(),
+                  [&](const Polyhedron_attributes& attrs)
+                  { sum += attrs.get_number_of_connected_components(); });
   return sum;
 }
 

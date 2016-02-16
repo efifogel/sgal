@@ -30,8 +30,9 @@ public:
   /*! Construct.
    */
   Polyhedron_attributes(Boolean valid,
-                        size_t number_of_vertices, size_t number_of_facets,
+                        Size number_of_vertices, Size number_of_facets,
                         Float volume, Float surface_area,
+                        Size number_of_connected_components,
                         const Bounding_box& bounding_box,
                         const Bounding_sphere& bounding_sphere);
 
@@ -45,19 +46,19 @@ public:
 
   /*! Set the number of vertices.
    */
-  void set_number_of_vertices(size_t num);
+  void set_number_of_vertices(Size num);
 
   /*! Obtain the number of vertices.
    */
-  size_t get_number_of_vertices() const;
+  Size get_number_of_vertices() const;
 
   /*! Set the number of facets.
    */
-  void set_number_of_facets(size_t num);
+  void set_number_of_facets(Size num);
 
   /*! Obtain the number of facets.
    */
-  size_t get_number_of_facets() const;
+  Size get_number_of_facets() const;
 
   /*! Set the volume.
    */
@@ -74,6 +75,14 @@ public:
   /*! Obtain the surface area.
    */
   Float get_surface_area() const;
+
+  /*! Set the number of connected components.
+   */
+  void set_number_of_connected_components(Size num);
+
+  /*! Obtain the number of connected components.
+   */
+  Size get_number_of_connected_components() const;
 
   /*! Set the bounding box.
    */
@@ -93,10 +102,11 @@ public:
 
 private:
   Boolean m_valid;
-  size_t m_number_of_vertices;
-  size_t m_number_of_facets;
+  Size m_number_of_vertices;
+  Size m_number_of_facets;
   Float m_volume;
   Float m_surface_area;
+  Size m_number_of_connected_components;
   Bounding_box m_bounding_box;
   Bounding_sphere m_bounding_sphere;
 };
@@ -104,10 +114,11 @@ private:
 //! \brief construct.
 inline Polyhedron_attributes::
 Polyhedron_attributes(Boolean valid,
-                      size_t number_of_vertices,
-                      size_t number_of_facets,
+                      Size number_of_vertices,
+                      Size number_of_facets,
                       Float volume,
                       Float surface_area,
+                      Size number_of_connected_components,
                       const Bounding_box& bounding_box,
                       const Bounding_sphere& bounding_sphere) :
   m_valid(valid),
@@ -115,6 +126,7 @@ Polyhedron_attributes(Boolean valid,
   m_number_of_facets(number_of_facets),
   m_volume(volume),
   m_surface_area(surface_area),
+  m_number_of_connected_components(number_of_connected_components),
   m_bounding_box(bounding_box),
   m_bounding_sphere(bounding_sphere)
 {}
@@ -128,19 +140,19 @@ inline Boolean Polyhedron_attributes::is_valid() const
 { return m_valid; }
 
 //! \brief sets the number of vertices.
-inline void Polyhedron_attributes::set_number_of_vertices(size_t num)
+inline void Polyhedron_attributes::set_number_of_vertices(Size num)
 { m_number_of_vertices = num; }
 
 //! \brief obtains the number of vertices.
-inline size_t Polyhedron_attributes::get_number_of_vertices() const
+inline Size Polyhedron_attributes::get_number_of_vertices() const
 { return m_number_of_vertices; }
 
 //! \brief set the number of facets.
-inline void Polyhedron_attributes::set_number_of_facets(size_t num)
+inline void Polyhedron_attributes::set_number_of_facets(Size num)
 { m_number_of_facets = num; }
 
 //! \brief obtains the number of facets.
-inline size_t Polyhedron_attributes::get_number_of_facets() const
+inline Size Polyhedron_attributes::get_number_of_facets() const
 { return m_number_of_facets; }
 
 //! \set the volume.
@@ -158,6 +170,14 @@ inline void Polyhedron_attributes::set_surface_area(Float area)
 //! \brief obtains the surface area.
 inline Float Polyhedron_attributes::get_surface_area() const
 { return m_surface_area; }
+
+//! \brief sets the number of connected components.
+inline void Polyhedron_attributes::set_number_of_connected_components(Size num)
+{ m_number_of_connected_components = num; }
+
+//! \brief obtains the number of connected components.
+inline Size Polyhedron_attributes::get_number_of_connected_components() const
+{ return m_number_of_connected_components; }
 
 //! \brief sets the bounding box.
 inline void Polyhedron_attributes::set_bounding_box(const Bounding_box& bbox)

@@ -19,6 +19,8 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include <map>
+#include <boost/property_map/property_map.hpp>
 
 #if (defined _MSC_VER)
 #define NOMINMAX 1
@@ -26,6 +28,9 @@
 #endif
 #include <GL/gl.h>
 #include <GL/glext.h>
+
+#include <CGAL/basic.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Indexed_face_set.hpp"
@@ -50,6 +55,8 @@
 SGAL_BEGIN_NAMESPACE
 
 //! \todo #include "Model_stats.h"
+
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 const std::string Indexed_face_set::s_tag = "IndexedFaceSet";
 Container_proto* Indexed_face_set::s_prototype(nullptr);
@@ -505,6 +512,18 @@ void Indexed_face_set::init_border_edges(Boolean value)
     m_polyhedron.normalize_border();
   auto it = m_polyhedron.border_edges_begin();
   for (; it != m_polyhedron.edges_end(); ++it) it->opposite()->set_flag(value);
+}
+
+//! \bried obtains the number of connected components.
+Size Indexed_face_set::get_number_of_connected_components()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+
+  auto index_map = CGAL::get(boost::face_external_index_t(), m_polyhedron);
+  auto np = PMP::parameters::face_index_map(index_map);
+  std::map<Polyhedron::Face_handle, size_t> face_ccs;
+  auto fcm = boost::make_assoc_property_map(face_ccs);
+  return PMP::connected_components(m_polyhedron, fcm, np);
 }
 
 SGAL_END_NAMESPACE

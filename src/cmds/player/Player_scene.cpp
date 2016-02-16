@@ -702,7 +702,12 @@ void Player_scene::indulge_user()
     std::cout << "Polyhedron Attributes" << std::endl;
     if (!attrs_array.is_valid())
       std::cerr << "Error: the polyhedron is invalid!\n";
-    else std::cout << "Volume: " << attrs_array.volume() << std::endl;
+    else {
+      std::cout << "Volume: " << attrs_array.volume() << std::endl;
+      std::cout << "surface area: " << attrs_array.surface_area() << std::endl;
+    }
+    std::cout << "# CC: " << attrs_array.number_of_connected_components()
+              << std::endl;
     std::cout << "BBox: " << attrs_array.bounding_box() << std::endl;
   }
 

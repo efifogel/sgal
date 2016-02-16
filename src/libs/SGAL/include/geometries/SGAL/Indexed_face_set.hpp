@@ -173,6 +173,10 @@ public:
    */
   bool is_polyhedron_empty() const;
 
+  /*! Obtain the number of connected components.
+   */
+  Size get_number_of_connected_components();
+
   /*! Determine whether the polyhedron is closed.
    */
   Boolean is_closed();

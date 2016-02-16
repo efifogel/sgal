@@ -50,11 +50,11 @@ public:
 
   /*! Obtain the number of vertices of all polyhedrons.
    */
-  size_t number_of_vertices() const;
+  Size number_of_vertices() const;
 
   /*! Obtain the number of facets of all polyhedrons.
    */
-  size_t number_of_facets() const;
+  Size number_of_facets() const;
 
   /*! Obtain the number of vertices of all polyhedrons.
    */
@@ -63,6 +63,10 @@ public:
   /*! Obtain the number of vertices of all polyhedrons.
    */
   Float surface_area() const;
+
+  /*! Obtain the number of connected_components of all polyhedrons.
+   */
+  Size number_of_connected_components() const;
 
   /*! Obtain the number of vertices of all polyhedrons.
    */

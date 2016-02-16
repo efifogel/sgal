@@ -41,17 +41,18 @@ Action::Trav_directive Polyhedron_attributes_action::apply(Shared_node node)
 //! \brief adds some volume to the accumulated volume.
 inline void Polyhedron_attributes_action::insert(Shared_indexed_face_set ifs)
 {
-  size_t number_of_vertices(ifs->get_coord_array()->size());
-  size_t number_of_facets(ifs->get_num_primitives());
+  Size number_of_vertices(ifs->get_coord_array()->size());
+  Size number_of_facets(ifs->get_num_primitives());
   auto volume(ifs->volume());
-  auto valid(ifs->is_consistent() && (0 == ifs->get_number_of_border_edges()));
+  auto valid(ifs->is_consistent() && ifs->is_closed());
   auto surface_area(ifs->surface_area());
+  Size number_of_connected_components(ifs->get_number_of_connected_components());
   const auto& bounding_box(ifs->bounding_box());
   const auto& bounding_sphere(ifs->get_bounding_sphere());
   auto& array = m_array.get_array();
   array.emplace(array.end(), valid,
                 number_of_vertices, number_of_facets,
-                volume, surface_area,
+                volume, surface_area, number_of_connected_components,
                 bounding_box, bounding_sphere);
 }
 
