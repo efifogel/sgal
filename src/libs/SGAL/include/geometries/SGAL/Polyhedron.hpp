@@ -52,10 +52,23 @@ public:
    */
   Uint get_index() const { return m_index; }
 
+  /*! Set the general-purpose flag.
+   * \param[in] flag the new Boolean value of the flag.
+   */
+  void set_flag(Boolean flag) const { m_flag = flag; }
+
+  /*! Obtain the general-purpose flag.
+   * \return the Boolean value of the flag.
+   */
+  Boolean is_flag() const { return m_flag; }
+
   /*! The index of the index of the incident vertex. */
   Uint m_index;
 
   Boolean m_creased;
+
+  /*! A general-purpose Boolean flag. */
+  mutable Boolean m_flag;
 };
 
 // An items type using my vertex and edge.
