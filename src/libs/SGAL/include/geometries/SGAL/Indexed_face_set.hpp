@@ -19,8 +19,6 @@
 #ifndef SGAL_INDEXED_FACE_SET_HPP
 #define SGAL_INDEXED_FACE_SET_HPP
 
-#include <vector>
-
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 
@@ -175,6 +173,20 @@ public:
    */
   bool is_polyhedron_empty() const;
 
+  /*! Determine whether the polyhedron is closed.
+   */
+  Boolean is_closed();
+
+  /*! Obtain the number of border edges.
+   */
+  size_t get_number_of_border_edges();
+
+  /*! Initialize the border edges.
+   * \param[in] value the Boolean value to initialize the general-purpose flags
+   *                  of the border edges.
+   */
+  void init_border_edges(Boolean value = false);
+
   /// \name Change Recators
   //@{
   /*! Respond to a change in the coordinate array.
@@ -216,10 +228,6 @@ public:
    */
   Boolean set_has_singular_vertices(Boolean flag);
 
-  /*! Obtain the number of border edges.
-   */
-  size_t get_number_of_border_edges();
-
   /*! Orient polygon soup visitor. */
   class Orient_polygon_soup_visitor : public boost::static_visitor<Boolean> {
   private:
@@ -235,7 +243,7 @@ public:
     template <typename Indices>
     Boolean operator()(Indices& indices) const
     {
-      auto* field_info = m_coord_array->get_field_info(Coord_array_3d::POINT);
+      auto* field_info = m_coord_array->get_field_info(Coord_array::POINT);
       auto& points = *(m_coord_array->array_handle(field_info));
       auto has_singular_vertices =
         !CGAL::Polygon_mesh_processing::orient_polygon_soup(points, indices);
@@ -418,6 +426,10 @@ inline bool Indexed_face_set::is_polyhedron_empty() const
 //! brief sets the flag that determine whether the mesh has singular vertices.
 inline Boolean Indexed_face_set::set_has_singular_vertices(Boolean flag)
 { m_has_singular_vertices = flag; }
+
+//! \brief determines whether there are no border edges.
+inline Boolean Indexed_face_set::is_closed()
+{ return m_polyhedron.is_closed(); }
 
 SGAL_END_NAMESPACE
 
