@@ -38,7 +38,6 @@
 #include "SCGAL/Exact_plane_array.hpp"
 #include "SCGAL/Exact_coord_minkowski.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
-#include "SCGAL/Smallest_stabbing_cube.hpp"
 #include "SCGAL/Transformer_with_exact_coords.hpp"
 #include "SCGAL/Triangulation_geo.hpp"
 #if defined(SGAL_USE_ENV)
@@ -92,6 +91,7 @@
 #if defined(SGAL_USE_SSC)
 #include "SCGAL/Smallest_stabbing_cube.hpp"
 #endif
+#include "SCGAL/Surface_border.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -160,6 +160,7 @@ SGAL_SCGAL_DECL void scgal_init()
 #if defined(SGAL_USE_SSC)
   Container_factory::get_instance()->doregister(Smallest_stabbing_cube::prototype());
 #endif
+  Container_factory::get_instance()->doregister(Surface_border::prototype());
 }
 
 SGAL_END_NAMESPACE
