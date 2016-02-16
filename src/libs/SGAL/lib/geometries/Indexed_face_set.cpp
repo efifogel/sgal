@@ -56,7 +56,7 @@ Container_proto* Indexed_face_set::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Indexed_face_set, "Indexed_face_set");
 
-//! \brief constructs from proto.
+//! \brief constructs from the prototype.
 Indexed_face_set::Indexed_face_set(Boolean proto) :
   Boundary_set(proto),
   m_dirty_volume(true),
@@ -79,7 +79,11 @@ Indexed_face_set::~Indexed_face_set(){}
 
 //! \brief sets the attributes of the object.
 void Indexed_face_set::set_attributes(Element* elem)
-{ Boundary_set::set_attributes(elem); }
+{
+  Boundary_set::set_attributes(elem);
+  auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  if (!coords) m_coord_array.reset();
+}
 
 //! \brief initializes the container prototype.
 void Indexed_face_set::init_prototype()
@@ -288,12 +292,13 @@ void Indexed_face_set::clean_polyhedron()
   m_dirty_surface_area = true;
   m_consistent = true;
 
-  auto coords = get_coord_array();
-  if (!coords || coords->empty()) return;
+  auto coord_array = get_coord_array();
+  if (!coord_array || coord_array->empty()) return;
   if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
 
-  auto coord_array = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-  Orient_polygon_soup_visitor visitor(coord_array);
+  auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(coord_array);
+  if (!coords) return;
+  Orient_polygon_soup_visitor visitor(coords);
   m_has_singular_vertices = boost::apply_visitor(visitor, m_facet_coord_indices);
 
   m_polyhedron.delegate(m_surface);           // create the polyhedral surface
@@ -306,8 +311,6 @@ void Indexed_face_set::clean_polyhedron()
 #else
   m_polyhedron.normalize_border();
 #endif
-
-  // std::cout << "# border edges: " << get_number_of_border_edges() << std::endl;
 
   // Clean the facets
   std::transform(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
@@ -443,7 +446,6 @@ void Indexed_face_set::clean_surface_area()
   m_surface_area = 0;
   if (is_polyhedron_empty()) return;
 
-  m_surface_area = 0;
   std::for_each(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
                 [&](Polyhedron::Facet& facet)
                 {
@@ -493,6 +495,16 @@ size_t Indexed_face_set::get_number_of_border_edges()
 {
   if (m_dirty_polyhedron) clean_polyhedron();
   return m_polyhedron.size_of_border_edges();
+}
+
+//! \brief initializes the border edges.
+void Indexed_face_set::init_border_edges(Boolean value)
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  if (!m_polyhedron.normalized_border_is_valid())
+    m_polyhedron.normalize_border();
+  auto it = m_polyhedron.border_edges_begin();
+  for (; it != m_polyhedron.edges_end(); ++it) it->opposite()->set_flag(value);
 }
 
 SGAL_END_NAMESPACE
