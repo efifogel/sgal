@@ -74,14 +74,18 @@ Container_proto* Exact_polyhedron_geo::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Exact_polyhedron_geo, "Exact_polyhedron_geo");
 
-//! \brief constructs.
+//! \brief constructs from the prototype.
 Exact_polyhedron_geo::Exact_polyhedron_geo(Boolean proto) :
   Boundary_set(proto),
   m_convex_hull(false),
+  m_dirty_volume(true),
+  m_dirty_surface_area(true),
   m_dirty_coord_array(true),
   m_dirty_polyhedron(true),
   m_dirty_polyhedron_edges(true),
   m_dirty_polyhedron_facets(true),
+  m_consistent(true),
+  m_has_singular_vertices(false),
   m_time(0)
 {
   if (proto) return;
@@ -119,6 +123,19 @@ void Exact_polyhedron_geo::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Boundary_set::get_prototype());
+
+  // volume
+  auto volume_func = static_cast<Float_handle_function>
+    (&Exact_polyhedron_geo::volume_handle);
+  s_prototype->add_field_info(new SF_float(VOLUME, "volume",
+                                           Field_info::RULE_OUT, volume_func));
+
+  // surfaceArea
+  auto surface_area_func = static_cast<Float_handle_function>
+    (&Exact_polyhedron_geo::surface_area_handle);
+  s_prototype->add_field_info(new SF_float(SURFACE_AREA, "surfaceArea",
+                                           Field_info::RULE_OUT,
+                                           surface_area_func));
 }
 
 //! \brief deletes the container prototype.
@@ -359,14 +376,22 @@ void Exact_polyhedron_geo::clean_normals()
 void Exact_polyhedron_geo::clean_polyhedron()
 {
   m_dirty_polyhedron = false;
+  m_dirty_volume = true;
+  m_dirty_surface_area = true;
+  m_consistent = true;
 
-  auto coords = get_coord_array();
-  if (!coords || coords->empty()) return;
+  auto coord_array = get_coord_array();
+  if (!coord_array || coord_array->empty()) return;
 
   clock_t start_time = clock();
   if (m_convex_hull) convex_hull();
   else {
     if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+
+    Orient_polygon_soup_visitor visitor(coord_array);
+    m_has_singular_vertices =
+      boost::apply_visitor(visitor, m_facet_coord_indices);
+
     m_polyhedron.delegate(m_surface);
 #if 0
     if (!m_polyhedron.normalized_border_is_valid())
@@ -449,6 +474,8 @@ void Exact_polyhedron_geo::clear_polyhedron()
 {
   m_polyhedron.clear();
   m_dirty_polyhedron = true;
+  m_dirty_volume = true;
+  m_dirty_surface_area = true;
 }
 
 //! \brief draws the polygons.
@@ -621,28 +648,6 @@ Float Exact_polyhedron_geo::volume_of_convex_hull()
   return volume;
 }
 
-//! \brief computes the volume of the polyhedron.
-Exact_polyhedron_geo::Kernel::FT Exact_polyhedron_geo::volume()
-{
-  if (m_dirty_polyhedron) clean_polyhedron();
-  if (is_polyhedron_empty()) return 0;
-
-  Kernel::FT volume = 0;
-  Exact_point_3 origin(CGAL::ORIGIN);
-  std::for_each(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
-                [&](Exact_polyhedron::Facet& facet)
-                {
-                  SGAL_assertion(3 == CGAL::circulator_size(fit->facet_begin()));
-                  auto h = facet.halfedge();
-                  volume += CGAL::volume(origin,
-                                         h->vertex()->point(),
-                                         h->next()->vertex()->point(),
-                                         h->next()->next()->vertex()->point());
-                });
-
-  return volume;
-}
-
 //! \brief prints statistics.
 void Exact_polyhedron_geo::print_stat()
 {
@@ -676,6 +681,98 @@ void Exact_polyhedron_geo::write(Formatter* formatter)
       (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
     clean_coords();
   Boundary_set::write(formatter);
+}
+
+//! \brief cleans (compute) the volume.
+void Exact_polyhedron_geo::clean_volume()
+{
+  m_dirty_volume = false;
+
+  m_volume = 0;
+  if (is_polyhedron_empty()) return;
+
+  Exact_point_3 origin(CGAL::ORIGIN);
+  //! \todo Fix CGAL::volume() to accept CGAL::ORIGIN as an argument.
+  std::for_each(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
+                [&](Polyhedron::Facet& facet)
+                {
+                  SGAL_assertion(3 == CGAL::circulator_size(fit->facet_begin()));
+                  auto h = facet.halfedge();
+                  auto volume =
+                    CGAL::volume(origin, h->vertex()->point(),
+                                 h->next()->vertex()->point(),
+                                 h->next()->next()->vertex()->point());
+                  m_volume += CGAL::to_double(volume);
+                });
+}
+
+//! \brief cleans (compute) the surface area.
+void Exact_polyhedron_geo::clean_surface_area()
+{
+  m_dirty_surface_area = false;
+
+  m_surface_area = 0;
+  if (is_polyhedron_empty()) return;
+
+  std::for_each(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
+                [&](Polyhedron::Facet& facet)
+                {
+                  SGAL_assertion(3 == CGAL::circulator_size(fit->facet_begin()));
+                  auto h = facet.halfedge();
+                  const auto& p1 = h->vertex()->point();
+                  const auto& p2 = h->next()->vertex()->point();
+                  const auto& p3 = h->next()->next()->vertex()->point();
+                  // m_surface_area += CGAL::area(p1, p2, p3);
+                  Kernel::Triangle_3 tri(p1, p2, p3);
+                  m_surface_area += sqrtf(CGAL::to_double(tri.squared_area()));
+                });
+}
+
+//! \brief computes the volume of the polyhedron.
+Float Exact_polyhedron_geo::volume()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_dirty_volume) clean_volume();
+  return m_volume;
+}
+
+//! \brief computes the surface area of the polyhedron.
+Float Exact_polyhedron_geo::surface_area()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_dirty_surface_area) clean_surface_area();
+  return m_surface_area;
+}
+
+//! \brief determines wheather the mesh is consistent.
+Boolean Exact_polyhedron_geo::is_consistent()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  return m_consistent;
+}
+
+//! \brief determines whether the mesh has singular vertices.
+Boolean Exact_polyhedron_geo::has_singular_vertices()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  return m_has_singular_vertices;
+}
+
+//! \brief obtains the number of border edges.
+size_t Exact_polyhedron_geo::get_number_of_border_edges()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  return m_polyhedron.size_of_border_edges();
+}
+
+//! \brief initializes the border edges.
+void Exact_polyhedron_geo::init_border_edges(Boolean value)
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  if (!m_polyhedron.normalized_border_is_valid())
+    m_polyhedron.normalize_border();
+  auto it = m_polyhedron.border_edges_begin();
+  for (; it != m_polyhedron.edges_end(); ++it) it->opposite()->set_flag(value);
 }
 
 SGAL_END_NAMESPACE

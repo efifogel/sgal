@@ -19,6 +19,9 @@
 #ifndef SCGAL_EXACT_POLYHEDRON_GEO_HPP
 #define SCGAL_EXACT_POLYHEDRON_GEO_HPP
 
+#include <CGAL/basic.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Vector3f.hpp"
@@ -69,7 +72,8 @@ class SGAL_SCGAL_DECL Exact_polyhedron_geo : public Boundary_set {
 public:
   enum {
     FIRST = Boundary_set::LAST - 1,
-    INVALIDATE,
+    VOLUME,
+    SURFACE_AREA,
     LAST
   };
 
@@ -110,6 +114,8 @@ public:
 
   /// \name field handlers
   //@{
+  Float* volume_handle(const Field_info*) { return &m_volume; }
+  Float* surface_area_handle(const Field_info*) { return &m_surface_area; }
   //@}
 
   /*! Set the attributes of this node.
@@ -180,13 +186,24 @@ public:
    */
   const Exact_polyhedron& get_polyhedron(Boolean with_planes = false);
 
-  /*! Determine whether the polyhedron is closed.
-   */
-  Boolean is_closed();
-
   /*! Determine whether the polyhedron representation is empty.
    */
   bool is_polyhedron_empty() const;
+
+  /*! Determine whether there are no border edges.
+   * \return true if there are no border edges, and false otherwise.
+   */
+  Boolean is_closed();
+
+  /*! Obtain the number of border edges.
+   */
+  size_t get_number_of_border_edges();
+
+  /*! Initialize the border edges.
+   * \param[in] value the Boolean value to initialize the general-purpose flags
+   *                  of the border edges.
+   */
+  void init_border_edges(Boolean value = false);
 
   /// \name Change Recators
   //@{
@@ -217,11 +234,67 @@ public:
 
   /*! Compute the volume of the polyhedron.
    */
-  Kernel::FT volume();
+  Float volume();
+
+  /*! Compute the surface area of the polyhedron.
+   */
+  Float surface_area();
+
+  /*! Determine wheather the mesh is consistent.
+   * \return true if the the mesh is consistent and false otherwise.
+   */
+  Boolean is_consistent();
+
+  /*! Determine whether the mesh has singular vertices.
+    * \return true if the the mesh has singular vertices and false otherwise.
+   */
+  Boolean has_singular_vertices();
+
+  /*! Set the flag that determine whether the mesh has singular vertices.
+   * \param[in] flag the flag that determine whether the mesh has singular
+   *            vertices.
+   */
+  Boolean set_has_singular_vertices(Boolean flag);
 
   /*! Print statistics.
    */
   void print_stat();
+
+  /*! Orient polygon soup visitor. */
+  class Orient_polygon_soup_visitor : public boost::static_visitor<Boolean> {
+  private:
+    const Shared_coord_array m_coord_array;
+
+  public:
+    //! Construct
+    Orient_polygon_soup_visitor(Shared_coord_array coord_array) :
+      m_coord_array(coord_array) {}
+
+    template <typename Indices>
+    Boolean operator()(Indices& indices) const
+    {
+      auto* field_info = m_coord_array->get_field_info(Coord_array::POINT);
+      auto exact_coords =
+        boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
+      if (exact_coords) {
+        auto& points = *(exact_coords->array_handle(field_info));
+        auto has_singular_vertices =
+          !CGAL::Polygon_mesh_processing::orient_polygon_soup(points, indices);
+        return has_singular_vertices;
+      }
+      auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+      if (coords) {
+        auto& points = *(coords->array_handle(field_info));
+        auto has_singular_vertices =
+          !CGAL::Polygon_mesh_processing::orient_polygon_soup(points, indices);
+        return has_singular_vertices;
+      }
+      SGAL_error();
+    }
+
+    Boolean operator()(Flat_indices& indices) const
+    { SGAL_error(); return false; }
+  };
 
 protected:
   /*! A functor that calculates the normal of a given (half)edge. */
@@ -286,6 +359,59 @@ protected:
    * the facets are faceted.
    */
   void calculate_multiple_normals_per_vertex();
+
+  /*! Clean (compute) the volume.
+   */
+  void clean_volume();
+
+  /*! Clean (compute) the surface area.
+   */
+  void clean_surface_area();
+
+  /*! Indicates whether to compute the convex hull. */
+  bool m_convex_hull;
+
+  /*! The volume of the polyhedron. */
+  Float m_volume;
+
+  /*! The surface area of the polyhedron. */
+  Float m_surface_area;
+
+  /*! Indicates whether the volume is dirty and thus must be cleaned. */
+  Boolean m_dirty_volume;
+
+  /*! Indicates whether the surface area is dirty and thus must be cleaned. */
+  Boolean m_dirty_surface_area;
+
+  /*! Indicates whether the coordinate array is dirty and thus should be
+   * cleaned.
+   */
+  Boolean m_dirty_coord_array;
+
+  /*! The resulting polyhedron. */
+  Exact_polyhedron m_polyhedron;
+
+  /*! Indicates whether the polyhedron is dirty and thus should be cleaned. */
+  Boolean m_dirty_polyhedron;
+
+  /*! Indicates whether the polyhedron edges are dirty and thus should be
+   * cleaned.
+   */
+  Boolean m_dirty_polyhedron_edges;
+
+  /*! Indicates whether the polyhedron facets are dirty and thus should be
+   * cleaned.
+   */
+  Boolean m_dirty_polyhedron_facets;
+
+  /*! Indicates wheather the mesh is consistent.
+   * \return true if the mesh is consistent and false otherwise. An mesh is
+   * inconsistent iff the construction of the polyderal surface failed.
+   */
+  Boolean m_consistent;
+
+  /*! Indicates wheather the mesh has_singular vertices. */
+  Boolean m_has_singular_vertices;
 
 private:
   /*! Extracts the approximate point from a polyhedron vertex. */
@@ -359,30 +485,6 @@ private:
   /*! The builder. */
   Exact_polyhedron_geo_builder<Exact_polyhedron::HalfedgeDS> m_surface;
 
-  /*! The resulting polyhedron. */
-  Exact_polyhedron m_polyhedron;
-
-  /*! Indicates whether to compute the convex hull. */
-  bool m_convex_hull;
-
-  /*! Indicates whether the coordinate array is dirty and thus should be
-   * cleaned.
-   */
-  Boolean m_dirty_coord_array;
-
-  /*! Indicates whether the polyhedron is dirty and thus should be cleaned. */
-  Boolean m_dirty_polyhedron;
-
-  /*! Indicates whether the polyhedron edges are dirty and thus should be
-   * cleaned.
-   */
-  Boolean m_dirty_polyhedron_edges;
-
-  /*! Indicates whether the polyhedron facets are dirty and thus should be
-   * cleaned.
-   */
-  Boolean m_dirty_polyhedron_facets;
-
   /*! The time is took to compute the minkowski sum in seconds. */
   float m_time;
 
@@ -436,6 +538,10 @@ inline Boolean Exact_polyhedron_geo::is_dirty_polyhedron() const
 //! \brief determines whether the polyhedron representation is empty.
 inline bool Exact_polyhedron_geo::is_polyhedron_empty() const
 { return m_polyhedron.empty(); }
+
+//! brief sets the flag that determine whether the mesh has singular vertices.
+inline Boolean Exact_polyhedron_geo::set_has_singular_vertices(Boolean flag)
+{ m_has_singular_vertices = flag; }
 
 SGAL_END_NAMESPACE
 
