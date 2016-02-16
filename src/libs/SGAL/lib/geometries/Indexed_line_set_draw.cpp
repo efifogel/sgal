@@ -38,7 +38,7 @@
 SGAL_BEGIN_NAMESPACE
 
 void Indexed_line_set::draw_invalid()
-{ SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "invalid\n"); }
+{ SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "invalid\n"); }
 
 /*!
  * Fragment attach  - none
@@ -920,7 +920,7 @@ void Indexed_line_set::draw_FANO_TENO_MOLS_VANO()
   SGAL_assertion(m_coord_array);
 
   Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  for (auto i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
     for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
       glVertex3fv(get_by_coord_index(m_coord_array, j));
@@ -1785,24 +1785,17 @@ void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLS_VANO()
 void Indexed_line_set::draw_FANO_TENO_MOLL_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FANO_TENO_MOLL_VANO\n");
-  std::cout << "X1 " << m_num_primitives << std::endl;
 
   SGAL_assertion(m_coord_array);
 
   Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  for (auto i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      std::cout << "j: " << j << std::endl;
-      std::cout << "m_coord_indices[j]: " << m_coord_indices[j] << std::endl;
-      std::cout << "m_tex_coord_indices.size: " << m_tex_coord_indices.size() << std::endl;
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
       glVertex3fv(get_by_coord_index(m_coord_array, j));
-    }
     glEnd();
     ++j;
   }
-  std::cout << "X2" << std::endl;
 }
 
 /*!
