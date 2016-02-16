@@ -481,8 +481,7 @@ void Geo_set::reverse_coord_indices(const std::vector<Int32>& indices)
 //! \brief obtains the ith coordinate.
 const Vector3f& Geo_set::get_coord_3d(Uint i) const
 {
-  boost::shared_ptr<Coord_array_3d> coords =
-    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
   SGAL_assertion(coords);
   return (*coords)[i];
 }
