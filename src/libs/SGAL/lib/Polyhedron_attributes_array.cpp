@@ -48,7 +48,17 @@ Size Polyhedron_attributes_array::number_of_vertices() const
   return sum;
 }
 
-//! \brief Obtain the number of facets of all polyhedrons.
+//! \brief obtains the number of edges of all polyhedrons.
+Size Polyhedron_attributes_array::number_of_edges() const
+{
+  Size sum(0);
+  std::for_each(m_array.begin(), m_array.end(),
+                  [&](const Polyhedron_attributes& attrs)
+                  { sum += attrs.get_number_of_edges(); });
+  return sum;
+}
+
+//! \brief obtains the number of facets of all polyhedrons.
 Size Polyhedron_attributes_array::number_of_facets() const
 {
   Size sum(0);
@@ -58,7 +68,7 @@ Size Polyhedron_attributes_array::number_of_facets() const
   return sum;
 }
 
-//! \brief Obtain the number of vertices of all polyhedrons.
+//! \brief obtains the total volume of all polyhedrons.
 Float Polyhedron_attributes_array::volume() const
 {
   Float sum(0);
@@ -68,7 +78,7 @@ Float Polyhedron_attributes_array::volume() const
   return sum;
 }
 
-//! \brief Obtain the number of vertices of all polyhedrons.
+//! \brief obtains the surface area of all polyhedrons.
 Float Polyhedron_attributes_array::surface_area() const
 {
   Float sum(0);
@@ -78,7 +88,7 @@ Float Polyhedron_attributes_array::surface_area() const
   return sum;
 }
 
-//! \brief Obtain the number of connected components of all polyhedrons.
+//! \brief obtains the number of connected components of all polyhedrons.
 Size Polyhedron_attributes_array::number_of_connected_components() const
 {
   Size sum(0);
@@ -88,7 +98,7 @@ Size Polyhedron_attributes_array::number_of_connected_components() const
   return sum;
 }
 
-//! \brief Obtain the number of vertices of all polyhedrons.
+//! \brief obtains the number of vertices of all polyhedrons.
 const Bounding_box Polyhedron_attributes_array::bounding_box() const
 {
   auto it = m_array.begin();
@@ -99,7 +109,7 @@ const Bounding_box Polyhedron_attributes_array::bounding_box() const
   return bbox;
 }
 
-//! \brief Obtain the number of vertices of all polyhedrons.
+//! \brief obtains the number of vertices of all polyhedrons.
 const Bounding_sphere Polyhedron_attributes_array::bounding_sphere() const
 {
   std::vector<const Bounding_sphere*> spheres;

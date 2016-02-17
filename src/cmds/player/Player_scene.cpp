@@ -706,6 +706,9 @@ void Player_scene::indulge_user()
       std::cout << "Volume: " << attrs_array.volume() << std::endl;
       std::cout << "surface area: " << attrs_array.surface_area() << std::endl;
     }
+    std::cout << "# vertices: " << attrs_array.number_of_vertices() << std::endl;
+    std::cout << "# edges: " << attrs_array.number_of_edges() << std::endl;
+    std::cout << "# facets: " << attrs_array.number_of_facets() << std::endl;
     std::cout << "# CC: " << attrs_array.number_of_connected_components()
               << std::endl;
     std::cout << "BBox: " << attrs_array.bounding_box() << std::endl;

@@ -526,4 +526,25 @@ Size Indexed_face_set::get_number_of_connected_components()
   return PMP::connected_components(m_polyhedron, fcm, np);
 }
 
+//! \brief obtains the number of vertices.
+Size Indexed_face_set::get_number_of_vertices()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  return m_polyhedron.size_of_vertices();
+}
+
+//! \brief obtains the number of edges.
+Size Indexed_face_set::get_number_of_edges()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  return m_polyhedron.size_of_halfedges() / 2;
+}
+
+//! \brief obtains the number of facets.
+Size Indexed_face_set::get_number_of_facets()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  return m_polyhedron.size_of_facets();
+}
+
 SGAL_END_NAMESPACE

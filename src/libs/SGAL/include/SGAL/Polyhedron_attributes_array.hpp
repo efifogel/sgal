@@ -52,6 +52,10 @@ public:
    */
   Size number_of_vertices() const;
 
+  /*! Obtain the number of edges of all polyhedrons.
+   */
+  Size number_of_edges() const;
+
   /*! Obtain the number of facets of all polyhedrons.
    */
   Size number_of_facets() const;

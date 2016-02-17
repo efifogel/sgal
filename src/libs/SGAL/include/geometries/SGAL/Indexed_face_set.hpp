@@ -191,6 +191,18 @@ public:
    */
   void init_border_edges(Boolean value = false);
 
+  /*! Obtain the number of vertices.
+   */
+  Size get_number_of_vertices();
+
+  /*! Obtain the number of edges.
+   */
+  Size get_number_of_edges();
+
+  /*! Obtain the number of facets.
+   */
+  Size get_number_of_facets();
+
   /// \name Change Recators
   //@{
   /*! Respond to a change in the coordinate array.

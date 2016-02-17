@@ -30,7 +30,9 @@ public:
   /*! Construct.
    */
   Polyhedron_attributes(Boolean valid,
-                        Size number_of_vertices, Size number_of_facets,
+                        Size number_of_vertices,
+                        Size number_of_edges,
+                        Size number_of_facets,
                         Float volume, Float surface_area,
                         Size number_of_connected_components,
                         const Bounding_box& bounding_box,
@@ -52,7 +54,15 @@ public:
    */
   Size get_number_of_vertices() const;
 
-  /*! Set the number of facets.
+  /*! Set the number of edges.
+   */
+  void set_number_of_edges(Size num);
+
+  /*! Obtain the number of edges.
+   */
+  Size get_number_of_edges() const;
+
+   /*! Set the number of facets.
    */
   void set_number_of_facets(Size num);
 
@@ -103,6 +113,7 @@ public:
 private:
   Boolean m_valid;
   Size m_number_of_vertices;
+  Size m_number_of_edges;
   Size m_number_of_facets;
   Float m_volume;
   Float m_surface_area;
@@ -115,6 +126,7 @@ private:
 inline Polyhedron_attributes::
 Polyhedron_attributes(Boolean valid,
                       Size number_of_vertices,
+                      Size number_of_edges,
                       Size number_of_facets,
                       Float volume,
                       Float surface_area,
@@ -123,6 +135,7 @@ Polyhedron_attributes(Boolean valid,
                       const Bounding_sphere& bounding_sphere) :
   m_valid(valid),
   m_number_of_vertices(number_of_vertices),
+  m_number_of_edges(number_of_edges),
   m_number_of_facets(number_of_facets),
   m_volume(volume),
   m_surface_area(surface_area),
@@ -146,6 +159,14 @@ inline void Polyhedron_attributes::set_number_of_vertices(Size num)
 //! \brief obtains the number of vertices.
 inline Size Polyhedron_attributes::get_number_of_vertices() const
 { return m_number_of_vertices; }
+
+//! \brief sets the number of edges.
+inline void Polyhedron_attributes::set_number_of_edges(Size num)
+{ m_number_of_edges = num; }
+
+//! \brief obtains the number of edges.
+inline Size Polyhedron_attributes::get_number_of_edges() const
+{ return m_number_of_edges; }
 
 //! \brief set the number of facets.
 inline void Polyhedron_attributes::set_number_of_facets(Size num)
