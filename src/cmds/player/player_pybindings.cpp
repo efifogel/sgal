@@ -104,12 +104,14 @@ BOOST_PYTHON_MODULE(player)
   class_<SGAL::Polyhedron_attributes_array>("Polyhedron_attributes_array")
     .def("number_of_vertices",
          &SGAL::Polyhedron_attributes_array::number_of_vertices)
+    .def("number_of_edges",
+         &SGAL::Polyhedron_attributes_array::number_of_edges)
     .def("number_of_facets",
          &SGAL::Polyhedron_attributes_array::number_of_facets)
-    .def("volume", &SGAL::Polyhedron_attributes_array::volume)
-    .def("surface_area", &SGAL::Polyhedron_attributes_array::surface_area)
     .def("number_of_connected_components",
          &SGAL::Polyhedron_attributes_array::number_of_connected_components)
+    .def("volume", &SGAL::Polyhedron_attributes_array::volume)
+    .def("surface_area", &SGAL::Polyhedron_attributes_array::surface_area)
     .def("bounding_box", &SGAL::Polyhedron_attributes_array::bounding_box)
     .def("bounding_sphere", &SGAL::Polyhedron_attributes_array::bounding_sphere)
     .def("is_valid", &SGAL::Polyhedron_attributes_array::is_valid)
