@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7205 $
-//
 // Author(s)     : Ophir Setter         <ophir.setter@gmail.com>
 
 /*!
@@ -33,22 +30,21 @@
 #include <CGAL/Arr_spherical_topology_traits_2.h>
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 #include <CGAL/Arr_tracing_traits_2.h>
-
 #include <CGAL/Gps_traits_2.h>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Epec_kernel.hpp"
 
 #include "SCGAL/basic.hpp"
-#include "SCGAL/Exact_kernel.hpp"
 #include "SCGAL/Arrangement_mark_dcel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-/*! 
+/*!
   Internal namespace that there will not be any collision.
  */
 namespace Arrangement_on_sphere_marked_internal {
-  
+
 //  We use Gps_face_base as the base of our face so we could use Boolean
 //  set operations in the node Polygon_set_on_sphere_geo and still have
 //  Polygon_set_on_sphere_geo inherit from the Arrangement_on_sphere_marked_geo.
@@ -57,7 +53,7 @@ namespace Arrangement_on_sphere_marked_internal {
 //  (like using BOOST property maps).
 //  In the meantime, we use the Gps' "contain" flag instead of the "mark" flag.
   typedef CGAL::Gps_traits_2<
-    CGAL::Arr_geodesic_arc_on_sphere_traits_2<Exact_kernel> >
+    CGAL::Arr_geodesic_arc_on_sphere_traits_2<Epec_kernel> >
                                                    Aos_geom_traits_base;
 
 #if defined(CGAL_ARR_TRACING_TRAITS)
@@ -73,11 +69,10 @@ namespace Arrangement_on_sphere_marked_internal {
 
 // The definition of the arrangment
 typedef CGAL::Arrangement_on_surface_2<
-  Arrangement_on_sphere_marked_internal::Aos_geom_traits, 
+  Arrangement_on_sphere_marked_internal::Aos_geom_traits,
   Arrangement_on_sphere_marked_internal::Aos_topol_traits>
                                                    Arrangement_on_sphere_marked;
 
 SGAL_END_NAMESPACE
 
 #endif  // SGAL_ARRANGEMENT_ON_SPHERE_MARKED_HPP
-

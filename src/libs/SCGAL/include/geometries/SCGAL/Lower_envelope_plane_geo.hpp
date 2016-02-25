@@ -35,13 +35,13 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Trace.hpp"
+#include "SGAL/Epec_kernel.hpp"
+#include "SGAL/Epec_plane_array.hpp"
+#include "SGAL/Epec_coord_array_2d.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Lower_envelope_geo.hpp"
-#include "SCGAL/Exact_kernel.hpp"
 #include "SCGAL/Min_sphere.hpp"
-#include "SCGAL/Exact_plane_array.hpp"
-#include "SCGAL/Exact_coord_array_2d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -54,7 +54,7 @@ class Color_array;
 /*! A lower-envelope data structure. */
 class SGAL_SCGAL_DECL Lower_envelope_plane_geo : public Lower_envelope_geo {
 public:
-  typedef CGAL::Env_plane_traits_3<Exact_kernel>
+  typedef CGAL::Env_plane_traits_3<Epec_kernel>
     Env_plane_traits_base_3;
   typedef Env_plane_traits_base_3::Surface_3           Base_plane_3;
 
@@ -70,8 +70,8 @@ public:
   };
 
   typedef boost::shared_ptr<Color_array>            Shared_color_array;
-  typedef boost::shared_ptr<Exact_coord_array_2d>   Shared_exact_coord_array_2d;
-  typedef boost::shared_ptr<Exact_plane_array>      Shared_exact_plane_array;
+  typedef boost::shared_ptr<Epec_coord_array_2d>   Shared_exact_coord_array_2d;
+  typedef boost::shared_ptr<Epec_plane_array>      Shared_exact_plane_array;
 
   /*! Constructor. */
   Lower_envelope_plane_geo(Boolean proto = false);
@@ -211,9 +211,8 @@ private:
   OutputIterator get_planes(OutputIterator oi)
   {
     if (!m_plane_array || (m_plane_array->size() == 0)) return oi;
-    Exact_plane_array::Exact_plane_iter it;
     Uint i = 0;
-    for (it = m_plane_array->begin(); it != m_plane_array->end(); ++it)
+    for (auto it = m_plane_array->begin(); it != m_plane_array->end(); ++it)
       *oi++ = Plane_3(*it, i++);
     return oi;
   }

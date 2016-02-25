@@ -35,7 +35,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/basic.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
 #include "SGAL/basic.hpp"
@@ -122,27 +122,20 @@ void Exact_nef_polyhedron::clear_nef_polyhedron()
 void Exact_nef_polyhedron::draw_polyhedron(Draw_action * action)
 {
   if (m_dirty_polyhedron) clean_polyhedron();
-  Polyhedron::Facet_const_iterator i;
-  for (i = m_polyhedron.facets_begin(); i != m_polyhedron.facets_end(); ++i) {
+  auto i = m_polyhedron.facets_begin();
+  for (; i != m_polyhedron.facets_end(); ++i) {
     Polyhedron::Halfedge_around_facet_const_circulator j = i->facet_begin();
     // Facets in polyhedral surfaces are at least triangles.
     CGAL_assertion(CGAL::circulator_size(j) >= 3);
     glBegin(GL_POLYGON);
 
-    const Exact_vector_3& normal_3 = i->plane().orthogonal_vector();
-    float x = static_cast<float>(CGAL::to_double(normal_3.x()));
-    float y = static_cast<float>(CGAL::to_double(normal_3.y()));
-    float z = static_cast<float>(CGAL::to_double(normal_3.z()));
-    Vector3f normal(x, y, z);
+    auto normal = to_vector3f(i->plane().orthogonal_vector());
     normal.normalize();
     glNormal3fv((float*)&normal);
 
     do {
-      const Exact_point_3& point = j->vertex()->point();
-      float x = static_cast<float>(CGAL::to_double(point.x()));
-      float y = static_cast<float>(CGAL::to_double(point.y()));
-      float z = static_cast<float>(CGAL::to_double(point.z()));
-      glVertex3f(x, y, z);
+      auto point = to_vector3f(j->vertex()->point());
+      glVertex3fv((float*)&point);
     } while (++j != i->facet_begin());
 
     glEnd();
@@ -169,9 +162,8 @@ void Exact_nef_polyhedron::draw_geometry(Draw_action* action)
 
   // draw_polyhedron(action);
 
-  for (Halffacet_iterator f = m_nef_polyhedron.halffacets_begin();
-       f != m_nef_polyhedron.halffacets_end(); ++f)
-  {
+  auto f = m_nef_polyhedron.halffacets_begin();
+  for (; f != m_nef_polyhedron.halffacets_end(); ++f) {
     if (f->incident_volume() != m_nef_polyhedron.volumes_begin()) continue;
 
     // \todo do not ignore the holes!
@@ -183,26 +175,19 @@ void Exact_nef_polyhedron::draw_geometry(Draw_action* action)
 
     glBegin(GL_POLYGON);
 
-    Exact_vector_3 normal = f->plane().orthogonal_vector();
-    float x = static_cast<float>(CGAL::to_double(normal.x()));
-    float y = static_cast<float>(CGAL::to_double(normal.y()));
-    float z = static_cast<float>(CGAL::to_double(normal.z()));
-    Vector3f normal3f(x,y,z);
-    normal3f.normalize();
-    glNormal3fv((float*)&normal3f);
+    auto normal = to_vector3f(f->plane().orthogonal_vector());
+    normal.normalize();
+    glNormal3fv((float*)&normal);
 
     do {
-      const Exact_point_3& point = j->source()->source()->point();
-      float x = static_cast<float>(CGAL::to_double(point.x()));
-      float y = static_cast<float>(CGAL::to_double(point.y()));
-      float z = static_cast<float>(CGAL::to_double(point.z()));
-      glVertex3f(x, y, z);
+      auto point = to_vector3f(j->source()->source()->point());
+      glVertex3fv((float*)&point);
     } while (++j != j_begin);
     glEnd();
   }
 }
 
-/*! \brief */
+//! \brief
 void Exact_nef_polyhedron::isect(SGAL::Isect_action* action)
 {
   if (is_dirty_nef_polyhedron()) clean_nef_polyhedron();
@@ -222,7 +207,7 @@ void Exact_nef_polyhedron::isect(SGAL::Isect_action* action)
 
     glBegin(GL_POLYGON);
     do {
-      const Exact_point_3& point = j->source()->source()->point();
+      const Epec_point_3& point = j->source()->source()->point();
       float x = static_cast<float>(CGAL::to_double(point.x()));
       float y = static_cast<float>(CGAL::to_double(point.y()));
       float z = static_cast<float>(CGAL::to_double(point.z()));

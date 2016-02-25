@@ -37,8 +37,6 @@
 #include "SGAL/Types.hpp"
 
 #include "SCGAL/basic.hpp"
-#include "SCGAL/Exact_number_type.hpp"
-#include "SCGAL/Exact_kernel.hpp"
 #include "SCGAL/Arrangement_on_sphere_base_geo.hpp"
 #include "SCGAL/Arrangement_on_sphere_marked.hpp"
 #include "SCGAL/Arrangement_on_sphere_graph.hpp"

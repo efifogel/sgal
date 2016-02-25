@@ -30,12 +30,10 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Epec_coord_array_2d.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Arrangement_on_surface_geo.hpp"
-#include "SCGAL/Exact_coord_array_2d.hpp"
-#include "SCGAL/Exact_number_type.hpp"
-#include "SCGAL/Exact_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -61,7 +59,7 @@ class SGAL_SCGAL_DECL Arrangement_on_torus_base_geo :
 public:
   // Shared pointers
   typedef boost::shared_ptr<Coord_array>          Shared_coord_array;
-  typedef boost::shared_ptr<Exact_coord_array_2d> Shared_exact_coord_array_2d;
+  typedef boost::shared_ptr<Epec_coord_array_2d> Shared_exact_coord_array_2d;
 
   enum {
     FIRST = Arrangement_on_surface_geo::LAST - 1,
@@ -266,7 +264,7 @@ protected:
     const Geom_traits* traits = aot->geometry_traits();
 
     Shared_exact_coord_array_2d exact_coord_array =
-      boost::dynamic_pointer_cast<Exact_coord_array_2d>(m_coord_array);
+      boost::dynamic_pointer_cast<Epec_coord_array_2d>(m_coord_array);
 
     if (exact_coord_array && (exact_coord_array->size() > 0)) {
       std::vector<Uint>::iterator it;
@@ -283,11 +281,11 @@ protected:
           for (it = m_x_monotone_curve_indices.begin();
                it != m_x_monotone_curve_indices.end(); ++it)
           {
-            Exact_point_2& p1 = (*exact_coord_array)[*it];
+            Epec_point_2& p1 = (*exact_coord_array)[*it];
             Point q1(p1);
             ++it;
 
-            Exact_point_2& p2 = (*exact_coord_array)[*it];
+            Epec_point_2& p2 = (*exact_coord_array)[*it];
             Point q2(p2);
 
             vec[i++] = ctrx(q1, q2);
@@ -300,11 +298,11 @@ protected:
           for (it = m_x_monotone_curve_indices.begin();
                it != m_x_monotone_curve_indices.end(); ++it)
           {
-            Exact_point_2& p1 = (*exact_coord_array)[*it];
+            Epec_point_2& p1 = (*exact_coord_array)[*it];
             Point q1(p1);
             ++it;
 
-            Exact_point_2& p2 = (*exact_coord_array)[*it];
+            Epec_point_2& p2 = (*exact_coord_array)[*it];
             Point q2(p2);
 
             X_monotone_curve xcv = ctrx(q1, q2);
@@ -323,11 +321,11 @@ protected:
           unsigned int i = 0;
           for (it = m_curve_indices.begin(); it != m_curve_indices.end(); ++it)
           {
-            Exact_point_2& p1 = (*exact_coord_array)[*it];
+            Epec_point_2& p1 = (*exact_coord_array)[*it];
             Point q1(p1);
             ++it;
 
-            Exact_point_2& p2 = (*exact_coord_array)[*it];
+            Epec_point_2& p2 = (*exact_coord_array)[*it];
             Point q2(p2);
             vec[i++] = ctr(q1, q2);
           }
@@ -338,11 +336,11 @@ protected:
           unsigned int i = 0;
           for (it = m_curve_indices.begin(); it != m_curve_indices.end(); ++it)
           {
-            Exact_point_2& p1 = (*exact_coord_array)[*it];
+            Epec_point_2& p1 = (*exact_coord_array)[*it];
             Point q1(p1);
             ++it;
 
-            Exact_point_2& p2 = (*exact_coord_array)[*it];
+            Epec_point_2& p2 = (*exact_coord_array)[*it];
             Point q2(p2);
             Curve cv = ctr(q1, q2);
             insert(*aot, cv);
@@ -353,7 +351,7 @@ protected:
 
       // Insert the points:
       for (it = m_point_indices.begin(); it != m_point_indices.end(); ++it) {
-        Exact_point_2& p = (*exact_coord_array)[*it];
+        Epec_point_2& p = (*exact_coord_array)[*it];
         Point q(p);
         insert_point(*aot, q);
       }

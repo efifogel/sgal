@@ -32,7 +32,7 @@
 #include <vector>
 #include <boost/lexical_cast.hpp>
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/basic.h>
 
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
@@ -47,7 +47,10 @@
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Material.hpp"
 #include "SGAL/Sphere.hpp"
+#include "SGAL/Epec_plane_array.hpp"
+#include "SGAL/Epec_coord_array_2d.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Lower_envelope_plane_geo.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -59,7 +62,7 @@ bool Lower_envelope_plane_geo::s_def_draw_patches(true);
 
 REGISTER_TO_FACTORY(Lower_envelope_plane_geo, "Lower_envelope_plane_geo");
 
-//! \brief constructor.
+//! \brief constructs.
 Lower_envelope_plane_geo::Lower_envelope_plane_geo(Boolean proto) :
   Lower_envelope_geo(proto),
   m_owned_envelope(false),
@@ -67,7 +70,7 @@ Lower_envelope_plane_geo::Lower_envelope_plane_geo(Boolean proto) :
   m_draw_patches(s_def_draw_patches)
 {}
 
-//! \brief destructor.
+//! \brief destructs.
 Lower_envelope_plane_geo::~Lower_envelope_plane_geo()
 { if (m_envelope && m_owned_envelope) delete m_envelope; }
 
@@ -92,11 +95,11 @@ void Lower_envelope_plane_geo::clean()
   //}
   My_observer obs(*m_envelope);
 
-  Exact_coord_array_2d::Exact_point_const_iter it = m_bounding_polygon->begin();
-  const Env_plane_traits_3::Point_2& start_point = *it;
-  const Env_plane_traits_3::Point_2* prev_point = &(*it);
+  auto it = m_bounding_polygon->begin();
+  const auto& start_point = *it;
+  const auto* prev_point = &(*it);
   for (++it; it != m_bounding_polygon->end(); ++it) {
-    const Env_plane_traits_3::Point_2& point = *it;
+    const auto& point = *it;
     Env_plane_traits_3::X_monotone_curve_2 curve(*prev_point, point);
     CGAL::insert(*m_envelope, curve);
     prev_point = &(*it);
@@ -137,8 +140,7 @@ void Lower_envelope_plane_geo::set_attributes(Element* elem)
     const auto& name = elem->get_name(cai);
     auto cont = elem->get_value(cai);
     if (name == "plane") {
-      Shared_exact_plane_array plane_array =
-        boost::dynamic_pointer_cast<Exact_plane_array>(cont);
+      auto plane_array = boost::dynamic_pointer_cast<Epec_plane_array>(cont);
       set_plane_array(plane_array);
       elem->mark_delete(cai);
       continue;
@@ -151,8 +153,8 @@ void Lower_envelope_plane_geo::set_attributes(Element* elem)
       continue;
     }
     if (name == "boundingPolygon") {
-      Shared_exact_coord_array_2d bounding_polygon =
-        boost::dynamic_pointer_cast<Exact_coord_array_2d>(cont);
+      auto bounding_polygon =
+        boost::dynamic_pointer_cast<Epec_coord_array_2d>(cont);
       set_bounding_polygon(bounding_polygon);
       elem->mark_delete(cai);
       continue;
@@ -195,15 +197,15 @@ void Lower_envelope_plane_geo::draw_envelope_faces(Draw_action* action)
   context->draw_cull_face(Gfx::NO_CULL);
   context->draw_transp_enable(true);
 
-  Envelope_diagram_2::Face_const_iterator fit;
-  for (fit = m_envelope->faces_begin(); fit != m_envelope->faces_end(); ++fit) {
+  auto fit = m_envelope->faces_begin();;
+  for (; fit != m_envelope->faces_end(); ++fit) {
     SGAL_assertion(fit->number_of_surfaces() > 0);
     if (fit->is_unbounded()) continue;
 
     if (m_color_array) {
       Vector3f color;
-      Envelope_diagram_2::Surface_const_iterator sit;
-      for (sit = fit->surfaces_begin(); sit != fit->surfaces_end(); ++sit) {
+      auto sit = fit->surfaces_begin();
+      for (; sit != fit->surfaces_end(); ++sit) {
         Uint index = sit->data();
         const Vector3f& surf_color = (*m_color_array)[index];
         color.add(surf_color);
@@ -212,10 +214,10 @@ void Lower_envelope_plane_geo::draw_envelope_faces(Draw_action* action)
       glColor4f(color[0], color[1], color[2], m_face_transparency);
     }
 
-    Envelope_diagram_2::Outer_ccb_const_iterator oit;
-    for (oit = fit->outer_ccbs_begin(); oit != fit->outer_ccbs_end(); ++oit) {
-      Envelope_diagram_2::Halfedge_const_iterator first = *oit;
-      Envelope_diagram_2::Halfedge_const_iterator curr = first;
+    auto oit = fit->outer_ccbs_begin();
+    for (; oit != fit->outer_ccbs_end(); ++oit) {
+      auto first = *oit;
+      auto curr = first;
       glBegin(GL_POLYGON);
       do {
         const Vector2f& vec = to_vector2f(curr->source()->point());
@@ -225,10 +227,10 @@ void Lower_envelope_plane_geo::draw_envelope_faces(Draw_action* action)
       glEnd();
     }
 
-    Envelope_diagram_2::Inner_ccb_const_iterator iit;
-    for (iit = fit->inner_ccbs_begin(); iit != fit->inner_ccbs_end(); ++iit) {
-      Envelope_diagram_2::Halfedge_const_iterator first = *iit;
-      Envelope_diagram_2::Halfedge_const_iterator curr = first;
+    auto iit = fit->inner_ccbs_begin();
+    for (; iit != fit->inner_ccbs_end(); ++iit) {
+      auto first = *iit;
+      auto curr = first;
       glBegin(GL_POLYGON);
       do {
         const Vector2f& vec = to_vector2f(curr->source()->point());
@@ -249,13 +251,13 @@ void Lower_envelope_plane_geo::draw_envelope_faces(Draw_action* action)
 //! \brief draws the envelope edges.
 void Lower_envelope_plane_geo::draw_envelope_edges(Draw_action* action)
 {
-  Envelope_diagram_2::Edge_const_iterator eit;
-  for (eit = m_envelope->edges_begin(); eit != m_envelope->edges_end(); ++eit) {
+  auto eit = m_envelope->edges_begin();
+  for (; eit != m_envelope->edges_end(); ++eit) {
     if (eit->source()->is_at_open_boundary() ||
         eit->target()->is_at_open_boundary())
       continue;
-    Vector2f src = to_vector2f(eit->source()->point());
-    Vector2f trg = to_vector2f(eit->target()->point());
+    auto src = to_vector2f(eit->source()->point());
+    auto trg = to_vector2f(eit->target()->point());
 
     Extrusion tube;
     tube.set_cross_section_radius(m_edge_radius);
@@ -302,58 +304,58 @@ void Lower_envelope_plane_geo::draw_patches(Draw_action* action)
   }
   context->draw_cull_face(Gfx::NO_CULL);
 
-  Envelope_diagram_2::Face_const_iterator fit;
-  for (fit = m_envelope->faces_begin(); fit != m_envelope->faces_end(); ++fit) {
+  auto fit = m_envelope->faces_begin();
+  for (; fit != m_envelope->faces_end(); ++fit) {
     SGAL_assertion(fit->number_of_surfaces() > 0);
     if (fit->is_unbounded()) continue;
-    const Base_plane_3& env_plane = fit->surface();
-    const Exact_plane_3& plane = env_plane.plane();
-    const Exact_FT& a = plane.a();
-    const Exact_FT& b = plane.b();
-    const Exact_FT& c = plane.c();
-    const Exact_FT& d = plane.d();
+    const auto& env_plane = fit->surface();
+    const auto& plane = env_plane.plane();
+    const auto& a = plane.a();
+    const auto& b = plane.b();
+    const auto& c = plane.c();
+    const auto& d = plane.d();
     if (m_color_array) {
       Vector3f color;
-      Envelope_diagram_2::Surface_const_iterator sit;
-      for (sit = fit->surfaces_begin(); sit != fit->surfaces_end(); ++sit) {
+      auto sit = fit->surfaces_begin();
+      for (; sit != fit->surfaces_end(); ++sit) {
         Uint index = sit->data();
-        const Vector3f& surf_color = (*m_color_array)[index];
+        const auto& surf_color = (*m_color_array)[index];
         color.add(surf_color);
       }
       color.scale(1.0f / fit->number_of_surfaces());
       glColor3fv((float*)&color);
     }
 
-    Envelope_diagram_2::Outer_ccb_const_iterator oit;
-    for (oit = fit->outer_ccbs_begin(); oit != fit->outer_ccbs_end(); ++oit) {
-      Envelope_diagram_2::Halfedge_const_iterator first = *oit;
-      Envelope_diagram_2::Halfedge_const_iterator curr = first;
+    auto oit = fit->outer_ccbs_begin();
+    for (; oit != fit->outer_ccbs_end(); ++oit) {
+      auto first = *oit;
+      auto curr = first;
       glBegin(GL_POLYGON);
       do {
-        const Env_plane_traits_3::Point_2& point2 = curr->source()->point();
-        const Exact_FT& x = point2.x();
-        const Exact_FT& y = point2.y();
-        Exact_FT z = (-a * x - b * y - d) / c;
-        Exact_point_3 point3(x, y, z);
-        Vector3f vec = to_vector3f(point3);
+        const auto& point2 = curr->source()->point();
+        const auto& x = point2.x();
+        const auto& y = point2.y();
+        Epec_FT z = (-a * x - b * y - d) / c;
+        Epec_point_3 point3(x, y, z);
+        auto vec = to_vector3f(point3);
         glVertex3fv((float*)&vec);
         curr = curr->next();
       } while (curr != first);
       glEnd();
     }
 
-    Envelope_diagram_2::Inner_ccb_const_iterator iit;
-    for (iit = fit->inner_ccbs_begin(); iit != fit->inner_ccbs_end(); ++iit) {
-      Envelope_diagram_2::Halfedge_const_iterator first = *iit;
-      Envelope_diagram_2::Halfedge_const_iterator curr = first;
+    auto iit = fit->inner_ccbs_begin();
+    for (; iit != fit->inner_ccbs_end(); ++iit) {
+      auto first = *iit;
+      auto curr = first;
       glBegin(GL_POLYGON);
       do {
         const Env_plane_traits_3::Point_2& point2 = curr->source()->point();
-        const Exact_FT& x = point2.x();
-        const Exact_FT& y = point2.y();
-        Exact_FT z = (-a * x - b * y - d) / c;
-        Exact_point_3 point3(x, y, z);
-        Vector3f vec = to_vector3f(point3);
+        const auto& x = point2.x();
+        const auto& y = point2.y();
+        Epec_FT z = (-a * x - b * y - d) / c;
+        Epec_point_3 point3(x, y, z);
+        auto vec = to_vector3f(point3);
         glVertex3fv((float*)&vec);
         curr = curr->next();
       } while (curr != first);

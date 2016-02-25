@@ -35,13 +35,11 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Epec_coord_array_3d.hpp"
+#include "SGAL/Epec_normal_array.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Arrangement_on_surface_geo.hpp"
-#include "SCGAL/Exact_coord_array_3d.hpp"
-#include "SCGAL/Exact_normal_array.hpp"
-#include "SCGAL/Exact_number_type.hpp"
-#include "SCGAL/Exact_kernel.hpp"
 #include "SCGAL/Arrangement_on_sphere_base_geo.hpp"
 #include "SCGAL/Arrangement_on_sphere_renderers.hpp"
 
@@ -248,16 +246,14 @@ protected:
      const GeomTraits* traits)
   {
     const auto* seg_traits = traits->subcurve_traits_2();
-    Exact_kernel::Construct_direction_3 ctr_direction =
-      seg_traits->construct_direction_3_object();
-    Exact_kernel::Construct_vector_3 ctr_vector =
-      seg_traits->construct_vector_3_object();
+    auto ctr_direction = seg_traits->construct_direction_3_object();
+    auto ctr_vector = seg_traits->construct_vector_3_object();
 
     std::list<typename GeomTraits::Point_2> points;
     while (static_cast<Uint>(-1) != *it) {
-      Exact_point_3& p = (*exact_coord_array)[*it];
-      Exact_vector_3 v = ctr_vector(CGAL::ORIGIN, p);
-      Exact_direction_3 d = ctr_direction(v);
+      Epec_point_3& p = (*exact_coord_array)[*it];
+      Epec_vector_3 v = ctr_vector(CGAL::ORIGIN, p);
+      Epec_direction_3 d = ctr_direction(v);
       typename GeomTraits::Point_2 q(d);
       points.push_back(q);
       ++it;
@@ -269,8 +265,8 @@ protected:
 
     SGAL_assertion(2 = points.size());
     Uint index = m_normal_indices[i];
-    Exact_vector_3& v = (*exact_normal_array)[index];
-    Exact_direction_3 normal = ctr_direction(v);
+    Epec_vector_3& v = (*exact_normal_array)[index];
+    Epec_direction_3 normal = ctr_direction(v);
     auto pit = points.begin();
     typename GeomTraits::Segment_traits_2::X_monotone_curve_2
       seg(*pit++, *pit, normal);
@@ -294,16 +290,14 @@ protected:
      const GeomTraits* traits)
   {
     const auto* seg_traits = traits->subcurve_traits_2();
-    Exact_kernel::Construct_direction_3 ctr_direction =
-      seg_traits->construct_direction_3_object();
-    Exact_kernel::Construct_vector_3 ctr_vector =
-      seg_traits->construct_vector_3_object();
+    auto ctr_direction = seg_traits->construct_direction_3_object();
+    auto ctr_vector = seg_traits->construct_vector_3_object();
 
     std::list<typename GeomTraits::Point_2> points;
     while (static_cast<Uint>(-1) != *it) {
-      Exact_point_3& p = (*exact_coord_array)[*it];
-      Exact_vector_3 v = ctr_vector(CGAL::ORIGIN, p);
-      Exact_direction_3 d = ctr_direction(v);
+      Epec_point_3& p = (*exact_coord_array)[*it];
+      Epec_vector_3 v = ctr_vector(CGAL::ORIGIN, p);
+      Epec_direction_3 d = ctr_direction(v);
       typename GeomTraits::Point_2 q(d);
       points.push_back(q);
       ++it;
@@ -314,8 +308,8 @@ protected:
 
     SGAL_assertion(2 = points.size());
     Uint index = m_normal_indices[i];
-    Exact_vector_3& v = (*exact_normal_array)[index];
-    Exact_direction_3 normal = ctr_direction(v);
+    Epec_vector_3& v = (*exact_normal_array)[index];
+    Epec_direction_3 normal = ctr_direction(v);
     auto pit = points.begin();
     typename GeomTraits::Segment_traits_2::Curve_2 seg(*pit++, *pit, normal);
     return traits->construct_curve_2_object()(seg);
@@ -334,18 +328,16 @@ protected:
 
     if (!m_coord_array) return;
 
-    Shared_exact_coord_array_3d exact_coord_array =
-      boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
-    Shared_exact_normal_array exact_normal_array =
-      boost::dynamic_pointer_cast<Exact_normal_array>(m_normal_array);
+    auto exact_coord_array =
+      boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
+    auto exact_normal_array =
+      boost::dynamic_pointer_cast<Epec_normal_array>(m_normal_array);
 
     if (exact_coord_array && (exact_coord_array->size() > 0)) {
       const Geom_traits* traits = aos->geometry_traits();
       const auto* seg_traits = traits->subcurve_traits_2();
-      Exact_kernel::Construct_direction_3 ctr_direction =
-        seg_traits->construct_direction_3_object();
-      Exact_kernel::Construct_vector_3 ctr_vector =
-        seg_traits->construct_vector_3_object();
+      auto ctr_direction = seg_traits->construct_direction_3_object();
+      auto ctr_vector = seg_traits->construct_vector_3_object();
 
       // Insert the x-monotone curves:
       if (! m_x_monotone_curve_indices.empty()) {
@@ -413,9 +405,9 @@ protected:
       for (auto it = m_point_indices.begin(); it != m_point_indices.end();
            ++it)
       {
-        Exact_point_3& p = (*exact_coord_array)[*it];
-        Exact_vector_3 v = ctr_vector(CGAL::ORIGIN, p);
-        Exact_direction_3 d = ctr_direction(v);
+        Epec_point_3& p = (*exact_coord_array)[*it];
+        Epec_vector_3 v = ctr_vector(CGAL::ORIGIN, p);
+        Epec_direction_3 d = ctr_direction(v);
         insert_point(*aos, d);
       }
     }

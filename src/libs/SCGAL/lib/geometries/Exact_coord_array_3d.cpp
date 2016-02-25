@@ -31,53 +31,52 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
-
-#include "SCGAL/Exact_coord_array_3d.hpp"
+#include "SGAL/Epec_coord_array_3d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-const std::string Exact_coord_array_3d::s_tag = "ExactCoordinate";
+const std::string Epec_coord_array_3d::s_tag = "ExactCoordinate";
 
 //! The node prototype.
-Container_proto* Exact_coord_array_3d::s_prototype(nullptr);
+Container_proto* Epec_coord_array_3d::s_prototype(nullptr);
 
 //! Register to the container factory.
-REGISTER_TO_FACTORY(Exact_coord_array_3d, "Exact_coord_array_3d");
+REGISTER_TO_FACTORY(Epec_coord_array_3d, "Epec_coord_array_3d");
 
 //! \brief constructs.
-Exact_coord_array_3d::Exact_coord_array_3d(Boolean proto) :
+Epec_coord_array_3d::Epec_coord_array_3d(Boolean proto) :
   Coord_array(proto),
   m_dirty_inexact_coords(true)
 {}
 
 //! \brief constructs.
-Exact_coord_array_3d::Exact_coord_array_3d(Size n) :
+Epec_coord_array_3d::Epec_coord_array_3d(Size n) :
   m_dirty_inexact_coords(true)
 { m_array.resize(n); }
 
 //! \brief initializes the node prototype.
-void Exact_coord_array_3d::init_prototype()
+void Epec_coord_array_3d::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Coord_array::get_prototype());
 }
 
 //! \brief deletes the node prototype.
-void Exact_coord_array_3d::delete_prototype()
+void Epec_coord_array_3d::delete_prototype()
 {
   delete s_prototype;
   s_prototype = nullptr;
 }
 
 //! Obtain the node prototype.
-Container_proto* Exact_coord_array_3d::get_prototype()
+Container_proto* Epec_coord_array_3d::get_prototype()
 {
-  if (!s_prototype) Exact_coord_array_3d::init_prototype();
+  if (!s_prototype) Epec_coord_array_3d::init_prototype();
   return s_prototype;
 }
 
 //! Sets the attributes of the object extracted from the VRML or X3D file.
-void Exact_coord_array_3d::set_attributes(Element* elem)
+void Epec_coord_array_3d::set_attributes(Element* elem)
 {
   m_array.clear();
   Coord_array::set_attributes(elem);
@@ -94,25 +93,16 @@ void Exact_coord_array_3d::set_attributes(Element* elem)
       for (auto i = 0; i < size; i++) {
         float x, y, z;
         svalue >> x >> y >> z;
-#if SCGAL_KERNEL == SCGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL
+
+        //! \todo apply the following conditionaly and use an input parameter.
         CGAL::Gmpq ex((int)(x * 1000), 1000);
         CGAL::Gmpq ey((int)(y * 1000), 1000);
         CGAL::Gmpq ez((int)(z * 1000), 1000);
-#elif SCGAL_NT == SCGAL_CGAL_GMPZ_NT
-        Exact_number_type ex(((int)(x * 1000)) / 1000);
-        Exact_number_type ey(((int)(y * 1000)) / 1000);
-        Exact_number_type ez(((int)(z * 1000)) / 1000);
-#elif SCGAL_NT == SCGAL_DOUBLE_NT
-        not implemented
-#else
-        Exact_number_type ex((int)(x * 1000), 1000);
-        Exact_number_type ey((int)(y * 1000), 1000);
-        Exact_number_type ez((int)(z * 1000), 1000);
-#endif
-        Exact_FT fx(ex);
-        Exact_FT fy(ey);
-        Exact_FT fz(ez);
-        m_array[i] = Exact_point_3(fx,fy,fz);
+
+        Epec_FT fx(ex);
+        Epec_FT fy(ey);
+        Epec_FT fz(ez);
+        m_array[i] = Epec_point_3(fx,fy,fz);
       }
       //! \todo sg->get_stats().AddNumVertices(size);
       elem->mark_delete(ai);
@@ -146,30 +136,30 @@ void Exact_coord_array_3d::set_attributes(Element* elem)
 #else
         float utanhalf = tanf(u_rad * 0.5f);
         CGAL::Gmpq eu(static_cast<int>(utanhalf * 1000), 1000);
-        Exact_FT ut(eu);
-        Exact_FT ut_square = CGAL::square(ut);
-        Exact_FT cosu = (1 - ut_square) / (1 + ut_square);
-        Exact_FT sinu = 2 * ut / (1 + ut_square);
+        Epec_FT ut(eu);
+        Epec_FT ut_square = CGAL::square(ut);
+        Epec_FT cosu = (1 - ut_square) / (1 + ut_square);
+        Epec_FT sinu = 2 * ut / (1 + ut_square);
 
         float vtanhalf = tanf(v_rad * 0.5f);
         CGAL::Gmpq ev(static_cast<int>(vtanhalf * 1000), 1000);
-        Exact_FT vt(ev);
-        Exact_FT vt_square = CGAL::square(vt);
-        Exact_FT cosv = (1 - vt_square) / (1 + vt_square);
-        Exact_FT sinv = 2 * vt / (1 + vt_square);
+        Epec_FT vt(ev);
+        Epec_FT vt_square = CGAL::square(vt);
+        Epec_FT cosv = (1 - vt_square) / (1 + vt_square);
+        Epec_FT sinv = 2 * vt / (1 + vt_square);
 
-        Exact_FT fx = cosu * cosv;
-        Exact_FT fy = cosu * sinv;
-        Exact_FT fz = sinu;
+        Epec_FT fx = cosu * cosv;
+        Epec_FT fy = cosu * sinv;
+        Epec_FT fz = sinu;
 #endif
 
-        m_array[i] = Exact_point_3(fx,fy,fz);
+        m_array[i] = Epec_point_3(fx,fy,fz);
       }
       elem->mark_delete(ai);
     }
 
     if (name == "exactPoint") {
-      auto num_values = get_num_values<Exact_FT>(value);
+      auto num_values = get_num_values<Epec_FT>(value);
       auto size = num_values / 3;
       m_array.resize(size);
       std::istringstream svalue(value, std::istringstream::in);
@@ -185,56 +175,55 @@ void Exact_coord_array_3d::set_attributes(Element* elem)
 }
 
 //! Obtain the data size.
-Size Exact_coord_array_3d::data_size() const
+Size Epec_coord_array_3d::data_size() const
 { return m_array.size() * sizeof(Vector3f); }
 
 //! \brief obtains the data.
-inline const GLfloat* Exact_coord_array_3d::datum(Uint i) const
+inline const GLfloat* Epec_coord_array_3d::datum(Uint i) const
 {
   if (m_dirty_inexact_coords) clean_inexact_coords();
   return (GLfloat*)(&(m_inexact_coords[i]));
 }
 
 // \brief obtains the data.
-const GLfloat* Exact_coord_array_3d::data() const
+const GLfloat* Epec_coord_array_3d::data() const
 {
   if (m_dirty_inexact_coords) clean_inexact_coords();
   return (GLfloat*)(&(*(m_inexact_coords.begin())));
 }
 
 //! \brief obtains the inexact coordinates.
-const std::vector<Vector3f>& Exact_coord_array_3d::get_inexact_coords() const
+const std::vector<Vector3f>& Epec_coord_array_3d::get_inexact_coords() const
 {
   if (m_dirty_inexact_coords) clean_inexact_coords();
   return m_inexact_coords;
 }
 
 //! \brief obtains the ith inexact coordinate.
-const Vector3f& Exact_coord_array_3d::get_inexact_coord(Uint i) const
+const Vector3f& Epec_coord_array_3d::get_inexact_coord(Uint i) const
 {
   if (m_dirty_inexact_coords) clean_inexact_coords();
   return m_inexact_coords[i];
 }
 
 //! \brief cleans the raw data.
-void Exact_coord_array_3d::clean_inexact_coords() const
+void Epec_coord_array_3d::clean_inexact_coords() const
 {
   m_dirty_inexact_coords = false;
   m_inexact_coords.resize(size());
 
   // Convert the exact points to inexact points.
-  std::vector<Vector3f>::iterator it = m_inexact_coords.begin();
-  CGAL::To_double<Exact_FT> todouble;
-  for (Exact_point_const_iter eit = begin(); eit != end(); ++eit) {
-    const Exact_point_3& p = *eit;
-    it++->set(static_cast<Float>(todouble(p.x())),
-              static_cast<Float>(todouble(p.y())),
-              static_cast<Float>(todouble(p.z())));
+  auto it = m_inexact_coords.begin();
+  for (auto eit = begin(); eit != end(); ++eit) {
+    const auto& p = *eit;
+    it++->set(static_cast<Float>(CGAL::to_double(p.x())),
+              static_cast<Float>(CGAL::to_double(p.y())),
+              static_cast<Float>(CGAL::to_double(p.z())));
   }
 }
 
 //! \brief clears the array.
-void Exact_coord_array_3d::clear()
+void Epec_coord_array_3d::clear()
 {
   m_array.clear();
   m_inexact_coords.clear();

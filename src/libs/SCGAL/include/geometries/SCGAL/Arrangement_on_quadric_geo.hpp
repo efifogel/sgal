@@ -42,10 +42,10 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Inexact_kernel.hpp"
+#include "SGAL/Epec_kernel.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Arrangement_on_surface_geo.hpp"
-#include "SCGAL/Exact_number_type.hpp"
-#include "SCGAL/Exact_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -75,9 +75,8 @@ public:
   };
 
   // Kernel, Number type, etc.
-  typedef Exact_number_type                           Number_type;
-  typedef Exact_kernel                                Kernel;
-  typedef Kernel::Point_3                             Point_3;
+  typedef Epec_kernel                                 Kernel;
+  typedef Epec_point_3                                Point_3;
 
 protected:
   // Inexact types:

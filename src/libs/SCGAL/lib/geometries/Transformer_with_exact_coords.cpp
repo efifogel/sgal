@@ -22,9 +22,10 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Epec_coord_array_3d.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Transformer_with_exact_coords.hpp"
-#include "SCGAL/Exact_coord_array_3d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -69,11 +70,11 @@ void Transformer_with_exact_coords::apply()
   if (!m_coord_array) return;
   if (!m_coord_array_changed) return;
 
-  boost::shared_ptr<Coord_array_3d> coords_changed =
+  auto coords_changed =
     boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array_changed);
   SGAL_assertion(coords_changed);
-  boost::shared_ptr<Exact_coord_array_3d> exact_coords =
-    boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
+  auto exact_coords =
+    boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
 
   if (exact_coords) {
     const std::vector<Vector3f>& coords = exact_coords->get_inexact_coords();
@@ -82,7 +83,7 @@ void Transformer_with_exact_coords::apply()
     else transform(coords.begin(), coords.end(), coords_changed->begin());
   }
   else {
-    boost::shared_ptr<Coord_array_3d> coords =
+    auto coords =
       boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
     SGAL_assertion(coords);
     if (do_reflect())

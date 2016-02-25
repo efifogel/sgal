@@ -33,7 +33,6 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-// #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/basic.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Triangulation_3.h>
@@ -41,6 +40,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Coord_array_3d.hpp"
+#include "SGAL/Epec_coord_array_3d.hpp"
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
@@ -53,10 +53,10 @@
 #include "SGAL/Stl_formatter.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/calculate_multiple_normals_per_vertex.hpp"
+#include "SGAL/Epec_polyhedron.hpp"
 
-#include "SCGAL/Exact_polyhedron.hpp"
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
-#include "SCGAL/Exact_coord_array_3d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -157,8 +157,8 @@ void Exact_polyhedron_geo::convex_hull()
 {
   if (!m_coord_array || m_coord_array->empty()) return;
 
-  boost::shared_ptr<Exact_coord_array_3d> exact_coords =
-    boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
+  auto exact_coords =
+    boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
   if (exact_coords) {
     if (exact_coords->size() > 0)
       CGAL::convex_hull_3(exact_coords->begin(), exact_coords->end(),
@@ -175,7 +175,7 @@ void Exact_polyhedron_geo::convex_hull()
       boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
     if (coord_array) {
       if (coord_array->size() > 0) {
-        std::vector<Exact_point_3> points;
+        std::vector<Epec_point_3> points;
         points.resize(coord_array->size());
         std::transform(coord_array->begin(), coord_array->end(),
                        points.begin(), Vector_to_point());
@@ -231,7 +231,7 @@ void Exact_polyhedron_geo::clean_coords()
   }
   else {
     auto exact_coords =
-      boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
+      boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
     if (exact_coords) {
       Uint index = 0;
       auto cit = exact_coords->begin();
@@ -288,7 +288,7 @@ void Exact_polyhedron_geo::clean_coord_indices()
   for (auto fit = m_polyhedron.facets_begin();
        fit != m_polyhedron.facets_end(); ++fit)
   {
-    Exact_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
+    Epec_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
     size_t circ_size = CGAL::circulator_size(hh);
     size += circ_size;
     if (circ_size != 3) triangles = false;
@@ -305,7 +305,7 @@ void Exact_polyhedron_geo::clean_coord_indices()
     for (auto fit = m_polyhedron.facets_begin();
          fit != m_polyhedron.facets_end(); ++fit, ++i)
     {
-      Exact_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
+      Epec_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
       size_t j(0);
       do {
         coord_indices[i][j++] = hh->vertex()->m_index;
@@ -321,7 +321,7 @@ void Exact_polyhedron_geo::clean_coord_indices()
     for (auto fit = m_polyhedron.facets_begin();
          fit != m_polyhedron.facets_end(); ++fit, ++i)
     {
-      Exact_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
+      Epec_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
       size_t j(0);
       do {
         coord_indices[i][j++] = hh->vertex()->m_index;
@@ -337,7 +337,7 @@ void Exact_polyhedron_geo::clean_coord_indices()
     for (auto fit = m_polyhedron.facets_begin();
          fit != m_polyhedron.facets_end(); ++fit, ++i)
     {
-      Exact_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
+      Epec_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
       size_t circ_size = CGAL::circulator_size(hh);
       coord_indices[i].resize(circ_size);
       size_t j(0);
@@ -413,9 +413,9 @@ void Exact_polyhedron_geo::clean_polyhedron_edges()
 
 //   // Compute the normal used only for drawing the polyhedron
 //   std::for_each(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
-//                 [](Exact_polyhedron::Facet& facet)
+//                 [](Epec_polyhedron::Facet& facet)
 //                 {
-//                   Exact_polyhedron::Halfedge_const_handle h = facet.halfedge();
+//                   Epec_polyhedron::Halfedge_const_handle h = facet.halfedge();
 //                   Kernel kernel;
 //                   auto normal =
 //                     kernel.construct_cross_product_vector_3_object()
@@ -517,7 +517,7 @@ void Exact_polyhedron_geo::clean_bounding_sphere()
     if (coords) m_bounding_sphere.set_around(coords->begin(), coords->end());
     else {
       auto exact_coords =
-        boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
+        boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
       SGAL_assertion(exact_coords);
       const auto& vecs = exact_coords->get_inexact_coords();
       m_bounding_sphere.set_around(vecs.begin(), vecs.end());
@@ -526,12 +526,12 @@ void Exact_polyhedron_geo::clean_bounding_sphere()
 }
 
 //! \brief computes the orientation of a point relative to the polyhedron.
-CGAL::Oriented_side Exact_polyhedron_geo::oriented_side(const Exact_point_3& p)
+CGAL::Oriented_side Exact_polyhedron_geo::oriented_side(const Epec_point_3& p)
 {
   for (auto fi = m_polyhedron.facets_begin(); fi != m_polyhedron.facets_end();
        ++fi)
   {
-    const Exact_plane_3& plane = fi->plane();
+    const Epec_plane_3& plane = fi->plane();
     CGAL::Oriented_side side =  plane.oriented_side(p);
     if (side == CGAL::ON_NEGATIVE_SIDE) continue;
     return side;
@@ -540,7 +540,7 @@ CGAL::Oriented_side Exact_polyhedron_geo::oriented_side(const Exact_point_3& p)
 }
 
 //! \brief obtains the polyhedron data-structure.
-const Exact_polyhedron&
+const Epec_polyhedron&
 Exact_polyhedron_geo::get_polyhedron(Boolean with_planes)
 {
   if (m_dirty_polyhedron) clean_polyhedron();
@@ -551,7 +551,7 @@ Exact_polyhedron_geo::get_polyhedron(Boolean with_planes)
 }
 
 //! \brief sets the polyhedron data-structure.
-void Exact_polyhedron_geo::set_polyhedron(Exact_polyhedron& polyhedron)
+void Exact_polyhedron_geo::set_polyhedron(Epec_polyhedron& polyhedron)
 {
   m_polyhedron = polyhedron;
   m_dirty_polyhedron = false;
@@ -585,7 +585,7 @@ const Vector3f& Exact_polyhedron_geo::get_coord_3d(Uint i) const
   if (coords) return (*coords)[i];
 
   auto exact_coords =
-    boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
+    boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
   SGAL_assertion(exact_coords);
   return exact_coords->get_inexact_coord(i);
 }
@@ -623,7 +623,7 @@ Float Exact_polyhedron_geo::volume_of_convex_hull()
   // typedef CGAL::Exact_predicates_inexact_constructions_kernel   Epic_kernel;
   Float volume = 0.0f;
   if (is_convex_hull()) {
-    typedef CGAL::Triangulation_3<Exact_kernel>                Triangulation;
+    typedef CGAL::Triangulation_3<Epec_kernel>                Triangulation;
     Triangulation tri(m_polyhedron.points_begin(), m_polyhedron.points_end());
     for (auto it = tri.finite_cells_begin(); it != tri.finite_cells_end(); ++it)
     {
@@ -632,11 +632,11 @@ Float Exact_polyhedron_geo::volume_of_convex_hull()
     }
   }
   else {
-    Exact_polyhedron ch;
+    Epec_polyhedron ch;
     CGAL::convex_hull_3(m_polyhedron.points_begin(), m_polyhedron.points_end(),
                         ch);
 
-    typedef CGAL::Triangulation_3<Exact_kernel>                Triangulation;
+    typedef CGAL::Triangulation_3<Epec_kernel>                Triangulation;
     Triangulation tri(ch.points_begin(), ch.points_end());
     for (auto it = tri.finite_cells_begin(); it != tri.finite_cells_end(); ++it)
     {
@@ -691,7 +691,7 @@ void Exact_polyhedron_geo::clean_volume()
   m_volume = 0;
   if (is_polyhedron_empty()) return;
 
-  Exact_point_3 origin(CGAL::ORIGIN);
+  Epec_point_3 origin(CGAL::ORIGIN);
   //! \todo Fix CGAL::volume() to accept CGAL::ORIGIN as an argument.
   std::for_each(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
                 [&](Polyhedron::Facet& facet)

@@ -16,15 +16,14 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#include <CGAL/basic.h>
-#include <CGAL/number_utils_classes.h>
-
 #include <iostream>
 #include <sstream>
 #include <string>
 
-#include "SCGAL/Exact_plane_array.hpp"
+#include <CGAL/basic.h>
+#include <CGAL/number_utils_classes.h>
 
+#include "SGAL/basic.hpp"
 #include "SGAL/Geo_set.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Container_factory.hpp"
@@ -32,54 +31,53 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Epec_plane_array.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-const std::string Exact_plane_array::s_tag = "ExactPlane";
-Container_proto* Exact_plane_array::s_prototype(NULL);
+const std::string Epec_plane_array::s_tag = "ExactPlane";
+Container_proto* Epec_plane_array::s_prototype(nullptr);
 
-REGISTER_TO_FACTORY(Exact_plane_array, "Exact_plane_array");
+REGISTER_TO_FACTORY(Epec_plane_array, "Epec_plane_array");
 
-/*! Constructor */
-Exact_plane_array::Exact_plane_array(Boolean proto) : Container(proto) {}
+//! \brief construct.
+Epec_plane_array::Epec_plane_array(Boolean proto) : Container(proto) {}
 
-/*! Constructor */
-Exact_plane_array::Exact_plane_array(Uint n) { m_array.resize(n); }
+//! \brief constructs.
+Epec_plane_array::Epec_plane_array(Uint n) { m_array.resize(n); }
 
-/*! Destructor */
-Exact_plane_array::~Exact_plane_array() { clear(); }
+//! \brief destructors.
+Epec_plane_array::~Epec_plane_array() { clear(); }
 
-/*! \brief initializes the node prototype. */
-void Exact_plane_array::init_prototype()
+//! \brief initializes the node prototype.
+void Epec_plane_array::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Container::get_prototype());
 }
 
-/*! \brief deletes the node prototype. */
-void Exact_plane_array::delete_prototype()
+//! \brief deletes the node prototype.
+void Epec_plane_array::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the node prototype. */
-Container_proto* Exact_plane_array::get_prototype()
+//! \brief obtains the node prototype.
+Container_proto* Epec_plane_array::get_prototype()
 {
-  if (!s_prototype) Exact_plane_array::init_prototype();
+  if (!s_prototype) Epec_plane_array::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of this object. */
-void Exact_plane_array::set_attributes(Element* elem)
+//! \brief sets the attributes of this object.
+void Epec_plane_array::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "fltPlane") {
       Uint num_values = get_num_tokens(value);
       Uint size = num_values / 4;
@@ -107,17 +105,17 @@ void Exact_plane_array::set_attributes(Element* elem)
         Exact_number_type ec((int)(c * 1000), 1000);
         Exact_number_type ed((int)(d * 1000), 1000);
 #endif
-        Exact_FT fa(ea);
-        Exact_FT fb(eb);
-        Exact_FT fc(ec);
-        Exact_FT fd(ed);
-        m_array[i] = Exact_plane_3(fa,fb,fc,fd);
+        Epec_FT fa(ea);
+        Epec_FT fb(eb);
+        Epec_FT fc(ec);
+        Epec_FT fd(ed);
+        m_array[i] = Epec_plane_3(fa,fb,fc,fd);
       }
       //! \todo sg->get_stats().AddNumVertices(size);
       elem->mark_delete(ai);
     }
     if (name == "ratPlane") {
-      Uint num_values = get_num_values<Exact_FT>(value);
+      Uint num_values = get_num_values<Epec_FT>(value);
       Uint size = num_values / 4;
       m_array.resize(size);
       std::istringstream svalue(value, std::istringstream::in);
@@ -133,12 +131,11 @@ void Exact_plane_array::set_attributes(Element* elem)
     Coord_array* coord_array = this;
     coord_array->resize(size());
     Uint i = 0;
-    CGAL::To_double<Exact_FT> todouble;
-    for (Exact_plane_iter eit = begin(); eit != end(); ++eit) {
+    for (auto eit = begin(); eit != end(); ++eit) {
       Exact_plane_3& p = *eit;
-      (*coord_array)[i++].set(static_cast<float>(todouble(p.x())),
-                              static_cast<float>(todouble(p.y())),
-                              static_cast<float>(todouble(p.z())));
+      (*coord_array)[i++].set(static_cast<float>(CGAL::to_double(p.x())),
+                              static_cast<float>(CGAL::to_double(p.y())),
+                              static_cast<float>(CGAL::to_double(p.z())));
     }
   }
 #endif
@@ -148,7 +145,7 @@ void Exact_plane_array::set_attributes(Element* elem)
 }
 
 #if 0
-Attribute_list Exact_plane_array::get_attributes()
+Attribute_list Epec_plane_array::get_attributes()
 {
   Attribute_list attrs;
   attrs = Plane_array::get_attributes();

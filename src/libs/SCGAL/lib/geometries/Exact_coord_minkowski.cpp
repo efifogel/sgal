@@ -31,9 +31,10 @@
 #include "SGAL/Field.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Utilities.hpp"
+#include "SGAL/Epec_coord_array_3d.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Exact_coord_minkowski.hpp"
-#include "SCGAL/Exact_coord_array_3d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -128,13 +129,13 @@ void Exact_coord_minkowski::set_attributes(Element* elem)
     const auto& name = elem->get_name(cai);
     Shared_container cont = elem->get_value(cai);
     if (name == "coord1") {
-      auto coord_array = boost::dynamic_pointer_cast<Exact_coord_array_3d>(cont);
+      auto coord_array = boost::dynamic_pointer_cast<Epec_coord_array_3d>(cont);
       set_coord_array1(coord_array);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "coord2") {
-      auto coord_array = boost::dynamic_pointer_cast<Exact_coord_array_3d>(cont);
+      auto coord_array = boost::dynamic_pointer_cast<Epec_coord_array_3d>(cont);
       set_coord_array2(coord_array);
       elem->mark_delete(cai);
       continue;
@@ -152,11 +153,11 @@ void Exact_coord_minkowski::execute(const Field_info* field_info)
   if (!m_coord_array1) return;
   if (!m_coord_array2) return;
 
-  boost::shared_ptr<Exact_coord_array_3d> exact_coord_array1 =
-    boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array1);
+  auto exact_coord_array1 =
+    boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array1);
   SGAL_assertion(exact_coord_array1);
-  boost::shared_ptr<Exact_coord_array_3d> exact_coord_array2 =
-    boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array2);
+  auto exact_coord_array2 =
+    boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array2);
   SGAL_assertion(exact_coord_array2);
 
   auto size1 = exact_coord_array1->size();
@@ -164,23 +165,23 @@ void Exact_coord_minkowski::execute(const Field_info* field_info)
   auto size = size1 * size2;
 
   if (!m_coord_array_changed) {
-    m_coord_array_changed.reset(new Exact_coord_array_3d(size));
+    m_coord_array_changed.reset(new Epec_coord_array_3d(size));
     SGAL_assertion(m_coord_array_changed);
   }
   else
     m_coord_array_changed->resize(size);
 
   auto coord_array_changed =
-    boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array_changed);
+    boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array_changed);
   SGAL_assertion(coord_array_changed);
 
   auto pi1 = exact_coord_array1->begin();
   for (; pi1 != exact_coord_array1->end(); ++pi1) {
-    const Exact_point_3& p1 = *pi1;
-    Exact_vector_3 v(CGAL::ORIGIN, p1);
+    const auto& p1 = *pi1;
+    Epec_vector_3 v(CGAL::ORIGIN, p1);
     auto pi2 = exact_coord_array2->begin();
     for (; pi2 != exact_coord_array2->end(); ++pi2) {
-      const Exact_point_3& p2 = *pi2;
+      const auto& p2 = *pi2;
       coord_array_changed->push_back(p2 + v);
     }
   }

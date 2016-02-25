@@ -54,15 +54,16 @@
 #include "SGAL/Sphere.hpp"
 #include "SGAL/Extrusion.hpp"
 #include "SGAL/Context.hpp"
+#include "SGAL/Epec_coord_array_3d.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Voronoi_diagram_on_sphere_geo.hpp"
-#include "SCGAL/Exact_coord_array_3d.hpp"
 #include "SCGAL/Arrangement_on_sphere_renderers.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 std::string Voronoi_diagram_on_sphere_geo::s_tag = "VoronoiDiagramOnSphere";
-Container_proto* Voronoi_diagram_on_sphere_geo::s_prototype(NULL);
+Container_proto* Voronoi_diagram_on_sphere_geo::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Voronoi_diagram_on_sphere_geo,
                     "Voronoi_diagram_on_sphere_geo");
@@ -74,19 +75,19 @@ const Float Voronoi_diagram_on_sphere_geo::s_def_site_radius(0.06f);
 const Float Voronoi_diagram_on_sphere_geo::s_def_site_point_size(1);
 const Float Voronoi_diagram_on_sphere_geo::s_def_site_delta_angle(0.1f);
 
-/*! Constructor. */
+//! \brief constructs.
 Voronoi_diagram_on_sphere_geo::
 Voronoi_diagram_on_sphere_geo(Boolean proto) :
   Geodesic_voronoi_on_sphere_geo(proto),
   m_owned_vos(false),
-  m_vos(NULL),
+  m_vos(nullptr),
   m_site_style(s_def_site_style),
   m_site_radius(s_def_site_radius),
   m_site_point_size(s_def_site_point_size),
   m_site_delta_angle(s_def_site_delta_angle)
 { if (!proto) create_renderers(); }
 
-/*! Destructor. */
+//! \brief destructs.
 Voronoi_diagram_on_sphere_geo::~Voronoi_diagram_on_sphere_geo()
 {
   clear();
@@ -95,13 +96,13 @@ Voronoi_diagram_on_sphere_geo::~Voronoi_diagram_on_sphere_geo()
   if (m_owned_vos) {
     if (m_vos) {
       delete m_vos;
-      m_vos = NULL;
+      m_vos = nullptr;
     }
     m_owned_vos = false;
   }
 }
 
-/*! \brief initializes the container prototype. */
+//! \brief initializes the container prototype.
 void Voronoi_diagram_on_sphere_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -119,32 +120,30 @@ void Voronoi_diagram_on_sphere_geo::init_prototype()
                                           site_style_func, exec_func));
 }
 
-/*! \brief deletes the container prototype. */
+//! \brief deletes the container prototype.
 void Voronoi_diagram_on_sphere_geo::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the container prototype. */
+//! \brief obtains the container prototype.
 Container_proto* Voronoi_diagram_on_sphere_geo::get_prototype()
 {
   if (!s_prototype) Voronoi_diagram_on_sphere_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the ellpsoid attributes. */
+//! \brief sets the ellpsoid attributes.
  void Voronoi_diagram_on_sphere_geo::set_attributes(Element* elem)
 {
   Geodesic_voronoi_on_sphere_geo::set_attributes(elem);
 
-  typedef Element::Str_attr_iter        Str_attr_iter;
   typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
   boost::char_separator<char> sep(", \t\n\r");
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
 
     if (name == "siteStyle") {
       m_site_style = Site_shape::style(strip_double_quotes(value));
@@ -163,11 +162,11 @@ Container_proto* Voronoi_diagram_on_sphere_geo::get_prototype()
     }
   }
 
-  typedef Element::Cont_attr_iter       Cont_attr_iter;
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
-    const std::string& name = elem->get_name(cai);
-    Element::Shared_container cont = elem->get_value(cai);
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
+    const auto& name = elem->get_name(cai);
+    auto cont = elem->get_value(cai);
     if (name == "coord") {
       Shared_coord_array coord_array =
         boost::dynamic_pointer_cast<Coord_array>(cont);
@@ -181,7 +180,7 @@ Container_proto* Voronoi_diagram_on_sphere_geo::get_prototype()
   elem->delete_marked();
 }
 
-/*! \brief cleans the representation. */
+//! \brief cleans the representation.
 void Voronoi_diagram_on_sphere_geo::clean()
 {
   Geodesic_voronoi_on_sphere_geo::clean();
@@ -191,23 +190,22 @@ void Voronoi_diagram_on_sphere_geo::clean()
     SGAL_assertion(m_vos);
     m_owned_vos = true;
   }
-  Shared_exact_coord_array_3d exact_coord_array =
-    boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
+  auto exact_coord_array =
+    boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
   if (exact_coord_array && (exact_coord_array->size() > 0)) {
-    Exact_kernel kernel;
+    Epec_kernel kernel;
 
     if (this->m_site_indices.size() != 0) {
       // Compute the voronoi:
-      std::vector<Uint>::iterator it;
       std::vector<Site> points;
       points.resize(this->m_site_indices.size());
       Uint i = 0;
-      for (it = this->m_site_indices.begin();
+      for (auto it = this->m_site_indices.begin();
            it != this->m_site_indices.end(); ++it)
       {
-        Exact_point_3& p = (*exact_coord_array)[*it];
-        Exact_vector_3 v = kernel.construct_vector_3_object()(CGAL::ORIGIN, p);
-        Exact_direction_3 d = kernel.construct_direction_3_object()(v);
+        Epec_point_3& p = (*exact_coord_array)[*it];
+        Epec_vector_3 v = kernel.construct_vector_3_object()(CGAL::ORIGIN, p);
+        Epec_direction_3 d = kernel.construct_direction_3_object()(v);
         points[i++] = d;
       }
       CGAL::voronoi_2(points.begin(), points.end(), *(this->m_vos));
@@ -216,17 +214,17 @@ void Voronoi_diagram_on_sphere_geo::clean()
   }
 }
 
-/*! \brief clears the internal representation and auxiliary data structures. */
+//! \brief clears the internal representation and auxiliary data structures.
 void Voronoi_diagram_on_sphere_geo::clear()
 {
   this->m_dirty = true;
   if (m_vos) m_vos->clear();
 }
 
-/*! \brief */
+//! \brief
 void Voronoi_diagram_on_sphere_geo::cull(Cull_context& cull_context) {}
 
-/*! \brief draws the arrangement on sphere opaque. */
+//! \brief draws the arrangement on sphere opaque.
 void Voronoi_diagram_on_sphere_geo::draw_opaque(Draw_action* action)
 {
   Context* context = action->get_context();
@@ -311,9 +309,9 @@ void Voronoi_diagram_on_sphere_geo::draw_opaque(Draw_action* action)
   context->draw_material_mode_enable(Gfx::NO_COLOR_MATERIAL);
 }
 
-/*! \brief draws a site. */
+//! \brief draws a site.
 void Voronoi_diagram_on_sphere_geo::draw_site(Draw_action* action,
-                                              Exact_point_3& point)
+                                              Epec_point_3& point)
 {
   float x = static_cast<float>(CGAL::to_double(point.x()));
   float y = static_cast<float>(CGAL::to_double(point.y()));
@@ -324,25 +322,25 @@ void Voronoi_diagram_on_sphere_geo::draw_site(Draw_action* action,
                         m_site_delta_angle);
 }
 
-/*! \brief draws the sites. */
+//! \brief draws the sites.
 void Voronoi_diagram_on_sphere_geo::draw_sites(Draw_action* action)
 {
   glColor3fv((float*)&m_site_color[0]);
 
-  Shared_exact_coord_array_3d exact_coord_array =
-    boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
+  auto exact_coord_array =
+    boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
   if (exact_coord_array && (exact_coord_array->size() > 0)) {
     std::vector<Uint>::iterator it;
     for (it = this->m_site_indices.begin();
          it != this->m_site_indices.end(); ++it)
     {
-      Exact_point_3& point = (*exact_coord_array)[*it];
+      Epec_point_3& point = (*exact_coord_array)[*it];
       draw_site(action, point);
     }
   }
 }
 
-/*! \brief cleans the renderer. */
+//! \brief cleans the renderer.
 void Voronoi_diagram_on_sphere_geo::clean_renderer()
 {
   if (get_draw_aos_surface())
@@ -410,7 +408,7 @@ void Voronoi_diagram_on_sphere_geo::clean_renderer()
   m_renderer_dirty = false;
 }
 
-/*! \brief draws the sites. */
+//! \brief draws the sites.
 void Voronoi_diagram_on_sphere_geo::Site_other_renderer::
 operator()(Draw_action* action)
 {
@@ -426,7 +424,7 @@ operator()(Draw_action* action)
   }
 }
 
-/*! \brief creates the renderers. */
+//! \brief creates the renderers.
 void Voronoi_diagram_on_sphere_geo::create_renderers()
 {
   m_edges_renderer = new Voronoi_edges_renderer(*this);
@@ -452,7 +450,7 @@ void Voronoi_diagram_on_sphere_geo::create_renderers()
   m_site_other_renderer = new Site_other_renderer(*this);
 }
 
-/*! \brief destroys the renderers. */
+//! \brief destroys the renderers.
 void Voronoi_diagram_on_sphere_geo::destroy_renderers()
 {
   if (m_edges_renderer) delete m_edges_renderer;

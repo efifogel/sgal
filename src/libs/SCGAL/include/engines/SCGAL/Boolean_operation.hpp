@@ -34,6 +34,7 @@
 #include "SGAL/Node.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Math_defs.hpp"
+#include "SGAL/Epec_kernel.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
@@ -70,7 +71,7 @@ public:
     OP_Q_MINUS_P
   };
 
-  typedef CGAL::Polyhedron_corefinement<Exact_polyhedron, Exact_kernel> Bso;
+  typedef CGAL::Polyhedron_corefinement<Epec_polyhedron, Epec_kernel> Bso;
 
   typedef boost::shared_ptr<Exact_polyhedron_geo>   Shared_exact_polyhedron_geo;
   typedef boost::shared_ptr<Mesh_set>               Shared_mesh_set;

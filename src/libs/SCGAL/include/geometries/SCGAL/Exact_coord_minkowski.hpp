@@ -27,16 +27,14 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
-
-#include "SCGAL/basic.hpp"
-#include "SCGAL/Exact_kernel.hpp"
+#include "SGAL/Epec_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Element;
 class Scene_graph;
 class Container_proto;
-class Exact_coord_array_3d;
+class Epec_coord_array_3d;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -56,7 +54,7 @@ public:
     LAST
   };
 
-  typedef boost::shared_ptr<Exact_coord_array_3d>  Shared_exact_coord_array_3d;
+  typedef boost::shared_ptr<Epec_coord_array_3d>  Shared_exact_coord_array_3d;
 
   /*! Constructor. */
   Exact_coord_minkowski(Boolean proto = false);

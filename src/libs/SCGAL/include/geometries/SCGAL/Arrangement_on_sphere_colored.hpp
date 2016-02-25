@@ -28,14 +28,15 @@
 #include <CGAL/Arr_tracing_traits_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
 
+#include "SGAL/basic.hpp"
+#include "SGAL/Epec_kernel.hpp"
+
 #include "SCGAL/basic.hpp"
-#include "SCGAL/Exact_number_type.hpp"
-#include "SCGAL/Exact_kernel.hpp"
 #include "SCGAL/Arrangement_color_dcel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Exact_kernel>
+typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Epec_kernel>
                                                 Aos_colored_geom_traits_base;
 #if defined(CGAL_ARR_TRACING_TRAITS)
 typedef CGAL::Arr_tracing_traits_2<Aos_colored_geom_traits_base>

@@ -35,13 +35,12 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Epec_kernel.hpp"
+#include "SGAL/Epec_coord_array_3d.hpp"
+#include "SGAL/Epec_normal_array.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Arrangement_on_surface_geo.hpp"
-#include "SCGAL/Exact_coord_array_3d.hpp"
-#include "SCGAL/Exact_normal_array.hpp"
-#include "SCGAL/Exact_number_type.hpp"
-#include "SCGAL/Exact_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -67,8 +66,8 @@ public:
   // Shared pointers
   typedef boost::shared_ptr<Coord_array>          Shared_coord_array;
   typedef boost::shared_ptr<Normal_array>         Shared_normal_array;
-  typedef boost::shared_ptr<Exact_coord_array_3d> Shared_exact_coord_array_3d;
-  typedef boost::shared_ptr<Exact_normal_array>   Shared_exact_normal_array;
+  typedef boost::shared_ptr<Epec_coord_array_3d> Shared_exact_coord_array_3d;
+  typedef boost::shared_ptr<Epec_normal_array>   Shared_exact_normal_array;
 
   enum {
     FIRST = Arrangement_on_surface_geo::LAST - 1,
@@ -311,18 +310,16 @@ protected:
 
     if (!m_coord_array) return;
 
-    Shared_exact_coord_array_3d exact_coord_array =
-      boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
-    Shared_exact_normal_array exact_normal_array =
-      boost::dynamic_pointer_cast<Exact_normal_array>(m_normal_array);
+    auto exact_coord_array =
+      boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
+    auto exact_normal_array =
+      boost::dynamic_pointer_cast<Epec_normal_array>(m_normal_array);
 
     if (exact_coord_array && (exact_coord_array->size() > 0)) {
       std::vector<Uint>::iterator it;
-      Exact_kernel kernel;
-      Exact_kernel::Construct_direction_3 ctr_direction =
-        kernel.construct_direction_3_object();
-      Exact_kernel::Construct_vector_3 ctr_vector =
-        kernel.construct_vector_3_object();
+      Epec_kernel kernel;
+      auto ctr_direction = kernel.construct_direction_3_object();
+      auto ctr_vector = kernel.construct_vector_3_object();
 
       // Insert the x-monotone curves:
       if (m_x_monotone_curve_indices.size() != 0) {
@@ -333,22 +330,22 @@ protected:
           for (it = m_x_monotone_curve_indices.begin();
                it != m_x_monotone_curve_indices.end(); ++it)
           {
-            Exact_point_3& p1 = (*exact_coord_array)[*it];
-            Exact_vector_3 v1 = ctr_vector(CGAL::ORIGIN, p1);
-            Exact_direction_3 d1 = ctr_direction(v1);
+            Epec_point_3& p1 = (*exact_coord_array)[*it];
+            Epec_vector_3 v1 = ctr_vector(CGAL::ORIGIN, p1);
+            Epec_direction_3 d1 = ctr_direction(v1);
             Point q1(d1);
             ++it;
 
-            Exact_point_3& p2 = (*exact_coord_array)[*it];
-            Exact_vector_3 v2 = ctr_vector(CGAL::ORIGIN, p2);
-            Exact_direction_3 d2 = ctr_direction(v2);
+            Epec_point_3& p2 = (*exact_coord_array)[*it];
+            Epec_vector_3 v2 = ctr_vector(CGAL::ORIGIN, p2);
+            Epec_direction_3 d2 = ctr_direction(v2);
             Point q2(d2);
 
             if (exact_normal_array && (m_normal_indices.size() > i)) {
               Uint index = m_normal_indices[i];
               if (index != static_cast<Uint>(-1)) {
-                Exact_vector_3& v = (*exact_normal_array)[index];
-                Exact_direction_3 normal = ctr_direction(v);
+                Epec_vector_3& v = (*exact_normal_array)[index];
+                Epec_direction_3 normal = ctr_direction(v);
                 vec[i++] = X_monotone_curve(q1, q2, normal);
                 continue;
               }
@@ -362,22 +359,22 @@ protected:
           unsigned int i = 0;
           for (it = m_x_monotone_curve_indices.begin();
                it != m_x_monotone_curve_indices.end(); ++it) {
-            Exact_point_3& p1 = (*exact_coord_array)[*it];
-            Exact_vector_3 v1 = ctr_vector(CGAL::ORIGIN, p1);
-            Exact_direction_3 d1 = ctr_direction(v1);
+            Epec_point_3& p1 = (*exact_coord_array)[*it];
+            Epec_vector_3 v1 = ctr_vector(CGAL::ORIGIN, p1);
+            Epec_direction_3 d1 = ctr_direction(v1);
             Point q1(d1);
             ++it;
 
-            Exact_point_3& p2 = (*exact_coord_array)[*it];
-            Exact_vector_3 v2 = ctr_vector(CGAL::ORIGIN, p2);
-            Exact_direction_3 d2 = ctr_direction(v2);
+            Epec_point_3& p2 = (*exact_coord_array)[*it];
+            Epec_vector_3 v2 = ctr_vector(CGAL::ORIGIN, p2);
+            Epec_direction_3 d2 = ctr_direction(v2);
             Point q2(d2);
 
             if (exact_normal_array && (m_normal_indices.size() > i)) {
               Uint index = m_normal_indices[i];
               if (index != static_cast<Uint>(-1)) {
-                Exact_vector_3& v = (*exact_normal_array)[index];
-                Exact_direction_3 normal = ctr_direction(v);
+                Epec_vector_3& v = (*exact_normal_array)[index];
+                Epec_direction_3 normal = ctr_direction(v);
                 X_monotone_curve xc(q1, q2, normal);
                 insert(*aos, xc);
                 ++i;
@@ -398,20 +395,20 @@ protected:
           unsigned int i = 0;
           for (it = m_curve_indices.begin(); it != m_curve_indices.end(); ++it)
           {
-            Exact_point_3& p1 = (*exact_coord_array)[*it];
-            Exact_vector_3 v1 = ctr_vector(CGAL::ORIGIN, p1);
-            Exact_direction_3 d1 = ctr_direction(v1);
+            Epec_point_3& p1 = (*exact_coord_array)[*it];
+            Epec_vector_3 v1 = ctr_vector(CGAL::ORIGIN, p1);
+            Epec_direction_3 d1 = ctr_direction(v1);
             ++it;
 
-            Exact_point_3& p2 = (*exact_coord_array)[*it];
-            Exact_vector_3 v2 = ctr_vector(CGAL::ORIGIN, p2);
-            Exact_direction_3 d2 = ctr_direction(v2);
+            Epec_point_3& p2 = (*exact_coord_array)[*it];
+            Epec_vector_3 v2 = ctr_vector(CGAL::ORIGIN, p2);
+            Epec_direction_3 d2 = ctr_direction(v2);
 
             if (exact_normal_array && (m_normal_indices.size() > i)) {
               Uint index = m_normal_indices[i];
               if (index != static_cast<Uint>(-1)) {
-                Exact_vector_3& v = (*exact_normal_array)[index];
-                Exact_direction_3 normal = ctr_direction(v);
+                Epec_vector_3& v = (*exact_normal_array)[index];
+                Epec_direction_3 normal = ctr_direction(v);
                 vec[i++] = Curve(d1, d2, normal);
                 continue;
               }
@@ -425,20 +422,20 @@ protected:
           unsigned int i = 0;
           for (it = m_curve_indices.begin(); it != m_curve_indices.end(); ++it)
           {
-            Exact_point_3& p1 = (*exact_coord_array)[*it];
-            Exact_vector_3 v1 = ctr_vector(CGAL::ORIGIN, p1);
-            Exact_direction_3 d1 = ctr_direction(v1);
+            Epec_point_3& p1 = (*exact_coord_array)[*it];
+            Epec_vector_3 v1 = ctr_vector(CGAL::ORIGIN, p1);
+            Epec_direction_3 d1 = ctr_direction(v1);
             ++it;
 
-            Exact_point_3& p2 = (*exact_coord_array)[*it];
-            Exact_vector_3 v2 = ctr_vector(CGAL::ORIGIN, p2);
-            Exact_direction_3 d2 = ctr_direction(v2);
+            Epec_point_3& p2 = (*exact_coord_array)[*it];
+            Epec_vector_3 v2 = ctr_vector(CGAL::ORIGIN, p2);
+            Epec_direction_3 d2 = ctr_direction(v2);
 
             if (exact_normal_array && (m_normal_indices.size() > i)) {
               Uint index = m_normal_indices[i];
               if (index != static_cast<Uint>(-1)) {
-                Exact_vector_3& v = (*exact_normal_array)[index];
-                Exact_direction_3 normal = ctr_direction(v);
+                Epec_vector_3& v = (*exact_normal_array)[index];
+                Epec_direction_3 normal = ctr_direction(v);
                 Curve cv(d1, d2, normal);
                 insert(*aos, cv);
                 ++i;
@@ -454,9 +451,9 @@ protected:
 
       // Insert the points:
       for (it = m_point_indices.begin(); it != m_point_indices.end(); ++it) {
-        Exact_point_3& p = (*exact_coord_array)[*it];
-        Exact_vector_3 v = ctr_vector(CGAL::ORIGIN, p);
-        Exact_direction_3 d = ctr_direction(v);
+        Epec_point_3& p = (*exact_coord_array)[*it];
+        Epec_vector_3 v = ctr_vector(CGAL::ORIGIN, p);
+        Epec_direction_3 d = ctr_direction(v);
         insert_point(*aos, d);
       }
     }

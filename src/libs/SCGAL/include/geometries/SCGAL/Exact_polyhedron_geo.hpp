@@ -26,12 +26,11 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Boundary_set.hpp"
+#include "SGAL/Epec_kernel.hpp"
+#include "SGAL/Epec_polyhedron.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Min_sphere.hpp"
-#include "SCGAL/Exact_number_type.hpp"
-#include "SCGAL/Exact_kernel.hpp"
-#include "SCGAL/Exact_polyhedron.hpp"
 #include "SCGAL/Exact_polyhedron_geo_builder.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -77,8 +76,8 @@ public:
     LAST
   };
 
-  typedef Exact_polyhedron              Polyhedron;
-  typedef Exact_kernel                  Kernel;
+  typedef Epec_polyhedron              Polyhedron;
+  typedef Epec_kernel                  Kernel;
 
   /*! Constructor.
    * \param[in] proto determines whether to construct a prototype.
@@ -177,14 +176,14 @@ public:
   Boolean is_dirty_polyhedron() const;
 
   /*! Set the polyhedron data-structure. */
-  void set_polyhedron(Exact_polyhedron& polyhedron);
+  void set_polyhedron(Epec_polyhedron& polyhedron);
 
   /*! Obtain the polyhedron data-structure.
    * \param[in] with_planes indicates whether to clean the planes (as well
    *            as the polyhedron itself.
    * \return the polyhedron data-structure.
    */
-  const Exact_polyhedron& get_polyhedron(Boolean with_planes = false);
+  const Epec_polyhedron& get_polyhedron(Boolean with_planes = false);
 
   /*! Determine whether the polyhedron representation is empty.
    */
@@ -226,7 +225,7 @@ public:
 
   /*! Compute the orientation of a point relative to the polyhedron.
    */
-  CGAL::Oriented_side oriented_side(const Exact_point_3& p);
+  CGAL::Oriented_side oriented_side(const Epec_point_3& p);
 
   /*! Compute the volume of the convex hull of the polyhedron.
    */
@@ -275,7 +274,7 @@ public:
     {
       auto* field_info = m_coord_array->get_field_info(Coord_array::POINT);
       auto exact_coords =
-        boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
+        boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
       if (exact_coords) {
         auto& points = *(exact_coords->array_handle(field_info));
         auto has_singular_vertices =
@@ -389,7 +388,7 @@ protected:
   Boolean m_dirty_coord_array;
 
   /*! The resulting polyhedron. */
-  Exact_polyhedron m_polyhedron;
+  Epec_polyhedron m_polyhedron;
 
   /*! Indicates whether the polyhedron is dirty and thus should be cleaned. */
   Boolean m_dirty_polyhedron;
@@ -417,26 +416,26 @@ private:
   /*! Extracts the approximate point from a polyhedron vertex. */
   struct Convert_approximate_sphere {
     Inexact_sphere_3
-    operator()(const Exact_polyhedron::Vertex& vertex) const
+    operator()(const Epec_polyhedron::Vertex& vertex) const
     { return to_inexact_sphere(vertex.point()); }
   };
 
    /*! Convert a point in approximate number type to exact. */
   struct Vector_to_point {
     template <typename Vector3f>
-    Exact_point_3 operator()(const Vector3f& vec)
-    { return Exact_point_3(vec[0], vec[1], vec[2]); }
+    Epec_point_3 operator()(const Vector3f& vec)
+    { return Epec_point_3(vec[0], vec[1], vec[2]); }
   };
 
   // /*! Convert a point in exact number type to approximate. */
   // struct Point_to_vector {
-  //   void operator()(Exact_polyhedron::Vertex& vertex)
+  //   void operator()(Epec_polyhedron::Vertex& vertex)
   //   { vertex.m_vertex = to_vector3f(vertex.point()); }
   // };
 
   /*! Convert Plane_3 to normal in Vector3f representation. */
   struct Plane_to_normal {
-    void operator()(Exact_polyhedron::Facet& facet)
+    void operator()(Epec_polyhedron::Facet& facet)
     {
       Vector3f normal = to_vector3f(facet.plane().orthogonal_vector());
       facet.m_normal.set(normal);
@@ -483,7 +482,7 @@ private:
   void convex_hull();
 
   /*! The builder. */
-  Exact_polyhedron_geo_builder<Exact_polyhedron::HalfedgeDS> m_surface;
+  Exact_polyhedron_geo_builder<Epec_polyhedron::HalfedgeDS> m_surface;
 
   /*! The time is took to compute the minkowski sum in seconds. */
   float m_time;

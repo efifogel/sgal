@@ -37,10 +37,10 @@
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Coord_array_3d.hpp"
+#include "SGAL/Epec_kernel.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Lower_envelope_geo.hpp"
-#include "SCGAL/Exact_kernel.hpp"
 #include "SCGAL/Min_sphere.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -56,7 +56,7 @@ class SGAL_SCGAL_DECL Lower_envelope_tri_geo : public Lower_envelope_geo {
 public:
   typedef boost::shared_ptr<Appearance>                   Shared_appearance;
 
-  typedef CGAL::Env_triangle_traits_3<Exact_kernel>
+  typedef CGAL::Env_triangle_traits_3<Epec_kernel>
     Env_triangle_traits_base_3;
   typedef Env_triangle_traits_base_3::Surface_3           Base_triangle_3;
 
@@ -196,9 +196,9 @@ OutputIterator Lower_envelope_tri_geo::get_triangles(OutputIterator oi)
       const Vector3f& v2 = (*coord_array)[coord_indices[i][1]];
       const Vector3f& v3 = (*coord_array)[coord_indices[i][2]];
 
-      Exact_point_3 p1(v1[0], v1[1], v1[2]);
-      Exact_point_3 p2(v2[0], v2[1], v2[2]);
-      Exact_point_3 p3(v3[0], v3[1], v3[2]);
+      Epec_point_3 p1(v1[0], v1[1], v1[2]);
+      Epec_point_3 p2(v2[0], v2[1], v2[2]);
+      Epec_point_3 p3(v3[0], v3[1], v3[2]);
       Base_triangle_3 t(p1, p2, p3);
       *oi++ = Triangle_3(t, shape->get_appearance());
     }

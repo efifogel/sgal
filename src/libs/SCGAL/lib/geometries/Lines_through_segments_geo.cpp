@@ -155,10 +155,10 @@ void Lines_through_segments_geo::clean()
 
   if (m_in_segments_dirty) {
     if (!m_segments) return;
-//     Exact_coord_array_3d* coord_array =
-//       dynamic_cast<Exact_coord_array *>(m_segments->get_coord_array());
+//     Epec_coord_array_3d* coord_array =
+//       dynamic_cast<Epec_coord_array *>(m_segments->get_coord_array());
 //     if (!coord_array) return;
-    const boost::shared_ptr<Coord_array_3d> coord_array =
+    const auto coord_array =
       boost::dynamic_pointer_cast<Coord_array_3d>(m_segments->get_coord_array());
     if (!coord_array) return;
     auto& coord_indices = m_segments->get_coord_indices();

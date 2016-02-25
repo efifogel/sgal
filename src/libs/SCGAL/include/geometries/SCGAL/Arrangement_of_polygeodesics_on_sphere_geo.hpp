@@ -40,6 +40,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Epec_kernel.hpp"
 
 #include "SCGAL/basic.hpp"
 // #include "SCGAL/Arrangement_of_polygeodesics_on_sphere.hpp"
@@ -73,7 +74,7 @@ public:
     LAST
   };
 
-  typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Exact_kernel>
+  typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Epec_kernel>
                                                          Aos_geom_traits_gos;
   typedef CGAL::Arr_polyline_traits_2<Aos_geom_traits_gos>
     Aos_geom_traits_base;

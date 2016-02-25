@@ -38,9 +38,9 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Rotation.hpp"
+#include "SGAL/Epec_kernel.hpp"
 
 #include "SCGAL/basic.hpp"
-#include "SCGAL/Exact_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -67,7 +67,8 @@ public:
     LAST
   };
 
-  typedef Exact_kernel                                  Kernel;
+  typedef Epec_kernel                                   Kernel;
+  typedef Epec_point_3                                  Point_3;
 
   typedef CGAL::Nef_polyhedron_3<Kernel>                Nef_polyhedron;
   typedef CGAL::Arr_polyhedral_sgm_traits<Kernel>       Sgm_geometry_traits_2;
@@ -76,14 +77,13 @@ public:
     Spherical_gaussian_map_for_ssc;
   typedef CGAL::Arr_polyhedral_sgm_polyhedron_3<Spherical_gaussian_map_for_ssc,
                                                 Kernel> Polyhedron;
-  typedef CGAL::Point_3<Kernel>                         Point_3;
   typedef Polyhedron::Plane_3                           Plane_3;
   typedef CGAL::Arr_polyhedral_sgm_initializer<Spherical_gaussian_map_for_ssc,
                                                Polyhedron> Sgm_initializer_for_ssc;
   typedef CGAL::Arr_polyhedral_sgm_overlay<Spherical_gaussian_map_for_ssc>
     Sgm_overlay_traits_for_ssc;
-  typedef CGAL::Quadratic_program<Exact_FT>           Program;
-  typedef CGAL::Quadratic_program_solution<Exact_FT>  Solution;
+  typedef CGAL::Quadratic_program<Epec_FT>            Program;
+  typedef CGAL::Quadratic_program_solution<Epec_FT>   Solution;
 
   typedef boost::shared_ptr<Coord_array>              Shared_coord_array;
   typedef boost::shared_ptr<Coord_transformer>        Shared_Coord_transformer;

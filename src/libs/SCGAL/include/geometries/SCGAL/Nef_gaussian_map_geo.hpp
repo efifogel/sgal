@@ -42,14 +42,13 @@
 #include <CGAL/HalfedgeDS_face_base.h>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Epec_kernel.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Inexact_kernel.hpp"
 
 #include "SCGAL/basic.hpp"
-#include "SCGAL/Exact_number_type.hpp"
-#include "SCGAL/Exact_kernel.hpp"
 #include "SCGAL/Nef_gaussian_map.hpp"
 #include "SCGAL/gausian_map_to_polyhedron_3.hpp"
 #include "SCGAL/Exact_polyhedron_geo_builder.hpp"
@@ -70,11 +69,10 @@ public:
   typedef CGAL::Tag_true                                Tag_true;
   typedef CGAL::Tag_false                               Tag_false;
 
-  typedef Exact_number_type                             Number_type;
-  typedef Exact_kernel                                  Kernel;
-  typedef Kernel::Point_3                               Point_3;
-  typedef Kernel::Plane_3                               Plane_3;
-  typedef Kernel::Vector_3                              Vector_3;
+  typedef Epec_kernel                                   Kernel;
+  typedef Epec_point_3                                  Point_3;
+  typedef Epec_plane_3                                  Plane_3;
+  typedef Epec_vector_3                                 Vector_3;
 
   // Inexact types:
   typedef CGAL::Min_sphere_of_spheres_d_traits_3<Inexact_kernel,Inexact_FT>

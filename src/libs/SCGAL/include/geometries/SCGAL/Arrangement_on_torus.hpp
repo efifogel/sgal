@@ -27,12 +27,11 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector3f.hpp"
-
-#include "SCGAL/Exact_kernel.hpp"
+#include "SGAL/Epec_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-typedef CGAL::Arr_flat_torus_traits_2<Exact_kernel>     Aot_geom_traits_base;
+typedef CGAL::Arr_flat_torus_traits_2<Epec_kernel>      Aot_geom_traits_base;
 #if defined(CGAL_ARR_TRACING_TRAITS)
 typedef CGAL::Arr_tracing_traits_2<Aot_geom_traits_base>
                                                         Aot_geom_traits;

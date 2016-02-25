@@ -31,13 +31,15 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector3f.hpp"
 
+#include "SGAL/basic.hpp"
+#include "SGAL/Epec_kernel.hpp"
+
 #include "SCGAL/basic.hpp"
-#include "SCGAL/Exact_kernel.hpp"
 #include "SCGAL/Arrangement_label_dcel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Exact_kernel>
+typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Epec_kernel>
                                                 Aos_labeled_geom_traits_base;
 #if defined(CGAL_ARR_TRACING_TRAITS)
 typedef CGAL::Arr_tracing_traits_2<Aos_labeled_geom_traits_base>

@@ -42,11 +42,10 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Epec_kernel.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Arrangement_on_sphere_marked_geo.hpp"
-#include "SCGAL/Exact_number_type.hpp"
-#include "SCGAL/Exact_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -177,7 +176,7 @@ protected:
       \param p1 First point
       \param p2 Second point
   */
-  Curve_cont construct_curves(Exact_point_3* p1, Exact_point_3* p2);
+  Curve_cont construct_curves(Epec_point_3* p1, Epec_point_3* p2);
 
   //! Get the type of operation according to its name
   Operation_type get_operation_type_by_name(const std::string& op_name);

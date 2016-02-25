@@ -54,10 +54,10 @@
 #include "SGAL/Context.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Epec_coord_array_3d.hpp"
 
 #include "SCGAL/Spherical_gaussian_map_colored_geo.hpp"
 #include "SCGAL/Sgm_color_overlay_traits.hpp"
-#include "SCGAL/Exact_coord_array_3d.hpp"
 #include "SCGAL/merge_coplanar_facets.hpp"
 #include "SCGAL/compute_planes.hpp"
 
@@ -128,11 +128,11 @@ void Spherical_gaussian_map_colored_geo::clean_sgm()
     m_time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
   }
   else if (m_polyhedron) {
-    typedef boost::is_same<Polyhedron::Plane_3, Exact_plane_3>
+    typedef boost::is_same<Polyhedron::Plane_3, Epec_plane_3>
       Polyhedron_has_plane;
 
     // TBD: Use an existing kernel.
-    Exact_kernel kernel;
+    Epec_kernel kernel;
 
     compute_planes(kernel, *m_polyhedron, Polyhedron_has_plane());
     merge_coplanar_facets(kernel, *m_polyhedron, Polyhedron_has_plane());
@@ -150,10 +150,10 @@ void Spherical_gaussian_map_colored_geo::clean_sgm()
     clock_t start_time = clock();
     if (m_coord_array) {
       auto exact_coord_array =
-        boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
+        boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
       if (exact_coord_array) {
         if (!exact_coord_array->empty()) {
-          typedef boost::shared_ptr<Exact_coord_array_3d>
+          typedef boost::shared_ptr<Epec_coord_array_3d>
             Shared_exact_coord_array_3d;
           Cleaner_visitor<Shared_exact_coord_array_3d>
             cleaner_visitor(this, exact_coord_array);

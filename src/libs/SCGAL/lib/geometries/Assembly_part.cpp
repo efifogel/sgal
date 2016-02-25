@@ -34,12 +34,14 @@
 #include <CGAL/convex_decomposition_3.h>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Epec_kernel.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Material.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Assembly_part.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
 #include "SCGAL/Exact_nef_polyhedron.hpp"
@@ -151,7 +153,7 @@ void Assembly_part::clean_sgm_geos(Container* node)
     auto polyhedron_geo =
       boost::dynamic_pointer_cast<Exact_polyhedron_geo>(shape->get_geometry());
     if (polyhedron_geo) {
-      typedef CGAL::Nef_polyhedron_3<Exact_kernel, CGAL::SNC_indexed_items>
+      typedef CGAL::Nef_polyhedron_3<Epec_kernel, CGAL::SNC_indexed_items>
                                                         Nef_polyhedron;
       typedef Nef_polyhedron::Volume_const_iterator     Volume_const_iterator;
 
@@ -179,10 +181,10 @@ void Assembly_part::clean_sgm_geos(Container* node)
         Sgm_geo::Polyhedron p;
         nef_polyhedron.convert_inner_shell_to_polyhedron(ci->shells_begin(), p);
         // std::cout << p << std::endl;
-        typedef boost::is_same<Sgm_geo::Polyhedron::Plane_3, Exact_plane_3>
+        typedef boost::is_same<Sgm_geo::Polyhedron::Plane_3, Epec_plane_3>
           Polyhedron_has_plane;
         // TBD: Use an existing kernel.
-        Exact_kernel kernel;
+        Epec_kernel kernel;
         compute_planes(kernel, p, Polyhedron_has_plane());
         merge_coplanar_facets(kernel, p, Polyhedron_has_plane());
         number_of_vertices += p.size_of_vertices();

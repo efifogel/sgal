@@ -17,7 +17,7 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
- * Defines the type Exact_polyhedron, which is a polyhedral surface
+ * Defines the type Epec_polyhedron, which is a polyhedral surface
  * representation of a polyhedron. It uses CGAL and as such it uses a
  * halfedge data structure to represent the incidence relations between the
  * cells, namely, vertices, halfedges, and facets. It uses an exact Cartesian
@@ -31,9 +31,7 @@
 #include <CGAL/Polyhedron_3.h>
 
 #include "SGAL/basic.hpp"
-
-#include "SCGAL/basic.hpp"
-#include "SCGAL/Exact_kernel.hpp"
+#include "SGAL/Epec_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -101,7 +99,7 @@ struct My_face :
 };
 
 /*! An items type using extended features */
-struct Exact_polyhedron_items : public CGAL::Polyhedron_items_3 {
+struct Epec_polyhedron_items : public CGAL::Polyhedron_items_3 {
   template <typename Refs, typename Traits>
   struct Vertex_wrapper {
     typedef My_vertex<Refs, Traits> Vertex;
@@ -118,8 +116,8 @@ struct Exact_polyhedron_items : public CGAL::Polyhedron_items_3 {
   };
 };
 
-typedef CGAL::Polyhedron_3<Exact_kernel, Exact_polyhedron_items>
-  Exact_polyhedron;
+typedef CGAL::Polyhedron_3<Epec_kernel, Epec_polyhedron_items>
+  Epec_polyhedron;
 
 SGAL_END_NAMESPACE
 

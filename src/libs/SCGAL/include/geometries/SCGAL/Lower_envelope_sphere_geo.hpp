@@ -38,11 +38,11 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Sphere.hpp"
+#include "SGAL/Epec_kernel.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Lower_envelope_geo.hpp"
 #include "SCGAL/Lower_envelope_sphere.hpp"
-#include "SCGAL/Exact_kernel.hpp"
 #include "SCGAL/Min_sphere.hpp"
 
 SGAL_BEGIN_NAMESPACE

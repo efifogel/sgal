@@ -299,7 +299,7 @@ private:
    * \param action
    * \param point
    */
-  void draw_site(Draw_action* action, Exact_point_3& point);
+  void draw_site(Draw_action* action, Epec_point_3& point);
 
   /*! Draw the arrangement vertices.
    * \param action

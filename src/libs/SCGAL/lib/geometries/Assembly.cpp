@@ -51,11 +51,11 @@
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Switch.hpp"
+#include "SGAL/Epec_coord_array_3d.hpp"
 
 #include "SCGAL/Assembly.hpp"
 #include "SCGAL/Assembly_part.hpp"
 #include "SCGAL/Spherical_gaussian_map.hpp"
-#include "SCGAL/Exact_coord_array_3d.hpp"
 #include "SCGAL/Arrangement_on_sphere_marked_geo.hpp"
 #include "SCGAL/Arrangement_on_sphere_graph_geo.hpp"
 #include "SCGAL/Arrangement_marked_overlay_traits.hpp"
@@ -356,10 +356,9 @@ void Assembly::construct_reflected_sgms()
 {
   clock_t start_time = clock();
   Sgm_geo_list_iter slit;
-  Exact_kernel kernel;
-  Exact_kernel::Construct_translated_point_3 tpoint =
-    kernel.construct_translated_point_3_object();
-  Exact_kernel::Construct_vector_3 cvec = kernel.construct_vector_3_object();
+  Epec_kernel kernel;
+  auto tpoint = kernel.construct_translated_point_3_object();
+  auto cvec = kernel.construct_vector_3_object();
 
   for (auto ppit = m_parts.begin(); ppit != m_parts.end(); ++ppit) {
     auto* part = *ppit;
@@ -373,19 +372,18 @@ void Assembly::construct_reflected_sgms()
        * from the input coordinate array, or from the input polyhedron with new
        * code that computes it directly from the Sgm.
        */
-      typedef boost::shared_ptr<Exact_coord_array_3d>
+      typedef boost::shared_ptr<Epec_coord_array_3d>
         Shared_exact_coord_array_3d;
       Sgm_geo::Shared_coord_array tmp = sgm_geo->get_coord_array();
-      auto coord_array = boost::dynamic_pointer_cast<Exact_coord_array_3d>(tmp);
+      auto coord_array = boost::dynamic_pointer_cast<Epec_coord_array_3d>(tmp);
       if (coord_array) {
         auto size = coord_array->size();
         Shared_exact_coord_array_3d
-          inverse_coord_array(new Exact_coord_array_3d(size));
-        Exact_coord_array_3d::Exact_point_iter itt =
-          inverse_coord_array->begin();
+          inverse_coord_array(new Epec_coord_array_3d(size));
+        auto itt = inverse_coord_array->begin();
         for (auto its = coord_array->begin(); its != coord_array->end(); ++its) {
-          const Exact_point_3& point = *its;
-          Exact_vector_3 vec = cvec(point, CGAL::ORIGIN);
+          const Epec_point_3& point = *its;
+          Epec_vector_3 vec = cvec(point, CGAL::ORIGIN);
           *itt++ = tpoint(CGAL::ORIGIN, vec);
         }
         reflected_sgm_geo->set_coord_array(inverse_coord_array);
@@ -397,12 +395,12 @@ void Assembly::construct_reflected_sgms()
       else {
         Sgm_geo::Polyhedron* reflected_polyhedron = new Sgm_geo::Polyhedron;
         Spherical_gaussian_map_colored* sgm = sgm_geo->get_sgm();
-        std::vector<Exact_point_3> inverse_points;
+        std::vector<Epec_point_3> inverse_points;
         inverse_points.resize(sgm->number_of_faces());
         unsigned int i = 0;
         Sgm_colored_face_const_iterator fit;
         for (fit = sgm->faces_begin(); fit != sgm->faces_end(); ++fit) {
-          Exact_vector_3 vec = cvec(fit->point(), CGAL::ORIGIN);
+          Epec_vector_3 vec = cvec(fit->point(), CGAL::ORIGIN);
           inverse_points[i++] = tpoint(CGAL::ORIGIN, vec);
         }
         CGAL::convex_hull_3(inverse_points.begin(), inverse_points.end(),
@@ -612,23 +610,23 @@ void Assembly::compute_projection(Sgm::Face_const_handle fit, Aos_mark* aos)
   typedef std::list<Aos_mark::Halfedge_handle>          Halfedge_list;
   typedef Halfedge_list::iterator                       Halfedge_list_iter;
 
-  Exact_kernel kernel;
-  Exact_kernel::Construct_vector_3 cvec = kernel.construct_vector_3_object();
+  Epec_kernel kernel;
+  auto cvec = kernel.construct_vector_3_object();
 
-  CGAL::Arr_sgm_initializer<Aos_mark, Exact_kernel> initializer(*aos);
+  CGAL::Arr_sgm_initializer<Aos_mark, Epec_kernel> initializer(*aos);
   Halfedge_list hes;
 
   // Advance the first to a proper place:
   if (first->source()->degree() == 2) first = first->next();
 
-  const Exact_point_3& first_point = first->twin()->face()->point();
-  Exact_vector_3 first_vec = cvec(CGAL::ORIGIN, first_point);
+  const Epec_point_3& first_point = first->twin()->face()->point();
+  Epec_vector_3 first_vec = cvec(CGAL::ORIGIN, first_point);
 
   Sgm::Halfedge_const_iterator curr = first->next();
   if (curr->source()->degree() == 2) curr = curr->next();
 
-  const Exact_point_3& curr_point = curr->twin()->face()->point();
-  Exact_vector_3 curr_vec = cvec(CGAL::ORIGIN, curr_point);
+  const Epec_point_3& curr_point = curr->twin()->face()->point();
+  Epec_vector_3 curr_vec = cvec(CGAL::ORIGIN, curr_point);
 
   initializer.insert(first_vec, curr_vec, std::back_inserter(hes));
   Halfedge_list_iter first_hit = hes.begin();
@@ -636,15 +634,15 @@ void Assembly::compute_projection(Sgm::Face_const_handle fit, Aos_mark* aos)
   --last_hit;
   Aos_mark::Vertex_handle first_vertex = (*first_hit)->source();
   Aos_mark::Vertex_handle curr_vertex = (*last_hit)->target();
-  Exact_vector_3& prev_vec = curr_vec;
+  Epec_vector_3& prev_vec = curr_vec;
   Aos_mark::Vertex_handle prev_vertex = curr_vertex;
 
   curr = curr->next();
   if (curr->source()->degree() == 2) curr = curr->next();
 
   do {
-    const Exact_point_3& curr_point = curr->twin()->face()->point();
-    Exact_vector_3 curr_vec = cvec(CGAL::ORIGIN, curr_point);
+    const Epec_point_3& curr_point = curr->twin()->face()->point();
+    Epec_vector_3 curr_vec = cvec(CGAL::ORIGIN, curr_point);
 
     initializer.insert(prev_vec, prev_vertex, curr_vec,
                        std::back_inserter(hes));
@@ -675,31 +673,31 @@ void Assembly::compute_projection(Sgm::Halfedge_const_handle hit1,
   typedef std::list<Aos_mark::Halfedge_handle>          Halfedge_list;
   typedef Halfedge_list::iterator                       Halfedge_list_iter;
 
-  Exact_kernel kernel;
-  Exact_kernel::Construct_vector_3 cvec = kernel.construct_vector_3_object();
+  Epec_kernel kernel;
+  auto cvec = kernel.construct_vector_3_object();
 
   Sgm::Halfedge_const_iterator hit2 = hit1->twin();
 
   Sgm::Face_const_handle fh1 = hit1->face();
   Sgm::Face_const_handle fh2 = hit2->face();
 
-  const Exact_point_3& point0 = fh1->point();
-  const Exact_point_3& point2 = fh2->point();
+  const Epec_point_3& point0 = fh1->point();
+  const Epec_point_3& point2 = fh2->point();
 
-  const Exact_point_3& point1 = (hit1->source()->degree() > 2) ?
+  const Epec_point_3& point1 = (hit1->source()->degree() > 2) ?
     hit1->prev()->twin()->face()->point() :
     hit1->prev()->prev()->twin()->face()->point();
-  const Exact_point_3& point3 = (hit2->source()->degree() > 2) ?
+  const Epec_point_3& point3 = (hit2->source()->degree() > 2) ?
     hit2->prev()->twin()->face()->point() :
     hit2->prev()->prev()->twin()->face()->point();
 
-  CGAL::Arr_sgm_initializer<Aos_mark, Exact_kernel> initializer(*aos);
+  CGAL::Arr_sgm_initializer<Aos_mark, Epec_kernel> initializer(*aos);
   Halfedge_list hes;
 
-  Exact_vector_3 vec0 = cvec(CGAL::ORIGIN, point0);
-  Exact_vector_3 vec1 = cvec(CGAL::ORIGIN, point1);
-  Exact_vector_3 vec2 = cvec(CGAL::ORIGIN, point2);
-  Exact_vector_3 vec3 = cvec(CGAL::ORIGIN, point3);
+  Epec_vector_3 vec0 = cvec(CGAL::ORIGIN, point0);
+  Epec_vector_3 vec1 = cvec(CGAL::ORIGIN, point1);
+  Epec_vector_3 vec2 = cvec(CGAL::ORIGIN, point2);
+  Epec_vector_3 vec3 = cvec(CGAL::ORIGIN, point3);
 
   initializer.insert(vec0, vec1, std::back_inserter(hes));
   Halfedge_list_iter first_hit = hes.begin();
@@ -732,23 +730,23 @@ void Assembly::compute_projection(Sgm::Halfedge_const_handle hit1,
  */
 void Assembly::compute_projection(Sgm::Vertex_const_handle vit, Aos_mark* aos)
 {
-  Exact_kernel kernel;
-  Exact_kernel::Construct_vector_3 cvec = kernel.construct_vector_3_object();
+  Epec_kernel kernel;
+  auto cvec = kernel.construct_vector_3_object();
 
   typedef std::list<Aos_mark::Halfedge_handle>          Halfedge_list;
   typedef Halfedge_list::iterator                       Halfedge_list_iter;
 
-  CGAL::Arr_sgm_initializer<Aos_mark, Exact_kernel> initializer(*aos);
+  CGAL::Arr_sgm_initializer<Aos_mark, Epec_kernel> initializer(*aos);
   Halfedge_list hes;
 
   Sgm::Halfedge_around_vertex_const_circulator hec = vit->incident_halfedges();
   Sgm::Halfedge_around_vertex_const_circulator first = hec++;
-  const Exact_point_3& first_point = first->face()->point();
-  const Exact_point_3& point = hec->face()->point();
+  const Epec_point_3& first_point = first->face()->point();
+  const Epec_point_3& point = hec->face()->point();
 
   // Create first arc:
-  Exact_vector_3 first_vec = cvec(CGAL::ORIGIN, first_point);
-  Exact_vector_3 vec = cvec(CGAL::ORIGIN, point);
+  Epec_vector_3 first_vec = cvec(CGAL::ORIGIN, first_point);
+  Epec_vector_3 vec = cvec(CGAL::ORIGIN, point);
 
   initializer.insert(first_vec, vec, std::back_inserter(hes));
   Halfedge_list_iter first_hit = hes.begin();
@@ -759,8 +757,8 @@ void Assembly::compute_projection(Sgm::Vertex_const_handle vit, Aos_mark* aos)
 
   ++hec;
   do {
-    const Exact_point_3& next_point = hec->face()->point();
-    Exact_vector_3 next_vec = cvec(CGAL::ORIGIN, next_point);
+    const Epec_point_3& next_point = hec->face()->point();
+    Epec_vector_3 next_vec = cvec(CGAL::ORIGIN, next_point);
 
     // Create arc:
     initializer.insert(vec, vertex, next_vec, std::back_inserter(hes));
@@ -838,10 +836,10 @@ void Assembly::compute_general_projection(const Sgm* sgm, Aos_mark* aos)
   typedef std::list<Aos_mark::Halfedge_handle>          Halfedge_list;
   typedef Halfedge_list::iterator                       Halfedge_list_iter;
 
-  Exact_kernel kernel;
-  Exact_kernel::Construct_vector_3 cvec = kernel.construct_vector_3_object();
+  Epec_kernel kernel;
+  auto cvec = kernel.construct_vector_3_object();
 
-  CGAL::Arr_sgm_initializer<Aos_mark, Exact_kernel> initializer(*aos);
+  CGAL::Arr_sgm_initializer<Aos_mark, Epec_kernel> initializer(*aos);
   Halfedge_list hes;
 
   /* Traverse all halfedges. Search for a halfedge, such that the origin lies
@@ -872,8 +870,8 @@ void Assembly::compute_general_projection(const Sgm* sgm, Aos_mark* aos)
   }
   Sgm::Face_const_handle first_silhouette_face = silhouette_he->face();
 
-  const Exact_point_3& first_point = first_silhouette_face->point();
-  Exact_vector_3 first_vec = cvec(CGAL::ORIGIN, first_point);
+  const Epec_point_3& first_point = first_silhouette_face->point();
+  Epec_vector_3 first_vec = cvec(CGAL::ORIGIN, first_point);
 
   // Advance:
   silhouette_he = find_next_silhouette_halfedge(silhouette_he->twin());
@@ -881,8 +879,8 @@ void Assembly::compute_general_projection(const Sgm* sgm, Aos_mark* aos)
   Sgm::Face_const_handle silhouette_face = silhouette_he->face();
 
   // Create arc:
-  const Exact_point_3& point = silhouette_face->point();
-  Exact_vector_3 vec = cvec(CGAL::ORIGIN, point);
+  const Epec_point_3& point = silhouette_face->point();
+  Epec_vector_3 vec = cvec(CGAL::ORIGIN, point);
   initializer.insert(first_vec, vec, std::back_inserter(hes));
   Halfedge_list_iter first_hit = hes.begin();
   Halfedge_list_iter last_hit = hes.end();
@@ -900,8 +898,8 @@ void Assembly::compute_general_projection(const Sgm* sgm, Aos_mark* aos)
    */
   while (silhouette_face != first_silhouette_face) {
     // Create arc:
-    const Exact_point_3& next_point = silhouette_face->point();
-    Exact_vector_3 next_vec = cvec(CGAL::ORIGIN, next_point);
+    const Epec_point_3& next_point = silhouette_face->point();
+    Epec_vector_3 next_vec = cvec(CGAL::ORIGIN, next_point);
     initializer.insert(vec, vertex, next_vec, std::back_inserter(hes));
     last_hit = hes.end();
     --last_hit;
@@ -929,23 +927,20 @@ void Assembly::compute_general_projection(const Sgm* sgm, Aos_mark* aos)
  */
 CGAL::Oriented_side Assembly::compute_side(Sgm::Halfedge_const_handle heh)
 {
-  typedef Exact_kernel::Plane_3                         Exact_plane_3;
-
-  Exact_kernel kernel;
-  Exact_kernel::Oriented_side_3 os_op = kernel.oriented_side_3_object();
-  Exact_kernel::Construct_plane_3 construct_plane =
-    kernel.construct_plane_3_object();
+  Epec_kernel kernel;
+  auto os_op = kernel.oriented_side_3_object();
+  auto construct_plane = kernel.construct_plane_3_object();
 
   Sgm::Halfedge_const_handle twin_heh = heh->twin();
-  const Exact_point_3& point1 = heh->face()->point();
-  const Exact_point_3& point2 = twin_heh->face()->point();
-  const Exact_point_3& point3 = (twin_heh->target()->degree() > 2) ?
+  const Epec_point_3& point1 = heh->face()->point();
+  const Epec_point_3& point2 = twin_heh->face()->point();
+  const Epec_point_3& point3 = (twin_heh->target()->degree() > 2) ?
     twin_heh->next()->twin()->face()->point() :
     twin_heh->next()->next()->twin()->face()->point();
-  Exact_plane_3 plane = construct_plane(point1, point2, point3);
+  Epec_plane_3 plane = construct_plane(point1, point2, point3);
   // For some reason the statement bellow does not compile (at least with VC).
   // return os_op(plane, CGAL::ORIGIN);
-  Exact_point_3 origin(CGAL::ORIGIN);
+  Epec_point_3 origin(CGAL::ORIGIN);
   return os_op(plane, origin);
 }
 
@@ -962,8 +957,8 @@ void Assembly::compute_projection(const Sgm* sgm, Aos_mark* aos)
    *   from there to find all the polyhedron vertices on the silhouette.
    */
 
-  Exact_kernel kernel;
-  Exact_kernel::Coplanar_3 coplanar = kernel.coplanar_3_object();
+  Epec_kernel kernel;
+  auto coplanar = kernel.coplanar_3_object();
 
   // Traverse all Gaussian map vertices (primal facets):
   for (auto vit = sgm->vertices_begin(); vit != sgm->vertices_end(); ++vit) {
@@ -981,7 +976,7 @@ void Assembly::compute_projection(const Sgm* sgm, Aos_mark* aos)
 
     // For some reason the statement bellow does not compile (at least with VC).
     // if (coplanar(point1, point2, point3, CGAL::ORIGIN)) {
-    Exact_point_3 origin(CGAL::ORIGIN);
+    Epec_point_3 origin(CGAL::ORIGIN);
     if (coplanar(point1, point2, point3, origin)) {
       /* The origin is contained in the underlying plane of the primal
        * facet associated with vit. Traverse all adjacent primal facets:

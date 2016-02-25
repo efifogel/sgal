@@ -38,8 +38,9 @@
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_polyhedron_3.h>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Vector3f.hpp"
 #include "SGAL/Trace.hpp"
+#include "SGAL/Epec_kernel.hpp"
+#include "SGAL/Vector3f.hpp"
 #include "SGAL/Cull_context.hpp"
 
 #include "SCGAL/basic.hpp"
@@ -83,7 +84,7 @@ private:
     Shared_spherical_gaussian_map_marked_geo;
 
   typedef Spherical_gaussian_map_marked           Sgm;
-  typedef CGAL::Arr_polyhedral_sgm_polyhedron_3<Sgm, Exact_kernel>
+  typedef CGAL::Arr_polyhedral_sgm_polyhedron_3<Sgm, Epec_kernel>
                                                   Polyhedron;
 
   typedef Sgm::Geometry_traits_2                  Geometry_traits_2;

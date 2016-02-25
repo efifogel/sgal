@@ -1,4 +1,4 @@
-// Copyright (c) 2007 Israel.
+// Copyright (c) 2015 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -14,34 +14,26 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Arrangement_extended_direction.hpp 6681 2008-07-27 12:01:54Z efif $
-// $Revision: 6681 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SCGAL_ARRANGEMENT_EXTENDED_DIRECTION_HPP
-#define SCGAL_ARRANGEMENT_EXTENDED_DIRECTION_HPP
+#if defined(_MSC_VER)
+#pragma warning ( disable : 4512 )
+#endif
 
-#include <CGAL/basic.h>
-#include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
+#include <vector>
+#include <string>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Vector3f.hpp"
-#include "SGAL/Epec_kernel.hpp"
+#include "SGAL/Modeling_option_parser.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Convert a direction into Vector3f. */
-typedef CGAL::Arr_extended_direction_3<Epec_kernel>  Arr_extended_direction_3;
+//! \brief constructs default.
+Modeling_option_parser::Modeling_option_parser() :
+  m_modeling_opts("Modeling options")
+{}
 
-template <>
-inline Vector3f
-to_vector3f<Arr_extended_direction_3>(const Arr_extended_direction_3& dir)
-{
-  const Epec_direction_3& exact_dir = dir;
-  return to_vector3f(exact_dir);
-}
+//! \brief destructs.
+Modeling_option_parser::~Modeling_option_parser() {}
 
 SGAL_END_NAMESPACE
-
-#endif

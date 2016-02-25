@@ -34,13 +34,14 @@
 #include <list>
 #include <boost/lexical_cast.hpp>
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/basic.h>
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_geodesic_arc_on_sphere_partition_traits_2.h>
 #include <CGAL/partition_2.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Epec_kernel.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Element.hpp"
@@ -48,10 +49,11 @@
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
+#include "SGAL/Epec_coord_array_3d.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Arrangement_on_sphere_marked_geo.hpp"
 #include "SCGAL/Arrangement_on_surface_geo_overlay.hpp"
-#include "SCGAL/Exact_coord_array_3d.hpp"
 #include "SCGAL/Arrangement_on_sphere_renderers.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -380,19 +382,19 @@ void Arrangement_on_sphere_marked_geo::clean()
               std::distance(m_aoses.begin(), m_aoses.end()), this);
 
   // Locate points:
-  boost::shared_ptr<Exact_coord_array_3d> exact_coord_array =
-    boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
+  boost::shared_ptr<Epec_coord_array_3d> exact_coord_array =
+    boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
   if (exact_coord_array && (exact_coord_array->size() > 0)) {
     Aos_point_location_strategy naive_pl(*m_aos);
     std::vector<Uint>::iterator it;
-    Exact_kernel kernel;
+    Epec_kernel kernel;
     for (it = m_point_location_indices.begin();
          it != m_point_location_indices.end(); ++it)
     {
-      Exact_point_3& point = (*exact_coord_array)[*it];
-      Exact_vector_3 vec =
+      Epec_point_3& point = (*exact_coord_array)[*it];
+      Epec_vector_3 vec =
         kernel.construct_vector_3_object()(CGAL::ORIGIN, point);
-      Exact_direction_3 dir = kernel.construct_direction_3_object()(vec);
+      Epec_direction_3 dir = kernel.construct_direction_3_object()(vec);
       // Perform the point-location query.
       CGAL::Object obj = naive_pl.locate(dir);
       Aos_marked::Vertex_const_handle v;

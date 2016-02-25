@@ -37,6 +37,7 @@
 // #include <CGAL/IO/Arr_iostream.h>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Epec_kernel.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Vector4f.hpp"
 #include "SGAL/Trace.hpp"
@@ -72,7 +73,7 @@ public:
     Shared_spherical_gaussian_map_colored_geo;
 
   typedef CGAL::Arr_polyhedral_sgm_polyhedron_3<Spherical_gaussian_map_colored,
-                                                Exact_kernel>
+                                                Epec_kernel>
                                                   Polyhedron;
   /*! Fields */
   enum {

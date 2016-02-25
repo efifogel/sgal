@@ -58,9 +58,10 @@
 #include "SGAL/Field.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Extrusion.hpp"
+#include "SGAL/Epec_coord_array_3d.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Cubical_gaussian_map_geo.hpp"
-#include "SCGAL/Exact_coord_array_3d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -250,10 +251,10 @@ void Cubical_gaussian_map_geo::clean_cgm()
   else {
     clock_t start_time = clock();
     auto exact_coord_array =
-      boost::dynamic_pointer_cast<Exact_coord_array_3d>(get_coord_array());
+      boost::dynamic_pointer_cast<Epec_coord_array_3d>(get_coord_array());
     if (exact_coord_array) {
       if (!exact_coord_array->empty()) {
-        typedef boost::shared_ptr<Exact_coord_array_3d>
+        typedef boost::shared_ptr<Epec_coord_array_3d>
           Shared_exact_coord_array_3d;
         Cleaner_visitor<Shared_exact_coord_array_3d>
           cleaner_visitor(this, exact_coord_array);

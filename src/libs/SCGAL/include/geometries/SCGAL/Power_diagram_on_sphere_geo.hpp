@@ -36,10 +36,10 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Epec_plane_array.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Geodesic_voronoi_on_sphere_geo.hpp"
-#include "SCGAL/Exact_plane_array.hpp"
 #include "SCGAL/Arrangement_extended_direction.hpp"
 #include "SCGAL/Arrangement_renderer.hpp"
 
@@ -82,7 +82,7 @@ public:
   typedef Site_shape::Style                     Site_style;
 
 private:
-  typedef Exact_plane_array                        Coeff_array;
+  typedef Epec_plane_array                        Coeff_array;
 
   typedef CGAL::Spherical_power_diagram_traits_2<Kernel>
     Geom_traits;
@@ -124,7 +124,7 @@ private:
     Vos_halfedge_around_vertex_const_circulator;
 
   typedef boost::shared_ptr<Coeff_array>           Shared_coeff_array;
-  typedef boost::shared_ptr<Exact_plane_array>     Shared_exact_plane_array;
+  typedef boost::shared_ptr<Epec_plane_array>     Shared_exact_plane_array;
 
 public:
   /*! Constructor. */
@@ -133,7 +133,7 @@ public:
   /*! Destructor. */
   virtual ~Power_diagram_on_sphere_geo();
 
-  /* Construct the prototype. */
+  /*! Construct the prototype. */
   static Power_diagram_on_sphere_geo* prototype();
 
   /*! Clone. */
@@ -365,7 +365,7 @@ private:
    * \param action
    * \param point
    */
-  void draw_site(Draw_action* action, Exact_plane_3& plane);
+  void draw_site(Draw_action* action, Epec_plane_3& plane);
 
   /*! Draw the arrangement vertices.
    * \param action

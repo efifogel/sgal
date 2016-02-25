@@ -32,15 +32,15 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/basic.h>
 #include <CGAL/Min_sphere_of_spheres_d.h>
-
 #include <CGAL/envelope_3.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Trace.hpp"
+#include "SGAL/Epec_kernel.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Element.hpp"
@@ -61,9 +61,10 @@
 #include "SGAL/Shape.hpp"
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Material.hpp"
+#include "SGAL/Epec_plane_array.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Power_diagram_on_sphere_geo.hpp"
-#include "SCGAL/Exact_plane_array.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -242,11 +243,11 @@ void Power_diagram_on_sphere_geo::clean()
     m_owned_vos = true;
   }
 
-  Exact_kernel kernel;
-  Exact_point_3 origin = kernel.construct_point_3_object() (CGAL::ORIGIN);
+  Epec_kernel kernel;
+  Epec_point_3 origin = kernel.construct_point_3_object() (CGAL::ORIGIN);
 
   Shared_exact_plane_array exact_coeff_array =
-    boost::dynamic_pointer_cast<Exact_plane_array>(m_coeff_array);
+    boost::dynamic_pointer_cast<Epec_plane_array>(m_coeff_array);
   if (exact_coeff_array && (exact_coeff_array->size() > 0)) {
 
     if (this->m_site_indices.size() != 0) {
@@ -257,7 +258,7 @@ void Power_diagram_on_sphere_geo::clean()
       for (auto it = this->m_site_indices.begin();
            it != this->m_site_indices.end(); ++it)
       {
-        Exact_plane_3 plane = (*exact_coeff_array)[*it];
+        Epec_plane_3 plane = (*exact_coeff_array)[*it];
         if (kernel.oriented_side_3_object() (plane, origin) ==
             CGAL::ON_NEGATIVE_SIDE)
           plane = kernel.construct_opposite_plane_3_object() (plane);
@@ -297,7 +298,7 @@ void Power_diagram_on_sphere_geo::draw_opaque(Draw_action* action)
 
 //! \brief draws a site.
 void Power_diagram_on_sphere_geo::draw_site(Draw_action* action,
-                                            Exact_plane_3& plane)
+                                            Epec_plane_3& plane)
 {
   float a = static_cast<float>(CGAL::to_double(plane.a()));
   float b = static_cast<float>(CGAL::to_double(plane.b()));
@@ -392,13 +393,13 @@ void Power_diagram_on_sphere_geo::draw_sites(Draw_action* action)
 {
   glColor3fv((float*)&m_site_color[0]);
 
-  Shared_exact_plane_array exact_coeff_array =
-    boost::dynamic_pointer_cast<Exact_plane_array>(m_coeff_array);
+  auto exact_coeff_array =
+    boost::dynamic_pointer_cast<Epec_plane_array>(m_coeff_array);
   if (exact_coeff_array && (exact_coeff_array->size() > 0)) {
     for (auto it = this->m_site_indices.begin();
          it != this->m_site_indices.end(); ++it)
     {
-      Exact_plane_3& plane = (*exact_coeff_array)[*it];
+      Epec_plane_3& plane = (*exact_coeff_array)[*it];
       draw_site(action, plane);
     }
   }

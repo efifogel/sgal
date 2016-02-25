@@ -31,10 +31,10 @@
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_polyhedron_3.h>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Epec_kernel.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Spherical_gaussian_map.hpp"
-#include "SCGAL/Exact_number_type.hpp"
-#include "SCGAL/Exact_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -73,7 +73,7 @@ public:
   /*! Set the color. */
   void set_color(const Vector3f& color) { m_color = color; }
 };
-  
+
 /*! Extend the arrangement face. */
 class Sgm_colored_arr_face : public Sgm_arr_face {
 private:
@@ -102,7 +102,7 @@ public:
   Sgm_colored_arr_dcel() {}
 };
 
-typedef CGAL::Arr_polyhedral_sgm_traits<Exact_kernel>
+typedef CGAL::Arr_polyhedral_sgm_traits<Epec_kernel>
   Sgm_colored_geometry_traits_2;
 typedef CGAL::Arr_polyhedral_sgm<Sgm_colored_geometry_traits_2,
                                  Sgm_colored_arr_dcel>
@@ -130,7 +130,7 @@ typedef Spherical_gaussian_map_colored::Halfedge_const_handle
   Sgm_colored_halfedge_const_handle;
 typedef Spherical_gaussian_map_colored::Face_const_handle
   Sgm_colored_face_const_handle;
-  
+
 typedef Spherical_gaussian_map_colored::Vertex_iterator
   Sgm_colored_vertex_iterator;
 typedef Spherical_gaussian_map_colored::Halfedge_iterator
@@ -155,7 +155,7 @@ typedef Spherical_gaussian_map_colored::Halfedge_around_vertex_const_circulator
   Sgm_colored_halfedge_around_vertex_const_circulator;
 
 typedef CGAL::Arr_polyhedral_sgm_polyhedron_3<Spherical_gaussian_map_colored,
-                                              Exact_kernel>
+                                              Epec_kernel>
   Sgm_colored_polyhedron;
 typedef CGAL::Arr_polyhedral_sgm_initializer<Spherical_gaussian_map_colored,
                                              Sgm_colored_polyhedron>

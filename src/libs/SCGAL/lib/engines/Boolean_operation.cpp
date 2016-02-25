@@ -47,8 +47,9 @@
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Vrml_formatter.hpp"
+#include "SGAL/Epec_polyhedron.hpp"
 
-#include "SCGAL/Exact_polyhedron.hpp"
+#include "SCGAL/basic.hpp"
 #include "SCGAL/compute_planes.hpp"
 #include "SCGAL/merge_coplanar_facets.hpp"
 #include "SCGAL/Boolean_operation.hpp"
@@ -122,21 +123,21 @@ void Boolean_operation::execute()
   if (!m_operand1 || !m_operand2) return;
 
   Shared_exact_polyhedron_geo geometry1 = get_geometry(m_operand1);
-  const Exact_polyhedron& polyhedron1 = geometry1->get_polyhedron();
+  const Epec_polyhedron& polyhedron1 = geometry1->get_polyhedron();
   Shared_exact_polyhedron_geo geometry2 = get_geometry(m_operand2);
-  const Exact_polyhedron& polyhedron2 = geometry2->get_polyhedron();
+  const Epec_polyhedron& polyhedron2 = geometry2->get_polyhedron();
 
   m_result.clear();
 
 #if 0
-  typedef CGAL::Nef_polyhedron_3<Exact_kernel, CGAL::SNC_indexed_items>
+  typedef CGAL::Nef_polyhedron_3<Epec_kernel, CGAL::SNC_indexed_items>
                                                     Nef_polyhedron;
 
   /*! \todo Allow passing a const polyhedron to the constructor of
    * Nef_polyhedron
    */
-  auto tmp1 = const_cast<Exact_polyhedron&>(polyhedron1);
-  auto tmp2 = const_cast<Exact_polyhedron&>(polyhedron2);
+  auto tmp1 = const_cast<Epec_polyhedron&>(polyhedron1);
+  auto tmp2 = const_cast<Epec_polyhedron&>(polyhedron2);
   Nef_polyhedron nef_polyhedron1 = Nef_polyhedron(tmp1);
   Nef_polyhedron nef_polyhedron2 = Nef_polyhedron(tmp2);
 
@@ -144,7 +145,7 @@ void Boolean_operation::execute()
   Nef_polyhedron nef_polyhedron(nef_polyhedron1 * nef_polyhedron2);
   SGAL_assertion(nef_polyhedron.is_simple());
 
-  Exact_polyhedron p;
+  Epec_polyhedron p;
   nef_polyhedron.convert_to_polyhedron(p);
   auto geometry = Shared_exact_polyhedron_geo(new Exact_polyhedron_geo);
   geometry->set_polyhedron(p);
@@ -152,12 +153,12 @@ void Boolean_operation::execute()
 
 #else
   //! \todo Allow passing a const polyhedron
-  auto tmp1 = const_cast<Exact_polyhedron&>(polyhedron1);
-  auto tmp2 = const_cast<Exact_polyhedron&>(polyhedron2);
+  auto tmp1 = const_cast<Epec_polyhedron&>(polyhedron1);
+  auto tmp2 = const_cast<Epec_polyhedron&>(polyhedron2);
 
-  typedef std::vector<Exact_point_3>          Polyline;
+  typedef std::vector<Epec_point_3>          Polyline;
   std::list<Polyline> polylines;
-  typedef std::pair<Exact_polyhedron*, int>   Polyhedron_ptr_and_type;
+  typedef std::pair<Epec_polyhedron*, int>   Polyhedron_ptr_and_type;
   std::list<Polyhedron_ptr_and_type> polyhedrons;
   Bso op;
 

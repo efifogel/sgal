@@ -38,7 +38,6 @@
 #include "SGAL/Geometry.hpp"
 
 #include "SCGAL/basic.hpp"
-#include "SCGAL/Exact_kernel.hpp"
 #include "SCGAL/Min_sphere.hpp"
 
 SGAL_BEGIN_NAMESPACE

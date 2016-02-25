@@ -40,8 +40,6 @@
 #include "SGAL/Inexact_kernel.hpp"
 
 #include "SCGAL/basic.hpp"
-#include "SCGAL/Exact_number_type.hpp"
-#include "SCGAL/Exact_kernel.hpp"
 #include "SCGAL/Arrangement_renderer.hpp"
 #include "SCGAL/Arrangement_renderers.hpp"
 

@@ -46,11 +46,10 @@
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Trace.hpp"
+#include "SGAL/Epec_kernel.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Min_sphere.hpp"
-#include "SCGAL/Exact_number_type.hpp"
-#include "SCGAL/Exact_kernel.hpp"
 #include "SCGAL/Arrangement_renderer.hpp"
 #include "SCGAL/Arrangement_renderers.hpp"
 #include "SCGAL/Arrangement_on_cube_renderers.hpp"
@@ -64,7 +63,7 @@ class Draw_action;
 class Scene_graph;
 class Sphere;
 class Cylinder;
-class Exact_coord_array_3d;
+class Epec_coord_array_3d;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -104,18 +103,17 @@ public:
     LAST
   };
 
-  typedef Arrangement_renderer::Vertex_shape          Vertex_shape;
-  typedef Vertex_shape::Style                         Vertex_style;
+  typedef Arrangement_renderer::Vertex_shape         Vertex_shape;
+  typedef Vertex_shape::Style                        Vertex_style;
 
-  typedef Arrangement_renderer::Edge_shape            Edge_shape;
-  typedef Edge_shape::Style                           Edge_style;
+  typedef Arrangement_renderer::Edge_shape           Edge_shape;
+  typedef Edge_shape::Style                          Edge_style;
 
   // Kernel, Number type, etc.
-  typedef Exact_number_type                           Number_type;
-  typedef Exact_kernel                                Kernel;
-  typedef Kernel::Point_3                             Point_3;
-  typedef Kernel::Vector_3                            Vector_3;
-  typedef Kernel::Aff_transformation_3                Aff_transformation_3;
+  typedef Epec_kernel                                Kernel;
+  typedef Epec_point_3                               Point_3;
+  typedef Epec_vector_3                              Vector_3;
+  typedef Epec_aff_transformation_3                  Aff_transformation_3;
 
 private:
   template <typename CoordArray>

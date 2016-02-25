@@ -37,10 +37,11 @@
 #include <list>
 #include <boost/lexical_cast.hpp>
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/basic.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Epec_kernel.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Element.hpp"
@@ -48,9 +49,10 @@
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
+#include "SGAL/Epec_coord_array_3d.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Polygon_set_on_sphere_geo.hpp"
-#include "SCGAL/Exact_coord_array_3d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -110,12 +112,12 @@ void Polygon_set_on_sphere_geo::set_attributes(Element* elem)
   boost::char_separator<char> sep(", \t\n\r");
 
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
 
     if (name == "polyIndex") {
       tokenizer tokens(value, sep);
-      Uint size = std::distance(tokens.begin(), tokens.end());
+      auto size = std::distance(tokens.begin(), tokens.end());
       if (size == 0) {
         m_poly_indices.clear();
         std::cerr << "Error!" << std::endl;
@@ -137,11 +139,11 @@ void Polygon_set_on_sphere_geo::set_attributes(Element* elem)
   for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
        ++cai)
   {
-    const std::string& name = elem->get_name(cai);
-    Shared_container cont = elem->get_value(cai);
+    const auto& name = elem->get_name(cai);
+    auto cont = elem->get_value(cai);
     if (is_operation_type_name(name)) {
       set_operation_type(get_operation_type_by_name(name));
-      Shared_polygon_set_on_sphere_geo aos_geo =
+      auto aos_geo =
         boost::dynamic_pointer_cast<Polygon_set_on_sphere_geo>(cont);
       if (aos_geo) add_aos_geo(aos_geo);
       elem->mark_delete(cai);
@@ -153,8 +155,8 @@ void Polygon_set_on_sphere_geo::set_attributes(Element* elem)
   for (auto mcai = elem->multi_cont_attrs_begin();
        mcai != elem->multi_cont_attrs_end(); ++mcai)
   {
-    const std::string& name = elem->get_name(mcai);
-    Element::Cont_list& cont_list = elem->get_value(mcai);
+    const auto& name = elem->get_name(mcai);
+    auto& cont_list = elem->get_value(mcai);
     if (is_operation_type_name(name)) {
       set_operation_type(get_operation_type_by_name(name));
       for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++) {
@@ -189,8 +191,8 @@ void Polygon_set_on_sphere_geo::clean()
   this->polygon_set().clear();
 
   if (m_poly_indices.empty() == false) {
-    boost::shared_ptr<Exact_coord_array_3d> exact_coord_array =
-      boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
+    auto exact_coord_array =
+      boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
     auto it = m_poly_indices.begin();
     while (it != m_poly_indices.end()) {
       // create the polygons according to the indices and add them to the
@@ -198,9 +200,9 @@ void Polygon_set_on_sphere_geo::clean()
       typedef std::vector<CGAL::Object>                           Obj_cont;
 
       Curve_cont curves;
-      Exact_point_3* first = &(*exact_coord_array)[*it];
-      Exact_point_3* curr = nullptr;
-      Exact_point_3* prev = nullptr;
+      Epec_point_3* first = &(*exact_coord_array)[*it];
+      Epec_point_3* curr = nullptr;
+      Epec_point_3* prev = nullptr;
       while ((it != m_poly_indices.end()) && (*it != -1)) {
         prev = curr;
 
@@ -254,9 +256,9 @@ void Polygon_set_on_sphere_geo::clean()
   // For now, we compute the operation between the first and the last
   // polygons.
   if (m_aoses.size() >= 2) {
-    Shared_polygon_set_on_sphere_geo first =
+    auto first =
       boost::dynamic_pointer_cast<Polygon_set_on_sphere_geo>(m_aoses.front());
-    Shared_polygon_set_on_sphere_geo last =
+    auto last =
       boost::dynamic_pointer_cast<Polygon_set_on_sphere_geo>(m_aoses.back());
 
     // TODO: Prevent infinite recursion!
@@ -326,8 +328,7 @@ Polygon_set_on_sphere_geo::get_operation_type_by_name(const std::string& op_name
  * \param p2 Second point
  */
 Polygon_set_on_sphere_geo::Curve_cont
-Polygon_set_on_sphere_geo::construct_curves(Exact_point_3* p1,
-                                            Exact_point_3* p2)
+Polygon_set_on_sphere_geo::construct_curves(Epec_point_3* p1, Epec_point_3* p2)
 {
   SGAL_precondition(p1 != nullptr);
   SGAL_precondition(p2 != nullptr);
@@ -337,15 +338,11 @@ Polygon_set_on_sphere_geo::construct_curves(Exact_point_3* p1,
   typedef Aos_geom_traits::X_monotone_curve_2 X_monotone_curve_2;
 
   // converting points to directions, needed by the geodesic traits class.
-  Exact_kernel k;
-  Exact_kernel::Vector_3 vec1 = k.construct_vector_3_object()
-    (CGAL::ORIGIN, *p1);
-  Exact_kernel::Vector_3 vec2 = k.construct_vector_3_object()
-    (CGAL::ORIGIN, *p2);
-  Exact_kernel::Direction_3 dir1 = k.construct_direction_3_object()
-    (vec1);
-  Exact_kernel::Direction_3 dir2 = k.construct_direction_3_object()
-    (vec2);
+  Epec_kernel k;
+  Epec_vector_3 vec1 = k.construct_vector_3_object()(CGAL::ORIGIN, *p1);
+  Epec_vector_3 vec2 = k.construct_vector_3_object()(CGAL::ORIGIN, *p2);
+  Epec_direction_3 dir1 = k.construct_direction_3_object()(vec1);
+  Epec_direction_3 dir2 = k.construct_direction_3_object()(vec2);
   Curve_2 new_cv(dir1, dir2);
 
   std::list<CGAL::Object> objects;
