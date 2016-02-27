@@ -24,6 +24,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Vector3f.hpp"
+#include "SGAL/to_vector.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -40,25 +41,6 @@ typedef Epic_kernel::Vector_3                         Epic_vector_3;
 typedef Epic_kernel::Direction_3                      Epic_direction_3;
 typedef Epic_kernel::Plane_3                          Epic_plane_3;
 typedef Epic_kernel::Aff_transformation_3             Epic_aff_transformation_3;
-
-/*! Convert a point into Vector2f.
- */
-template <typename Point>
-inline Vector2f to_vector2f(const Point & point)
-{
-  return Vector2f(static_cast<float>(CGAL::to_double(point.x())),
-                  static_cast<float>(CGAL::to_double(point.y())));
-}
-
-/*! Convert a point into Vector3f.
- */
-template <typename Point>
-inline Vector3f to_vector3f(const Point& point)
-{
-  return Vector3f(static_cast<float>(CGAL::to_double(point.x())),
-                  static_cast<float>(CGAL::to_double(point.y())),
-                  static_cast<float>(CGAL::to_double(point.z())));
-}
 
 /*! Convert a direction into Vector3f. */
 template <>

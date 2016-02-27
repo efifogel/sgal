@@ -16,14 +16,15 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SCGAL_EPEC_KERNEL_HPP
-#define SCGAL_EPEC_KERNEL_HPP
+#ifndef SGAL_EPEC_KERNEL_HPP
+#define SGAL_EPEC_KERNEL_HPP
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Vector3f.hpp"
+#include "SGAL/to_vector.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -40,25 +41,6 @@ typedef Epec_kernel::Vector_3                         Epec_vector_3;
 typedef Epec_kernel::Direction_3                      Epec_direction_3;
 typedef Epec_kernel::Plane_3                          Epec_plane_3;
 typedef Epec_kernel::Aff_transformation_3             Epec_aff_transformation_3;
-
-/*! Convert a point into Vector2f.
- */
-template <typename Point>
-inline Vector2f to_vector2f(const Point & point)
-{
-  return Vector2f(static_cast<float>(CGAL::to_double(point.x())),
-                  static_cast<float>(CGAL::to_double(point.y())));
-}
-
-/*! Convert a point into Vector3f.
- */
-template <typename Point>
-inline Vector3f to_vector3f(const Point& point)
-{
-  return Vector3f(static_cast<float>(CGAL::to_double(point.x())),
-                  static_cast<float>(CGAL::to_double(point.y())),
-                  static_cast<float>(CGAL::to_double(point.z())));
-}
 
 /*! Convert a direction into Vector3f. */
 template <>
