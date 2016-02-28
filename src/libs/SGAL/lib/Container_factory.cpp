@@ -69,6 +69,7 @@
 #include "SGAL/Epec_coord_array_3d.hpp"
 #include "SGAL/Epec_normal_array.hpp"
 #include "SGAL/Epec_plane_array.hpp"
+#include "SGAL/Epic_coord_array_3d.hpp"
 #include "SGAL/Elevation_grid.hpp"
 #include "SGAL/Extrusion.hpp"
 #include "SGAL/Indexed_face_set.hpp"
@@ -203,6 +204,7 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Epec_coord_array_3d);
   REGISTER_OBJECT(Epec_normal_array);
   REGISTER_OBJECT(Epec_plane_array);
+  REGISTER_OBJECT(Epic_coord_array_3d);
   REGISTER_OBJECT(Elevation_grid);
   REGISTER_OBJECT(Extrusion);
   REGISTER_OBJECT(Environment_background);

@@ -21,9 +21,9 @@ DEF ROBOT_NAVIGATION NavigationInfo {
 DEF DRAW_DUAL_ROBOT_KEY SingleKeySensor { key "d" }
 DEF FLATTEN_ROBOT_KEY SingleKeySensor { key "f" }
 
-DEF ROBOT_TRANSFORMER TransformerWithExactCoordinates {
+DEF ROBOT_TRANSFORMER TransformerWithEpecCoordinates {
   translation 3 0 0
-  coord DEF ROBOT_COORD ExactCoordinate {
+  coord DEF ROBOT_COORD EpecCoordinate {
      exactPoint [-2000/1000 0/1000 0/1000,
 	       -2076/1000 -382/1000 0/1000,
 	       -2292/1000 -707/1000 0/1000,
@@ -54,10 +54,10 @@ DEF OBSTACLE_NAVIGATION NavigationInfo {
 DEF DRAW_DUAL_OBSTACLE_KEY SingleKeySensor { key "e" }
 DEF FLATTEN_OBSTACLE_KEY SingleKeySensor { key "g" }
 
-DEF OBSTACLE_TRANSFORMER TransformerWithExactCoordinates {
+DEF OBSTACLE_TRANSFORMER TransformerWithEpecCoordinates {
   translation -3 0 0
   rotation 1 0 0 1.57079632679489661922
-  coord DEF OBSTACLE_COORD ExactCoordinate {
+  coord DEF OBSTACLE_COORD EpecCoordinate {
     exactPoint [4000/1000 0/1000 0/1000,
 	      3923/1000 0/1000 382/1000,
 	      3707/1000 0/1000 707/1000,
@@ -79,7 +79,7 @@ DEF OBSTACLE_TRANSFORMER TransformerWithExactCoordinates {
   }
 }
 
-# No point using ExactCoordinateMinkowski, because we route the output
+# No point using EpecCoordinateMinkowski, because we route the output
 # coordinates of the transformers as input to this node. The output
 # coordinates of the transformers are inexact; an exact transformer is
 # not implemented yet (requires exact rotation).

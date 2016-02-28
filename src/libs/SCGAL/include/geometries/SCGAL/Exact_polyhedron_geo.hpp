@@ -28,10 +28,11 @@
 #include "SGAL/Boundary_set.hpp"
 #include "SGAL/Epec_kernel.hpp"
 #include "SGAL/Epec_polyhedron.hpp"
+#include "SGAL/Epic_coord_array_3d.hpp"
+#include "SGAL/Epec_coord_array_3d.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Min_sphere.hpp"
-#include "SCGAL/Exact_polyhedron_geo_builder.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -480,9 +481,6 @@ private:
 
   /*! Computes the convex hull of the coordinate set. */
   void convex_hull();
-
-  /*! The builder. */
-  Exact_polyhedron_geo_builder<Epec_polyhedron::HalfedgeDS> m_surface;
 
   /*! The time is took to compute the minkowski sum in seconds. */
   float m_time;

@@ -19,15 +19,26 @@
 #ifndef SGAL_INDEXED_FACE_SET_HPP
 #define SGAL_INDEXED_FACE_SET_HPP
 
+#include <map>
+#include <boost/variant.hpp>
+#include <boost/property_map/property_map.hpp>
+#include <boost/type_traits.hpp>
+
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Boundary_set.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Inexact_kernel.hpp"
+#include "SGAL/Epic_kernel.hpp"
+#include "SGAL/Epec_kernel.hpp"
 #include "SGAL/Polyhedron.hpp"
-#include "SGAL/Polyhedron_geo_builder.hpp"
+#include "SGAL/Epic_polyhedron.hpp"
+#include "SGAL/Epec_polyhedron.hpp"
+
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 SGAL_BEGIN_NAMESPACE
 
@@ -57,8 +68,11 @@ public:
     LAST
   };
 
-  typedef Inexact_kernel                               Kernel;
-  typedef Inexact_polyhedron                           Polyhedron;
+  typedef boost::variant<Inexact_polyhedron, Epic_polyhedron, Epec_polyhedron>
+                                                          Polyhedron;
+
+  // typedef Inexact_kernel                               Kernel;
+  // typedef Inexact_polyhedron                           Polyhedron;
 
   /*! Constructor */
   Indexed_face_set(Boolean proto = false);
@@ -185,12 +199,6 @@ public:
    */
   size_t get_number_of_border_edges();
 
-  /*! Initialize the border edges.
-   * \param[in] value the Boolean value to initialize the general-purpose flags
-   *                  of the border edges.
-   */
-  void init_border_edges(Boolean value = false);
-
   /*! Obtain the number of vertices.
    */
   Size get_number_of_vertices();
@@ -294,6 +302,16 @@ protected:
    */
   Boolean m_dirty_polyhedron;
 
+  /*! Indicates whether the polyhedron edges are dirty and thus should be
+   * cleaned.
+   */
+  Boolean m_dirty_polyhedron_edges;
+
+  /*! Indicates whether the polyhedron facets are dirty and thus should be
+   * cleaned.
+   */
+  Boolean m_dirty_polyhedron_facets;
+
   /*! Indicates wheather the mesh is consistent.
    * \return true if the mesh is consistent and false otherwise. An mesh is
    * inconsistent iff the construction of the polyderal surface failed.
@@ -305,6 +323,14 @@ protected:
 
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
+
+  /*! Clean the polyhedron edges.
+   */
+  void clean_polyhedron_edges();
+
+  /*! Clean the polyhedron facets.
+   */
+  void clean_polyhedron_facets();
 
   /*! Determine whether the angle between two given vectors is smooth.
    */
@@ -318,86 +344,419 @@ protected:
    */
   void clean_surface_area();
 
-  template <typename InputIterator_, typename Polyhedron_>
-  void compute_coord_indices(InputIterator_ begin, InputIterator_ end_,
-                             Polyhedron_& polyhedron)
-  {
-    Uint index = 0;
-    auto it = begin;
-    auto fit = polyhedron.facets_begin();
-    for (; fit != polyhedron.facets_end(); ++fit, ++it) {
-      auto hh = fit->facet_begin();
-      size_t j(0);
-      do {
-        // (*it)[j++] = hh->vertex()->m_index;
-        hh->m_index = index++;
-      } while (++hh != fit->facet_begin());
-    }
-  }
+  /// \name Obtain empty polyhedron
+  //@{
+  /*! Obtain an empty inexact polyhedron. */
+  Inexact_polyhedron& empty_inexact_polyhedron();
 
-private:
-  /*! A functor that calculates the normal of a given facet. */
-  struct Facet_normal_calculator {
-    template <typename Facet>
-    typename Facet::Plane_3 operator()(Facet& f) {
-      typename Facet::Halfedge_handle h = f.halfedge();
-      // Facet::Plane_3 is the normal vector type. We assume the
-      // CGAL Kernel here and use its global functions.
-      Kernel::Vector_3 normal =
-        CGAL::cross_product(h->next()->vertex()->point() -
-                            h->vertex()->point(),
-                            h->next()->next()->vertex()->point() -
-                            h->next()->vertex()->point());
-      return normal / CGAL::sqrt(normal.squared_length());
+  /*! Obtain an empty epic polyhedron. */
+  Epic_polyhedron& empty_epic_polyhedron();
+
+  /*! Obtain an empty eprc polyhedron. */
+  Epec_polyhedron& empty_epec_polyhedron();
+  //@}
+
+  /*! Compute the indices of the mesh. */
+  template <typename Indices>
+  class Compute_coord_indices_visitor : public boost::static_visitor<> {
+  private:
+    Indices& m_indices;
+
+  public:
+    Compute_coord_indices_visitor(Indices& indices) : m_indices(indices) {}
+
+    template <typename Polyhedron_>
+    void operator()(Polyhedron_& polyhedron) const
+    {
+      typedef boost::is_same<Indices, Polygon_indices> Is_polygon;
+
+      size_t index = 0;
+      auto it = m_indices.begin();
+      auto fit = polyhedron.facets_begin();
+      for (; fit != polyhedron.facets_end(); ++fit, ++it) {
+        auto hh = fit->facet_begin();
+        initialize_polygon(*it, hh, Is_polygon());
+        size_t j(0);
+        do {
+          (*it)[j++] = hh->vertex()->m_index;
+          hh->m_index = index++;
+        } while (++hh != fit->facet_begin());
+      }
+    }
+
+  private:
+    /*! Resize the polygon.
+     * \param[in] is_not_fixed the polygon is not a triangle nor a quad.
+     * In this case, where the polygon is not a triangle nor a quad, we need
+     * to resize the structure with number of vertices.
+     */
+    template <typename Polygon_, typename HalfedgeHandle_>
+    void initialize_polygon(Polygon_& polygon, HalfedgeHandle_ hh,
+                            boost::true_type /*! is_not_fixed */) const
+    { polygon.resize(CGAL::circulator_size(hh)); }
+
+    /*! Resize the polygon.
+     * \param[in] is_fixed the polygon is either a triangle or a quad.
+     * In this case, where the polygon is a triangle or a quad, there is
+     * nothing to do.
+     */
+    template <typename Polygon_, typename HalfedgeHandle_>
+    void initialize_polygon(Polygon_& polygon, HalfedgeHandle_ hh,
+                            boost::false_type /*! is_fixed */) const
+    {}
+  };
+
+  /*! Compute coords visitor. */
+  template <typename InputIterator>
+  class Compute_coords_visitor : public boost::static_visitor<> {
+  private:
+    InputIterator m_begin;
+
+  public:
+    Compute_coords_visitor(InputIterator begin) : m_begin(begin) {}
+
+    template <typename Polyhedron_>
+    void operator()(Polyhedron_& polyhedron) const
+    {
+      Size index = 0;
+      auto cit = m_begin;
+      auto vit = polyhedron.vertices_begin();
+      for (; vit != polyhedron.vertices_end(); ++vit) {
+        vit->m_index = index++;
+        auto& p = vit->point();
+        auto x = to_float(p.x());
+        auto y = to_float(p.y());
+        auto z = to_float(p.z());
+        cit++->set(x, y, z);
+      }
     }
   };
 
-  /*! A functor that calculates the normal of a given (half)edge. */
-  struct Edge_normal_calculator {
-    /*! The crease angle. */
+  /*! Size of vertices polyhedron visitor. */
+  class Size_of_vertices_visitor : public boost::static_visitor<Size>
+  {
+  public:
+    template <typename Polyhedron_>
+    Size operator()(const Polyhedron_& polyhedron) const
+    { return polyhedron.size_of_vertices(); }
+  };
+
+  /*! Size of halfedges polyhedron visitor. */
+  class Size_of_halfedges_visitor : public boost::static_visitor<Size>
+  {
+  public:
+    template <typename Polyhedron>
+    Size operator()(const Polyhedron& polyhedron) const
+    { return polyhedron.size_of_halfedges(); }
+  };
+
+  /*! Size of facets polyhedron visitor. */
+  class Size_of_facets_visitor : public boost::static_visitor<Size>
+  {
+  public:
+    template <typename Polyhedron>
+    Size operator()(const Polyhedron& polyhedron) const
+    { return polyhedron.size_of_facets(); }
+  };
+
+  /*! Empty polyhedron visitor. */
+  class Empty_polyhedron_visitor : public boost::static_visitor<Boolean> {
+  public:
+    template <typename Polyhedron>
+    Boolean operator()(const Polyhedron& polyhedron) const
+    { return polyhedron.empty(); }
+  };
+
+  /*! Clear polyhedron visitor. */
+  class Clear_polyhedron_visitor : public boost::static_visitor<> {
+  public:
+    template <typename Polyhedron_>
+    void operator()(Polyhedron_& polyhedron) const { polyhedron.clear(); }
+  };
+
+  /*! Normalize border polyhedron visitor. */
+  class Normalize_border_visitor : public boost::static_visitor<> {
+  public:
+    template <typename Polyhedron_>
+    void operator()(Polyhedron_& polyhedron) const
+    { return polyhedron.normalize_border(); }
+  };
+
+  /*! Is closed polyhedron visitor. */
+  class Is_closed_polyhedron_visitor : public boost::static_visitor<Boolean> {
+  public:
+    template <typename Polyhedron_>
+    Boolean operator()(const Polyhedron_& polyhedron) const
+    { return polyhedron.is_closed(); }
+  };
+
+  /*! Size of border edges polyhedron visitor. */
+  class Size_of_border_edges_polyhedron_visitor :
+    public boost::static_visitor<Boolean>
+  {
+  public:
+    template <typename Polyhedron_>
+    Boolean operator()(const Polyhedron_& polyhedron) const
+    { return polyhedron.size_of_border_edges(); }
+  };
+
+  /*! Number of connected components polyhedron visitor. */
+  class Number_of_connected_components_polyhedron_visitor :
+    public boost::static_visitor<Boolean>
+  {
+  public:
+    template <typename Polyhedron_>
+    Boolean operator()(Polyhedron_& polyhedron) const
+    {
+      typedef Polyhedron_               Polyhedron;
+      auto index_map = CGAL::get(boost::face_external_index_t(), polyhedron);
+      auto np = PMP::parameters::face_index_map(index_map);
+      std::map<typename Polyhedron::Face_handle, size_t> face_ccs;
+      auto fcm = boost::make_assoc_property_map(face_ccs);
+      return PMP::connected_components(polyhedron, fcm, np);
+    }
+  };
+
+  /*! Volume polyhedron visitor. */
+  class Volume_visitor : public boost::static_visitor<Float> {
+  public:
+    Float operator()(const Inexact_polyhedron& polyhedron) const
+    { return volume<Inexact_kernel>(polyhedron); }
+
+    Float operator()(const Epic_polyhedron& polyhedron) const
+    { return volume<Epic_kernel>(polyhedron); }
+
+    Float operator()(const Epec_polyhedron& polyhedron) const
+    { return volume<Epec_kernel>(polyhedron); }
+
+  private:
+    template <typename Kernel_, typename Polyhedron_>
+    Float volume(const Polyhedron_& polyhedron) const
+    {
+      typedef Kernel_                           Kernel;
+      typedef Polyhedron_                       Polyhedron;
+      typedef typename Polyhedron::Facet        Polyhedron_facet;
+
+      Float volume = 0;
+      typename Kernel::Point_3 origin(CGAL::ORIGIN);
+      //! \todo Fix CGAL::volume() to accept CGAL::ORIGIN as an argument.
+      std::for_each(polyhedron.facets_begin(), polyhedron.facets_end(),
+                    [&](const Polyhedron_facet& facet)
+                    {
+                      SGAL_assertion(3 == CGAL::circulator_size(fit->facet_begin()));
+                      auto h1 = facet.halfedge();
+                      auto h2 = h1->next();
+                      auto h3 = h2->next();
+                      volume += to_float(CGAL::volume(origin,
+                                                      h1->vertex()->point(),
+                                                      h2->vertex()->point(),
+                                                      h3->vertex()->point()));
+                    });
+      return volume;
+    }
+  };
+
+  /*! Surface area polyhedron visitor. */
+  class Surface_area_visitor : public boost::static_visitor<Float> {
+  public:
+    Float operator()(const Inexact_polyhedron& polyhedron) const
+    { return surface_area<Inexact_kernel>(polyhedron); }
+
+    Float operator()(const Epic_polyhedron& polyhedron) const
+    { return surface_area<Epic_kernel>(polyhedron); }
+
+    Float operator()(const Epec_polyhedron& polyhedron) const
+    { return surface_area<Epec_kernel>(polyhedron); }
+
+  private:
+    template <typename Kernel_, typename Polyhedron_>
+    Float surface_area(const Polyhedron_& polyhedron) const
+    {
+      typedef Kernel_                           Kernel;
+      typedef Polyhedron_                       Polyhedron;
+      typedef typename Polyhedron::Facet        Polyhedron_facet;
+
+      Float surface_area = 0;
+      std::for_each(polyhedron.facets_begin(), polyhedron.facets_end(),
+                [&](const Polyhedron_facet& facet)
+                {
+                  SGAL_assertion(3 == CGAL::circulator_size(fit->facet_begin()));
+                  auto h = facet.halfedge();
+                  const auto& p1 = h->vertex()->point();
+                  const auto& p2 = h->next()->vertex()->point();
+                  const auto& p3 = h->next()->next()->vertex()->point();
+                  // m_surface_area += CGAL::area(p1, p2, p3);
+                  typename Kernel::Triangle_3 tri(p1, p2, p3);
+                  surface_area += sqrtf(to_float(tri.squared_area()));
+                });
+      return surface_area;
+    }
+  };
+
+  /*! Polyhedron type visitor. */
+  class Type_polyhedron_visitor : public boost::static_visitor<Primitive_type> {
+  public:
+    template <typename Polyhedron_>
+    Primitive_type operator()(const Polyhedron_& polyhedron) const
+    {
+      Boolean triangles(true);
+      Boolean quads(true);
+      auto fit = polyhedron.facets_begin();
+      for (; fit != polyhedron.facets_end(); ++fit) {
+        auto hh = fit->facet_begin();
+        size_t circ_size = CGAL::circulator_size(hh);
+        if (circ_size != 3) triangles = false;
+        if (circ_size != 4) quads = false;
+      }
+      SGAL_assertion(triangles && quads);
+
+      return (triangles) ? PT_TRIANGLES : (quads) ? PT_QUADS : PT_POLYGONS;
+    }
+  };
+
+  /*! Clean Polyhedron facets visitor. */
+  class Clean_facets_visitor : public boost::static_visitor<> {
+  public:
+    template <typename Polyhedron_>
+    void operator()(Polyhedron_& polyhedron) const
+    {
+      // Compute the plane equations:
+      std::transform(polyhedron.facets_begin(), polyhedron.facets_end(),
+                     polyhedron.planes_begin(), Plane_equation());
+
+      // Compute the normal used only for drawing the polyhedron
+      std::for_each(polyhedron.facets_begin(), polyhedron.facets_end(),
+                    Plane_to_normal());
+
+      // // Convert the exact points to approximate used for drawing the polyhedron
+      // std::for_each(polyhedron.vertices_begin(), polyhedron.vertices_end(),
+      //               Point_to_vector());
+    }
+
+    void operator()(Inexact_polyhedron& polyhedron) const
+    {
+      std::transform(polyhedron.facets_begin(), polyhedron.facets_end(),
+                     polyhedron.planes_begin(), Facet_normal_calculator());
+    }
+
+  private:
+    /*! A functor that calculates the normal of a given facet. */
+    struct Facet_normal_calculator {
+      template <typename Facet>
+      typename Facet::Plane_3 operator()(Facet& f) {
+        typename Facet::Halfedge_handle h = f.halfedge();
+        // Facet::Plane_3 is the normal vector type. We assume the
+        // CGAL Kernel here and use its global functions.
+        Inexact_vector_3 normal =
+          CGAL::cross_product(h->next()->vertex()->point() -
+                              h->vertex()->point(),
+                              h->next()->next()->vertex()->point() -
+                              h->next()->vertex()->point());
+        return normal / CGAL::sqrt(normal.squared_length());
+      }
+    };
+
+    /*! Transform a (planar) facet into a plane. */
+    struct Plane_equation {
+      template <typename Facet>
+      typename Facet::Plane_3 operator()(Facet& f) {
+        typename Facet::Halfedge_handle h = f.halfedge();
+        typedef typename Facet::Plane_3 Plane;
+        return Plane(h->vertex()->point(),
+                     h->next()->vertex()->point(),
+                     h->next()->next()->vertex()->point());
+      }
+    };
+
+    /*! Convert Plane_3 to normal in Vector3f representation. */
+    struct Plane_to_normal {
+      template <typename Facet>
+      void operator()(Facet& facet) {
+        const auto& normal = to_vector3f(facet.plane().orthogonal_vector());
+        facet.m_normal.set(normal);
+        facet.m_normal.normalize();
+      }
+    };
+
+    // /*! Convert a point in exact number type to approximate. */
+    // struct Point_to_vector {
+    //   template <typename Vertex>
+    //   void operator()(Vertex& vertex)
+    //   { vertex.m_vertex = to_vector3f(vertex.point()); }
+    // };
+  };
+
+  /*! Clean Polyhedron edges visitor. */
+  class Clean_edges_visitor :
+    public boost::static_visitor<std::pair<Boolean, Boolean> > {
+  private:
     Float m_crease_angle;
 
-    /*! Indicates whether all edges are creased. */
-    Boolean m_creased;
+  public:
+    Clean_edges_visitor(Float crease_angle) : m_crease_angle(crease_angle) {}
 
-    /*! Indicates whether all edges are smooth. */
-    Boolean m_smooth;
+    std::pair<Boolean, Boolean> operator()(Inexact_polyhedron& polyhedron) const
+    { return clean_edges<Inexact_kernel>(polyhedron); }
 
-    /*! Constructor. */
-    Edge_normal_calculator(Float crease_angle) :
-      m_crease_angle(crease_angle),
-      m_creased(true),
-      m_smooth(true)
-    {}
+    std::pair<Boolean, Boolean> operator()(Epic_polyhedron& polyhedron) const
+    { return clean_edges<Epic_kernel>(polyhedron); }
 
-    /*! Calculate the normal of a given (half)edge.
-     * \param[in] edge the given (half)edge.
-     */
-    template <typename Halfedge>
-    void operator()(Halfedge& edge)
+    std::pair<Boolean, Boolean> operator()(Epec_polyhedron& polyhedron) const
+    { return clean_edges<Epec_kernel>(polyhedron); }
+
+  private:
+    template <typename Kernel_, typename Polyhedron_>
+    std::pair<Boolean, Boolean> clean_edges(Polyhedron_& polyhedron) const
     {
-      if (edge.is_border_edge()) return;
-      Kernel::Vector_3 normal1 = edge.facet()->plane();
-      Kernel::Vector_3 normal2 = edge.opposite()->facet()->plane();
-      Float angle = arccosf(normal1 * normal2);  // inner product
-      if (abs(angle) > m_crease_angle) {
-        edge.m_creased = true;
-        edge.opposite()->m_creased = true;
-        m_smooth = false;
-        return;
-      }
-      edge.m_creased = false;
-      edge.opposite()->m_creased = false;
-      m_creased = false;
+      typedef Kernel_                                   Kernel;
+      typedef Polyhedron_                               Polyhedron;
+      typedef typename Polyhedron::Halfedge             Halfedge;
+
+      typedef boost::is_same<typename Polyhedron::Plane_3,
+                             typename Kernel::Vector_3> Has_vector;
+
+      Boolean creased(true);
+      Boolean smooth(true);
+
+      std::for_each(polyhedron.edges_begin(), polyhedron.edges_end(),
+                    [&](Halfedge& edge)
+                    {
+                      if (edge.is_border_edge()) return;
+                      Float angle = compute_angle(edge, Has_vector());
+                      if (abs(angle) > m_crease_angle) {
+                        edge.m_creased = true;
+                        edge.opposite()->m_creased = true;
+                        smooth = false;
+                        return;
+                      }
+                      edge.m_creased = false;
+                      edge.opposite()->m_creased = false;
+                      creased = false;
+                    });
+      return std::make_pair(smooth, creased);
+    }
+
+    template <typename Halfedge_>
+    Float compute_angle(Halfedge_& edge, boost::true_type) const
+    {
+      const auto& normal1 = edge.facet()->plane();
+      const auto& normal2 = edge.opposite()->facet()->plane();
+      return arccosf(normal1 * normal2);  // inner product
+    }
+
+    template <typename Halfedge_>
+    Float compute_angle(Halfedge_& edge, boost::false_type) const
+    {
+      const auto& normal1 = edge.facet()->m_normal;
+      const auto& normal2 = edge.opposite()->facet()->m_normal;
+      return arccosf(normal1.dot(normal2));  // inner product
     }
   };
 
+private:
   /*! Clean the coordinate indices.
    */
   void clean_coord_indices();
-
-  /*! The builder. */
-  Polyhedron_geo_builder<Polyhedron::HalfedgeDS> m_surface;
 
   /*! Indicates whether all edges are creased. */
   Boolean m_creased;
@@ -437,15 +796,15 @@ inline Boolean Indexed_face_set::is_dirty_polyhedron() const
 
 //! \brief determines whether the polyhedron representation is empty.
 inline bool Indexed_face_set::is_polyhedron_empty() const
-{ return m_polyhedron.empty(); }
+{ return boost::apply_visitor(Empty_polyhedron_visitor(), m_polyhedron); }
+
+//! \brief determines whether there are no border edges.
+inline Boolean Indexed_face_set::is_closed()
+{ return boost::apply_visitor(Is_closed_polyhedron_visitor(), m_polyhedron); }
 
 //! brief sets the flag that determine whether the mesh has singular vertices.
 inline Boolean Indexed_face_set::set_has_singular_vertices(Boolean flag)
 { m_has_singular_vertices = flag; }
-
-//! \brief determines whether there are no border edges.
-inline Boolean Indexed_face_set::is_closed()
-{ return m_polyhedron.is_closed(); }
 
 SGAL_END_NAMESPACE
 

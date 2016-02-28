@@ -19,8 +19,6 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
-#include <map>
-#include <boost/property_map/property_map.hpp>
 
 #if (defined _MSC_VER)
 #define NOMINMAX 1
@@ -28,9 +26,6 @@
 #endif
 #include <GL/gl.h>
 #include <GL/glext.h>
-
-#include <CGAL/basic.h>
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Indexed_face_set.hpp"
@@ -51,12 +46,12 @@
 #include "SGAL/calculate_multiple_normals_per_vertex.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Field_info.hpp"
+#include "SGAL/Polyhedron_geo_builder.hpp"
+#include "SGAL/Exact_polyhedron_geo_builder.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 //! \todo #include "Model_stats.h"
-
-namespace PMP = CGAL::Polygon_mesh_processing;
 
 const std::string Indexed_face_set::s_tag = "IndexedFaceSet";
 Container_proto* Indexed_face_set::s_prototype(nullptr);
@@ -70,11 +65,12 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   m_dirty_surface_area(true),
   m_dirty_coord_array(true),
   m_dirty_polyhedron(true),
+  m_dirty_polyhedron_edges(true),
+  m_dirty_polyhedron_facets(true),
   m_consistent(true),
   m_has_singular_vertices(false)
 {
   if (proto) return;
-  m_surface.set_mesh_set(this);
   //! \todo move crease_angle to here.
   set_crease_angle(0);
   set_normal_per_vertex(true);
@@ -162,33 +158,26 @@ void Indexed_face_set::clean_coords()
   m_dirty_coord_array = false;
 
   if (m_dirty_polyhedron) clean_polyhedron();
-  if (m_polyhedron.empty()) return;
+  if (is_polyhedron_empty()) return;
 
+  Size_of_vertices_visitor indices_visitor;
+  auto size_of_vertices = boost::apply_visitor(indices_visitor, m_polyhedron);
+  // auto size_of_vertices = m_polyhedron.size_of_vertices();
   if (!m_coord_array) {
-    auto size = m_polyhedron.size_of_vertices();
-    m_coord_array.reset(new Coord_array_3d(size));
+    m_coord_array.reset(new Coord_array_3d(size_of_vertices));
     SGAL_assertion(m_coord_array);
   }
-  else m_coord_array->resize(m_polyhedron.size_of_vertices());
+  else m_coord_array->resize(size_of_vertices);
 
-  boost::shared_ptr<Coord_array_3d> coords =
-    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
   SGAL_assertion(coords);
 
   /* Generate the coordinate array and assign the index into the coordinate
    * array of the vertex to the vertex.
-   * \todo either remove index from Exact_polyhedron_geo or introduce here.
    */
-  // Uint index = 0;
-  auto cit = coords->begin();
-  for (auto vit = m_polyhedron.vertices_begin();
-       vit != m_polyhedron.vertices_end(); ++vit)
-  {
-    // vit->m_index = index++;
-    auto& p = vit->point();
-    cit->set(p.x(), p.y(), p.z());
-    ++cit;
-  }
+  Compute_coords_visitor<Coord_array_3d::iterator>
+    coords_visitor(coords->begin());
+  boost::apply_visitor(coords_visitor, m_polyhedron);
 
   clean_coord_indices();
 
@@ -219,55 +208,49 @@ Indexed_face_set::Shared_coord_array Indexed_face_set::get_coord_array()
 //! \brief cleans the coordinate indices.
 void Indexed_face_set::clean_coord_indices()
 {
-  if (m_polyhedron.empty()) {
+  if (is_polyhedron_empty()) {
     m_dirty_coord_indices = false;
     m_dirty_facet_coord_indices = false;
     return;
   }
 
-  set_num_primitives(m_polyhedron.size_of_facets());
+  auto num_primitives =
+    boost::apply_visitor(Size_of_facets_visitor(), m_polyhedron);
+  set_num_primitives(num_primitives);
 
-  bool triangles(true);
-  bool quads(true);
-  Uint size = 0;
-  for (auto fit = m_polyhedron.facets_begin();
-       fit != m_polyhedron.facets_end(); ++fit)
-  {
-    Polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
-    size_t circ_size = CGAL::circulator_size(hh);
-    size += circ_size;
-    if (circ_size != 3) triangles = false;
-    if (circ_size != 4) quads = false;
-  }
-  SGAL_assertion(triangles && quads);
+  auto primitive_type =
+    boost::apply_visitor(Type_polyhedron_visitor(), m_polyhedron);
+  set_primitive_type(primitive_type);
 
-  if (triangles) {
-    set_primitive_type(PT_TRIANGLES);
-    auto& coord_indices = empty_triangle_coord_indices();
-    coord_indices.resize(get_num_primitives());
-    compute_coord_indices(coord_indices.begin(), coord_indices.end(),
-                          m_polyhedron);
-  }
-  else if (quads) {
-    set_primitive_type(PT_QUADS);
-    auto& coord_indices = empty_quad_coord_indices();
-    coord_indices.resize(get_num_primitives());
-      compute_coord_indices(coord_indices.begin(), coord_indices.end(),
-                            m_polyhedron);
-  }
-  else {
-    set_primitive_type(PT_POLYGONS);
-    auto& coord_indices = empty_polygon_coord_indices();
-    coord_indices.resize(get_num_primitives());
-    auto fit = m_polyhedron.facets_begin();
-    size_t i(0);
-    for (; fit != m_polyhedron.facets_end(); ++fit, ++i) {
-      auto hh = fit->facet_begin();
-      size_t circ_size = CGAL::circulator_size(hh);
-      coord_indices[i].resize(circ_size);
+  switch (primitive_type) {
+   case PT_TRIANGLES:
+    {
+     auto& coord_indices = empty_triangle_coord_indices();
+     coord_indices.resize(num_primitives);
+     Compute_coord_indices_visitor<Triangle_indices&> visitor(coord_indices);
+     boost::apply_visitor(visitor, m_polyhedron);
     }
-    compute_coord_indices(coord_indices.begin(), coord_indices.end(),
-                          m_polyhedron);
+    break;
+
+   case PT_QUADS:
+    {
+     auto& coord_indices = empty_quad_coord_indices();
+     coord_indices.resize(num_primitives);
+     Compute_coord_indices_visitor<Quad_indices&> visitor(coord_indices);
+     boost::apply_visitor(visitor, m_polyhedron);
+    }
+    break;
+
+   case PT_POLYGONS:
+    {
+     auto& coord_indices = empty_polygon_coord_indices();
+     coord_indices.resize(num_primitives);
+     Compute_coord_indices_visitor<Polygon_indices&> visitor(coord_indices);
+     boost::apply_visitor(visitor, m_polyhedron);
+    }
+    break;
+
+   default: SGAL_error();
   }
 
   m_dirty_coord_indices = true;
@@ -279,6 +262,9 @@ void Indexed_face_set::clean_normals()
 {
   if ((0 < m_crease_angle) && (m_crease_angle < SGAL_PI)) {
     if (m_dirty_polyhedron) clean_polyhedron();
+    if (m_dirty_polyhedron_facets) clean_polyhedron_facets();
+    if (m_dirty_polyhedron_edges) clean_polyhedron_edges();
+
     if (m_smooth) calculate_single_normal_per_vertex();
     else if (m_creased) calculate_normal_per_facet();
     else calculate_multiple_normals_per_vertex();
@@ -308,28 +294,17 @@ void Indexed_face_set::clean_polyhedron()
   Orient_polygon_soup_visitor visitor(coords);
   m_has_singular_vertices = boost::apply_visitor(visitor, m_facet_coord_indices);
 
-  m_polyhedron.delegate(m_surface);           // create the polyhedral surface
-  if (!m_surface.is_consistent()) m_consistent = false;
+  // create the polyhedral surface
+  auto polyhedron = empty_inexact_polyhedron();
+  Polyhedron_geo_builder<Inexact_polyhedron::HalfedgeDS> surface(this);
+  polyhedron.delegate(surface);
+  m_consistent = surface.is_consistent();
 
-#if 0
-  if (!m_polyhedron.normalized_border_is_valid()) {
-    m_polyhedron.normalize_border();
-  }
-#else
-  m_polyhedron.normalize_border();
-#endif
+  // Normalize the border of the polyhedron.
+  boost::apply_visitor(Normalize_border_visitor(), m_polyhedron);
 
-  // Clean the facets
-  std::transform(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
-                 m_polyhedron.planes_begin(), Facet_normal_calculator());
-
-  // Clean the halfedges
-  Edge_normal_calculator edge_normal_calculator(get_crease_angle());
-  edge_normal_calculator =
-    std::for_each(m_polyhedron.edges_begin(), m_polyhedron.edges_end(),
-                  edge_normal_calculator);
-  m_smooth = edge_normal_calculator.m_smooth;
-  m_creased = edge_normal_calculator.m_creased;
+  m_dirty_polyhedron_edges = true;
+  m_dirty_polyhedron_facets = true;
 }
 
 //! \brief clears the polyhedron.
@@ -338,7 +313,7 @@ void Indexed_face_set::clear_polyhedron()
   m_dirty_polyhedron = true;
   m_dirty_volume = true;
   m_dirty_surface_area = true;
-  m_polyhedron.clear();
+  boost::apply_visitor(Clear_polyhedron_visitor(), m_polyhedron);
 }
 
 //! \brief sets the polyhedron data-structure.
@@ -355,9 +330,12 @@ void Indexed_face_set::set_polyhedron(Polyhedron& polyhedron)
 
 //! \brief obtains the polyhedron data-structure.
 const Indexed_face_set::Polyhedron&
-Indexed_face_set::get_polyhedron(Boolean /* with_planes */)
+Indexed_face_set::get_polyhedron(Boolean with_planes)
 {
   if (m_dirty_polyhedron) clean_polyhedron();
+  if (with_planes) {
+    if (m_dirty_polyhedron_facets) clean_polyhedron_facets();
+  }
   return m_polyhedron;
 }
 
@@ -386,8 +364,11 @@ void Indexed_face_set::calculate_multiple_normals_per_vertex()
     SGAL_assertion(m_normal_array);
   }
   else m_normal_array->clear();
-  SGAL::calculate_multiple_normals_per_vertex(m_polyhedron, m_normal_array,
-                                              m_facet_normal_indices);
+  Calculate_multiple_normals_per_vertex_visitor visitor(m_normal_array,
+                                                        m_facet_normal_indices);
+  boost::apply_visitor(visitor, m_polyhedron);
+  // SGAL::calculate_multiple_normals_per_vertex(m_polyhedron, m_normal_array,
+  //                                             m_facet_normal_indices);
   m_dirty_normal_indices = true;
   m_dirty_facet_normal_indices = false;
 }
@@ -430,19 +411,7 @@ void Indexed_face_set::clean_volume()
 
   m_volume = 0;
   if (is_polyhedron_empty()) return;
-
-  Inexact_point_3 origin(CGAL::ORIGIN);
-  //! \todo Fix CGAL::volume() to accept CGAL::ORIGIN as an argument.
-  std::for_each(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
-                [&](Polyhedron::Facet& facet)
-                {
-                  SGAL_assertion(3 == CGAL::circulator_size(fit->facet_begin()));
-                  auto h = facet.halfedge();
-                  m_volume += CGAL::volume(origin,
-                                           h->vertex()->point(),
-                                           h->next()->vertex()->point(),
-                                           h->next()->next()->vertex()->point());
-                });
+  m_volume = boost::apply_visitor(Volume_visitor(), m_polyhedron);
 }
 
 //! \brief cleans (compute) the surface area.
@@ -452,19 +421,7 @@ void Indexed_face_set::clean_surface_area()
 
   m_surface_area = 0;
   if (is_polyhedron_empty()) return;
-
-  std::for_each(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
-                [&](Polyhedron::Facet& facet)
-                {
-                  SGAL_assertion(3 == CGAL::circulator_size(fit->facet_begin()));
-                  auto h = facet.halfedge();
-                  const auto& p1 = h->vertex()->point();
-                  const auto& p2 = h->next()->vertex()->point();
-                  const auto& p3 = h->next()->next()->vertex()->point();
-                  // m_surface_area += CGAL::area(p1, p2, p3);
-                  Kernel::Triangle_3 tri(p1, p2, p3);
-                  m_surface_area += sqrtf(tri.squared_area());
-                });
+   m_surface_area = boost::apply_visitor(Surface_area_visitor(), m_polyhedron);
 }
 
 //! \brief computes the volume of the polyhedron.
@@ -501,50 +458,77 @@ Boolean Indexed_face_set::has_singular_vertices()
 size_t Indexed_face_set::get_number_of_border_edges()
 {
   if (m_dirty_polyhedron) clean_polyhedron();
-  return m_polyhedron.size_of_border_edges();
-}
-
-//! \brief initializes the border edges.
-void Indexed_face_set::init_border_edges(Boolean value)
-{
-  if (m_dirty_polyhedron) clean_polyhedron();
-  if (!m_polyhedron.normalized_border_is_valid())
-    m_polyhedron.normalize_border();
-  auto it = m_polyhedron.border_edges_begin();
-  for (; it != m_polyhedron.edges_end(); ++it) it->opposite()->set_flag(value);
+  Size_of_border_edges_polyhedron_visitor visitor;
+  return boost::apply_visitor(visitor, m_polyhedron);
+  // return m_polyhedron.size_of_border_edges();
 }
 
 //! \bried obtains the number of connected components.
 Size Indexed_face_set::get_number_of_connected_components()
 {
   if (m_dirty_polyhedron) clean_polyhedron();
-
-  auto index_map = CGAL::get(boost::face_external_index_t(), m_polyhedron);
-  auto np = PMP::parameters::face_index_map(index_map);
-  std::map<Polyhedron::Face_handle, size_t> face_ccs;
-  auto fcm = boost::make_assoc_property_map(face_ccs);
-  return PMP::connected_components(m_polyhedron, fcm, np);
+  Number_of_connected_components_polyhedron_visitor visitor;
+  return boost::apply_visitor(visitor, m_polyhedron);
 }
 
 //! \brief obtains the number of vertices.
 Size Indexed_face_set::get_number_of_vertices()
 {
   if (m_dirty_polyhedron) clean_polyhedron();
-  return m_polyhedron.size_of_vertices();
+  return boost::apply_visitor(Size_of_vertices_visitor(), m_polyhedron);
 }
 
 //! \brief obtains the number of edges.
 Size Indexed_face_set::get_number_of_edges()
 {
   if (m_dirty_polyhedron) clean_polyhedron();
-  return m_polyhedron.size_of_halfedges() / 2;
+  return boost::apply_visitor(Size_of_halfedges_visitor(), m_polyhedron) / 2;
 }
 
 //! \brief obtains the number of facets.
 Size Indexed_face_set::get_number_of_facets()
 {
   if (m_dirty_polyhedron) clean_polyhedron();
-  return m_polyhedron.size_of_facets();
+  return boost::apply_visitor(Size_of_facets_visitor(), m_polyhedron) / 2;
+}
+
+//! \brief cleans the polyhedron facets.
+void Indexed_face_set::clean_polyhedron_facets()
+{
+  m_dirty_polyhedron_facets = false;
+  boost::apply_visitor(Clean_facets_visitor(), m_polyhedron);
+  m_dirty_polyhedron_edges = true;
+}
+
+//! \brief cleans the polyhedron edges.
+void Indexed_face_set::clean_polyhedron_edges()
+{
+  m_dirty_polyhedron_edges = false;
+  Clean_edges_visitor visitor(get_crease_angle());
+  std::pair<Boolean, Boolean> res = boost::apply_visitor(visitor, m_polyhedron);
+  m_smooth = res.first;
+  m_creased = res.second;
+}
+
+//! \brief obtains an empty inexact polyhedron.
+inline Inexact_polyhedron& Indexed_face_set::empty_inexact_polyhedron()
+{
+  m_polyhedron = Inexact_polyhedron();
+  return boost::get<Inexact_polyhedron>(m_polyhedron);
+}
+
+//! \brief obtains an empty epic polyhedron.
+inline Epic_polyhedron& Indexed_face_set::empty_epic_polyhedron()
+{
+  m_polyhedron = Epic_polyhedron();
+  return boost::get<Epic_polyhedron>(m_polyhedron);
+}
+
+//! \brief obtains an empty eprc polyhedron.
+inline Epec_polyhedron& Indexed_face_set::empty_epec_polyhedron()
+{
+  m_polyhedron = Epec_polyhedron();
+  return boost::get<Epec_polyhedron>(m_polyhedron);
 }
 
 SGAL_END_NAMESPACE

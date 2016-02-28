@@ -25,23 +25,24 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Convert a point into Vector2f.
+/*! Convert a number type to Float.
+ */
+template <typename NumberType>
+inline Float to_float(const NumberType& number)
+{ return static_cast<Float>(CGAL::to_double(number)); }
+
+/*! Convert a point to Vector2f.
  */
 template <typename Point>
-inline Vector2f to_vector2f(const Point & point)
-{
-  return Vector2f(static_cast<float>(CGAL::to_double(point.x())),
-                  static_cast<float>(CGAL::to_double(point.y())));
-}
+inline Vector2f to_vector2f(const Point& point)
+{ return Vector2f(to_float(point.x()), to_float(point.y())); }
 
-/*! Convert a point into Vector3f.
+/*! Convert a point to Vector3f.
  */
 template <typename Point>
 inline Vector3f to_vector3f(const Point& point)
 {
-  return Vector3f(static_cast<float>(CGAL::to_double(point.x())),
-                  static_cast<float>(CGAL::to_double(point.y())),
-                  static_cast<float>(CGAL::to_double(point.z())));
+  return Vector3f(to_float(point.x()), to_float(point.y()), to_float(point.z()));
 }
 
 SGAL_END_NAMESPACE

@@ -90,7 +90,7 @@ Transform {
 	    aosMarkedFaceColor 1 0 0
 	    aosMarkedFaceTransparency 0.5
 	    # aosMarkedFaceIndex [28 46 47]
-            coord DEF COORD ExactCoordinate {
+            coord DEF COORD EpecCoordinate {
               exactPoint [
 			-1 -1 -1,
 			1 -1 -1,
@@ -131,7 +131,7 @@ Transform {
             aosMarkedEdgeRadius 0.003
 	    aosMarkedFaceColor 0 1 0
 	    aosMarkedFaceTransparency 0.5
-            coord DEF COORD ExactCoordinate {
+            coord DEF COORD EpecCoordinate {
               exactPoint [
 			-1 -1 1,
 			0 -1 -1

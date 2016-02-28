@@ -54,6 +54,7 @@
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/calculate_multiple_normals_per_vertex.hpp"
 #include "SGAL/Epec_polyhedron.hpp"
+#include "SGAL/Exact_polyhedron_geo_builder.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
@@ -89,7 +90,6 @@ Exact_polyhedron_geo::Exact_polyhedron_geo(Boolean proto) :
   m_time(0)
 {
   if (proto) return;
-  m_surface.set_mesh_set(this);
   //! \todo move crease_angle to here.
   set_crease_angle(0);
   set_normal_per_vertex(true);
@@ -392,13 +392,9 @@ void Exact_polyhedron_geo::clean_polyhedron()
     m_has_singular_vertices =
       boost::apply_visitor(visitor, m_facet_coord_indices);
 
-    m_polyhedron.delegate(m_surface);
-#if 0
-    if (!m_polyhedron.normalized_border_is_valid())
-      m_polyhedron.normalize_border();
-#else
+    Exact_polyhedron_geo_builder<Epec_polyhedron::HalfedgeDS> surface(this);
+    m_polyhedron.delegate(surface);
     m_polyhedron.normalize_border();
-#endif
   }
   clock_t end_time = clock();
   m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;

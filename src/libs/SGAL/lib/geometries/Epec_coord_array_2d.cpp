@@ -35,7 +35,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-const std::string Epec_coord_array_2d::s_tag = "ExactCoordinate2D";
+const std::string Epec_coord_array_2d::s_tag = "EpecCoordinate2D";
 
 //! The node prototype.
 Container_proto* Epec_coord_array_2d::s_prototype(nullptr);

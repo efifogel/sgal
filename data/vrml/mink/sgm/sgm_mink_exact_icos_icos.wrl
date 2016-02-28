@@ -35,7 +35,7 @@ Transform {
           }
           geometry DEF ROBOT SphericalGaussianMapColored {
             drawAos FALSE
-            coord DEF COORD ExactCoordinate {
+            coord DEF COORD EpecCoordinate {
               exactPoint [    0/1000     0/1000  1175/1000,
                          1050/1000     0/1000   525/1000,
                           325/1000  1000/1000   525/1000,
@@ -140,7 +140,7 @@ Transform {
    ]
 }
 
-# No point using ExactCoordinateMinkowski, because we route the output
+# No point using EpecCoordinateMinkowski, because we route the output
 # coordinates of the transformers as input to this node. The output
 # coordinates of the transformers are inexact; an exact transformer is
 # not implemented yet (requires exact rotation).

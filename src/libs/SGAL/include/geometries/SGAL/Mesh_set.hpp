@@ -21,7 +21,7 @@
 
 #include <vector>
 #include <boost/variant.hpp>
-#
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Geo_set.hpp"
 
@@ -553,7 +553,7 @@ public:
     // It is prohibited to specialize a function in non-namespace scope.
     // Instead, we we dispatch the appropriate function.
 
-    template<typename T> struct Identity { typedef T type; };
+    template <typename T> struct Identity { typedef T type; };
 
     template <typename Indices>
     void operator()(Indices& indices) const

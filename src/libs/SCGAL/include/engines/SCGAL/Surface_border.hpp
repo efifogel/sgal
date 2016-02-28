@@ -126,6 +126,99 @@ public:
   Shared_indexed_line_set get_border() const;
 
 protected:
+  /*! Surface border visitor. */
+  class Construct_border_visitor : public boost::static_visitor<>
+  {
+  private:
+    /*! The resulting polylines. */
+    Shared_indexed_line_set m_border;
+
+  public:
+    Construct_border_visitor(Shared_indexed_line_set border) :
+      m_border(border)
+    {}
+
+    template <typename Polyhedron_>
+    void operator()(const Polyhedron_& polyhedron)
+    {
+      typedef Polyhedron_               Polyhedron;
+      typedef std::list<typename Polyhedron::Halfedge_const_handle>   Hole;
+
+      if (polyhedron.empty()) return;
+
+      auto begin = polyhedron.border_edges_begin();
+      auto end = polyhedron.edges_end();
+      init_border_edges(begin, end);
+      if (polyhedron.is_closed()) return;
+      std::list<Hole> holes;
+      construct_holes(begin, end, holes);
+      // std::cout << "# : " << holes.size() << std::endl;
+      construct_polylines(holes);
+      for (auto& hole: holes) hole.clear();
+      holes.clear();
+    }
+  private:
+    /*! Initialize the border edges.
+     */
+    template <typename InputIterator>
+    void init_border_edges(InputIterator begin, InputIterator end) const
+    { for (auto it = begin; it != end; ++it) it->opposite()->set_flag(false); }
+
+    /*! Construct the holes.
+     */
+    template <typename InputIterator, typename Holes>
+    void construct_holes(InputIterator begin, InputIterator end, Holes& holes)
+      const
+    {
+      auto it = begin;
+      while (true) {
+        auto first = it->opposite();
+        holes.emplace_back();
+        auto& border_edges = holes.back();
+        auto circ = first;
+        do {
+          border_edges.push_back(circ);
+          circ->set_flag(true);
+          circ = circ->next();
+        } while(circ != first);
+
+        while (it->opposite()->is_flag()) {
+          ++it;
+          if (it == end) return;
+        }
+      }
+    }
+
+    /*! Construct the polylines.
+     */
+    template <typename Holes>
+    void construct_polylines(const Holes& holes)
+    {
+      size_t size(0);
+      for (auto& hole: holes) size += hole.size();
+      m_border->set_num_primitives(holes.size());
+      m_border->set_primitive_type(Geo_set::PT_LINE_LOOPS);
+      auto& indices = m_border->get_coord_indices();
+      indices.resize(size + holes.size());
+      if (!m_border->get_coord_array()) {
+        Geo_set::Shared_coord_array coord_array(new Coord_array_3d(size));
+        m_border->set_coord_array(coord_array);
+      }
+      auto coord_array = m_border->get_coord_array();
+      auto coords = boost::static_pointer_cast<Coord_array_3d>(coord_array);
+      size_t i(0);
+      size_t j(0);
+      for (auto& hole: holes) {
+        for (auto hh: hole) {
+          const auto& point = hh->vertex()->point();
+          (*coords)[j] = to_vector3f(point);
+          indices[i++] = j++;
+        }
+        indices[i++] = -1;
+      }
+    }
+  };
+
   /*! The input polygonal mesh. */
   Shared_mesh_set m_surface;
 

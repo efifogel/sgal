@@ -19,7 +19,7 @@
 #ifndef SCGAL_EPIC_KERNEL_HPP
 #define SCGAL_EPIC_KERNEL_HPP
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector2f.hpp"
@@ -28,7 +28,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel Epic_kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
 
 typedef Epic_kernel::RT                               Epic_RT;
 typedef Epic_kernel::FT                               Epic_FT;
@@ -42,21 +42,18 @@ typedef Epic_kernel::Direction_3                      Epic_direction_3;
 typedef Epic_kernel::Plane_3                          Epic_plane_3;
 typedef Epic_kernel::Aff_transformation_3             Epic_aff_transformation_3;
 
-/*! Convert a direction into Vector3f. */
+/*! Convert a direction to Vector2f.
+ */
+template <>
+inline Vector2f to_vector2f<Epic_direction_2>(const Epic_direction_2& dir)
+{ return Vector2f(to_float(dir.dx()), to_float(dir.dy())); }
+
+/*! Convert a direction to Vector3f.
+ */
 template <>
 inline Vector3f to_vector3f<Epic_direction_3>(const Epic_direction_3& dir)
 {
-  return Vector3f(static_cast<float>(CGAL::to_double(dir.dx())),
-                  static_cast<float>(CGAL::to_double(dir.dy())),
-                  static_cast<float>(CGAL::to_double(dir.dz())));
-}
-
-/*! Convert a direction into Vector2f. */
-template <>
-inline Vector2f to_vector2f<Epic_direction_2>(const Epic_direction_2& dir)
-{
-  return Vector2f(static_cast<float>(CGAL::to_double(dir.dx())),
-                  static_cast<float>(CGAL::to_double(dir.dy())));
+  return Vector3f(to_float(dir.dx()), to_float(dir.dy()), to_float(dir.dz()));
 }
 
 SGAL_END_NAMESPACE

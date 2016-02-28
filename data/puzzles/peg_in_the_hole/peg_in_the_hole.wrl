@@ -208,7 +208,7 @@ Transform {
 			    }
 			  }
 			  geometry ExactPolyhedron {
-			    coord DEF COORD_RED ExactCoordinate {
+			    coord DEF COORD_RED EpecCoordinate {
 			      exactPoint\[-1 -4 -1,
 				        1 -4 -1,
 				        1  0 -1,
@@ -248,7 +248,7 @@ Transform {
 			    }
 			  }
 			  geometry DEF PIECE_BLUE_0 ExactPolyhedron {
-			    coord ExactCoordinate {
+			    coord EpecCoordinate {
 			      exactPoint\[-2 -2 -2,
 				        2 -2 -2,
 				       -2 -2  2,
@@ -299,7 +299,7 @@ Transform {
 		    # 		drawAosHaloed TRUE
 		    # 		aosVertexStyle "none"
 		    # 		aosEdgeColor 0 0 1
-		    # 		coord ExactCoordinate {
+		    # 		coord EpecCoordinate {
 		    # 		  exactPoint\[ 1 -2 -2,
 		    # 			    2 -2 -2,
 		    # 			    2  0 -2,
@@ -332,7 +332,7 @@ Transform {
 		    # 		drawAosHaloed TRUE
 		    # 		aosVertexStyle "none"
 		    # 		aosEdgeColor 0 0 1
-		    # 		coord ExactCoordinate {
+		    # 		coord EpecCoordinate {
 		    # 		  exactPoint\[-1 -2 -2,
 		    # 			    1 -2 -2,
 		    # 			    1  0 -2,
@@ -365,7 +365,7 @@ Transform {
 		    # 		drawAosHaloed TRUE
 		    # 		aosVertexStyle "none"
 		    # 		aosEdgeColor 0 0 1
-		    # 		coord ExactCoordinate {
+		    # 		coord EpecCoordinate {
 		    # 		  exactPoint\[-1 -2 1,
 		    # 			    1 -2 1,
 		    # 			    1  0 1,

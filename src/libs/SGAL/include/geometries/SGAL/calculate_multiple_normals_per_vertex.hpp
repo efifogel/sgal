@@ -23,6 +23,7 @@
 #include <boost/type_traits.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
+#include <boost/variant.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Normal_array.hpp"
@@ -49,6 +50,31 @@ Vector3f get_normal(typename Polyhedron_::Facet_const_handle f)
                                                         Polyhedron_has_vector;
   return get_normal_impl(f, Polyhedron_has_vector());
 }
+
+/*! Calculate multiple normal per vertex polyhedron visitor. */
+class Calculate_multiple_normals_per_vertex_visitor :
+  public boost::static_visitor<>
+{
+private:
+  typedef boost::shared_ptr<Normal_array>       Shared_normal_array;
+
+  Shared_normal_array m_normal_array;
+  Mesh_set::Facet_indices& m_normal_indices;
+
+public:
+  Calculate_multiple_normals_per_vertex_visitor
+  (Shared_normal_array normal_array, Mesh_set::Facet_indices& normal_indices) :
+    m_normal_array(normal_array),
+    m_normal_indices(normal_indices)
+  {}
+
+  template <typename Polyhedron_>
+  void operator()(Polyhedron_& polyhedron) const
+  {
+    calculate_multiple_normals_per_vertex(polyhedron, m_normal_array,
+                                          m_normal_indices);
+  }
+};
 
 template <typename Polyhedron_>
 void calculate_multiple_normals_per_vertex

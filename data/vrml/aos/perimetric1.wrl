@@ -92,7 +92,7 @@ Transform {
 	    aosEdgeMarkedShape "strip"
 	    aosMarkedEdgeColor 0 1 0
 	    # aosMarkedEdgeIndex [0]
-	    coord DEF COORD ExactCoordinate {
+	    coord DEF COORD EpecCoordinate {
 	      exactPoint [-1 0 1, 0 -1 1, 1 0 1, 0 1 1,
 		        -1 0 -1, 0 -1 -1, 1 0 -1, 0 1 -1]
 	    }

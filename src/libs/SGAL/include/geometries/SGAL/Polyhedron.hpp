@@ -41,6 +41,22 @@
 
 SGAL_BEGIN_NAMESPACE
 
+template <typename Refs, typename Traits>
+struct Polyhedron_vertex :
+  public CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true,
+                                      typename Traits::Point_3>
+{
+  typedef typename Traits::Point_3    Point;
+
+  /*! A uniqe index of vertices. */
+  Uint m_index;
+
+  Polyhedron_vertex() {}
+  Polyhedron_vertex(const Point& p) :
+    CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true, Point>(p)
+  {}
+};
+
 template <typename Refs>
 class Polyhedron_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
 public:
@@ -73,6 +89,11 @@ public:
 
 // An items type using my vertex and edge.
 struct Polyhedron_items : public CGAL::Polyhedron_items_3 {
+  template <typename Refs, typename Traits>
+  struct Vertex_wrapper {
+    typedef Polyhedron_vertex<Refs, Traits> Vertex;
+  };
+
   template <typename Refs, typename Traits>
   struct Halfedge_wrapper {
     typedef Polyhedron_halfedge<Refs> Halfedge;

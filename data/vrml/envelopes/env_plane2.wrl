@@ -170,7 +170,7 @@ Transform {
 	    faceTransparency 0.5
 	    edgeRadius 0.075
 	    vertexRadius 0.15
-	    boundingPolygon ExactCoordinate2D {
+	    boundingPolygon EpecCoordinate2D {
 	      exactPoint [ -5 -5, 5 -5, 5 5, -5 5]
 	    }
 	    color Color {

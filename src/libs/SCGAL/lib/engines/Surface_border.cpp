@@ -23,6 +23,7 @@
 
 #include <list>
 #include <boost/lexical_cast.hpp>
+#include <boost/variant.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Container_factory.hpp"
@@ -150,13 +151,14 @@ void Surface_border::execute()
 
   if (!m_border) m_border = Shared_indexed_line_set(new Indexed_line_set);
 
-  auto geometry = boost::dynamic_pointer_cast<Exact_polyhedron_geo>(m_surface);
+  auto geometry = boost::dynamic_pointer_cast<Indexed_face_set>(m_surface);
   if (geometry) {
     const auto& polyhedron = geometry->get_polyhedron();
-    construct_border(polyhedron);
+    Construct_border_visitor visitor(m_border);
+    boost::apply_visitor(visitor, polyhedron);
   }
   else {
-    auto geometry = boost::dynamic_pointer_cast<Indexed_face_set>(m_surface);
+    auto geometry = boost::dynamic_pointer_cast<Exact_polyhedron_geo>(m_surface);
     if (geometry) {
       const auto& polyhedron = geometry->get_polyhedron();
       construct_border(polyhedron);

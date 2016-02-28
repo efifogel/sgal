@@ -16,8 +16,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SCGAL_POLYHEDRON_GEO_BUILDER_HPP
-#define SCGAL_POLYHEDRON_GEO_BUILDER_HPP
+#ifndef SGAL_POLYHEDRON_GEO_BUILDER_HPP
+#define SGAL_POLYHEDRON_GEO_BUILDER_HPP
 
 #include <stdexcept>
 #include <boost/type_traits.hpp>
@@ -44,7 +44,7 @@ protected:
    * It is defined as const, because the array of indices of the mesh  may
    * need to be flattened.
    */
-  Mesh_set* m_mesh_set;
+  Mesh_set* m_mesh;
 
   /*! Insert the vertices.
    * \param B (in) the halfedge data structure.
@@ -55,7 +55,7 @@ protected:
     typedef typename Vertex::Point Point;
 
     boost::shared_ptr<Coord_array_3d> coords =
-      boost::static_pointer_cast<Coord_array_3d>(m_mesh_set->get_coord_array());
+      boost::static_pointer_cast<Coord_array_3d>(m_mesh->get_coord_array());
     SGAL_assertion(coords);
 
     // Add the points:
@@ -129,7 +129,7 @@ protected:
    */
   void insert_triangles(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
-    const auto& facet_indices = m_mesh_set->get_facet_coord_indices();
+    const auto& facet_indices = m_mesh->get_facet_coord_indices();
     const auto& indices = boost::get<Mesh_set::Triangle_indices>(facet_indices);
     size_t j(0);
     for (size_t i = 0; i < indices.size(); ++i)
@@ -141,7 +141,7 @@ protected:
    */
   void insert_quads(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
-    const auto& facet_indices = m_mesh_set->get_facet_coord_indices();
+    const auto& facet_indices = m_mesh->get_facet_coord_indices();
     const auto& indices = boost::get<Mesh_set::Quad_indices>(facet_indices);
     size_t j(0);
     for (Uint i = 0; i < indices.size(); ++i)
@@ -153,7 +153,7 @@ protected:
    */
   void insert_polygons(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
-    const auto& facet_indices = m_mesh_set->get_facet_coord_indices();
+    const auto& facet_indices = m_mesh->get_facet_coord_indices();
     const auto& indices = boost::get<Mesh_set::Polygon_indices>(facet_indices);
     size_t j(0);
     for (size_t i = 0; i < indices.size(); ++i)
@@ -166,9 +166,9 @@ protected:
   void insert_faces(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
     // Add the faces:
-    if (m_mesh_set->is_dirty_facet_coord_indices())
-      m_mesh_set->clean_facet_coord_indices();
-    switch (m_mesh_set->get_primitive_type()) {
+    if (m_mesh->is_dirty_facet_coord_indices())
+      m_mesh->clean_facet_coord_indices();
+    switch (m_mesh->get_primitive_type()) {
      case Geo_set::PT_TRIANGLES: insert_triangles(B); break;
      case Geo_set::PT_QUADS: insert_quads(B); break;
      case Geo_set::PT_POLYGONS: insert_polygons(B); break;
@@ -181,12 +181,12 @@ protected:
   }
 
 public:
-  /*! Set the Mesh_set.
+  /*! Construct.
    * \param mesh_set (in) the Mesh_set, which provides the
    *                 a. coordinate array, and
    *                 b. coordinate indices
    */
-  void set_mesh_set(Mesh_set* mesh_set) { m_mesh_set = mesh_set; }
+  Polyhedron_geo_builder(Mesh_set* mesh) : m_mesh(mesh) {}
 
   /*! Build the polyhedral surface.
    * \param[out] hds the halfedge data structure, which stores the incidence
@@ -198,8 +198,8 @@ public:
 
     // Postcondition: `hds' is a valid polyhedral surface.
     CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
-    B.begin_surface(m_mesh_set->get_coord_array()->size(),
-                    m_mesh_set->get_num_primitives());
+    B.begin_surface(m_mesh->get_coord_array()->size(),
+                    m_mesh->get_num_primitives());
     try {
       insert_vertices(B);
       insert_faces(B);

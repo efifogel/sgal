@@ -92,7 +92,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.31 0.47 0.63
-			coord DEF COORD_0_0 ExactCoordinate {
+			coord DEF COORD_0_0 EpecCoordinate {
 			  exactPoint[-1 -4 -4, 1 -4 -4, 1 -2 -4, -1 -2 -4,
 				   -1 -4 -1, 1 -4 -1, 1 -2 -1, -1 -2 -1
 				  ]
@@ -119,7 +119,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.31 0.47 0.63
-			coord DEF COORD_0_1 ExactCoordinate {
+			coord DEF COORD_0_1 EpecCoordinate {
 			  exactPoint[-1 -4 1, 1 -4 1, 1 -2 1, -1 -2 1,
 				   -1 -4 4, 1 -4 4, 1 -2 4, -1 -2 4
 				  ]
@@ -146,7 +146,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.31 0.47 0.63
-			coord DEF COORD_0_2 ExactCoordinate {
+			coord DEF COORD_0_2 EpecCoordinate {
 			  exactPoint[0 -4 -1, 2 -4 -1, 2 4 -1, 0 4 -1,
 				   0 -4  1, 2 -4  1, 2 4  1, 0 4  1
 				  ]
@@ -189,7 +189,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.33 0.22 0.28
-			coord DEF COORD_1_0 ExactCoordinate {
+			coord DEF COORD_1_0 EpecCoordinate {
 			  exactPoint[2 -4 -1, 4 -4 -1, 4 -1 -1, 2 -1 -1,
 				   2 -4  1, 4 -4  1, 4 -1  1, 2 -1  1
 				  ]
@@ -216,7 +216,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.33 0.22 0.28
-			coord DEF COORD_1_1 ExactCoordinate {
+			coord DEF COORD_1_1 EpecCoordinate {
 			  exactPoint[2 -1 -1, 3 -1 -1, 3 1 -1, 2 1 -1,
 				   2 -1  1, 3 -1  1, 3 1  1, 2 1  1
 				  ]
@@ -243,7 +243,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.33 0.22 0.28
-			coord DEF COORD_1_2 ExactCoordinate {
+			coord DEF COORD_1_2 EpecCoordinate {
 			  exactPoint[2 1 -1, 4 1 -1, 4 4 -1, 2 4 -1,
 				   2 1  1, 4 1  1, 4 4  1, 2 4  1
 				  ]
@@ -286,7 +286,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.98 0.50 0.45
-			coord DEF COORD_2_0 ExactCoordinate {
+			coord DEF COORD_2_0 EpecCoordinate {
 			  exactPoint[-4 -4 -1, -2 -4 -1, -2 -1 -1, -4 -1 -1,
 				   -4 -4  1, -2 -4  1, -2 -1  1, -4 -1  1
 				  ]
@@ -313,7 +313,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.98, 0.50 0.45
-			coord DEF COORD_2_1 ExactCoordinate {
+			coord DEF COORD_2_1 EpecCoordinate {
 			  exactPoint[-3 -1 -1, -2 -1 -1, -2 1 -1, -3 1 -1,
 				   -3 -1  1, -2 -1  1, -2 1  1, -3 1  1
 				  ]
@@ -340,7 +340,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.98, 0.50 0.45
-			coord DEF COORD_2_2 ExactCoordinate {
+			coord DEF COORD_2_2 EpecCoordinate {
 			  exactPoint[-4 1 -1, -2 1 -1, -2 4 -1, -4 4 -1,
 				   -4 1  1, -2 1  1, -2 4  1, -4 4  1
 				  ]
@@ -383,7 +383,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.50 0.60 0.40
-			coord DEF COORD_3_0 ExactCoordinate {
+			coord DEF COORD_3_0 EpecCoordinate {
 			  exactPoint[-2 -4 -1, 0 -4 -1, 0 -2 -1, -2 -2 -1,
 				   -2 -4  1, 0 -4  1, 0 -2  1, -2 -2  1
 				  ]
@@ -410,7 +410,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.50 0.60 0.40
-			coord DEF COORD_3_1 ExactCoordinate {
+			coord DEF COORD_3_1 EpecCoordinate {
 			  exactPoint[-2 -2 -1, -1 -2 -1, -1 3 -1, -2 3 -1,
 				   -2 -2  1, -1 -2  1, -1 3  1, -2 3  1
 				  ]
@@ -437,7 +437,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.50 0.60 0.40
-			coord DEF COORD_3_2 ExactCoordinate {
+			coord DEF COORD_3_2 EpecCoordinate {
 			  exactPoint[-2 3 -1, 0 3 -1, 0 4 -1, -2 4 -1,
 				   -2 3  1, 0 3  1, 0 4  1, -2 4  1
 				  ]
@@ -480,7 +480,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.86 0.58 0.44
-			coord DEF COORD_4_0 ExactCoordinate {
+			coord DEF COORD_4_0 EpecCoordinate {
 			  exactPoint[-1 2 -4, 1 2 -4, 1 4 -4, -1 4 -4,
 				   -1 2 -1, 1 2 -1, 1 4 -1, -1 4 -1
 				  ]
@@ -507,7 +507,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.86 0.58 0.44
-			coord DEF COORD_4_1 ExactCoordinate {
+			coord DEF COORD_4_1 EpecCoordinate {
 			  exactPoint[-1 2 -1, 0 2 -1, 0 3 -1, -1 3 -1,
 				   -1 2  1, 0 2  1, 0 3  1, -1 3  1
 				  ]
@@ -534,7 +534,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.86 0.58 0.44
-			coord DEF COORD_4_2 ExactCoordinate {
+			coord DEF COORD_4_2 EpecCoordinate {
 			  exactPoint[-1 2 1, 1 2 1, 1 4 1, -1 4 1,
 				   -1 2 4, 1 2 4, 1 4 4, -1 4 4
 				  ]
@@ -577,7 +577,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 1 1 0.49
-			coord DEF COORD_5_0 ExactCoordinate {
+			coord DEF COORD_5_0 EpecCoordinate {
 			  exactPoint[-1 0 -4, 1 0 -4, 1 2 -4, -1 2 -4,
 				   -1 0 -3, 1 0 -3, 1 2 -3, -1 2 -3
 				  ]
@@ -604,7 +604,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 1 1 0.49
-			coord DEF COORD_5_1 ExactCoordinate {
+			coord DEF COORD_5_1 EpecCoordinate {
 			  exactPoint[-1 1 -3, 1 1 -3, 1 2 -3, -1 2 -3,
 				   -1 1 -1, 1 1 -1, 1 2 -1, -1 2 -1
 				  ]
@@ -631,7 +631,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 1 1 0.49
-			coord DEF COORD_5_2 ExactCoordinate {
+			coord DEF COORD_5_2 EpecCoordinate {
 			  exactPoint[-1 0 -1, 0 0 -1, 0 2 -1, -1 2 -1,
 				   -1 0  1, 0 0  1, 0 2  1, -1 2  1
 				  ]
@@ -658,7 +658,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 1 1 0.49
-			coord DEF COORD_5_3 ExactCoordinate {
+			coord DEF COORD_5_3 EpecCoordinate {
 			  exactPoint[-1 1 1, 1 1 1, 1 2 1, -1 2 1,
 				   -1 1 3, 1 1 3, 1 2 3, -1 2 3
 				  ]
@@ -685,7 +685,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 1 1 0.49
-			coord DEF COORD_5_4 ExactCoordinate {
+			coord DEF COORD_5_4 EpecCoordinate {
 			  exactPoint[-1 0 3, 1 0 3, 1 2 3, -1 2 3,
 				   -1 0 4, 1 0 4, 1 2 4, -1 2 4
 				  ]
@@ -729,7 +729,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.75 0.85 0.69
-			coord DEF COORD_6_0 ExactCoordinate {
+			coord DEF COORD_6_0 EpecCoordinate {
 			  exactPoint[-1 -2 -4, 1 -2 -4, 1 0 -4, -1 0 -4,
 				   -1 -2 -3, 1 -2 -3, 1 0 -3, -1 0 -3
 				  ]
@@ -756,7 +756,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.75 0.85 0.69
-			coord DEF COORD_6_1 ExactCoordinate {
+			coord DEF COORD_6_1 EpecCoordinate {
 			  exactPoint[-1 -2 -3, 1 -2 -3, 1 -1 -3, -1 -1 -3,
 				   -1 -2 -1, 1 -2 -1, 1 -1 -1, -1 -1 -1
 				  ]
@@ -783,7 +783,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.75 0.85 0.69
-			coord DEF COORD_6_2 ExactCoordinate {
+			coord DEF COORD_6_2 EpecCoordinate {
 			  exactPoint[-1 -2 -1, 0 -2 -1, 0 0 -1, -1 0 -1,
 				   -1 -2  1, 0 -2  1, 0 0  1, -1 0  1
 				  ]
@@ -810,7 +810,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.75 0.85 0.69
-			coord DEF COORD_6_3 ExactCoordinate {
+			coord DEF COORD_6_3 EpecCoordinate {
 			  exactPoint[-1 -2 1, 1 -2 1, 1 -1 1, -1 -1 1,
 				   -1 -2 3, 1 -2 3, 1 -1 3, -1 -1 3
 				  ]
@@ -837,7 +837,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.75 0.85 0.69
-			coord DEF COORD_6_4 ExactCoordinate {
+			coord DEF COORD_6_4 EpecCoordinate {
 			  exactPoint[-1 -2 3, 1 -2 3, 1 0 3, -1 0 3,
 				   -1 -2 4, 1 -2 4, 1 0 4, -1 0 4
 				  ]
@@ -881,7 +881,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.91 0.78 0.65
-			coord DEF COORD_7_0 ExactCoordinate {
+			coord DEF COORD_7_0 EpecCoordinate {
 			  exactPoint[-4 -1 0, -3 -1 0, -3 1 0, -4 1 0,
 				   -4 -1 2, -3 -1 2, -3 1 2, -4 1 2
 				  ]
@@ -908,7 +908,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.91 0.78 0.65
-			coord DEF COORD_7_1 ExactCoordinate {
+			coord DEF COORD_7_1 EpecCoordinate {
 			  exactPoint[-3 -1 1, 3 -1 1, 3 1 1, -3 1 1,
 				   -3 -1 2, 3 -1 2, 3 1 2, -3 1 2
 				  ]
@@ -935,7 +935,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.91 0.78 0.65
-			coord DEF COORD_7_2 ExactCoordinate {
+			coord DEF COORD_7_2 EpecCoordinate {
 			  exactPoint[3 -1 0, 4 -1 0, 4 1 0, 3 1 0,
 				   3 -1 2, 4 -1 2, 4 1 2, 3 1 2
 				  ]
@@ -978,7 +978,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.92 0.37 0.40
-			coord DEF COORD_8_0 ExactCoordinate {
+			coord DEF COORD_8_0 EpecCoordinate {
 			  exactPoint[-4 -1 -2, -3 -1 -2, -3 1 -2, -4 1 -2,
 				   -4 -1  0, -3 -1  0, -3 1  0, -4 1  0
 				  ]
@@ -1005,7 +1005,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.92 0.37 0.40
-			coord DEF COORD_8_1 ExactCoordinate {
+			coord DEF COORD_8_1 EpecCoordinate {
 			  exactPoint[-3 -1 -2, 3 -1 -2, 3 1 -2, -3 1 -2,
 				   -3 -1 -1, 3 -1 -1, 3 1 -1, -3 1 -1
 				  ]
@@ -1032,7 +1032,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.92 0.37 0.40
-			coord DEF COORD_8_2 ExactCoordinate {
+			coord DEF COORD_8_2 EpecCoordinate {
 			  exactPoint[3 -1 -2, 4 -1 -2, 4 1 -2, 3 1 -2,
 				   3 -1  0, 4 -1  0, 4 1  0, 3 1  0
 				  ]
@@ -1075,7 +1075,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.89 0.66 0.41
-			coord DEF COORD_9_0 ExactCoordinate {
+			coord DEF COORD_9_0 EpecCoordinate {
 			  exactPoint[-4 -4 -4, -1 -4 -4, -1 -1 -4, -4 -1 -4,
 				   -4 -4 -1, -1 -4 -1, -1 -1 -1, -4 -1 -1
 				  ]
@@ -1102,7 +1102,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.89 0.66 0.41
-			coord DEF COORD_9_1 ExactCoordinate {
+			coord DEF COORD_9_1 EpecCoordinate {
 			  exactPoint[-4 1 -4, -1 1 -4, -1 4 -4, -4 4 -4,
 				   -4 1 -1, -1 1 -1, -1 4 -1, -4 4 -1
 				  ]
@@ -1129,7 +1129,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.89 0.66 0.41
-			coord DEF COORD_9_2 ExactCoordinate {
+			coord DEF COORD_9_2 EpecCoordinate {
 			  exactPoint[1 1 -4, 4 1 -4, 4 4 -4, 1 4 -4,
 				   1 1 -1, 4 1 -1, 4 4 -1, 1 4 -1
 				  ]
@@ -1156,7 +1156,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.89 0.66 0.41
-			coord DEF COORD_9_3 ExactCoordinate {
+			coord DEF COORD_9_3 EpecCoordinate {
 			  exactPoint[1 -4 -4, 4 -4 -4, 4 -1 -4, 1 -1 -4,
 				   1 -4 -1, 4 -4 -1, 4 -1 -1, 1 -1 -1
 				  ]
@@ -1183,7 +1183,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.89 0.66 0.41
-			coord DEF COORD_9_4 ExactCoordinate {
+			coord DEF COORD_9_4 EpecCoordinate {
 			  exactPoint[-4 -1 -4, -1 -1 -4, -1 1 -4, -4 1 -4,
 				   -4 -1 -2, -1 -1 -2, -1 1 -2, -4 1 -2
 				  ]
@@ -1210,7 +1210,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.89 0.66 0.41
-			coord DEF COORD_9_5 ExactCoordinate {
+			coord DEF COORD_9_5 EpecCoordinate {
 			  exactPoint[-1 -1 -3, 1 -1 -3, 1 1 -3, -1 1 -3,
 				   -1 -1 -2, 1 -1 -2, 1 1 -2, -1 1 -2
 				  ]
@@ -1237,7 +1237,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.89 0.66 0.41
-			coord DEF COORD_9_6 ExactCoordinate {
+			coord DEF COORD_9_6 EpecCoordinate {
 			  exactPoint[1 -1 -4, 4 -1 -4, 4 1 -4, 1 1 -4,
 				   1 -1 -2, 4 -1 -2, 4 1 -2, 1 1 -2
 				  ]
@@ -1281,7 +1281,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.35 0.41 0.29
-			coord DEF COORD_10_0 ExactCoordinate {
+			coord DEF COORD_10_0 EpecCoordinate {
 			  exactPoint[-4 -4 1, -1 -4 1, -1 -1 1, -4 -1 1,
 				   -4 -4 4, -1 -4 4, -1 -1 4, -4 -1 4
 				  ]
@@ -1308,7 +1308,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.35 0.41 0.29
-			coord DEF COORD_10_1 ExactCoordinate {
+			coord DEF COORD_10_1 EpecCoordinate {
 			  exactPoint[-4 1 1, -1 1 1, -1 4 1, -4 4 1,
 				   -4 1 4, -1 1 4, -1 4 4, -4 4 4
 				  ]
@@ -1335,7 +1335,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.35 0.41 0.29
-			coord DEF COORD_10_2 ExactCoordinate {
+			coord DEF COORD_10_2 EpecCoordinate {
 			  exactPoint[1 1 1, 4 1 1, 4 4 1, 1 4 1,
 				   1 1 4, 4 1 4, 4 4 4, 1 4 4
 				  ]
@@ -1362,7 +1362,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.35 0.41 0.29
-			coord DEF COORD_10_3 ExactCoordinate {
+			coord DEF COORD_10_3 EpecCoordinate {
 			  exactPoint[1 -4 1, 4 -4 1, 4 -1 1, 1 -1 1,
 				   1 -4 4, 4 -4 4, 4 -1 4, 1 -1 4
 				  ]
@@ -1389,7 +1389,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.35 0.41 0.29
-			coord DEF COORD_10_4 ExactCoordinate {
+			coord DEF COORD_10_4 EpecCoordinate {
 			  exactPoint[-4 -1 2, -1 -1 2, -1 1 2, -4 1 2,
 				   -4 -1 4, -1 -1 4, -1 1 4, -4 1 4
 				  ]
@@ -1416,7 +1416,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.35 0.41 0.29
-			coord DEF COORD_10_5 ExactCoordinate {
+			coord DEF COORD_10_5 EpecCoordinate {
 			  exactPoint[-1 -1 2, 1 -1 2, 1 1 2, -1 1 2,
 				   -1 -1 3, 1 -1 3, 1 1 3, -1 1 3
 				  ]
@@ -1443,7 +1443,7 @@ Transform {
 			drawAosHaloed TRUE
 			aosVertexStyle "none"
 			aosEdgeColor 0.35 0.41 0.29
-			coord DEF COORD_10_6 ExactCoordinate {
+			coord DEF COORD_10_6 EpecCoordinate {
 			  exactPoint[1 -1 2, 4 -1 2, 4 1 2, 1 1 2,
 				   1 -1 4, 4 -1 4, 4 1 4, 1 1 4
 				  ]

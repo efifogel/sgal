@@ -97,7 +97,7 @@ Transform {
 		aosBoundaryVertexStyle "disc"
 		pgVertexStyle "disc"
 #	        insertionStrategy "increment"
-		coord DEF COORD ExactCoordinate {
+		coord DEF COORD EpecCoordinate {
 		  exactPoint [0 1 -1, -1 0 0, -1 1 1]
 		}
 		# pointIndex [6 7]

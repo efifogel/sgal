@@ -44,22 +44,30 @@ typedef Inexact_kernel::Plane_3                 Inexact_plane_3;
 
 typedef CGAL::Polygon_2<Inexact_kernel>         Inexact_polygon;
 
-/*! Convert a point into Vector2f. */
+/*! Convert a number type to Float.
+ */
+inline Float to_float(Float number) { return number; }
+
+/*! Convert a point to Vector2f.
+ */
 template <>
 inline Vector2f to_vector2f<Inexact_point_2>(const Inexact_point_2& point)
 { return Vector2f(point.x(), point.y()); }
 
-/*! Convert a direction into Vector2f. */
+/*! Convert a direction to Vector2f.
+ */
 template <>
 inline Vector2f to_vector2f<Inexact_direction_2>(const Inexact_direction_2& dir)
 { return Vector2f(dir.dx(), dir.dy()); }
 
-/*! Convert a point into Vector3f. */
+/*! Convert a point to Vector3f.
+ */
 template <>
 inline Vector3f to_vector3f<Inexact_point_3>(const Inexact_point_3& point)
 { return Vector3f(point.x(), point.y(), point.z()); }
 
-/*! Convert a direction into Vector3f. */
+/*! Convert a direction to Vector3f.
+ */
 template <>
 inline Vector3f to_vector3f<Inexact_direction_3>(const Inexact_direction_3& dir)
 { return Vector3f(dir.dx(), dir.dy(), dir.dz()); }

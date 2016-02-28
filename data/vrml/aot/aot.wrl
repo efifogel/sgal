@@ -84,7 +84,7 @@ Transform {
 		aosVertexPointSize 6
 		aosIsolatedVertexStyle "disc"
 #	        insertionStrategy "increment"
-		coord DEF COORD ExactCoordinate2D {
+		coord DEF COORD EpecCoordinate2D {
 		  exactPoint [1/2 1/2]
 		}
 #		pointIndex [0]

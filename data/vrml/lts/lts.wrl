@@ -38,7 +38,7 @@ DEF TRANSFORM Transform {
 	colorPerVertex FALSE
     	elliminateHiden TRUE
     	lineWidth 4
-    	# coord ExactCoordinate { ratPoint
+    	# coord EpecCoordinate { ratPoint
     	coord DEF co Coordinate {
     	  point [
     	   1 1 0, 9 3 0,

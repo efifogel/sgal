@@ -26,7 +26,7 @@ Transform {
           }
           geometry DEF ROBOT CubicalGaussianMap {
             drawDual FALSE
-            coord DEF COORD ExactCoordinate {
+            coord DEF COORD EpecCoordinate {
               exactPoint [    0/1000     0/1000  1175/1000,
                          1050/1000     0/1000   525/1000,
                           325/1000  1000/1000   525/1000,
@@ -136,7 +136,7 @@ Transform {
    ]
 }
 
-DEF COORD_ADDER ExactCoordinateMinkowski {
+DEF COORD_ADDER EpecCoordinateMinkowski {
   coord1 USE COORD
   coord2 USE COORD
 }

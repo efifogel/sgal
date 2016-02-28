@@ -199,9 +199,6 @@ private:
 
   /*! The node prototype. */
   static Container_proto* m_prototype;
-
-  /*! The builder. */
-  Polyhedron_geo_builder<HalfedgeDS> m_surface;
 };
 
 #if defined(_MSC_VER)

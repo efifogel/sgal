@@ -96,7 +96,7 @@ Transform {
 		aosIsolatedVertexStyle "disc"
 		# aosBoundaryVertexStyle "disc"
 #	        insertionStrategy "increment"
-		coord DEF COORD ExactCoordinate {
+		coord DEF COORD EpecCoordinate {
 		  exactPoint [1 0 0, 0 1 0, 0 0 1, -1 0 0, 0 -1 0, 0 0 -1,
 			    1 1 1, -1 -1 -1
 			   ]

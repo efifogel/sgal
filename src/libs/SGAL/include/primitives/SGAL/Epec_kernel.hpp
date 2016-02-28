@@ -42,21 +42,18 @@ typedef Epec_kernel::Direction_3                      Epec_direction_3;
 typedef Epec_kernel::Plane_3                          Epec_plane_3;
 typedef Epec_kernel::Aff_transformation_3             Epec_aff_transformation_3;
 
-/*! Convert a direction into Vector3f. */
+/*! Convert a direction to Vector2f.
+ */
+template <>
+inline Vector2f to_vector2f<Epec_direction_2>(const Epec_direction_2& dir)
+{ return Vector2f(to_float(dir.dx()), to_float(dir.dy())); }
+
+/*! Convert a direction to Vector3f.
+ */
 template <>
 inline Vector3f to_vector3f<Epec_direction_3>(const Epec_direction_3& dir)
 {
-  return Vector3f(static_cast<float>(CGAL::to_double(dir.dx())),
-                  static_cast<float>(CGAL::to_double(dir.dy())),
-                  static_cast<float>(CGAL::to_double(dir.dz())));
-}
-
-/*! Convert a direction into Vector2f. */
-template <>
-inline Vector2f to_vector2f<Epec_direction_2>(const Epec_direction_2& dir)
-{
-  return Vector2f(static_cast<float>(CGAL::to_double(dir.dx())),
-                  static_cast<float>(CGAL::to_double(dir.dy())));
+  return Vector3f(to_float(dir.dx()), to_float(dir.dy()), to_float(dir.dz()));
 }
 
 SGAL_END_NAMESPACE

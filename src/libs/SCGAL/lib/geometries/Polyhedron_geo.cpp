@@ -57,10 +57,7 @@ Polyhedron_geo::Polyhedron_geo(Boolean proto) :
   Mesh_set(proto),
   m_dirty_polyhedron(true),
   m_dirty_facets(true)
-{
-  if (proto) return;
-  m_surface.set_mesh_set(this);
-}
+{}
 
 //! \brief destructor.
 Polyhedron_geo::~Polyhedron_geo() { clear(); }
@@ -82,14 +79,9 @@ void Polyhedron_geo::draw(Draw_action* action)
 //! \brief cleans the data structure.
 void Polyhedron_geo::clean_polyhedron()
 {
-  m_polyhedron.delegate(m_surface);
-#if 0
-  if (!m_polyhedron.normalized_border_is_valid()) {
-    m_polyhedron.normalize_border();
-  }
-#else
+  Polyhedron_geo_builder<Inexact_polyhedron::HalfedgeDS> surface(this);
+  m_polyhedron.delegate(surface);
   m_polyhedron.normalize_border();
-#endif
 
   m_dirty_polyhedron = false;
   m_dirty_facets = true;
