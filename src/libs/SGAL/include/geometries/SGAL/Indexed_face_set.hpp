@@ -68,6 +68,12 @@ public:
     LAST
   };
 
+  enum Polyhedron_type {
+    POLYHEDRON_INEXACT = 0,
+    POLYHEDRON_EPIC,
+    POLYHEDRON_EPEC
+  };
+
   typedef boost::variant<Inexact_polyhedron, Epic_polyhedron, Epec_polyhedron>
                                                           Polyhedron;
 
@@ -102,6 +108,8 @@ public:
   //@{
   Float* volume_handle(const Field_info*) { return &m_volume; }
   Float* surface_area_handle(const Field_info*) { return &m_surface_area; }
+  Polyhedron_type* polyhedron_type_handle(const Field_info*)
+  { return &m_polyhedron_type; }
   //@}
 
   /*! Sets the attributes of this node extracted from the VRML or X3D file.
@@ -185,7 +193,7 @@ public:
 
   /*! Determine whether the polyhedron representation is empty.
    */
-  bool is_polyhedron_empty() const;
+  bool is_polyhedron_empty();
 
   /*! Obtain the number of connected components.
    */
@@ -211,6 +219,14 @@ public:
    */
   Size get_number_of_facets();
 
+  /*! Clear the polyhedron edges. (Invalidate their attributes.)
+   */
+  void clear_polyhedron_edges();
+
+  /*! Clear the polyhedron facets. (Invalidate their attributes.)
+   */
+  void clear_polyhedron_facets();
+
   /// \name Change Recators
   //@{
   /*! Respond to a change in the coordinate array.
@@ -228,13 +244,29 @@ public:
    */
   void calculate_multiple_normals_per_vertex();
 
+  /*! Set the polyhedron type.
+   */
+  void set_polyhedron_type(Polyhedron_type type);
+
+  /*! Obtain the polyhedron type.
+   */
+  Polyhedron_type get_polyhedron_type() const;
+
   /*! Compute the volume of the polyhedron.
    */
   Float volume();
 
+  /*! Clear (invalidate) the volume.
+   */
+  void clear_volume();
+
   /*! Compute the surface area of the polyhedron.
    */
   Float surface_area();
+
+  /*! Clear (invalidate) the surface_area.
+   */
+  void clear_surface_area();
 
   /*! Determine wheather the mesh is consistent.
    * \return true if the the mesh is consistent and false otherwise.
@@ -285,6 +317,9 @@ protected:
   /*! The surface area of the polyhedron. */
   Float m_surface_area;
 
+  /*! The type of the polyhedrlal surface. */
+  Polyhedron_type m_polyhedron_type;
+
   /*! Indicates whether the volume is dirty and thus must be cleaned. */
   Boolean m_dirty_volume;
 
@@ -324,17 +359,13 @@ protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
-  /*! Clean the polyhedron edges.
+  /*! Clean the polyhedron edges. (Compute their attributes.)
    */
   void clean_polyhedron_edges();
 
-  /*! Clean the polyhedron facets.
+  /*! Clean the polyhedron facets. (Compute their attributes.)
    */
   void clean_polyhedron_facets();
-
-  /*! Determine whether the angle between two given vectors is smooth.
-   */
-  Boolean is_smooth(const Vector3f& normal1, const Vector3f& normal2) const;
 
   /*! Clean (compute) the volume.
    */
@@ -343,6 +374,10 @@ protected:
   /*! Clean (compute) the surface area.
    */
   void clean_surface_area();
+
+  /*! Determine whether the angle between two given vectors is smooth.
+   */
+  Boolean is_smooth(const Vector3f& normal1, const Vector3f& normal2) const;
 
   /// \name Obtain empty polyhedron
   //@{
@@ -433,8 +468,7 @@ protected:
   };
 
   /*! Size of vertices polyhedron visitor. */
-  class Size_of_vertices_visitor : public boost::static_visitor<Size>
-  {
+  class Size_of_vertices_visitor : public boost::static_visitor<Size> {
   public:
     template <typename Polyhedron_>
     Size operator()(const Polyhedron_& polyhedron) const
@@ -442,28 +476,26 @@ protected:
   };
 
   /*! Size of halfedges polyhedron visitor. */
-  class Size_of_halfedges_visitor : public boost::static_visitor<Size>
-  {
+  class Size_of_halfedges_visitor : public boost::static_visitor<Size> {
   public:
-    template <typename Polyhedron>
-    Size operator()(const Polyhedron& polyhedron) const
+    template <typename Polyhedron_>
+    Size operator()(const Polyhedron_& polyhedron) const
     { return polyhedron.size_of_halfedges(); }
   };
 
   /*! Size of facets polyhedron visitor. */
-  class Size_of_facets_visitor : public boost::static_visitor<Size>
-  {
+  class Size_of_facets_visitor : public boost::static_visitor<Size> {
   public:
-    template <typename Polyhedron>
-    Size operator()(const Polyhedron& polyhedron) const
+    template <typename Polyhedron_>
+    Size operator()(const Polyhedron_& polyhedron) const
     { return polyhedron.size_of_facets(); }
   };
 
   /*! Empty polyhedron visitor. */
   class Empty_polyhedron_visitor : public boost::static_visitor<Boolean> {
   public:
-    template <typename Polyhedron>
-    Boolean operator()(const Polyhedron& polyhedron) const
+    template <typename Polyhedron_>
+    Boolean operator()(const Polyhedron_& polyhedron) const
     { return polyhedron.empty(); }
   };
 
@@ -492,11 +524,11 @@ protected:
 
   /*! Size of border edges polyhedron visitor. */
   class Size_of_border_edges_polyhedron_visitor :
-    public boost::static_visitor<Boolean>
+    public boost::static_visitor<Size>
   {
   public:
     template <typename Polyhedron_>
-    Boolean operator()(const Polyhedron_& polyhedron) const
+    Size operator()(const Polyhedron_& polyhedron) const
     { return polyhedron.size_of_border_edges(); }
   };
 
@@ -794,17 +826,29 @@ inline Boolean Indexed_face_set::is_dirty_coord_array() const
 inline Boolean Indexed_face_set::is_dirty_polyhedron() const
 { return m_dirty_polyhedron; }
 
-//! \brief determines whether the polyhedron representation is empty.
-inline bool Indexed_face_set::is_polyhedron_empty() const
-{ return boost::apply_visitor(Empty_polyhedron_visitor(), m_polyhedron); }
-
-//! \brief determines whether there are no border edges.
-inline Boolean Indexed_face_set::is_closed()
-{ return boost::apply_visitor(Is_closed_polyhedron_visitor(), m_polyhedron); }
-
 //! brief sets the flag that determine whether the mesh has singular vertices.
 inline Boolean Indexed_face_set::set_has_singular_vertices(Boolean flag)
 { m_has_singular_vertices = flag; }
+
+//! brief obtains the polyhedron type.
+inline Indexed_face_set::Polyhedron_type Indexed_face_set::get_polyhedron_type()
+  const
+{ return m_polyhedron_type; }
+
+//! \brief clears (invalidate) the volume.
+inline void Indexed_face_set::clear_volume() { m_dirty_volume = true; }
+
+//! \brief clears (invalidate) the surface_area.
+inline void Indexed_face_set::clear_surface_area()
+{ m_dirty_surface_area = true; }
+
+//! \brief clears the polyhedron edges. (Invalidate their attributes.)
+inline void Indexed_face_set::clear_polyhedron_edges()
+{ m_dirty_polyhedron_edges = true; }
+
+//! \brief clears the polyhedron facets. (Invalidate their attributes.)
+inline void Indexed_face_set::clear_polyhedron_facets()
+{ m_dirty_polyhedron_facets = true; }
 
 SGAL_END_NAMESPACE
 

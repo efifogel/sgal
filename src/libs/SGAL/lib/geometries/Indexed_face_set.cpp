@@ -63,6 +63,7 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   Boundary_set(proto),
   m_dirty_volume(true),
   m_dirty_surface_area(true),
+  m_polyhedron_type(POLYHEDRON_INEXACT),
   m_dirty_coord_array(true),
   m_dirty_polyhedron(true),
   m_dirty_polyhedron_edges(true),
@@ -71,7 +72,6 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   m_has_singular_vertices(false)
 {
   if (proto) return;
-  //! \todo move crease_angle to here.
   set_crease_angle(0);
   set_normal_per_vertex(true);
   set_color_per_vertex(true);
@@ -295,10 +295,36 @@ void Indexed_face_set::clean_polyhedron()
   m_has_singular_vertices = boost::apply_visitor(visitor, m_facet_coord_indices);
 
   // create the polyhedral surface
-  auto polyhedron = empty_inexact_polyhedron();
-  Polyhedron_geo_builder<Inexact_polyhedron::HalfedgeDS> surface(this);
-  polyhedron.delegate(surface);
-  m_consistent = surface.is_consistent();
+  switch (m_polyhedron_type) {
+   case POLYHEDRON_INEXACT:
+    {
+     auto& polyhedron = empty_inexact_polyhedron();
+     Polyhedron_geo_builder<Inexact_polyhedron::HalfedgeDS> surface(this);
+     polyhedron.delegate(surface);
+     m_consistent = surface.is_consistent();
+    }
+    break;
+
+   case POLYHEDRON_EPIC:
+    {
+     auto& polyhedron = empty_epic_polyhedron();
+     Polyhedron_geo_builder<Epic_polyhedron::HalfedgeDS> surface(this);
+     polyhedron.delegate(surface);
+     m_consistent = surface.is_consistent();
+    }
+    break;
+
+   case POLYHEDRON_EPEC:
+    {
+     auto& polyhedron = empty_epec_polyhedron();
+     Polyhedron_geo_builder<Epec_polyhedron::HalfedgeDS> surface(this);
+     polyhedron.delegate(surface);
+     m_consistent = surface.is_consistent();
+    }
+    break;
+
+   default: SGAL_error();
+  }
 
   // Normalize the border of the polyhedron.
   boost::apply_visitor(Normalize_border_visitor(), m_polyhedron);
@@ -311,6 +337,8 @@ void Indexed_face_set::clean_polyhedron()
 void Indexed_face_set::clear_polyhedron()
 {
   m_dirty_polyhedron = true;
+  m_dirty_polyhedron_edges = true;
+  m_dirty_polyhedron_facets = true;
   m_dirty_volume = true;
   m_dirty_surface_area = true;
   boost::apply_visitor(Clear_polyhedron_visitor(), m_polyhedron);
@@ -321,11 +349,15 @@ void Indexed_face_set::set_polyhedron(Polyhedron& polyhedron)
 {
   m_polyhedron = polyhedron;
   m_dirty_polyhedron = false;
+  m_dirty_polyhedron_edges = false;
+  m_dirty_polyhedron_facets = false;
   m_dirty_volume = true;
   m_dirty_surface_area = true;
   clear_coord_array();
   clear_coord_indices();
   clear_facet_coord_indices();
+  m_consistent = true;
+  m_has_singular_vertices = false;
 }
 
 //! \brief obtains the polyhedron data-structure.
@@ -454,13 +486,26 @@ Boolean Indexed_face_set::has_singular_vertices()
   return m_has_singular_vertices;
 }
 
+//! \brief determines whether the polyhedron representation is empty.
+bool Indexed_face_set::is_polyhedron_empty()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  return boost::apply_visitor(Empty_polyhedron_visitor(), m_polyhedron);
+}
+
+//! \brief determines whether there are no border edges.
+Boolean Indexed_face_set::is_closed()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  return boost::apply_visitor(Is_closed_polyhedron_visitor(), m_polyhedron);
+}
+
 //! \brief obtains the number of border edges.
 size_t Indexed_face_set::get_number_of_border_edges()
 {
   if (m_dirty_polyhedron) clean_polyhedron();
-  Size_of_border_edges_polyhedron_visitor visitor;
-  return boost::apply_visitor(visitor, m_polyhedron);
-  // return m_polyhedron.size_of_border_edges();
+  return boost::apply_visitor(Size_of_border_edges_polyhedron_visitor(),
+                              m_polyhedron);
 }
 
 //! \bried obtains the number of connected components.
@@ -511,24 +556,31 @@ void Indexed_face_set::clean_polyhedron_edges()
 }
 
 //! \brief obtains an empty inexact polyhedron.
-inline Inexact_polyhedron& Indexed_face_set::empty_inexact_polyhedron()
+Inexact_polyhedron& Indexed_face_set::empty_inexact_polyhedron()
 {
   m_polyhedron = Inexact_polyhedron();
   return boost::get<Inexact_polyhedron>(m_polyhedron);
 }
 
 //! \brief obtains an empty epic polyhedron.
-inline Epic_polyhedron& Indexed_face_set::empty_epic_polyhedron()
+Epic_polyhedron& Indexed_face_set::empty_epic_polyhedron()
 {
   m_polyhedron = Epic_polyhedron();
   return boost::get<Epic_polyhedron>(m_polyhedron);
 }
 
 //! \brief obtains an empty eprc polyhedron.
-inline Epec_polyhedron& Indexed_face_set::empty_epec_polyhedron()
+Epec_polyhedron& Indexed_face_set::empty_epec_polyhedron()
 {
   m_polyhedron = Epec_polyhedron();
   return boost::get<Epec_polyhedron>(m_polyhedron);
+}
+
+//! brief sets the polyhedron type.
+void Indexed_face_set::set_polyhedron_type(Polyhedron_type type)
+{
+  if (m_polyhedron_type != type) clear_polyhedron();
+  m_polyhedron_type = type;
 }
 
 SGAL_END_NAMESPACE
