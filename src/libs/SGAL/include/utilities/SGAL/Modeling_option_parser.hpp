@@ -36,6 +36,8 @@ SGAL_BEGIN_NAMESPACE
 
 namespace po = boost::program_options;
 
+class Configuration;
+
 class SGAL_SGAL_DECL Modeling_option_parser {
 public:
   /*! Construct default.
@@ -46,53 +48,64 @@ public:
    */
   virtual ~Modeling_option_parser();
 
+  /*! Obtain the variable map.
+   * \return the variable map.
+   */
+  virtual const po::variables_map& get_variable_map() const = 0;
+
+  /*! Apply the options
+   */
+  void apply();
+
   /*! Obtain the modeling-option description.
    * \return the modeling-option description.
    */
   inline const po::options_description& get_modeling_opts() const;
 
-  /*! Apply the options
-   * \param variable_map
+  /*! Configure. */
+  void configure(Configuration* conf);
+
+  /*! Determine whether to triangulate holes.
+   * \return true if the triangulations of holes is desired, and false otherwise.
    */
-  void apply(po::variables_map& variable_map);
+  Boolean get_triangulate() const;
 
-  /*! Configure the given window manager.
+  /*! Determine whether to refine the triangulation of holes.
+   * \return true if the refinement of the triangulations of holes is desired,
+   *         and false otherwise.
    */
-//   template <typename Font_manager>
-//   void configure(const po::variables_map& variable_map,
-//                  Font_manager* window_manager)
-//   {
-//     Uint width;
-//     if (get_window_width(variable_map, width))
-//       window_manager->set_window_width(width);
+  Boolean get_refine() const;
 
-//     Uint height;
-//     if (get_window_height(variable_map, height))
-//       window_manager->set_window_height(height);
-
-//     Uint x;
-//     if (get_window_x(variable_map, x)) window_manager->set_window_x(x);
-
-//     Uint y;
-//     if (get_window_y(variable_map, y)) window_manager->set_window_y(y);
-
-//     Boolean full_screen;
-//     if (get_window_full_screen(variable_map, full_screen))
-//       window_manager->set_full_screen(full_screen);
-//   }
+  /*! Determine whether to fair (smooth) the triangulations of holes.
+   * \return true if the fairing of the triangulations of holes is desired,
+   *         and false otherwise.
+   */
+  Boolean get_fair() const;
 
   /*! Obtain the font paths.
    * \param variable_map (in)
    * \return the font paths.
    */
-  const String_array& get_paths(const po::variables_map& variable_map)
-    const;
+  const String_array& get_paths(const po::variables_map& variable_map) const;
 
 protected:
   /*! The modeling options. */
   po::options_description m_modeling_opts;
 
 private:
+  /*! Indicates whether to triangulate a hole thereby filling it. */
+  Boolean m_triangulate;
+
+  /*! Indicates whether to refine the triangulation of a hole by applying
+   * local averaging rules.
+   */
+  Boolean m_refine;
+
+  /*! Indicates whether to smooth the triangulation of a hole to obtain
+   * as-smooth-as-possible shape deformation.
+   */
+  Boolean m_fair;
+
   // The assignment operator cannot be generated (because some of the data
   // members are const pointers), so we suppress it explicitly.
   // We also suppress the copy constructor.
@@ -108,9 +121,15 @@ private:
 inline const po::options_description&
 Modeling_option_parser::get_modeling_opts() const { return m_modeling_opts; }
 
-//! \brief applies the options.
-inline void Modeling_option_parser::apply(po::variables_map& /* variable_map */)
-{}
+//! \brief determines whether to triangulate holes.
+inline Boolean Modeling_option_parser::get_triangulate() const
+{ return m_triangulate; }
+
+//! \brief determines whether to refine the triangulation of holes.
+inline Boolean Modeling_option_parser::get_refine() const { return m_refine; }
+
+//! \brief determines whether to fair the triangulation of holes.
+inline Boolean Modeling_option_parser::get_fair() const {return m_fair; }
 
 SGAL_END_NAMESPACE
 
