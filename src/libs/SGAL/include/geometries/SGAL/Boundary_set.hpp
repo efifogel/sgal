@@ -306,8 +306,8 @@ public:
    */
   Boolean is_dirty_center() const;
 
-  /*! Add the container to a given scene
-   * \param scene_graph the given scene
+  /*! Add the container to a given scene.
+   * \param[in] scene_graph the given scene.
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
