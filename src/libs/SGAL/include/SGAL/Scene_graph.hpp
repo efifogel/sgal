@@ -106,6 +106,7 @@ class Polyhedron_attributes_array;
 class SGAL_SGAL_DECL Scene_graph {
 public:
   typedef boost::shared_ptr<Container>            Shared_container;
+  typedef boost::shared_ptr<Configuration>        Shared_configuration;
   typedef boost::shared_ptr<Group>                Shared_group;
   typedef boost::shared_ptr<Transform>            Shared_transform;
   typedef boost::shared_ptr<Point_light>          Shared_point_light;
