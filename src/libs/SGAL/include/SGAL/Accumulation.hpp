@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Accumulation.hpp 7628 2009-05-26 11:11:45Z efif $
-// $Revision: 7628 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_ACCUMULATION_HPP
@@ -261,42 +258,42 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Accumulation* Accumulation::prototype()
 { return new Accumulation(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Accumulation::clone() { return new Accumulation(); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Accumulation::get_tag() const { return s_tag; }
 
-/*! \brief Obtain the total number of iterations. */
+//! \brief Obtain the total number of iterations.
 inline Uint Accumulation::get_num_iters() const { return m_num_iters; }
 
-/*! \brief sets the flag that indicates whether accumulation is enabled. */
+//! \brief sets the flag that indicates whether accumulation is enabled.
 inline void Accumulation::set_enabled(Boolean flag) { m_enabled = flag; }
 
-/*! \brief obtains the flag that indicates whether accumulation is enabled. */
+//! \brief obtains the flag that indicates whether accumulation is enabled.
 inline Boolean Accumulation::is_enabled() const { return m_enabled; }
 
-/*! \brief sets the accumulation delay in miliseconds. */
+//! \brief sets the accumulation delay in miliseconds.
 inline void Accumulation::set_delay(Uint ms) { m_delay = ms; }
 
-/*! \brief obtains the accumulation delay in miliseconds. */
+//! \brief obtains the accumulation delay in miliseconds.
 inline Uint Accumulation::get_delay() const { return m_delay; }
 
-/*! \brief sets the accumulation quality. */
+//! \brief sets the accumulation quality.
 inline void Accumulation::set_quality(Quality quality) { m_quality = quality; }
 
-/*! \brief obtains the accumulation quality. */
+//! \brief obtains the accumulation quality.
 inline Accumulation::Quality Accumulation::get_quality() const
 { return m_quality; }
 
-/*! \brief returns ture if the frame buffer is being accumulated. */
+//! \brief returns ture if the frame buffer is being accumulated.
 inline Boolean Accumulation::is_active() const { return m_active; }
 
-/*! \brief returns ture if the frame buffer showld be shown. */
+//! \brief returns ture if the frame buffer showld be shown.
 inline Boolean Accumulation::do_show() const { return m_show; }
 
 SGAL_END_NAMESPACE
