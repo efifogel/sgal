@@ -295,98 +295,98 @@ void Mesh_set::clean_bounding_sphere()
 }
 
 //! \brief obtains the triangle coord indices.
-Mesh_set::Triangle_indices& Mesh_set::empty_triangle_coord_indices()
+Triangle_indices& Mesh_set::empty_triangle_coord_indices()
 {
   m_facet_coord_indices = Triangle_indices();
   return boost::get<Triangle_indices>(m_facet_coord_indices);
 }
 
 //! \brief obtains the quad coord indices.
-Mesh_set::Quad_indices& Mesh_set::empty_quad_coord_indices()
+Quad_indices& Mesh_set::empty_quad_coord_indices()
 {
   m_facet_coord_indices = Quad_indices();
   return boost::get<Quad_indices>(m_facet_coord_indices);
 }
 
 //! \brief obtains the polygon coord indices.
-Mesh_set::Polygon_indices& Mesh_set::empty_polygon_coord_indices()
+Polygon_indices& Mesh_set::empty_polygon_coord_indices()
 {
   m_facet_coord_indices = Polygon_indices();
   return boost::get<Polygon_indices>(m_facet_coord_indices);
 }
 
 //! \brief obtains the triangle normal indices.
-Mesh_set::Triangle_indices& Mesh_set::empty_triangle_normal_indices()
+Triangle_indices& Mesh_set::empty_triangle_normal_indices()
 {
   m_facet_normal_indices = Triangle_indices();
   return boost::get<Triangle_indices>(m_facet_normal_indices);
 }
 
 //! \brief obtains the quad normal indices.
-Mesh_set::Quad_indices& Mesh_set::empty_quad_normal_indices()
+Quad_indices& Mesh_set::empty_quad_normal_indices()
 {
   m_facet_normal_indices = Quad_indices();
   return boost::get<Quad_indices>(m_facet_normal_indices);
 }
 
 //! \brief obtains the polygon normal indices.
-Mesh_set::Polygon_indices& Mesh_set::empty_polygon_normal_indices()
+Polygon_indices& Mesh_set::empty_polygon_normal_indices()
 {
   m_facet_normal_indices = Polygon_indices();
   return boost::get<Polygon_indices>(m_facet_normal_indices);
 }
 
 //! \brief obtains the flat normal indices.
-Mesh_set::Flat_indices& Mesh_set::empty_flat_normal_indices()
+Flat_indices& Mesh_set::empty_flat_normal_indices()
 {
   m_facet_normal_indices = Flat_indices();
   return boost::get<Flat_indices>(m_facet_normal_indices);
 }
 
 //! \brief obtains the triangle color indices.
-Mesh_set::Triangle_indices& Mesh_set::empty_triangle_color_indices()
+Triangle_indices& Mesh_set::empty_triangle_color_indices()
 {
   m_facet_color_indices = Triangle_indices();
   return boost::get<Triangle_indices>(m_facet_color_indices);
 }
 
 //! \brief obtains the quad color indices.
-Mesh_set::Quad_indices& Mesh_set::empty_quad_color_indices()
+Quad_indices& Mesh_set::empty_quad_color_indices()
 {
   m_facet_color_indices = Quad_indices();
   return boost::get<Quad_indices>(m_facet_color_indices);
 }
 
 //! \brief obtains the polygon color indices.
-Mesh_set::Polygon_indices& Mesh_set::empty_polygon_color_indices()
+Polygon_indices& Mesh_set::empty_polygon_color_indices()
 {
   m_facet_color_indices = Polygon_indices();
   return boost::get<Polygon_indices>(m_facet_color_indices);
 }
 
 //! \brief obtains the flat color indices.
-Mesh_set::Flat_indices& Mesh_set::empty_flat_color_indices()
+Flat_indices& Mesh_set::empty_flat_color_indices()
 {
   m_facet_color_indices = Flat_indices();
   return boost::get<Flat_indices>(m_facet_color_indices);
 }
 
 //! \brief obtains the triangle tex-coord indices.
-Mesh_set::Triangle_indices& Mesh_set::empty_triangle_tex_coord_indices()
+Triangle_indices& Mesh_set::empty_triangle_tex_coord_indices()
 {
   m_facet_tex_coord_indices = Triangle_indices();
   return boost::get<Triangle_indices>(m_facet_tex_coord_indices);
 }
 
 //! \brief obtains the quad tex-coord indices.
-Mesh_set::Quad_indices& Mesh_set::empty_quad_tex_coord_indices()
+Quad_indices& Mesh_set::empty_quad_tex_coord_indices()
 {
   m_facet_tex_coord_indices = Quad_indices();
   return boost::get<Quad_indices>(m_facet_tex_coord_indices);
 }
 
 //! \brief obtains the polygon tex-coord indices.
-Mesh_set::Polygon_indices& Mesh_set::empty_polygon_tex_coord_indices()
+Polygon_indices& Mesh_set::empty_polygon_tex_coord_indices()
 {
   m_facet_tex_coord_indices = Polygon_indices();
   return boost::get<Polygon_indices>(m_facet_tex_coord_indices);
@@ -1079,7 +1079,7 @@ void Mesh_set::set_index_facet_indices(Facet_indices& indices, size_t address,
 }
 
 //! \brief gets the value of an entry in a facet indices structure.
-Mesh_set::Index_type
+Index_type
 Mesh_set::get_index_facet_indices(const Facet_indices& indices, size_t address)
 {
   Get_index_facet_indices_visitor visitor(address);

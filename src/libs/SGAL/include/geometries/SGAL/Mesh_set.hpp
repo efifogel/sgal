@@ -23,6 +23,7 @@
 #include <boost/variant.hpp>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Indices_types.hpp"
 #include "SGAL/Geo_set.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -48,17 +49,6 @@ public:
     LAST
   };
 
-  /* The type Index_array is used to store an array of unsigned int indices.
-   * Arrays of such type are used as arguments in OpenGL calls, where the
-   * type of the index, namely unsigned int, is hard coded.
-   */
-  typedef uint32_t                                          Index_type;
-  typedef std::vector<Index_type>                           Index_array;
-
-  typedef std::vector<std::array<Index_type, 3> >           Triangle_indices;
-  typedef std::vector<std::array<Index_type, 4> >           Quad_indices;
-  typedef std::vector<std::vector<Index_type> >             Polygon_indices;
-  typedef std::vector<Index_type>                           Flat_indices;
   typedef boost::variant<Triangle_indices, Quad_indices, Polygon_indices,
                          Flat_indices>                      Facet_indices;
 
@@ -1287,64 +1277,59 @@ inline Boolean Mesh_set::is_dirty_tex_coord_indices() const
 { return m_dirty_tex_coord_indices; }
 
 //! \brief obtains the triangle coord indices.
-inline const Mesh_set::Triangle_indices& Mesh_set::triangle_coord_indices()
-  const
+inline const Triangle_indices& Mesh_set::triangle_coord_indices() const
 { return boost::get<Triangle_indices>(m_facet_coord_indices); }
 
 //! \brief obtains the quad coord indices.
-inline const Mesh_set::Quad_indices& Mesh_set::quad_coord_indices() const
+inline const Quad_indices& Mesh_set::quad_coord_indices() const
 { return boost::get<Quad_indices>(m_facet_coord_indices); }
 
 //! \brief obtains the polygon coord indices.
-inline const Mesh_set::Polygon_indices& Mesh_set::polygon_coord_indices() const
+inline const Polygon_indices& Mesh_set::polygon_coord_indices() const
 { return boost::get<Polygon_indices>(m_facet_coord_indices); }
 
 //! \brief obtains the triangle normal indices.
-inline const Mesh_set::Triangle_indices& Mesh_set::triangle_normal_indices()
-  const
+inline const Triangle_indices& Mesh_set::triangle_normal_indices() const
 { return boost::get<Triangle_indices>(m_facet_normal_indices); }
 
 //! \brief obtains the quad normal indices.
-inline const Mesh_set::Quad_indices& Mesh_set::quad_normal_indices() const
+inline const Quad_indices& Mesh_set::quad_normal_indices() const
 { return boost::get<Quad_indices>(m_facet_normal_indices); }
 
 //! \brief obtains the polygon normal indices.
-inline const Mesh_set::Polygon_indices& Mesh_set::polygon_normal_indices() const
+inline const Polygon_indices& Mesh_set::polygon_normal_indices() const
 { return boost::get<Polygon_indices>(m_facet_normal_indices); }
 
 //! \brief Obtain the flat normal indices.
-inline const Mesh_set::Flat_indices& Mesh_set::flat_normal_indices() const
+inline const Flat_indices& Mesh_set::flat_normal_indices() const
 { return boost::get<Flat_indices>(m_facet_normal_indices); }
 
 //! \brief obtains the triangle color indices.
-inline const Mesh_set::Triangle_indices& Mesh_set::triangle_color_indices()
-  const
+inline const Triangle_indices& Mesh_set::triangle_color_indices() const
 { return boost::get<Triangle_indices>(m_facet_color_indices); }
 
 //! \brief obtains the quad normal indices.
-inline const Mesh_set::Quad_indices& Mesh_set::quad_color_indices() const
+inline const Quad_indices& Mesh_set::quad_color_indices() const
 { return boost::get<Quad_indices>(m_facet_color_indices); }
 
 //! \brief obtains the polygon normal indices.
-inline const Mesh_set::Polygon_indices& Mesh_set::polygon_color_indices() const
+inline const Polygon_indices& Mesh_set::polygon_color_indices() const
 { return boost::get<Polygon_indices>(m_facet_color_indices); }
 
 //! \brief obtains the flat color indices.
-inline const Mesh_set::Flat_indices& Mesh_set::flat_color_indices() const
+inline const Flat_indices& Mesh_set::flat_color_indices() const
 { return boost::get<Flat_indices>(m_facet_color_indices); }
 
 //! \brief obtains the triangle tex-coord indices.
-inline const Mesh_set::Triangle_indices& Mesh_set::triangle_tex_coord_indices()
-  const
+inline const Triangle_indices& Mesh_set::triangle_tex_coord_indices() const
 { return boost::get<Triangle_indices>(m_facet_tex_coord_indices); }
 
 //! \brief obtains the quad tex-coord indices.
-inline const Mesh_set::Quad_indices& Mesh_set::quad_tex_coord_indices() const
+inline const Quad_indices& Mesh_set::quad_tex_coord_indices() const
 { return boost::get<Quad_indices>(m_facet_tex_coord_indices); }
 
 //! \brief obtains the polygon tex-coord indices.
-inline const Mesh_set::Polygon_indices& Mesh_set::polygon_tex_coord_indices()
-  const
+inline const Polygon_indices& Mesh_set::polygon_tex_coord_indices() const
 { return boost::get<Polygon_indices>(m_facet_tex_coord_indices); }
 
 //! \brief constructs default.
@@ -1392,8 +1377,7 @@ Facet_indices_const_iterator(Polygon_indices::const_iterator end) :
 inline Mesh_set::Facet_indices_const_iterator::
 Facet_indices_const_iterator(Flat_indices::const_iterator it) : m_it(it) {}
 
-inline const Mesh_set::Index_type&
-Mesh_set::Facet_indices_const_iterator::operator*()
+inline const Index_type& Mesh_set::Facet_indices_const_iterator::operator*()
 {
   Reference_visitor visitor(*this);
   return boost::apply_visitor(visitor, m_it);
