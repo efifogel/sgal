@@ -18,7 +18,7 @@
 
 /*! \file
  * A pure geometry container that represents an arrangement embeded on a
- * parametric surface
+ * parametric surface.
  */
 
 #ifndef SCGAL_ARRANGEMENT_ON_SURFACE_GEO_HPP
@@ -46,7 +46,6 @@
 SGAL_BEGIN_NAMESPACE
 
 class Coord_array;
-class Index_array;
 class Draw_action;
 class Isect_action;
 class Cull_context;
@@ -127,10 +126,10 @@ protected:
   typedef Edge_shape::Style                           Edge_style;
 
 public:
-  /*! Constructor. */
+  /*! Construct. */
   Arrangement_on_surface_geo(Boolean proto = false);
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Arrangement_on_surface_geo();
 
   /*! Clone. */
