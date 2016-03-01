@@ -28,6 +28,9 @@
 #include <GL/glext.h>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Polyhedron.hpp"
+#include "SGAL/Epic_polyhedron.hpp"
+#include "SGAL/Epec_polyhedron.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Normal_array.hpp"
@@ -48,6 +51,12 @@
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Polyhedron_geo_builder.hpp"
 #include "SGAL/Exact_polyhedron_geo_builder.hpp"
+#include "SGAL/Configuration.hpp"
+#include "SGAL/Modeling.hpp"
+#include "SGAL/Scene_graph.hpp"
+#include "SGAL/Hole_filler_visitor.hpp"
+#include "SGAL/Orient_polygon_soup_visitor.hpp"
+#include "SGAL/Number_of_connected_components_polyhedron_visitor.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -69,7 +78,10 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   m_dirty_polyhedron_edges(true),
   m_dirty_polyhedron_facets(true),
   m_consistent(true),
-  m_has_singular_vertices(false)
+  m_has_singular_vertices(false),
+  m_triangulate(Modeling::s_def_triangulate),
+  m_refine(Modeling::s_def_refine),
+  m_fair(Modeling::s_def_refine)
 {
   if (proto) return;
   set_crease_angle(0);
@@ -285,6 +297,9 @@ void Indexed_face_set::clean_polyhedron()
   m_dirty_surface_area = true;
   m_consistent = true;
 
+  if ((m_polyhedron_type == POLYHEDRON_INEXACT) && m_triangulate)
+    m_polyhedron_type = POLYHEDRON_EPIC;
+
   auto coord_array = get_coord_array();
   if (!coord_array || coord_array->empty()) return;
   if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
@@ -329,6 +344,19 @@ void Indexed_face_set::clean_polyhedron()
   // Normalize the border of the polyhedron.
   boost::apply_visitor(Normalize_border_visitor(), m_polyhedron);
 
+  if (!is_closed() && m_triangulate) {
+    Hole_filler_visitor visitor(m_refine, m_fair);
+    boost::apply_visitor(visitor, m_polyhedron);
+
+    //! \todo instead of brutally clearing the coord array and indices arrays,
+    // update these arrays based on the results of the hole-filler visitor.
+    clear_coord_array();
+    clear_coord_indices();
+    clear_facet_coord_indices();
+  }
+
+  m_dirty_volume = true;
+  m_dirty_surface_area = true;
   m_dirty_polyhedron_edges = true;
   m_dirty_polyhedron_facets = true;
 }
@@ -581,6 +609,20 @@ void Indexed_face_set::set_polyhedron_type(Polyhedron_type type)
 {
   if (m_polyhedron_type != type) clear_polyhedron();
   m_polyhedron_type = type;
+}
+
+//! \brief adds the container to a given scene.
+void Indexed_face_set::add_to_scene(Scene_graph* sg)
+{
+  auto* conf = sg->get_configuration();
+  if (!conf) return;
+
+  auto modeling = conf->get_modeling();
+  if (!modeling) return;
+
+  m_triangulate = modeling->get_triangulate();
+  m_refine = modeling->get_refine();
+  m_fair = modeling->get_fair();
 }
 
 SGAL_END_NAMESPACE

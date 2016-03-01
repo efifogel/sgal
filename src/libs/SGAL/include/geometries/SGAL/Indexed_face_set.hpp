@@ -19,16 +19,13 @@
 #ifndef SGAL_INDEXED_FACE_SET_HPP
 #define SGAL_INDEXED_FACE_SET_HPP
 
-#include <map>
 #include <boost/variant.hpp>
-#include <boost/property_map/property_map.hpp>
 #include <boost/type_traits.hpp>
 
 #include <CGAL/basic.h>
-#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Configuration.hpp"
 #include "SGAL/Boundary_set.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Inexact_kernel.hpp"
@@ -38,8 +35,6 @@
 #include "SGAL/Epic_polyhedron.hpp"
 #include "SGAL/Epec_polyhedron.hpp"
 
-namespace PMP = CGAL::Polygon_mesh_processing;
-
 SGAL_BEGIN_NAMESPACE
 
 class Element;
@@ -47,6 +42,7 @@ class Container_proto;
 class Draw_action;
 class Isect_action;
 class Formatter;
+class Scene_graph;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -118,6 +114,11 @@ public:
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
+
+  /*! Add the container to a given scene.
+   * \param[in] scene_graph the given scene.
+   */
+  virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Draw the polygons.
    */
@@ -283,32 +284,6 @@ public:
    *            vertices.
    */
   Boolean set_has_singular_vertices(Boolean flag);
-
-  /*! Orient polygon soup visitor. */
-  class Orient_polygon_soup_visitor : public boost::static_visitor<Boolean> {
-  private:
-    typedef boost::shared_ptr<Coord_array_3d>         Shared_coord_array_3d;
-
-    const Shared_coord_array_3d m_coord_array;
-
-  public:
-    //! Construct
-    Orient_polygon_soup_visitor(Shared_coord_array_3d coord_array) :
-      m_coord_array(coord_array) {}
-
-    template <typename Indices>
-    Boolean operator()(Indices& indices) const
-    {
-      auto* field_info = m_coord_array->get_field_info(Coord_array::POINT);
-      auto& points = *(m_coord_array->array_handle(field_info));
-      auto has_singular_vertices =
-        !CGAL::Polygon_mesh_processing::orient_polygon_soup(points, indices);
-      return has_singular_vertices;
-    }
-
-    Boolean operator()(Flat_indices& indices) const
-    { SGAL_error(); return false; }
-  };
 
 protected:
   /*! The volume of the polyhedron. */
@@ -530,23 +505,6 @@ protected:
     template <typename Polyhedron_>
     Size operator()(const Polyhedron_& polyhedron) const
     { return polyhedron.size_of_border_edges(); }
-  };
-
-  /*! Number of connected components polyhedron visitor. */
-  class Number_of_connected_components_polyhedron_visitor :
-    public boost::static_visitor<Boolean>
-  {
-  public:
-    template <typename Polyhedron_>
-    Boolean operator()(Polyhedron_& polyhedron) const
-    {
-      typedef Polyhedron_               Polyhedron;
-      auto index_map = CGAL::get(boost::face_external_index_t(), polyhedron);
-      auto np = PMP::parameters::face_index_map(index_map);
-      std::map<typename Polyhedron::Face_handle, size_t> face_ccs;
-      auto fcm = boost::make_assoc_property_map(face_ccs);
-      return PMP::connected_components(polyhedron, fcm, np);
-    }
   };
 
   /*! Volume polyhedron visitor. */
@@ -786,6 +744,19 @@ protected:
   };
 
 private:
+  /*! Indicates whether to triangulate a hole thereby filling it. */
+  Boolean m_triangulate;
+
+  /*! Indicates whether to refine the triangulation of a hole by applying
+   * local averaging rules.
+   */
+  Boolean m_refine;
+
+  /*! Indicates whether to smooth the triangulation of a hole to obtain
+   * as-smooth-as-possible shape deformation.
+   */
+  Boolean m_fair;
+
   /*! Clean the coordinate indices.
    */
   void clean_coord_indices();
