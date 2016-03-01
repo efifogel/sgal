@@ -72,10 +72,10 @@ public:
     LAST
   };
 
-  /*! Constructor. */
+  /*! Construct. */
   Lower_envelope_tri_geo(Boolean proto = false);
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Lower_envelope_tri_geo();
 
   /*! Construct the prototype. */
@@ -189,7 +189,7 @@ OutputIterator Lower_envelope_tri_geo::get_triangles(OutputIterator oi)
     const auto& facet_indices = ifs->get_facet_coord_indices();
     //! \todo use a visitor instead of the following statement.
     const auto& coord_indices =
-      boost::get<Mesh_set::Triangle_indices>(facet_indices);
+      boost::get<Triangle_indices>(facet_indices);
 
     for (Uint i = 0; i < ifs->get_num_primitives(); ++i) {
       const Vector3f& v1 = (*coord_array)[coord_indices[i][0]];
