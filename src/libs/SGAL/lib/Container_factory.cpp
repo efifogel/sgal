@@ -128,8 +128,10 @@
 // #include "SGAL/Comp_rotation_interpolator.hpp"
 
 // #include "SGAL/Prog_indexed_tri_set.hpp"
+#include "SGAL/Hole_filler.hpp"
 #include "SGAL/Snapshot.hpp"
 #include "SGAL/Snapshotter.hpp"
+#include "SGAL/Surface_border.hpp"
 // #include "SGAL/Movie_recorder.hpp"
 // #include "SGAL/Field_def.hpp"
 
@@ -224,6 +226,7 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Indexed_face_set);
   REGISTER_OBJECT(Indexed_geodesic_set);
   REGISTER_OBJECT(Indexed_line_set);
+  REGISTER_OBJECT(Hole_filler);
   REGISTER_OBJECT(Key_sensor);
   REGISTER_OBJECT(Material);
   REGISTER_OBJECT(Modeling);
@@ -246,6 +249,7 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Sphere);
   REGISTER_OBJECT(Sphere_environment);
   REGISTER_OBJECT(Sphere_plane_intersection);
+  REGISTER_OBJECT(Surface_border);
   REGISTER_OBJECT(Spot_light);
   REGISTER_OBJECT(Switch);
   REGISTER_OBJECT(Tex_coord_array_2d);

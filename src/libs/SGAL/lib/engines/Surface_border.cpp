@@ -36,9 +36,7 @@
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Indexed_line_set.hpp"
-
-#include "SCGAL/basic.hpp"
-#include "SCGAL/Surface_border.hpp"
+#include "SGAL/Surface_border.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -152,19 +150,10 @@ void Surface_border::execute()
   if (!m_border) m_border = Shared_indexed_line_set(new Indexed_line_set);
 
   auto geometry = boost::dynamic_pointer_cast<Indexed_face_set>(m_surface);
-  if (geometry) {
-    const auto& polyhedron = geometry->get_polyhedron();
-    Construct_border_visitor visitor(m_border);
-    boost::apply_visitor(visitor, polyhedron);
-  }
-  else {
-    auto geometry = boost::dynamic_pointer_cast<Exact_polyhedron_geo>(m_surface);
-    if (geometry) {
-      const auto& polyhedron = geometry->get_polyhedron();
-      construct_border(polyhedron);
-    }
-    else SGAL_error();
-  }
+  SGAL_assertion(geometry);
+  const auto& polyhedron = geometry->get_polyhedron();
+  Construct_border_visitor visitor(m_border);
+  boost::apply_visitor(visitor, polyhedron);
 
   // Cascade the result field:
   auto* field = get_field(BORDER);

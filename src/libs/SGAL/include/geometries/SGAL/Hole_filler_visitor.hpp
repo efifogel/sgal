@@ -100,8 +100,8 @@ private:
       //           << std::endl;
       ++nb_holes;
     }
-    std::cout << std::endl;
-    std::cout << nb_holes << " holes have been filled" << std::endl;
+    // std::cout << std::endl;
+    // std::cout << nb_holes << " holes have been filled" << std::endl;
   }
 };
 

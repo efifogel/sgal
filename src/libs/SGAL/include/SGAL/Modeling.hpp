@@ -31,6 +31,7 @@ class Container_proto;
 
 class SGAL_SGAL_DECL Modeling : public Container {
   friend class Indexed_face_set;
+  friend class Hole_filler;
 public:
   enum {
     FIRST = Container::LAST - 1,

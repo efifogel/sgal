@@ -32,9 +32,6 @@
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Indexed_line_set.hpp"
 
-#include "SCGAL/basic.hpp"
-#include "SCGAL/Exact_polyhedron_geo.hpp"
-
 SGAL_BEGIN_NAMESPACE
 
 class Field_info;
@@ -57,7 +54,6 @@ public:
 
   typedef boost::shared_ptr<Indexed_line_set>       Shared_indexed_line_set;
   typedef boost::shared_ptr<Mesh_set>               Shared_mesh_set;
-  typedef boost::shared_ptr<Exact_polyhedron_geo>   Shared_exact_polyhedron_geo;
 
   /*! Construct.
    */

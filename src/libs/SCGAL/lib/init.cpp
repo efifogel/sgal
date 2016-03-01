@@ -87,7 +87,6 @@
 #if defined(SGAL_USE_SSC)
 #include "SCGAL/Smallest_stabbing_cube.hpp"
 #endif
-#include "SCGAL/Surface_border.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -152,7 +151,6 @@ SGAL_SCGAL_DECL void scgal_init()
 #if defined(SGAL_USE_SSC)
   Container_factory::get_instance()->doregister(Smallest_stabbing_cube::prototype());
 #endif
-  Container_factory::get_instance()->doregister(Surface_border::prototype());
 }
 
 SGAL_END_NAMESPACE
