@@ -99,16 +99,16 @@ public:
   typedef boost::shared_ptr<Multisample>                Shared_multisample;
   typedef boost::shared_ptr<Modeling>                   Shared_modeling;
 
-  /*! Constructor */
+  /*! Construct. */
   Configuration(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destruct. */
   virtual ~Configuration() {};
 
-  /*! Construct the prototype */
+  /*! Construct the prototype. */
   static Configuration* prototype();
 
-  /*! Clone */
+  /*! Clone. */
   virtual Container* clone();
 
   /*! Initialize the node prototype. */
@@ -144,7 +144,6 @@ public:
 
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
-
 
   /*! Add the container to a given scene.
    * \param scene_graph the given scene.
