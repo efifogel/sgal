@@ -83,8 +83,8 @@ Float Polyhedron_attributes_array::surface_area() const
 {
   Float sum(0);
   std::for_each(m_array.begin(), m_array.end(),
-                  [&](const Polyhedron_attributes& attrs)
-                  { sum += attrs.get_surface_area(); });
+                [&](const Polyhedron_attributes& attrs)
+                { sum += attrs.get_surface_area(); });
   return sum;
 }
 
@@ -93,8 +93,8 @@ Size Polyhedron_attributes_array::number_of_connected_components() const
 {
   Size sum(0);
   std::for_each(m_array.begin(), m_array.end(),
-                  [&](const Polyhedron_attributes& attrs)
-                  { sum += attrs.get_number_of_connected_components(); });
+                [&](const Polyhedron_attributes& attrs)
+                { sum += attrs.get_number_of_connected_components(); });
   return sum;
 }
 
@@ -102,10 +102,11 @@ Size Polyhedron_attributes_array::number_of_connected_components() const
 const Bounding_box Polyhedron_attributes_array::bounding_box() const
 {
   auto it = m_array.begin();
+  if (it == m_array.end()) return Bounding_box();
   Bounding_box bbox(it++->get_bounding_box());
   std::for_each(it, m_array.end(),
-                  [&](const Polyhedron_attributes& attrs)
-                  { bbox += attrs.get_bounding_box(); });
+                [&](const Polyhedron_attributes& attrs)
+                { bbox += attrs.get_bounding_box(); });
   return bbox;
 }
 
@@ -114,12 +115,12 @@ const Bounding_sphere Polyhedron_attributes_array::bounding_sphere() const
 {
   std::vector<const Bounding_sphere*> spheres;
   std::for_each(m_array.begin(), m_array.end(),
-                  [&](const Polyhedron_attributes& attrs)
-                  {
-                    const auto& bs = attrs.get_bounding_sphere();
-                    if (bs.get_radius() == 0) return;
-                    spheres.push_back(&bs);
-                  });
+                [&](const Polyhedron_attributes& attrs)
+                {
+                  const auto& bs = attrs.get_bounding_sphere();
+                  if (bs.get_radius() == 0) return;
+                  spheres.push_back(&bs);
+                });
 
   Bounding_sphere bs;
   bs.set_around(spheres.begin(), spheres.end());
