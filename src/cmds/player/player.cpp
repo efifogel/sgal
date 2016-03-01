@@ -42,6 +42,10 @@
 #include "SGAL/X11_window_manager.hpp"
 #endif
 
+// The preprocessor symbol 'Success' is defined, possibly by the header file X.h
+// It is also defined by Eigen3...
+#undef Success
+
 #include "Player_scene.hpp"
 #include "Player_option_parser.hpp"
 #include "Player.hpp"

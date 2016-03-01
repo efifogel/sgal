@@ -103,6 +103,10 @@
 #include "SGAL/X11_window_manager.hpp"
 #endif
 
+// The preprocessor symbol 'Success' is defined, possibly by the header file X.h
+// It is also defined by Eigen3...
+#undef Success
+
 #include "Player_scene.hpp"
 #include "Player_option_parser.hpp"
 
@@ -317,6 +321,7 @@ void Player_scene::create_scene()
   m_configuration = new SGAL::Configuration();
   SGAL_assertion(m_configuration);
   m_configuration->add_to_scene(m_scene_graph);
+  std::cout << "Player_scene::create_scene()" << std::endl;
   m_scene_graph->get_configuration_stack()->bind_top();
 
 #if defined(SGAL_USE_V8)
