@@ -233,7 +233,7 @@ const Uint Accumulation::s_def_alpha_bits(SGAL_DEF_WINDOW_ACCUM_COLOR_BITS);
 
 REGISTER_TO_FACTORY(Accumulation, "Accumulation");
 
-/*! Constructor */
+//! \brief constructs.
 Accumulation::Accumulation(Boolean proto) :
   Container(proto),
   m_enabled(s_def_enabled),
@@ -250,7 +250,7 @@ Accumulation::Accumulation(Boolean proto) :
   m_alpha_bits(s_def_alpha_bits)
 { set_num_iters(8); }
 
-/*! \brief initializes the node prototype. */
+//! \brief initializes the node prototype.
 void Accumulation::init_prototype()
 {
   if (s_prototype) return;
@@ -262,7 +262,7 @@ void Accumulation::init_prototype()
   // enabled
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  Boolean_handle_function enabled_func =
+  auto enabled_func =
     static_cast<Boolean_handle_function>(&Accumulation::enabled_handle);
   s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
                                           Field_info::RULE_EXPOSED_FIELD,
@@ -270,7 +270,7 @@ void Accumulation::init_prototype()
                                           exec_func));
 
   // quality
-  Uint_handle_function quality_func =
+  auto quality_func =
     reinterpret_cast<Uint_handle_function>(&Accumulation::quality_handle);
   s_prototype->add_field_info(new SF_uint(QUALITY, "quality",
                                           Field_info::RULE_EXPOSED_FIELD,
@@ -278,28 +278,28 @@ void Accumulation::init_prototype()
                                           exec_func));
 
   // delay
-  Uint_handle_function delay_func =
+  auto delay_func =
     static_cast<Uint_handle_function>(&Accumulation::delay_handle);
   s_prototype->add_field_info(new SF_uint(DELAY, "delay",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           delay_func, s_def_delay));
 }
 
-/*! \brief deletes the node prototype. */
+//! \brief deletes the node prototype.
 void Accumulation::delete_prototype()
 {
   delete s_prototype;
   s_prototype = nullptr;
 }
 
-/*! \brief obtains the node prototype. */
+//! \brief obtains the node prototype.
 Container_proto* Accumulation::get_prototype()
 {
   if (!s_prototype) Accumulation::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets defualt values. */
+//! \brief sets defualt values.
 void Accumulation::reset(Boolean def_enabled, Uint def_delay,
                          Quality def_quality)
 {
@@ -308,7 +308,7 @@ void Accumulation::reset(Boolean def_enabled, Uint def_delay,
   m_quality = def_quality;
 }
 
-/*! \brief sets the attributes of the object. */
+//! \brief sets the attributes of the object.
 void Accumulation::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
@@ -348,7 +348,7 @@ void Accumulation::set_attributes(Element* elem)
 }
 
 #if 0
-/*! \brief */
+//! \brief
 Attribute_list Accumulation::get_attributes()
 {
   Attribute_list attrs;
@@ -376,7 +376,7 @@ Attribute_list Accumulation::get_attributes()
 }
 #endif
 
-/*! \brief sets the total number of iterations. */
+//! \brief sets the total number of iterations.
 void Accumulation::set_num_iters(Uint num_iters)
 {
   Uint num_jitter_arrays = sizeof(s_sizes) / sizeof(Jitter_pair);
@@ -395,7 +395,7 @@ void Accumulation::set_num_iters(Uint num_iters)
   m_contribution = 1 / (Float) m_num_iters;
 }
 
-/*! \brief applies Actions when accumulation starts. */
+//! \brief applies Actions when accumulation starts.
 void Accumulation::pre_render(Draw_action* /* draw_action */)
 {
   if (m_iteration_no == 0) {
@@ -404,7 +404,7 @@ void Accumulation::pre_render(Draw_action* /* draw_action */)
   }
 }
 
-/*! \brief applies actions when accumulation ends. */
+//! \brief applies actions when accumulation ends.
 void Accumulation::post_render(Draw_action* /* draw_action */)
 {
   Boolean blendMode = (glIsEnabled(GL_BLEND) == GL_TRUE);
@@ -422,10 +422,10 @@ void Accumulation::post_render(Draw_action* /* draw_action */)
   if (blendMode) glEnable(GL_BLEND);
 }
 
-/*! \brief resets the delay start time to the current time. */
+//! \brief resets the delay start time to the current time.
 void Accumulation::reset_delay_time() {}
 
-/*! \brief enactivates accumulation. */
+//! \brief enactivates accumulation.
 void Accumulation::enactivate()
 {
   m_active = true;
@@ -433,17 +433,17 @@ void Accumulation::enactivate()
   m_accumulate = 0;
 }
 
-/*! \brief returns ture if accumulation is done. */
+//! \brief returns ture if accumulation is done.
 Boolean Accumulation::is_done() { return (m_iteration_no == m_num_iters); }
 
-/*! \brief obtains the jitter value of the current iteration. */
+//! \brief obtains the jitter value of the current iteration.
 void Accumulation::get_jitter(float& x, float& y)
 {
   x = m_jitters[m_iteration_no].x;
   y = m_jitters[m_iteration_no].y;
 }
 
-/*! \brief sets the number of RGBA bits stored in the accumulation buffer. */
+//! \brief sets the number of RGBA bits stored in the accumulation buffer.
 void Accumulation::set_number_of_bits(Uint red_bits, Uint green_bits,
                                       Uint blue_bits, Uint alpha_bits)
 {
@@ -453,7 +453,7 @@ void Accumulation::set_number_of_bits(Uint red_bits, Uint green_bits,
   m_alpha_bits = alpha_bits;
 }
 
-/*! \brief obtains the number of RGBA bits stored in the accumulation buffer. */
+//! \brief obtains the number of RGBA bits stored in the accumulation buffer.
 void Accumulation::get_number_of_bits(Uint& red_bits, Uint& green_bits,
                                       Uint& blue_bits, Uint& alpha_bits) const
 {
