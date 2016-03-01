@@ -25,7 +25,7 @@
  */
 
 #include <X11/Xlib.h>
-#include <X11/extensions/xf86vmode.h>
+// #include <X11/extensions/xf86vmode.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
