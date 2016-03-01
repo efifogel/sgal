@@ -40,6 +40,7 @@ class Element;
 class Scene_graph;
 class Accumulation;
 class Multisample;
+class Modeling;
 class Bindable_stack;
 
 #if (defined _MSC_VER)
@@ -58,6 +59,7 @@ public:
   enum {
     FIRST = Bindable_node::LAST - 1,
     ACCUMULATION,
+    MODELING,
     POLY_MODE,
     DISPLAY_FPS,
     FIXED_HEADLIGHT,
@@ -95,6 +97,7 @@ public:
 
   typedef boost::shared_ptr<Accumulation>               Shared_accumulation;
   typedef boost::shared_ptr<Multisample>                Shared_multisample;
+  typedef boost::shared_ptr<Modeling>                   Shared_modeling;
 
   /*! Constructor */
   Configuration(Boolean proto = false);
@@ -121,6 +124,8 @@ public:
   //@{
   Shared_accumulation* accumulation_handle(const Field_info*)
   { return &m_accumulation; }
+  Shared_modeling* modeling_handle(const Field_info*)
+  { return &m_modeling; }
   Gfx::Poly_mode* poly_mode_handle(const Field_info*) { return &m_poly_mode; }
   Boolean* display_fps_handle(const Field_info*) { return &m_display_fps; }
   Boolean* is_fixed_head_light_handle(const Field_info*)
@@ -256,6 +261,12 @@ public:
   /*! Obtain the multisample object. */
   Shared_multisample get_multisample() const;
 
+  /*! Set the modeling object. */
+  void set_modeling(Shared_modeling acc);
+
+  /*! Obtain the modeling object. */
+  Shared_modeling get_modeling() const;
+
   /*! Set the verbosity level. */
   void set_verbosity_level(Uint level);
 
@@ -331,6 +342,9 @@ private:
 
   /*! Multisample object. */
   Shared_multisample m_multisample;
+
+  /*! Modeling object. */
+  Shared_modeling m_modeling;
 
   /*! The viewpoint mode. */
   Viewpoint_mode m_viewpoint_mode;
@@ -436,11 +450,6 @@ private:
    * previous appearance is not restored to its original value.
    */
   Boolean m_override_light_enable;
-
-  /*! Indicates whether the accumulation is owned. If the accumulation is
-   * owned, it is constructed and destructed by this construct.
-   */
-  Boolean m_owned_accumulation;
 
   // default values
   static const Viewpoint_mode s_def_viewpoint_mode;
@@ -616,6 +625,14 @@ inline void Configuration::set_multisample(Shared_multisample ms)
 //! \brief obtains the multisample object.
 inline Configuration::Shared_multisample Configuration::get_multisample() const
 { return m_multisample; }
+
+//! \brief sets the modeling object.
+inline void Configuration::set_modeling(Shared_modeling modeling)
+{ m_modeling = modeling; }
+
+//! \brief obtains the modeling object.
+inline Configuration::Shared_modeling Configuration::get_modeling() const
+{ return m_modeling; }
 
 //! \brief obtains the verbosity level.
 inline Uint Configuration::get_verbosity_level() const
