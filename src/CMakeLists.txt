@@ -14,7 +14,18 @@ if (NOT WIN32)
 endif(NOT WIN32)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
+if (NOT CGAL_FOUND)
+  message(STATUS "This library cannot be compiled, as it requires CGAL.")
+  return()
+endif()
 include(${CGAL_USE_FILE})
+
+find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+if (NOT EIGEN3_FOUND)
+  message(STATUS "This library cannot be compiled, as it requires Eigen3.")
+  return()
+endif()
+include(${EIGEN3_USE_FILE})
 
 # Add includes and libs
 include_directories(${Boost_INCLUDE_DIR})
