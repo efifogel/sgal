@@ -30,6 +30,7 @@
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Accumulation.hpp"
 #include "SGAL/Multisample.hpp"
+#include "SGAL/Modeling.hpp"
 #include "SGAL/Window_item.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -96,8 +97,7 @@ Configuration::Configuration(Boolean proto) :
   m_override_blend_func(Configuration::s_def_override_blend_func),
   m_override_light_model(Configuration::s_def_override_light_model),
   m_override_tex_gen(Configuration::s_def_override_tex_gen),
-  m_override_light_enable(Configuration::s_def_override_light_enable),
-  m_owned_accumulation(false)
+  m_override_light_enable(Configuration::s_def_override_light_enable)
 {}
 
 //! \brief sets defualt values.
@@ -116,6 +116,7 @@ void Configuration::reset(Viewpoint_mode viewpoint_mode,
                           Boolean def_seamless_cube_map)
 {
   if (m_accumulation) m_accumulation->reset();
+  if (m_modeling) m_modeling->reset();
 
   m_viewpoint_mode = viewpoint_mode;
   m_geometry_drawing_mode = def_geometry_drawing_mode;
@@ -243,6 +244,16 @@ void Configuration::init_prototype()
                                                       "accumulation",
                                                       Field_info::RULE_EXPOSED_FIELD,
                                                       accumulation_func,
+                                                      exec_func));
+
+  // Modeling
+  Shared_container_handle_function modeling_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Configuration::modeling_handle);
+  s_prototype->add_field_info(new SF_shared_container(MODELING,
+                                                      "modeling",
+                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      modeling_func,
                                                       exec_func));
 }
 
@@ -407,6 +418,12 @@ void Configuration::set_attributes(Element* elem)
       elem->mark_delete(cai);
       continue;
     }
+    if (name == "modeling") {
+      auto modeling = boost::dynamic_pointer_cast<Modeling>(cont);
+      set_modeling(modeling);
+      elem->mark_delete(cai);
+      continue;
+    }
   }
 
   // Remove all the marked attributes:
@@ -438,15 +455,17 @@ Bindable_stack* Configuration::get_stack()
 void Configuration::enable() {}
 
 //! \brief merges another configuration node.
-// \todo We use a stack of configurations. When a new configuration is introduced,
-//       for every attribte we carry over the value from the previous configuration
-//       if this value is not equal to its default. If the attribute was excplicitly
-//       set with its default value (remaining intact) it is ignored and the
-//       intension to force it's default value is lost. We need to add a Boolean
-//       flag for each attribute indicating whether it was explicitly set.
+/*! \todo We use a stack of configurations. When a new configuration is
+ * introduced, for every attribute we carry over the value from the previous
+ * configuration if this value is not equal to its default. If the attribute
+ * was excplicitly set with its default value (remaining intact) it is ignored
+ * and the intension to force its default value is lost. We need to add a
+ * Boolean flag for each attribute indicating whether it was explicitly set.
+ */
 void Configuration::merge(const Configuration* other)
 {
   if (other->m_accumulation) m_accumulation = other->m_accumulation;
+  if (other->m_modeling) m_modeling = other->m_modeling;
   if (other->m_viewpoint_mode != s_def_viewpoint_mode)
     m_viewpoint_mode = other->m_viewpoint_mode;
   if (other->m_geometry_drawing_mode != s_def_geometry_drawing_mode)
