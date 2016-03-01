@@ -45,7 +45,6 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Index_array;
 class Draw_action;
 class Isect_action;
 class Cull_context;
@@ -127,10 +126,10 @@ private:
   typedef boost::shared_ptr<Epec_plane_array>     Shared_exact_plane_array;
 
 public:
-  /*! Constructor. */
+  /*! Construct. */
   Power_diagram_on_sphere_geo(Boolean proto = false);
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Power_diagram_on_sphere_geo();
 
   /*! Construct the prototype. */

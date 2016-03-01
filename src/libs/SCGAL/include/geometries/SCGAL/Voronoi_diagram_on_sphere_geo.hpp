@@ -43,7 +43,6 @@
 SGAL_BEGIN_NAMESPACE
 
 class Coord_array;
-class Index_array;
 class Draw_action;
 class Isect_action;
 class Cull_context;
@@ -118,10 +117,10 @@ private:
     Vos_halfedge_around_vertex_const_circulator;
 
 public:
-  /*! Constructor. */
+  /*! Construct. */
   Voronoi_diagram_on_sphere_geo(Boolean proto = false);
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Voronoi_diagram_on_sphere_geo();
 
   /* Construct the prototype. */
