@@ -36,6 +36,7 @@
 #include "SGAL/Generic_option_parser.hpp"
 #include "SGAL/Bench_option_parser.hpp"
 #include "SGAL/Conf_option_parser.hpp"
+#include "SGAL/Modeling_option_parser.hpp"
 #include "SGAL/IO_option_parser.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -47,7 +48,8 @@ class Scene_graph;
 class SGAL_SGAL_DECL Option_parser : public Generic_option_parser,
                                      public Bench_option_parser,
                                      public Conf_option_parser,
-                                     public IO_option_parser
+                                     public IO_option_parser,
+                                     public Modeling_option_parser
 {
 public:
   typedef std::vector<std::string>              Plugin;
