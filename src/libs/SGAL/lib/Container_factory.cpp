@@ -43,6 +43,7 @@
 #include "SGAL/Navigation_info.hpp"
 // #include "SGAL/Text_texture.hpp"
 #include "SGAL/Material.hpp"
+#include "SGAL/Modeling.hpp"
 #include "SGAL/Multisample.hpp"
 #include "SGAL/Route.hpp"
 #include "SGAL/Shape.hpp"
@@ -225,6 +226,7 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Indexed_line_set);
   REGISTER_OBJECT(Key_sensor);
   REGISTER_OBJECT(Material);
+  REGISTER_OBJECT(Modeling);
   REGISTER_OBJECT(Multisample);
   REGISTER_OBJECT(Navigation_info);
   REGISTER_OBJECT(Navigation_sensor);
