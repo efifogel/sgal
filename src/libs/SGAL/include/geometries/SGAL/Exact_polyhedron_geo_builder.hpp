@@ -195,7 +195,7 @@ protected:
   void insert_triangles(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
     const auto& facet_indices = m_mesh->get_facet_coord_indices();
-    const auto& indices = boost::get<Mesh_set::Triangle_indices>(facet_indices);
+    const auto& indices = boost::get<Triangle_indices>(facet_indices);
     size_t j(0);
     for (size_t i = 0; i < indices.size(); ++i)
       j = insert_triangle(B, indices[i].begin(), indices[i].end(), j);
@@ -227,7 +227,7 @@ protected:
   void insert_quads(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
     const auto& facet_indices = m_mesh->get_facet_coord_indices();
-    const auto& indices = boost::get<Mesh_set::Quad_indices>(facet_indices);
+    const auto& indices = boost::get<Quad_indices>(facet_indices);
     size_t j(0);
     for (Uint i = 0; i < indices.size(); ++i)
       j = insert_quad(B, indices[i].begin(), indices[i].end(), j);
@@ -260,7 +260,7 @@ protected:
   void insert_polygons(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
     const auto& facet_indices = m_mesh->get_facet_coord_indices();
-    const auto& indices = boost::get<Mesh_set::Polygon_indices>(facet_indices);
+    const auto& indices = boost::get<Polygon_indices>(facet_indices);
     size_t j(0);
     for (size_t i = 0; i < indices.size(); ++i)
       j = insert_polygon(B, indices[i].begin(), indices[i].end(), j);
@@ -268,15 +268,15 @@ protected:
 
 public:
   /*! Set the Mesh_set.
-   * \param mesh_set (in) the Mesh_set, which provides the
-   *                 a. coordinate array, and
-   *                 b. coordinate indices
+   * \param[in] mesh_set the Mesh_set, which provides the
+   *            a. coordinate array, and
+   *            b. coordinate indices
    */
   Exact_polyhedron_geo_builder(Mesh_set* mesh) : m_mesh(mesh) {}
 
   /*! Build the polyhedral surface.
-   * \param hds (out) the halfedge data structure, which stores the incidence
-   *            relations between the cells of the polyhedral surface.
+   * \param[out] hds the halfedge data structure, which stores the incidence
+   *             relations between the cells of the polyhedral surface.
    */
   void operator()(HDS& hds)
   {
