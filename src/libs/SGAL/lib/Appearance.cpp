@@ -36,7 +36,6 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Execution_function.hpp"
-#include "SGAL/Configuration.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Tex_gen.hpp"
 #include "SGAL/Utilities.hpp"
