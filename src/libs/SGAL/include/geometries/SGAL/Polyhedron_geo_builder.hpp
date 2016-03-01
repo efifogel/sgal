@@ -130,7 +130,7 @@ protected:
   void insert_triangles(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
     const auto& facet_indices = m_mesh->get_facet_coord_indices();
-    const auto& indices = boost::get<Mesh_set::Triangle_indices>(facet_indices);
+    const auto& indices = boost::get<Triangle_indices>(facet_indices);
     size_t j(0);
     for (size_t i = 0; i < indices.size(); ++i)
       j = insert_triangle(B, indices[i].begin(), indices[i].end(), j);
@@ -142,7 +142,7 @@ protected:
   void insert_quads(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
     const auto& facet_indices = m_mesh->get_facet_coord_indices();
-    const auto& indices = boost::get<Mesh_set::Quad_indices>(facet_indices);
+    const auto& indices = boost::get<Quad_indices>(facet_indices);
     size_t j(0);
     for (Uint i = 0; i < indices.size(); ++i)
       j = insert_quad(B, indices[i].begin(), indices[i].end(), j);
@@ -154,7 +154,7 @@ protected:
   void insert_polygons(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
     const auto& facet_indices = m_mesh->get_facet_coord_indices();
-    const auto& indices = boost::get<Mesh_set::Polygon_indices>(facet_indices);
+    const auto& indices = boost::get<Polygon_indices>(facet_indices);
     size_t j(0);
     for (size_t i = 0; i < indices.size(); ++i)
       j = insert_polygon(B, indices[i].begin(), indices[i].end(), j);
