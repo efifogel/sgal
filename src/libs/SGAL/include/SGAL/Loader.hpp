@@ -141,7 +141,7 @@ private:
   std::string m_filename;
 
   /*! Compute a new Indexed Face Set container. */
-  Shared_indexed_face_set compute_ifs(size_t count,
+  Shared_indexed_face_set compute_ifs(Scene_graph* scene_graph, size_t count,
                                       std::list<Triangle>::const_iterator begin,
                                       std::list<Triangle>::const_iterator end);
 

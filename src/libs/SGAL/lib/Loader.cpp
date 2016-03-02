@@ -241,7 +241,7 @@ Loader::Return_code Loader::read_triangle(std::istream& stl_stream,
 
 //! \brief computes a new Indexed Face Set container.
 Loader::Shared_indexed_face_set
-Loader::compute_ifs(size_t count,
+Loader::compute_ifs(Scene_graph* scene_graph, size_t count,
                     std::list<Triangle>::const_iterator begin,
                     std::list<Triangle>::const_iterator end)
 {
@@ -249,6 +249,8 @@ Loader::compute_ifs(size_t count,
   SGAL_assertion(ifs);
   ifs->set_primitive_type(Geo_set::PT_TRIANGLES);
   ifs->set_num_primitives(count);
+  ifs->add_to_scene(scene_graph);
+
   auto num_vertices = count * 3;
   Coord_array_3d* coords = new Coord_array_3d(num_vertices);
   Shared_coord_array_3d shared_coords(coords);
@@ -316,7 +318,7 @@ void Loader::add_shapes(Scene_graph* scene_graph, Shared_transform transform,
 
     if (tmp_color != last_color) {
       auto shape = compute_shape(scene_graph, transform, last_color);
-      auto ifs = compute_ifs(count, first, it);
+      auto ifs = compute_ifs(scene_graph, count, first, it);
       shape->set_geometry(ifs);
 
       first = it;
@@ -327,7 +329,7 @@ void Loader::add_shapes(Scene_graph* scene_graph, Shared_transform transform,
     ++count;
   }
   auto shape = compute_shape(scene_graph, transform, last_color);
-  auto ifs = compute_ifs(count, first, triangles.end());
+  auto ifs = compute_ifs(scene_graph, count, first, triangles.end());
   shape->set_geometry(ifs);
 }
 
@@ -343,6 +345,7 @@ void Loader::add_colored_shape(Scene_graph* scene_graph,
   SGAL_assertion(ifs);
   ifs->set_primitive_type(Geo_set::PT_TRIANGLES);
   ifs->set_num_primitives(count);
+  ifs->add_to_scene(scene_graph);
 
   auto num_vertices = count * 3;
   Coord_array_3d* coords = new Coord_array_3d(num_vertices);
