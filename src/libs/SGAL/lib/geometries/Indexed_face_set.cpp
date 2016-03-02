@@ -50,7 +50,6 @@
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Polyhedron_geo_builder.hpp"
-#include "SGAL/Exact_polyhedron_geo_builder.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Modeling.hpp"
 #include "SGAL/Scene_graph.hpp"

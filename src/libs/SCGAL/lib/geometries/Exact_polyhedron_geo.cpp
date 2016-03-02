@@ -54,7 +54,7 @@
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/calculate_multiple_normals_per_vertex.hpp"
 #include "SGAL/Epec_polyhedron.hpp"
-#include "SGAL/Exact_polyhedron_geo_builder.hpp"
+#include "SGAL/Polyhedron_geo_builder.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
@@ -392,7 +392,7 @@ void Exact_polyhedron_geo::clean_polyhedron()
     m_has_singular_vertices =
       boost::apply_visitor(visitor, m_facet_coord_indices);
 
-    Exact_polyhedron_geo_builder<Epec_polyhedron::HalfedgeDS> surface(this);
+    Polyhedron_geo_builder<Epec_polyhedron::HalfedgeDS> surface(this);
     m_polyhedron.delegate(surface);
     m_polyhedron.normalize_border();
   }

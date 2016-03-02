@@ -42,16 +42,16 @@
 #include <CGAL/HalfedgeDS_face_base.h>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Inexact_kernel.hpp"
 #include "SGAL/Epec_kernel.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Vector3f.hpp"
-#include "SGAL/Inexact_kernel.hpp"
+#include "SGAL/Polyhedron_geo_builder.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Nef_gaussian_map.hpp"
 #include "SCGAL/gausian_map_to_polyhedron_3.hpp"
-#include "SCGAL/Exact_polyhedron_geo_builder.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -366,9 +366,6 @@ private:
 
   /*! The node prototype. */
   static Container_proto* s_prototype;
-
-  /*! The builder. */
-  Exact_polyhedron_geo_builder<HalfedgeDS> m_surface;
 
   /*! Indicates whether the intermediate polyhedron has been built. */
   Boolean m_dirty_polyhedron;

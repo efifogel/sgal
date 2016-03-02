@@ -110,7 +110,7 @@ Nef_gaussian_map_geo::Nef_gaussian_map_geo(Boolean proto) :
   m_marked_edge_index(0),
   m_marked_facet_index(0)
 {
-  m_surface.set_mesh_set(this);
+  if (proto) return;
 
   m_sphere = new Sphere();
   m_sphere->set_stacks(32);
@@ -130,14 +130,10 @@ Nef_gaussian_map_geo::~Nef_gaussian_map_geo()
 void Nef_gaussian_map_geo::clean_polyhedron()
 {
   // Construct the polyhedron:
-  m_polyhedron.delegate(m_surface);
-#if 0
-  if (!m_polyhedron.normalized_border_is_valid()) {
-    m_polyhedron.normalize_border();
-  }
-#else
+  /*! The builder. */
+  Polyhedron_geo_builder<Polyhedron::HalfedgeDS> surface(this);
+  m_polyhedron.delegate(surface);
   m_polyhedron.normalize_border();
-#endif
 
   // Compute the plane equations:
   std::transform(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
