@@ -1,3 +1,0 @@
-[submodule "bison"]
-	path = bison
-	url = git://git.savannah.gnu.org/bison.git
