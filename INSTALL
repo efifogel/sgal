@@ -39,8 +39,8 @@ Ideally, building SGAL amounts to:
 
 Installing SGAL requires a few components to be installed apriori: a
 supported compiler (see Section 2.3.), bison (see Section 2.5.2),
-flex, Boost, gl2ps, Magick++, V8, freetype, CGAL, GMP, and MPFR; see
-Section 2.5. for more details on essential third party software.
+flex, Boost, gl2ps, Magick++, V8, freetype, GMP, MPFR, Eigen3, and CGAL;
+see Section 2.5. for more details on essential third party software.
 
 2.2. Downloading
 You can obtain the most up-to-date sources from the git repository
@@ -97,15 +97,21 @@ is in the LD_LIBRARY_PATH.
 
 2.5.1. List of required packages.
 
-2.5.1.1. Required packages of Ubuntu 12.04:
+2.5.1.1. Required packages of Ubuntu 14.04:
 * libboost-dev
+* libboost-system-dev
+* libboost-thread-dev
+* libboost-filesystem-dev
+* libboost-program-options-dev
 * libmagick++-dev
 * libgl2ps-dev
 * libxxf86vm-dev
 * libgmp-dev
+* libmpfr-dev
 * libv8-dev
 * libfreetype6-dev
 * bison, YACC-compatible parser generator >= 2.7.91
+* libeigen3-dev
 
 2.5.1.2. Required items on Windows
 * Boost
@@ -114,6 +120,7 @@ is in the LD_LIBRARY_PATH.
 * GMP
 * MPFR
 * V8
+* Eigen3
 * freetype
 * flex (cygwin)
 * bison (cygwin)
@@ -366,7 +373,13 @@ As Visual C++ is not properly supported by the GMP and MPFR projects,
 CGAL provides precompiled versions of GMP and MPFR, which can be downloaded
 with the installer of CGAL-4.2-Setup.exe.
 
-2.5.8. OpenGL
+2.5.8. Eigen3
+Eigen is a library for linear algebra: matrices, vectors, numerical solvers,
+and related algorithms. It is optionaly required by CGAL and optionaly
+required by SGAL. If not present, filling holes of a polyhedral surface is
+not supported.
+
+2.5.9. OpenGL
 OpenGL (Open Graphics Library) provides an API for applications that produce
 2D and 3D computer graphics. SGAL depends on OpenGL. There is no alternative.
 That is, SGAL does not use Direct 3D (on Windows) or any other proprietary
@@ -375,11 +388,11 @@ API.
 Typically, OpenGL is preinstalled on systems; if not, it can be downloaded
 from http://www.opengl.org/.
 
-2.5.9. gl2ps
+2.5.10. gl2ps
 GL2PS is a C library providing vector output for any OpenGL application.
 For more information see http://www.geuz.org/gl2ps/.
 
-2.5.10. Some X libraries (forgot the name)
+2.5.11. Some X libraries (forgot the name)
 This applies to Linux only. These libraries are not installed by default.
 You will get an error message during link if they are not installed.
 
