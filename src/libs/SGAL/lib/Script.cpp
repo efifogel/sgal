@@ -188,7 +188,7 @@ void Script::getter(v8::Local<v8::String> property,
     {
      // Set (the GetReturnValue) a pointer to the Shared_container object.
      auto* tmp = script_node->field_handle<Shared_container>(field_info);
-     info.GetReturnValue().Set((void*)(tmp));
+     info.GetReturnValue().Set(v8::External::New(isolate, tmp));
     }
     break;
 
@@ -723,7 +723,7 @@ void Script::indexed_getter(uint32_t index,
      v8::HandleScope scope(isolate);
      auto* tmp = script_node->field_handle<Shared_container_array>(field_info);
      SGAL_assertion(index < tmp->size());
-     info.GetReturnValue().Set((void*)&((*tmp)[index]));
+     info.GetReturnValue().Set(v8::External::New(isolate, &((*tmp)[index])));
     }
     break;
 
