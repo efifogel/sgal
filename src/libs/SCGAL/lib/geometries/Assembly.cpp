@@ -372,13 +372,11 @@ void Assembly::construct_reflected_sgms()
        * from the input coordinate array, or from the input polyhedron with new
        * code that computes it directly from the Sgm.
        */
-      typedef boost::shared_ptr<Epec_coord_array_3d>
-        Shared_exact_coord_array_3d;
-      Sgm_geo::Shared_coord_array tmp = sgm_geo->get_coord_array();
+      auto tmp = sgm_geo->get_coord_array();
       auto coord_array = boost::dynamic_pointer_cast<Epec_coord_array_3d>(tmp);
       if (coord_array) {
         auto size = coord_array->size();
-        Shared_exact_coord_array_3d
+        boost::shared_ptr<Epec_coord_array_3d>
           inverse_coord_array(new Epec_coord_array_3d(size));
         auto itt = inverse_coord_array->begin();
         for (auto its = coord_array->begin(); its != coord_array->end(); ++its) {
@@ -471,12 +469,12 @@ void Assembly::construct_sgms_nodes()
   clock_t start_time = clock();
 
   for (auto ppit = m_parts.begin(); ppit != m_parts.end(); ++ppit) {
-    Assembly_part* part = *ppit;
-    Sgm_geo_list& sgm_geos = part->get_sgm_geos();
-    Appearance_list& sgm_apps = part->get_sgm_apps();
-    Sgm_geo_iter sgit;
-    Appearance_iter apit = sgm_apps.begin();
-    for (sgit = sgm_geos.begin(); sgit != sgm_geos.end(); ++sgit, ++apit) {
+    auto* part = *ppit;
+    auto& sgm_geos = part->get_sgm_geos();
+    auto& sgm_apps = part->get_sgm_apps();
+    auto apit = sgm_apps.begin();
+    auto sgit = sgm_geos.begin();
+    for (; sgit != sgm_geos.end(); ++sgit, ++apit) {
       SGAL_assertion(apit != sgm_apps.end());
       Shared_sgm_geo sgm_geo = *sgit;
       Shared_shape shape(new Shape());

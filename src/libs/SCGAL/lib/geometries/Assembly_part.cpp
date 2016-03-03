@@ -143,7 +143,8 @@ void Assembly_part::clean_sgm_geos(Container* node)
   auto* shape = dynamic_cast<Shape*>(node);
   if (shape) {
     auto app = shape->get_appearance();
-    auto sgm_geo = boost::dynamic_pointer_cast<Sgm_geo>(shape->get_geometry());
+    auto geometry = shape->get_geometry();
+    auto sgm_geo = boost::dynamic_pointer_cast<Sgm_geo>(geometry);
     if (sgm_geo) {
       m_sgm_geos.push_back(sgm_geo);
       m_sgm_apps.push_back(app);
@@ -151,15 +152,14 @@ void Assembly_part::clean_sgm_geos(Container* node)
     }
 
     auto polyhedron_geo =
-      boost::dynamic_pointer_cast<Exact_polyhedron_geo>(shape->get_geometry());
+      boost::dynamic_pointer_cast<Exact_polyhedron_geo>(geometry);
     if (polyhedron_geo) {
       typedef CGAL::Nef_polyhedron_3<Epec_kernel, CGAL::SNC_indexed_items>
                                                         Nef_polyhedron;
       typedef Nef_polyhedron::Volume_const_iterator     Volume_const_iterator;
 
       clock_t start_time = clock();
-      const Exact_polyhedron_geo::Polyhedron& polyhedron =
-        polyhedron_geo->get_polyhedron();
+      const auto& polyhedron = polyhedron_geo->get_polyhedron();
       /*! \todo Allow passing a const polyhedron to the constructor of
        * Nef_polyhedron
        */
