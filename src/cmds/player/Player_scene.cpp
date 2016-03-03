@@ -131,17 +131,6 @@
 #endif
 #endif
 
-// /*! The allocator below is used by the recent version of V8, which is not
-//  * yet in use.
-//  * Why doesn't it have a default? beats me.
-//  */
-// struct array_buffer_allocator : v8::ArrayBuffer::Allocator {
-//   void* Allocate(size_t length) { return calloc(length, 1); }
-//   void* AllocateUninitialized(size_t length) { return malloc(length); }
-//   void Free(void* data, size_t length) { free(data); }
-// };
-// static array_buffer_allocator array_buffer_allocator_;
-
 //! \brief constructs default.
 Player_scene::Player_scene() :
   m_window_manager(nullptr),
@@ -275,7 +264,7 @@ void Player_scene::create_scene(char* data, int size)
 #if defined(SGAL_USE_V8)
 #if 0
   v8::Isolate::CreateParams params;
-  params.array_buffer_allocator = &array_buffer_allocator_;
+  params.array_buffer_allocator = &m_allocator;
   m_isolate = v8::Isolate::New(params);
 #else
   m_isolate = v8::Isolate::New();
@@ -326,7 +315,7 @@ void Player_scene::create_scene()
 #if defined(SGAL_USE_V8)
 #if 0
   v8::Isolate::CreateParams params;
-  params.array_buffer_allocator = &array_buffer_allocator_;
+  params.array_buffer_allocator = &m_allocator;
   m_isolate = v8::Isolate::New(params);
 #else
   m_isolate = v8::Isolate::New();

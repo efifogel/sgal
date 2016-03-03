@@ -33,11 +33,13 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/shared_ptr.hpp>
 
+#include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Scene.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Box.hpp"
+// #include "SGAL/Array_buffer_allocator.hpp"
 #if defined(_WIN32)
 #include "SGAL/Windows_window_manager.hpp"
 #endif
@@ -47,7 +49,7 @@
 namespace fi = boost::filesystem;
 
 namespace v8 {
-class Isolate;
+  class Isolate;
 };
 
 SGAL_BEGIN_NAMESPACE
@@ -276,6 +278,9 @@ protected:
 
   /* The height of the offscreen framebuffer. */
   SGAL::Uint m_offscreen_height;
+
+  /*! An allocator. */
+  // SGAL::Array_buffer_allocator m_allocator;
 
   /*! An isolated instance of the V8 engine. */
   v8::Isolate* m_isolate;
