@@ -565,5 +565,13 @@ DEF BO BooleanOperation {
   operand2 USE OPERAND2
 }
 
+DEF EXTRACT_GEOM Script {
+  eventIn MFNode modes
+  eventOut SFNode out
+  url "javascript:
+    function modes(value, timestamp) { out = value[0]; }"
+}
+
 ROUTE SIM.start TO BO.trigger
-ROUTE BO.result TO INTERSECTION.geometry
+ROUTE BO.result TO EXTRACT_GEOM.modes
+ROUTE EXTRACT_GEOM.out TO INTERSECTION.geometry
