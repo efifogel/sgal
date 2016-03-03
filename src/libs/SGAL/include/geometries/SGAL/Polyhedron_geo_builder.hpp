@@ -125,7 +125,7 @@ protected:
 
     auto coord_array = m_mesh->get_coord_array();
 
-    auto coords = boost::static_pointer_cast<Coord_array_3d>(coord_array);
+    auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(coord_array);
     if (coords) {
       Vertex_adder<Point, Vector3f> adder;
       for (auto it = coords->begin(); it != coords->end(); ++it) adder(B, *it);
