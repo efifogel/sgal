@@ -47,6 +47,7 @@
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Vector3f.hpp"
+#include "SGAL/Epec_polyhedron.hpp"
 #include "SGAL/Polyhedron_geo_builder.hpp"
 
 #include "SCGAL/basic.hpp"
@@ -86,84 +87,7 @@ public:
   typedef std::vector<Inexact_sphere_3>                 Inexact_sphere_vector;
   typedef Inexact_sphere_vector::const_iterator         Inexact_sphere_iter;
 
-  // A halfedge type with a flag member variable.
-  template <class Refs>
-  struct Polyhedron_vertex :
-    public CGAL::HalfedgeDS_vertex_base<Refs, Tag_true, Point_3>
-  {
-    typedef CGAL::HalfedgeDS_vertex_base<Refs, Tag_true, Point_3> Base;
-    typedef typename Base::Point                                  Point;
-    Polyhedron_vertex() : Base() {}
-    Polyhedron_vertex(const Point& p) : Base(p) {}
-
-    /*! A uniqe index of vertices.
-     * Used by the builder.
-     */
-    Uint m_index;
-
-//     Point& point() { return Base::point(); }
-//     const Point& point () const { return Base::point(); }
-
-//     Inexact_point_3 m_inexact_point;
-
-//     /*! */
-//     void set_inexact_point(const Inexact_point_3& point)
-//     { m_inexact_point = point; }
-
-//     /*! */
-//     const Inexact_point_3& get_inexact_point(void) const
-//     { return m_inexact_point; }
-  };
-
-  /*! Represnts a polyhedron halfedge */
-  template <class Refs>
-  struct Polyhedron_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
-    /*! Constructor. */
-    Polyhedron_halfedge() {}
-
-    /*! The index of the index of the points of the facets.
-     * Used by the builder.
-     */
-    Uint m_index;
-  };
-
-  /*! Represnts a polyhedron facet */
-  template <class Refs>
-  struct Polyhedron_face :
-    public CGAL::HalfedgeDS_face_base<Refs, Tag_true, Plane_3>
-  {
-    Vector3f m_normal;
-
-    /*! Constructor */
-    Polyhedron_face() {}
-
-    /*! Constructor */
-    Polyhedron_face(const Plane_3& pln) :
-      CGAL::HalfedgeDS_face_base<Refs, CGAL::Tag_true, Plane_3>(pln)
-    {}
-  };
-
-  // An items type using my features.
-  struct Polyhedron_items : public CGAL::Polyhedron_items_3 {
-    template <class Refs, class Traits>
-    struct Vertex_wrapper {
-      typedef Polyhedron_vertex<Refs> Vertex;
-    };
-    template <class Refs, class Traits>
-    struct Halfedge_wrapper {
-      typedef Polyhedron_halfedge<Refs> Halfedge;
-    };
-    template <class Refs, class Traits>
-    struct Face_wrapper {
-      typedef Polyhedron_face<Refs> Face;
-    };
-  };
-
-  typedef Kernel                                        Polyhedron_traits;
-  // typedef CGAL::Polyhedron_3<Polyhedron_traits,Polyhedron_items>
-  // Polyhedron;
-  typedef CGAL::Polyhedron_3<Polyhedron_traits, Polyhedron_items>
-                                                        Polyhedron;
+  typedef Epec_polyhedron                               Polyhedron;
   typedef Polyhedron::Facet_iterator                    Facet_iterator;
   typedef Polyhedron::Vertex_iterator                   Vertex_iterator;
   typedef Polyhedron::Point_iterator                    Point_iterator;
@@ -176,11 +100,11 @@ public:
   typedef Polyhedron::Vertex                            Vertex;
 
   // Nef stuff:
-  //  typedef CGAL::Nef_polyhedron_3<Polyhedron_traits>     Nef_polyhedron_3;
-  //  typedef Nef_polyhedron_3::Halffacet_const_iterator    Nef_halffacet_iterator;
+  // typedef CGAL::Nef_polyhedron_3<Kernel>                Nef_polyhedron_3;
+  // typedef Nef_polyhedron_3::Halffacet_const_iterator    Nef_halffacet_iterator;
 
   // Nef Gaussian map
-  typedef CGAL::Nef_gaussian_map<Polyhedron_traits>     Nef_gaussian_map;
+  typedef CGAL::Nef_gaussian_map<Kernel>                Nef_gaussian_map;
 
   typedef std::vector<int>                              Coord_index_vector;
   typedef Coord_index_vector::const_iterator            Coord_index_iter;

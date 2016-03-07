@@ -191,8 +191,8 @@ void Hole_filler::execute()
                          const_cast<Indexed_face_set::Polyhedron&>(polyhedron));
     result->clear_volume();
     result->clear_surface_area();
-    result->clear_polyhedron_edges();
-    result->clear_polyhedron_facets();
+    result->clear_polyhedron_facet_normals();
+    result->clear_normal_attributes();
 
     //! \todo fix the arrays instead of brutally invalidate them.
     result->clear_coord_array();

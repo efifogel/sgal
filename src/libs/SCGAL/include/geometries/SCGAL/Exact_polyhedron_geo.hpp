@@ -184,7 +184,7 @@ public:
    *            as the polyhedron itself.
    * \return the polyhedron data-structure.
    */
-  const Epec_polyhedron& get_polyhedron(Boolean with_planes = false);
+  const Epec_polyhedron& get_polyhedron(Boolean clean_facet_normals = false);
 
   /*! Determine whether the polyhedron representation is empty.
    */
@@ -322,17 +322,17 @@ protected:
     void operator()(Halfedge& edge)
     {
       if (edge.is_border_edge()) return;
-      Vector3f normal1 = edge.facet()->m_normal;
-      Vector3f normal2 = edge.opposite()->facet()->m_normal;
+      Vector3f normal1 = edge.facet()->get_normal();
+      Vector3f normal2 = edge.opposite()->facet()->get_normal();
       Float angle = arccosf(normal1.dot(normal2));  // inner product
       if (abs(angle) > m_crease_angle) {
-        edge.m_creased = true;
-        edge.opposite()->m_creased = true;
+        edge.set_creased(true);
+        edge.opposite()->set_creased(true);
         m_smooth = false;
         return;
       }
-      edge.m_creased = false;
-      edge.opposite()->m_creased = false;
+      edge.set_creased(false);
+      edge.opposite()->set_creased(false);
       m_creased = false;
     }
   };
@@ -346,11 +346,11 @@ protected:
 
   /*! Clean the polyhedron edges.
    */
-  virtual void clean_polyhedron_edges();
+  virtual void clean_normal_attributes();
 
   /*! Clean the polyhedron facets.
    */
-  virtual void clean_polyhedron_facets();
+  virtual void clean_polyhedron_facet_normals();
 
   /*! Calculate multiple normals per vertex for all vertices.
    * If the angle between the geometric normals of two adjacent faces is less
@@ -397,12 +397,12 @@ protected:
   /*! Indicates whether the polyhedron edges are dirty and thus should be
    * cleaned.
    */
-  Boolean m_dirty_polyhedron_edges;
+  Boolean m_dirty_normal_attributes;
 
   /*! Indicates whether the polyhedron facets are dirty and thus should be
    * cleaned.
    */
-  Boolean m_dirty_polyhedron_facets;
+  Boolean m_dirty_polyhedron_facet_normals;
 
   /*! Indicates wheather the mesh is consistent.
    * \return true if the mesh is consistent and false otherwise. An mesh is
@@ -438,9 +438,9 @@ private:
   struct Plane_to_normal {
     void operator()(Epec_polyhedron::Facet& facet)
     {
-      Vector3f normal = to_vector3f(facet.plane().orthogonal_vector());
-      facet.m_normal.set(normal);
-      facet.m_normal.normalize();
+      auto normal = to_vector3f(facet.plane().orthogonal_vector());
+      normal.normalize();
+      facet.set_normal(normal);
     }
   };
 
@@ -470,12 +470,12 @@ private:
          vit != m_polyhedron.vertices_end(); ++vit)
     {
       // find the index
-      Uint index = 0;
+      Size index(0);
       InputIterator cit;
       for (cit = begin; cit != end; ++cit, ++index)
         if (vit->point() == *cit) break;
       SGAL_assertion(cit != end);
-      vit->m_index = index;
+      vit->set_id(index);
     }
   }
 

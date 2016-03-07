@@ -32,87 +32,29 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Epic_kernel.hpp"
+#include "SGAL/HalfedgeDS_vertex_with_id.hpp"
+#include "SGAL/HalfedgeDS_halfedge_with_id_and_flag.hpp"
+#include "SGAL/HalfedgeDS_face_with_id_and_normal.hpp"
 
 SGAL_BEGIN_NAMESPACE
-
-/*! An extended vertex */
-template <typename Refs, typename Traits>
-struct Epic_vertex :
-  public CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true,
-                                      typename Traits::Point_3>
-{
-  typedef typename Traits::Point_3    Point;
-
-  /*! A uniqe index of vertices. */
-  Uint m_index;
-
-  Vector3f m_vertex;
-  Epic_vertex() {}
-  Epic_vertex(const Point& p) :
-    CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true, Point>(p)
-  {}
-};
-
-/*! A halfedge type extended with some data fields.
- */
-template <typename Refs>
-struct Epic_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
-  /*! Construct default. */
-  Epic_halfedge() : m_creased(false) {}
-
-  /*! Obtain the index of the index of the incident vertex.
-   * \return the index of the incident vertex.
-   */
-  Uint get_index() const { return m_index; }
-
-  /*! Set the general-purpose flag.
-   * \param[in] flag the new Boolean value of the flag.
-   */
-  void set_flag(Boolean flag) const { m_flag = flag; }
-
-  /*! Obtain the general-purpose flag.
-   * \return the Boolean value of the flag.
-   */
-  Boolean is_flag() const { return m_flag; }
-
-  /*! The index of the index of the points of the facets. */
-  Uint m_index;
-
-  Boolean m_creased;
-
-  /*! A general-purpose Boolean flag. */
-  mutable Boolean m_flag;
-};
-
-/*! A face type with the face normal data member */
-template <typename Refs, typename Traits>
-struct Epic_face :
-  public CGAL::HalfedgeDS_face_base<Refs, CGAL::Tag_true,
-                                    typename Traits::Plane_3>
-{
-  Vector3f m_normal;
-  Epic_face() {}
-  Epic_face(const typename Traits::Plane_3& pln) :
-    CGAL::HalfedgeDS_face_base<Refs, CGAL::Tag_true,
-                               typename Traits::Plane_3>(pln)
-  {}
-};
 
 /*! An items type using extended features */
 struct Epic_polyhedron_items : public CGAL::Polyhedron_items_3 {
   template <typename Refs, typename Traits>
   struct Vertex_wrapper {
-    typedef Epic_vertex<Refs, Traits> Vertex;
+    typedef typename Traits::Point_3 Point;
+    typedef HalfedgeDS_vertex_with_id<Refs, Point, Size> Vertex;
   };
 
   template <typename Refs, typename Traits>
   struct Halfedge_wrapper {
-    typedef Epic_halfedge<Refs> Halfedge;
+    typedef HalfedgeDS_halfedge_with_id_and_flag<Refs, Size> Halfedge;
   };
 
   template <typename Refs, typename Traits>
   struct Face_wrapper {
-    typedef Epic_face<Refs, Traits> Face;
+    typedef typename Traits::Plane_3 Plane;
+    typedef HalfedgeDS_face_with_id_and_normal<Refs, Plane, Size> Face;
   };
 };
 

@@ -189,9 +189,9 @@ protected:
       throw(std::runtime_error("Error: inconsistent mesh!"));
     auto he = B.add_facet(begin, end);
     SGAL_assertion(B.error());
-    he->m_index = j;
-    he->next()->m_index = j+1;
-    he->next()->next()->m_index = j+2;
+    he->set_id(j);
+    he->next()->set_id(j+1);
+    he->next()->next()->set_id(j+2);
     return j+3;
   }
 
@@ -210,10 +210,10 @@ protected:
     if (!B.test_facet(begin, end))
       throw(std::runtime_error("Error: inconsistent mesh!"));
     auto he = B.add_facet(begin, end);
-    he->m_index = j;
-    he->next()->m_index = j+1;
-    he->next()->next()->m_index = j+2;
-    he->next()->next()->next()->m_index = j+3;
+    he->set_id(j);
+    he->next()->set_id(j+1);
+    he->next()->next()->set_id(j+2);
+    he->next()->next()->next()->set_id(j+3);
     return j+4;
   }
 
@@ -234,7 +234,7 @@ protected:
     auto he = B.add_facet(begin, end);
     auto start_he = he;
     do {
-      he->m_index = j++;
+      he->set_id(j++);
       he = he->next();
     } while (he != start_he);
     return j;

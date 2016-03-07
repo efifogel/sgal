@@ -28,7 +28,7 @@
 #include <GL/glext.h>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Polyhedron.hpp"
+#include "SGAL/Inexact_polyhedron.hpp"
 #include "SGAL/Epic_polyhedron.hpp"
 #include "SGAL/Epec_polyhedron.hpp"
 #include "SGAL/Indexed_face_set.hpp"
@@ -74,8 +74,8 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   m_polyhedron_type(POLYHEDRON_INEXACT),
   m_dirty_coord_array(true),
   m_dirty_polyhedron(true),
-  m_dirty_polyhedron_edges(true),
-  m_dirty_polyhedron_facets(true),
+  m_dirty_polyhedron_facet_normals(true),
+  m_dirty_normal_attributes(true),
   m_consistent(true),
   m_has_singular_vertices(false),
   m_triangulate(Modeling::s_def_triangulate),
@@ -129,7 +129,7 @@ void Indexed_face_set::delete_prototype()
 //! \brief obtains the container prototype.
 Container_proto* Indexed_face_set::get_prototype()
 {
-  if (s_prototype == NULL) Indexed_face_set::init_prototype();
+  if (s_prototype == nullptr) Indexed_face_set::init_prototype();
   return s_prototype;
 }
 
@@ -273,8 +273,8 @@ void Indexed_face_set::clean_normals()
 {
   if ((0 < m_crease_angle) && (m_crease_angle < SGAL_PI)) {
     if (m_dirty_polyhedron) clean_polyhedron();
-    if (m_dirty_polyhedron_facets) clean_polyhedron_facets();
-    if (m_dirty_polyhedron_edges) clean_polyhedron_edges();
+    if (m_dirty_polyhedron_facet_normals) clean_polyhedron_facet_normals();
+    if (m_dirty_normal_attributes) clean_normal_attributes();
 
     if (m_smooth) calculate_single_normal_per_vertex();
     else if (m_creased) calculate_normal_per_facet();
@@ -347,7 +347,7 @@ void Indexed_face_set::clean_polyhedron()
     Hole_filler_visitor visitor(m_refine, m_fair);
     boost::apply_visitor(visitor, m_polyhedron);
 
-    //! \todo instead of brutally clearing the coord array and indices arrays,
+    //! \todo instead of brutally clearing the coords and indices arrays,
     // update these arrays based on the results of the hole-filler visitor.
     clear_coord_array();
     clear_coord_indices();
@@ -356,16 +356,16 @@ void Indexed_face_set::clean_polyhedron()
 
   m_dirty_volume = true;
   m_dirty_surface_area = true;
-  m_dirty_polyhedron_edges = true;
-  m_dirty_polyhedron_facets = true;
+  m_dirty_polyhedron_facet_normals = true;
+  m_dirty_normal_attributes = true;
 }
 
 //! \brief clears the polyhedron.
 void Indexed_face_set::clear_polyhedron()
 {
   m_dirty_polyhedron = true;
-  m_dirty_polyhedron_edges = true;
-  m_dirty_polyhedron_facets = true;
+  m_dirty_polyhedron_facet_normals = true;
+  m_dirty_normal_attributes = true;
   m_dirty_volume = true;
   m_dirty_surface_area = true;
   boost::apply_visitor(Clear_polyhedron_visitor(), m_polyhedron);
@@ -376,8 +376,8 @@ void Indexed_face_set::set_polyhedron(Polyhedron& polyhedron)
 {
   m_polyhedron = polyhedron;
   m_dirty_polyhedron = false;
-  m_dirty_polyhedron_edges = false;
-  m_dirty_polyhedron_facets = false;
+  m_dirty_polyhedron_facet_normals = false;
+  m_dirty_normal_attributes = false;
   m_dirty_volume = true;
   m_dirty_surface_area = true;
   clear_coord_array();
@@ -389,11 +389,11 @@ void Indexed_face_set::set_polyhedron(Polyhedron& polyhedron)
 
 //! \brief obtains the polyhedron data-structure.
 const Indexed_face_set::Polyhedron&
-Indexed_face_set::get_polyhedron(Boolean with_planes)
+Indexed_face_set::get_polyhedron(Boolean clean_facet_normals)
 {
   if (m_dirty_polyhedron) clean_polyhedron();
-  if (with_planes) {
-    if (m_dirty_polyhedron_facets) clean_polyhedron_facets();
+  if (clean_facet_normals) {
+    if (m_dirty_polyhedron_facet_normals) clean_polyhedron_facet_normals();
   }
   return m_polyhedron;
 }
@@ -426,8 +426,6 @@ void Indexed_face_set::calculate_multiple_normals_per_vertex()
   Calculate_multiple_normals_per_vertex_visitor visitor(m_normal_array,
                                                         m_facet_normal_indices);
   boost::apply_visitor(visitor, m_polyhedron);
-  // SGAL::calculate_multiple_normals_per_vertex(m_polyhedron, m_normal_array,
-  //                                             m_facet_normal_indices);
   m_dirty_normal_indices = true;
   m_dirty_facet_normal_indices = false;
 }
@@ -565,18 +563,18 @@ Size Indexed_face_set::get_number_of_facets()
 }
 
 //! \brief cleans the polyhedron facets.
-void Indexed_face_set::clean_polyhedron_facets()
+void Indexed_face_set::clean_polyhedron_facet_normals()
 {
-  m_dirty_polyhedron_facets = false;
-  boost::apply_visitor(Clean_facets_visitor(), m_polyhedron);
-  m_dirty_polyhedron_edges = true;
+  m_dirty_polyhedron_facet_normals = false;
+  boost::apply_visitor(Clean_facet_normals_visitor(), m_polyhedron);
+  m_dirty_normal_attributes = true;
 }
 
 //! \brief cleans the polyhedron edges.
-void Indexed_face_set::clean_polyhedron_edges()
+void Indexed_face_set::clean_normal_attributes()
 {
-  m_dirty_polyhedron_edges = false;
-  Clean_edges_visitor visitor(get_crease_angle());
+  m_dirty_normal_attributes = false;
+  Clean_normal_attributes_visitor visitor(get_crease_angle());
   std::pair<Boolean, Boolean> res = boost::apply_visitor(visitor, m_polyhedron);
   m_smooth = res.first;
   m_creased = res.second;

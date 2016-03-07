@@ -22,7 +22,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Node.hpp"
-#include "SGAL/Polyhedron.hpp"
+#include "SGAL/Inexact_polyhedron.hpp"
 #include "SGAL/Epic_polyhedron.hpp"
 #include "SGAL/Epec_polyhedron.hpp"
 

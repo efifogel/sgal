@@ -43,7 +43,7 @@
 #include "SGAL/Cull_context.hpp"
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Inexact_kernel.hpp"
-#include "SGAL/Polyhedron.hpp"
+#include "SGAL/Inexact_polyhedron.hpp"
 #include "SGAL/Polyhedron_geo_builder.hpp"
 
 #include "SCGAL/basic.hpp"

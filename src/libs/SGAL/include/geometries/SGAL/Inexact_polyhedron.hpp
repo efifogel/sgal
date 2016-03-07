@@ -38,72 +38,36 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Inexact_kernel.hpp"
+#include "SGAL/HalfedgeDS_vertex_with_id.hpp"
+#include "SGAL/HalfedgeDS_halfedge_with_id_and_flag.hpp"
+#include "SGAL/HalfedgeDS_face_with_id.hpp"
 
 SGAL_BEGIN_NAMESPACE
-
-template <typename Refs, typename Traits>
-struct Polyhedron_vertex :
-  public CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true,
-                                      typename Traits::Point_3>
-{
-  typedef typename Traits::Point_3    Point;
-
-  /*! A uniqe index of vertices. */
-  Uint m_index;
-
-  Polyhedron_vertex() {}
-  Polyhedron_vertex(const Point& p) :
-    CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true, Point>(p)
-  {}
-};
-
-template <typename Refs>
-class Polyhedron_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
-public:
-  /*! Default constructor */
-  Polyhedron_halfedge() : m_creased(false) {}
-
-  /*! Obtain the index of the index of the incident vertex.
-   * \return the index of the incident vertex.
-   */
-  Uint get_index() const { return m_index; }
-
-  /*! Set the general-purpose flag.
-   * \param[in] flag the new Boolean value of the flag.
-   */
-  void set_flag(Boolean flag) const { m_flag = flag; }
-
-  /*! Obtain the general-purpose flag.
-   * \return the Boolean value of the flag.
-   */
-  Boolean is_flag() const { return m_flag; }
-
-  /*! The index of the index of the incident vertex. */
-  Uint m_index;
-
-  Boolean m_creased;
-
-  /*! A general-purpose Boolean flag. */
-  mutable Boolean m_flag;
-};
 
 // An items type using my vertex and edge.
 struct Polyhedron_items : public CGAL::Polyhedron_items_3 {
   template <typename Refs, typename Traits>
   struct Vertex_wrapper {
-    typedef Polyhedron_vertex<Refs, Traits> Vertex;
+    typedef typename Traits::Point_3 Point;
+    typedef HalfedgeDS_vertex_with_id<Refs, Point, Size> Vertex;
   };
 
   template <typename Refs, typename Traits>
   struct Halfedge_wrapper {
-    typedef Polyhedron_halfedge<Refs> Halfedge;
+    typedef HalfedgeDS_halfedge_with_id_and_flag<Refs, Size> Halfedge;
+  };
+
+  template <typename Refs, typename Traits>
+  struct Face_wrapper {
+    typedef typename Traits::Plane_3 Plane;
+    typedef HalfedgeDS_face_with_id<Refs, Plane, Size> Face;
   };
 };
 
 typedef CGAL::Polyhedron_traits_with_normals_3<Inexact_kernel>
-                                                   Inexact_polyhedron_traits;
+                                                    Inexact_polyhedron_traits;
 typedef CGAL::Polyhedron_3<Inexact_polyhedron_traits, Polyhedron_items>
-                                                   Inexact_polyhedron;
+                                                    Inexact_polyhedron;
 
 SGAL_END_NAMESPACE
 

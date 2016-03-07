@@ -65,7 +65,7 @@ SGAL_BEGIN_NAMESPACE
  * hull of a set of input coordinates. Currently, we use the field "coordArray"
  * as the input. If this option is desired, the polyhedron intermediate
  * structure is constructed. Then, the "coordArray" field is overriden with
- * the coordinates of the convex hull. We need to introduce a new filed, say
+ * the coordinates of the convex hull. We need to introduce a new field, say
  * "coordSet", which should be used as input. This way, the input field is not
  * overriden.
  */
@@ -83,8 +83,8 @@ Exact_polyhedron_geo::Exact_polyhedron_geo(Boolean proto) :
   m_dirty_surface_area(true),
   m_dirty_coord_array(true),
   m_dirty_polyhedron(true),
-  m_dirty_polyhedron_edges(true),
-  m_dirty_polyhedron_facets(true),
+  m_dirty_normal_attributes(true),
+  m_dirty_polyhedron_facet_normals(true),
   m_consistent(true),
   m_has_singular_vertices(false),
   m_time(0)
@@ -225,7 +225,7 @@ void Exact_polyhedron_geo::clean_coords()
     for (auto vit = m_polyhedron.vertices_begin();
          vit != m_polyhedron.vertices_end(); ++vit)
     {
-      vit->m_index = index++;
+      vit->set_id(index++);
       *cit++ = to_vector3f(vit->point());
     }
   }
@@ -238,7 +238,7 @@ void Exact_polyhedron_geo::clean_coords()
       for (auto vit = m_polyhedron.vertices_begin();
            vit != m_polyhedron.vertices_end(); ++vit)
       {
-        vit->m_index = index++;
+        vit->set_id(index++);
         *cit++ = vit->point();
       }
     }
@@ -308,8 +308,8 @@ void Exact_polyhedron_geo::clean_coord_indices()
       Epec_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
       size_t j(0);
       do {
-        coord_indices[i][j++] = hh->vertex()->m_index;
-        hh->m_index = index++;
+        coord_indices[i][j++] = hh->vertex()->id();
+        hh->set_id(index++);
       } while (++hh != fit->facet_begin());
     }
   }
@@ -324,8 +324,8 @@ void Exact_polyhedron_geo::clean_coord_indices()
       Epec_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
       size_t j(0);
       do {
-        coord_indices[i][j++] = hh->vertex()->m_index;
-        hh->m_index = index++;
+        coord_indices[i][j++] = hh->vertex()->id();
+        hh->set_id(index++);
       } while (++hh != fit->facet_begin());
     }
   }
@@ -342,8 +342,8 @@ void Exact_polyhedron_geo::clean_coord_indices()
       coord_indices[i].resize(circ_size);
       size_t j(0);
       do {
-        coord_indices[i][j++] = hh->vertex()->m_index;
-        hh->m_index = index++;
+        coord_indices[i][j++] = hh->vertex()->id();
+        hh->set_id(index++);
       } while (++hh != fit->facet_begin());
     }
   }
@@ -357,8 +357,8 @@ void Exact_polyhedron_geo::clean_normals()
 {
   if ((0 < m_crease_angle) && (m_crease_angle < SGAL_PI)) {
     if (m_dirty_polyhedron) clean_polyhedron();
-    if (m_dirty_polyhedron_facets) clean_polyhedron_facets();
-    if (m_dirty_polyhedron_edges) clean_polyhedron_edges();
+    if (m_dirty_polyhedron_facet_normals) clean_polyhedron_facet_normals();
+    if (m_dirty_normal_attributes) clean_normal_attributes();
 
     if (m_smooth) calculate_single_normal_per_vertex();
     else if (m_creased) calculate_normal_per_facet();
@@ -397,44 +397,14 @@ void Exact_polyhedron_geo::clean_polyhedron()
   }
   clock_t end_time = clock();
   m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
-  m_dirty_polyhedron_edges = true;
-  m_dirty_polyhedron_facets = true;
+  m_dirty_polyhedron_facet_normals = true;
+  m_dirty_normal_attributes = true;
 }
 
 //! \brief cleans the polyhedron cells.
-void Exact_polyhedron_geo::clean_polyhedron_edges()
+void Exact_polyhedron_geo::clean_normal_attributes()
 {
-  m_dirty_polyhedron_edges = false;
-
-//   // Compute the normal used only for drawing the polyhedron
-//   std::for_each(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
-//                 [](Epec_polyhedron::Facet& facet)
-//                 {
-//                   Epec_polyhedron::Halfedge_const_handle h = facet.halfedge();
-//                   Kernel kernel;
-//                   auto normal =
-//                     kernel.construct_cross_product_vector_3_object()
-//                     (h->next()->vertex()->point() - h->vertex()->point(),
-//                      h->next()->next()->vertex()->point() -
-//                      h->next()->vertex()->point());
-//                   facet.plane() =
-//                     kernel.construct_plane_3_object()(h->vertex()->point(), normal);
-//                   std::cout << "plane: " << facet.plane() << std::endl;
-
-// //                   const Vector3f& v1 = to_vector3f(h->vertex()->point());
-// //                   h = h->next();
-// //                   const Vector3f& v2 = to_vector3f(h->vertex()->point());
-// //                   h = h->next();
-// //                   const Vector3f& v3 = to_vector3f(h->vertex()->point());
-// //                   Vector3f vec1, vec2;
-// //                   vec1.sub(v2, v1);
-// //                   vec2.sub(v3, v2);
-// //                   facet.m_normal.cross(vec1, vec2);
-//                   facet.m_normal.set(CGAL::to_double(normal.x()),
-//                                      CGAL::to_double(normal.y()),
-//                                      CGAL::to_double(normal.z()));
-//                   facet.m_normal.normalize();
-//                 });
+  m_dirty_normal_attributes = false;
 
   // Clean the halfedges
   Edge_normal_calculator edge_normal_calculator(get_crease_angle());
@@ -446,7 +416,7 @@ void Exact_polyhedron_geo::clean_polyhedron_edges()
 }
 
 //! \brief cleans the polyhedron facets.
-void Exact_polyhedron_geo::clean_polyhedron_facets()
+void Exact_polyhedron_geo::clean_polyhedron_facet_normals()
 {
   // Compute the plane equations:
   std::transform(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
@@ -460,8 +430,8 @@ void Exact_polyhedron_geo::clean_polyhedron_facets()
   // std::for_each(m_polyhedron.vertices_begin(), m_polyhedron.vertices_end(),
   //               Point_to_vector());
 
-  m_dirty_polyhedron_facets = false;
-  m_dirty_polyhedron_edges = true;
+  m_dirty_polyhedron_facet_normals = false;
+  m_dirty_normal_attributes = true;
 }
 
 //! \brief clears the internal representation.
@@ -536,11 +506,11 @@ CGAL::Oriented_side Exact_polyhedron_geo::oriented_side(const Epec_point_3& p)
 
 //! \brief obtains the polyhedron data-structure.
 const Epec_polyhedron&
-Exact_polyhedron_geo::get_polyhedron(Boolean with_planes)
+Exact_polyhedron_geo::get_polyhedron(Boolean clean_facet_normals)
 {
   if (m_dirty_polyhedron) clean_polyhedron();
-  if (with_planes) {
-    if (m_dirty_polyhedron_facets) clean_polyhedron_facets();
+  if (clean_facet_normals) {
+    if (m_dirty_polyhedron_facet_normals) clean_polyhedron_facet_normals();
   }
   return m_polyhedron;
 }

@@ -160,8 +160,8 @@ void Nef_gaussian_map_geo::clean_ngm()
     const Nef_gaussian_map& ngm1 = ngm_geo1->get_ngm();
     const Nef_gaussian_map& ngm2 = ngm_geo2->get_ngm();
     m_nef_gaussian_map.minkowski_sum(ngm1, ngm2);
-    gausian_map_to_polyhedron_3<Polyhedron_traits,
-      Polyhedron::HDS> Converter(m_nef_gaussian_map);
+    gausian_map_to_polyhedron_3<Kernel, Polyhedron::HDS>
+      Converter(m_nef_gaussian_map);
 
     m_polyhedron.clear();
     m_polyhedron.delegate(Converter);

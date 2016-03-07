@@ -40,7 +40,7 @@ SGAL_BEGIN_NAMESPACE
  * types of polyhedrons.
  */
 class Number_of_connected_components_polyhedron_visitor :
-  public boost::static_visitor<Boolean>
+  public boost::static_visitor<Size>
 {
 public:
   /*! Count the number of connected components.
@@ -48,14 +48,23 @@ public:
    * \return the number of connected components.
    */
   template <typename Polyhedron_>
-  Boolean operator()(Polyhedron_& polyhedron) const
+  Size operator()(Polyhedron_& polyhedron) const
   {
     typedef Polyhedron_                 Polyhedron;
     auto index_map = CGAL::get(boost::face_external_index_t(), polyhedron);
     auto np = PMP::parameters::face_index_map(index_map);
     std::map<typename Polyhedron::Face_handle, size_t> face_ccs;
     auto fcm = boost::make_assoc_property_map(face_ccs);
-    return PMP::connected_components(polyhedron, fcm, np);
+    auto num = PMP::connected_components(polyhedron, fcm, np);
+    // {
+    //   size_t i(0);
+    //   auto it = polyhedron.facets_begin();
+    //   for (; it != polyhedron.facets_end(); ++it) {
+    //     std::cout << "index: " << index_map[i++] << std::endl;
+    //   }
+    // }
+    std::cout << "# cc: " << num << std::endl;
+    return num;
   }
 };
 

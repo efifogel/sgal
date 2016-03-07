@@ -30,7 +30,6 @@
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Inexact_kernel.hpp"
 #include "SGAL/Mesh_set.hpp"
-#include "SGAL/Polyhedron.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -40,7 +39,7 @@ Vector3f get_normal_impl(FacetHandle f, boost::true_type)
 
 template <typename FacetHandle>
 Vector3f get_normal_impl(FacetHandle f, boost::false_type)
-{ return f->m_normal; }
+{ return f->get_normal(); }
 
 template <typename Polyhedron_>
 Vector3f get_normal(typename Polyhedron_::Facet_const_handle f)
@@ -109,12 +108,12 @@ void calculate_multiple_normals_per_vertex
     Halfedge_around_facet_const_circulator start = facet.facet_begin();
     Halfedge_around_facet_const_circulator he = start;
     do {
-      Uint index = he->m_index;
+      auto index = he->id();
 
       // Go backwards around the vertex until a creased edge is encountered.
       Halfedge_around_vertex_const_circulator hev = he->vertex_begin();
       Halfedge_around_vertex_const_circulator startv = hev;
-      while (!hev->m_creased) {
+      while (!hev->is_creased()) {
         if (--hev == startv) break;
       }
 
@@ -124,7 +123,7 @@ void calculate_multiple_normals_per_vertex
       Vector3f prev_normal = get_normal<Polyhedron>(f);
       Vector3f normal_res(prev_normal);
       startv = hev++;
-      while ((hev != startv) && !hev->m_creased) {
+      while ((hev != startv) && !hev->is_creased()) {
         if (hev->is_border()) {
           ++hev;
           continue;

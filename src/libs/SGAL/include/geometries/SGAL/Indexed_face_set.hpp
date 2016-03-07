@@ -31,7 +31,7 @@
 #include "SGAL/Inexact_kernel.hpp"
 #include "SGAL/Epic_kernel.hpp"
 #include "SGAL/Epec_kernel.hpp"
-#include "SGAL/Polyhedron.hpp"
+#include "SGAL/Inexact_polyhedron.hpp"
 #include "SGAL/Epic_polyhedron.hpp"
 #include "SGAL/Epec_polyhedron.hpp"
 
@@ -190,7 +190,7 @@ public:
    *            as the polyhedron itself.
    * \return the polyhedron data-structure.
    */
-  const Polyhedron& get_polyhedron(Boolean with_planes = false);
+  const Polyhedron& get_polyhedron(Boolean clean_facet_normals = false);
 
   /*! Determine whether the polyhedron representation is empty.
    */
@@ -220,13 +220,13 @@ public:
    */
   Size get_number_of_facets();
 
-  /*! Clear the polyhedron edges. (Invalidate their attributes.)
+  /*! Clear (invalidate) the normal attributes m_creased and m_smooth.
    */
-  void clear_polyhedron_edges();
+  void clear_normal_attributes();
 
   /*! Clear the polyhedron facets. (Invalidate their attributes.)
    */
-  void clear_polyhedron_facets();
+  void clear_polyhedron_facet_normals();
 
   /// \name Change Recators
   //@{
@@ -312,15 +312,15 @@ protected:
    */
   Boolean m_dirty_polyhedron;
 
-  /*! Indicates whether the polyhedron edges are dirty and thus should be
-   * cleaned.
-   */
-  Boolean m_dirty_polyhedron_edges;
-
   /*! Indicates whether the polyhedron facets are dirty and thus should be
    * cleaned.
    */
-  Boolean m_dirty_polyhedron_facets;
+  Boolean m_dirty_polyhedron_facet_normals;
+
+  /*! Indicates whether the normal attributes are dirty and thus should be
+   * cleaned.
+   */
+  Boolean m_dirty_normal_attributes;
 
   /*! Indicates wheather the mesh is consistent.
    * \return true if the mesh is consistent and false otherwise. An mesh is
@@ -334,13 +334,13 @@ protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
-  /*! Clean the polyhedron edges. (Compute their attributes.)
-   */
-  void clean_polyhedron_edges();
-
   /*! Clean the polyhedron facets. (Compute their attributes.)
    */
-  void clean_polyhedron_facets();
+  void clean_polyhedron_facet_normals();
+
+  /*! Clean (recompute) the normal attributes m_creased and m_smooth.
+   */
+  void clean_normal_attributes();
 
   /*! Clean (compute) the volume.
    */
@@ -388,8 +388,8 @@ protected:
         initialize_polygon(*it, hh, Is_polygon());
         size_t j(0);
         do {
-          (*it)[j++] = hh->vertex()->m_index;
-          hh->m_index = index++;
+          (*it)[j++] = hh->vertex()->id();
+          hh->set_id(index++);
         } while (++hh != fit->facet_begin());
       }
     }
@@ -428,11 +428,11 @@ protected:
     template <typename Polyhedron_>
     void operator()(Polyhedron_& polyhedron) const
     {
-      Size index = 0;
+      Size index(0);
       auto cit = m_begin;
       auto vit = polyhedron.vertices_begin();
       for (; vit != polyhedron.vertices_end(); ++vit) {
-        vit->m_index = index++;
+        vit->set_id(index++);
         auto& p = vit->point();
         auto x = to_float(p.x());
         auto y = to_float(p.y());
@@ -605,7 +605,7 @@ protected:
   };
 
   /*! Clean Polyhedron facets visitor. */
-  class Clean_facets_visitor : public boost::static_visitor<> {
+  class Clean_facet_normals_visitor : public boost::static_visitor<> {
   public:
     template <typename Polyhedron_>
     void operator()(Polyhedron_& polyhedron) const
@@ -662,28 +662,23 @@ protected:
     struct Plane_to_normal {
       template <typename Facet>
       void operator()(Facet& facet) {
-        const auto& normal = to_vector3f(facet.plane().orthogonal_vector());
-        facet.m_normal.set(normal);
-        facet.m_normal.normalize();
+        auto normal = to_vector3f(facet.plane().orthogonal_vector());
+        normal.normalize();
+        facet.set_normal(normal);
       }
     };
-
-    // /*! Convert a point in exact number type to approximate. */
-    // struct Point_to_vector {
-    //   template <typename Vertex>
-    //   void operator()(Vertex& vertex)
-    //   { vertex.m_vertex = to_vector3f(vertex.point()); }
-    // };
   };
 
-  /*! Clean Polyhedron edges visitor. */
-  class Clean_edges_visitor :
+  /*! Clean normal attributes visitor. */
+  class Clean_normal_attributes_visitor :
     public boost::static_visitor<std::pair<Boolean, Boolean> > {
   private:
     Float m_crease_angle;
 
   public:
-    Clean_edges_visitor(Float crease_angle) : m_crease_angle(crease_angle) {}
+    Clean_normal_attributes_visitor(Float crease_angle) :
+      m_crease_angle(crease_angle)
+    {}
 
     std::pair<Boolean, Boolean> operator()(Inexact_polyhedron& polyhedron) const
     { return clean_edges<Inexact_kernel>(polyhedron); }
@@ -714,13 +709,13 @@ protected:
                       if (edge.is_border_edge()) return;
                       Float angle = compute_angle(edge, Has_vector());
                       if (abs(angle) > m_crease_angle) {
-                        edge.m_creased = true;
-                        edge.opposite()->m_creased = true;
+                        edge.set_creased(true);
+                        edge.opposite()->set_creased(true);
                         smooth = false;
                         return;
                       }
-                      edge.m_creased = false;
-                      edge.opposite()->m_creased = false;
+                      edge.set_creased(false);
+                      edge.opposite()->set_creased(false);
                       creased = false;
                     });
       return std::make_pair(smooth, creased);
@@ -737,8 +732,8 @@ protected:
     template <typename Halfedge_>
     Float compute_angle(Halfedge_& edge, boost::false_type) const
     {
-      const auto& normal1 = edge.facet()->m_normal;
-      const auto& normal2 = edge.opposite()->facet()->m_normal;
+      const auto& normal1 = edge.facet()->get_normal();
+      const auto& normal2 = edge.opposite()->facet()->get_normal();
       return arccosf(normal1.dot(normal2));  // inner product
     }
   };
@@ -813,13 +808,13 @@ inline void Indexed_face_set::clear_volume() { m_dirty_volume = true; }
 inline void Indexed_face_set::clear_surface_area()
 { m_dirty_surface_area = true; }
 
-//! \brief clears the polyhedron edges. (Invalidate their attributes.)
-inline void Indexed_face_set::clear_polyhedron_edges()
-{ m_dirty_polyhedron_edges = true; }
+//! \brief clears (invalidate) the normal attributes m_creased and m_smooth.
+inline void Indexed_face_set::clear_normal_attributes()
+{ m_dirty_normal_attributes = true; }
 
 //! \brief clears the polyhedron facets. (Invalidate their attributes.)
-inline void Indexed_face_set::clear_polyhedron_facets()
-{ m_dirty_polyhedron_facets = true; }
+inline void Indexed_face_set::clear_polyhedron_facet_normals()
+{ m_dirty_polyhedron_facet_normals = true; }
 
 SGAL_END_NAMESPACE
 
