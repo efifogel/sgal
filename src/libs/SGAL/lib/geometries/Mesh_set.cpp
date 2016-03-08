@@ -502,6 +502,7 @@ void Mesh_set::clean_polygon_indices(Polygon_indices& polygons,
 }
 
 //! \brief cleans the facet coordinate-index vector.
+//! \todo turn to a visitor.
 void Mesh_set::clean_facet_coord_indices()
 {
   if (!m_coord_indices.empty()) {
@@ -528,6 +529,7 @@ void Mesh_set::clean_facet_coord_indices()
 }
 
 //! \brief cleans the facet normal-index array.
+//! \todo turn to a visitor.
 void Mesh_set::clean_facet_normal_indices()
 {
   if (!m_normal_indices.empty()) {
@@ -557,6 +559,7 @@ void Mesh_set::clean_facet_normal_indices()
 }
 
 //! \brief cleans the color-index array.
+//! \todo turn to a visitor.
 void Mesh_set::clean_facet_color_indices()
 {
   if (!m_normal_indices.empty()) {
@@ -585,6 +588,7 @@ void Mesh_set::clean_facet_color_indices()
 }
 
 //! \brief cleans the texture-mapping coordinate-index array.
+//! \todo turn to a visitor.
 void Mesh_set::clean_facet_tex_coord_indices()
 {
   if (!m_tex_coord_indices.empty()) {
@@ -647,6 +651,66 @@ void Mesh_set::clear_facet_tex_coord_indices()
 {
   clear_facet_indices(m_facet_tex_coord_indices);
   m_dirty_facet_tex_coord_indices = true;
+}
+
+//! \brief initializes the facet cordinate-index array.
+void Mesh_set::init_facet_coord_indices()
+{
+  switch (m_primitive_type) {
+   case PT_TRIANGLES: m_facet_coord_indices = Triangle_indices(); break;
+   case PT_QUADS: m_facet_coord_indices = Quad_indices(); break;
+   case PT_POLYGONS: m_facet_coord_indices = Polygon_indices(); break;
+
+   case PT_TRIANGLE_STRIP:
+   case PT_TRIANGLE_FAN:
+   case PT_QUAD_STRIP:
+   default: break;
+  }
+}
+
+//! \brief initializes the normal cordinate-index array.
+void Mesh_set::init_facet_normal_indices()
+{
+  switch (m_primitive_type) {
+   case PT_TRIANGLES: m_facet_normal_indices = Triangle_indices(); break;
+   case PT_QUADS: m_facet_normal_indices = Quad_indices(); break;
+   case PT_POLYGONS: m_facet_normal_indices = Polygon_indices(); break;
+
+   case PT_TRIANGLE_STRIP:
+   case PT_TRIANGLE_FAN:
+   case PT_QUAD_STRIP:
+   default: break;
+  }
+}
+
+//! \brief initializes the color cordinate-index array.
+void Mesh_set::init_facet_color_indices()
+{
+  switch (m_primitive_type) {
+   case PT_TRIANGLES: m_facet_color_indices = Triangle_indices(); break;
+   case PT_QUADS: m_facet_color_indices = Quad_indices(); break;
+   case PT_POLYGONS: m_facet_color_indices = Polygon_indices(); break;
+
+   case PT_TRIANGLE_STRIP:
+   case PT_TRIANGLE_FAN:
+   case PT_QUAD_STRIP:
+   default: break;
+  }
+}
+
+//! \brief initializes the facet texture-cordinate-index array.
+void Mesh_set::init_facet_tex_coord_indices()
+{
+  switch (m_primitive_type) {
+   case PT_TRIANGLES: m_facet_tex_coord_indices = Triangle_indices(); break;
+   case PT_QUADS: m_facet_tex_coord_indices = Quad_indices(); break;
+   case PT_POLYGONS: m_facet_tex_coord_indices = Polygon_indices(); break;
+
+   case PT_TRIANGLE_STRIP:
+   case PT_TRIANGLE_FAN:
+   case PT_QUAD_STRIP:
+   default: break;
+  }
 }
 
 //! \brief assigns the coord indices with the reverse of given indices.
