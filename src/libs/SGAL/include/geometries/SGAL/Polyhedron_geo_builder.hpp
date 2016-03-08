@@ -40,66 +40,78 @@ SGAL_BEGIN_NAMESPACE
  */
 template <typename TargetPoint_, typename SourcePoint_>
 struct Vertex_adder {
-  template <typename Builder_>
-  void operator()(Builder_& B, const SourcePoint_& point)
-  {}
+  template <typename Builder_, typename Size_>
+  void operator()(Builder_& B, const SourcePoint_& point, Size_ id) {}
 };
 
 // Target is Inexact.
 template <typename SourcePoint_>
 struct Vertex_adder<Inexact_point_3, SourcePoint_> {
-  template <typename Builder_>
-  void operator()(Builder_& B, const SourcePoint_& point)
+  template <typename Builder_, typename Size_>
+  void operator()(Builder_& B, const SourcePoint_& point, Size_ id)
   {
     auto x = to_float(point[0]);
     auto y = to_float(point[1]);
     auto z = to_float(point[2]);
-    B.add_vertex(Inexact_point_3(x, y, z));
+    auto v = B.add_vertex(Inexact_point_3(x, y, z));
+    v->set_id(id);
   }
 };
 
 // Target is Epic.
 template <>
 struct Vertex_adder<Epic_point_3, Vector3f> {
-  template <typename Builder_>
-  void operator()(Builder_& B, const Vector3f& point)
-  { B.add_vertex(Epic_point_3(point[0], point[1], point[2])); }
+  template <typename Builder_, typename Size_>
+  void operator()(Builder_& B, const Vector3f& point, Size_ id)
+  {
+    auto v = B.add_vertex(Epic_point_3(point[0], point[1], point[2]));
+    v->set_id(id);
+  }
 };
 
 template <>
 struct Vertex_adder<Epic_point_3, Epic_point_3> {
-  template <typename Builder_>
-  void operator()(Builder_& B, const Epic_point_3& point)
-  { B.add_vertex(point); }
+  template <typename Builder_, typename Size_>
+  void operator()(Builder_& B, const Epic_point_3& point, Size_ id)
+  {
+    auto v = B.add_vertex(point);
+    v->set_id(id);
+  }
 };
 
 template <>
 struct Vertex_adder<Epic_point_3, Epec_point_3>{
-  template <typename Builder_>
-  void operator()(Builder_& /* B */, const Epec_point_3& /* point */)
+  template <typename Builder_, typename Size_>
+  void operator()(Builder_& /* B */, const Epec_point_3& /* p */, Size_ /* id */)
   { SGAL_error_msg("Not implemented Yet!"); }
 };
 
 // Target is Epec.
 template <>
 struct Vertex_adder<Epec_point_3, Vector3f> {
-  template <typename Builder_>
-  void operator()(Builder_& B, const Vector3f& point)
-  { B.add_vertex(Epec_point_3(point[0], point[1], point[2])); }
+  template <typename Builder_, typename Size_>
+  void operator()(Builder_& B, const Vector3f& point, Size_ id)
+  {
+    auto v = B.add_vertex(Epec_point_3(point[0], point[1], point[2]));
+    v->set_id(id);
+  }
 };
 
 template <>
 struct Vertex_adder<Epec_point_3, Epic_point_3> {
-  template <typename Builder_>
-  void operator()(Builder_& /* B */, const Epic_point_3& /* point */)
+  template <typename Builder_, typename Size_>
+  void operator()(Builder_& /* B */, const Epic_point_3& /* p */, Size_ /* id */)
   { SGAL_error_msg("Not implemented Yet!"); }
 };
 
 template <>
 struct Vertex_adder<Epec_point_3, Epec_point_3> {
-  template <typename Builder_>
-  void operator()(Builder_& B, const Epec_point_3& point)
-  { B.add_vertex(point); }
+  template <typename Builder_, typename Size_>
+  void operator()(Builder_& B, const Epec_point_3& point, Size_ id)
+  {
+    auto v = B.add_vertex(point);
+    v->set_id(id);
+  }
 };
 
 template <typename HDS>
@@ -128,7 +140,9 @@ protected:
     auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(coord_array);
     if (coords) {
       Vertex_adder<Point, Vector3f> adder;
-      for (auto it = coords->begin(); it != coords->end(); ++it) adder(B, *it);
+      Size i(0);
+      for (auto it = coords->begin(); it != coords->end(); ++it)
+        adder(B, *it, i++);
       return;
     }
 
@@ -136,8 +150,9 @@ protected:
       boost::dynamic_pointer_cast<Epic_coord_array_3d>(coord_array);
     if (epic_coords) {
       Vertex_adder<Point, Epic_point_3> adder;
+      Size i(0);
       for (auto it = epic_coords->begin(); it != epic_coords->end(); ++it)
-        adder(B, *it);
+        adder(B, *it, i++);
       return;
     }
 
@@ -145,8 +160,9 @@ protected:
       boost::dynamic_pointer_cast<Epec_coord_array_3d>(coord_array);
     if (epec_coords) {
       Vertex_adder<Point, Epec_point_3> adder;
+      Size i(0);
       for (auto it = epec_coords->begin(); it != epec_coords->end(); ++it)
-        adder(B, *it);
+        adder(B, *it, i++);
       return;
     }
 
