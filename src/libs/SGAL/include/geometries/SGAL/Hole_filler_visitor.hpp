@@ -1,4 +1,4 @@
-// Copyright (c) 2004 Israel.
+// Copyright (c) 2016 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
