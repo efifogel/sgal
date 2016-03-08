@@ -128,6 +128,7 @@
 // #include "SGAL/Comp_rotation_interpolator.hpp"
 
 // #include "SGAL/Prog_indexed_tri_set.hpp"
+#include "SGAL/Connected_components_splitter.hpp"
 #include "SGAL/Hole_filler.hpp"
 #include "SGAL/Snapshot.hpp"
 #include "SGAL/Snapshotter.hpp"
@@ -195,6 +196,7 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Coord_array_3d);
   REGISTER_OBJECT(Configuration);
   REGISTER_OBJECT(Cone);
+  REGISTER_OBJECT(Connected_components_splitter);
   REGISTER_OBJECT(Coord_minkowski);
   REGISTER_OBJECT(Coord_transformer);
   REGISTER_OBJECT(Cube_environment);
