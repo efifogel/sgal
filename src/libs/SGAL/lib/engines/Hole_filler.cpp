@@ -176,7 +176,7 @@ void Hole_filler::execute()
     // Fill the holes.
     surface->set_polyhedron_type(Indexed_face_set::POLYHEDRON_EPIC);
 
-    // We obtain the polyhedron by reference, cast it to a volatile, and
+    // We obtain the polyhedron by const reference, cast way constness, and
     // apply the visitor on it. Then, we need to invalidate all fields that
     // depend on the altered polyhedron. This is a bit risky, cause a new field
     // might be introduced.
