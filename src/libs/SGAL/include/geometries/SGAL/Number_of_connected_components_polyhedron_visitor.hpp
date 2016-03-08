@@ -51,20 +51,18 @@ public:
   Size operator()(Polyhedron_& polyhedron) const
   {
     typedef Polyhedron_                 Polyhedron;
-    auto index_map = CGAL::get(boost::face_external_index_t(), polyhedron);
-    auto np = PMP::parameters::face_index_map(index_map);
-    std::map<typename Polyhedron::Face_handle, size_t> face_ccs;
-    auto fcm = boost::make_assoc_property_map(face_ccs);
-    auto num = PMP::connected_components(polyhedron, fcm, np);
-    // {
-    //   size_t i(0);
-    //   auto it = polyhedron.facets_begin();
-    //   for (; it != polyhedron.facets_end(); ++it) {
-    //     std::cout << "index: " << index_map[i++] << std::endl;
-    //   }
-    // }
-    std::cout << "# cc: " << num << std::endl;
-    return num;
+    // Exploit the ids of the facets, so an external index map is not needed.
+    // auto index_map = CGAL::get(boost::face_external_index_t(), polyhedron);
+    // auto np = PMP::parameters::face_index_map(index_map);
+    // std::map<typename Polyhedron::Face_handle, Size> face_ccs;
+    // auto fcm = boost::make_assoc_property_map(face_ccs);
+
+    // Initialize the ids of the faces.
+    Size i(0);
+    BOOST_FOREACH(auto f, faces(polyhedron)) f->id() = i++;
+
+    auto fcm(CGAL::get(boost::face_index, polyhedron));
+    return PMP::connected_components(polyhedron, fcm);
   }
 };
 
