@@ -143,7 +143,7 @@ public:
   void set_operand1(Shared_mesh_set operand);
 
   /*! Obtain the 1st operand.
-   * \result the operand.
+   * \return the operand.
    */
   Shared_mesh_set get_operand1() const;
 
@@ -153,7 +153,7 @@ public:
   void set_operand2(Shared_mesh_set operand);
 
   /*! Obtain the 2nd operand.
-   * \result[in] the operand.
+   * \return the operand.
    */
   Shared_mesh_set get_operand2() const;
 
