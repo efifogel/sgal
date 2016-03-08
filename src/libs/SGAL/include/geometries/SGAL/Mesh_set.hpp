@@ -361,6 +361,22 @@ public:
    */
   Boolean is_dirty_facet_tex_coord_indices() const;
 
+  /*! Initialize the facet cordinate-index array.
+   */
+  void init_facet_coord_indices();
+
+  /*! Initialize the facet normal-index array.
+   */
+  void init_facet_normal_indices();
+
+  /*! Initialize the facet color-index array.
+   */
+  void init_facet_color_indices();
+
+  /*! Initialize the facet texture-cordinate-index array.
+   */
+  void init_facet_tex_coord_indices();
+
   /*! Resize facet indices visitor */
   class Resize_facet_indices_visitor : public boost::static_visitor<> {
   private:
@@ -585,7 +601,7 @@ public:
     Boolean operator()(const Indices& indices) const { return indices.empty(); }
   };
 
-  /*! Etermines whether the given index vector is empty. */
+  /*! Determine whether the given index vector is empty. */
   Boolean empty_facet_indices(const Facet_indices& indices);
 
   /*! Size facet indices visitor */
