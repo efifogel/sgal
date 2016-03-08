@@ -45,6 +45,7 @@ include_directories(${GENERATED_DIR})
 #file(GLOB_RECURSE SGAL_SOURCE_FILES *.cpp)
 
 #Engines
+set(SGAL_ENGINES_SOURCE_FILES ${SGAL_ENGINES_SOURCE_FILES} lib/engines/Connected_components_splitter.cpp)
 set(SGAL_ENGINES_SOURCE_FILES ${SGAL_ENGINES_SOURCE_FILES} lib/engines/Image_to_height_map.cpp)
 set(SGAL_ENGINES_SOURCE_FILES ${SGAL_ENGINES_SOURCE_FILES} lib/engines/Image_writer.cpp)
 set(SGAL_ENGINES_SOURCE_FILES ${SGAL_ENGINES_SOURCE_FILES} lib/engines/Incrementor.cpp)
@@ -54,6 +55,7 @@ set(SGAL_ENGINES_SOURCE_FILES ${SGAL_ENGINES_SOURCE_FILES} lib/engines/Surface_b
 if (EIGEN3_FOUND)
   set(SGAL_ENGINES_SOURCE_FILES ${SGAL_ENGINES_SOURCE_FILES} lib/engines/Hole_filler.cpp)
 endif(EIGEN3_FOUND)
+set(SGAL_ENGINES_HEADER_FILES ${SGAL_ENGINES_HEADER_FILES} include/engines/SGAL/Connected_components_splitter.hpp)
 set(SGAL_ENGINES_HEADER_FILES ${SGAL_ENGINES_HEADER_FILES} include/engines/SGAL/Image_to_height_map.hpp)
 set(SGAL_ENGINES_HEADER_FILES ${SGAL_ENGINES_HEADER_FILES} include/engines/SGAL/Image_writer.hpp)
 set(SGAL_ENGINES_HEADER_FILES ${SGAL_ENGINES_HEADER_FILES} include/engines/SGAL/Incrementor.hpp)
