@@ -492,6 +492,10 @@ public:
   void process_polyhedron_attributes_array(Polyhedron_attributes_array& array)
     const;
 
+  /*! Split connected components of all polyhedrons.
+   */
+  void split_connected_components();
+
 private:
   /*! Binadable stacks */
 

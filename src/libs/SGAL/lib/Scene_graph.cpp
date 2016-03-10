@@ -44,6 +44,7 @@
 #include "SGAL/Surface_area_action.hpp"
 #include "SGAL/Polyhedron_attributes_action.hpp"
 #include "SGAL/Isect_action.hpp"
+#include "SGAL/Split_connected_components_action.hpp"
 #include "SGAL/Execution_coordinator.hpp"
 #include "SGAL/Bounding_sphere.hpp"
 #include "SGAL/Touch_sensor.hpp"
@@ -1028,6 +1029,14 @@ process_polyhedron_attributes_array(Polyhedron_attributes_array& array) const
 {
   auto root = get_root();
   Polyhedron_attributes_action action(array);
+  root->traverse(&action);
+}
+
+//! \brief splits connected components.
+void Scene_graph::split_connected_components()
+{
+  auto root = get_root();
+  Split_connected_components_action action;
   root->traverse(&action);
 }
 
