@@ -406,8 +406,7 @@ void Extrusion::clean_coords()
   m_dirty_coord_array = false;
 
   if (!m_coord_array) m_coord_array.reset(new Coord_array_3d);
-  boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  auto coord_array = boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
   SGAL_assertion(coord_array);
 
   // Generate (closed) cross section:

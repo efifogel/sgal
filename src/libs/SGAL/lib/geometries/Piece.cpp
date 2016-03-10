@@ -165,8 +165,7 @@ void Piece::clean_coords()
   Uint size = (m_width + 1) * (m_height + 1) * (m_depth + 1);
   m_coord_array->resize(size);
 
-  boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  auto coord_array = boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
   SGAL_assertion(coord_array);
 
   Uint i, j, k, l = 0;
