@@ -249,7 +249,6 @@ Loader::compute_ifs(Scene_graph* scene_graph, size_t count,
   SGAL_assertion(ifs);
   ifs->set_primitive_type(Geo_set::PT_TRIANGLES);
   ifs->set_num_primitives(count);
-  ifs->add_to_scene(scene_graph);
 
   auto num_vertices = count * 3;
   Coord_array_3d* coords = new Coord_array_3d(num_vertices);
@@ -257,7 +256,6 @@ Loader::compute_ifs(Scene_graph* scene_graph, size_t count,
   ifs->set_coord_array(shared_coords);
   auto& indices = ifs->empty_triangle_coord_indices();
   indices.resize(count);
-
   size_t i(0);
   Uint coord_index(0);
   for (auto it = begin; it != end; ++it) {
@@ -270,7 +268,9 @@ Loader::compute_ifs(Scene_graph* scene_graph, size_t count,
     indices[i][2] = coord_index++;
     ++i;
   }
+  ifs->facet_coord_indices_changed();
   ifs->collapse_identical_coordinates();
+  ifs->add_to_scene(scene_graph);
 
   return ifs;
 }
@@ -345,7 +345,6 @@ void Loader::add_colored_shape(Scene_graph* scene_graph,
   SGAL_assertion(ifs);
   ifs->set_primitive_type(Geo_set::PT_TRIANGLES);
   ifs->set_num_primitives(count);
-  ifs->add_to_scene(scene_graph);
 
   auto num_vertices = count * 3;
   Coord_array_3d* coords = new Coord_array_3d(num_vertices);
@@ -386,6 +385,9 @@ void Loader::add_colored_shape(Scene_graph* scene_graph,
   }
   auto shape = compute_shape(scene_graph, transform, color);
   ifs->collapse_identical_coordinates();
+  ifs->facet_coord_indices_changed();
+  ifs->facet_color_indices_changed();
+  ifs->add_to_scene(scene_graph);
   shape->set_geometry(ifs);
 }
 
