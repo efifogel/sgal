@@ -31,6 +31,7 @@ SGAL_BEGIN_NAMESPACE
 class Node;
 class Shape;
 class Connected_components_splitter;
+class Scene_graph;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -48,8 +49,9 @@ public:
                                         Share_connected_components_splitter;
 
   /*! Construct.
+   * param[in] sg the scene graph used to to configure the result.
    */
-  Split_connected_components_action();
+  Split_connected_components_action(Scene_graph* sg);
 
   /*! Destruct. */
   virtual ~Split_connected_components_action();
@@ -59,17 +61,32 @@ public:
    */
   virtual Trav_directive apply(Shared_node node);
 
+  /*! Set the scene_graph container.
+   */
+  void set_scene_graph(Scene_graph* sg);
+
+  /*! Obtain the scene_graph container.
+   */
+  Scene_graph* get_scene_graph() const;
+
 private:
   /*! A list of shape children */
   std::list<Shared_shape> m_shapes;
 
   /*! The ccs splitter engine. */
   Share_connected_components_splitter m_splitter;
+
+  /*! Scene_graph \todo move to action? */
+  Scene_graph* m_scene_graph;
 };
 
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief obtains the scene_graph container.
+inline Scene_graph* Split_connected_components_action::get_scene_graph() const
+{ return m_scene_graph; }
 
 SGAL_END_NAMESPACE
 

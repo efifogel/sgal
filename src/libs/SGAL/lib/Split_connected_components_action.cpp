@@ -22,11 +22,21 @@
 
 SGAL_BEGIN_NAMESPACE
 
-//! \brief constructs default.
-Split_connected_components_action::Split_connected_components_action()
+//! \brief constructs.
+Split_connected_components_action::
+Split_connected_components_action(Scene_graph* sg) :
+  m_scene_graph(sg)
 {
   m_splitter.reset(new Connected_components_splitter);
+  set_scene_graph(sg);
   SGAL_assertion(m_splitter);
+}
+
+//! \brief sets the scene_graph container.
+void Split_connected_components_action::set_scene_graph(Scene_graph* sg)
+{
+  m_splitter->add_to_scene(sg);
+  m_scene_graph = sg;
 }
 
 //! \brief destructs.
@@ -46,9 +56,12 @@ Action::Trav_directive Split_connected_components_action::apply(Shared_node node
   auto group = boost::dynamic_pointer_cast<Group>(node);
   if (!group) return TRAV_CONT;
 
+  std::list<Shared_shape> shapes;
+  std::swap(m_shapes, shapes);
   node->traverse(this);
+  std::swap(m_shapes, shapes);
 
-  for (auto shape : m_shapes) {
+  for (auto shape : shapes) {
     const auto geometry = shape->get_geometry();
     const auto ifs = boost::dynamic_pointer_cast<Indexed_face_set>(geometry);
     if (!ifs) break;
@@ -65,7 +78,7 @@ Action::Trav_directive Split_connected_components_action::apply(Shared_node node
       group->add_child(new_shape);
     }
   }
-  m_shapes.clear();
+  shapes.clear();
 
   return TRAV_CONT;
 }
