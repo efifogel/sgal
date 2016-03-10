@@ -82,6 +82,12 @@ public:
    */
   Boolean get_fair() const;
 
+  /*! Determine whether to split connected components.
+   * \return true if splitting connected components is desired, and false
+   *         otherwise.
+   */
+  Boolean get_split_ccs() const;
+
   /*! Obtain the font paths.
    * \param variable_map (in)
    * \return the font paths.
@@ -105,6 +111,9 @@ private:
    * as-smooth-as-possible shape deformation.
    */
   Boolean m_fair;
+
+  /*! Indicates wither whether to split connected components. */
+  Boolean m_split_ccs;
 
   // The assignment operator cannot be generated (because some of the data
   // members are const pointers), so we suppress it explicitly.
@@ -130,6 +139,10 @@ inline Boolean Modeling_option_parser::get_refine() const { return m_refine; }
 
 //! \brief determines whether to fair the triangulation of holes.
 inline Boolean Modeling_option_parser::get_fair() const {return m_fair; }
+
+//! \brief determines whether to split connected components.
+inline Boolean Modeling_option_parser::get_split_ccs() const
+{return m_split_ccs; }
 
 SGAL_END_NAMESPACE
 
