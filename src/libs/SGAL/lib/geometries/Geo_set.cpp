@@ -215,8 +215,7 @@ void Geo_set::set_attributes(Element* elem)
       m_coord_indices.resize(size);
       Uint i = 0;
       for (tokenizer::iterator it = tokens.begin(); it != tokens.end(); ++it) {
-        m_coord_indices[i++] =
-          static_cast<Uint>(boost::lexical_cast<int>(*it));
+        m_coord_indices[i++] = static_cast<Uint>(boost::lexical_cast<int>(*it));
       }
 
       if (m_primitive_type == PT_POLYGONS) {
@@ -247,6 +246,7 @@ void Geo_set::set_attributes(Element* elem)
           if (*it == static_cast<Uint>(-1)) ++m_num_primitives;
       }
       if (m_num_primitives == 0) goto err;
+      coord_indices_changed();
       elem->mark_delete(ai);
       continue;
     }
@@ -256,25 +256,31 @@ void Geo_set::set_attributes(Element* elem)
       m_color_indices.resize(num_values);
       std::istringstream svalue(value, std::istringstream::in);
       for (Uint i = 0; i < num_values; ++i) svalue >> m_color_indices[i];
+      color_indices_changed();
       elem->mark_delete(ai);
       continue;
     }
+
     if (name == "normalIndex") {
       Uint num_values = get_num_tokens(value);
       m_normal_indices.resize(num_values);
       std::istringstream svalue(value, std::istringstream::in);
       for (Uint i = 0; i < num_values; ++i) svalue >> m_normal_indices[i];
+      normal_indices_changed();
       elem->mark_delete(ai);
       continue;
     }
+
     if (name == "texCoordIndex") {
       Uint num_values = get_num_tokens(value);
       m_tex_coord_indices.resize(num_values);
       std::istringstream svalue(value, std::istringstream::in);
       for (Uint i = 0; i < num_values; ++i) svalue >> m_tex_coord_indices[i];
+      tex_coord_indices_changed();
       elem->mark_delete(ai);
       continue;
     }
+
     if (name == "primitiveType") {
       Uint num = sizeof(s_primitive_type_names) / sizeof(char*);
       const char** found = std::find(s_primitive_type_names,
@@ -290,9 +296,8 @@ void Geo_set::set_attributes(Element* elem)
     }
   }
 
-  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
-       ++cai)
-  {
+  auto cai = elem->cont_attrs_begin();
+  for (; cai != elem->cont_attrs_end(); ++cai) {
     const auto& name = elem->get_name(cai);
     auto cont = elem->get_value(cai);
     if (name == "coord") {
