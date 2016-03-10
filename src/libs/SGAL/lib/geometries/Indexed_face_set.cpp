@@ -433,6 +433,11 @@ void Indexed_face_set::calculate_multiple_normals_per_vertex()
 //! Write this container.
 void Indexed_face_set::write(Formatter* formatter)
 {
+  SGAL_TRACE_CODE(Trace::EXPORT,
+                  std::cout << "Indexed_face_set: " << "Tag: " << get_tag()
+                  << ", name: " << get_name()
+                  << std::endl;);
+
   SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
   if (is_dirty_coord_array() ||
       (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
