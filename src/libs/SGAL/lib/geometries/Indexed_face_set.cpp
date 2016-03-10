@@ -613,10 +613,9 @@ void Indexed_face_set::set_polyhedron_type(Polyhedron_type type)
   m_polyhedron_type = type;
 }
 
-//! \brief adds the container to a given scene.
-void Indexed_face_set::add_to_scene(Scene_graph* sg)
+//! \brief configures.
+void Indexed_face_set::configure(const Configuration* conf)
 {
-  auto* conf = sg->get_configuration();
   if (!conf) return;
 
   auto modeling = conf->get_modeling();
@@ -625,6 +624,13 @@ void Indexed_face_set::add_to_scene(Scene_graph* sg)
   m_triangulate = modeling->get_triangulate();
   m_refine = modeling->get_refine();
   m_fair = modeling->get_fair();
+}
+
+//! \brief adds the container to a given scene.
+void Indexed_face_set::add_to_scene(Scene_graph* sg)
+{
+  const auto* conf = sg->get_configuration();
+  configure(conf);
 }
 
 SGAL_END_NAMESPACE

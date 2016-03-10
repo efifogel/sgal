@@ -25,7 +25,6 @@
 #include <CGAL/basic.h>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Configuration.hpp"
 #include "SGAL/Boundary_set.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Inexact_kernel.hpp"
@@ -43,6 +42,7 @@ class Draw_action;
 class Isect_action;
 class Formatter;
 class Scene_graph;
+class Configuration;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -151,6 +151,10 @@ public:
    * \return the coordinate array.
    */
   virtual Shared_coord_array get_coord_array();
+
+  /*! Configure.
+   */
+  void configure(const Configuration* conf);
 
   /*! Clear the coordinate array.
    */
