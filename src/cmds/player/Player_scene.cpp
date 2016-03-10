@@ -296,6 +296,8 @@ void Player_scene::create_scene(char* data, int size)
   print_stat();
 
   create_defaults();
+  indulge_user();
+
   if (m_option_parser->do_snapshot()) snapshot_scene();
   if (m_option_parser->do_export()) export_scene();
 }
@@ -363,6 +365,8 @@ void Player_scene::create_scene()
   // }
 
   create_defaults();
+  indulge_user();
+
   if (m_option_parser->do_snapshot()) snapshot_scene();
   if (m_option_parser->do_export()) export_scene();
 }
@@ -628,8 +632,7 @@ void Player_scene::create_window()
 }
 
 //! \brief creates default nodes in the scene graph.
-void Player_scene::create_defaults()
-{ m_scene_graph->create_defaults(); }
+void Player_scene::create_defaults() { m_scene_graph->create_defaults(); }
 
 //! \brief initializes the secene.
 // Creates all windows; in this case only one.
@@ -637,13 +640,14 @@ void Player_scene::init_scene()
 {
   m_option_parser->configure_window_manager(m_window_manager);
   create_window();
-  indulge_user();
 }
 
 //! \brief indulges user requests from the command line.
 void Player_scene::indulge_user()
 {
-  // Local options:
+  if (m_option_parser->get_split_ccs())
+    m_scene_graph->split_connected_components();
+
   if (m_option_parser->get_display_texture_info()) {
     SGAL_assertion(m_scene_graph);
     // Look for non instance containers:
