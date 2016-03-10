@@ -42,6 +42,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 class Field_info;
 class Container_proto;
 class Mesh_set;
+class Scene_graph;
 
 /*! \class Connected_components_splitter Connected_components_splitter.hpp
  * Connected_components_splitter is an engine node in the scene graph that splits
@@ -93,6 +94,11 @@ public:
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
+  /*! Add the container to a given scene.
+   * \param scene_graph the given scene.
+   */
+  virtual void add_to_scene(Scene_graph* scene_graph);
+
   /*! Export this container.
    * \param[in] formatter the formatter to use for exporting; e.g., VRML.
    */
@@ -135,6 +141,10 @@ public:
 
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
+
+protected:
+  /*! The scene graph. */
+  Scene_graph* m_scene_graph;
 
 private:
   /*! Trigger of the engine that makes the engine excute. */

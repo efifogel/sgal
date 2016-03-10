@@ -58,12 +58,8 @@ public:
   Size operator()(const Polyhedron_& polyhedron,
                   Triangle_indices& indices) const
   {
-    Size count(0);
-    BOOST_FOREACH(auto f, faces(polyhedron)) {
-      if (f->id() != m_id) continue;
-      ++count;
-    }
-    indices.resize(count);
+    auto size = num_facets(polyhedron);
+    indices.resize(size);
     auto it = indices.begin();
     BOOST_FOREACH(auto f, faces(polyhedron)) {
       if (f->id() != m_id) continue;
@@ -73,27 +69,62 @@ public:
       tri[1] = hh++->vertex()->id();
       tri[2] = hh->vertex()->id();
     }
-    return count;
+    return size;
   }
 
-  // template <typename Polyhedron_>
-  // void operator()(const Polyhedron_& polyhedron,
-  //                 Quad_indices& indices) const
-  // {
-  //   SGAL_error_msg("Not implemented yet!");
-  // }
+  template <typename Polyhedron_>
+  Size operator()(const Polyhedron_& polyhedron,
+                  Quad_indices& indices) const
+  {
+    auto size = num_facets(polyhedron);
+    indices.resize(size);
+    auto it = indices.begin();
+    BOOST_FOREACH(auto f, faces(polyhedron)) {
+      if (f->id() != m_id) continue;
+      auto& quad = *it++;
+      auto hh = f->facet_begin();
+      quad[0] = hh++->vertex()->id();
+      quad[1] = hh++->vertex()->id();
+      quad[2] = hh++->vertex()->id();
+      quad[3] = hh->vertex()->id();
+    }
+    return size;
+  }
 
-  // template <typename Polyhedron_>
-  // void operator()(const Polyhedron_& polyhedron,
-  //                 Polygon_indices& indices) const
-  // {
-  //   SGAL_error_msg("Not implemented yet!");
-  // }
+  template <typename Polyhedron_>
+  Size operator()(const Polyhedron_& polyhedron,
+                  Polygon_indices& indices) const
+  {
+    auto size = num_facets(polyhedron);
+    indices.resize(size);
+    auto it = indices.begin();
+    BOOST_FOREACH(auto f, faces(polyhedron)) {
+      if (f->id() != m_id) continue;
+      auto& polygon = *it++;
+      auto num_vertices = CGAL::circulator_size(f->facet_begin());
+      polygon.resize(num_vertices);
+      auto hh = f->facet_begin();
+      for (auto i = 0; i < num_vertices; ++i) polygon[i] = hh++->vertex()->id();
+    }
+    return size;
+  }
 
   // template <typename Polyhedron_>
   // void operator()(const Polyhedron_& polyhedron,
   //                 const Mesh_set::Flat_indices& indices) const
   // { SGAL_error(); }
+
+private:
+  template <typename Polyhedron_>
+  Size num_facets(const Polyhedron_& polyhedron) const
+  {
+    Size size(0);
+    BOOST_FOREACH(auto f, faces(polyhedron)) {
+      if (f->id() != m_id) continue;
+      ++size;
+    }
+    return size;
+  }
 };
 
 SGAL_END_NAMESPACE
