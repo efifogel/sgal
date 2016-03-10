@@ -171,6 +171,8 @@ void Connected_components_splitter::execute()
       Connected_components_splitter_visitor visitor(i);
       auto num = boost::apply_visitor(visitor, polyhedron, indices);
       m_result[i]->set_num_primitives(num);
+      m_result[i]->facet_coord_indices_changed();
+      m_result[i]->add_to_scene(m_scene_graph);
     }
   }
 
@@ -185,5 +187,9 @@ void Connected_components_splitter::write(Formatter* formatter)
   auto* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
   if (vrml_formatter) Node::write(formatter);
 }
+
+//! \brief adds the container to a given scene.
+void Connected_components_splitter::add_to_scene(Scene_graph* sg)
+{ m_scene_graph = sg; }
 
 SGAL_END_NAMESPACE
