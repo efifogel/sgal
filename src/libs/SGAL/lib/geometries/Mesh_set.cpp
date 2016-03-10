@@ -65,10 +65,10 @@ Mesh_set::Mesh_set(Boolean proto) :
   m_dirty_facet_normal_indices(true),
   m_dirty_facet_color_indices(true),
   m_dirty_facet_tex_coord_indices(true),
-  m_dirty_coord_indices(false),
-  m_dirty_normal_indices(false),
-  m_dirty_color_indices(false),
-  m_dirty_tex_coord_indices(false)
+  m_dirty_coord_indices(true),
+  m_dirty_normal_indices(true),
+  m_dirty_color_indices(true),
+  m_dirty_tex_coord_indices(true)
 {}
 
 //! \brief destructs.
@@ -281,6 +281,38 @@ void Mesh_set::tex_coord_indices_changed(const Field_info* field_info)
   Geo_set::tex_coord_indices_changed(field_info);
 }
 
+//! \brief responds to a change in the facet coordinate-index array.
+void Mesh_set::facet_coord_indices_changed()
+{
+  m_dirty_coord_indices = true;
+  m_dirty_facet_coord_indices = false;
+  Geo_set::coord_indices_changed();
+}
+
+//! \auto responds to a change in the facet normal-index array.
+void Mesh_set::facet_normal_indices_changed()
+{
+  m_dirty_normal_indices = true;
+  m_dirty_facet_normal_indices = false;
+  Geo_set::normal_indices_changed();
+}
+
+//! \brief responds to a change in the facet color-index array.
+void Mesh_set::facet_color_indices_changed()
+{
+  m_dirty_color_indices = true;
+  m_dirty_facet_color_indices = false;
+  Geo_set::color_indices_changed();
+}
+
+//! \brief responds to a change in the facet texture-coordinate index array.
+void Mesh_set::facet_tex_coord_indices_changed()
+{
+  m_dirty_tex_coord_indices = true;
+  m_dirty_facet_tex_coord_indices = false;
+  Geo_set::tex_coord_indices_changed();
+}
+
 //! \brief calculates the sphere bound.
 void Mesh_set::clean_bounding_sphere()
 {
@@ -452,166 +484,46 @@ void Mesh_set::set_facet_tex_coord_indices(const Facet_indices& indices)
   m_dirty_tex_coord_indices = true;
 }
 
-//! \brief cleans a triangle index vector.
-void Mesh_set::clean_triangle_indices(Triangle_indices& triangles,
-                                      const std::vector<Int32>& indices)
-{
-  triangles.resize(m_num_primitives);
-  auto it = indices.begin();
-  for (size_t j = 0; j < m_num_primitives; ++j) {
-    triangles[j][0] = *it++;
-    triangles[j][1] = *it++;
-    triangles[j][2] = *it++;
-    ++it;               // consume the -1 end-of-facet indicator
-  }
-}
-
-//! \brief cleans a quad index vector.
-void Mesh_set::clean_quad_indices(Quad_indices& quads,
-                                  const std::vector<Int32>& indices)
-{
-  quads.resize(m_num_primitives);
-  auto it = indices.begin();
-  for (size_t j = 0; j < m_num_primitives; ++j) {
-    quads[j][0] = *it++;
-    quads[j][1] = *it++;
-    quads[j][2] = *it++;
-    quads[j][3] = *it++;
-    ++it;                       // consume the -1 end-of-facet indicator
-  }
-}
-
-//! \brief cleans a polygon index vector.
-void Mesh_set::clean_polygon_indices(Polygon_indices& polygons,
-                                     const std::vector<Int32>& indices)
-{
-  polygons.resize(m_num_primitives);
-  auto it = indices.begin();
-  for (size_t j = 0; j < m_num_primitives; ++j) {
-    auto it_start = it;
-    size_t count(0);
-    while (*it++ != -1) ++count;
-    if (count != 0) {
-      polygons[j].resize(count);
-      it = it_start;
-      size_t i(0);
-      while (*it != -1) polygons[j][i++] = *it++;
-      ++it;
-    }
-  }
-}
-
 //! \brief cleans the facet coordinate-index vector.
-//! \todo turn to a visitor.
 void Mesh_set::clean_facet_coord_indices()
 {
+  init_facet_coord_indices();
   if (!m_coord_indices.empty()) {
-    switch (m_primitive_type) {
-     case PT_TRIANGLES:
-      clean_triangle_indices(empty_triangle_coord_indices(), m_coord_indices);
-      break;
-
-     case PT_QUADS:
-      clean_quad_indices(empty_quad_coord_indices(), m_coord_indices);
-      break;
-
-     case PT_POLYGONS:
-      clean_polygon_indices(empty_polygon_coord_indices(), m_coord_indices);
-      break;
-
-     case PT_TRIANGLE_STRIP:
-     case PT_TRIANGLE_FAN:
-     case PT_QUAD_STRIP:
-     default: break;
-    }
+    Clean_facet_indices_visitor visitor(m_coord_indices, m_num_primitives);
+    boost::apply_visitor(visitor, m_facet_coord_indices);
   }
   m_dirty_facet_coord_indices = false;
 }
 
 //! \brief cleans the facet normal-index array.
-//! \todo turn to a visitor.
 void Mesh_set::clean_facet_normal_indices()
 {
+  init_facet_normal_indices();
   if (!m_normal_indices.empty()) {
-    if (m_normal_attachment == AT_PER_VERTEX) {
-      switch (m_primitive_type) {
-       case PT_TRIANGLES:
-        clean_triangle_indices(empty_triangle_normal_indices(),
-                               m_normal_indices);
-        break;
-
-       case PT_QUADS:
-        clean_quad_indices(empty_quad_normal_indices(), m_normal_indices);
-        break;
-
-       case PT_POLYGONS:
-        clean_polygon_indices(empty_polygon_normal_indices(), m_normal_indices);
-        break;
-
-       case PT_TRIANGLE_STRIP:
-       case PT_TRIANGLE_FAN:
-       case PT_QUAD_STRIP:
-       default: break;
-      }
-    }
+    Clean_facet_indices_visitor visitor(m_normal_indices, m_num_primitives);
+    boost::apply_visitor(visitor, m_facet_normal_indices);
   }
   m_dirty_facet_normal_indices = false;
 }
 
 //! \brief cleans the color-index array.
-//! \todo turn to a visitor.
 void Mesh_set::clean_facet_color_indices()
 {
-  if (!m_normal_indices.empty()) {
-    if (m_color_attachment == AT_PER_VERTEX) {
-      switch (m_primitive_type) {
-       case PT_TRIANGLES:
-        clean_triangle_indices(empty_triangle_color_indices(), m_color_indices);
-        break;
-
-       case PT_QUADS:
-        clean_quad_indices(empty_quad_color_indices(), m_color_indices);
-        break;
-
-       case PT_POLYGONS:
-        clean_polygon_indices(empty_polygon_color_indices(), m_color_indices);
-        break;
-
-       case PT_TRIANGLE_STRIP:
-       case PT_TRIANGLE_FAN:
-       case PT_QUAD_STRIP:
-       default: break;
-      }
-    }
+  init_facet_color_indices();
+  if (!m_color_indices.empty()) {
+    Clean_facet_indices_visitor visitor(m_color_indices, m_num_primitives);
+    boost::apply_visitor(visitor, m_facet_color_indices);
   }
   m_dirty_facet_color_indices = false;
 }
 
 //! \brief cleans the texture-mapping coordinate-index array.
-//! \todo turn to a visitor.
 void Mesh_set::clean_facet_tex_coord_indices()
 {
+  init_facet_tex_coord_indices();
   if (!m_tex_coord_indices.empty()) {
-    switch (m_primitive_type) {
-     case PT_TRIANGLES:
-      clean_triangle_indices(empty_triangle_tex_coord_indices(),
-                             m_tex_coord_indices);
-      break;
-
-     case PT_QUADS:
-      clean_quad_indices(empty_quad_tex_coord_indices(), m_tex_coord_indices);
-      break;
-
-     case PT_POLYGONS:
-      clean_polygon_indices(empty_polygon_tex_coord_indices(),
-                            m_tex_coord_indices);
-      break;
-
-     case PT_TRIANGLE_STRIP:
-     case PT_TRIANGLE_FAN:
-     case PT_QUAD_STRIP:
-     default: break;
-    }
+    Clean_facet_indices_visitor visitor(m_tex_coord_indices, m_num_primitives);
+    boost::apply_visitor(visitor, m_facet_tex_coord_indices);
   }
   m_dirty_facet_tex_coord_indices = false;
 }
@@ -732,28 +644,28 @@ void Mesh_set::reverse_coord_indices(const Facet_indices& source)
 //! \brief cleans the coord-index array.
 void Mesh_set::clean_coord_indices()
 {
-  clean_facet_indices(m_coord_indices, m_facet_coord_indices);
+  clean_indices(m_coord_indices, m_facet_coord_indices);
   m_dirty_coord_indices = false;
 }
 
 //! \brief cleans the normal-index array.
 void Mesh_set::clean_normal_indices()
 {
-  clean_facet_indices(m_normal_indices, m_facet_normal_indices);
+  clean_indices(m_normal_indices, m_facet_normal_indices);
   m_dirty_normal_indices = false;
 }
 
 //! \brief validates (cleans) the color-index array.
 void Mesh_set::clean_color_indices()
 {
-  clean_facet_indices(m_color_indices, m_facet_color_indices);
+  clean_indices(m_color_indices, m_facet_color_indices);
   m_dirty_color_indices = false;
 }
 
 //! \brief cleans the texture coord-index array.
 void Mesh_set::clean_tex_coord_indices()
 {
-  clean_facet_indices(m_tex_coord_indices, m_facet_tex_coord_indices);
+  clean_indices(m_tex_coord_indices, m_facet_tex_coord_indices);
   m_dirty_tex_coord_indices = false;
 }
 
@@ -1044,6 +956,7 @@ void Mesh_set::write_facet(const Vector3f& p1, const Vector3f& p2,
 Bounding_box Mesh_set::bounding_box()
 {
   if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  if (empty_facet_indices(m_facet_coord_indices)) return Bounding_box();
 
   auto it = begin_facet_indices(m_facet_coord_indices);
   const Vector3f& v = get_coord_3d(*it);
@@ -1119,10 +1032,10 @@ void Mesh_set::clear_facet_indices(Facet_indices& indices)
 }
 
 //! \brief cleans an index array from a facet indices structure.
-void Mesh_set::clean_facet_indices(std::vector<Int32>& indices,
-                                   const Facet_indices& source)
+void Mesh_set::clean_indices(std::vector<Int32>& indices,
+                             const Facet_indices& source)
 {
-  Clean_facet_indices_visitor visitor(indices);
+  Clean_indices_visitor visitor(indices);
   boost::apply_visitor(visitor, source);
 }
 

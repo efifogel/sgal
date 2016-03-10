@@ -164,7 +164,7 @@ public:
   virtual std::vector<Int32>& get_tex_coord_indices();
   //@}
 
-  /// \name Change Recators
+  /// \name Indices Change Recators
   //@{
   /*! Respond to a change in the coordinate-index array.
    * \param[in] field_info the information record of the field that caused
@@ -189,6 +189,33 @@ public:
    *                       the change.
    */
   virtual void tex_coord_indices_changed(const Field_info* field_info);
+  //@}
+
+  /// \name Facet Indices Change Recators
+  //@{
+  /*! Respond to a change in the facet coordinate-index array.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
+   */
+  void facet_coord_indices_changed();
+
+  /*! Respond to a change in the facet normal-index array.
+   * \param[in] field_info the information record of the field that caused
+   *            the change.
+   */
+  void facet_normal_indices_changed();
+
+  /*! Respond to a change in the facet color-index array.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
+   */
+  void facet_color_indices_changed();
+
+  /*! Respond to a change in the facet texture-coordinate index array.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
+   */
+  void facet_tex_coord_indices_changed();
   //@}
 
   /// \name Cleaners
@@ -825,13 +852,14 @@ public:
   /*! Obtain a past-the-end iterator of a facet indices structure. */
   Facet_indices_const_iterator end_facet_indices(const Facet_indices& indices);
 
-  /*! Clean facet indices visitor */
-  class Clean_facet_indices_visitor : public boost::static_visitor<> {
+  /*! Clean indices visitor */
+  class Clean_indices_visitor : public boost::static_visitor<> {
   public:
     std::vector<Int32>& m_indices;
 
-    Clean_facet_indices_visitor(std::vector<Int32>& indices) :
-      m_indices(indices) {}
+    Clean_indices_visitor(std::vector<Int32>& indices) :
+      m_indices(indices)
+    {}
 
     void operator()(const Triangle_indices& triangles)
     {
@@ -872,18 +900,71 @@ public:
     }
 
     void operator()(const Flat_indices& flats)
-    {
-      if (flats.empty()) return;
-      m_indices.resize(flats.size() + 1);
-      size_t i = 0;
-      for (; i < flats.size(); ++i) m_indices[i] = flats[i];
-      m_indices[i] = -1;
-    }
+    { std::copy(flats.begin(), flats.end(), m_indices.begin()); }
   };
 
   /*! Clean an index array from a facet indices structure. */
-  void clean_facet_indices(std::vector<Int32>& indices,
-                           const Facet_indices& source);
+  void clean_indices(std::vector<Int32>& indices,
+                     const Facet_indices& source);
+
+  /*! Clean facet indices visitor */
+  class Clean_facet_indices_visitor : public boost::static_visitor<> {
+  public:
+    const std::vector<Int32>& m_indices;
+    Size m_num_primitives;
+
+    Clean_facet_indices_visitor(const std::vector<Int32>& indices,
+                                Size num_primitives) :
+      m_indices(indices),
+      m_num_primitives(num_primitives)
+    {}
+
+    void operator()(Triangle_indices& triangles)
+    {
+      triangles.resize(m_num_primitives);
+      auto it = m_indices.begin();
+      for (size_t j = 0; j < m_num_primitives; ++j) {
+        triangles[j][0] = *it++;
+        triangles[j][1] = *it++;
+        triangles[j][2] = *it++;
+        ++it;               // consume the -1 end-of-facet indicator
+      }
+    }
+
+    void operator()(Quad_indices& quads)
+    {
+      quads.resize(m_num_primitives);
+      auto it = m_indices.begin();
+      for (size_t j = 0; j < m_num_primitives; ++j) {
+        quads[j][0] = *it++;
+        quads[j][1] = *it++;
+        quads[j][2] = *it++;
+        quads[j][3] = *it++;
+        ++it;                       // consume the -1 end-of-facet indicator
+      }
+    }
+
+    void operator()(Polygon_indices& polygons)
+    {
+      polygons.resize(m_num_primitives);
+      auto it = m_indices.begin();
+      for (size_t j = 0; j < m_num_primitives; ++j) {
+        auto it_start = it;
+        size_t count(0);
+        while (*it++ != -1) ++count;
+        if (count != 0) {
+          polygons[j].resize(count);
+          it = it_start;
+          size_t i(0);
+          while (*it != -1) polygons[j][i++] = *it++;
+          ++it;
+        }
+      }
+    }
+
+    void operator()(Flat_indices& flats)
+    { std::copy(m_indices.begin(), m_indices.end(), flats.begin()); }
+  };
 
   /*! Reverse facet indices visitor */
   class Reverse_facet_indices_visitor : public boost::static_visitor<> {
@@ -1142,21 +1223,6 @@ protected:
   void write_facet(const Vector3f& p1, const Vector3f& p2,
                    const Vector3f& p3, const Vector3f& p4,
                    Formatter* formatter);
-
-  /// \name Clean index vectors
-  //@{
-  /*! Clean a triangle index vector. */
-  void clean_triangle_indices(Triangle_indices& triangles,
-                              const std::vector<Int32>& indices);
-
-  /*! Clean a quad index vector. */
-  void clean_quad_indices(Quad_indices& quads,
-                          const std::vector<Int32>& indices);
-
-  /*! Clean a polygon index vector. */
-  void clean_polygon_indices(Polygon_indices& polygons,
-                             const std::vector<Int32>& indices);
-  //@}
 
 private:
   /*! The node prototype. */
