@@ -37,7 +37,8 @@ public:
     FIRST = Container::LAST - 1,
     TRIANGULATE,
     REFINE,
-    FAIR
+    FAIR,
+    SPLIT_CCS
   };
 
   /*! Construct. */
@@ -66,6 +67,7 @@ public:
   Boolean* triangulate_handle(const Field_info*) { return &m_triangulate; }
   Boolean* refine_handle(const Field_info*) { return &m_refine; }
   Boolean* fair_handle(const Field_info*) { return &m_fair; }
+  Boolean* split_ccs_handle(const Field_info*) { return &m_split_ccs; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -103,15 +105,28 @@ public:
 
   /*! Obtain the flag that indicates whether to fair (smooth) the
    * triangulations of holes.
-   * \return true if the fairing of the triangulations of holes is desired,
+   * \return true if the splitting of connected components is desired,
    *         and false otherwise.
    */
   Boolean get_fair() const;
 
+  /*! Set the flag that indicates whether to split connected components.
+   * \param[in] flag indicates whether the the splitting of connected
+   *            components is desired
+   */
+  void set_split_ccs(Boolean flag);
+
+  /*! Obtain the flag that indicates whether to split connected components.
+   * \return true if the fairing of the triangulations of holes is desired,
+   *         and false otherwise.
+   */
+  Boolean get_split_ccs() const;
+
   /*! Set defualt values. */
   void reset(Boolean def_triangulate = s_def_triangulate,
              Boolean def_refine = s_def_refine,
-             Boolean def_fair = s_def_fair);
+             Boolean def_fair = s_def_fair,
+             Boolean def_split_ccs = s_def_split_ccs);
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -137,10 +152,15 @@ private:
    */
   Boolean m_fair;
 
+  /*! Indicates whether to split connected components.
+   */
+  Boolean m_split_ccs;
+
   // default values
   static const Boolean s_def_triangulate;
   static const Boolean s_def_refine;
   static const Boolean s_def_fair;
+  static const Boolean s_def_split_ccs;
 };
 
 //! \brief constructs the prototype.
@@ -177,6 +197,12 @@ inline void Modeling::set_fair(Boolean flag) { m_fair = flag; }
  * triangulations of holes.
  */
 inline Boolean Modeling::get_fair() const { return m_fair; }
+
+//! Set the flag that indicates whether to split connected components.
+inline void Modeling::set_split_ccs(Boolean flag) { m_split_ccs = flag; }
+
+//! Obtain the flag that indicates whether to split connected components.
+inline Boolean Modeling::get_split_ccs() const { return m_split_ccs; }
 
 SGAL_END_NAMESPACE
 

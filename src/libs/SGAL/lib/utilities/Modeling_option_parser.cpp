@@ -35,12 +35,18 @@ Modeling_option_parser::Modeling_option_parser() :
   m_modeling_opts("Modeling options"),
   m_triangulate(false),
   m_refine(false),
-  m_fair(false)
+  m_fair(false),
+  m_split_ccs(false)
 {
   m_modeling_opts.add_options()
-    ("triangulate", po::value<Boolean>(&m_triangulate)->default_value(false), "triangulate holes")
-    ("refine hole triangulation", po::value<Boolean>(&m_triangulate)->default_value(false), "refine")
-    ("fair hole triangulation", po::value<Boolean>(&m_triangulate)->default_value(false), "fair")
+    ("triangulate", po::value<Boolean>(&m_triangulate)->default_value(false),
+     "triangulate holes")
+    ("refine", po::value<Boolean>(&m_triangulate)->default_value(false),
+     "refine hole triangulation")
+    ("fair", po::value<Boolean>(&m_triangulate)->default_value(false),
+     "fair hole triangulation")
+    ("split-ccs", po::value<Boolean>(&m_split_ccs)->default_value(false),
+     "split connected components")
     ;
 }
 
@@ -72,6 +78,9 @@ void Modeling_option_parser::configure(Configuration* conf)
 
   if (var_map.count("fair"))
     modeling->set_fair(var_map["fair"].as<Boolean>());
+
+  if (var_map.count("split-ccs"))
+    modeling->set_fair(var_map["split-ccs"].as<Boolean>());
 }
 
 SGAL_END_NAMESPACE
