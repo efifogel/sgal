@@ -62,9 +62,14 @@ public:
    */
   void pop();
 
-  /*! Pushe a bindable onto the stack.
+  /*! Push a bindable onto the stack.
    */
   void push(Bindable_node* bindable);
+
+  /*! Obtain the size of the stack.
+   * \return the size of the stack.
+   */
+  size_t size() const;
 
   /*! Insert a bindable at the back of the stack.
    */
@@ -103,6 +108,9 @@ inline void Bindable_stack::insert(Bindable_node* bindable)
 template <typename UnaryFunc>
 inline void Bindable_stack::delegate(UnaryFunc& uf)
 { uf = std::for_each(m_bindable_stack.begin(), m_bindable_stack.end(), uf); }
+
+//! \brief obtains the size of the stack.
+inline size_t Bindable_stack::size() const { return m_bindable_stack.size(); }
 
 SGAL_END_NAMESPACE
 
