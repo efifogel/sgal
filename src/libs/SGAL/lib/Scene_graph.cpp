@@ -1036,7 +1036,7 @@ process_polyhedron_attributes_array(Polyhedron_attributes_array& array) const
 void Scene_graph::split_connected_components()
 {
   auto root = get_root();
-  Split_connected_components_action action;
+  Split_connected_components_action action(this);
   root->traverse(&action);
 }
 
