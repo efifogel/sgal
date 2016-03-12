@@ -164,58 +164,58 @@ public:
   virtual std::vector<Int32>& get_tex_coord_indices();
   //@}
 
-  /// \name Indices Change Recators
+  /// \name Indices Change Reactors
   //@{
   /*! Respond to a change in the coordinate-index array.
    * \param[in] field_info the information record of the field that caused
    *                       the change.
    */
-  virtual void coord_indices_changed(const Field_info* field_info);
+  virtual void coord_indices_changed(const Field_info* field_info = nullptr);
 
   /*! Respond to a change in the normal-index array.
    * \param[in] field_info the information record of the field that caused
    *            the change.
    */
-  virtual void normal_indices_changed(const Field_info* field_info);
+  virtual void normal_indices_changed(const Field_info* field_info = nullptr);
 
   /*! Respond to a change in the color-index array.
    * \param[in] field_info the information record of the field that caused
    *                       the change.
    */
-  virtual void color_indices_changed(const Field_info* field_info);
+  virtual void color_indices_changed(const Field_info* field_info = nullptr);
 
   /*! Respond to a change in the texture-coordinate index array.
    * \param[in] field_info the information record of the field that caused
    *                       the change.
    */
-  virtual void tex_coord_indices_changed(const Field_info* field_info);
+  virtual void tex_coord_indices_changed(const Field_info* field_info = nullptr);
   //@}
 
-  /// \name Facet Indices Change Recators
+  /// \name Facet Indices Change Reactors
   //@{
   /*! Respond to a change in the facet coordinate-index array.
    * \param[in] field_info the information record of the field that caused
    *                       the change.
    */
-  void facet_coord_indices_changed();
+  virtual void facet_coord_indices_changed();
 
   /*! Respond to a change in the facet normal-index array.
    * \param[in] field_info the information record of the field that caused
    *            the change.
    */
-  void facet_normal_indices_changed();
+  virtual void facet_normal_indices_changed();
 
   /*! Respond to a change in the facet color-index array.
    * \param[in] field_info the information record of the field that caused
    *                       the change.
    */
-  void facet_color_indices_changed();
+  virtual void facet_color_indices_changed();
 
   /*! Respond to a change in the facet texture-coordinate index array.
    * \param[in] field_info the information record of the field that caused
    *                       the change.
    */
-  void facet_tex_coord_indices_changed();
+  virtual void facet_tex_coord_indices_changed();
   //@}
 
   /// \name Cleaners
@@ -404,46 +404,6 @@ public:
    */
   void init_facet_tex_coord_indices();
 
-  /*! Resize facet indices visitor */
-  class Resize_facet_indices_visitor : public boost::static_visitor<> {
-  private:
-    Facet_indices& m_target;
-
-  public:
-    Resize_facet_indices_visitor(Facet_indices& target) : m_target(target) {}
-
-    void operator()(const Triangle_indices& source)
-    {
-      m_target = Triangle_indices();
-      auto& indices = boost::get<Triangle_indices>(m_target);
-      indices.resize(source.size());
-    }
-
-    void operator()(const Quad_indices& source)
-    {
-      m_target = Quad_indices();
-      auto& indices = boost::get<Quad_indices>(m_target);
-      indices.resize(source.size());
-    }
-
-    void operator()(const Polygon_indices& source)
-    {
-      m_target = Polygon_indices();
-      auto& indices = boost::get<Polygon_indices>(m_target);
-      indices.resize(source.size());
-      auto tit = indices.begin();
-      for (auto sit = source.begin(); sit != source.end(); ++sit, ++tit)
-        tit->resize(sit->size());
-    }
-
-    void operator()(const Flat_indices& source)
-    {
-      m_target = Flat_indices();
-      auto& indices = boost::get<Flat_indices>(m_target);
-      indices.resize(source.size());
-    }
-  };
-
   /*! Resize a facet indices structure with the same size as another.
    */
   void resize_facet_indices(Facet_indices& target, const Facet_indices& source);
@@ -491,165 +451,23 @@ public:
    */
   void sequence_facet_indices(Facet_indices& indices);
 
-  /*! Set index facet indices visitor. */
-  class Set_index_facet_indices_visitor : public boost::static_visitor<> {
-  private:
-    size_t m_address;
-    Index_type m_value;
-
-  public:
-    Set_index_facet_indices_visitor(size_t address, Index_type value) :
-      m_address(address), m_value(value) {}
-
-    void operator()(Triangle_indices& indices) const
-    {
-      auto res = std::div(m_address, 3);
-      indices[res.quot][res.rem] = m_value;
-    }
-
-    void operator()(Quad_indices& indices) const
-    {
-      auto res = std::div(m_address, 4);
-      indices[res.quot][res.rem] = m_value;
-    }
-
-    void operator()(Polygon_indices& indices) const
-    {
-      auto address = m_address;
-      size_t i(0);
-      size_t j(0);
-      for (auto it = indices.begin(); it != indices.end(); ++it) {
-        if (address < it->size()) {
-          j = address;
-          break;
-        }
-        address -= it->size();
-      }
-      indices[i][j] = m_value;
-    }
-
-    void operator()(Flat_indices& indices) const
-    { indices[m_address] = m_value; }
-  };
-
   /*! Set the value of an entry in a facet indices structure. */
   void set_index_facet_indices(Facet_indices& indices, size_t address,
                                Index_type value);
-
-  /*! Get index facet indices visitor. */
-  class Get_index_facet_indices_visitor :
-    public boost::static_visitor<Index_type>
-  {
-  public:
-    size_t m_address;
-
-    Get_index_facet_indices_visitor(size_t address) : m_address(address) {}
-
-    Index_type  operator()(const Triangle_indices& indices) const
-    {
-      auto res = std::div(m_address, 3);
-      return indices[res.quot][res.rem];
-    }
-
-    Index_type operator()(const Quad_indices& indices) const
-    {
-      auto res = std::div(m_address, 4);
-      return indices[res.quot][res.rem];
-    }
-
-    Index_type operator()(const Polygon_indices& indices) const
-    {
-      auto address = m_address;
-      size_t i(0);
-      size_t j(0);
-      for (auto it = indices.begin(); it != indices.end(); ++it) {
-        if (address < it->size()) {
-          j = address;
-          break;
-        }
-        address -= it->size();
-      }
-      return indices[i][j];
-    }
-
-    Index_type operator()(const Flat_indices& indices) const
-    { return indices[m_address]; }
-  };
 
   /*! Get the value of an entry in a facet indices structure. */
   Index_type get_index_facet_indices(const Facet_indices& indices,
                                      size_t address);
 
-  /*! Clear facet indices visitor. */
-  class Clear_facet_indices_visitor : public boost::static_visitor<> {
-  public:
-    // It is prohibited to specialize a function in non-namespace scope.
-    // Instead, we we dispatch the appropriate function.
-
-    template <typename T> struct Identity { typedef T type; };
-
-    template <typename Indices>
-    void operator()(Indices& indices) const
-    { operator()(indices, Identity<Indices>()); }
-
-  private:
-    template <typename Indices>
-    void operator()(Indices& indices, Identity<Indices>) const
-    { indices.clear(); }
-
-    void operator()(Polygon_indices& indices, Identity<Polygon_indices>) const
-    {
-      for (auto it = indices.begin(); it != indices.end(); ++it) it->clear();
-      indices.clear();
-    }
-  };
-
   /*! Clear */
   void clear_facet_indices(Facet_indices& indices);
-
-  /*! Equal facet indices visitor */
-  class Equal_facet_indices_visitor : public boost::static_visitor<Boolean> {
-  public:
-    template <typename T, typename U>
-    Boolean operator()(const T&, const U&) const { return false; }
-
-    template <typename T>
-    Boolean operator()(const T& lhs, const T& rhs) const { return lhs == rhs; }
-  };
 
   /*! Equal */
   Boolean equal_facet_indices(const Facet_indices& target,
                               const Facet_indices& source);
 
-  /*! Empty facet indices visitor */
-  class Empty_facet_indices_visitor : public boost::static_visitor<Boolean> {
-  public:
-    template <typename Indices>
-    Boolean operator()(const Indices& indices) const { return indices.empty(); }
-  };
-
   /*! Determine whether the given index vector is empty. */
   Boolean empty_facet_indices(const Facet_indices& indices);
-
-  /*! Size facet indices visitor */
-  class Size_facet_indices_visitor : public boost::static_visitor<size_t> {
-  public:
-    size_t operator()(const Triangle_indices& indices) const
-    { return 3 * indices.size(); }
-
-    size_t operator()(const Quad_indices& indices) const
-    { return 4 * indices.size(); }
-
-    size_t operator()(const Polygon_indices& indices) const
-    {
-      size_t size(0);
-      for (auto& polygon: indices) size += polygon.size();
-      return size;
-    }
-
-    size_t operator()(const Flat_indices& indices) const
-    { return indices.size(); }
-  };
 
   /*! Obtain the number of indices.
    */
@@ -852,189 +670,24 @@ public:
   /*! Obtain a past-the-end iterator of a facet indices structure. */
   Facet_indices_const_iterator end_facet_indices(const Facet_indices& indices);
 
-  /*! Clean indices visitor */
-  class Clean_indices_visitor : public boost::static_visitor<> {
-  public:
-    std::vector<Int32>& m_indices;
-
-    Clean_indices_visitor(std::vector<Int32>& indices) :
-      m_indices(indices)
-    {}
-
-    void operator()(const Triangle_indices& triangles)
-    {
-      m_indices.resize(4 * triangles.size());
-      size_t k(0);
-      for (size_t i = 0; i < triangles.size(); ++i) {
-        m_indices[k++] = triangles[i][0];
-        m_indices[k++] = triangles[i][1];
-        m_indices[k++] = triangles[i][2];
-        m_indices[k++] = -1;
-      }
-    }
-
-    void operator()(const Quad_indices& quads)
-    {
-      m_indices.resize(5 * quads.size());
-      size_t k(0);
-      for (size_t i = 0; i < quads.size(); ++i) {
-        m_indices[k++] = quads[i][0];
-        m_indices[k++] = quads[i][1];
-        m_indices[k++] = quads[i][2];
-        m_indices[k++] = quads[i][3];
-        m_indices[k++] = -1;
-      }
-    }
-
-    void operator()(const Polygon_indices& polygons)
-    {
-      size_t size(0);
-      for (size_t i = 0; i < polygons.size(); ++i) size += polygons[i].size();
-      m_indices.resize(size);
-      size_t k(0);
-      for (size_t i = 0; i < polygons.size(); ++i) {
-        for (size_t j = 0; j < polygons[i].size(); ++j)
-          m_indices[k++] = polygons[i][j];
-        m_indices[k++] = -1;
-      }
-    }
-
-    void operator()(const Flat_indices& flats)
-    { std::copy(flats.begin(), flats.end(), m_indices.begin()); }
-  };
-
   /*! Clean an index array from a facet indices structure. */
   void clean_indices(std::vector<Int32>& indices,
                      const Facet_indices& source);
 
-  /*! Clean facet indices visitor */
-  class Clean_facet_indices_visitor : public boost::static_visitor<> {
-  public:
-    const std::vector<Int32>& m_indices;
-    Size m_num_primitives;
+  /*! Assign the facet coord indices with the reverse of given indices.
+   * \param[in] indices the input indices to reverse.
+   */
+  void reverse_facet_coord_indices(const Facet_indices& indices);
 
-    Clean_facet_indices_visitor(const std::vector<Int32>& indices,
-                                Size num_primitives) :
-      m_indices(indices),
-      m_num_primitives(num_primitives)
-    {}
-
-    void operator()(Triangle_indices& triangles)
-    {
-      triangles.resize(m_num_primitives);
-      auto it = m_indices.begin();
-      for (size_t j = 0; j < m_num_primitives; ++j) {
-        triangles[j][0] = *it++;
-        triangles[j][1] = *it++;
-        triangles[j][2] = *it++;
-        ++it;               // consume the -1 end-of-facet indicator
-      }
-    }
-
-    void operator()(Quad_indices& quads)
-    {
-      quads.resize(m_num_primitives);
-      auto it = m_indices.begin();
-      for (size_t j = 0; j < m_num_primitives; ++j) {
-        quads[j][0] = *it++;
-        quads[j][1] = *it++;
-        quads[j][2] = *it++;
-        quads[j][3] = *it++;
-        ++it;                       // consume the -1 end-of-facet indicator
-      }
-    }
-
-    void operator()(Polygon_indices& polygons)
-    {
-      polygons.resize(m_num_primitives);
-      auto it = m_indices.begin();
-      for (size_t j = 0; j < m_num_primitives; ++j) {
-        auto it_start = it;
-        size_t count(0);
-        while (*it++ != -1) ++count;
-        if (count != 0) {
-          polygons[j].resize(count);
-          it = it_start;
-          size_t i(0);
-          while (*it != -1) polygons[j][i++] = *it++;
-          ++it;
-        }
-      }
-    }
-
-    void operator()(Flat_indices& flats)
-    { std::copy(m_indices.begin(), m_indices.end(), flats.begin()); }
-  };
-
-  /*! Reverse facet indices visitor */
-  class Reverse_facet_indices_visitor : public boost::static_visitor<> {
-  public:
-    Facet_indices& m_target;
-
-    Reverse_facet_indices_visitor(Facet_indices& target) : m_target(target) {}
-
-    void operator()(const Triangle_indices& source)
-    {
-      m_target = Triangle_indices();
-      auto& indices = boost::get<Triangle_indices>(m_target);
-      indices.resize(source.size());
-      for (size_t i = 0; i < source.size(); ++i) {
-        indices[i][0] = source[i][2];
-        indices[i][1] = source[i][1];
-        indices[i][2] = source[i][0];
-      }
-    }
-
-    void operator()(const Quad_indices& source)
-    {
-      m_target = Quad_indices();
-      auto& indices = boost::get<Quad_indices>(m_target);
-      indices.resize(source.size());
-      for (size_t i = 0; i < source.size(); ++i) {
-        indices[i][0] = source[i][3];
-        indices[i][1] = source[i][3];
-        indices[i][2] = source[i][1];
-        indices[i][3] = source[i][0];
-      }
-    }
-
-    void operator()(const Polygon_indices& source)
-    {
-      m_target = Polygon_indices();
-      auto& indices = boost::get<Polygon_indices>(m_target);
-      indices.resize(source.size());
-      for (size_t i = 0; i < source.size(); ++i) {
-        size_t j(0);
-        for (auto it = source[i].rbegin(); it != source[i].rend(); ++it)
-          indices[i][j++] = *it;
-      }
-    }
-
-    void operator()(const Flat_indices& source)
-    {
-      m_target = Flat_indices();
-      auto& indices = boost::get<Flat_indices>(m_target);
-      indices.resize(source.size());
-      size_t j(0);
-      for (auto it = source.rbegin(); it != source.rend(); ++it)
-        indices[j++] = *it;
-    }
-  };
-
-  /*! Reverse indices. */
-  void reverse_facet_indices(Facet_indices& indices,
-                             const Facet_indices& source);
+  /*! Reverse the facet coord indices.
+   */
+  void reverse_facet_coord_indices();
   //@}
 
   /*! Assign the coord indices with the reverse of given indices.
-   * \param indices the indices to reverse.
+   * \param[i] indices the indices to reverse.
    */
   void reverse_coord_indices(const std::vector<Int32>& indices);
-
-  /*! Assign the polygon coord indices with the reverse of given indices.
-   * \param indices the indices to reverse.
-   */
-  void reverse_coord_indices(const Facet_indices& indices);
 
   /*! Set the coordinate indices from a range of elements that counts
    * the number of vertices per primitive.
