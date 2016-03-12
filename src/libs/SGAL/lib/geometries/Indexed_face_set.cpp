@@ -56,6 +56,7 @@
 #include "SGAL/Hole_filler_visitor.hpp"
 #include "SGAL/Clean_facet_indices_from_polyhedron_visitor.hpp"
 #include "SGAL/Orient_polygon_soup_visitor.hpp"
+#include "SGAL/Delegate_surface_visitor.hpp"
 #include "SGAL/Number_of_connected_components_polyhedron_visitor.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -68,8 +69,12 @@ Container_proto* Indexed_face_set::s_prototype(nullptr);
 REGISTER_TO_FACTORY(Indexed_face_set, "Indexed_face_set");
 
 //! \brief constructs from the prototype.
+// By default, we assume that the mesh is inconsistent.
+// If the mesh is consistent, there is no need to re-orient the polygon soup
 Indexed_face_set::Indexed_face_set(Boolean proto) :
   Boundary_set(proto),
+  m_consistent(false),
+  m_has_singular_vertices(true),
   m_repaired(true),
   m_dirty_volume(true),
   m_dirty_surface_area(true),
@@ -80,8 +85,6 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   m_dirty_repaired_coords(true),
   m_dirty_polyhedron_facet_normals(true),
   m_dirty_normal_attributes(true),
-  m_consistent(true),
-  m_has_singular_vertices(false),
   m_triangulate(Modeling::s_def_triangulate),
   m_refine(Modeling::s_def_refine),
   m_fair(Modeling::s_def_refine),
@@ -305,23 +308,29 @@ void Indexed_face_set::clean_repaired_polyhedron()
 {
   // If triangulation of holes or orientation repairing is required,
   // first clean the repaired data structure. This either leaves the polyhedron
-  // clean of the coordinate and the coordinate-indices clean; then, re-clean
-  // the polyhedron.
+  // or the coordinate and the coordinate-indices cleaned;
+  // then, re-clean the polyhedron.
   if (!m_repaired && (m_triangulate || m_repair_orientation)) repair();
-
-  //! \todo Do not attempt to orient the polygon in the 2nd call.
   if (m_dirty_polyhedron) clean_polyhedron();
 
   m_dirty_repaired_polyhedron = false;
 }
 
+//! \brief initializes the polyhedron.
+void Indexed_face_set::init_polyhedron()
+{
+  switch (m_polyhedron_type) {
+   case POLYHEDRON_INEXACT: m_polyhedron = Inexact_polyhedron(); break;
+   case POLYHEDRON_EPIC: m_polyhedron = Epic_polyhedron(); break;
+   case POLYHEDRON_EPEC: m_polyhedron = Epec_polyhedron(); break;
+   default: SGAL_error();
+  }
+}
+
 //! \brief cleans the polyhedron data structure.
 void Indexed_face_set::clean_polyhedron()
 {
-  // Set the flags at the beginning in case of an earlt return.
   m_dirty_polyhedron = false;
-  m_consistent = true;
-  m_has_singular_vertices = false;
   m_dirty_volume = true;
   m_dirty_surface_area = true;
   m_dirty_polyhedron_facet_normals = true;
@@ -334,50 +343,36 @@ void Indexed_face_set::clean_polyhedron()
   if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
 
   // If there are no coordinates bail out.
-  if (!m_coord_array || m_coord_array->empty()) return;
+  if (!m_coord_array || m_coord_array->empty()) {
+    m_consistent = true;
+    m_has_singular_vertices = false;
+  }
+
   auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-  if (!coords) return;
+  if (!coords) {
+    m_consistent = true;
+    m_has_singular_vertices = false;
+  }
 
   // If there are no coordinate indices bail out.
-  if (empty_facet_indices(m_facet_coord_indices)) return;
+  if (empty_facet_indices(m_facet_coord_indices)) {
+    m_consistent = true;
+    m_has_singular_vertices = false;
+  }
 
-  Orient_polygon_soup_visitor visitor(coords);
-  m_has_singular_vertices = boost::apply_visitor(visitor, m_facet_coord_indices);
+  if (!m_consistent) {
+    Orient_polygon_soup_visitor visitor(coords);
+    m_has_singular_vertices =
+      boost::apply_visitor(visitor, m_facet_coord_indices);
+  }
 
-  // create the polyhedral surface
+  // Create the polyhedral surface
   if ((m_polyhedron_type == POLYHEDRON_INEXACT) && m_triangulate)
     m_polyhedron_type = POLYHEDRON_EPIC;
-
-  switch (m_polyhedron_type) {
-   case POLYHEDRON_INEXACT:
-    {
-     auto& polyhedron = empty_inexact_polyhedron();
-     Polyhedron_geo_builder<Inexact_polyhedron::HalfedgeDS> surface(this);
-     polyhedron.delegate(surface);
-     m_consistent = surface.is_consistent();
-    }
-    break;
-
-   case POLYHEDRON_EPIC:
-    {
-     auto& polyhedron = empty_epic_polyhedron();
-     Polyhedron_geo_builder<Epic_polyhedron::HalfedgeDS> surface(this);
-     polyhedron.delegate(surface);
-     m_consistent = surface.is_consistent();
-    }
-    break;
-
-   case POLYHEDRON_EPEC:
-    {
-     auto& polyhedron = empty_epec_polyhedron();
-     Polyhedron_geo_builder<Epec_polyhedron::HalfedgeDS> surface(this);
-     polyhedron.delegate(surface);
-     m_consistent = surface.is_consistent();
-    }
-    break;
-
-   default: SGAL_error();
-  }
+  init_polyhedron();
+  Delegate_surface_visitor visitor(m_primitive_type, m_num_primitives,
+                                   m_coord_array, m_facet_coord_indices);
+  m_consistent = boost::apply_visitor(visitor, m_polyhedron);
 
   // Normalize the border of the polyhedron.
   boost::apply_visitor(Normalize_border_visitor(), m_polyhedron);
@@ -400,10 +395,14 @@ void Indexed_face_set::clean_polyhedron()
 void Indexed_face_set::clear_polyhedron()
 {
   m_dirty_polyhedron = true;
+  m_dirty_repaired_polyhedron = true;
   m_dirty_polyhedron_facet_normals = true;
   m_dirty_normal_attributes = true;
   m_dirty_volume = true;
   m_dirty_surface_area = true;
+  m_consistent = false;
+  m_has_singular_vertices = true;
+  m_repaired = true;
   boost::apply_visitor(Clear_polyhedron_visitor(), m_polyhedron);
 }
 
@@ -422,6 +421,7 @@ void Indexed_face_set::set_polyhedron(Polyhedron& polyhedron)
 
   // Assume that the incoming polyhedron has no singular vertices, is
   // consistent, and repaired.
+  m_dirty_repaired_polyhedron = false;
   m_consistent = true;
   m_has_singular_vertices = false;
   m_repaired = true;
@@ -442,6 +442,10 @@ Indexed_face_set::get_polyhedron(Boolean clean_facet_normals)
 void Indexed_face_set::coord_content_changed(const Field_info* field_info)
 {
   m_dirty_coord_array = false;
+
+  // Assume that the coordinates need reapiring.
+  m_dirty_repaired_coords = true;
+
   clear_polyhedron();
   Boundary_set::coord_content_changed(field_info);
 }
@@ -622,27 +626,6 @@ void Indexed_face_set::clean_normal_attributes()
   m_creased = res.second;
 }
 
-//! \brief obtains an empty inexact polyhedron.
-Inexact_polyhedron& Indexed_face_set::empty_inexact_polyhedron()
-{
-  m_polyhedron = Inexact_polyhedron();
-  return boost::get<Inexact_polyhedron>(m_polyhedron);
-}
-
-//! \brief obtains an empty epic polyhedron.
-Epic_polyhedron& Indexed_face_set::empty_epic_polyhedron()
-{
-  m_polyhedron = Epic_polyhedron();
-  return boost::get<Epic_polyhedron>(m_polyhedron);
-}
-
-//! \brief obtains an empty eprc polyhedron.
-Epec_polyhedron& Indexed_face_set::empty_epec_polyhedron()
-{
-  m_polyhedron = Epec_polyhedron();
-  return boost::get<Epec_polyhedron>(m_polyhedron);
-}
-
 //! brief sets the polyhedron type.
 void Indexed_face_set::set_polyhedron_type(Polyhedron_type type)
 {
@@ -675,57 +658,47 @@ void Indexed_face_set::add_to_scene(Scene_graph* sg)
 //! \brief responds to a change in the coordinate-index array.
 void Indexed_face_set::coord_indices_changed(const Field_info* field_info)
 {
-  m_dirty_polyhedron = true;
+  clear_polyhedron();
+
+  // Assume that the coordinates need reapiring.
+  m_dirty_repaired_coords = true;
+
   Boundary_set::coord_indices_changed(field_info);
 }
 
 //! \brief responds to a change in the normal-index array.
 void Indexed_face_set::normal_indices_changed(const Field_info* field_info)
-{
-  m_dirty_polyhedron = true;
-  Boundary_set::normal_indices_changed(field_info);
-}
+{ Boundary_set::normal_indices_changed(field_info); }
 
 //! \brief responds to a change in the color-index array.
 void Indexed_face_set::color_indices_changed(const Field_info* field_info)
-{
-  m_dirty_polyhedron = true;
-  Boundary_set::color_indices_changed(field_info);
-}
+{ Boundary_set::color_indices_changed(field_info); }
 
 //! \brief responds to a change in the texture-coordinate index array.
 void Indexed_face_set::tex_coord_indices_changed(const Field_info* field_info)
-{
-  m_dirty_polyhedron = true;
-  Boundary_set::tex_coord_indices_changed(field_info);
-}
+{ Boundary_set::tex_coord_indices_changed(field_info); }
 
 //! \brief responds to a change in the facet coordinate-index array.
 void Indexed_face_set::facet_coord_indices_changed()
 {
-  m_dirty_polyhedron = true;
+  clear_polyhedron();
+
+  // Assume that the coordinates need reapiring.
+  m_dirty_repaired_coords = true;
+
   Boundary_set::facet_coord_indices_changed();
 }
 
 //! \brief responds to a change in the facet normal-index array.
 void Indexed_face_set::facet_normal_indices_changed()
-{
-  m_dirty_polyhedron = true;
-  Boundary_set::facet_normal_indices_changed();
-}
+{ Boundary_set::facet_normal_indices_changed(); }
 
 //! \brief responds to a change in the facet color-index array.
 void Indexed_face_set::facet_color_indices_changed()
-{
-  m_dirty_polyhedron = true;
-  Boundary_set::facet_color_indices_changed();
-}
+{ Boundary_set::facet_color_indices_changed(); }
 
 //! \brief responds to a change in the facet texture-coordinate index array.
 void Indexed_face_set::facet_tex_coord_indices_changed()
-{
-  m_dirty_polyhedron = true;
-  Boundary_set::facet_tex_coord_indices_changed();
-}
+{ Boundary_set::facet_tex_coord_indices_changed(); }
 
 SGAL_END_NAMESPACE

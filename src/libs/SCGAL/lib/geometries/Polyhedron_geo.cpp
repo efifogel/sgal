@@ -79,7 +79,9 @@ void Polyhedron_geo::draw(Draw_action* action)
 //! \brief cleans the data structure.
 void Polyhedron_geo::clean_polyhedron()
 {
-  Polyhedron_geo_builder<Inexact_polyhedron::HalfedgeDS> surface(this);
+  typedef Polyhedron_geo_builder<Inexact_polyhedron::HalfedgeDS>    Builder;
+  Builder surface(m_primitive_type, m_num_primitives, m_coord_array,
+                  m_facet_coord_indices);
   m_polyhedron.delegate(surface);
   m_polyhedron.normalize_border();
 

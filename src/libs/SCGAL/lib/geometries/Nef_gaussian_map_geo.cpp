@@ -131,7 +131,9 @@ void Nef_gaussian_map_geo::clean_polyhedron()
 {
   // Construct the polyhedron:
   /*! The builder. */
-  Polyhedron_geo_builder<Polyhedron::HalfedgeDS> surface(this);
+  typedef Polyhedron_geo_builder<Polyhedron::HalfedgeDS>    Builder;
+  Builder surface(m_primitive_type, m_num_primitives, m_coord_array,
+                  m_facet_coord_indices);
   m_polyhedron.delegate(surface);
   m_polyhedron.normalize_border();
 

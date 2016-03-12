@@ -391,7 +391,10 @@ void Exact_polyhedron_geo::clean_polyhedron()
     Orient_polygon_soup_visitor visitor(coord_array);
     m_has_singular_vertices =
       boost::apply_visitor(visitor, m_facet_coord_indices);
-    Polyhedron_geo_builder<Polyhedron::HalfedgeDS> surface(this);
+
+    typedef Polyhedron_geo_builder<Polyhedron::HalfedgeDS>    Builder;
+    Builder surface(m_primitive_type, m_num_primitives, m_coord_array,
+                    m_facet_coord_indices);
     m_polyhedron.delegate(surface);
     m_polyhedron.normalize_border();
   }

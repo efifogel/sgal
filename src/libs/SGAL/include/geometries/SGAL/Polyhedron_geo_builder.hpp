@@ -29,6 +29,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Mesh_set.hpp"
+#include "SGAL/Coord_array.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Epic_coord_array_3d.hpp"
 #include "SGAL/Epec_coord_array_3d.hpp"
@@ -121,11 +122,27 @@ private:
   Boolean m_consistent;
 
 protected:
-  /*! The mesh for which a polyhedron data structure is constructed.
-   * It is defined as const, because the array of indices of the mesh  may
-   * need to be flattened.
+  typedef boost::shared_ptr<Coord_array>                Shared_coord_array;
+
+  /*! The primitive type of the mesh for which a polyhedron data structure is
+   * constructed.
    */
-  Mesh_set* m_mesh;
+  Geo_set::Primitive_type m_primitive_type;
+
+  /*! The number of facets of the mesh for which a polyhedron data structure is
+   * constructed.
+   */
+  Size m_num_primitives;
+
+  /*! The coordinates of the mesh for which a polyhedron data structure is
+   * constructed.
+   */
+  Shared_coord_array m_coord_array;
+
+  /*! The coordinate indices of the mesh for which a polyhedron data structure is
+   * constructed.
+   */
+  const Mesh_set::Facet_indices m_coord_indices;
 
   /*! Insert the vertices.
    * \param[in] B the halfedge data structure.
@@ -135,9 +152,7 @@ protected:
     typedef typename HDS::Vertex Vertex;
     typedef typename Vertex::Point Point;
 
-    auto coord_array = m_mesh->get_coord_array();
-
-    auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(coord_array);
+    auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
     if (coords) {
       Vertex_adder<Point, Vector3f> adder;
       Size i(0);
@@ -147,7 +162,7 @@ protected:
     }
 
     auto epic_coords =
-      boost::dynamic_pointer_cast<Epic_coord_array_3d>(coord_array);
+      boost::dynamic_pointer_cast<Epic_coord_array_3d>(m_coord_array);
     if (epic_coords) {
       Vertex_adder<Point, Epic_point_3> adder;
       Size i(0);
@@ -157,7 +172,7 @@ protected:
     }
 
     auto epec_coords =
-      boost::dynamic_pointer_cast<Epec_coord_array_3d>(coord_array);
+      boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
     if (epec_coords) {
       Vertex_adder<Point, Epec_point_3> adder;
       Size i(0);
@@ -175,9 +190,7 @@ protected:
   void insert_faces(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
     // Add the faces:
-    if (m_mesh->is_dirty_facet_coord_indices())
-      m_mesh->clean_facet_coord_indices();
-    switch (m_mesh->get_primitive_type()) {
+    switch (m_primitive_type) {
      case Geo_set::PT_TRIANGLES: insert_triangles(B); break;
      case Geo_set::PT_QUADS: insert_quads(B); break;
      case Geo_set::PT_POLYGONS: insert_polygons(B); break;
@@ -261,8 +274,7 @@ protected:
    */
   void insert_triangles(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
-    const auto& facet_indices = m_mesh->get_facet_coord_indices();
-    const auto& indices = boost::get<Triangle_indices>(facet_indices);
+    const auto& indices = boost::get<Triangle_indices>(m_coord_indices);
     size_t j(0);
     for (size_t i = 0; i < indices.size(); ++i)
       j = insert_triangle(B, indices[i].begin(), indices[i].end(), j);
@@ -273,8 +285,7 @@ protected:
    */
   void insert_quads(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
-    const auto& facet_indices = m_mesh->get_facet_coord_indices();
-    const auto& indices = boost::get<Quad_indices>(facet_indices);
+    const auto& indices = boost::get<Quad_indices>(m_coord_indices);
     size_t j(0);
     for (Uint i = 0; i < indices.size(); ++i)
       j = insert_quad(B, indices[i].begin(), indices[i].end(), j);
@@ -285,8 +296,7 @@ protected:
    */
   void insert_polygons(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
-    const auto& facet_indices = m_mesh->get_facet_coord_indices();
-    const auto& indices = boost::get<Polygon_indices>(facet_indices);
+    const auto& indices = boost::get<Polygon_indices>(m_coord_indices);
     size_t j(0);
     for (size_t i = 0; i < indices.size(); ++i)
       j = insert_polygon(B, indices[i].begin(), indices[i].end(), j);
@@ -298,7 +308,15 @@ public:
    *            a. coordinate array, and
    *            b. coordinate indices
    */
-  Polyhedron_geo_builder(Mesh_set* mesh) : m_mesh(mesh) {}
+  Polyhedron_geo_builder(Geo_set::Primitive_type primitive_type,
+                         Size num_primitives,
+                         Shared_coord_array coord_array,
+                         const Mesh_set::Facet_indices& coord_indices) :
+    m_primitive_type(primitive_type),
+    m_num_primitives(num_primitives),
+    m_coord_array(coord_array),
+    m_coord_indices(coord_indices)
+  {}
 
   /*! Build the polyhedral surface.
    * \param[out] hds the halfedge data structure, which stores the incidence
@@ -310,8 +328,7 @@ public:
 
     // Postcondition: `hds' is a valid polyhedral surface.
     CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
-    B.begin_surface(m_mesh->get_coord_array()->size(),
-                    m_mesh->get_num_primitives());
+    B.begin_surface(m_coord_array->size(), m_num_primitives);
     try {
       insert_vertices(B);
       insert_faces(B);

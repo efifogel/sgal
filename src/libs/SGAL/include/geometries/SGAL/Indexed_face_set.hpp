@@ -367,6 +367,15 @@ protected:
   /*! The type of the polyhedrlal surface. */
   Polyhedron_type m_polyhedron_type;
 
+  /*! Indicates wheather the mesh is consistent.
+   * \return true if the mesh is consistent and false otherwise. An mesh is
+   * inconsistent iff the construction of the polyderal surface failed.
+   */
+  Boolean m_consistent;
+
+  /*! Indicates wheather the mesh has_singular vertices. */
+  Boolean m_has_singular_vertices;
+
   //*! Indicates whether the geometry is reapired. */
   Boolean m_repaired;
 
@@ -407,15 +416,6 @@ protected:
    */
   Boolean m_dirty_normal_attributes;
 
-  /*! Indicates wheather the mesh is consistent.
-   * \return true if the mesh is consistent and false otherwise. An mesh is
-   * inconsistent iff the construction of the polyderal surface failed.
-   */
-  Boolean m_consistent;
-
-  /*! Indicates wheather the mesh has_singular vertices. */
-  Boolean m_has_singular_vertices;
-
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
@@ -439,17 +439,9 @@ protected:
    */
   Boolean is_smooth(const Vector3f& normal1, const Vector3f& normal2) const;
 
-  /// \name Obtain empty polyhedron
-  //@{
-  /*! Obtain an empty inexact polyhedron. */
-  Inexact_polyhedron& empty_inexact_polyhedron();
-
-  /*! Obtain an empty epic polyhedron. */
-  Epic_polyhedron& empty_epic_polyhedron();
-
-  /*! Obtain an empty eprc polyhedron. */
-  Epec_polyhedron& empty_epec_polyhedron();
-  //@}
+  /*! Initialize the polyhedron.
+   */
+  void init_polyhedron();
 
   /*! Compute coords visitor. */
   template <typename InputIterator>
