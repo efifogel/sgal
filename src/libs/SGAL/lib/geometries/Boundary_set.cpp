@@ -2244,4 +2244,60 @@ Boolean Boundary_set::use_vertex_buffer_object() const
           Gfx_conf::get_instance()->is_vertex_buffer_object_supported());
 }
 
+//! \brief responds to a change in the coordinate-index array.
+void Boundary_set::coord_indices_changed(const Field_info* field_info)
+{
+  m_dirty_coord_buffer = true;
+  Mesh_set::coord_indices_changed(field_info);
+}
+
+//! \brief responds to a change in the normal-index array.
+void Boundary_set::normal_indices_changed(const Field_info* field_info)
+{
+  m_dirty_normal_buffer = true;
+  Mesh_set::normal_indices_changed(field_info);
+}
+
+//! \brief responds to a change in the color-index array.
+void Boundary_set::color_indices_changed(const Field_info* field_info)
+{
+  m_dirty_color_buffer = true;
+  Mesh_set::color_indices_changed(field_info);
+}
+
+//! \brief responds to a change in the texture-coordinate index array.
+void Boundary_set::tex_coord_indices_changed(const Field_info* field_info)
+{
+  m_dirty_tex_coord_buffer = true;
+  Mesh_set::tex_coord_indices_changed(field_info);
+}
+
+//! \brief responds to a change in the facet coordinate-index array.
+void Boundary_set::facet_coord_indices_changed()
+{
+  m_dirty_coord_buffer = true;
+  Mesh_set::facet_coord_indices_changed();
+}
+
+//! \brief responds to a change in the facet normal-index array.
+void Boundary_set::facet_normal_indices_changed()
+{
+  m_dirty_normal_buffer = true;
+  Mesh_set::facet_normal_indices_changed();
+}
+
+//! \brief responds to a change in the facet color-index array.
+void Boundary_set::facet_color_indices_changed()
+{
+  m_dirty_color_buffer = true;
+  Mesh_set::facet_color_indices_changed();
+}
+
+//! \brief responds to a change in the facet texture-coordinate index array.
+void Boundary_set::facet_tex_coord_indices_changed()
+{
+  m_dirty_coord_buffer = true;
+  Mesh_set::facet_tex_coord_indices_changed();
+}
+
 SGAL_END_NAMESPACE
