@@ -657,10 +657,15 @@ void Mesh_set::reverse_facet_coord_indices()
 //! \brief assigns coord indices with the reverse of given indices.
 void Mesh_set::reverse_facet_coord_indices(const Facet_indices& source)
 {
-  Reverse_facet_indices_visitor visitor;
-  if (source == m_facet_coord_indices)
+  if (source == m_facet_coord_indices) {
+    Reverse_facet_indices_visitor visitor;
     boost::apply_visitor(visitor, m_facet_coord_indices);
-  else boost::apply_visitor(visitor, m_facet_coord_indices, source);
+  }
+  else {
+    init_facet_coord_indices();
+    Reverse_facet_indices_visitor visitor;
+    boost::apply_visitor(visitor, m_facet_coord_indices, source);
+  }
   m_dirty_facet_coord_indices = false;
   m_dirty_coord_indices = true;
   facet_coord_indices_changed();
