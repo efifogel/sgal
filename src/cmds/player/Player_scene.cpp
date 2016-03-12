@@ -645,6 +645,7 @@ void Player_scene::init_scene()
 //! \brief indulges user requests from the command line.
 void Player_scene::indulge_user()
 {
+  // Split connected components.
   if (m_option_parser->get_split_ccs())
     m_scene_graph->split_connected_components();
 
