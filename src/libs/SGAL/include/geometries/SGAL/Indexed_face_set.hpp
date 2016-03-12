@@ -341,21 +341,35 @@ public:
    */
   void clear_surface_area();
 
+  /*! Set the flag that determines wheather the mesh is repaired.
+   * \param[in] flag indicates wheather the mesh is repaired.
+   */
+  void set_repaired(Boolean flag);
+
+  /*! Determine wheather the mesh is repaired.
+   * \return true if the the mesh is repaired and false otherwise.
+   */
+  Boolean is_repaired();
+
+  /*! Set the flag that determines wheather the mesh is consistent.
+   * \param[in] flag indicates wheather the mesh is consistent.
+   */
+  void set_consistent(Boolean flag);
+
   /*! Determine wheather the mesh is consistent.
    * \return true if the the mesh is consistent and false otherwise.
    */
   Boolean is_consistent();
 
+  /*! Set the flag that determine whether the mesh has singular vertices.
+   * \param[in] flag indicates whether the mesh has singular vertices.
+   */
+  Boolean set_has_singular_vertices(Boolean flag);
+
   /*! Determine whether the mesh has singular vertices.
     * \return true if the the mesh has singular vertices and false otherwise.
    */
   Boolean has_singular_vertices();
-
-  /*! Set the flag that determine whether the mesh has singular vertices.
-   * \param[in] flag the flag that determine whether the mesh has singular
-   *            vertices.
-   */
-  Boolean set_has_singular_vertices(Boolean flag);
 
 protected:
   /*! The volume of the polyhedron. */
@@ -847,6 +861,16 @@ inline void Indexed_face_set::clear_normal_attributes()
 //! \brief clears the polyhedron facets. (Invalidate their attributes.)
 inline void Indexed_face_set::clear_polyhedron_facet_normals()
 { m_dirty_polyhedron_facet_normals = true; }
+
+//! \brief sets the flag that determines wheather the mesh is repaired.
+inline void Indexed_face_set::set_repaired(Boolean flag) { m_repaired = flag; }
+
+//! \brief determines wheather the mesh is repaired.
+inline Boolean Indexed_face_set::is_repaired() { return m_repaired; }
+
+//! \brief sets the flag that determines wheather the mesh is consistent.
+inline void Indexed_face_set::set_consistent(Boolean flag)
+{ m_consistent = flag; }
 
 SGAL_END_NAMESPACE
 

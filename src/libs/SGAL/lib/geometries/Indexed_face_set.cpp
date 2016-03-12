@@ -58,6 +58,7 @@
 #include "SGAL/Orient_polygon_soup_visitor.hpp"
 #include "SGAL/Delegate_surface_visitor.hpp"
 #include "SGAL/Number_of_connected_components_polyhedron_visitor.hpp"
+#include "SGAL/Reverse_facet_indices_visitor.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -296,7 +297,24 @@ void Indexed_face_set::repair()
       if (is_dirty_coord_array() ||
           (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
         clean_coords();
-      reverse_facet_coord_indices();
+
+      // Do not call reverse_facet_coord_indices() of the base class.
+      // Instead, reverse and set the appropriate flags.
+      // Do not alter the following flags:
+      // m_consistent, m_has_singular_vertices, and m_dirty_repaired_polyhedron
+      Reverse_facet_indices_visitor visitor;
+      boost::apply_visitor(visitor, m_facet_coord_indices);
+
+      m_dirty_facet_coord_indices = false;
+      Boundary_set::facet_coord_indices_changed();
+      m_dirty_coord_indices = true;
+      boost::apply_visitor(Clear_polyhedron_visitor(), m_polyhedron);
+      m_dirty_polyhedron = true;
+      m_dirty_polyhedron_facet_normals = true;
+      m_dirty_normal_attributes = true;
+      m_dirty_volume = true;
+      m_dirty_surface_area = true;
+      m_repaired = true;
     }
   }
 
@@ -629,8 +647,10 @@ void Indexed_face_set::clean_normal_attributes()
 //! brief sets the polyhedron type.
 void Indexed_face_set::set_polyhedron_type(Polyhedron_type type)
 {
-  if (m_polyhedron_type != type) clear_polyhedron();
+  if (m_polyhedron_type == type) return;
+  clear_polyhedron();
   m_polyhedron_type = type;
+  init_polyhedron();
 }
 
 //! \brief configures.
