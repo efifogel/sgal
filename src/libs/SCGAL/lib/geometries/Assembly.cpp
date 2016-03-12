@@ -388,7 +388,7 @@ void Assembly::construct_reflected_sgms()
         reflected_sgm_geo->set_primitive_type(sgm_geo->get_primitive_type());
         reflected_sgm_geo->set_num_primitives(sgm_geo->get_num_primitives());
         const auto& indices = sgm_geo->get_facet_coord_indices();
-        reflected_sgm_geo->reverse_coord_indices(indices);
+        reflected_sgm_geo->reverse_facet_coord_indices(indices);
       }
       else {
         Sgm_geo::Polyhedron* reflected_polyhedron = new Sgm_geo::Polyhedron;
@@ -428,8 +428,7 @@ void Assembly::compute_minkowski_sums()
     auto& sgm_geos1 = part->get_sgm_geos();
     Uint j = 0;
     for (auto slit2 = m_parts_reflected_sgm_geos.begin();
-         slit2 != m_parts_reflected_sgm_geos.end();
-         ++slit2, ++j)
+         slit2 != m_parts_reflected_sgm_geos.end(); ++slit2, ++j)
     {
       if (i == j) continue;
 
