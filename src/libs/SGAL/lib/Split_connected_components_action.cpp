@@ -68,12 +68,14 @@ Action::Trav_directive Split_connected_components_action::apply(Shared_node node
 
     m_splitter->set_operand(ifs);
     m_splitter->execute();
-    const auto& components = m_splitter->get_result();
-    if (components.size() <= 1) break;
+    const auto& components = m_splitter->get_components();
+    if (components.size() <= 1) continue;
     group->remove_child(shape);
     for (auto geometry : components) {
       Shared_shape new_shape(new Shape);
       new_shape->set_appearance(shape->get_appearance());
+      geometry->set_consistent(true);
+      geometry->set_has_singular_vertices(false);
       new_shape->set_geometry(geometry);
       group->add_child(new_shape);
     }
