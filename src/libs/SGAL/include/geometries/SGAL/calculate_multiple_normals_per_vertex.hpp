@@ -30,6 +30,7 @@
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Inexact_kernel.hpp"
 #include "SGAL/Mesh_set.hpp"
+#include "SGAL/Set_index_facet_indices_visitor.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -140,12 +141,12 @@ void calculate_multiple_normals_per_vertex
       normal_res.scale(1.0f/static_cast<Float>(cnt));
       typename Normal_map::const_iterator got = normal_map.find(normal_res);
       if (got != normal_map.end()) {
-        Mesh_set::Set_index_facet_indices_visitor visitor(index, got->second);
+        Set_index_facet_indices_visitor visitor(index, got->second);
         boost::apply_visitor(visitor, normal_indices);
       }
       else {
         Uint id = normal_array->size();
-        Mesh_set::Set_index_facet_indices_visitor visitor(index, id);
+        Set_index_facet_indices_visitor visitor(index, id);
         boost::apply_visitor(visitor, normal_indices);
         normal_map[normal_res] = id;
         normal_res.normalize();
