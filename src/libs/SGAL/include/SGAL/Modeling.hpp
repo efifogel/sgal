@@ -38,7 +38,8 @@ public:
     TRIANGULATE,
     REFINE,
     FAIR,
-    SPLIT_CCS
+    SPLIT_CCS,
+    REPAIR_ORIENTATION
   };
 
   /*! Construct. */
@@ -68,6 +69,8 @@ public:
   Boolean* refine_handle(const Field_info*) { return &m_refine; }
   Boolean* fair_handle(const Field_info*) { return &m_fair; }
   Boolean* split_ccs_handle(const Field_info*) { return &m_split_ccs; }
+  Boolean* repair_orientation_handle(const Field_info*)
+  { return &m_repair_orientation; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -117,16 +120,29 @@ public:
   void set_split_ccs(Boolean flag);
 
   /*! Obtain the flag that indicates whether to split connected components.
-   * \return true if the fairing of the triangulations of holes is desired,
-   *         and false otherwise.
+   * \return true if splitting connected components is desired, and false
+   *         otherwise.
    */
   Boolean get_split_ccs() const;
+
+  /*! Set the flag that indicates whether to repair the orientation of facets
+   * of closed polyhedral surfaces.
+   * \param[in] flag indicates whether the the repairing is desired
+   */
+  void set_repair_orientation(Boolean flag);
+
+  /*! Obtain the flag that indicates whether to repair the orientation of facets
+   * of closed polyhedral surfaces.
+   * \return true if the repairing is desired, and false otherwise.
+   */
+  Boolean get_repair_orientation() const;
 
   /*! Set defualt values. */
   void reset(Boolean def_triangulate = s_def_triangulate,
              Boolean def_refine = s_def_refine,
              Boolean def_fair = s_def_fair,
-             Boolean def_split_ccs = s_def_split_ccs);
+             Boolean def_split_ccs = s_def_split_ccs,
+             Boolean def_repair_orientation = s_def_repair_orientation);
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -156,11 +172,17 @@ private:
    */
   Boolean m_split_ccs;
 
+  /*! Indicates whether to repair the orientation of facets of closed polyhedral
+   * surface.
+   */
+  Boolean m_repair_orientation;
+
   // default values
   static const Boolean s_def_triangulate;
   static const Boolean s_def_refine;
   static const Boolean s_def_fair;
   static const Boolean s_def_split_ccs;
+  static const Boolean s_def_repair_orientation;
 };
 
 //! \brief constructs the prototype.
@@ -203,6 +225,14 @@ inline void Modeling::set_split_ccs(Boolean flag) { m_split_ccs = flag; }
 
 //! Obtain the flag that indicates whether to split connected components.
 inline Boolean Modeling::get_split_ccs() const { return m_split_ccs; }
+
+//! Set the flag that indicates whether to repair the orientation of facets.
+inline void Modeling::set_repair_orientation(Boolean flag)
+{ m_repair_orientation = flag; }
+
+//! Obtain the flag that indicates whether to repair the orientation of facets.
+inline Boolean Modeling::get_repair_orientation() const
+{ return m_repair_orientation; }
 
 SGAL_END_NAMESPACE
 

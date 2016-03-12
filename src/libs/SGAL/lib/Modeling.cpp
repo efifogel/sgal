@@ -34,6 +34,7 @@ const Boolean Modeling::s_def_triangulate(false);
 const Boolean Modeling::s_def_refine(false);
 const Boolean Modeling::s_def_fair(false);
 const Boolean Modeling::s_def_split_ccs(false);
+const Boolean Modeling::s_def_repair_orientation(false);
 
 //! \brief constructs.
 Modeling::Modeling(Boolean proto) :
@@ -41,7 +42,8 @@ Modeling::Modeling(Boolean proto) :
   m_triangulate(s_def_triangulate),
   m_refine(s_def_refine),
   m_fair(s_def_fair),
-  m_split_ccs(s_def_split_ccs)
+  m_split_ccs(s_def_split_ccs),
+  m_repair_orientation(s_def_repair_orientation)
 {}
 
 //! \brief initializes the node prototype.
@@ -84,6 +86,16 @@ void Modeling::init_prototype()
   s_prototype->add_field_info(new SF_bool(SPLIT_CCS, "splitCcs",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           split_ccs_func, s_def_split_ccs,
+                                          exec_func));
+
+  // repairOrientation
+  auto repair_orientation_func =
+    static_cast<Boolean_handle_function>(&Modeling::repair_orientation_handle);
+  s_prototype->add_field_info(new SF_bool(REPAIR_ORIENTATION,
+                                          "repairOrientation",
+                                          Field_info::RULE_EXPOSED_FIELD,
+                                          repair_orientation_func,
+                                          s_def_repair_orientation,
                                           exec_func));
 }
 
@@ -130,6 +142,11 @@ void Modeling::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "repairOrientation") {
+      set_repair_orientation(compare_to_true(value));
+      elem->mark_delete(ai);
+      continue;
+    }
   }
 
   // Remove all the marked attributes:
@@ -138,11 +155,13 @@ void Modeling::set_attributes(Element* elem)
 
 //! \brief sets defualt values.
 void Modeling::reset(Boolean def_triangulate, Boolean def_refine,
-                     Boolean def_fair, Boolean def_split_ccs)
+                     Boolean def_fair, Boolean def_split_ccs,
+                     Boolean def_repair_orientation)
 {
   m_triangulate = def_triangulate;
   m_refine = def_refine;
   m_fair = def_fair;
   m_split_ccs = def_split_ccs;
+  m_repair_orientation = def_repair_orientation;
 }
 SGAL_END_NAMESPACE
