@@ -212,7 +212,7 @@ public:
    */
   virtual void isect(Isect_action* action);
 
-  /// \name Change Recators
+  /// \name Indices Change Reactors
   //@{
   /*! Respond to a change in the coordinate array.
    * \param field_info (in) the information record of the field that caused
@@ -276,6 +276,60 @@ public:
    * indices.
    */
   virtual void clean_tex_coords_3d();
+  //@}
+
+  /// \name Facet Indices Change Recators
+  //@{
+  /*! Respond to a change in the coordinate-index array.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
+   */
+  virtual void coord_indices_changed(const Field_info* field_info);
+
+  /*! Respond to a change in the normal-index array.
+   * \param[in] field_info the information record of the field that caused
+   *            the change.
+   */
+  virtual void normal_indices_changed(const Field_info* field_info);
+
+  /*! Respond to a change in the color-index array.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
+   */
+  virtual void color_indices_changed(const Field_info* field_info);
+
+  /*! Respond to a change in the texture-coordinate index array.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
+   */
+  virtual void tex_coord_indices_changed(const Field_info* field_info);
+  //@}
+
+  /// \name Facet Indices Change Recators
+  //@{
+  /*! Respond to a change in the facet coordinate-index array.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
+   */
+  virtual void facet_coord_indices_changed();
+
+  /*! Respond to a change in the facet normal-index array.
+   * \param[in] field_info the information record of the field that caused
+   *            the change.
+   */
+  virtual void facet_normal_indices_changed();
+
+  /*! Respond to a change in the facet color-index array.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
+   */
+  virtual void facet_color_indices_changed();
+
+  /*! Respond to a change in the facet texture-coordinate index array.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
+   */
+  virtual void facet_tex_coord_indices_changed();
   //@}
 
   /// \name Array Predicates
