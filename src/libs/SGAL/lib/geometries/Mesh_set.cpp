@@ -42,6 +42,16 @@
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Coord_array_3d.hpp"
+#include "SGAL/Clean_indices_visitor.hpp"
+#include "SGAL/Clean_facet_indices_visitor.hpp"
+#include "SGAL/Resize_facet_indices_visitor.hpp"
+#include "SGAL/Size_facet_indices_visitor.hpp"
+#include "SGAL/Reverse_facet_indices_visitor.hpp"
+#include "SGAL/Equal_facet_indices_visitor.hpp"
+#include "SGAL/Empty_facet_indices_visitor.hpp"
+#include "SGAL/Get_index_facet_indices_visitor.hpp"
+#include "SGAL/Set_index_facet_indices_visitor.hpp"
+#include "SGAL/Clear_facet_indices_visitor.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -489,7 +499,7 @@ void Mesh_set::clean_facet_coord_indices()
 {
   init_facet_coord_indices();
   if (!m_coord_indices.empty()) {
-    Clean_facet_indices_visitor visitor(m_coord_indices, m_num_primitives);
+    Clean_indices_visitor visitor(m_coord_indices, m_num_primitives);
     boost::apply_visitor(visitor, m_facet_coord_indices);
   }
   m_dirty_facet_coord_indices = false;
@@ -500,7 +510,7 @@ void Mesh_set::clean_facet_normal_indices()
 {
   init_facet_normal_indices();
   if (!m_normal_indices.empty()) {
-    Clean_facet_indices_visitor visitor(m_normal_indices, m_num_primitives);
+    Clean_indices_visitor visitor(m_normal_indices, m_num_primitives);
     boost::apply_visitor(visitor, m_facet_normal_indices);
   }
   m_dirty_facet_normal_indices = false;
@@ -511,7 +521,7 @@ void Mesh_set::clean_facet_color_indices()
 {
   init_facet_color_indices();
   if (!m_color_indices.empty()) {
-    Clean_facet_indices_visitor visitor(m_color_indices, m_num_primitives);
+    Clean_indices_visitor visitor(m_color_indices, m_num_primitives);
     boost::apply_visitor(visitor, m_facet_color_indices);
   }
   m_dirty_facet_color_indices = false;
@@ -522,7 +532,7 @@ void Mesh_set::clean_facet_tex_coord_indices()
 {
   init_facet_tex_coord_indices();
   if (!m_tex_coord_indices.empty()) {
-    Clean_facet_indices_visitor visitor(m_tex_coord_indices, m_num_primitives);
+    Clean_indices_visitor visitor(m_tex_coord_indices, m_num_primitives);
     boost::apply_visitor(visitor, m_facet_tex_coord_indices);
   }
   m_dirty_facet_tex_coord_indices = false;
@@ -631,14 +641,29 @@ void Mesh_set::reverse_coord_indices(const std::vector<Int32>& source)
   Geo_set::reverse_coord_indices(source);
   m_dirty_facet_coord_indices = true;
   m_dirty_coord_indices = false;
+  coord_indices_changed();
 }
 
 //! \brief assigns coord indices with the reverse of given indices.
-void Mesh_set::reverse_coord_indices(const Facet_indices& source)
+void Mesh_set::reverse_facet_coord_indices()
 {
-  reverse_facet_indices(m_facet_color_indices, source);
+  Reverse_facet_indices_visitor visitor;
+  boost::apply_visitor(visitor, m_facet_coord_indices);
   m_dirty_facet_coord_indices = false;
   m_dirty_coord_indices = true;
+  facet_coord_indices_changed();
+}
+
+//! \brief assigns coord indices with the reverse of given indices.
+void Mesh_set::reverse_facet_coord_indices(const Facet_indices& source)
+{
+  Reverse_facet_indices_visitor visitor;
+  if (source == m_facet_coord_indices)
+    boost::apply_visitor(visitor, m_facet_coord_indices);
+  else boost::apply_visitor(visitor, m_facet_coord_indices, source);
+  m_dirty_facet_coord_indices = false;
+  m_dirty_coord_indices = true;
+  facet_coord_indices_changed();
 }
 
 //! \brief cleans the coord-index array.
@@ -1035,15 +1060,7 @@ void Mesh_set::clear_facet_indices(Facet_indices& indices)
 void Mesh_set::clean_indices(std::vector<Int32>& indices,
                              const Facet_indices& source)
 {
-  Clean_indices_visitor visitor(indices);
-  boost::apply_visitor(visitor, source);
-}
-
-//! \brief reverses the entries of a facet indices structure.
-void Mesh_set::reverse_facet_indices(Facet_indices& indices,
-                                     const Facet_indices& source)
-{
-  Reverse_facet_indices_visitor visitor(indices);
+  Clean_facet_indices_visitor visitor(indices);
   boost::apply_visitor(visitor, source);
 }
 
