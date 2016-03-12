@@ -152,6 +152,60 @@ public:
    */
   virtual Shared_coord_array get_coord_array();
 
+  /// \name Indices Change Reactors
+  //@{
+  /*! Respond to a change in the coordinate-index array.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
+   */
+  virtual void coord_indices_changed(const Field_info* field_info);
+
+  /*! Respond to a change in the normal-index array.
+   * \param[in] field_info the information record of the field that caused
+   *            the change.
+   */
+  virtual void normal_indices_changed(const Field_info* field_info);
+
+  /*! Respond to a change in the color-index array.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
+   */
+  virtual void color_indices_changed(const Field_info* field_info);
+
+  /*! Respond to a change in the texture-coordinate index array.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
+   */
+  virtual void tex_coord_indices_changed(const Field_info* field_info);
+  //@}
+
+  /// \name Facet Indices Change Reactors
+  //@{
+  /*! Respond to a change in the facet coordinate-index array.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
+   */
+  virtual void facet_coord_indices_changed();
+
+  /*! Respond to a change in the facet normal-index array.
+   * \param[in] field_info the information record of the field that caused
+   *            the change.
+   */
+  virtual void facet_normal_indices_changed();
+
+  /*! Respond to a change in the facet color-index array.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
+   */
+  virtual void facet_color_indices_changed();
+
+  /*! Respond to a change in the facet texture-coordinate index array.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
+   */
+  virtual void facet_tex_coord_indices_changed();
+  //@}
+
   /*! Configure.
    */
   void configure(const Configuration* conf);
@@ -346,6 +400,11 @@ protected:
    */
   void clean_normal_attributes();
 
+  /*! Clean the polyhedron without applying deformations (such as repairing)
+   * that may require re-cleaning.
+   */
+  void clean_polyhedron_base();
+
   /*! Clean (compute) the volume.
    */
   void clean_volume();
@@ -369,56 +428,6 @@ protected:
   /*! Obtain an empty eprc polyhedron. */
   Epec_polyhedron& empty_epec_polyhedron();
   //@}
-
-  /*! Compute the indices of the mesh. */
-  template <typename Indices>
-  class Compute_coord_indices_visitor : public boost::static_visitor<> {
-  private:
-    Indices& m_indices;
-
-  public:
-    Compute_coord_indices_visitor(Indices& indices) : m_indices(indices) {}
-
-    template <typename Polyhedron_>
-    void operator()(Polyhedron_& polyhedron) const
-    {
-      typedef boost::is_same<Indices, Polygon_indices> Is_polygon;
-
-      size_t index = 0;
-      auto it = m_indices.begin();
-      auto fit = polyhedron.facets_begin();
-      for (; fit != polyhedron.facets_end(); ++fit, ++it) {
-        auto hh = fit->facet_begin();
-        initialize_polygon(*it, hh, Is_polygon());
-        size_t j(0);
-        do {
-          (*it)[j++] = hh->vertex()->id();
-          hh->set_id(index++);
-        } while (++hh != fit->facet_begin());
-      }
-    }
-
-  private:
-    /*! Resize the polygon.
-     * \param[in] is_not_fixed the polygon is not a triangle nor a quad.
-     * In this case, where the polygon is not a triangle nor a quad, we need
-     * to resize the structure with number of vertices.
-     */
-    template <typename Polygon_, typename HalfedgeHandle_>
-    void initialize_polygon(Polygon_& polygon, HalfedgeHandle_ hh,
-                            boost::true_type /*! is_not_fixed */) const
-    { polygon.resize(CGAL::circulator_size(hh)); }
-
-    /*! Resize the polygon.
-     * \param[in] is_fixed the polygon is either a triangle or a quad.
-     * In this case, where the polygon is a triangle or a quad, there is
-     * nothing to do.
-     */
-    template <typename Polygon_, typename HalfedgeHandle_>
-    void initialize_polygon(Polygon_& polygon, HalfedgeHandle_ hh,
-                            boost::false_type /*! is_fixed */) const
-    {}
-  };
 
   /*! Compute coords visitor. */
   template <typename InputIterator>
@@ -755,6 +764,11 @@ private:
    * as-smooth-as-possible shape deformation.
    */
   Boolean m_fair;
+
+  /*! Indicates whether to repair the orientation of facets of closed polyhedral
+   * surfaces.
+   */
+  Boolean m_repair_orientation;
 
   /*! Clean the coordinate indices.
    */
