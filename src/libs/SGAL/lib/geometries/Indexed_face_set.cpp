@@ -54,6 +54,7 @@
 #include "SGAL/Modeling.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Hole_filler_visitor.hpp"
+#include "SGAL/Clean_facet_indices_from_polyhedron_visitor.hpp"
 #include "SGAL/Orient_polygon_soup_visitor.hpp"
 #include "SGAL/Number_of_connected_components_polyhedron_visitor.hpp"
 
@@ -69,18 +70,22 @@ REGISTER_TO_FACTORY(Indexed_face_set, "Indexed_face_set");
 //! \brief constructs from the prototype.
 Indexed_face_set::Indexed_face_set(Boolean proto) :
   Boundary_set(proto),
+  m_repaired(true),
   m_dirty_volume(true),
   m_dirty_surface_area(true),
   m_polyhedron_type(POLYHEDRON_INEXACT),
   m_dirty_coord_array(true),
   m_dirty_polyhedron(true),
+  m_dirty_repaired_polyhedron(true),
+  m_dirty_repaired_coords(true),
   m_dirty_polyhedron_facet_normals(true),
   m_dirty_normal_attributes(true),
   m_consistent(true),
   m_has_singular_vertices(false),
   m_triangulate(Modeling::s_def_triangulate),
   m_refine(Modeling::s_def_refine),
-  m_fair(Modeling::s_def_refine)
+  m_fair(Modeling::s_def_refine),
+  m_repair_orientation(Modeling::s_def_repair_orientation)
 {
   if (proto) return;
   set_crease_angle(0);
@@ -133,33 +138,40 @@ Container_proto* Indexed_face_set::get_prototype()
   return s_prototype;
 }
 
-//! \brief draws the polygons.
-void Indexed_face_set::draw(Draw_action* action)
+//! \brief cleans the repaired coordinates and the coordinate indices.
+void Indexed_face_set::clean_repaired_coords()
 {
-  SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
+  // If triangulation of holes or orientation repairing is required,
+  // first clean the repaired data structure. This either leaves the polyhedron
+  // clean of the coordinate and the coordinate-indices clean; then, re-clean
+  // the coordinates and the coordinate indices.
+  if (!m_repaired && (m_triangulate || m_repair_orientation)) repair();
+
   if (is_dirty_coord_array() ||
       (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
     clean_coords();
+
+  m_dirty_repaired_coords = false;
+}
+
+//! \brief draws the polygons.
+void Indexed_face_set::draw(Draw_action* action)
+{
+  if (m_dirty_repaired_coords) clean_repaired_coords();
   Boundary_set::draw(action);
 }
 
 //! \brief draws the polygons for selection.
 void Indexed_face_set::isect(Isect_action* action)
 {
-  SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
-  if (is_dirty_coord_array() ||
-      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
-    clean_coords();
+  if (m_dirty_repaired_coords) clean_repaired_coords();
   Boundary_set::isect(action);
 }
 
 //! \brief cleans the sphere bound.
 void Indexed_face_set::clean_bounding_sphere()
 {
-  SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
-  if (is_dirty_coord_array() ||
-      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
-    clean_coords();
+  if (m_dirty_repaired_coords) clean_repaired_coords();
   Boundary_set::clean_bounding_sphere();
 }
 
@@ -173,7 +185,7 @@ void Indexed_face_set::clean_coords()
 
   Size_of_vertices_visitor indices_visitor;
   auto size_of_vertices = boost::apply_visitor(indices_visitor, m_polyhedron);
-  // auto size_of_vertices = m_polyhedron.size_of_vertices();
+
   if (!m_coord_array) {
     m_coord_array.reset(new Coord_array_3d(size_of_vertices));
     SGAL_assertion(m_coord_array);
@@ -196,7 +208,7 @@ void Indexed_face_set::clean_coords()
    * In general when the coordinates change, we must invalidate the polyhedron
    * to force cleaning of the polyhedron, so that the change to the coordinates
    * is reflected in the polyhedron. However, clean_coords() could have beeen
-   * invoked as a consequence to an update of the polyhedron. Naturally, in this
+   * invoked as a consequence of an update of the polyhedron. Naturally, in this
    * case we do not want to invalidate the polyhedron.
    */
   Boundary_set::coord_content_changed(get_field_info(COORD_ARRAY));
@@ -212,7 +224,7 @@ void Indexed_face_set::clear_coord_array()
 //! \brief obtains the coordinate array.
 Indexed_face_set::Shared_coord_array Indexed_face_set::get_coord_array()
 {
-  if (is_dirty_coord_array()) clean_coords();
+  if (m_dirty_repaired_coords) clean_repaired_coords();
   return m_coord_array;
 }
 
@@ -233,36 +245,9 @@ void Indexed_face_set::clean_coord_indices()
     boost::apply_visitor(Type_polyhedron_visitor(), m_polyhedron);
   set_primitive_type(primitive_type);
 
-  switch (primitive_type) {
-   case PT_TRIANGLES:
-    {
-     auto& coord_indices = empty_triangle_coord_indices();
-     coord_indices.resize(num_primitives);
-     Compute_coord_indices_visitor<Triangle_indices&> visitor(coord_indices);
-     boost::apply_visitor(visitor, m_polyhedron);
-    }
-    break;
-
-   case PT_QUADS:
-    {
-     auto& coord_indices = empty_quad_coord_indices();
-     coord_indices.resize(num_primitives);
-     Compute_coord_indices_visitor<Quad_indices&> visitor(coord_indices);
-     boost::apply_visitor(visitor, m_polyhedron);
-    }
-    break;
-
-   case PT_POLYGONS:
-    {
-     auto& coord_indices = empty_polygon_coord_indices();
-     coord_indices.resize(num_primitives);
-     Compute_coord_indices_visitor<Polygon_indices&> visitor(coord_indices);
-     boost::apply_visitor(visitor, m_polyhedron);
-    }
-    break;
-
-   default: SGAL_error();
-  }
+  init_facet_coord_indices();
+  Clean_facet_indices_from_polyhedron_visitor visitor(num_primitives);
+  boost::apply_visitor(visitor, m_polyhedron, m_facet_coord_indices);
 
   m_dirty_coord_indices = true;
   m_dirty_facet_coord_indices = false;
@@ -272,7 +257,7 @@ void Indexed_face_set::clean_coord_indices()
 void Indexed_face_set::clean_normals()
 {
   if ((0 < m_crease_angle) && (m_crease_angle < SGAL_PI)) {
-    if (m_dirty_polyhedron) clean_polyhedron();
+    if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
     if (m_dirty_polyhedron_facet_normals) clean_polyhedron_facet_normals();
     if (m_dirty_normal_attributes) clean_normal_attributes();
 
@@ -288,27 +273,81 @@ void Indexed_face_set::clean_normals()
   m_dirty_normal_buffer = true;
 }
 
+//! \brief repairs the data structures
+void Indexed_face_set::repair()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+
+  Number_of_connected_components_polyhedron_visitor num_ccs_visitor;
+  auto num_ccs = boost::apply_visitor(num_ccs_visitor, m_polyhedron);
+  Is_closed_polyhedron_visitor is_closed_visitor;
+  auto closed = boost::apply_visitor(is_closed_visitor, m_polyhedron);
+  if ((num_ccs == 1) && closed && m_repair_orientation) {
+    clean_volume();
+    // If the volume of the closed polyhedron is negative, all facets are
+    // oriented clockwise. That is, the normal of every facet is directed
+    // towards the interior of the polyhedron instead of the exterior.
+    if (m_volume < 0) {
+      // If the facet coord indices is dirty (invalid), clean (recompute) it.
+      //! \todo Do the cleaning and reversing at once as an optimization.
+      if (is_dirty_coord_array() ||
+          (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+        clean_coords();
+      reverse_facet_coord_indices();
+    }
+  }
+
+  m_repaired = true;
+}
+
+//! \brief cleans the polyhedron data structure.
+void Indexed_face_set::clean_repaired_polyhedron()
+{
+  // If triangulation of holes or orientation repairing is required,
+  // first clean the repaired data structure. This either leaves the polyhedron
+  // clean of the coordinate and the coordinate-indices clean; then, re-clean
+  // the polyhedron.
+  if (!m_repaired && (m_triangulate || m_repair_orientation)) repair();
+
+  //! \todo Do not attempt to orient the polygon in the 2nd call.
+  if (m_dirty_polyhedron) clean_polyhedron();
+
+  m_dirty_repaired_polyhedron = false;
+}
+
 //! \brief cleans the polyhedron data structure.
 void Indexed_face_set::clean_polyhedron()
 {
+  // Set the flags at the beginning in case of an earlt return.
   m_dirty_polyhedron = false;
+  m_consistent = true;
+  m_has_singular_vertices = false;
   m_dirty_volume = true;
   m_dirty_surface_area = true;
-  m_consistent = true;
+  m_dirty_polyhedron_facet_normals = true;
+  m_dirty_normal_attributes = true;
 
-  if ((m_polyhedron_type == POLYHEDRON_INEXACT) && m_triangulate)
-    m_polyhedron_type = POLYHEDRON_EPIC;
-
-  auto coord_array = get_coord_array();
-  if (!coord_array || coord_array->empty()) return;
+  // Clean the coordinates and the coordinate indices (without repairing).
+  if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+    clean_coords();
   if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
 
-  auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(coord_array);
+  // If there are no coordinates bail out.
+  if (!m_coord_array || m_coord_array->empty()) return;
+  auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
   if (!coords) return;
+
+  // If there are no coordinate indices bail out.
+  if (empty_facet_indices(m_facet_coord_indices)) return;
+
   Orient_polygon_soup_visitor visitor(coords);
   m_has_singular_vertices = boost::apply_visitor(visitor, m_facet_coord_indices);
 
   // create the polyhedral surface
+  if ((m_polyhedron_type == POLYHEDRON_INEXACT) && m_triangulate)
+    m_polyhedron_type = POLYHEDRON_EPIC;
+
   switch (m_polyhedron_type) {
    case POLYHEDRON_INEXACT:
     {
@@ -343,7 +382,9 @@ void Indexed_face_set::clean_polyhedron()
   // Normalize the border of the polyhedron.
   boost::apply_visitor(Normalize_border_visitor(), m_polyhedron);
 
-  if (!is_closed() && m_triangulate) {
+  auto closed =
+    boost::apply_visitor(Is_closed_polyhedron_visitor(), m_polyhedron);
+  if (!closed && m_triangulate) {
     Hole_filler_visitor visitor(m_refine, m_fair);
     boost::apply_visitor(visitor, m_polyhedron);
 
@@ -353,11 +394,6 @@ void Indexed_face_set::clean_polyhedron()
     clear_coord_indices();
     clear_facet_coord_indices();
   }
-
-  m_dirty_volume = true;
-  m_dirty_surface_area = true;
-  m_dirty_polyhedron_facet_normals = true;
-  m_dirty_normal_attributes = true;
 }
 
 //! \brief clears the polyhedron.
@@ -383,15 +419,19 @@ void Indexed_face_set::set_polyhedron(Polyhedron& polyhedron)
   clear_coord_array();
   clear_coord_indices();
   clear_facet_coord_indices();
+
+  // Assume that the incoming polyhedron has no singular vertices, is
+  // consistent, and repaired.
   m_consistent = true;
   m_has_singular_vertices = false;
+  m_repaired = true;
 }
 
 //! \brief obtains the polyhedron data-structure.
 const Indexed_face_set::Polyhedron&
 Indexed_face_set::get_polyhedron(Boolean clean_facet_normals)
 {
-  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
   if (clean_facet_normals) {
     if (m_dirty_polyhedron_facet_normals) clean_polyhedron_facet_normals();
   }
@@ -438,10 +478,7 @@ void Indexed_face_set::write(Formatter* formatter)
                   << ", name: " << get_name()
                   << std::endl;);
 
-  SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
-  if (is_dirty_coord_array() ||
-      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
-    clean_coords();
+  if (m_dirty_repaired_coords) clean_repaired_coords();
   Boundary_set::write(formatter);
 }
 
@@ -489,7 +526,7 @@ void Indexed_face_set::clean_surface_area()
 //! \brief computes the volume of the polyhedron.
 Float Indexed_face_set::volume()
 {
-  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
   if (m_dirty_volume) clean_volume();
   return m_volume;
 }
@@ -497,7 +534,7 @@ Float Indexed_face_set::volume()
 //! \brief computes the surface area of the polyhedron.
 Float Indexed_face_set::surface_area()
 {
-  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
   if (m_dirty_surface_area) clean_surface_area();
   return m_surface_area;
 }
@@ -505,7 +542,7 @@ Float Indexed_face_set::surface_area()
 //! \brief determines wheather the mesh is consistent.
 Boolean Indexed_face_set::is_consistent()
 {
-  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
   return m_consistent;
 }
 
@@ -533,7 +570,7 @@ Boolean Indexed_face_set::is_closed()
 //! \brief obtains the number of border edges.
 size_t Indexed_face_set::get_number_of_border_edges()
 {
-  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
   return boost::apply_visitor(Size_of_border_edges_polyhedron_visitor(),
                               m_polyhedron);
 }
@@ -549,21 +586,21 @@ Size Indexed_face_set::get_number_of_connected_components()
 //! \brief obtains the number of vertices.
 Size Indexed_face_set::get_number_of_vertices()
 {
-  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
   return boost::apply_visitor(Size_of_vertices_visitor(), m_polyhedron);
 }
 
 //! \brief obtains the number of edges.
 Size Indexed_face_set::get_number_of_edges()
 {
-  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
   return boost::apply_visitor(Size_of_halfedges_visitor(), m_polyhedron) / 2;
 }
 
 //! \brief obtains the number of facets.
 Size Indexed_face_set::get_number_of_facets()
 {
-  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
   return boost::apply_visitor(Size_of_facets_visitor(), m_polyhedron) / 2;
 }
 
@@ -624,6 +661,8 @@ void Indexed_face_set::configure(const Configuration* conf)
   m_triangulate = modeling->get_triangulate();
   m_refine = modeling->get_refine();
   m_fair = modeling->get_fair();
+  m_repair_orientation = modeling->get_repair_orientation();
+  if (m_triangulate || m_repair_orientation) m_repaired = false;
 }
 
 //! \brief adds the container to a given scene.
@@ -631,6 +670,62 @@ void Indexed_face_set::add_to_scene(Scene_graph* sg)
 {
   const auto* conf = sg->get_configuration();
   configure(conf);
+}
+
+//! \brief responds to a change in the coordinate-index array.
+void Indexed_face_set::coord_indices_changed(const Field_info* field_info)
+{
+  m_dirty_polyhedron = true;
+  Boundary_set::coord_indices_changed(field_info);
+}
+
+//! \brief responds to a change in the normal-index array.
+void Indexed_face_set::normal_indices_changed(const Field_info* field_info)
+{
+  m_dirty_polyhedron = true;
+  Boundary_set::normal_indices_changed(field_info);
+}
+
+//! \brief responds to a change in the color-index array.
+void Indexed_face_set::color_indices_changed(const Field_info* field_info)
+{
+  m_dirty_polyhedron = true;
+  Boundary_set::color_indices_changed(field_info);
+}
+
+//! \brief responds to a change in the texture-coordinate index array.
+void Indexed_face_set::tex_coord_indices_changed(const Field_info* field_info)
+{
+  m_dirty_polyhedron = true;
+  Boundary_set::tex_coord_indices_changed(field_info);
+}
+
+//! \brief responds to a change in the facet coordinate-index array.
+void Indexed_face_set::facet_coord_indices_changed()
+{
+  m_dirty_polyhedron = true;
+  Boundary_set::facet_coord_indices_changed();
+}
+
+//! \brief responds to a change in the facet normal-index array.
+void Indexed_face_set::facet_normal_indices_changed()
+{
+  m_dirty_polyhedron = true;
+  Boundary_set::facet_normal_indices_changed();
+}
+
+//! \brief responds to a change in the facet color-index array.
+void Indexed_face_set::facet_color_indices_changed()
+{
+  m_dirty_polyhedron = true;
+  Boundary_set::facet_color_indices_changed();
+}
+
+//! \brief responds to a change in the facet texture-coordinate index array.
+void Indexed_face_set::facet_tex_coord_indices_changed()
+{
+  m_dirty_polyhedron = true;
+  Boundary_set::facet_tex_coord_indices_changed();
 }
 
 SGAL_END_NAMESPACE

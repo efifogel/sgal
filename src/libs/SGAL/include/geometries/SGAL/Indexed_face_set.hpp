@@ -152,6 +152,11 @@ public:
    */
   virtual Shared_coord_array get_coord_array();
 
+  /*! Repair the data structures, either the coordinates and the coordinate
+   * indices, or the polyhedron.
+   */
+  void repair();
+
   /// \name Indices Change Reactors
   //@{
   /*! Respond to a change in the coordinate-index array.
@@ -227,7 +232,16 @@ public:
 
   /*! Clean the polyhedron.
    */
-  virtual void clean_polyhedron();
+  void clean_polyhedron();
+
+  /*! Clean the repaired coordinates and the coordinate indices.
+   */
+  void clean_repaired_coords();
+
+  /*! Clean the polyhedron without applying deformations (such as repairing)
+   * that may require re-cleaning.
+   */
+  void clean_repaired_polyhedron();
 
   /*! Clear the polyhedron.
    */
@@ -353,6 +367,9 @@ protected:
   /*! The type of the polyhedrlal surface. */
   Polyhedron_type m_polyhedron_type;
 
+  //*! Indicates whether the geometry is reapired. */
+  Boolean m_repaired;
+
   /*! Indicates whether the volume is dirty and thus must be cleaned. */
   Boolean m_dirty_volume;
 
@@ -369,6 +386,16 @@ protected:
    * cleaned.
    */
   Boolean m_dirty_polyhedron;
+
+  /*! Indicates whether the repaired polyhedron has been invalidated, and thus
+   * must be cleaned.
+   */
+  Boolean m_dirty_repaired_polyhedron;
+
+  /*! Indicates whether the repaired coordinates and coordinate indices have
+   * been invalidated, and thus must be cleaned.
+   */
+  Boolean m_dirty_repaired_coords;
 
   /*! Indicates whether the polyhedron facets are dirty and thus should be
    * cleaned.
@@ -399,11 +426,6 @@ protected:
   /*! Clean (recompute) the normal attributes m_creased and m_smooth.
    */
   void clean_normal_attributes();
-
-  /*! Clean the polyhedron without applying deformations (such as repairing)
-   * that may require re-cleaning.
-   */
-  void clean_polyhedron_base();
 
   /*! Clean (compute) the volume.
    */
