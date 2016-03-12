@@ -41,7 +41,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 class Field_info;
 class Container_proto;
-class Mesh_set;
+class Indexed_face_set;
 class Scene_graph;
 
 /*! \class Connected_components_splitter Connected_components_splitter.hpp
@@ -53,12 +53,12 @@ public:
   enum {
     FIRST = Node::LAST - 1,
     OPERAND,
-    RESULT,
+    COMPONENTS,
     TRIGGER,
     LAST
   };
 
-  typedef boost::shared_ptr<Mesh_set>               Shared_mesh_set;
+  typedef boost::shared_ptr<Indexed_face_set>   Shared_indexed_face_set;
 
   /*! Construct.
    */
@@ -86,9 +86,10 @@ public:
   /// \name field handlers
   //@{
   Boolean* trigger_handle(const Field_info*) { return &m_trigger; }
-  Shared_mesh_set* operand_handle(const Field_info*) { return &m_operand; }
-  std::vector<Shared_mesh_set>* result_handle(const Field_info*)
-  { return &m_result; }
+  Shared_indexed_face_set* operand_handle(const Field_info*)
+  { return &m_operand; }
+  std::vector<Shared_indexed_face_set>* components_handle(const Field_info*)
+  { return &m_components; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -115,29 +116,29 @@ public:
   /*! Set the input operand, which is a mesh that might be open (may have holes).
    * \param operand the input operand.
    */
-  void set_operand(Shared_mesh_set operand);
+  void set_operand(Shared_indexed_face_set operand);
 
   /*! Obtain the input operand, which is a mesh that might be open (may have
    * holes).
    * \return the input operand.
    */
-  Shared_mesh_set get_operand() const;
+  Shared_indexed_face_set get_operand() const;
 
-  /*! Set the resulting geometry.
-   * \param[in] result the resulting geomery.
+  /*! Set the resulting components.
+   * \param[in] components the resulting components.
    */
-  void set_result(const std::vector<Shared_mesh_set>& result);
+  void set_components(const std::vector<Shared_indexed_face_set>& components);
 
-  /*! Obtain the resulting geometry.
-   * \param[in] result the resulting geomery.
+  /*! Obtain the resulting components.
+   * \param[in] components the resulting components.
    */
-  const std::vector<Shared_mesh_set>& get_result() const;
+  const std::vector<Shared_indexed_face_set>& get_components() const;
 
   /*! The input polygonal mesh, which might be open. */
-  Shared_mesh_set m_operand;
+  Shared_indexed_face_set m_operand;
 
-  /*! The resulting polygonal closed mesh. */
-  std::vector<Shared_mesh_set> m_result;
+  /*! The resulting components. */
+  std::vector<Shared_indexed_face_set> m_components;
 
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -171,20 +172,21 @@ inline const std::string& Connected_components_splitter::get_tag() const
 { return s_tag; }
 
 //! \brief obtains the input operand, which is a mesh that might be open.
-inline Connected_components_splitter::Shared_mesh_set
+inline Connected_components_splitter::Shared_indexed_face_set
 Connected_components_splitter::get_operand() const { return m_operand; }
 
 //! \brief sets the input operand, which is a mesh that might be open.
-inline void Connected_components_splitter::set_operand(Shared_mesh_set operand)
+inline void Connected_components_splitter::set_operand(Shared_indexed_face_set operand)
 { m_operand = operand; }
 
-//! \brief sets the resulting geometry.
+//! \brief sets the resulting components.
 inline void Connected_components_splitter::
-set_result(const std::vector<Shared_mesh_set>& result) { m_result = result; }
+set_components(const std::vector<Shared_indexed_face_set>& components)
+{ m_components = components; }
 
-//! \brief obtains the resulting geometry.
-inline const std::vector<Connected_components_splitter::Shared_mesh_set>&
-Connected_components_splitter::get_result() const { return m_result; }
+//! \brief obtains the resulting components.
+inline const std::vector<Connected_components_splitter::Shared_indexed_face_set>&
+Connected_components_splitter::get_components() const { return m_components; }
 
 SGAL_END_NAMESPACE
 

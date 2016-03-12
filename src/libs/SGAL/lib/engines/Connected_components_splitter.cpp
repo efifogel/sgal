@@ -26,7 +26,7 @@
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
-#include "SGAL/Mesh_set.hpp"
+#include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Connected_components_splitter.hpp"
@@ -88,12 +88,13 @@ void Connected_components_splitter::init_prototype()
                                                       operand_func,
                                                       exec_func));
 
-  // result
-  auto result_func = reinterpret_cast<Shared_container_array_handle_function>
-    (&Connected_components_splitter::result_handle);
-  s_prototype->add_field_info(new MF_shared_container(RESULT, "result",
+  // components
+  auto components_func =
+    reinterpret_cast<Shared_container_array_handle_function>
+    (&Connected_components_splitter::components_handle);
+  s_prototype->add_field_info(new MF_shared_container(COMPONENTS, "components",
                                                       Field_info::RULE_EXPOSED_FIELD,
-                                                      result_func));
+                                                      components_func));
 }
 
 //! \brief deletes the container prototype.
@@ -126,15 +127,15 @@ void Connected_components_splitter::set_attributes(Element* elem)
     const auto& name = elem->get_name(cai);
     auto cont = elem->get_value(cai);
     if (name == "operand") {
-      auto mesh = boost::dynamic_pointer_cast<Mesh_set>(cont);
+      auto mesh = boost::dynamic_pointer_cast<Indexed_face_set>(cont);
       set_operand(mesh);
       elem->mark_delete(cai);
       continue;
     }
     //! \todo
-    // if (name == "result") {
-    //   auto result = boost::dynamic_pointer_cast<Mesh_set>(cont);
-    //   set_result(result);
+    // if (name == "components") {
+    //   auto components = boost::dynamic_pointer_cast<Indexed_face_set>(cont);
+    //   set_components(components);
     //   elem->mark_delete(cai);
     //   continue;
     // }
@@ -153,31 +154,31 @@ void Connected_components_splitter::execute()
   SGAL_assertion(operand);
 
   auto num_ccs = operand->get_number_of_connected_components();
-  m_result.resize(num_ccs);
+  m_components.resize(num_ccs);
   if (num_ccs == 1) {
-    m_result[0] = operand;
+    m_components[0] = operand;
   }
   else {
     const auto& polyhedron = operand->get_polyhedron();
     auto type = operand->get_primitive_type();
     for (auto i = 0; i != num_ccs; ++i) {
-      m_result[i].reset(new Indexed_face_set);
-      m_result[i]->set_coord_array(operand->get_coord_array());
-      m_result[i]->set_primitive_type(type);
-      m_result[i]->init_facet_coord_indices();
+      m_components[i].reset(new Indexed_face_set);
+      m_components[i]->set_coord_array(operand->get_coord_array());
+      m_components[i]->set_primitive_type(type);
+      m_components[i]->init_facet_coord_indices();
 
-      const auto& const_indices = m_result[i]->get_facet_coord_indices();
+      const auto& const_indices = m_components[i]->get_facet_coord_indices();
       auto& indices = const_cast<Mesh_set::Facet_indices&>(const_indices);
       Connected_components_splitter_visitor visitor(i);
       auto num = boost::apply_visitor(visitor, polyhedron, indices);
-      m_result[i]->set_num_primitives(num);
-      m_result[i]->facet_coord_indices_changed();
-      m_result[i]->add_to_scene(m_scene_graph);
+      m_components[i]->set_num_primitives(num);
+      m_components[i]->facet_coord_indices_changed();
+      m_components[i]->add_to_scene(m_scene_graph);
     }
   }
 
-  // Cascade the result field:
-  auto* field = get_field(RESULT);
+  // Cascade the components field:
+  auto* field = get_field(COMPONENTS);
   if (field) field->cascade();
 }
 
