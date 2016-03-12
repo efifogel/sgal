@@ -36,7 +36,8 @@ Modeling_option_parser::Modeling_option_parser() :
   m_triangulate(false),
   m_refine(false),
   m_fair(false),
-  m_split_ccs(false)
+  m_split_ccs(false),
+  m_repair_orientation(false)
 {
   m_modeling_opts.add_options()
     ("triangulate", po::value<Boolean>(&m_triangulate)->default_value(false),
@@ -47,6 +48,8 @@ Modeling_option_parser::Modeling_option_parser() :
      "fair hole triangulation")
     ("split-ccs", po::value<Boolean>(&m_split_ccs)->default_value(false),
      "split connected components")
+    ("repair-orientation", po::value<Boolean>(&m_split_ccs)->default_value(false),
+     "repair orientation")
     ;
 }
 
@@ -81,6 +84,9 @@ void Modeling_option_parser::configure(Configuration* conf)
 
   if (var_map.count("split-ccs"))
     modeling->set_fair(var_map["split-ccs"].as<Boolean>());
+
+  if (var_map.count("repair-orientation"))
+    modeling->set_repair_orientation(var_map["repair-orientation"].as<Boolean>());
 }
 
 SGAL_END_NAMESPACE
