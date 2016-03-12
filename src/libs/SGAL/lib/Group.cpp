@@ -153,7 +153,7 @@ void Group::remove_child(Shared_container node)
 //! \brief traverses the children of the group.
 Action::Trav_directive Group::traverse(Action* action)
 {
-  if (!is_visible() || (action == 0)) return Action::TRAV_CONT;
+  if (!is_visible() || (action == nullptr)) return Action::TRAV_CONT;
   for (auto it = m_childs.begin(); it != m_childs.end(); ++it) {
     auto node = boost::dynamic_pointer_cast<Node>(*it);
     if (!node) continue;
@@ -166,8 +166,10 @@ Action::Trav_directive Group::traverse(Action* action)
 //! \brief draws the children of the group.
 Action::Trav_directive Group::draw(Draw_action* draw_action)
 {
-  if (!is_visible() || (draw_action == 0) || (draw_action->get_context() == 0))
+  if (!is_visible() || (draw_action == nullptr) ||
+      (draw_action->get_context() == nullptr))
     return Action::TRAV_CONT;
+
   if (has_lights()) draw_action->get_context()->push_lights();
   Action::Trav_directive traversal_directive = Action::TRAV_CONT;
   for (auto it = m_childs.begin(); it != m_childs.end(); ++it) {
