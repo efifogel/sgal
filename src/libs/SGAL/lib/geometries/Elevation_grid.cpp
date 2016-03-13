@@ -369,7 +369,7 @@ void Elevation_grid::clean_facet_coord_indices()
 
   m_num_primitives = (m_x_dimension - 1) * (m_z_dimension - 1) * 2;
   if (is_closed()) m_num_primitives += (m_z_dimension + m_x_dimension) * 2 + 2;
-  auto& indices = empty_triangle_coord_indices();
+  auto& indices = get_empty_triangle_coord_indices();
   indices.resize(m_num_primitives);
 
   // Generate:

@@ -610,7 +610,7 @@ void Extrusion::clean_facet_coord_indices()
   if (m_end_cap) m_num_primitives += cross_section_size - 2;
 
   // Generate:
-  auto& coord_indices = empty_triangle_coord_indices();
+  auto& coord_indices = get_empty_triangle_coord_indices();
   coord_indices.resize(m_num_primitives);
   size_t j, i, k = 0;
   for (j = 0; j < m_spine.size() - 1; ++j) {
@@ -764,7 +764,7 @@ void Extrusion::clean_facet_tex_coord_indices()
     cross_section_size : cross_section_size + 1;
   size_t stacks = (m_loop) ? m_spine.size() : m_spine.size() - 1;
 
-  auto& tex_coord_indices = empty_triangle_tex_coord_indices();
+  auto& tex_coord_indices = get_empty_triangle_tex_coord_indices();
   tex_coord_indices.resize(m_num_primitives);
   size_t i, j, k = 0;
 
