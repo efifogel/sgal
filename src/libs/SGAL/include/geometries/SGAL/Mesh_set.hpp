@@ -143,48 +143,48 @@ public:
 
   /// \name Index-Arrays Getters
   //@{
-  /*! Obtain the coordinate-index array.
-   * \return the coordinate-index array.
+  /*! Obtain the coordinate indices.
+   * \return the coordinate indices.
    */
   virtual std::vector<Int32>& get_coord_indices();
 
-  /*! Obtain the normal-index array.
-   * \return the normal-index array.
+  /*! Obtain the normal indices.
+   * \return the normal indices.
    */
   virtual std::vector<Int32>& get_normal_indices();
 
-  /*! Obtain the color-index array.
-   * \return the color-index array.
+  /*! Obtain the color indices.
+   * \return the color indices.
    */
   virtual std::vector<Int32>& get_color_indices();
 
-  /*! Obtain the texture-coordinate-index array.
-   * \return the texture-coordinate-index array.
+  /*! Obtain the texture-coordinate indices.
+   * \return the texture-coordinate indices.
    */
   virtual std::vector<Int32>& get_tex_coord_indices();
   //@}
 
   /// \name Indices Change Reactors
   //@{
-  /*! Respond to a change in the coordinate-index array.
+  /*! Respond to a change in the coordinate indices.
    * \param[in] field_info the information record of the field that caused
    *                       the change.
    */
   virtual void coord_indices_changed(const Field_info* field_info = nullptr);
 
-  /*! Respond to a change in the normal-index array.
+  /*! Respond to a change in the normal indices.
    * \param[in] field_info the information record of the field that caused
    *            the change.
    */
   virtual void normal_indices_changed(const Field_info* field_info = nullptr);
 
-  /*! Respond to a change in the color-index array.
+  /*! Respond to a change in the color indices.
    * \param[in] field_info the information record of the field that caused
    *                       the change.
    */
   virtual void color_indices_changed(const Field_info* field_info = nullptr);
 
-  /*! Respond to a change in the texture-coordinate index array.
+  /*! Respond to a change in the texture-coordinate indices.
    * \param[in] field_info the information record of the field that caused
    *                       the change.
    */
@@ -193,25 +193,25 @@ public:
 
   /// \name Facet Indices Change Reactors
   //@{
-  /*! Respond to a change in the facet coordinate-index array.
+  /*! Respond to a change in the facet coordinate indices.
    * \param[in] field_info the information record of the field that caused
    *                       the change.
    */
   virtual void facet_coord_indices_changed();
 
-  /*! Respond to a change in the facet normal-index array.
+  /*! Respond to a change in the facet normal indices.
    * \param[in] field_info the information record of the field that caused
    *            the change.
    */
   virtual void facet_normal_indices_changed();
 
-  /*! Respond to a change in the facet color-index array.
+  /*! Respond to a change in the facet color indices.
    * \param[in] field_info the information record of the field that caused
    *                       the change.
    */
   virtual void facet_color_indices_changed();
 
-  /*! Respond to a change in the facet texture-coordinate index array.
+  /*! Respond to a change in the facet texture-coordinate indices.
    * \param[in] field_info the information record of the field that caused
    *                       the change.
    */
@@ -220,16 +220,16 @@ public:
 
   /// \name Cleaners
   //@{
-  /*! Validate (clean) the coordinate-index array. */
+  /*! Clean (validate) the coordinate indices. */
   void clean_coord_indices();
 
-  /*! Validate (clean) the normal-index array. */
+  /*! Clean (validate) the normal indices. */
   void clean_normal_indices();
 
-  /*! Validate (clean) the color-index array. */
+  /*! Clean (validate) the color indices. */
   void clean_color_indices();
 
-  /*! Validate (clean) the texture coordinate-index array. */
+  /*! Clean (validate) the texture-coordinate indices. */
   void clean_tex_coord_indices();
 
   /*! Clean the bounding sphere of the mesh set. */
@@ -238,45 +238,45 @@ public:
 
   /// \name Clearers
   //@{
-  /*! Invalidate (clear) the coordinate-index array. */
+  /*! Clear (invalidate) the coordinate indices. */
   void clear_coord_indices();
 
-  /*! Invalidate (clear) the normal-index array. */
+  /*! Clear (invalidate) the normal indices. */
   void clear_normal_indices();
 
-  /*! Invalidate (clear) the color-index array. */
+  /*! Clear (invalidate) the color indices. */
   void clear_color_indices();
 
-  /*! Invalidate (clear) the texture coordinate-index array. */
+  /*! Clear (invalidate) the texture-coordinate indices. */
   void clear_tex_coord_indices();
   //@}
 
   /// \name Index-Array Predicates
   //@{
-  /*! Determine whether the coordinate-index array has been invalidated
+  /*! Determine whether the coordinate indices has been invalidated
    * (is dirty).
-   * \return a Boolean flag that indicates whether the coordinate-index array
+   * \return a Boolean flag that indicates whether the coordinate indices
    *         is dirty.
    */
   Boolean is_dirty_coord_indices() const;
 
-  /*! Determine whether the normal-index array has been invalidated
+  /*! Determine whether the normal indices has been invalidated
    * (is dirty).
-   * \return a Boolean flag that indicates whether the normal-index array is
+   * \return a Boolean flag that indicates whether the normal indices is
    *         dirty.
    */
   Boolean is_dirty_normal_indices() const;
 
-  /*! Determine whether the color-index array has been invalidated
+  /*! Determine whether the color indices has been invalidated
    * (is dirty).
-   * \return a Boolean flag that indicates whether the color-index array is
+   * \return a Boolean flag that indicates whether the color indices is
    *         dirty.
    */
   Boolean is_dirty_color_indices() const;
 
-  /*! Determine whether the texture coordinate-index array has been
+  /*! Determine whether the texture-coordinate indices has been
    * invalidated (is dirty).
-   * \return a Boolean flag that indicates whether the texture coordinate-index
+   * \return a Boolean flag that indicates whether the texture-coordinate index
    *         array is dirty.
    */
   Boolean is_dirty_tex_coord_indices() const;
@@ -284,123 +284,123 @@ public:
 
   /// \name Obtain const vectors of facet indices
   //@{
-  /*! Obtain the facet coordinate-index array.
+  /*! Obtain the facet coordinate indices.
    */
   const Facet_indices& get_facet_coord_indices();
 
-  /*! Obtain the facet normal-index array.
+  /*! Obtain the facet normal indices.
    */
   const Facet_indices& get_facet_normal_indices();
 
-  /*! Obtain the facet color-index array.
+  /*! Obtain the facet color indices.
    */
   const Facet_indices& get_facet_color_indices();
 
-  /*! Obtain the facet texture coordinate-index array.
+  /*! Obtain the facet texture-coordinate indices.
    */
   const Facet_indices& get_facet_tex_coord_indices();
   //@}
 
   /// \name Facet Index Arrays
   //@{
-  /*! Set the facet coordinate-index array.
+  /*! Set the facet coordinate indices.
    */
   void set_facet_coord_indices(const Facet_indices& indices);
 
-  /*! Set the facet normal-index array.
+  /*! Set the facet normal indices.
    */
   void set_facet_normal_indices(const Facet_indices& indices);
 
-  /*! Set the facet color-index array.
+  /*! Set the facet color indices.
    */
   void set_facet_color_indices(const Facet_indices& indices);
 
-  /*! Set the facet texture coordinate-index array.
+  /*! Set the facet texture-coordinate indices.
    */
   void set_facet_tex_coord_indices(const Facet_indices& indices);
 
-   /*! Validate (clean) the facet coordinate-index array.
+   /*! Clean (validate) the facet coordinate indices.
    * In case of triangles or quads, remove the '-1' end-of-polygon indication
-   * from the index array. This operation changes the structure of the
-   * index array, and must be reflected in the drawing routines.
+   * from the indices. This operation changes the structure of the
+   * indices, and must be reflected in the drawing routines.
    */
   virtual void clean_facet_coord_indices();
 
-  /*! Validate (clean) the facet normal-index array.
+  /*! Clean (validate) the facet normal indices.
    * In case of triangles or quads, remove the '-1' end-of-polygon indication
-   * from the index array. This operation changes the structure of the
-   * index array, and must be reflected in the drawing routines.
+   * from the indices. This operation changes the structure of the
+   * indices, and must be reflected in the drawing routines.
    */
   virtual void clean_facet_normal_indices();
 
-  /*! Validate (clean) the facet color-index array.
+  /*! Clean (validate) the facet color indices.
    * In case of triangles or quads, remove the '-1' end-of-polygon indication
-   * from the index array. This operation changes the structure of the
-   * index array, and must be reflected in the drawing routines.
+   * from the indices. This operation changes the structure of the
+   * indices, and must be reflected in the drawing routines.
    */
   virtual void clean_facet_color_indices();
 
-  /*! Validate (clean) the facet texture coord-index array.
+  /*! Clean (validate) the facet texture-coordinate indices.
    * In case of triangles or quads, remove the '-1' end-of-polygon indication
-   * from the index array. This operation changes the structure of the
-   * index array, and must be reflected in the drawing routines.
+   * from the indices. This operation changes the structure of the
+   * indices, and must be reflected in the drawing routines.
    */
   virtual void clean_facet_tex_coord_indices();
 
-  /*! Invalidate (clear) the facet index arrays, i.e., coordinate-index array,
-   * normal-index array, color-index array, and texture coordinate index arrays.
+  /*! Clear (invalidate) the facet indicess, i.e., coordinate indices,
+   * normal indices, color indices, and texture-coordinate indicess.
    */
   void clear_facet_indices();
 
-  /*! Invalidate (clear) the facet cordinate-index array.
+  /*! Clear (invalidate) the facet cordinate indices.
    */
   void clear_facet_coord_indices();
 
-  /*! Invalidate (clear) the facet normal-index array.
+  /*! Clear (invalidate) the facet normal indices.
    */
   void clear_facet_normal_indices();
 
-  /*! Invalidate (clear) the facet color-index array.
+  /*! Clear (invalidate) the facet color indices.
    */
   void clear_facet_color_indices();
 
-  /*! Invalidate (clear) the facet texture cordinate-index array.
+  /*! Clear (invalidate) the facet texture-cordinate indices.
    */
   void clear_facet_tex_coord_indices();
 
-  /*! Determine whether the coordinate-index array has been invalidated
+  /*! Determine whether the coordinate indices has been invalidated
    * (is dirty) and thus must be cleaned.
    */
   Boolean is_dirty_facet_coord_indices() const;
 
-  /*! Determine whether the normal-index array has been invalidated (is dirty)
+  /*! Determine whether the normal indices has been invalidated (is dirty)
    * thus must be cleaned.
    */
   Boolean is_dirty_facet_normal_indices() const;
 
-  /*! Determine whether the color-index array has been invalidated (is dirty)
+  /*! Determine whether the color indices has been invalidated (is dirty)
    * and thus must be cleaned.
    */
   Boolean is_dirty_facet_color_indices() const;
 
-  /*! Determine whether the texture coordinate-index array has been
+  /*! Determine whether the texture-coordinate indices has been
    * invalidated (is dirty) and thus must be cleaned.
    */
   Boolean is_dirty_facet_tex_coord_indices() const;
 
-  /*! Initialize the facet cordinate-index array.
+  /*! Initialize the facet cordinate indices.
    */
   void init_facet_coord_indices();
 
-  /*! Initialize the facet normal-index array.
+  /*! Initialize the facet normal indices.
    */
   void init_facet_normal_indices();
 
-  /*! Initialize the facet color-index array.
+  /*! Initialize the facet color indices.
    */
   void init_facet_color_indices();
 
-  /*! Initialize the facet texture-cordinate-index array.
+  /*! Initialize the facet texture-cordinate indices.
    */
   void init_facet_tex_coord_indices();
 
@@ -670,21 +670,21 @@ public:
   /*! Obtain a past-the-end iterator of a facet indices structure. */
   Facet_indices_const_iterator end_facet_indices(const Facet_indices& indices);
 
-  /*! Clean an index array from a facet indices structure. */
+  /*! Clean an indices from a facet indices structure. */
   void clean_indices(std::vector<Int32>& indices,
                      const Facet_indices& source);
 
-  /*! Assign the facet coord indices with the reverse of given indices.
+  /*! Assign the facet coordinate indices with the reverse of given indices.
    * \param[in] indices the input indices to reverse.
    */
   void reverse_facet_coord_indices(const Facet_indices& indices);
 
-  /*! Reverse the facet coord indices.
+  /*! Reverse the facet coordinate indices.
    */
   void reverse_facet_coord_indices();
   //@}
 
-  /*! Assign the coord indices with the reverse of given indices.
+  /*! Assign the coordinate indices with the reverse of given indices.
    * \param[i] indices the indices to reverse.
    */
   void reverse_coord_indices(const std::vector<Int32>& indices);
@@ -703,58 +703,76 @@ public:
 
   /// \name Obtain empty index vectors
   //@{
-  /*! Obtain the triangle coord indices. */
-  Triangle_indices& empty_triangle_coord_indices();
+  /*! Obtain the empty facet coordinate indices. */
+  Facet_indices& get_empty_facet_coord_indices();
 
-  /*! Obtain the quad coord indices. */
-  Quad_indices& empty_quad_coord_indices();
+  /*! Obtain the empty facet normal indices. */
+  Facet_indices& get_empty_facet_normal_indices();
 
-  /*! Obtain the polygon coord indices. */
-  Polygon_indices& empty_polygon_coord_indices();
+  /*! Obtain the empty facet color indices. */
+  Facet_indices& get_empty_facet_color_indices();
 
-  /*! Obtain the triangle normal indices. */
-  Triangle_indices& empty_triangle_normal_indices();
+  /*! Obtain the empty facet texture-coordinate indices. */
+  Facet_indices& get_empty_facet_tex_coord_indices();
 
-  /*! Obtain the quad normal indices. */
-  Quad_indices& empty_quad_normal_indices();
+  /*! Obtain the empty triangle coordinate indices. */
+  Triangle_indices& get_empty_triangle_coord_indices();
 
-  /*! Obtain the polygon normal indices. */
-  Polygon_indices& empty_polygon_normal_indices();
+  /*! Obtain the empty quad coordinate indices. */
+  Quad_indices& get_empty_quad_coord_indices();
 
-  /*! Obtain the flat normal indices. */
-  Flat_indices& empty_flat_normal_indices();
+  /*! Obtain the empty polygon coordinate indices. */
+  Polygon_indices& get_empty_polygon_coord_indices();
 
-  /*! Obtain the triangle color indices. */
-  Triangle_indices& empty_triangle_color_indices();
+  /*! Obtain the empty flat coordinate indices. */
+  Flat_indices& get_empty_flat_coord_indices();
 
-  /*! Obtain the quad color indices. */
-  Quad_indices& empty_quad_color_indices();
+  /*! Obtain the empty triangle normal indices. */
+  Triangle_indices& get_empty_triangle_normal_indices();
 
-  /*! Obtain the polygon color indices. */
-  Polygon_indices& empty_polygon_color_indices();
+  /*! Obtain the empty quad normal indices. */
+  Quad_indices& get_empty_quad_normal_indices();
 
-  /*! Obtain the flat color indices. */
-  Flat_indices& empty_flat_color_indices();
+  /*! Obtain the empty polygon normal indices. */
+  Polygon_indices& get_empty_polygon_normal_indices();
 
-  /*! Obtain the triangle tex-coord indices. */
-  Triangle_indices& empty_triangle_tex_coord_indices();
+  /*! Obtain the empty flat normal indices. */
+  Flat_indices& get_empty_flat_normal_indices();
 
-  /*! Obtain the quad tex-coord indices. */
-  Quad_indices& empty_quad_tex_coord_indices();
+  /*! Obtain the empty triangle color indices. */
+  Triangle_indices& get_empty_triangle_color_indices();
 
-  /*! Obtain the polygon tex-coord indices. */
-  Polygon_indices& empty_polygon_tex_coord_indices();
+  /*! Obtain the empty quad color indices. */
+  Quad_indices& get_empty_quad_color_indices();
+
+  /*! Obtain the empty polygon color indices. */
+  Polygon_indices& get_empty_polygon_color_indices();
+
+  /*! Obtain the empty flat color indices. */
+  Flat_indices& get_empty_flat_color_indices();
+
+  /*! Obtain the empty triangle texture-coordinate indices. */
+  Triangle_indices& get_empty_triangle_tex_coord_indices();
+
+  /*! Obtain the empty quad texture-coordinate indices. */
+  Quad_indices& get_empty_quad_tex_coord_indices();
+
+  /*! Obtain the empty polygon texture-coordinate indices. */
+  Polygon_indices& get_empty_polygon_tex_coord_indices();
+
+  /*! Obtain the empty flat texture-coordinate indices. */
+  Flat_indices& get_empty_flat_tex_coord_indices();
   //@}
 
   /// \name Obtain const index vectors
   //@{
-  /*! Obtain the triangle coord indices. */
+  /*! Obtain the triangle coordinate indices. */
   const Triangle_indices& triangle_coord_indices() const;
 
-  /*! Obtain the quad coord indices. */
+  /*! Obtain the quad coordinate indices. */
   const Quad_indices& quad_coord_indices() const;
 
-  /*! Obtain the polygon coord indices. */
+  /*! Obtain the polygon coordinate indices. */
   const Polygon_indices& polygon_coord_indices() const;
 
   /*! Obtain the triangle normal indices. */
@@ -781,13 +799,13 @@ public:
   /*! Obtain the flat color indices. */
   const Flat_indices& flat_color_indices() const;
 
-  /*! Obtain the triangle tex-coord indices. */
+  /*! Obtain the triangle texture-coordinate indices. */
   const Triangle_indices& triangle_tex_coord_indices() const;
 
-  /*! Obtain the quad tex-coord indices. */
+  /*! Obtain the quad texture-coordinate indices. */
   const Quad_indices& quad_tex_coord_indices() const;
 
-  /*! Obtain the polygon tex-coord indices. */
+  /*! Obtain the polygon texture-coordinate indices. */
   const Polygon_indices& polygon_tex_coord_indices() const;
   //@}
 
@@ -811,42 +829,42 @@ protected:
   /*! The polygon offset factor. */
   Float m_polygon_offset_factor;
 
-  /*! An array of indices into the vertex-coordinate array. */
+  /*! An array of indices into the coordinate array. */
   Facet_indices m_facet_coord_indices;
 
-  /*! An array of indices into the vertex-texture-coordinate array. */
+  /*! An array of indices into the texture-coordinate array. */
   Facet_indices m_facet_normal_indices;
 
-  /*! An array of indices into the vertex-color array. */
+  /*! An array of indices into the color array. */
   Facet_indices m_facet_color_indices;
 
-  /*! An array of indices into the vertex-normal array. */
+  /*! An array of indices into the normal array. */
   Facet_indices m_facet_tex_coord_indices;
 
-  /*! Indicates whether the facet coordinate-index array should be cleaned. */
+  /*! Indicates whether the facet coordinate indices should be cleaned. */
   Boolean m_dirty_facet_coord_indices;
 
-  /*! Indicates whether the facet normal-index array should be cleaned. */
+  /*! Indicates whether the facet normal indices should be cleaned. */
   Boolean m_dirty_facet_normal_indices;
 
-  /*! Indicates whether the facet color-index array should be cleaned. */
+  /*! Indicates whether the facet color indices should be cleaned. */
   Boolean m_dirty_facet_color_indices;
 
-  /*! Indicates whether the facet texture coordinate-index array should be
+  /*! Indicates whether the facet texture-coordinate indices should be
    * cleaned.
    */
   Boolean m_dirty_facet_tex_coord_indices;
 
-  /*! Indicates whether the coordinate-index array should be cleaned. */
+  /*! Indicates whether the coordinate indices should be cleaned. */
   Boolean m_dirty_coord_indices;
 
-  /*! Indicates whether the normal-index array should be cleaned. */
+  /*! Indicates whether the normal indices should be cleaned. */
   Boolean m_dirty_normal_indices;
 
-  /*! Indicates whether the color-index array should be cleaned. */
+  /*! Indicates whether the color indices should be cleaned. */
   Boolean m_dirty_color_indices;
 
-  /*! Indicates whether the texture coordinate-index array should be cleaned. */
+  /*! Indicates whether the texture-coordinate indices should be cleaned. */
   Boolean m_dirty_tex_coord_indices;
 
   /*! Colapse identical coordinates.
@@ -918,19 +936,19 @@ inline void Mesh_set::set_crease_angle(Float crease_angle)
 //! \brief obtains the creas_angle.
 inline Float Mesh_set::get_crease_angle() const { return m_crease_angle; }
 
-//! \brief determines whether the facet coordinate-index array is dirty.
+//! \brief determines whether the facet coordinate indices is dirty.
 inline Boolean Mesh_set::is_dirty_facet_coord_indices() const
 { return m_dirty_facet_coord_indices; }
 
-//! \brief determines whether the facet normal-index array is dirty.
+//! \brief determines whether the facet normal indices is dirty.
 inline Boolean Mesh_set::is_dirty_facet_normal_indices() const
 { return m_dirty_facet_normal_indices; }
 
-//! \brief determines whether the facet color-index array is dirty.
+//! \brief determines whether the facet color indices is dirty.
 inline Boolean Mesh_set::is_dirty_facet_color_indices() const
 { return m_dirty_facet_color_indices; }
 
-//! \brief determines whether the facet texture coordinate-index array is dirty.
+//! \brief determines whether the facet texture-coordinate indices is dirty.
 inline Boolean Mesh_set::is_dirty_facet_tex_coord_indices() const
 { return m_dirty_facet_tex_coord_indices; }
 
@@ -959,7 +977,7 @@ void Mesh_set::set_coord_indices_from_range(InputIterator begin,
 
   if (is_tris) {
     set_primitive_type(Geo_set::PT_TRIANGLES);
-    auto& tris = empty_triangle_coord_indices();
+    auto& tris = get_empty_triangle_coord_indices();
     tris.resize(num);
     Index_type j(0);
     for (size_t i = 0; i < num; ++i) {
@@ -970,7 +988,7 @@ void Mesh_set::set_coord_indices_from_range(InputIterator begin,
   }
   else if (is_quads) {
     set_primitive_type(Geo_set::PT_TRIANGLES);
-    auto& quads = empty_quad_coord_indices();
+    auto& quads = get_empty_quad_coord_indices();
     quads.resize(num);
     Index_type j(0);
     for (size_t i = 0; i < num; ++i) {
@@ -982,7 +1000,7 @@ void Mesh_set::set_coord_indices_from_range(InputIterator begin,
   }
   else {
     set_primitive_type(Geo_set::PT_POLYGONS);
-    auto& polys = empty_polygon_coord_indices();
+    auto& polys = get_empty_polygon_coord_indices();
     polys.resize(num);
     Index_type k(0);
     auto it = begin;
@@ -995,31 +1013,31 @@ void Mesh_set::set_coord_indices_from_range(InputIterator begin,
   m_dirty_coord_indices = true;
 }
 
-//! \brief determines whether the coordinate-index array is dirty.
+//! \brief determines whether the coordinate indices is dirty.
 inline Boolean Mesh_set::is_dirty_coord_indices() const
 { return m_dirty_coord_indices; }
 
-//! \brief determines whether the normal-index array is dirty.
+//! \brief determines whether the normal indices is dirty.
 inline Boolean Mesh_set::is_dirty_normal_indices() const
 { return m_dirty_normal_indices; }
 
-//! \brief determines whether the color-index array is dirty.
+//! \brief determines whether the color indices is dirty.
 inline Boolean Mesh_set::is_dirty_color_indices() const
 { return m_dirty_color_indices; }
 
-//! \brief determines whether the texture coordinate-index array is dirty.
+//! \brief determines whether the texture-coordinate indices is dirty.
 inline Boolean Mesh_set::is_dirty_tex_coord_indices() const
 { return m_dirty_tex_coord_indices; }
 
-//! \brief obtains the triangle coord indices.
+//! \brief obtains the triangle coordinate indices.
 inline const Triangle_indices& Mesh_set::triangle_coord_indices() const
 { return boost::get<Triangle_indices>(m_facet_coord_indices); }
 
-//! \brief obtains the quad coord indices.
+//! \brief obtains the quad coordinate indices.
 inline const Quad_indices& Mesh_set::quad_coord_indices() const
 { return boost::get<Quad_indices>(m_facet_coord_indices); }
 
-//! \brief obtains the polygon coord indices.
+//! \brief obtains the polygon coordinate indices.
 inline const Polygon_indices& Mesh_set::polygon_coord_indices() const
 { return boost::get<Polygon_indices>(m_facet_coord_indices); }
 
@@ -1055,15 +1073,15 @@ inline const Polygon_indices& Mesh_set::polygon_color_indices() const
 inline const Flat_indices& Mesh_set::flat_color_indices() const
 { return boost::get<Flat_indices>(m_facet_color_indices); }
 
-//! \brief obtains the triangle tex-coord indices.
+//! \brief obtains the triangle texture-coordinate indices.
 inline const Triangle_indices& Mesh_set::triangle_tex_coord_indices() const
 { return boost::get<Triangle_indices>(m_facet_tex_coord_indices); }
 
-//! \brief obtains the quad tex-coord indices.
+//! \brief obtains the quad texture-coordinate indices.
 inline const Quad_indices& Mesh_set::quad_tex_coord_indices() const
 { return boost::get<Quad_indices>(m_facet_tex_coord_indices); }
 
-//! \brief obtains the polygon tex-coord indices.
+//! \brief obtains the polygon texture-coordinate indices.
 inline const Polygon_indices& Mesh_set::polygon_tex_coord_indices() const
 { return boost::get<Polygon_indices>(m_facet_tex_coord_indices); }
 
