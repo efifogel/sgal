@@ -35,9 +35,9 @@
 #include "SGAL/Types.hpp"
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Epec_kernel.hpp"
+#include "SGAL/Epec_polyhedron.hpp"
 
 #include "SCGAL/basic.hpp"
-#include "SCGAL/Exact_polyhedron_geo.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -46,6 +46,7 @@ class Isect_action;
 class Container_proto;
 class Element;
 class Formatter;
+class Indexed_face_set;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -73,8 +74,7 @@ public:
 
   typedef CGAL::Polyhedron_corefinement<Epec_polyhedron, Epec_kernel> Bso;
 
-  typedef boost::shared_ptr<Exact_polyhedron_geo>   Shared_exact_polyhedron_geo;
-  typedef boost::shared_ptr<Mesh_set>               Shared_mesh_set;
+  typedef boost::shared_ptr<Indexed_face_set>       Shared_indexed_face_set;
 
   /*! Construct. */
   Boolean_operation(Boolean proto = false);
@@ -101,9 +101,11 @@ public:
   //@{
   Boolean* trigger_handle(const Field_info*) { return &m_trigger; }
   Operation* operation_handle(const Field_info*) { return &m_operation; }
-  Shared_mesh_set* operand1_handle(const Field_info*) { return &m_operand1; }
-  Shared_mesh_set* operand2_handle(const Field_info*) { return &m_operand2; }
-  std::vector<Shared_exact_polyhedron_geo>* result_handle(const Field_info*)
+  Shared_indexed_face_set* operand1_handle(const Field_info*)
+  { return &m_operand1; }
+  Shared_indexed_face_set* operand2_handle(const Field_info*)
+  { return &m_operand2; }
+  std::vector<Shared_indexed_face_set>* result_handle(const Field_info*)
   { return &m_result; }
   //@}
 
@@ -140,50 +142,45 @@ public:
   /*! Set the 1st operand.
    * \param[in] operand the operand.
    */
-  void set_operand1(Shared_mesh_set operand);
+  void set_operand1(Shared_indexed_face_set operand);
 
   /*! Obtain the 1st operand.
    * \return the operand.
    */
-  Shared_mesh_set get_operand1() const;
+  Shared_indexed_face_set get_operand1() const;
 
   /*! Set the 2nd operand.
    * \param[in] operand the operand.
    */
-  void set_operand2(Shared_mesh_set operand);
+  void set_operand2(Shared_indexed_face_set operand);
 
   /*! Obtain the 2nd operand.
    * \return the operand.
    */
-  Shared_mesh_set get_operand2() const;
+  Shared_indexed_face_set get_operand2() const;
 
   /*! Set the resulting geometry.
    * \param[in] result the resulting geomery.
    */
-  void set_result(const std::vector<Shared_exact_polyhedron_geo>& result);
+  void set_result(const std::vector<Shared_indexed_face_set>& result);
 
   /*! Obtain the resulting geometry.
    * \param[in] result the resulting geomery.
    */
-  const std::vector<Shared_exact_polyhedron_geo>& get_result() const;
+  const std::vector<Shared_indexed_face_set>& get_result() const;
 
 protected:
   /*! 1st operand. */
-  Shared_mesh_set m_operand1;
+  Shared_indexed_face_set m_operand1;
 
   /*! 2nd operand. */
-  Shared_mesh_set m_operand2;
+  Shared_indexed_face_set m_operand2;
 
   /*! Result. */
-  std::vector<Shared_exact_polyhedron_geo> m_result;
+  std::vector<Shared_indexed_face_set> m_result;
 
   /*! The operation. */
   Operation m_operation;
-
-  /*! \todo elliminate. Introduce a proper constructor in Exact_polhedron_geo.
-   * Obtain an exact polyhedron geometry from an operand geometry container.
-   */
-  Shared_exact_polyhedron_geo get_geometry(Shared_mesh_set operand) const;
 
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -228,30 +225,30 @@ inline void Boolean_operation::set_operation(Operation operation)
 { m_operation = operation; }
 
 //! \brief obtains the 1st operand.
-inline Boolean_operation::Shared_mesh_set Boolean_operation::get_operand1()
-  const
+inline Boolean_operation::Shared_indexed_face_set
+Boolean_operation::get_operand1() const
 { return m_operand1; }
 
 //! \brief sets the 1st operand.
-inline void Boolean_operation::set_operand1(Shared_mesh_set operand)
+inline void Boolean_operation::set_operand1(Shared_indexed_face_set operand)
 { m_operand1 = operand; }
 
 //! \brief obtains the 2nd operand.
-inline Boolean_operation::Shared_mesh_set Boolean_operation::get_operand2()
-  const
+inline Boolean_operation::Shared_indexed_face_set
+Boolean_operation::get_operand2() const
 { return m_operand2; }
 
 //! \brief sets the 2nd operand.
-inline void Boolean_operation::set_operand2(Shared_mesh_set operand)
+inline void Boolean_operation::set_operand2(Shared_indexed_face_set operand)
 { m_operand2 = operand; }
 
 //! \brief sets the resulting geometry.
 inline void Boolean_operation::
-set_result(const std::vector<Shared_exact_polyhedron_geo>& result)
+set_result(const std::vector<Shared_indexed_face_set>& result)
 { m_result = result; }
 
 //! \brief obtains the resulting geometry.
-inline const std::vector<Boolean_operation::Shared_exact_polyhedron_geo>&
+inline const std::vector<Boolean_operation::Shared_indexed_face_set>&
 Boolean_operation::get_result() const
 { return m_result; }
 

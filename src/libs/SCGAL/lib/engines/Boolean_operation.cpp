@@ -29,7 +29,6 @@
 #include <vector>
 #include <string>
 #include <boost/lexical_cast.hpp>
-#include <boost/foreach.hpp>
 
 #if 0
 #include <CGAL/Nef_polyhedron_3.h>
@@ -47,6 +46,7 @@
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Vrml_formatter.hpp"
+#include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Epec_polyhedron.hpp"
 
 #include "SCGAL/basic.hpp"
@@ -96,36 +96,18 @@ Boolean_operation::~Boolean_operation() {}
 void Boolean_operation::trigger_changed(const Field_info* /* field_info */)
 { execute(); }
 
-//! \brief obtains an exact polyhedron from an operand geometry container.
-//! \todo create a new constructor of Exact_polyhedron_geo from any mesh.
-Boolean_operation::Shared_exact_polyhedron_geo
-Boolean_operation::get_geometry(Shared_mesh_set operand) const
-{
-  Shared_exact_polyhedron_geo geometry =
-    boost::dynamic_pointer_cast<Exact_polyhedron_geo>(operand);
-  if (geometry) return geometry;
-  geometry.reset(new Exact_polyhedron_geo);
-  geometry->set_coord_array(operand->get_coord_array());
-  auto& indices = operand->get_facet_coord_indices();
-  /* Observe that the call to get_flat_coord_indices() may trigger the
-   * "cleaning" of the coord indices. Thus, the following query must succeed
-   * the previous statement.
-   */
-  geometry->set_facet_coord_indices(indices);
-  geometry->set_num_primitives(operand->get_num_primitives());
-  geometry->set_primitive_type(operand->get_primitive_type());
-  return geometry;
-}
-
 //! \brief executes the engine.
 void Boolean_operation::execute()
 {
   if (!m_operand1 || !m_operand2) return;
 
-  Shared_exact_polyhedron_geo geometry1 = get_geometry(m_operand1);
-  const Epec_polyhedron& polyhedron1 = geometry1->get_polyhedron();
-  Shared_exact_polyhedron_geo geometry2 = get_geometry(m_operand2);
-  const Epec_polyhedron& polyhedron2 = geometry2->get_polyhedron();
+  m_operand1->set_polyhedron_type(Indexed_face_set::POLYHEDRON_EPEC);
+  const auto& p_var1 = m_operand1->get_polyhedron();
+  const Epec_polyhedron& polyhedron1 = boost::get<Epec_polyhedron>(p_var1);
+
+  m_operand2->set_polyhedron_type(Indexed_face_set::POLYHEDRON_EPEC);
+  const auto& p_var2 = m_operand2->get_polyhedron();
+  const Epec_polyhedron& polyhedron2 = boost::get<Epec_polyhedron>(p_var2);
 
   m_result.clear();
 
@@ -147,8 +129,21 @@ void Boolean_operation::execute()
 
   Epec_polyhedron p;
   nef_polyhedron.convert_to_polyhedron(p);
-  auto geometry = Shared_exact_polyhedron_geo(new Exact_polyhedron_geo);
-  geometry->set_polyhedron(p);
+  auto geometry = Shared_indexed_face_set(new Indexed_face_set);
+
+  geometry->set_polyhedron_type(Indexed_face_set::POLYHEDRON_EPEC);
+  const auto& polyhedron_var = geometry->get_polyhedron();
+  const auto& p_const = boost::get<Epec_polyhedron>(polyhedron_var)
+  auto& polyhedron = const_cast<Indexed_face_set::Polyhedron&>(p_const);
+  polyhedron = p;
+  geometry->clear_volume();
+  geometry->clear_surface_area();
+  geometry->clear_polyhedron_facet_normals();
+  geometry->clear_normal_attributes();
+  geometry->clear_coord_array();
+  geometry->clear_coord_indices();
+  geometry->clear_facet_coord_indices();
+
   m_result.push_back(geometry);
 
 #else
@@ -172,14 +167,12 @@ void Boolean_operation::execute()
   // }
   m_result.resize(polyhedrons.size());
   auto it = m_result.begin();
-#if (_MSC_VER <= 1600)
-  BOOST_FOREACH(auto& pp, polyhedrons)
-#else
-  for (auto& pp : polyhedrons)
-#endif
-  {
-    auto geometry = Shared_exact_polyhedron_geo(new Exact_polyhedron_geo);
-    geometry->set_polyhedron(*(pp.first));
+  for (auto& pp : polyhedrons) {
+    auto geometry = Shared_indexed_face_set(new Indexed_face_set);
+
+    geometry->set_polyhedron_type(Indexed_face_set::POLYHEDRON_EPEC);
+    auto& polyhedron = geometry->get_empty_epec_polyhedron();
+    polyhedron = *pp.first;
     *it++ = geometry;
   }
   for (auto plit = polylines.begin(); plit != polylines.begin(); ++plit)
@@ -222,14 +215,14 @@ void Boolean_operation::set_attributes(Element* elem)
     auto cont = elem->get_value(cai);
 
     if (name == "operand1") {
-      auto mesh = boost::dynamic_pointer_cast<Mesh_set>(cont);
+      auto mesh = boost::dynamic_pointer_cast<Indexed_face_set>(cont);
       set_operand1(mesh);
       elem->mark_delete(cai);
       continue;
     }
 
     if (name == "operand2") {
-      auto mesh = boost::dynamic_pointer_cast<Mesh_set>(cont);
+      auto mesh = boost::dynamic_pointer_cast<Indexed_face_set>(cont);
       set_operand2(mesh);
       elem->mark_delete(cai);
       continue;
