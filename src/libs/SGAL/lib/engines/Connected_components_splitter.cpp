@@ -165,10 +165,7 @@ void Connected_components_splitter::execute()
       m_components[i].reset(new Indexed_face_set);
       m_components[i]->set_coord_array(operand->get_coord_array());
       m_components[i]->set_primitive_type(type);
-      m_components[i]->init_facet_coord_indices();
-
-      const auto& const_indices = m_components[i]->get_facet_coord_indices();
-      auto& indices = const_cast<Mesh_set::Facet_indices&>(const_indices);
+      auto& indices = m_components[i]->get_empty_facet_coord_indices();
       Connected_components_splitter_visitor visitor(i);
       auto num = boost::apply_visitor(visitor, polyhedron, indices);
       m_components[i]->set_num_primitives(num);
