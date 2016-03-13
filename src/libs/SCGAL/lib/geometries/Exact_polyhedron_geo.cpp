@@ -299,7 +299,7 @@ void Exact_polyhedron_geo::clean_coord_indices()
   Uint index = 0;
   if (triangles) {
     set_primitive_type(PT_TRIANGLES);
-    auto& coord_indices = empty_triangle_coord_indices();
+    auto& coord_indices = get_empty_triangle_coord_indices();
     coord_indices.resize(get_num_primitives());
     size_t i(0);
     for (auto fit = m_polyhedron.facets_begin();
@@ -315,7 +315,7 @@ void Exact_polyhedron_geo::clean_coord_indices()
   }
   else if (quads) {
     set_primitive_type(PT_QUADS);
-    auto& coord_indices = empty_quad_coord_indices();
+    auto& coord_indices = get_empty_quad_coord_indices();
     coord_indices.resize(get_num_primitives());
     size_t i(0);
     for (auto fit = m_polyhedron.facets_begin();
@@ -331,7 +331,7 @@ void Exact_polyhedron_geo::clean_coord_indices()
   }
   else {
     set_primitive_type(PT_POLYGONS);
-    auto& coord_indices = empty_polygon_coord_indices();
+    auto& coord_indices = get_empty_polygon_coord_indices();
     coord_indices.resize(get_num_primitives());
     size_t i(0);
     for (auto fit = m_polyhedron.facets_begin();
