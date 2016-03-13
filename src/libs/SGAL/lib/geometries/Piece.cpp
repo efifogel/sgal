@@ -213,7 +213,7 @@ void Piece::clean_facet_coord_indices()
 
   set_primitive_type(PT_QUADS);
 
-  auto& coord_indices = empty_quad_coord_indices();
+  auto& coord_indices = get_empty_quad_coord_indices();
   coord_indices.resize(m_num_primitives);
   Uint width = m_width + 1;
   Uint height = m_height + 1;
