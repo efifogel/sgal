@@ -345,14 +345,33 @@ void Indexed_face_set::init_polyhedron()
   }
 }
 
-//! \brief cleans the polyhedron data structure.
-void Indexed_face_set::clean_polyhedron()
+//! \brief responds to a change in the polyhedron.
+void Indexed_face_set::polyhedron_changed()
 {
   m_dirty_polyhedron = false;
   m_dirty_volume = true;
   m_dirty_surface_area = true;
-  m_dirty_polyhedron_facet_normals = true;
-  m_dirty_normal_attributes = true;
+
+  // Assume that the incoming polyhedron
+  //   (i) the facets normal of which are cleaned,
+  //  (ii) has no singular vertices,
+  // (iii) is consistent, and
+  // ((iv) repaired.
+  m_dirty_polyhedron_facet_normals = false;
+  m_dirty_repaired_polyhedron = false;
+  m_consistent = true;
+  m_has_singular_vertices = false;
+  m_repaired = true;
+
+  clear_coord_array();
+  clear_coord_indices();
+  clear_facet_coord_indices();
+}
+
+//! \brief cleans the polyhedron data structure.
+void Indexed_face_set::clean_polyhedron()
+{
+  m_dirty_polyhedron = false;
 
   // Clean the coordinates and the coordinate indices (without repairing).
   if (is_dirty_coord_array() ||
@@ -362,20 +381,35 @@ void Indexed_face_set::clean_polyhedron()
 
   // If there are no coordinates bail out.
   if (!m_coord_array || m_coord_array->empty()) {
+    m_dirty_polyhedron_facet_normals = false;
+    m_dirty_volume = true;
+    m_dirty_surface_area = true;
     m_consistent = true;
     m_has_singular_vertices = false;
+    m_repaired = true;
+    return;
   }
 
   auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
   if (!coords) {
+    m_dirty_polyhedron_facet_normals = false;
+    m_dirty_volume = true;
+    m_dirty_surface_area = true;
     m_consistent = true;
     m_has_singular_vertices = false;
+    m_repaired = true;
+    return;
   }
 
   // If there are no coordinate indices bail out.
   if (empty_facet_indices(m_facet_coord_indices)) {
+    m_dirty_polyhedron_facet_normals = false;
+    m_dirty_volume = true;
+    m_dirty_surface_area = true;
     m_consistent = true;
     m_has_singular_vertices = false;
+    m_repaired = true;
+    return;
   }
 
   if (!m_consistent) {
@@ -407,6 +441,10 @@ void Indexed_face_set::clean_polyhedron()
     clear_coord_indices();
     clear_facet_coord_indices();
   }
+
+  m_dirty_polyhedron_facet_normals = true;
+  m_dirty_volume = true;
+  m_dirty_surface_area = true;
 }
 
 //! \brief clears the polyhedron.
@@ -415,7 +453,6 @@ void Indexed_face_set::clear_polyhedron()
   m_dirty_polyhedron = true;
   m_dirty_repaired_polyhedron = true;
   m_dirty_polyhedron_facet_normals = true;
-  m_dirty_normal_attributes = true;
   m_dirty_volume = true;
   m_dirty_surface_area = true;
   m_consistent = false;
@@ -428,21 +465,7 @@ void Indexed_face_set::clear_polyhedron()
 void Indexed_face_set::set_polyhedron(Polyhedron& polyhedron)
 {
   m_polyhedron = polyhedron;
-  m_dirty_polyhedron = false;
-  m_dirty_polyhedron_facet_normals = false;
-  m_dirty_normal_attributes = false;
-  m_dirty_volume = true;
-  m_dirty_surface_area = true;
-  clear_coord_array();
-  clear_coord_indices();
-  clear_facet_coord_indices();
-
-  // Assume that the incoming polyhedron has no singular vertices, is
-  // consistent, and repaired.
-  m_dirty_repaired_polyhedron = false;
-  m_consistent = true;
-  m_has_singular_vertices = false;
-  m_repaired = true;
+  polyhedron_changed();
 }
 
 //! \brief obtains the polyhedron data-structure.
@@ -720,5 +743,37 @@ void Indexed_face_set::facet_color_indices_changed()
 //! \brief responds to a change in the facet texture-coordinate index array.
 void Indexed_face_set::facet_tex_coord_indices_changed()
 { Boundary_set::facet_tex_coord_indices_changed(); }
+
+//! \brief obtains the empty polyhedron.
+Indexed_face_set::Polyhedron& Indexed_face_set::get_empty_polyhedron()
+{
+  init_polyhedron();
+  polyhedron_changed();
+  return m_polyhedron;
+}
+
+//! \brief obtains the empty inexact polyhedron.
+Inexact_polyhedron& Indexed_face_set::get_empty_inexact_polyhedron()
+{
+  m_polyhedron = Inexact_polyhedron();
+  polyhedron_changed();
+  return boost::get<Inexact_polyhedron>(m_polyhedron);
+}
+
+//! \brief obtains the empty epic  polyhedron.
+Epic_polyhedron& Indexed_face_set::get_empty_epic_polyhedron()
+{
+  m_polyhedron = Epic_polyhedron();
+  polyhedron_changed();
+  return boost::get<Epic_polyhedron>(m_polyhedron);
+}
+
+//! \brief obtains the empty epec  polyhedron.
+Epec_polyhedron& Indexed_face_set::get_empty_epec_polyhedron()
+{
+  m_polyhedron = Epec_polyhedron();
+  polyhedron_changed();
+  return boost::get<Epec_polyhedron>(m_polyhedron);
+}
 
 SGAL_END_NAMESPACE

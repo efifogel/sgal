@@ -309,6 +309,10 @@ public:
   virtual void coord_content_changed(const Field_info* field_info);
   //@}
 
+  /*! Respond to a change in the polyhedron.
+   */
+  virtual void polyhedron_changed();
+
   /*! Calculate multiple normals per vertex for all vertices.
    * If the angle between the geometric normals of two adjacent faces is less
    * than the crease angle, calculate the normals so that the facets are
@@ -370,6 +374,21 @@ public:
     * \return true if the the mesh has singular vertices and false otherwise.
    */
   Boolean has_singular_vertices();
+
+  /// \name Obtain empty polyhedrons
+  //@{
+  /*! Obtain the empty polyhedron. */
+  Polyhedron& get_empty_polyhedron();
+
+  /*! Obtain the empty inexact polyhedron. */
+  Inexact_polyhedron& get_empty_inexact_polyhedron();
+
+  /*! Obtain the empty epic  polyhedron. */
+  Epic_polyhedron& get_empty_epic_polyhedron();
+
+  /*! Obtain the empty epec  polyhedron. */
+  Epec_polyhedron& get_empty_epec_polyhedron();
+  //@}
 
 protected:
   /*! The volume of the polyhedron. */
