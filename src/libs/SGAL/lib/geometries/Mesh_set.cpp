@@ -231,35 +231,35 @@ void Mesh_set::draw_mesh(Draw_action* action)
   if (has_scale()) glDisable(GL_NORMALIZE);
 }
 
-//! \brief obtains the (const) coordinate-index array.
+//! \brief obtains the (const) coordinate indices.
 std::vector<Int32>& Mesh_set::get_coord_indices()
 {
   if (is_dirty_coord_indices()) clean_coord_indices();
   return m_coord_indices;
 }
 
-//! \brief obtains the (const) normal-index array.
+//! \brief obtains the (const) normal indices.
 std::vector<Int32>& Mesh_set::get_normal_indices()
 {
   if (is_dirty_normal_indices()) clean_normal_indices();
   return m_normal_indices;
 }
 
-//! \brief obtains the (const) color-index array.
+//! \brief obtains the (const) color indices.
 std::vector<Int32>& Mesh_set::get_color_indices()
 {
   if (is_dirty_color_indices()) clean_color_indices();
   return m_color_indices;
 }
 
-//! \brief obtains the (const) texture-coordinate-index array.
+//! \brief obtains the (const) texture-coordinate indices.
 std::vector<Int32>& Mesh_set::get_tex_coord_indices()
 {
   if (is_dirty_tex_coord_indices()) clean_tex_coord_indices();
   return m_tex_coord_indices;
 }
 
-//! \brief responds to a change in the coordinate-index array.
+//! \brief responds to a change in the coordinate indices.
 void Mesh_set::coord_indices_changed(const Field_info* field_info)
 {
   m_dirty_facet_coord_indices = true;
@@ -267,7 +267,7 @@ void Mesh_set::coord_indices_changed(const Field_info* field_info)
   Geo_set::coord_indices_changed(field_info);
 }
 
-//! \brief responds to a change in the normal-index array.
+//! \brief responds to a change in the normal indices.
 void Mesh_set::normal_indices_changed(const Field_info* field_info)
 {
   m_dirty_facet_normal_indices = true;
@@ -275,7 +275,7 @@ void Mesh_set::normal_indices_changed(const Field_info* field_info)
   Geo_set::normal_indices_changed(field_info);
 }
 
-//! \brief responds to a change in the color-index array.
+//! \brief responds to a change in the color indices.
 void Mesh_set::color_indices_changed(const Field_info* field_info)
 {
   m_dirty_facet_color_indices = true;
@@ -291,7 +291,7 @@ void Mesh_set::tex_coord_indices_changed(const Field_info* field_info)
   Geo_set::tex_coord_indices_changed(field_info);
 }
 
-//! \brief responds to a change in the facet coordinate-index array.
+//! \brief responds to a change in the facet coordinate indices.
 void Mesh_set::facet_coord_indices_changed()
 {
   m_dirty_coord_indices = true;
@@ -299,7 +299,7 @@ void Mesh_set::facet_coord_indices_changed()
   Geo_set::coord_indices_changed();
 }
 
-//! \auto responds to a change in the facet normal-index array.
+//! \auto responds to a change in the facet normal indices.
 void Mesh_set::facet_normal_indices_changed()
 {
   m_dirty_normal_indices = true;
@@ -307,7 +307,7 @@ void Mesh_set::facet_normal_indices_changed()
   Geo_set::normal_indices_changed();
 }
 
-//! \brief responds to a change in the facet color-index array.
+//! \brief responds to a change in the facet color indices.
 void Mesh_set::facet_color_indices_changed()
 {
   m_dirty_color_indices = true;
@@ -336,133 +336,175 @@ void Mesh_set::clean_bounding_sphere()
   Geo_set::clean_bounding_sphere();
 }
 
+//! \brief obtains the empty facet coordinate indices.
+Facet_indices& Mesh_set::get_empty_facet_coord_indices()
+{
+  init_facet_coord_indices();
+  return m_facet_coord_indices;
+}
+
+//! \brief obtains the empty facet normal indices.
+Facet_indices& Mesh_set::get_empty_facet_normal_indices()
+{
+  init_facet_normal_indices();
+  return m_facet_coord_indices;
+}
+
+//! \brief obtains the empty facet color indices.
+Facet_indices& Mesh_set::get_empty_facet_color_indices()
+{
+  init_facet_color_indices();
+  return m_facet_coord_indices;
+}
+
+//! \brief obtains the empty facet texture-coordinate indices.
+Facet_indices& Mesh_set::get_empty_facet_tex_coord_indices()
+{
+  init_facet_tex_coord_indices();
+  return m_facet_coord_indices;
+}
+
 //! \brief obtains the triangle coord indices.
-Triangle_indices& Mesh_set::empty_triangle_coord_indices()
+Triangle_indices& Mesh_set::get_empty_triangle_coord_indices()
 {
   m_facet_coord_indices = Triangle_indices();
   return boost::get<Triangle_indices>(m_facet_coord_indices);
 }
 
 //! \brief obtains the quad coord indices.
-Quad_indices& Mesh_set::empty_quad_coord_indices()
+Quad_indices& Mesh_set::get_empty_quad_coord_indices()
 {
   m_facet_coord_indices = Quad_indices();
   return boost::get<Quad_indices>(m_facet_coord_indices);
 }
 
 //! \brief obtains the polygon coord indices.
-Polygon_indices& Mesh_set::empty_polygon_coord_indices()
+Polygon_indices& Mesh_set::get_empty_polygon_coord_indices()
 {
   m_facet_coord_indices = Polygon_indices();
   return boost::get<Polygon_indices>(m_facet_coord_indices);
 }
 
+//! \brief obtains the flat coord indices.
+Flat_indices& Mesh_set::get_empty_flat_coord_indices()
+{
+  m_facet_coord_indices = Flat_indices();
+  return boost::get<Flat_indices>(m_facet_coord_indices);
+}
+
 //! \brief obtains the triangle normal indices.
-Triangle_indices& Mesh_set::empty_triangle_normal_indices()
+Triangle_indices& Mesh_set::get_empty_triangle_normal_indices()
 {
   m_facet_normal_indices = Triangle_indices();
   return boost::get<Triangle_indices>(m_facet_normal_indices);
 }
 
 //! \brief obtains the quad normal indices.
-Quad_indices& Mesh_set::empty_quad_normal_indices()
+Quad_indices& Mesh_set::get_empty_quad_normal_indices()
 {
   m_facet_normal_indices = Quad_indices();
   return boost::get<Quad_indices>(m_facet_normal_indices);
 }
 
 //! \brief obtains the polygon normal indices.
-Polygon_indices& Mesh_set::empty_polygon_normal_indices()
+Polygon_indices& Mesh_set::get_empty_polygon_normal_indices()
 {
   m_facet_normal_indices = Polygon_indices();
   return boost::get<Polygon_indices>(m_facet_normal_indices);
 }
 
 //! \brief obtains the flat normal indices.
-Flat_indices& Mesh_set::empty_flat_normal_indices()
+Flat_indices& Mesh_set::get_empty_flat_normal_indices()
 {
   m_facet_normal_indices = Flat_indices();
   return boost::get<Flat_indices>(m_facet_normal_indices);
 }
 
 //! \brief obtains the triangle color indices.
-Triangle_indices& Mesh_set::empty_triangle_color_indices()
+Triangle_indices& Mesh_set::get_empty_triangle_color_indices()
 {
   m_facet_color_indices = Triangle_indices();
   return boost::get<Triangle_indices>(m_facet_color_indices);
 }
 
 //! \brief obtains the quad color indices.
-Quad_indices& Mesh_set::empty_quad_color_indices()
+Quad_indices& Mesh_set::get_empty_quad_color_indices()
 {
   m_facet_color_indices = Quad_indices();
   return boost::get<Quad_indices>(m_facet_color_indices);
 }
 
 //! \brief obtains the polygon color indices.
-Polygon_indices& Mesh_set::empty_polygon_color_indices()
+Polygon_indices& Mesh_set::get_empty_polygon_color_indices()
 {
   m_facet_color_indices = Polygon_indices();
   return boost::get<Polygon_indices>(m_facet_color_indices);
 }
 
 //! \brief obtains the flat color indices.
-Flat_indices& Mesh_set::empty_flat_color_indices()
+Flat_indices& Mesh_set::get_empty_flat_color_indices()
 {
   m_facet_color_indices = Flat_indices();
   return boost::get<Flat_indices>(m_facet_color_indices);
 }
 
 //! \brief obtains the triangle tex-coord indices.
-Triangle_indices& Mesh_set::empty_triangle_tex_coord_indices()
+Triangle_indices& Mesh_set::get_empty_triangle_tex_coord_indices()
 {
   m_facet_tex_coord_indices = Triangle_indices();
   return boost::get<Triangle_indices>(m_facet_tex_coord_indices);
 }
 
 //! \brief obtains the quad tex-coord indices.
-Quad_indices& Mesh_set::empty_quad_tex_coord_indices()
+Quad_indices& Mesh_set::get_empty_quad_tex_coord_indices()
 {
   m_facet_tex_coord_indices = Quad_indices();
   return boost::get<Quad_indices>(m_facet_tex_coord_indices);
 }
 
 //! \brief obtains the polygon tex-coord indices.
-Polygon_indices& Mesh_set::empty_polygon_tex_coord_indices()
+Polygon_indices& Mesh_set::get_empty_polygon_tex_coord_indices()
 {
   m_facet_tex_coord_indices = Polygon_indices();
   return boost::get<Polygon_indices>(m_facet_tex_coord_indices);
 }
 
-//! \brief obtains the facet coordinate-index array.
+//! \brief obtains the flat tex-coord indices.
+Flat_indices& Mesh_set::get_empty_flat_tex_coord_indices()
+{
+  m_facet_tex_coord_indices = Flat_indices();
+  return boost::get<Flat_indices>(m_facet_tex_coord_indices);
+}
+
+//! \brief obtains the facet coordinate indices.
 const Mesh_set::Facet_indices& Mesh_set::get_facet_coord_indices()
 {
   if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
   return m_facet_coord_indices;
 }
 
-//! \brief obtains the facet normal-index array.
+//! \brief obtains the facet normal indices.
 const Mesh_set::Facet_indices& Mesh_set::get_facet_normal_indices()
 {
   if (is_dirty_facet_normal_indices()) clean_facet_normal_indices();
   return m_facet_normal_indices;
 }
 
-//! \brief obtains the facet color-index array.
+//! \brief obtains the facet color indices.
 const Mesh_set::Facet_indices& Mesh_set::get_facet_color_indices()
 {
   if (is_dirty_facet_color_indices()) clean_facet_color_indices();
   return m_facet_color_indices;
 }
 
-//! \brief obtains the facet texture coordinate-index array.
+//! \brief obtains the facet texture coordinate indices.
 const Mesh_set::Facet_indices& Mesh_set::get_facet_tex_coord_indices()
 {
   if (is_dirty_facet_tex_coord_indices()) clean_facet_tex_coord_indices();
   return m_facet_tex_coord_indices;
 }
 
-//! \brief sets the facet coordinate-index array.
+//! \brief sets the facet coordinate indices.
 void Mesh_set::set_facet_coord_indices(const Facet_indices& indices)
 {
   m_facet_coord_indices = indices;
@@ -470,7 +512,7 @@ void Mesh_set::set_facet_coord_indices(const Facet_indices& indices)
   m_dirty_coord_indices = true;
 }
 
-//! \brief sets the facet normal-index array.
+//! \brief sets the facet normal indices.
 void Mesh_set::set_facet_normal_indices(const Facet_indices& indices)
 {
   m_facet_normal_indices = indices;
@@ -478,7 +520,7 @@ void Mesh_set::set_facet_normal_indices(const Facet_indices& indices)
   m_dirty_normal_indices = true;
 }
 
-//! \brief sets the facet color-index array.
+//! \brief sets the facet color indices.
 void Mesh_set::set_facet_color_indices(const Facet_indices& indices)
 {
   m_facet_color_indices = indices;
@@ -486,7 +528,7 @@ void Mesh_set::set_facet_color_indices(const Facet_indices& indices)
   m_dirty_color_indices = true;
 }
 
-//! \brief sets the facet texture coordinate-index array.
+//! \brief sets the facet texture coordinate indices.
 void Mesh_set::set_facet_tex_coord_indices(const Facet_indices& indices)
 {
   m_facet_tex_coord_indices = indices;
@@ -505,7 +547,7 @@ void Mesh_set::clean_facet_coord_indices()
   m_dirty_facet_coord_indices = false;
 }
 
-//! \brief cleans the facet normal-index array.
+//! \brief cleans the facet normal indices.
 void Mesh_set::clean_facet_normal_indices()
 {
   init_facet_normal_indices();
@@ -516,7 +558,7 @@ void Mesh_set::clean_facet_normal_indices()
   m_dirty_facet_normal_indices = false;
 }
 
-//! \brief cleans the color-index array.
+//! \brief cleans the color indices.
 void Mesh_set::clean_facet_color_indices()
 {
   init_facet_color_indices();
@@ -527,7 +569,7 @@ void Mesh_set::clean_facet_color_indices()
   m_dirty_facet_color_indices = false;
 }
 
-//! \brief cleans the texture-mapping coordinate-index array.
+//! \brief cleans the texture-coordinate indices.
 void Mesh_set::clean_facet_tex_coord_indices()
 {
   init_facet_tex_coord_indices();
@@ -547,35 +589,35 @@ void Mesh_set::clear_facet_indices()
   clear_facet_tex_coord_indices();
 }
 
-//! \brief clears the cordinate-index array.
+//! \brief clears the coordinate indices.
 void Mesh_set::clear_facet_coord_indices()
 {
   clear_facet_indices(m_facet_coord_indices);
-  m_dirty_facet_coord_indices = true;
+  facet_coord_indices_changed();
 }
 
-//! \brief clears the normal-index array.
+//! \brief clears the normal indices.
 void Mesh_set::clear_facet_normal_indices()
 {
   clear_facet_indices(m_facet_normal_indices);
-  m_dirty_facet_normal_indices = true;
+  facet_normal_indices_changed();
 }
 
-//! \brief clears the color-index array.
+//! \brief clears the color indices.
 void Mesh_set::clear_facet_color_indices()
 {
   clear_facet_indices(m_facet_color_indices);
-  m_dirty_facet_color_indices = true;
+  facet_color_indices_changed();
 }
 
-//! \brief clears the texture-mapping cordinate-index array.
+//! \brief clears the texture-coordinate indices.
 void Mesh_set::clear_facet_tex_coord_indices()
 {
   clear_facet_indices(m_facet_tex_coord_indices);
-  m_dirty_facet_tex_coord_indices = true;
+  facet_tex_coord_indices_changed();
 }
 
-//! \brief initializes the facet cordinate-index array.
+//! \brief initializes the facet coordinate indices.
 void Mesh_set::init_facet_coord_indices()
 {
   switch (m_primitive_type) {
@@ -590,7 +632,7 @@ void Mesh_set::init_facet_coord_indices()
   }
 }
 
-//! \brief initializes the normal cordinate-index array.
+//! \brief initializes the normal coordinate indices.
 void Mesh_set::init_facet_normal_indices()
 {
   switch (m_primitive_type) {
@@ -605,7 +647,7 @@ void Mesh_set::init_facet_normal_indices()
   }
 }
 
-//! \brief initializes the color cordinate-index array.
+//! \brief initializes the color coordinate indices.
 void Mesh_set::init_facet_color_indices()
 {
   switch (m_primitive_type) {
@@ -620,7 +662,7 @@ void Mesh_set::init_facet_color_indices()
   }
 }
 
-//! \brief initializes the facet texture-cordinate-index array.
+//! \brief initializes the facet texture-coordinate indices.
 void Mesh_set::init_facet_tex_coord_indices()
 {
   switch (m_primitive_type) {
@@ -644,7 +686,7 @@ void Mesh_set::reverse_coord_indices(const std::vector<Int32>& source)
   coord_indices_changed();
 }
 
-//! \brief assigns coord indices with the reverse of given indices.
+//! \brief reverses the facet coordinate indices.
 void Mesh_set::reverse_facet_coord_indices()
 {
   Reverse_facet_indices_visitor visitor;
@@ -654,7 +696,7 @@ void Mesh_set::reverse_facet_coord_indices()
   facet_coord_indices_changed();
 }
 
-//! \brief assigns coord indices with the reverse of given indices.
+//! \brief assigns the facet coord indices with the reverse of given indices.
 void Mesh_set::reverse_facet_coord_indices(const Facet_indices& source)
 {
   if (source == m_facet_coord_indices) {
@@ -671,28 +713,28 @@ void Mesh_set::reverse_facet_coord_indices(const Facet_indices& source)
   facet_coord_indices_changed();
 }
 
-//! \brief cleans the coord-index array.
+//! \brief cleans the coordinate indices.
 void Mesh_set::clean_coord_indices()
 {
   clean_indices(m_coord_indices, m_facet_coord_indices);
   m_dirty_coord_indices = false;
 }
 
-//! \brief cleans the normal-index array.
+//! \brief cleans the normal indices.
 void Mesh_set::clean_normal_indices()
 {
   clean_indices(m_normal_indices, m_facet_normal_indices);
   m_dirty_normal_indices = false;
 }
 
-//! \brief validates (cleans) the color-index array.
+//! \brief validates (cleans) the color indices.
 void Mesh_set::clean_color_indices()
 {
   clean_indices(m_color_indices, m_facet_color_indices);
   m_dirty_color_indices = false;
 }
 
-//! \brief cleans the texture coord-index array.
+//! \brief cleans the texture coordinate indices.
 void Mesh_set::clean_tex_coord_indices()
 {
   clean_indices(m_tex_coord_indices, m_facet_tex_coord_indices);
@@ -702,29 +744,29 @@ void Mesh_set::clean_tex_coord_indices()
 //! \brief clears the coordinate index array.
 void Mesh_set::clear_coord_indices()
 {
-  m_dirty_coord_indices = true;
   m_coord_indices.clear();
+  coord_indices_changed();
 }
 
-//! \brief clears the normal-index array.
+//! \brief clears the normal indices.
 void Mesh_set::clear_normal_indices()
 {
-  m_dirty_normal_indices = true;
   m_normal_indices.clear();
+  normal_indices_changed();
 }
 
-//! \brief Invalidate (clear) the color-index array.
+//! \brief Invalidate (clear) the color indices.
 void Mesh_set::clear_color_indices()
 {
-  m_dirty_color_indices = true;
   m_color_indices.clear();
+  color_indices_changed();
 }
 
-//! \brief clears the texture-mapping coordinate-index array.
+//! \brief clears the texture-coordinate indices array.
 void Mesh_set::clear_tex_coord_indices()
 {
-  m_dirty_tex_coord_indices = true;
   m_tex_coord_indices.clear();
+  tex_coord_indices_changed();
 }
 
 //! \brief writes this container.
