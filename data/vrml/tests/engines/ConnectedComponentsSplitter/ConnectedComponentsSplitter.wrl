@@ -44,7 +44,7 @@ Transform {
 
 DEF CCS ConnectedComponentsSplitter {
   operand USE OPERAND
-  # result USE COMPONENTS
+  # components USE COMPONENTS
 }
 
 DEF EXTRACT_GEOM Script {
@@ -59,6 +59,6 @@ DEF EXTRACT_GEOM Script {
 }
 
 ROUTE SIM.start TO CCS.trigger
-ROUTE CCS.result TO EXTRACT_GEOM.modes
+ROUTE CCS.components TO EXTRACT_GEOM.modes
 ROUTE EXTRACT_GEOM.out1 TO COMPONENT1.geometry
 ROUTE EXTRACT_GEOM.out2 TO COMPONENT2.geometry
