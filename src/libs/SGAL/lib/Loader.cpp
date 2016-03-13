@@ -254,7 +254,7 @@ Loader::compute_ifs(Scene_graph* scene_graph, size_t count,
   Coord_array_3d* coords = new Coord_array_3d(num_vertices);
   Shared_coord_array_3d shared_coords(coords);
   ifs->set_coord_array(shared_coords);
-  auto& indices = ifs->empty_triangle_coord_indices();
+  auto& indices = ifs->get_empty_triangle_coord_indices();
   indices.resize(count);
   size_t i(0);
   Uint coord_index(0);
@@ -350,13 +350,13 @@ void Loader::add_colored_shape(Scene_graph* scene_graph,
   Coord_array_3d* coords = new Coord_array_3d(num_vertices);
   Shared_coord_array_3d shared_coords(coords);
   ifs->set_coord_array(shared_coords);
-  auto& indices = ifs->empty_triangle_coord_indices();
+  auto& indices = ifs->get_empty_triangle_coord_indices();
   indices.resize(count);
 
   Color_array* colors = new Color_array(count);
   Shared_color_array shared_colors(colors);
   ifs->set_color_array(shared_colors);
-  auto& color_indices = ifs->empty_triangle_color_indices();
+  auto& color_indices = ifs->get_empty_triangle_color_indices();
   color_indices.resize(count);
 
   ifs->set_color_per_vertex(true);
