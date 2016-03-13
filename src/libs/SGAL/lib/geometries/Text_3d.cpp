@@ -419,7 +419,7 @@ void Text_3d::clean_coords()
   }
 
   // Compute the indices
-  auto& coord_indices = empty_triangle_coord_indices();
+  auto& coord_indices = get_empty_triangle_coord_indices();
   coord_indices.resize(num_primitives);
   size_t i(0);
   Uint base(0);
