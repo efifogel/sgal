@@ -329,6 +329,24 @@ public:
    */
   Polyhedron_type get_polyhedron_type() const;
 
+  /*! Obtain the flag that indicates whether to compute the convex hull
+   * of the coordinate set.
+   */
+  Boolean is_convex_hull() const;
+
+  /*! Set the flag that indicates whether to compute the convex hull
+   * of the coordinate set.
+   */
+  void set_convex_hull(Boolean flag);
+
+  /*! Compute the orientation of a point relative to the polyhedron.
+   */
+  CGAL::Oriented_side oriented_side(const Epec_point_3& p);
+
+  /*! Compute the volume of the convex hull of the polyhedron.
+   */
+  Float volume_of_convex_hull();
+
   /*! Compute the volume of the polyhedron.
    */
   Float volume();
@@ -370,6 +388,10 @@ public:
    */
   Boolean set_has_singular_vertices(Boolean flag);
 
+  /*! Print statistics.
+   */
+  void print_stat();
+
   /*! Determine whether the mesh has singular vertices.
     * \return true if the the mesh has singular vertices and false otherwise.
    */
@@ -391,6 +413,9 @@ public:
   //@}
 
 protected:
+  /*! Indicates whether to compute the convex hull. */
+  Boolean m_convex_hull;
+
   /*! The volume of the polyhedron. */
   Float m_volume;
 
@@ -452,6 +477,10 @@ protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
+  /*! Obtain the ith 3D coordinate.
+   */
+  virtual const Vector3f& get_coord_3d(Uint i) const;
+
   /*! Clean the polyhedron facets. (Compute their attributes.)
    */
   void clean_polyhedron_facet_normals();
@@ -475,32 +504,6 @@ protected:
   /*! Initialize the polyhedron.
    */
   void init_polyhedron();
-
-  /*! Compute coords visitor. */
-  template <typename InputIterator>
-  class Compute_coords_visitor : public boost::static_visitor<> {
-  private:
-    InputIterator m_begin;
-
-  public:
-    Compute_coords_visitor(InputIterator begin) : m_begin(begin) {}
-
-    template <typename Polyhedron_>
-    void operator()(Polyhedron_& polyhedron) const
-    {
-      Size index(0);
-      auto cit = m_begin;
-      auto vit = polyhedron.vertices_begin();
-      for (; vit != polyhedron.vertices_end(); ++vit) {
-        vit->set_id(index++);
-        auto& p = vit->point();
-        auto x = to_float(p.x());
-        auto y = to_float(p.y());
-        auto z = to_float(p.z());
-        cit++->set(x, y, z);
-      }
-    }
-  };
 
   /*! Size of vertices polyhedron visitor. */
   class Size_of_vertices_visitor : public boost::static_visitor<Size> {
@@ -799,6 +802,12 @@ protected:
   };
 
 private:
+  struct Vector_to_point {
+    template <typename Vector3f>
+    Epec_point_3 operator()(const Vector3f& vec)
+    { return Epec_point_3(vec[0], vec[1], vec[2]); }
+  };
+
   /*! Indicates whether to triangulate a hole thereby filling it. */
   Boolean m_triangulate;
 
@@ -820,6 +829,12 @@ private:
   /*! Clean the coordinate indices.
    */
   void clean_coord_indices();
+
+  /*! Computes the convex hull of the coordinate set. */
+  void convex_hull();
+
+  /*! The time is took to compute the minkowski sum in seconds. */
+  float m_time;
 
   /*! Indicates whether all edges are creased. */
   Boolean m_creased;
@@ -890,6 +905,12 @@ inline Boolean Indexed_face_set::is_repaired() { return m_repaired; }
 //! \brief sets the flag that determines wheather the mesh is consistent.
 inline void Indexed_face_set::set_consistent(Boolean flag)
 { m_consistent = flag; }
+
+/*! \brief obtainss the flag that indicates whether to compute the convex hull
+ * of the coordinate set.
+ */
+inline Boolean Indexed_face_set::is_convex_hull() const
+{ return m_convex_hull; }
 
 SGAL_END_NAMESPACE
 

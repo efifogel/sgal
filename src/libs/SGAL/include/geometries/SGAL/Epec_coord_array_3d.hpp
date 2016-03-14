@@ -47,6 +47,9 @@ public:
   typedef Exact_point_vector::iterator                  Exact_point_iter;
   typedef Exact_point_vector::const_iterator            Exact_point_const_iter;
 
+  typedef std::vector<Epec_point_3>::iterator           iterator;
+  typedef std::vector<Epec_point_3>::const_iterator     const_iterator;
+
   enum {
     FIRST = Coord_array::LAST - 1,
     POINT,

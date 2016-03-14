@@ -28,6 +28,8 @@
 #include "SGAL/Types.hpp"
 #include "SGAL/Indices_types.hpp"
 #include "SGAL/Coord_array_3d.hpp"
+#include "SGAL/Epic_coord_array_3d.hpp"
+#include "SGAL/Epec_coord_array_3d.hpp"
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -44,16 +46,11 @@ SGAL_BEGIN_NAMESPACE
 class SGAL_SGAL_DECL Orient_polygon_soup_visitor :
   public boost::static_visitor<Boolean>
 {
-private:
-  typedef boost::shared_ptr<Coord_array_3d>     Shared_coord_array_3d;
-
-  const Shared_coord_array_3d m_coord_array;
-
 public:
+  typedef boost::shared_ptr<Coord_array>        Shared_coord_array;
+
   //! Construct
-  Orient_polygon_soup_visitor(Shared_coord_array_3d coord_array) :
-    m_coord_array(coord_array)
-  {}
+  Orient_polygon_soup_visitor(Shared_coord_array coords) : m_coords(coords) {}
 
   /*! Attempt to consistently orient a soup of polygons in 3D space.
    * \return true if the orientation operation succeded; return false if some
@@ -63,15 +60,36 @@ public:
   template <typename Indices_>
   Boolean operator()(Indices_& indices) const
   {
-    auto* field_info = m_coord_array->get_field_info(Coord_array::POINT);
-    auto& points = *(m_coord_array->array_handle(field_info));
-    auto has_singular_vertices =
-      !CGAL::Polygon_mesh_processing::orient_polygon_soup(points, indices);
-    return has_singular_vertices;
+    auto* field_info = m_coords->get_field_info(Coord_array::POINT);
+    auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coords);
+    if (coords) {
+      auto& points = *(coords->array_handle(field_info));
+      return !operator()(points, indices);
+    }
+    auto epic_coords =
+      boost::dynamic_pointer_cast<Epic_coord_array_3d>(m_coords);
+    if (epic_coords) {
+      auto& points = *(epic_coords->array_handle(field_info));
+      return !operator()(points, indices);
+    }
+    auto epec_coords =
+      boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coords);
+    if (epec_coords) {
+      auto& points = *(epec_coords->array_handle(field_info));
+      return !operator()(points, indices);
+    }
+    SGAL_error();
   }
 
   // The "flat" representation is inapplicable.
   Boolean operator()(Flat_indices& indices) const { SGAL_error(); return false; }
+
+private:
+  template <typename Points_, typename Indices_>
+  Boolean operator()(Points_& points, Indices_& indices) const
+  { return CGAL::Polygon_mesh_processing::orient_polygon_soup(points, indices); }
+
+  const Shared_coord_array m_coords;
 };
 
 SGAL_END_NAMESPACE

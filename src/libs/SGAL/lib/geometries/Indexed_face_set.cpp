@@ -19,6 +19,8 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include <time.h>
+#include <vector>
 
 #if (defined _MSC_VER)
 #define NOMINMAX 1
@@ -26,6 +28,11 @@
 #endif
 #include <GL/gl.h>
 #include <GL/glext.h>
+
+#include <CGAL/basic.h>
+#include <CGAL/convex_hull_3.h>
+#include <CGAL/Triangulation_3.h>
+#include <CGAL/enum.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Inexact_polyhedron.hpp"
@@ -59,10 +66,37 @@
 #include "SGAL/Delegate_surface_visitor.hpp"
 #include "SGAL/Number_of_connected_components_polyhedron_visitor.hpp"
 #include "SGAL/Reverse_facet_indices_visitor.hpp"
+#include "SGAL/Clean_vertices_visitor.hpp"
+#include "SGAL/Utilities.hpp"
+#include "SGAL/Convex_hull_visitor.hpp"
+#include "SGAL/Compute_coords_visitor.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 //! \todo #include "Model_stats.h"
+
+/*! We use a deferred response mechanism to handle the change of fields.
+ * For every field f we define at least the following functions:
+ * 1. set_f(value) -          sets a new value for f
+ * 2. value get_f() -         obtains the value of f
+ * 3. clean_f() -             cleans (or validates) the value of f
+ * 4. clear_f() -             clears (or invalidates) the value of f
+ * 5. f_changed(field-info) - responds to a change of the value of
+ *
+ * set_f() accepts a new value of f and stores it. Then, it calls f_changed().
+ *
+ * f_changed() propages the change, perhaps to other fields.
+ *
+ * clear_f() clears the data structure storing f and sets the corresponding
+ * m_dirty_f flag to indicate that the f is no longer valid. Then, it calls
+ * f_changed() of the base class if exists.
+ *
+ * f_clean() validates the value of f. Then, it calls
+ * f_changed() of the base class if exists.
+ *
+ * get_f() calls clean_f() if the m_dirty_f flag is set. Only then, it returns
+ * the current value of f.
+ */
 
 const std::string Indexed_face_set::s_tag = "IndexedFaceSet";
 Container_proto* Indexed_face_set::s_prototype(nullptr);
@@ -79,6 +113,9 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   m_repaired(true),
   m_dirty_volume(true),
   m_dirty_surface_area(true),
+  m_convex_hull(false),
+  m_volume(0),
+  m_surface_area(0),
   m_polyhedron_type(POLYHEDRON_INEXACT),
   m_dirty_coord_array(true),
   m_dirty_polyhedron(true),
@@ -104,8 +141,19 @@ Indexed_face_set::~Indexed_face_set(){}
 void Indexed_face_set::set_attributes(Element* elem)
 {
   Boundary_set::set_attributes(elem);
-  auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-  if (!coords) m_coord_array.reset();
+
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
+    if (name == "convexHull") {
+      set_convex_hull(compare_to_true(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+  }
+
+  // Remove all the deleted attributes:
+  elem->delete_marked();
 }
 
 //! \brief initializes the container prototype.
@@ -161,6 +209,13 @@ void Indexed_face_set::clean_repaired_coords()
 //! \brief draws the polygons.
 void Indexed_face_set::draw(Draw_action* action)
 {
+  std::cout << "Indexed_face_set::draw() "
+            << is_dirty_coord_array() << ", "
+            << is_dirty_coord_indices() << ", "
+            << is_dirty_facet_coord_indices() << ", "
+            << m_dirty_repaired_coords
+            << std::endl;
+  if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
   if (m_dirty_repaired_coords) clean_repaired_coords();
   Boundary_set::draw(action);
 }
@@ -168,6 +223,7 @@ void Indexed_face_set::draw(Draw_action* action)
 //! \brief draws the polygons for selection.
 void Indexed_face_set::isect(Isect_action* action)
 {
+  if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
   if (m_dirty_repaired_coords) clean_repaired_coords();
   Boundary_set::isect(action);
 }
@@ -175,13 +231,39 @@ void Indexed_face_set::isect(Isect_action* action)
 //! \brief cleans the sphere bound.
 void Indexed_face_set::clean_bounding_sphere()
 {
+  std::cout << "Indexed_face_set::clean_bounding_sphere()" << std::endl;
+
+  if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
   if (m_dirty_repaired_coords) clean_repaired_coords();
-  Boundary_set::clean_bounding_sphere();
+
+  //Boundary_set::clean_bounding_sphere();
+  if (m_coord_array) {
+    auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+    if (coords) m_bounding_sphere.set_around(coords->begin(), coords->end());
+    return;
+  }
+
+  auto epic_coords =
+    boost::dynamic_pointer_cast<Epic_coord_array_3d>(m_coord_array);
+  if (epic_coords) {
+    const auto& vecs = epic_coords->get_inexact_coords();
+    m_bounding_sphere.set_around(vecs.begin(), vecs.end());
+  }
+
+  auto epec_coords =
+    boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
+  if (epec_coords) {
+    const auto& vecs = epec_coords->get_inexact_coords();
+    m_bounding_sphere.set_around(vecs.begin(), vecs.end());
+  }
+
+  SGAL_error();
 }
 
 //! \brief cleans the coordinate array and coordinate indices.
 void Indexed_face_set::clean_coords()
 {
+  std::cout << "Indexed_face_set::clean_coords()" << std::endl;
   m_dirty_coord_array = false;
 
   if (m_dirty_polyhedron) clean_polyhedron();
@@ -196,14 +278,10 @@ void Indexed_face_set::clean_coords()
   }
   else m_coord_array->resize(size_of_vertices);
 
-  auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-  SGAL_assertion(coords);
-
   /* Generate the coordinate array and assign the index into the coordinate
    * array of the vertex to the vertex.
    */
-  Compute_coords_visitor<Coord_array_3d::iterator>
-    coords_visitor(coords->begin());
+  Compute_coords_visitor coords_visitor(m_coord_array);
   boost::apply_visitor(coords_visitor, m_polyhedron);
 
   clean_coord_indices();
@@ -221,8 +299,15 @@ void Indexed_face_set::clean_coords()
 //! \brief clears the coordinates.
 void Indexed_face_set::clear_coord_array()
 {
+  std::cout << "Indexed_face_set::clear_coord_array() " << get_name()
+            << std::endl;
   m_dirty_coord_array = true;
+
+  // Assume that the coordinates need reapiring.
+  m_dirty_repaired_coords = true;
+
   if (m_coord_array) m_coord_array->clear();
+  Boundary_set::coord_content_changed(get_field_info(COORD_ARRAY));
 }
 
 //! \brief obtains the coordinate array.
@@ -260,6 +345,7 @@ void Indexed_face_set::clean_coord_indices()
 //! \brief cleans the normal array and the normal indices.
 void Indexed_face_set::clean_normals()
 {
+  std::cout << "Indexed_face_set::clean_normals()" << std::endl;
   if ((0 < m_crease_angle) && (m_crease_angle < SGAL_PI)) {
     if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
     if (m_dirty_polyhedron_facet_normals) clean_polyhedron_facet_normals();
@@ -280,6 +366,7 @@ void Indexed_face_set::clean_normals()
 //! \brief repairs the data structures
 void Indexed_face_set::repair()
 {
+  std::cout << "Indexed_face_set::repair()" << std::endl;
   if (m_dirty_polyhedron) clean_polyhedron();
 
   Number_of_connected_components_polyhedron_visitor num_ccs_visitor;
@@ -324,6 +411,8 @@ void Indexed_face_set::repair()
 //! \brief cleans the polyhedron data structure.
 void Indexed_face_set::clean_repaired_polyhedron()
 {
+  std::cout << "Indexed_face_set::clean_repaired_polyhedron()" << std::endl;
+
   // If triangulation of holes or orientation repairing is required,
   // first clean the repaired data structure. This either leaves the polyhedron
   // or the coordinate and the coordinate-indices cleaned;
@@ -368,9 +457,69 @@ void Indexed_face_set::polyhedron_changed()
   clear_facet_coord_indices();
 }
 
+//! \brief computes the convex hull of the coordinate set.
+void Indexed_face_set::convex_hull()
+{
+  if (!m_coord_array || m_coord_array->empty()) return;
+
+  if (m_polyhedron_type != POLYHEDRON_EPEC) m_polyhedron_type = POLYHEDRON_EPEC;
+  init_polyhedron();
+
+  auto exact_coords =
+    boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
+  if (exact_coords) {
+    if (exact_coords->size() > 0) {
+      Convex_hull_visitor<Epec_coord_array_3d::Exact_point_const_iter>
+        ch_visitor(exact_coords->begin(), exact_coords->end());
+      boost::apply_visitor(ch_visitor, m_polyhedron);
+
+      /* Compute the index of the vertex into the coordinate array and assign it
+       * to the polyhedron-vertex record.
+       * \todo make more efficient.
+       */
+      Clean_vertices_visitor<Epec_coord_array_3d::Exact_point_const_iter>
+        cv_visitor(exact_coords->begin(), exact_coords->end());
+      boost::apply_visitor(cv_visitor, m_polyhedron);
+    }
+  }
+  else {
+    auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+    if (coords) {
+      if (coords->size() > 0) {
+        std::vector<Epec_point_3> points;
+        points.resize(coords->size());
+        std::transform(coords->begin(), coords->end(),
+                       points.begin(), Vector_to_point());
+
+        // std::copy(points.begin(), points.end(),
+        //           std::ostream_iterator<Exact_point_3>(std::cout, "\n"));
+
+        Convex_hull_visitor<std::vector<Epec_point_3>::const_iterator>
+          ch_visitor(points.begin(), points.end());
+        boost::apply_visitor(ch_visitor, m_polyhedron);
+
+        /* Compute the index of the vertex into the coordinate array and assign
+         * it to the polyhedron-vertex record.
+         * \todo make more efficient.
+         */
+        Clean_vertices_visitor<std::vector<Epec_point_3>::const_iterator>
+          cv_visitor(points.begin(), points.end());
+        boost::apply_visitor(cv_visitor, m_polyhedron);
+      }
+    }
+    else SGAL_error();
+  }
+
+  m_dirty_polyhedron = false;
+  m_dirty_coord_indices = true;
+  m_dirty_facet_coord_indices = true;
+}
+
 //! \brief cleans the polyhedron data structure.
 void Indexed_face_set::clean_polyhedron()
 {
+  std::cout << "Indexed_face_set::clean_polyhedron() " << this
+            << std::endl;
   m_dirty_polyhedron = false;
 
   // Clean the coordinates and the coordinate indices (without repairing).
@@ -390,57 +539,52 @@ void Indexed_face_set::clean_polyhedron()
     return;
   }
 
-  auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-  if (!coords) {
-    m_dirty_polyhedron_facet_normals = false;
-    m_dirty_volume = true;
-    m_dirty_surface_area = true;
-    m_consistent = true;
-    m_has_singular_vertices = false;
-    m_repaired = true;
-    return;
+  clock_t start_time = clock();
+  if (m_convex_hull) convex_hull();
+  else {
+    // If there are no coordinate indices bail out.
+    if (empty_facet_indices(m_facet_coord_indices)) {
+      m_dirty_polyhedron_facet_normals = false;
+      m_dirty_volume = true;
+      m_dirty_surface_area = true;
+      m_consistent = true;
+      m_has_singular_vertices = false;
+      m_repaired = true;
+      return;
+    }
+
+    if (!m_consistent) {
+      Orient_polygon_soup_visitor visitor(m_coord_array);
+      m_has_singular_vertices =
+        boost::apply_visitor(visitor, m_facet_coord_indices);
+    }
+
+    // Create the polyhedral surface
+    if ((m_polyhedron_type == POLYHEDRON_INEXACT) && m_triangulate)
+      m_polyhedron_type = POLYHEDRON_EPIC;
+    init_polyhedron();
+    Delegate_surface_visitor visitor(m_primitive_type, m_num_primitives,
+                                     m_coord_array, m_facet_coord_indices);
+    m_consistent = boost::apply_visitor(visitor, m_polyhedron);
+
+    // Normalize the border of the polyhedron.
+    boost::apply_visitor(Normalize_border_visitor(), m_polyhedron);
+
+    auto closed =
+      boost::apply_visitor(Is_closed_polyhedron_visitor(), m_polyhedron);
+    if (!closed && m_triangulate) {
+      Hole_filler_visitor visitor(m_refine, m_fair);
+      boost::apply_visitor(visitor, m_polyhedron);
+
+      //! \todo instead of brutally clearing the coords and indices arrays,
+      // update these arrays based on the results of the hole-filler visitor.
+      clear_coord_array();
+      clear_coord_indices();
+      clear_facet_coord_indices();
+    }
   }
-
-  // If there are no coordinate indices bail out.
-  if (empty_facet_indices(m_facet_coord_indices)) {
-    m_dirty_polyhedron_facet_normals = false;
-    m_dirty_volume = true;
-    m_dirty_surface_area = true;
-    m_consistent = true;
-    m_has_singular_vertices = false;
-    m_repaired = true;
-    return;
-  }
-
-  if (!m_consistent) {
-    Orient_polygon_soup_visitor visitor(coords);
-    m_has_singular_vertices =
-      boost::apply_visitor(visitor, m_facet_coord_indices);
-  }
-
-  // Create the polyhedral surface
-  if ((m_polyhedron_type == POLYHEDRON_INEXACT) && m_triangulate)
-    m_polyhedron_type = POLYHEDRON_EPIC;
-  init_polyhedron();
-  Delegate_surface_visitor visitor(m_primitive_type, m_num_primitives,
-                                   m_coord_array, m_facet_coord_indices);
-  m_consistent = boost::apply_visitor(visitor, m_polyhedron);
-
-  // Normalize the border of the polyhedron.
-  boost::apply_visitor(Normalize_border_visitor(), m_polyhedron);
-
-  auto closed =
-    boost::apply_visitor(Is_closed_polyhedron_visitor(), m_polyhedron);
-  if (!closed && m_triangulate) {
-    Hole_filler_visitor visitor(m_refine, m_fair);
-    boost::apply_visitor(visitor, m_polyhedron);
-
-    //! \todo instead of brutally clearing the coords and indices arrays,
-    // update these arrays based on the results of the hole-filler visitor.
-    clear_coord_array();
-    clear_coord_indices();
-    clear_facet_coord_indices();
-  }
+  clock_t end_time = clock();
+  m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
 
   m_dirty_polyhedron_facet_normals = true;
   m_dirty_volume = true;
@@ -472,6 +616,9 @@ void Indexed_face_set::set_polyhedron(Polyhedron& polyhedron)
 const Indexed_face_set::Polyhedron&
 Indexed_face_set::get_polyhedron(Boolean clean_facet_normals)
 {
+  std::cout << "Indexed_face_set::get_polyhedron()"
+            << ", drp: " << m_dirty_repaired_polyhedron
+            << ", this: " << this << std::endl;
   if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
   if (clean_facet_normals) {
     if (m_dirty_polyhedron_facet_normals) clean_polyhedron_facet_normals();
@@ -499,6 +646,22 @@ Boolean Indexed_face_set::is_smooth(const Vector3f& normal1,
   return (angle > m_crease_angle);
 }
 
+//! \brief obtains the ith 3D coordinate.
+const Vector3f& Indexed_face_set::get_coord_3d(Uint i) const
+{
+  auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  if (coords) return (*coords)[i];
+
+  auto epic_coords =
+    boost::dynamic_pointer_cast<Epic_coord_array_3d>(m_coord_array);
+  if (epic_coords) return epic_coords->get_inexact_coord(i);
+
+  auto epec_coords =
+    boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
+  SGAL_assertion(epec_coords);
+  return epec_coords->get_inexact_coord(i);
+}
+
 //! \brief calculates multiple normals per vertex for all vertices.
 void Indexed_face_set::calculate_multiple_normals_per_vertex()
 {
@@ -515,6 +678,30 @@ void Indexed_face_set::calculate_multiple_normals_per_vertex()
   m_dirty_facet_normal_indices = false;
 }
 
+//! \brief prints statistics.
+void Indexed_face_set::print_stat()
+{
+  SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
+  if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
+  if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+    clean_coords();
+
+  std::cout << "Container name: " << get_name() << std::endl;
+  std::cout << "Container tag: " << get_tag() << std::endl;
+  std::cout << "Is closed: " << is_closed() << std::endl;
+  // std::cout << "# vertices: " << m_polyhedron.size_of_vertices()
+  //           << ", # edges: " << m_polyhedron.size_of_halfedges() / 2
+  //           << ", # facets: " << m_polyhedron.size_of_facets()
+  //           << std::endl;
+  std::cout << "Volume of convex hull: " << volume_of_convex_hull()
+            << std::endl;
+
+  if (m_convex_hull)
+    std::cout << "Convex hull took " << m_time << " seconds to compute"
+              << std::endl;
+}
+
 //! Write this container.
 void Indexed_face_set::write(Formatter* formatter)
 {
@@ -523,6 +710,7 @@ void Indexed_face_set::write(Formatter* formatter)
                   << ", name: " << get_name()
                   << std::endl;);
 
+  if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
   if (m_dirty_repaired_coords) clean_repaired_coords();
   Boundary_set::write(formatter);
 }
@@ -774,6 +962,50 @@ Epec_polyhedron& Indexed_face_set::get_empty_epec_polyhedron()
   m_polyhedron = Epec_polyhedron();
   polyhedron_changed();
   return boost::get<Epec_polyhedron>(m_polyhedron);
+}
+
+/*! \brief Sets the flag that indicates whether to compute the convex hull
+ * of the coordinate set.
+ */
+void Indexed_face_set::set_convex_hull(Boolean flag)
+{
+  if (m_convex_hull == flag) return;
+  m_convex_hull = flag;
+  clear_polyhedron();
+}
+
+//! \brief computes the volume of the convex hull of the polyhedron.
+Float Indexed_face_set::volume_of_convex_hull()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  if (is_polyhedron_empty()) return 0.0f;
+
+  // typedef CGAL::Exact_predicates_inexact_constructions_kernel   Epic_kernel;
+  Float volume = 0.0f;
+  // if (is_convex_hull()) {
+  //   typedef CGAL::Triangulation_3<Epec_kernel>                Triangulation;
+  //   Triangulation tri(m_polyhedron.points_begin(), m_polyhedron.points_end());
+  //   for (auto it = tri.finite_cells_begin(); it != tri.finite_cells_end(); ++it)
+  //   {
+  //     auto tetr = tri.tetrahedron(it);
+  //     volume += CGAL::to_double(tetr.volume());
+  //   }
+  // }
+  // else {
+  //   Epec_polyhedron ch;
+  //   CGAL::convex_hull_3(m_polyhedron.points_begin(), m_polyhedron.points_end(),
+  //                       ch);
+
+  //   typedef CGAL::Triangulation_3<Epec_kernel>                Triangulation;
+  //   Triangulation tri(ch.points_begin(), ch.points_end());
+  //   for (auto it = tri.finite_cells_begin(); it != tri.finite_cells_end(); ++it)
+  //   {
+  //     auto tetr = tri.tetrahedron(it);
+  //     volume += CGAL::to_double(tetr.volume());
+  //   }
+  // }
+
+  return volume;
 }
 
 SGAL_END_NAMESPACE
