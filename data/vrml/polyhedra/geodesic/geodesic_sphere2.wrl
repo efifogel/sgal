@@ -6,7 +6,7 @@ Group {
       appearance Appearance {
 	material Material { }
       }
-#      geometry DEF GEOM ExactPolyhedron {
+#      geometry DEF GEOM IndexedFaceSet {
 #      geometry DEF GEOM GaussianMap {
       geometry IndexedFaceSet {
 	solid TRUE

@@ -45,7 +45,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -89,7 +89,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -133,7 +133,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -177,7 +177,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -221,7 +221,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -265,7 +265,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -309,7 +309,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -353,7 +353,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -397,7 +397,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -441,7 +441,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -485,7 +485,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -529,7 +529,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -573,7 +573,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -617,7 +617,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -661,7 +661,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -705,7 +705,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -749,7 +749,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -793,7 +793,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -837,7 +837,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -881,7 +881,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -925,7 +925,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -969,7 +969,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -1013,7 +1013,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -1057,7 +1057,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -1101,7 +1101,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -1145,7 +1145,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -1189,7 +1189,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -1233,7 +1233,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -1277,7 +1277,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [
@@ -1321,7 +1321,7 @@ Transform {
 		      # transparency 0.3
 		    }
 		  }
-		  geometry ExactPolyhedron {
+		  geometry IndexedFaceSet {
 		    convexHull TRUE
 		    coord Coordinate {
 		      point [

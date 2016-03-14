@@ -553,7 +553,7 @@ Transform {
 	  appearance Appearance {
 	    material Material { diffuseColor 0.5 0.2 0.1 }
 	  }
-	  geometry DEF ROBOT ExactPolyhedron {
+	  geometry DEF ROBOT IndexedFaceSet {
 	    convexHull TRUE
 	    coord USE ROBOT_COORD
 	    coordIndex [2 1 0 -1,
@@ -1069,7 +1069,7 @@ Transform {
 	  appearance Appearance {
 	    material Material { diffuseColor 0.1 0.2 0.5 }
 	  }
-	  geometry DEF OBSTACLE ExactPolyhedron {
+	  geometry DEF OBSTACLE IndexedFaceSet {
 	    convexHull TRUE
 	    coord USE OBSTACLE_COORD
 	    coordIndex [2 1 0 -1,
@@ -1582,7 +1582,7 @@ Transform {
       appearance Appearance {
 	material Material { diffuseColor 0.4 0.4 0.4 }
       }
-      geometry DEF MINK ExactPolyhedron {
+      geometry DEF MINK IndexedFaceSet {
 	convexHull TRUE
       }
     }

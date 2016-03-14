@@ -7,7 +7,7 @@ Transform {
       appearance DEF APP Appearance {
 	material Material { }
       }
-      geometry ExactPolyhedron {
+      geometry IndexedFaceSet {
 	# creaseAngle 0 the default
 	coord DEF COORDS Coordinate {
 	  point [ 0 0 1.732051,

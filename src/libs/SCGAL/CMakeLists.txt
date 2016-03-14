@@ -87,9 +87,7 @@ set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} ${SCGAL_ENGINES_SOURCE_FILES} ${SCG
 source_group(src\\engines FILES ${SCGAL_ENGINES_SOURCE_FILES} ${SCGAL_ENGINES_HEADER_FILES})
 
 set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/init.cpp)
-set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Polyhedron_geo.cpp)
 set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Exact_coord_minkowski.cpp)
-set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Exact_polyhedron_geo.cpp)
 set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Transformer_with_exact_coords.cpp)
 set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Triangulation_geo.cpp)
 

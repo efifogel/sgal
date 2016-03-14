@@ -7,7 +7,7 @@ Group {
 	material Material { }
       }
       geometry IndexedFaceSet {
-#      geometry DEF GEOM ExactPolyhedron {
+#      geometry DEF GEOM IndexedFaceSet {
 #      geometry DEF GEOM GaussianMap {
 	solid TRUE
 	coord Coordinate {

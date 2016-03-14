@@ -207,7 +207,7 @@ Transform {
 			      transparency 0.5
 			    }
 			  }
-			  geometry ExactPolyhedron {
+			  geometry IndexedFaceSet {
 			    coord DEF COORD_RED EpecCoordinate {
 			      exactPoint\[-1 -4 -1,
 				        1 -4 -1,
@@ -247,7 +247,7 @@ Transform {
 			      transparency 0.5
 			    }
 			  }
-			  geometry DEF PIECE_BLUE_0 ExactPolyhedron {
+			  geometry DEF PIECE_BLUE_0 IndexedFaceSet {
 			    coord EpecCoordinate {
 			      exactPoint\[-2 -2 -2,
 				        2 -2 -2,

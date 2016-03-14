@@ -278,7 +278,7 @@ Transform {
 				  # transparency 0.5 0.5 0.5
 				}
 			      }
-			      geometry ExactPolyhedron {
+			      geometry IndexedFaceSet {
 				coord DEF COORD_RED EpecCoordinate {
 				  exactPoint[-2 0 0, -2 0 2,
 					   -1 -1 1, -1 1 1,
@@ -319,7 +319,7 @@ Transform {
 				  # transparency 0.5 0.5 0.5
 				}
 			      }
-			      geometry ExactPolyhedron {
+			      geometry IndexedFaceSet {
 				coord DEF COORD_GREEN EpecCoordinate {
 				  exactPoint[-2 0 0, -2 0 -2,
 					   -1 -1 -1, -1 1 -1,
@@ -361,7 +361,7 @@ Transform {
 				  # transparency 0.5 0.5 0.5
 				}
 			      }
-			      geometry ExactPolyhedron {
+			      geometry IndexedFaceSet {
 				coord DEF COORD_BLUE EpecCoordinate {
 				  exactPoint[0 -2 0, 2 -2 0,
 					   1 -1 -1, 1 -1 1,
@@ -402,7 +402,7 @@ Transform {
 				  # transparency 0.5 0.5 0.5
 				}
 			      }
-			      geometry ExactPolyhedron {
+			      geometry IndexedFaceSet {
 				coord DEF COORD_PURPLE EpecCoordinate {
 				  exactPoint[0 -2 0, -2 -2 0,
 					   -1 -1 -1, -1 -1 1,
@@ -444,7 +444,7 @@ Transform {
 				  # transparency 0.5 0.5 0.5
 				}
 			      }
-			      geometry ExactPolyhedron {
+			      geometry IndexedFaceSet {
 				coord DEF COORD_YELLOW EpecCoordinate {
 				  exactPoint[0 0 -2, 0 2 -2,
 					   -1 1 -1, 1 1 -1,
@@ -485,7 +485,7 @@ Transform {
 				  # transparency 0.5 0.5 0.5
 				}
 			      }
-			      geometry ExactPolyhedron {
+			      geometry IndexedFaceSet {
 				coord DEF COORD_TURQUOISE EpecCoordinate {
 				  exactPoint[0 0 -2, 0 -2 -2,
 					   -1 -1 -1, 1 -1 -1,

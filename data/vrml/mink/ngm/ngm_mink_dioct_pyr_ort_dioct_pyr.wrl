@@ -233,7 +233,7 @@ DEF TRANS Transform {
 	  appearance Appearance {
 	    material Material { diffuseColor 0.6 0.6 0.6 }
 	  }
-	  geometry DEF MINK_CH ExactPolyhedron {
+	  geometry DEF MINK_CH IndexedFaceSet {
 	    convexHull TRUE
 	  }
 	}

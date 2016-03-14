@@ -40,7 +40,7 @@ Transform {
 	  appearance Appearance {
 	    material Material { }
 	  }
-	  geometry DEF GEOM ExactPolyhedron {
+	  geometry DEF GEOM IndexedFaceSet {
 	    convexHull TRUE
 	    coord Coordinate {
 	      point [0 0 1.175571,

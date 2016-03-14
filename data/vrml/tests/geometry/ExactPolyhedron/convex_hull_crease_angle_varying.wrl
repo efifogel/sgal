@@ -9,7 +9,7 @@ Shape {
   appearance Appearance {
     material Material { }
   }
-  geometry ExactPolyhedron {
+  geometry IndexedFaceSet {
     convexHull TRUE
     creaseAngle 1.5
     coord DEF COORDS Coordinate {

@@ -11,7 +11,7 @@ Shape {
   appearance Appearance {
     material Material { }
   }
-  geometry ExactPolyhedron {
+  geometry IndexedFaceSet {
     creaseAngle 1.5
     coord DEF COORDS Coordinate {
       point [  1    0     0

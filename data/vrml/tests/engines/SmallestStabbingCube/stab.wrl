@@ -145,7 +145,7 @@ DEF MAIN_TRANSFORM Transform {
 	      appearance Appearance {
 		material Material { diffuseColor 0.2 0.3 0.6 }
 	      }
-	      geometry DEF GEOM1 ExactPolyhedron {
+	      geometry DEF GEOM1 IndexedFaceSet {
 		convexHull TRUE
 	      }
 	    }
@@ -186,7 +186,7 @@ DEF MAIN_TRANSFORM Transform {
     	      appearance Appearance {
     		material Material { diffuseColor 0.1 0.4 0.2 }
     	      }
-    	      geometry DEF GEOM3 ExactPolyhedron {
+    	      geometry DEF GEOM3 IndexedFaceSet {
     		convexHull TRUE
     	      }
     	    }
@@ -205,7 +205,7 @@ DEF MAIN_TRANSFORM Transform {
     	      appearance Appearance {
     		material Material { diffuseColor 0.2 0.2 0.2 }
     	      }
-    	      geometry DEF GEOM4 ExactPolyhedron {
+    	      geometry DEF GEOM4 IndexedFaceSet {
     		convexHull TRUE
     	      }
     	    }
@@ -224,7 +224,7 @@ DEF MAIN_TRANSFORM Transform {
     	      appearance Appearance {
     		material Material { diffuseColor 0.8 0.4 0.8 }
     	      }
-    	      geometry DEF GEOM5 ExactPolyhedron {
+    	      geometry DEF GEOM5 IndexedFaceSet {
     		convexHull TRUE
     	      }
     	    }
@@ -237,7 +237,7 @@ DEF MAIN_TRANSFORM Transform {
       appearance Appearance {
     	material Material { diffuseColor 0.7 0.1 0.8 }
       }
-      geometry DEF STAB_CH ExactPolyhedron {
+      geometry DEF STAB_CH IndexedFaceSet {
     	convexHull TRUE
       }
     }

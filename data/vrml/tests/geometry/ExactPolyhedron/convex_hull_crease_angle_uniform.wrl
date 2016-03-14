@@ -12,7 +12,7 @@ Transform {
       appearance Appearance {
 	material Material { }
       }
-      geometry ExactPolyhedron {
+      geometry IndexedFaceSet {
 	creaseAngle 2.0
 	convexHull TRUE
 	coord DEF COORDS Coordinate {
@@ -32,7 +32,7 @@ Transform {
   children [
     Shape {
       appearance USE APP
-      geometry ExactPolyhedron {
+      geometry IndexedFaceSet {
 	creaseAngle 1.8
 	convexHull TRUE
 	coord USE COORDS

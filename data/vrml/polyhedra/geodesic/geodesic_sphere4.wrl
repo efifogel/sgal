@@ -8,7 +8,7 @@ Group {
 	material Material { diffuseColor 0.7 0.6 0.6 }
       }
       geometry IndexedFaceSet {
-#      geometry DEF GEOM ExactPolyhedron {
+#      geometry DEF GEOM IndexedFaceSet {
 #      geometry DEF GEOM GaussianMap {      
 	solid TRUE
 	coord Coordinate {

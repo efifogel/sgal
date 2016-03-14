@@ -113,7 +113,7 @@
 #if 0
 #include "SCGAL/basic.h"
 
-#include "SCGAL/Exact_polyhedron_geo.hpp"
+#include "SGAL/Indexed_face_set.hpp"
 #if defined(SGAL_USE_CGM)
 #include "SCGAL/Cubical_gaussian_map_geo.hpp"
 #endif
@@ -803,31 +803,29 @@ void Player_scene::print_stat()
     {"GEOM", "ROBOT", "OBSTACLE", "MINK", "MINK_CH"};
 
   if (m_option_parser->get_verbosity_level() >= 1) {
-    unsigned int size = sizeof(names) / sizeof(char*);
+    size_t size = sizeof(names) / sizeof(char*);
     for (const char** ni = names; ni != &names[size]; ++ni) {
       std::string name(*ni);
       boost::shared_ptr<SGAL::Container> cont =
         m_scene_graph->get_container(name);
-      boost::shared_ptr<SGAL::Exact_polyhedron_geo> ep =
-        boost::dynamic_pointer_cast<SGAL::Exact_polyhedron_geo>(cont);
-      if (ep) ep->print_stat();
+      auto ifs = boost::dynamic_pointer_cast<SGAL::Indexed_face_set>(cont);
+      if (ifs) ifs->print_stat();
 #if defined(SGAL_USE_AOS)
-      boost::shared_ptr<SGAL::Arrangement_on_sphere_geo> aos =
+      auto aos =
         boost::dynamic_pointer_cast<SGAL::Arrangement_on_sphere_geo>(cont);
       if (aos) aos->print_stat();
 #if defined(SGAL_USE_SGM)
-      boost::shared_ptr<SGAL::Spherical_gaussian_map_geo> sgm =
+      auto sgm =
         boost::dynamic_pointer_cast<SGAL::Spherical_gaussian_map_geo>(cont);
       if (sgm) sgm->print_stat();
 #endif
 #if defined(SGAL_USE_CGM)
-      boost::shared_ptr<SGAL::Cubical_gaussian_map_geo> cgm =
+      auto cgm =
         boost::dynamic_pointer_cast<SGAL::Cubical_gaussian_map_geo>(cont);
       if (cgm) cgm->print_stat();
 #endif
 #if defined(SGAL_USE_NEF) && defined(SGAL_USE_NGM)
-      boost::shared_ptr<SGAL::Nef_gaussian_map_geo> ngm =
-        boost::dynamic_pointer_cast<SGAL::Nef_gaussian_map_geo>(cont);
+      auto ngm = boost::dynamic_pointer_cast<SGAL::Nef_gaussian_map_geo>(cont);
       if (ngm) ngm->print_stat();
 #endif
     }

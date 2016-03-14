@@ -40,10 +40,10 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Material.hpp"
+#include "SGAL/Indexed_face_set.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Assembly_part.hpp"
-#include "SCGAL/Exact_polyhedron_geo.hpp"
 #include "SCGAL/Exact_nef_polyhedron.hpp"
 #include "SCGAL/compute_planes.hpp"
 #include "SCGAL/merge_coplanar_facets.hpp"
@@ -151,20 +151,23 @@ void Assembly_part::clean_sgm_geos(Container* node)
       return;
     }
 
-    auto polyhedron_geo =
-      boost::dynamic_pointer_cast<Exact_polyhedron_geo>(geometry);
-    if (polyhedron_geo) {
+    auto ifs = boost::dynamic_pointer_cast<Indexed_face_set>(geometry);
+    if (ifs) {
       typedef CGAL::Nef_polyhedron_3<Epec_kernel, CGAL::SNC_indexed_items>
                                                         Nef_polyhedron;
       typedef Nef_polyhedron::Volume_const_iterator     Volume_const_iterator;
 
       clock_t start_time = clock();
-      const auto& polyhedron = polyhedron_geo->get_polyhedron();
+      ifs->set_polyhedron_type(Indexed_face_set::POLYHEDRON_EPEC);
+      const auto& p_var = ifs->get_polyhedron();
+      const auto& p_const = boost::get<Epec_polyhedron>(p_var);
       /*! \todo Allow passing a const polyhedron to the constructor of
        * Nef_polyhedron
        */
-      auto tmp = const_cast<Exact_polyhedron_geo::Polyhedron&>(polyhedron);
-      Nef_polyhedron nef_polyhedron = Nef_polyhedron(tmp);
+      auto& polyhedron = const_cast<Epec_polyhedron&>(p_const);
+      std::cout << "# vertives: " << polyhedron.size_of_vertices()
+                << std::endl;
+      Nef_polyhedron nef_polyhedron = Nef_polyhedron(polyhedron);
       CGAL::convex_decomposition_3(nef_polyhedron);
       clock_t end_time = clock();
       float duration_time =
