@@ -249,6 +249,7 @@ Loader::compute_ifs(Scene_graph* scene_graph, size_t count,
   SGAL_assertion(ifs);
   ifs->set_primitive_type(Geo_set::PT_TRIANGLES);
   ifs->set_num_primitives(count);
+  ifs->set_make_consistent(true);
 
   auto num_vertices = count * 3;
   Coord_array_3d* coords = new Coord_array_3d(num_vertices);

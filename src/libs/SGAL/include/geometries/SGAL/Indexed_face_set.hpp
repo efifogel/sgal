@@ -211,10 +211,6 @@ public:
   virtual void facet_tex_coord_indices_changed();
   //@}
 
-  /*! Configure.
-   */
-  void configure(const Configuration* conf);
-
   /*! Clear the coordinate array.
    */
   void clear_coord_array();
@@ -397,6 +393,17 @@ public:
    */
   Boolean has_singular_vertices();
 
+  /*! Set the flag that indicates whether to enable consistency repairing.
+   * \param[in] indicates whether to enable consistency repairing.
+   */
+  void set_make_consistent(Boolean flag);
+
+  /*! Set the flag that indicates whether to enable repairing procedures.
+   * \param[in] triangulate_holes indicates whether to triangulate holes.
+   * \param[in] repair_orientation indicates whether to repair orientation.
+   */
+  void set_repair(Boolean triangulate_holes, Boolean repair_orientation);
+
   /// \name Obtain empty polyhedrons
   //@{
   /*! Obtain the empty polyhedron. */
@@ -453,16 +460,6 @@ protected:
    * cleaned.
    */
   Boolean m_dirty_polyhedron;
-
-  /*! Indicates whether the repaired polyhedron has been invalidated, and thus
-   * must be cleaned.
-   */
-  Boolean m_dirty_repaired_polyhedron;
-
-  /*! Indicates whether the repaired coordinates and coordinate indices have
-   * been invalidated, and thus must be cleaned.
-   */
-  Boolean m_dirty_repaired_coords;
 
   /*! Indicates whether the polyhedron facets are dirty and thus should be
    * cleaned.
@@ -809,7 +806,7 @@ private:
   };
 
   /*! Indicates whether to triangulate a hole thereby filling it. */
-  Boolean m_triangulate;
+  Boolean m_triangulate_holes;
 
   /*! Indicates whether to refine the triangulation of a hole by applying
    * local averaging rules.
@@ -825,6 +822,11 @@ private:
    * surfaces.
    */
   Boolean m_repair_orientation;
+
+  /*! Indicates whether to try and orient the facets to make them consistent
+   * and duplicate singular vertices (and edges).
+   */
+  Boolean m_make_consistent;
 
   /*! Clean the coordinate indices.
    */

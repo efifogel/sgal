@@ -19,6 +19,7 @@
 #include <vector>
 #include <utility>
 #include <boost/lexical_cast.hpp>
+#include <boost/variant.hpp>
 
 #if defined(_WIN32)
 #define NOMINMAX 1
@@ -593,28 +594,28 @@ void Mesh_set::clear_facet_indices()
 void Mesh_set::clear_facet_coord_indices()
 {
   clear_facet_indices(m_facet_coord_indices);
-  facet_coord_indices_changed();
+  m_dirty_facet_coord_indices = true;
 }
 
 //! \brief clears the normal indices.
 void Mesh_set::clear_facet_normal_indices()
 {
   clear_facet_indices(m_facet_normal_indices);
-  facet_normal_indices_changed();
+  m_dirty_facet_normal_indices = true;
 }
 
 //! \brief clears the color indices.
 void Mesh_set::clear_facet_color_indices()
 {
   clear_facet_indices(m_facet_color_indices);
-  facet_color_indices_changed();
+  m_dirty_facet_color_indices = true;
 }
 
 //! \brief clears the texture-coordinate indices.
 void Mesh_set::clear_facet_tex_coord_indices()
 {
   clear_facet_indices(m_facet_tex_coord_indices);
-  facet_tex_coord_indices_changed();
+  m_dirty_facet_tex_coord_indices = true;
 }
 
 //! \brief initializes the facet coordinate indices.
@@ -681,8 +682,6 @@ void Mesh_set::init_facet_tex_coord_indices()
 void Mesh_set::reverse_coord_indices(const std::vector<Int32>& source)
 {
   Geo_set::reverse_coord_indices(source);
-  m_dirty_facet_coord_indices = true;
-  m_dirty_coord_indices = false;
   coord_indices_changed();
 }
 
@@ -691,8 +690,6 @@ void Mesh_set::reverse_facet_coord_indices()
 {
   Reverse_facet_indices_visitor visitor;
   boost::apply_visitor(visitor, m_facet_coord_indices);
-  m_dirty_facet_coord_indices = false;
-  m_dirty_coord_indices = true;
   facet_coord_indices_changed();
 }
 
@@ -708,8 +705,6 @@ void Mesh_set::reverse_facet_coord_indices(const Facet_indices& source)
     Reverse_facet_indices_visitor visitor;
     boost::apply_visitor(visitor, m_facet_coord_indices, source);
   }
-  m_dirty_facet_coord_indices = false;
-  m_dirty_coord_indices = true;
   facet_coord_indices_changed();
 }
 
@@ -718,6 +713,7 @@ void Mesh_set::clean_coord_indices()
 {
   clean_indices(m_coord_indices, m_facet_coord_indices);
   m_dirty_coord_indices = false;
+  Geo_set::coord_indices_changed();
 }
 
 //! \brief cleans the normal indices.
@@ -725,6 +721,7 @@ void Mesh_set::clean_normal_indices()
 {
   clean_indices(m_normal_indices, m_facet_normal_indices);
   m_dirty_normal_indices = false;
+  Geo_set::normal_indices_changed();
 }
 
 //! \brief validates (cleans) the color indices.
@@ -732,6 +729,7 @@ void Mesh_set::clean_color_indices()
 {
   clean_indices(m_color_indices, m_facet_color_indices);
   m_dirty_color_indices = false;
+  Geo_set::color_indices_changed();
 }
 
 //! \brief cleans the texture coordinate indices.
@@ -739,34 +737,42 @@ void Mesh_set::clean_tex_coord_indices()
 {
   clean_indices(m_tex_coord_indices, m_facet_tex_coord_indices);
   m_dirty_tex_coord_indices = false;
+  Geo_set::tex_coord_indices_changed();
 }
 
 //! \brief clears the coordinate index array.
 void Mesh_set::clear_coord_indices()
 {
   m_coord_indices.clear();
-  coord_indices_changed();
+  m_dirty_coord_indices = true;
+  Geo_set::coord_indices_changed();
+
+  //! todo remove!!!
+  // coord_indices_changed();
 }
 
 //! \brief clears the normal indices.
 void Mesh_set::clear_normal_indices()
 {
   m_normal_indices.clear();
-  normal_indices_changed();
+  m_dirty_normal_indices = true;
+  Geo_set::normal_indices_changed();
 }
 
 //! \brief Invalidate (clear) the color indices.
 void Mesh_set::clear_color_indices()
 {
   m_color_indices.clear();
-  color_indices_changed();
+  m_dirty_color_indices = true;
+  Geo_set::color_indices_changed();
 }
 
 //! \brief clears the texture-coordinate indices array.
 void Mesh_set::clear_tex_coord_indices()
 {
   m_tex_coord_indices.clear();
-  tex_coord_indices_changed();
+  m_dirty_tex_coord_indices = true;
+  Geo_set::tex_coord_indices_changed();
 }
 
 //! \brief writes this container.
@@ -982,8 +988,7 @@ void Mesh_set::collapse_identical_coordinates(Facet_indices& indices)
     set_index_facet_indices(m_facet_coord_indices, index, i);
     prev = curr;
   }
-  Shared_coord_array old_shared_coord = get_coord_array();
-  old_shared_coord->clear();
+  m_coord_array->clear();
   set_coord_array(shared_coords);
 }
 

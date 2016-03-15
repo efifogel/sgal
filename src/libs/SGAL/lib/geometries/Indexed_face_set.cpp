@@ -73,29 +73,59 @@
 
 SGAL_BEGIN_NAMESPACE
 
-//! \todo #include "Model_stats.h"
-
-/*! We use a deferred response mechanism to handle the change of fields.
+/*!
+ * -----------------------------------------------------------------------------
+ * Handling Fields
+ * -----------------------------------------------------------------------------
+ * We use a deferred response mechanism to handle the change of fields.
  * For every field f we define at least the following functions:
- * 1. set_f(value) -          sets a new value for f
- * 2. value get_f() -         obtains the value of f
- * 3. clean_f() -             cleans (or validates) the value of f
- * 4. clear_f() -             clears (or invalidates) the value of f
- * 5. f_changed(field-info) - responds to a change of the value of
+ * 1. set_f(value) -          sets a new value for f.
+ * 2. value get_f() -         obtains the value of f.
+ * 3. clean_f() -             cleans (or validates) the value of f.
+ * 4. clear_f() -             clears (or invalidates) the value of f.
+ * 5. f_changed(field-info) - responds to a change of the value of f.
+ * 6. bool is_dirty_f() -     determines whether the field has been cleared.
  *
  * set_f() accepts a new value of f and stores it. Then, it calls f_changed().
  *
- * f_changed() propages the change, perhaps to other fields.
+ * f_changed() propagates the change to other fields. It also reflects the
+ *             change at derived classes if exist and perhaps even at the
+ *             parent Shape node (which, in turn, reflects it further up in
+ *             parent via polymorphism. (Notice that this function is virtual.)
  *
- * clear_f() clears the data structure storing f and sets the corresponding
- * m_dirty_f flag to indicate that the f is no longer valid. Then, it calls
- * f_changed() of the base class if exists.
+ * clear_f() clears the data structure storing f, and sets the corresponding
+ *           m_dirty_f flag to indicate that the f is no longer valid. Then,
+ *           it calls f_changed() of the base class if exists. It is imperative
+ *           to call the base class function, so that the call to f_changed()
+ *           is not captured by the derived classes if exist.
  *
- * f_clean() validates the value of f. Then, it calls
- * f_changed() of the base class if exists.
+ * f_clean() validates the value of f. Then, it calls f_changed() of the base
+ *           class if exists; see clear_f() above.
  *
  * get_f() calls clean_f() if the m_dirty_f flag is set. Only then, it returns
- * the current value of f.
+ *         the current value of f.
+ *
+ * is_dirty_f() simply returns the value of the m_dirty_f flag.
+ *
+ * The above, essencially implies that the call to clear_f() clears all
+ * dependent data structures of base classes and the call to f_changed() clears
+ * all dependent data structures of derived classes.
+ *
+ * -----------------------------------------------------------------------------
+ * Repairing
+ * -----------------------------------------------------------------------------
+ * It is assumed that the geometry represented by this data structure does
+ * not need repairing at all, that is, it is consistent, has no singular
+ * vertices, and does not need repairing (triangulation of holes and repairing
+ * of orientation) at all, with the following exceptions:
+ * a. If the global configuration indicates that hole-triangulation or
+ *    orientation repairing is desired, then repairing is enabled.
+ * b. lobal configuration indicates that consistency repairing is desired,
+ *    then consistency enforcing is enabled.
+ * In order to alter the defaults, e.g., in the case of polygon soup read from
+ * an stl file, call the following corespnding member functions:
+ *   set_consistent(false) - enables consistency enforcing.
+ *   set_repaired(flase) - enables hole-triangulation and orientation-repairing.
  */
 
 const std::string Indexed_face_set::s_tag = "IndexedFaceSet";
@@ -108,8 +138,8 @@ REGISTER_TO_FACTORY(Indexed_face_set, "Indexed_face_set");
 // If the mesh is consistent, there is no need to re-orient the polygon soup
 Indexed_face_set::Indexed_face_set(Boolean proto) :
   Boundary_set(proto),
-  m_consistent(false),
-  m_has_singular_vertices(true),
+  m_consistent(true),
+  m_has_singular_vertices(false),
   m_repaired(true),
   m_dirty_volume(true),
   m_dirty_surface_area(true),
@@ -119,14 +149,13 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   m_polyhedron_type(POLYHEDRON_INEXACT),
   m_dirty_coord_array(true),
   m_dirty_polyhedron(true),
-  m_dirty_repaired_polyhedron(true),
-  m_dirty_repaired_coords(true),
   m_dirty_polyhedron_facet_normals(true),
   m_dirty_normal_attributes(true),
-  m_triangulate(Modeling::s_def_triangulate),
+  m_triangulate_holes(Modeling::s_def_triangulate_holes),
   m_refine(Modeling::s_def_refine),
   m_fair(Modeling::s_def_refine),
-  m_repair_orientation(Modeling::s_def_repair_orientation)
+  m_repair_orientation(Modeling::s_def_repair_orientation),
+  m_make_consistent(Modeling::s_def_make_consistent)
 {
   if (proto) return;
   set_crease_angle(0);
@@ -190,53 +219,52 @@ Container_proto* Indexed_face_set::get_prototype()
   return s_prototype;
 }
 
-//! \brief cleans the repaired coordinates and the coordinate indices.
-void Indexed_face_set::clean_repaired_coords()
-{
-  // If triangulation of holes or orientation repairing is required,
-  // first clean the repaired data structure. This either leaves the polyhedron
-  // clean of the coordinate and the coordinate-indices clean; then, re-clean
-  // the coordinates and the coordinate indices.
-  if (!m_repaired && (m_triangulate || m_repair_orientation)) repair();
-
-  if (is_dirty_coord_array() ||
-      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
-    clean_coords();
-
-  m_dirty_repaired_coords = false;
-}
-
 //! \brief draws the polygons.
 void Indexed_face_set::draw(Draw_action* action)
 {
-  std::cout << "Indexed_face_set::draw() "
-            << is_dirty_coord_array() << ", "
-            << is_dirty_coord_indices() << ", "
-            << is_dirty_facet_coord_indices() << ", "
-            << m_dirty_repaired_coords
-            << std::endl;
-  if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
-  if (m_dirty_repaired_coords) clean_repaired_coords();
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
+  else if (is_dirty_polyhedron()) clean_polyhedron();
+  if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+    clean_coords();
+  // If clean_coords() is not invoked, the facet coord indices might still be
+  // dirty (invalid). Even if invoked, it may still leave the facet coord
+  // indices dirty upon completion, as it might be overriden by a derived class
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+
   Boundary_set::draw(action);
 }
 
 //! \brief draws the polygons for selection.
 void Indexed_face_set::isect(Isect_action* action)
 {
-  if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
-  if (m_dirty_repaired_coords) clean_repaired_coords();
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
+  else if (is_dirty_polyhedron()) clean_polyhedron();
+  if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+    clean_coords();
+  // If clean_coords() is not invoked, the facet coord indices might still be
+  // dirty (invalid). Even if invoked, it may still leave the facet coord
+  // indices dirty upon completion, as it might be overriden by a derived class
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+
   Boundary_set::isect(action);
 }
 
 //! \brief cleans the sphere bound.
 void Indexed_face_set::clean_bounding_sphere()
 {
-  std::cout << "Indexed_face_set::clean_bounding_sphere()" << std::endl;
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
+  else if (is_dirty_polyhedron()) clean_polyhedron();
+  if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+    clean_coords();
+  // If clean_coords() is not invoked, the facet coord indices might still be
+  // dirty (invalid). Even if invoked, it may still leave the facet coord
+  // indices dirty upon completion, as it might be overriden by a derived class
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
 
-  if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
-  if (m_dirty_repaired_coords) clean_repaired_coords();
-
-  //Boundary_set::clean_bounding_sphere();
+  // Boundary_set::clean_bounding_sphere();
   if (m_coord_array) {
     auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
     if (coords) m_bounding_sphere.set_around(coords->begin(), coords->end());
@@ -263,11 +291,10 @@ void Indexed_face_set::clean_bounding_sphere()
 //! \brief cleans the coordinate array and coordinate indices.
 void Indexed_face_set::clean_coords()
 {
-  std::cout << "Indexed_face_set::clean_coords()" << std::endl;
   m_dirty_coord_array = false;
 
-  if (m_dirty_polyhedron) clean_polyhedron();
-  if (is_polyhedron_empty()) return;
+  // If the polyhedron is empty, return.
+  if (boost::apply_visitor(Empty_polyhedron_visitor(), m_polyhedron)) return;
 
   Size_of_vertices_visitor indices_visitor;
   auto size_of_vertices = boost::apply_visitor(indices_visitor, m_polyhedron);
@@ -299,12 +326,7 @@ void Indexed_face_set::clean_coords()
 //! \brief clears the coordinates.
 void Indexed_face_set::clear_coord_array()
 {
-  std::cout << "Indexed_face_set::clear_coord_array() " << get_name()
-            << std::endl;
   m_dirty_coord_array = true;
-
-  // Assume that the coordinates need reapiring.
-  m_dirty_repaired_coords = true;
 
   if (m_coord_array) m_coord_array->clear();
   Boundary_set::coord_content_changed(get_field_info(COORD_ARRAY));
@@ -313,14 +335,19 @@ void Indexed_face_set::clear_coord_array()
 //! \brief obtains the coordinate array.
 Indexed_face_set::Shared_coord_array Indexed_face_set::get_coord_array()
 {
-  if (m_dirty_repaired_coords) clean_repaired_coords();
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
+  else if (is_dirty_polyhedron()) clean_polyhedron();
+  if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+    clean_coords();
   return m_coord_array;
 }
 
 //! \brief cleans the coordinate indices.
 void Indexed_face_set::clean_coord_indices()
 {
-  if (is_polyhedron_empty()) {
+  // If the polyhedron is empty, return.
+  if (boost::apply_visitor(Empty_polyhedron_visitor(), m_polyhedron)) {
     m_dirty_coord_indices = false;
     m_dirty_facet_coord_indices = false;
     return;
@@ -345,9 +372,8 @@ void Indexed_face_set::clean_coord_indices()
 //! \brief cleans the normal array and the normal indices.
 void Indexed_face_set::clean_normals()
 {
-  std::cout << "Indexed_face_set::clean_normals()" << std::endl;
   if ((0 < m_crease_angle) && (m_crease_angle < SGAL_PI)) {
-    if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
+    if (m_dirty_polyhedron) clean_polyhedron();
     if (m_dirty_polyhedron_facet_normals) clean_polyhedron_facet_normals();
     if (m_dirty_normal_attributes) clean_normal_attributes();
 
@@ -366,7 +392,15 @@ void Indexed_face_set::clean_normals()
 //! \brief repairs the data structures
 void Indexed_face_set::repair()
 {
-  std::cout << "Indexed_face_set::repair()" << std::endl;
+  if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+    clean_coords();
+
+  // If clean_coords() is not invoked, the facet coord indices might still be
+  // dirty (invalid). Even if invoked, it may still leave the facet coord
+  // indices dirty upon completion, as it might be overriden by a derived class
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+
   if (m_dirty_polyhedron) clean_polyhedron();
 
   Number_of_connected_components_polyhedron_visitor num_ccs_visitor;
@@ -408,21 +442,6 @@ void Indexed_face_set::repair()
   m_repaired = true;
 }
 
-//! \brief cleans the polyhedron data structure.
-void Indexed_face_set::clean_repaired_polyhedron()
-{
-  std::cout << "Indexed_face_set::clean_repaired_polyhedron()" << std::endl;
-
-  // If triangulation of holes or orientation repairing is required,
-  // first clean the repaired data structure. This either leaves the polyhedron
-  // or the coordinate and the coordinate-indices cleaned;
-  // then, re-clean the polyhedron.
-  if (!m_repaired && (m_triangulate || m_repair_orientation)) repair();
-  if (m_dirty_polyhedron) clean_polyhedron();
-
-  m_dirty_repaired_polyhedron = false;
-}
-
 //! \brief initializes the polyhedron.
 void Indexed_face_set::init_polyhedron()
 {
@@ -447,7 +466,7 @@ void Indexed_face_set::polyhedron_changed()
   // (iii) is consistent, and
   // ((iv) repaired.
   m_dirty_polyhedron_facet_normals = false;
-  m_dirty_repaired_polyhedron = false;
+
   m_consistent = true;
   m_has_singular_vertices = false;
   m_repaired = true;
@@ -516,42 +535,31 @@ void Indexed_face_set::convex_hull()
 }
 
 //! \brief cleans the polyhedron data structure.
+// Set (or reset) the dirty flags at the end.
+// In fact, this should be applied for all cleaning functions.
+// In some cases it doesn't matter, but here, we bail out if the coordinates
+// or the coordinate indices are empty and the m_dirty_polyhedron must retain
+// its (true) value; this is imperative as explained next.
+// When we need the clean (valid) polyhedron (e.g., when we need to determine
+// whether the polyhedron is closedwe) we first attempt to cleanl the
+// coordinates & coordinate indices and immediately after we attempt to
+// clean the polyhedron. In, on the other hand, we need the clean (valid)
+// coordinates & coordinate indices, we attemp the cleaning the other way
+// around; that is, we first attempt to clean the polyhedron, and immediately
+// after we attempt to clean the coordinates & coordinate indices. In this
+// case, when the polyhedron cleaning function is invoked, and indices are
+// not cleaned, we must enable the re-invocation of the polyhedron cleaning
+// function at a later point after the indices have been cleaned.
 void Indexed_face_set::clean_polyhedron()
 {
-  std::cout << "Indexed_face_set::clean_polyhedron() " << this
-            << std::endl;
-  m_dirty_polyhedron = false;
-
-  // Clean the coordinates and the coordinate indices (without repairing).
-  if (is_dirty_coord_array() ||
-      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
-    clean_coords();
-  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
-
   // If there are no coordinates bail out.
-  if (!m_coord_array || m_coord_array->empty()) {
-    m_dirty_polyhedron_facet_normals = false;
-    m_dirty_volume = true;
-    m_dirty_surface_area = true;
-    m_consistent = true;
-    m_has_singular_vertices = false;
-    m_repaired = true;
-    return;
-  }
+  if (!m_coord_array || m_coord_array->empty()) return;
 
   clock_t start_time = clock();
   if (m_convex_hull) convex_hull();
   else {
     // If there are no coordinate indices bail out.
-    if (empty_facet_indices(m_facet_coord_indices)) {
-      m_dirty_polyhedron_facet_normals = false;
-      m_dirty_volume = true;
-      m_dirty_surface_area = true;
-      m_consistent = true;
-      m_has_singular_vertices = false;
-      m_repaired = true;
-      return;
-    }
+    if (empty_facet_indices(m_facet_coord_indices)) return;
 
     if (!m_consistent) {
       Orient_polygon_soup_visitor visitor(m_coord_array);
@@ -560,7 +568,7 @@ void Indexed_face_set::clean_polyhedron()
     }
 
     // Create the polyhedral surface
-    if ((m_polyhedron_type == POLYHEDRON_INEXACT) && m_triangulate)
+    if ((m_polyhedron_type == POLYHEDRON_INEXACT) && m_triangulate_holes)
       m_polyhedron_type = POLYHEDRON_EPIC;
     init_polyhedron();
     Delegate_surface_visitor visitor(m_primitive_type, m_num_primitives,
@@ -572,7 +580,7 @@ void Indexed_face_set::clean_polyhedron()
 
     auto closed =
       boost::apply_visitor(Is_closed_polyhedron_visitor(), m_polyhedron);
-    if (!closed && m_triangulate) {
+    if (!closed && m_triangulate_holes) {
       Hole_filler_visitor visitor(m_refine, m_fair);
       boost::apply_visitor(visitor, m_polyhedron);
 
@@ -586,6 +594,7 @@ void Indexed_face_set::clean_polyhedron()
   clock_t end_time = clock();
   m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
 
+  m_dirty_polyhedron = false;
   m_dirty_polyhedron_facet_normals = true;
   m_dirty_volume = true;
   m_dirty_surface_area = true;
@@ -595,13 +604,18 @@ void Indexed_face_set::clean_polyhedron()
 void Indexed_face_set::clear_polyhedron()
 {
   m_dirty_polyhedron = true;
-  m_dirty_repaired_polyhedron = true;
   m_dirty_polyhedron_facet_normals = true;
   m_dirty_volume = true;
   m_dirty_surface_area = true;
-  m_consistent = false;
-  m_has_singular_vertices = true;
+
+  // It is assumed by default that the polyhedron does not nead repairing at
+  // all.
+  m_consistent = true;
+  m_has_singular_vertices = false;
   m_repaired = true;
+  if (m_make_consistent) m_consistent = false;
+  if (m_triangulate_holes || m_repair_orientation) m_repaired = false;
+
   boost::apply_visitor(Clear_polyhedron_visitor(), m_polyhedron);
 }
 
@@ -616,10 +630,19 @@ void Indexed_face_set::set_polyhedron(Polyhedron& polyhedron)
 const Indexed_face_set::Polyhedron&
 Indexed_face_set::get_polyhedron(Boolean clean_facet_normals)
 {
-  std::cout << "Indexed_face_set::get_polyhedron()"
-            << ", drp: " << m_dirty_repaired_polyhedron
-            << ", this: " << this << std::endl;
-  if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
+  // Clean the coordinates and the coordinate indices (without repairing).
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
+  else {
+    if (is_dirty_coord_array() ||
+        (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+      clean_coords();
+
+    // If clean_coords() is not invoked, the facet coord indices might still be
+    // dirty (invalid). Even if invoked, it may still leave the facet coord
+    // indices dirty upon completion, as it might be overriden by a derived class
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
+  if (m_dirty_polyhedron) clean_polyhedron();
   if (clean_facet_normals) {
     if (m_dirty_polyhedron_facet_normals) clean_polyhedron_facet_normals();
   }
@@ -630,10 +653,6 @@ Indexed_face_set::get_polyhedron(Boolean clean_facet_normals)
 void Indexed_face_set::coord_content_changed(const Field_info* field_info)
 {
   m_dirty_coord_array = false;
-
-  // Assume that the coordinates need reapiring.
-  m_dirty_repaired_coords = true;
-
   clear_polyhedron();
   Boundary_set::coord_content_changed(field_info);
 }
@@ -681,11 +700,16 @@ void Indexed_face_set::calculate_multiple_normals_per_vertex()
 //! \brief prints statistics.
 void Indexed_face_set::print_stat()
 {
-  SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
-  if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
+  else if (is_dirty_polyhedron()) clean_polyhedron();
   if (is_dirty_coord_array() ||
       (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
     clean_coords();
+
+  // If clean_coords() is not invoked, the facet coord indices might still be
+  // dirty (invalid). Even if invoked, it may still leave the facet coord
+  // indices dirty upon completion, as it might be overriden by a derived class
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
 
   std::cout << "Container name: " << get_name() << std::endl;
   std::cout << "Container tag: " << get_tag() << std::endl;
@@ -710,8 +734,16 @@ void Indexed_face_set::write(Formatter* formatter)
                   << ", name: " << get_name()
                   << std::endl;);
 
-  if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
-  if (m_dirty_repaired_coords) clean_repaired_coords();
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
+  else if (is_dirty_polyhedron()) clean_polyhedron();
+  if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+    clean_coords();
+  // If clean_coords() is not invoked, the facet coord indices might still be
+  // dirty (invalid). Even if invoked, it may still leave the facet coord
+  // indices dirty upon completion, as it might be overriden by a derived class
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+
   Boundary_set::write(formatter);
 }
 
@@ -742,7 +774,7 @@ void Indexed_face_set::clean_volume()
   m_dirty_volume = false;
 
   m_volume = 0;
-  if (is_polyhedron_empty()) return;
+  if (boost::apply_visitor(Empty_polyhedron_visitor(), m_polyhedron)) return;
   m_volume = boost::apply_visitor(Volume_visitor(), m_polyhedron);
 }
 
@@ -752,14 +784,26 @@ void Indexed_face_set::clean_surface_area()
   m_dirty_surface_area = false;
 
   m_surface_area = 0;
-  if (is_polyhedron_empty()) return;
+  if (boost::apply_visitor(Empty_polyhedron_visitor(), m_polyhedron)) return;
    m_surface_area = boost::apply_visitor(Surface_area_visitor(), m_polyhedron);
 }
 
 //! \brief computes the volume of the polyhedron.
 Float Indexed_face_set::volume()
 {
-  if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
+  else {
+    if (is_dirty_coord_array() ||
+        (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+      clean_coords();
+
+    // If clean_coords() is not invoked, the facet coord indices might still be
+    // dirty (invalid). Even if invoked, it may still leave the facet coord
+    // indices dirty upon completion, as it might be overriden by a derived class
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
+
+  if (m_dirty_polyhedron) clean_polyhedron();
   if (m_dirty_volume) clean_volume();
   return m_volume;
 }
@@ -767,7 +811,19 @@ Float Indexed_face_set::volume()
 //! \brief computes the surface area of the polyhedron.
 Float Indexed_face_set::surface_area()
 {
-  if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
+  else {
+    if (is_dirty_coord_array() ||
+        (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+      clean_coords();
+
+    // If clean_coords() is not invoked, the facet coord indices might still be
+    // dirty (invalid). Even if invoked, it may still leave the facet coord
+    // indices dirty upon completion, as it might be overriden by a derived class
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
+
+  if (m_dirty_polyhedron) clean_polyhedron();
   if (m_dirty_surface_area) clean_surface_area();
   return m_surface_area;
 }
@@ -775,35 +831,90 @@ Float Indexed_face_set::surface_area()
 //! \brief determines wheather the mesh is consistent.
 Boolean Indexed_face_set::is_consistent()
 {
-  if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
+  else {
+    if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+    clean_coords();
+    // If clean_coords() is not invoked, the facet coord indices might still be
+    // dirty (invalid). Even if invoked, it may still leave the facet coord
+    // indices dirty upon completion, as it might be overriden by a derived class
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
+  if (m_dirty_polyhedron) clean_polyhedron();
+
   return m_consistent;
 }
 
 //! \brief determines whether the mesh has singular vertices.
 Boolean Indexed_face_set::has_singular_vertices()
 {
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
+  else {
+    if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+    clean_coords();
+    // If clean_coords() is not invoked, the facet coord indices might still be
+    // dirty (invalid). Even if invoked, it may still leave the facet coord
+    // indices dirty upon completion, as it might be overriden by a derived class
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
   if (m_dirty_polyhedron) clean_polyhedron();
+
   return m_has_singular_vertices;
 }
 
 //! \brief determines whether the polyhedron representation is empty.
 bool Indexed_face_set::is_polyhedron_empty()
 {
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
+  else {
+    if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+    clean_coords();
+    // If clean_coords() is not invoked, the facet coord indices might still be
+    // dirty (invalid). Even if invoked, it may still leave the facet coord
+    // indices dirty upon completion, as it might be overriden by a derived class
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
   if (m_dirty_polyhedron) clean_polyhedron();
+
   return boost::apply_visitor(Empty_polyhedron_visitor(), m_polyhedron);
 }
 
 //! \brief determines whether there are no border edges.
 Boolean Indexed_face_set::is_closed()
 {
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
+  else {
+    if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+    clean_coords();
+    // If clean_coords() is not invoked, the facet coord indices might still be
+    // dirty (invalid). Even if invoked, it may still leave the facet coord
+    // indices dirty upon completion, as it might be overriden by a derived class
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
   if (m_dirty_polyhedron) clean_polyhedron();
+
   return boost::apply_visitor(Is_closed_polyhedron_visitor(), m_polyhedron);
 }
 
 //! \brief obtains the number of border edges.
 size_t Indexed_face_set::get_number_of_border_edges()
 {
-  if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
+  else {
+    if (is_dirty_coord_array() ||
+        (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+      clean_coords();
+    // If clean_coords() is not invoked, the facet coord indices might still be
+    // dirty (invalid). Even if invoked, it may still leave the facet coord
+    // indices dirty upon completion, as it might be overriden by a derived class
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
+  if (m_dirty_polyhedron) clean_polyhedron();
+
   return boost::apply_visitor(Size_of_border_edges_polyhedron_visitor(),
                               m_polyhedron);
 }
@@ -811,7 +922,18 @@ size_t Indexed_face_set::get_number_of_border_edges()
 //! \bried obtains the number of connected components.
 Size Indexed_face_set::get_number_of_connected_components()
 {
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
+  else {
+    if (is_dirty_coord_array() ||
+        (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+      clean_coords();
+    // If clean_coords() is not invoked, the facet coord indices might still be
+    // dirty (invalid). Even if invoked, it may still leave the facet coord
+    // indices dirty upon completion, as it might be overriden by a derived class
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
   if (m_dirty_polyhedron) clean_polyhedron();
+
   Number_of_connected_components_polyhedron_visitor visitor;
   return boost::apply_visitor(visitor, m_polyhedron);
 }
@@ -819,21 +941,54 @@ Size Indexed_face_set::get_number_of_connected_components()
 //! \brief obtains the number of vertices.
 Size Indexed_face_set::get_number_of_vertices()
 {
-  if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
+  else {
+    if (is_dirty_coord_array() ||
+        (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+      clean_coords();
+    // If clean_coords() is not invoked, the facet coord indices might still be
+    // dirty (invalid). Even if invoked, it may still leave the facet coord
+    // indices dirty upon completion, as it might be overriden by a derived class
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
+  if (m_dirty_polyhedron) clean_polyhedron();
+
   return boost::apply_visitor(Size_of_vertices_visitor(), m_polyhedron);
 }
 
 //! \brief obtains the number of edges.
 Size Indexed_face_set::get_number_of_edges()
 {
-  if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
+  else {
+    if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+    clean_coords();
+    // If clean_coords() is not invoked, the facet coord indices might still be
+    // dirty (invalid). Even if invoked, it may still leave the facet coord
+    // indices dirty upon completion, as it might be overriden by a derived class
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
+  if (m_dirty_polyhedron) clean_polyhedron();
+
   return boost::apply_visitor(Size_of_halfedges_visitor(), m_polyhedron) / 2;
 }
 
 //! \brief obtains the number of facets.
 Size Indexed_face_set::get_number_of_facets()
 {
-  if (m_dirty_repaired_polyhedron) clean_repaired_polyhedron();
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
+  else {
+    if (is_dirty_coord_array() ||
+        (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+      clean_coords();
+    // If clean_coords() is not invoked, the facet coord indices might still be
+    // dirty (invalid). Even if invoked, it may still leave the facet coord
+    // indices dirty upon completion, as it might be overriden by a derived class
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
+  if (m_dirty_polyhedron) clean_polyhedron();
+
   return boost::apply_visitor(Size_of_facets_visitor(), m_polyhedron) / 2;
 }
 
@@ -864,36 +1019,27 @@ void Indexed_face_set::set_polyhedron_type(Polyhedron_type type)
   init_polyhedron();
 }
 
-//! \brief configures.
-void Indexed_face_set::configure(const Configuration* conf)
+//! \brief adds the container to a given scene.
+void Indexed_face_set::add_to_scene(Scene_graph* sg)
 {
+  const auto* conf = sg->get_configuration();
+
   if (!conf) return;
 
   auto modeling = conf->get_modeling();
   if (!modeling) return;
 
-  m_triangulate = modeling->get_triangulate();
+  set_make_consistent(modeling->get_make_consistent());
+  set_repair(modeling->get_triangulate_holes(),
+             modeling->get_repair_orientation());
   m_refine = modeling->get_refine();
   m_fair = modeling->get_fair();
-  m_repair_orientation = modeling->get_repair_orientation();
-  if (m_triangulate || m_repair_orientation) m_repaired = false;
-}
-
-//! \brief adds the container to a given scene.
-void Indexed_face_set::add_to_scene(Scene_graph* sg)
-{
-  const auto* conf = sg->get_configuration();
-  configure(conf);
 }
 
 //! \brief responds to a change in the coordinate-index array.
 void Indexed_face_set::coord_indices_changed(const Field_info* field_info)
 {
   clear_polyhedron();
-
-  // Assume that the coordinates need reapiring.
-  m_dirty_repaired_coords = true;
-
   Boundary_set::coord_indices_changed(field_info);
 }
 
@@ -913,10 +1059,6 @@ void Indexed_face_set::tex_coord_indices_changed(const Field_info* field_info)
 void Indexed_face_set::facet_coord_indices_changed()
 {
   clear_polyhedron();
-
-  // Assume that the coordinates need reapiring.
-  m_dirty_repaired_coords = true;
-
   Boundary_set::facet_coord_indices_changed();
 }
 
@@ -977,35 +1119,66 @@ void Indexed_face_set::set_convex_hull(Boolean flag)
 //! \brief computes the volume of the convex hull of the polyhedron.
 Float Indexed_face_set::volume_of_convex_hull()
 {
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
+  else {
+    if (is_dirty_coord_array() ||
+        (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
+      clean_coords();
+    // If clean_coords() is not invoked, the facet coord indices might still be
+    // dirty (invalid). Even if invoked, it may still leave the facet coord
+    // indices dirty upon completion, as it might be overriden by a derived class
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
   if (m_dirty_polyhedron) clean_polyhedron();
-  if (is_polyhedron_empty()) return 0.0f;
 
-  // typedef CGAL::Exact_predicates_inexact_constructions_kernel   Epic_kernel;
   Float volume = 0.0f;
-  // if (is_convex_hull()) {
-  //   typedef CGAL::Triangulation_3<Epec_kernel>                Triangulation;
-  //   Triangulation tri(m_polyhedron.points_begin(), m_polyhedron.points_end());
-  //   for (auto it = tri.finite_cells_begin(); it != tri.finite_cells_end(); ++it)
-  //   {
-  //     auto tetr = tri.tetrahedron(it);
-  //     volume += CGAL::to_double(tetr.volume());
-  //   }
-  // }
-  // else {
-  //   Epec_polyhedron ch;
-  //   CGAL::convex_hull_3(m_polyhedron.points_begin(), m_polyhedron.points_end(),
-  //                       ch);
 
-  //   typedef CGAL::Triangulation_3<Epec_kernel>                Triangulation;
-  //   Triangulation tri(ch.points_begin(), ch.points_end());
-  //   for (auto it = tri.finite_cells_begin(); it != tri.finite_cells_end(); ++it)
-  //   {
-  //     auto tetr = tri.tetrahedron(it);
-  //     volume += CGAL::to_double(tetr.volume());
-  //   }
-  // }
+  // If the polyhedron is empty, return.
+  if (boost::apply_visitor(Empty_polyhedron_visitor(), m_polyhedron))
+    return volume;
+
+  //! \todo replace with a visitor.
+  const auto& polyhedron = boost::get<Epec_polyhedron>(m_polyhedron);
+
+  if (is_convex_hull()) {
+    typedef CGAL::Triangulation_3<Epec_kernel>                Triangulation;
+    Triangulation tri(polyhedron.points_begin(), polyhedron.points_end());
+    for (auto it = tri.finite_cells_begin(); it != tri.finite_cells_end(); ++it)
+    {
+      auto tetr = tri.tetrahedron(it);
+      volume += CGAL::to_double(tetr.volume());
+    }
+  }
+  else {
+    Epec_polyhedron ch;
+    CGAL::convex_hull_3(polyhedron.points_begin(), polyhedron.points_end(), ch);
+
+    typedef CGAL::Triangulation_3<Epec_kernel>                Triangulation;
+    Triangulation tri(ch.points_begin(), ch.points_end());
+    for (auto it = tri.finite_cells_begin(); it != tri.finite_cells_end(); ++it)
+    {
+      auto tetr = tri.tetrahedron(it);
+      volume += CGAL::to_double(tetr.volume());
+    }
+  }
 
   return volume;
+}
+
+//! \brief sets the flag that indicates whether to enable consistency repairing.
+void Indexed_face_set::set_make_consistent(Boolean flag)
+{
+  m_make_consistent = flag;
+  if (m_make_consistent) m_consistent = false;
+}
+
+//! \brief sets the flag that indicates whether to enable repairing procedures.
+void Indexed_face_set::set_repair(Boolean triangulate_holes,
+                                  Boolean repair_orientation)
+{
+  m_triangulate_holes = triangulate_holes;
+  m_repair_orientation = repair_orientation;
+  if (m_triangulate_holes || m_repair_orientation) m_repaired = false;
 }
 
 SGAL_END_NAMESPACE

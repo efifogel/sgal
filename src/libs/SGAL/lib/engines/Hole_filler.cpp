@@ -171,10 +171,9 @@ void Hole_filler::execute()
     result->set_primitive_type(surface->get_primitive_type());
   }
 
-  // std::cout << surface->get_number_of_border_edges() << std::endl;
-  if (!surface->is_closed()) {
+  if (!result->is_closed()) {
     // Fill the holes.
-    surface->set_polyhedron_type(Indexed_face_set::POLYHEDRON_EPIC);
+    result->set_polyhedron_type(Indexed_face_set::POLYHEDRON_EPIC);
 
     // We obtain the polyhedron by const reference, cast way constness, and
     // apply the visitor on it. Then, we need to invalidate all fields that
@@ -185,19 +184,12 @@ void Hole_filler::execute()
     // result->set_polyhedron(polyhedron);
     // The last statement willl invalidate all necessary fields.
 
-    const auto& polyhedron = surface->get_polyhedron();
+    const auto& polyhedron = result->get_polyhedron();
+    result->clear_polyhedron_facet_normals();
     Hole_filler_visitor visitor(m_refine, m_fair);
     boost::apply_visitor(visitor,
                          const_cast<Indexed_face_set::Polyhedron&>(polyhedron));
-    result->clear_volume();
-    result->clear_surface_area();
-    result->clear_polyhedron_facet_normals();
-    result->clear_normal_attributes();
-
-    //! \todo fix the arrays instead of brutally invalidate them.
-    result->clear_coord_array();
-    result->clear_coord_indices();
-    result->clear_facet_coord_indices();
+    result->polyhedron_changed();
   }
 
   // Cascade the result field:
