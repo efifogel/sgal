@@ -33,23 +33,29 @@ SGAL_BEGIN_NAMESPACE
 //! \brief constructs default.
 Modeling_option_parser::Modeling_option_parser() :
   m_modeling_opts("Modeling options"),
-  m_triangulate(false),
+  m_make_consistent(false),
+  m_triangulate_holes(false),
   m_refine(false),
   m_fair(false),
   m_split_ccs(false),
   m_repair_orientation(false)
 {
   m_modeling_opts.add_options()
-    ("triangulate", po::value<Boolean>(&m_triangulate)->default_value(false),
+    ("make-consistent",
+     po::value<Boolean>(&m_make_consistent)->default_value(false),
+     "make the orientation of facets consistent")
+    ("triangulate-holes",
+     po::value<Boolean>(&m_triangulate_holes)->default_value(false),
      "triangulate holes")
-    ("refine", po::value<Boolean>(&m_triangulate)->default_value(false),
+    ("refine", po::value<Boolean>(&m_refine)->default_value(false),
      "refine hole triangulation")
-    ("fair", po::value<Boolean>(&m_triangulate)->default_value(false),
+    ("fair", po::value<Boolean>(&m_fair)->default_value(false),
      "fair hole triangulation")
     ("split-ccs", po::value<Boolean>(&m_split_ccs)->default_value(false),
      "split connected components")
-    ("repair-orientation", po::value<Boolean>(&m_split_ccs)->default_value(false),
-     "repair orientation")
+    ("repair-orientation",
+     po::value<Boolean>(&m_repair_orientation)->default_value(false),
+     "repair the orientation of facets reversing them all")
     ;
 }
 
@@ -73,8 +79,11 @@ void Modeling_option_parser::configure(Configuration* conf)
     conf->set_modeling(modeling);
   }
 
-  if (var_map.count("triangulate"))
-    modeling->set_triangulate(var_map["triangulate"].as<Boolean>());
+  if (var_map.count("make-consistent"))
+    modeling->set_make_consistent(var_map["make-consistent"].as<Boolean>());
+
+  if (var_map.count("triangulate-holes"))
+    modeling->set_triangulate_holes(var_map["triangulate-holes"].as<Boolean>());
 
   if (var_map.count("refine"))
     modeling->set_refine(var_map["refine"].as<Boolean>());

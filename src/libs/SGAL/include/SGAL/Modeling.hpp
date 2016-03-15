@@ -35,7 +35,8 @@ class SGAL_SGAL_DECL Modeling : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,
-    TRIANGULATE,
+    MAKE_CONSISTENT,
+    TRIANGULATE_HOLES,
     REFINE,
     FAIR,
     SPLIT_CCS,
@@ -65,7 +66,10 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* triangulate_handle(const Field_info*) { return &m_triangulate; }
+  Boolean* make_consistent_handle(const Field_info*)
+  { return &m_make_consistent; }
+  Boolean* triangulate_holes_handle(const Field_info*)
+  { return &m_triangulate_holes; }
   Boolean* refine_handle(const Field_info*) { return &m_refine; }
   Boolean* fair_handle(const Field_info*) { return &m_fair; }
   Boolean* split_ccs_handle(const Field_info*) { return &m_split_ccs; }
@@ -76,15 +80,25 @@ public:
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
+  /*! Set the flag that indicates whether to repair consistency.
+   * \param[in] flag indicates whether to enable consistency repairing.
+   */
+  void set_make_consistent(Boolean flag);
+
+  /*! Obtain the flag that indicates whether to repair consistency.
+   * \return indicates whether the consistency repairing desired.
+   */
+  Boolean get_make_consistent() const;
+
   /*! Set the flag that indicates whether to triangulate holes.
    * \param[in] flag indicates whether to triangulate holes.
    */
-  void set_triangulate(Boolean flag);
+  void set_triangulate_holes(Boolean flag);
 
   /*! Obtain the flag that indicates whether to triangulate holes.
    * \return indicates whether the triangulations of holes is desired.
    */
-  Boolean get_triangulate() const;
+  Boolean get_triangulate_holes() const;
 
   /*! Set the flag that indicates whether to refine the triangulations of holes.
    * \param[in] flag indicates whether the refinement of the triangulations of
@@ -138,7 +152,8 @@ public:
   Boolean get_repair_orientation() const;
 
   /*! Set defualt values. */
-  void reset(Boolean def_triangulate = s_def_triangulate,
+  void reset(Boolean def_make_consistent = s_def_make_consistent,
+             Boolean def_triangulate_holes = s_def_triangulate_holes,
              Boolean def_refine = s_def_refine,
              Boolean def_fair = s_def_fair,
              Boolean def_split_ccs = s_def_split_ccs,
@@ -155,8 +170,11 @@ private:
   /*! The node prototype. */
   static Container_proto* s_prototype;
 
+  /*! Indicates whether to repair consistency of facet-orientation. */
+  Boolean m_make_consistent;
+
   /*! Indicates whether to triangulate a hole thereby filling it. */
-  Boolean m_triangulate;
+  Boolean m_triangulate_holes;
 
   /*! Indicates whether to refine the triangulation of a hole by applying
    * local averaging rules.
@@ -178,7 +196,8 @@ private:
   Boolean m_repair_orientation;
 
   // default values
-  static const Boolean s_def_triangulate;
+  static const Boolean s_def_make_consistent;
+  static const Boolean s_def_triangulate_holes;
   static const Boolean s_def_refine;
   static const Boolean s_def_fair;
   static const Boolean s_def_split_ccs;
@@ -194,11 +213,21 @@ inline Container* Modeling::clone() { return new Modeling(); }
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Modeling::get_tag() const { return s_tag; }
 
+//! \brief sets the flag that indicates whether to repair consistency.
+inline void Modeling::set_make_consistent(Boolean flag)
+{ m_make_consistent = flag; }
+
+//! \brief obtains the flag that indicates whether to repair consistency.
+inline Boolean Modeling::get_make_consistent() const
+{ return m_make_consistent; }
+
 //! \brief sets the flag that indicates whether to triangulate holes.
-inline void Modeling::set_triangulate(Boolean flag) { m_triangulate = flag; }
+inline void Modeling::set_triangulate_holes(Boolean flag)
+{ m_triangulate_holes = flag; }
 
 //! \brief obtains the flag that indicates whether to triangulate holes.
-inline Boolean Modeling::get_triangulate() const { return m_triangulate; }
+inline Boolean Modeling::get_triangulate_holes() const
+{ return m_triangulate_holes; }
 
 /*! \brief sets the flag that indicates whether to refine the triangulations of
  * holes.

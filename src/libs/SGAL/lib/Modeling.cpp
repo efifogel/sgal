@@ -30,7 +30,8 @@ const std::string Modeling::s_tag = "Modeling";
 Container_proto* Modeling::s_prototype(nullptr);
 
 // Default values
-const Boolean Modeling::s_def_triangulate(false);
+const Boolean Modeling::s_def_make_consistent(false);
+const Boolean Modeling::s_def_triangulate_holes(false);
 const Boolean Modeling::s_def_refine(false);
 const Boolean Modeling::s_def_fair(false);
 const Boolean Modeling::s_def_split_ccs(false);
@@ -39,7 +40,8 @@ const Boolean Modeling::s_def_repair_orientation(false);
 //! \brief constructs.
 Modeling::Modeling(Boolean proto) :
   Container(proto),
-  m_triangulate(s_def_triangulate),
+  m_make_consistent(s_def_make_consistent),
+  m_triangulate_holes(s_def_triangulate_holes),
   m_refine(s_def_refine),
   m_fair(s_def_fair),
   m_split_ccs(s_def_split_ccs),
@@ -56,12 +58,22 @@ void Modeling::init_prototype()
   auto exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
 
-  // triangulate
-  auto triangulate_func =
-    static_cast<Boolean_handle_function>(&Modeling::triangulate_handle);
-  s_prototype->add_field_info(new SF_bool(TRIANGULATE, "triangulate",
+  // makeConsistent
+  auto make_consistent_func =
+    static_cast<Boolean_handle_function>(&Modeling::make_consistent_handle);
+  s_prototype->add_field_info(new SF_bool(MAKE_CONSISTENT, "makeConsistent",
                                           Field_info::RULE_EXPOSED_FIELD,
-                                          triangulate_func, s_def_triangulate,
+                                          make_consistent_func,
+                                          s_def_make_consistent,
+                                          exec_func));
+
+  // triangulateHoles
+  auto triangulate_holes_func =
+    static_cast<Boolean_handle_function>(&Modeling::triangulate_holes_handle);
+  s_prototype->add_field_info(new SF_bool(TRIANGULATE_HOLES, "triangulateHoles",
+                                          Field_info::RULE_EXPOSED_FIELD,
+                                          triangulate_holes_func,
+                                          s_def_triangulate_holes,
                                           exec_func));
 
   // refine
@@ -122,8 +134,13 @@ void Modeling::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
 
-    if (name == "triangulate") {
-      set_triangulate(compare_to_true(value));
+    if (name == "makeConsistent") {
+      set_make_consistent(compare_to_true(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "triangulateHoles") {
+      set_triangulate_holes(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -154,11 +171,12 @@ void Modeling::set_attributes(Element* elem)
 }
 
 //! \brief sets defualt values.
-void Modeling::reset(Boolean def_triangulate, Boolean def_refine,
-                     Boolean def_fair, Boolean def_split_ccs,
-                     Boolean def_repair_orientation)
+void Modeling::reset(Boolean def_make_consistent, Boolean def_triangulate_holes,
+                     Boolean def_refine, Boolean def_fair,
+                     Boolean def_split_ccs, Boolean def_repair_orientation)
 {
-  m_triangulate = def_triangulate;
+  m_make_consistent = def_make_consistent;
+  m_triangulate_holes = def_triangulate_holes;
   m_refine = def_refine;
   m_fair = def_fair;
   m_split_ccs = def_split_ccs;

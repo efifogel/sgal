@@ -65,10 +65,16 @@ public:
   /*! Configure. */
   void configure(Configuration* conf);
 
+  /*! Determine whether to repair consistency.
+   * \return true if the repairing of consistency is desired, and false
+   *         otherwise.
+   */
+  Boolean get_make_consistent() const;
+
   /*! Determine whether to triangulate holes.
    * \return true if the triangulations of holes is desired, and false otherwise.
    */
-  Boolean get_triangulate() const;
+  Boolean get_triangulate_holes() const;
 
   /*! Determine whether to refine the triangulation of holes.
    * \return true if the refinement of the triangulations of holes is desired,
@@ -106,7 +112,10 @@ protected:
 
 private:
   /*! Indicates whether to triangulate a hole thereby filling it. */
-  Boolean m_triangulate;
+  Boolean m_triangulate_holes;
+
+  /*! Indicates whether to repair the consistency of facet orientation. */
+  Boolean m_make_consistent;
 
   /*! Indicates whether to refine the triangulation of a hole by applying
    * local averaging rules.
@@ -141,9 +150,13 @@ private:
 inline const po::options_description&
 Modeling_option_parser::get_modeling_opts() const { return m_modeling_opts; }
 
+//! \brief determines whether to repair the consistency of facet orientation.
+inline Boolean Modeling_option_parser::get_make_consistent() const
+{ return m_make_consistent; }
+
 //! \brief determines whether to triangulate holes.
-inline Boolean Modeling_option_parser::get_triangulate() const
-{ return m_triangulate; }
+inline Boolean Modeling_option_parser::get_triangulate_holes() const
+{ return m_triangulate_holes; }
 
 //! \brief determines whether to refine the triangulation of holes.
 inline Boolean Modeling_option_parser::get_refine() const { return m_refine; }
