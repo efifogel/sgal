@@ -94,7 +94,7 @@ size_t Stl_binary_formatter::number_of_triangles()
                   auto geometry = ws.first->get_geometry();
                   if (!geometry) return;
                   auto mesh = boost::dynamic_pointer_cast<Mesh_set>(geometry);
-
+                  if (!mesh) return;
                   const auto& indices = mesh->get_facet_coord_indices();
                   Count_triangles_visitor visitor;
                   num_triangles += boost::apply_visitor(visitor, indices);
@@ -170,7 +170,7 @@ void Stl_binary_formatter::clean(Shared_shape shape)
   auto geometry = shape->get_geometry();
   if (!geometry) return;
   auto mesh = boost::dynamic_pointer_cast<Mesh_set>(geometry);
-  if (! mesh) std::cout << "NOT MESH!!!!!!!!!!!!!!!\n";
+  if (!mesh) return;
   auto coords = mesh->get_coord_array();
   if (!coords || (coords->size() == 0)) return;
 
@@ -183,6 +183,7 @@ void Stl_binary_formatter::write(Shared_shape shape, Shared_matrix4f matrix)
   auto geometry = shape->get_geometry();
   if (!geometry) return;
   auto mesh = boost::dynamic_pointer_cast<Mesh_set>(geometry);
+  if (!mesh) return;
   auto coords = mesh->get_coord_array();
   if (!coords || (coords->size() == 0)) return;
 
