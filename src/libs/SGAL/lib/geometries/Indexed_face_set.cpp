@@ -70,6 +70,7 @@
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Convex_hull_visitor.hpp"
 #include "SGAL/Compute_coords_visitor.hpp"
+// #include "SGAL/Remove_collinear_facets_visitor.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -561,6 +562,12 @@ void Indexed_face_set::clean_polyhedron()
     // If there are no coordinate indices bail out.
     if (empty_facet_indices(m_facet_coord_indices)) return;
 
+    // Remove collinear facets.
+    // We do not remove collinear facets now, cause it may create T verticees.
+    // Remove_collinear_facets_visitor rcf_visitor(m_coord_array);
+    // m_num_primitives = boost::apply_visitor(rcf_visitor, m_facet_coord_indices);
+
+    // Make consistent.
     if (!m_consistent) {
       Orient_polygon_soup_visitor visitor(m_coord_array);
       m_has_singular_vertices =
@@ -1086,6 +1093,7 @@ Indexed_face_set::Polyhedron& Indexed_face_set::get_empty_polyhedron()
 Inexact_polyhedron& Indexed_face_set::get_empty_inexact_polyhedron()
 {
   m_polyhedron = Inexact_polyhedron();
+  m_polyhedron_type = POLYHEDRON_INEXACT;
   polyhedron_changed();
   return boost::get<Inexact_polyhedron>(m_polyhedron);
 }
@@ -1094,6 +1102,7 @@ Inexact_polyhedron& Indexed_face_set::get_empty_inexact_polyhedron()
 Epic_polyhedron& Indexed_face_set::get_empty_epic_polyhedron()
 {
   m_polyhedron = Epic_polyhedron();
+  m_polyhedron_type = POLYHEDRON_EPIC;
   polyhedron_changed();
   return boost::get<Epic_polyhedron>(m_polyhedron);
 }
@@ -1102,6 +1111,7 @@ Epic_polyhedron& Indexed_face_set::get_empty_epic_polyhedron()
 Epec_polyhedron& Indexed_face_set::get_empty_epec_polyhedron()
 {
   m_polyhedron = Epec_polyhedron();
+  m_polyhedron_type = POLYHEDRON_EPEC;
   polyhedron_changed();
   return boost::get<Epec_polyhedron>(m_polyhedron);
 }
