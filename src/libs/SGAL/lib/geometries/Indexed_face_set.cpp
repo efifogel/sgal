@@ -70,7 +70,7 @@
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Convex_hull_visitor.hpp"
 #include "SGAL/Compute_coords_visitor.hpp"
-// #include "SGAL/Remove_collinear_facets_visitor.hpp"
+// #include "SGAL/Collinear_facets_remesher_visitor.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -562,10 +562,7 @@ void Indexed_face_set::clean_polyhedron()
     // If there are no coordinate indices bail out.
     if (empty_facet_indices(m_facet_coord_indices)) return;
 
-    // Remove collinear facets.
     // We do not remove collinear facets now, cause it may create T verticees.
-    // Remove_collinear_facets_visitor rcf_visitor(m_coord_array);
-    // m_num_primitives = boost::apply_visitor(rcf_visitor, m_facet_coord_indices);
 
     // Make consistent.
     if (!m_consistent) {
@@ -597,6 +594,20 @@ void Indexed_face_set::clean_polyhedron()
       clear_coord_indices();
       clear_facet_coord_indices();
     }
+
+    // Remesh collinear triangles.
+    //! \todo Fix the remesher.
+    // Collinear_facets_remesher_visitor remesher_visitor(m_primitive_type);
+    // auto num_facets = boost::apply_visitor(remesher_visitor, m_polyhedron);
+    // std::cout << "primitive type: " << m_primitive_type << std::endl;
+    // std::cout << "# primitive: " << m_num_primitives << std::endl;
+    // std::cout << "# facets: " << num_facets << std::endl;
+    // if (num_facets != m_num_primitives) {
+    //   m_num_primitives = num_facets;
+    //   clear_coord_array();
+    //   clear_coord_indices();
+    //   clear_facet_coord_indices();
+    // }
   }
   clock_t end_time = clock();
   m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
