@@ -243,6 +243,17 @@ public:
    */
   const Vector3f& get_bbox_size() const;
 
+  template <typename UnaryPredicate>
+  void remove_children_if(UnaryPredicate pred)
+  {
+    const auto* field_info = get_field_info(BOUNDING_SPHERE);
+    Observer observer(this, field_info);
+    auto it = std::remove_if(m_childs.begin(), m_childs.end(), pred);
+    m_childs.erase(it, m_childs.end());
+    m_dirty_bounding_sphere = true;
+    field_changed(field_info);
+  }
+
   /* Remove a given child from the sequence of children of the group.
    * \param[in] node the child node to remove.
    */
