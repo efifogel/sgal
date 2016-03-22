@@ -92,15 +92,42 @@ private:
           std::back_inserter(patch_vertices),
           PMP::parameters::vertex_point_map(get(CGAL::vertex_point, poly)).
           geom_traits(kernel)));
-      // std::cout << " Number of facets in constructed patch: "
+      // std::cout << "1 Number of facets in constructed patch: "
       //           << patch_facets.size() << std::endl;
-      // std::cout << " Number of vertices in constructed patch: "
+      // std::cout << "1 Number of vertices in constructed patch: "
       //           << patch_vertices.size() << std::endl;
       // std::cout << " Fairing : " << (success ? "succeeded" : "failed")
       //           << std::endl;
+      if (!success) {
+        PMP::triangulate_and_refine_hole
+         (poly,
+          h,
+          std::back_inserter(patch_facets),
+          std::back_inserter(patch_vertices),
+          PMP::parameters::vertex_point_map(get(CGAL::vertex_point, poly)).
+          geom_traits(kernel));
+        // std::cout << "2 Number of facets in constructed patch: "
+        //           << patch_facets.size() << std::endl;
+        // std::cout << "2 Number of vertices in constructed patch: "
+        //           << patch_vertices.size() << std::endl;
+      }
+
+      // {
+      //   PMP::triangulate_hole
+      //    (poly,
+      //     h,
+      //     std::back_inserter(patch_facets),
+      //     PMP::parameters::vertex_point_map(get(CGAL::vertex_point, poly)).
+      //     geom_traits(kernel));
+      //   std::cout << "2 Number of facets in constructed patch: "
+      //             << patch_facets.size() << std::endl;
+      //   std::cout << "2 Number of vertices in constructed patch: "
+      //             << patch_vertices.size() << std::endl;
+      // }
+
       ++nb_holes;
     }
-    poly.normalize_border();
+    if (nb_holes) poly.normalize_border();
     // std::cout << std::endl;
     // std::cout << nb_holes << " holes have been filled" << std::endl;
   }
