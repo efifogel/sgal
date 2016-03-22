@@ -40,6 +40,7 @@ public:
     REFINE,
     FAIR,
     SPLIT_CCS,
+    REMOVE_DEGENERACIES,
     REPAIR_ORIENTATION
   };
 
@@ -73,6 +74,8 @@ public:
   Boolean* refine_handle(const Field_info*) { return &m_refine; }
   Boolean* fair_handle(const Field_info*) { return &m_fair; }
   Boolean* split_ccs_handle(const Field_info*) { return &m_split_ccs; }
+  Boolean* remove_degeneracies_handle(const Field_info*)
+  { return &m_remove_degeneracies; }
   Boolean* repair_orientation_handle(const Field_info*)
   { return &m_repair_orientation; }
   //@}
@@ -139,9 +142,21 @@ public:
    */
   Boolean get_split_ccs() const;
 
+  /*! Set the flag that indicates Determine to remove shapes the geometry of
+   * which is degenerate; that is, the volume of the geometry has zero volume.
+   * \param[in] flag indicates whether the removing is desired.
+   */
+  void set_remove_degeneracies(Boolean flag);
+
+  /*! Determine whether to remove shapes the geometry of which is degenerate;
+   * that is, the volume of the geometry has zero volume.
+   * \return true if removing is desired, and false otherwise.
+   */
+  Boolean get_remove_degeneracies() const;
+
   /*! Set the flag that indicates whether to repair the orientation of facets
    * of closed polyhedral surfaces.
-   * \param[in] flag indicates whether the the repairing is desired
+   * \param[in] flag indicates whether the repairing is desired
    */
   void set_repair_orientation(Boolean flag);
 
@@ -157,6 +172,7 @@ public:
              Boolean def_refine = s_def_refine,
              Boolean def_fair = s_def_fair,
              Boolean def_split_ccs = s_def_split_ccs,
+             Boolean def_remove_degeneracies = s_def_remove_degeneracies,
              Boolean def_repair_orientation = s_def_repair_orientation);
 
 protected:
@@ -190,6 +206,11 @@ private:
    */
   Boolean m_split_ccs;
 
+  /*! Indicates whether to remove shapes the geometry of which is degenerate;
+   * that is, the geometry has zero volume.
+   */
+  Boolean m_remove_degeneracies;
+
   /*! Indicates whether to repair the orientation of facets of closed polyhedral
    * surface.
    */
@@ -201,6 +222,7 @@ private:
   static const Boolean s_def_refine;
   static const Boolean s_def_fair;
   static const Boolean s_def_split_ccs;
+  static const Boolean s_def_remove_degeneracies;
   static const Boolean s_def_repair_orientation;
 };
 
@@ -262,6 +284,18 @@ inline void Modeling::set_repair_orientation(Boolean flag)
 //! Obtain the flag that indicates whether to repair the orientation of facets.
 inline Boolean Modeling::get_repair_orientation() const
 { return m_repair_orientation; }
+
+/*! \brief sets the flag that indicates Determine to remove shapes the geometry
+ * of which is degenerate; that is, the volume of the geometry has zero volume.
+ */
+inline void Modeling::set_remove_degeneracies(Boolean flag)
+{ m_remove_degeneracies = flag; }
+
+/*! \brief determines whether to remove shapes the geometry of which is
+ * degenerate; that is, the volume of the geometry has zero volume.
+ */
+inline Boolean Modeling::get_remove_degeneracies() const
+{ return m_remove_degeneracies; }
 
 SGAL_END_NAMESPACE
 

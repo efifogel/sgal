@@ -94,6 +94,12 @@ public:
    */
   Boolean get_split_ccs() const;
 
+  /*! Determine whether to remove shapes the geometry of which is degenerate;
+   * that is, the volume of the geometry has zero volume.
+   * \return true if removing is desired, and false otherwise.
+   */
+  Boolean get_remove_degeneracies() const;
+
   /*! Determine whether to repair the orientation of facets of closed polyhedral
    * surfaces.
    * \return true if repairing is desired, and false otherwise.
@@ -129,6 +135,11 @@ private:
 
   /*! Indicates wither whether to split connected components. */
   Boolean m_split_ccs;
+
+  /*! Indicates whether to remove shapes the geometry of which is degenerate;
+   * that is, the geometry has zero volume.
+   */
+  Boolean m_remove_degeneracies;
 
   /*! Indicates whether to repair the orientation of facets of closed polyhedral
    * surfaces.
@@ -167,6 +178,12 @@ inline Boolean Modeling_option_parser::get_fair() const {return m_fair; }
 //! \brief determines whether to split connected components.
 inline Boolean Modeling_option_parser::get_split_ccs() const
 {return m_split_ccs; }
+
+/*! \brief determines whether to remove shapes the geometry of which is
+ * degenerate; that is, the volume of the geometry has zero volume.
+ */
+inline Boolean Modeling_option_parser::get_remove_degeneracies() const
+{ return m_remove_degeneracies; }
 
 /*! \brief determines whether to repair the orientation of facets of closed
  * polyhedral surfaces.
