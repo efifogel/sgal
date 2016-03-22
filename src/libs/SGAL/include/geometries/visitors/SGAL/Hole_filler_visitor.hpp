@@ -100,6 +100,7 @@ private:
       //           << std::endl;
       ++nb_holes;
     }
+    poly.normalize_border();
     // std::cout << std::endl;
     // std::cout << nb_holes << " holes have been filled" << std::endl;
   }

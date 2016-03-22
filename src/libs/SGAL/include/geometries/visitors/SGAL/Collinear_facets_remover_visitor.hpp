@@ -16,8 +16,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_REMOVE_COLLINEAR_FACETS_VISITOR_HPP
-#define SGAL_REMOVE_COLLINEAR_FACETS_VISITOR_HPP
+#ifndef SGAL_COLLINEAR_FACETS_REMOVER_VISITOR_HPP
+#define SGAL_COLLINEAR_FACETS_REMOVER_VISITOR_HPP
 
 #include <algorithm>
 #include <boost/variant.hpp>
@@ -29,20 +29,18 @@
 #include "SGAL/Epic_coord_array_3d.hpp"
 #include "SGAL/Epec_coord_array_3d.hpp"
 
-namespace PMP = CGAL::Polygon_mesh_processing;
-
 SGAL_BEGIN_NAMESPACE
 
-/*! Remove_collinear_facets_visitor removes collienar facets.
+/*! Collinear_facets_remover_visitor removes collienar facets.
  */
-class SGAL_SGAL_DECL Remove_collinear_facets_visitor :
+class SGAL_SGAL_DECL Collinear_facets_remover_visitor :
   public boost::static_visitor<Size>
 {
 public:
   typedef boost::shared_ptr<Coord_array>        Shared_coord_array;
 
   //! Construct
-  Remove_collinear_facets_visitor(Shared_coord_array coords) :
+  Collinear_facets_remover_visitor(Shared_coord_array coords) :
     m_coords(coords)
   {}
 
