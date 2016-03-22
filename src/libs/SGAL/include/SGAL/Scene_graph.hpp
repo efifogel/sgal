@@ -492,6 +492,11 @@ public:
   void process_polyhedron_attributes_array(Polyhedron_attributes_array& array)
     const;
 
+  /*! Remove shapes the geometrty of which degenerate; that is, it has zero
+   * volume.
+   */
+  void remove_degeneracies();
+
   /*! Split connected components of all polyhedrons.
    */
   void split_connected_components();

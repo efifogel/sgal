@@ -44,6 +44,7 @@
 #include "SGAL/Surface_area_action.hpp"
 #include "SGAL/Polyhedron_attributes_action.hpp"
 #include "SGAL/Isect_action.hpp"
+#include "SGAL/Remove_degeneracies_action.hpp"
 #include "SGAL/Split_connected_components_action.hpp"
 #include "SGAL/Execution_coordinator.hpp"
 #include "SGAL/Bounding_sphere.hpp"
@@ -1029,6 +1030,14 @@ process_polyhedron_attributes_array(Polyhedron_attributes_array& array) const
 {
   auto root = get_root();
   Polyhedron_attributes_action action(array);
+  root->traverse(&action);
+}
+
+//! \brief removes shapes the geometry of which is degenerate.
+void Scene_graph::remove_degeneracies()
+{
+  auto root = get_root();
+  Remove_degeneracies_action action;
   root->traverse(&action);
 }
 
