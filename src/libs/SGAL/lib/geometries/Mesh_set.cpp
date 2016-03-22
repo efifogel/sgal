@@ -996,11 +996,8 @@ void Mesh_set::collapse_identical_coordinates(Facet_indices& indices)
 void Mesh_set::write_facet(const Vector3f& p1, const Vector3f& p2,
                            const Vector3f& p3, Formatter* formatter)
 {
-  if (Vector3f::collinear(p1, p2, p3)) {
-    std::cerr << "Cannot write a triangular facet using collinear points!"
-              << std::endl;
-    return;
-  }
+  // Observe that p1, p2, and p3 might be collinear.
+  // Vector3f::collinear(p1, p2, p3)
   Vector3f n;
   n.normal(p1, p2, p3);
   formatter->facet(p1, p2, p3, n);
