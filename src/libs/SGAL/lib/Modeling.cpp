@@ -35,6 +35,7 @@ const Boolean Modeling::s_def_triangulate_holes(false);
 const Boolean Modeling::s_def_refine(false);
 const Boolean Modeling::s_def_fair(false);
 const Boolean Modeling::s_def_split_ccs(false);
+const Boolean Modeling::s_def_remove_degeneracies(false);
 const Boolean Modeling::s_def_repair_orientation(false);
 
 //! \brief constructs.
@@ -45,6 +46,7 @@ Modeling::Modeling(Boolean proto) :
   m_refine(s_def_refine),
   m_fair(s_def_fair),
   m_split_ccs(s_def_split_ccs),
+  m_remove_degeneracies(s_def_remove_degeneracies),
   m_repair_orientation(s_def_repair_orientation)
 {}
 
@@ -98,6 +100,16 @@ void Modeling::init_prototype()
   s_prototype->add_field_info(new SF_bool(SPLIT_CCS, "splitCcs",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           split_ccs_func, s_def_split_ccs,
+                                          exec_func));
+
+  // removeDegeneracies
+  auto remove_degeneracies_func =
+    static_cast<Boolean_handle_function>(&Modeling::remove_degeneracies_handle);
+  s_prototype->add_field_info(new SF_bool(REMOVE_DEGENERACIES,
+                                          "removeDegeneracies",
+                                          Field_info::RULE_EXPOSED_FIELD,
+                                          remove_degeneracies_func,
+                                          s_def_remove_degeneracies,
                                           exec_func));
 
   // repairOrientation
@@ -159,6 +171,11 @@ void Modeling::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "removeDegeneracies") {
+      set_remove_degeneracies(compare_to_true(value));
+      elem->mark_delete(ai);
+      continue;
+    }
     if (name == "repairOrientation") {
       set_repair_orientation(compare_to_true(value));
       elem->mark_delete(ai);
@@ -173,13 +190,15 @@ void Modeling::set_attributes(Element* elem)
 //! \brief sets defualt values.
 void Modeling::reset(Boolean def_make_consistent, Boolean def_triangulate_holes,
                      Boolean def_refine, Boolean def_fair,
-                     Boolean def_split_ccs, Boolean def_repair_orientation)
+                     Boolean def_split_ccs, Boolean def_remove_degeneracies,
+                     Boolean def_repair_orientation)
 {
   m_make_consistent = def_make_consistent;
   m_triangulate_holes = def_triangulate_holes;
   m_refine = def_refine;
   m_fair = def_fair;
   m_split_ccs = def_split_ccs;
+  m_remove_degeneracies = def_remove_degeneracies;
   m_repair_orientation = def_repair_orientation;
 }
 SGAL_END_NAMESPACE
