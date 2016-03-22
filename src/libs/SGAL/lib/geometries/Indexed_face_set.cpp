@@ -70,6 +70,7 @@
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Convex_hull_visitor.hpp"
 #include "SGAL/Compute_coords_visitor.hpp"
+#include "SGAL/Size_facet_indices_visitor.hpp"
 // #include "SGAL/Collinear_facets_remesher_visitor.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -569,6 +570,11 @@ void Indexed_face_set::clean_polyhedron()
       Orient_polygon_soup_visitor visitor(m_coord_array);
       m_has_singular_vertices =
         boost::apply_visitor(visitor, m_facet_coord_indices);
+      clear_coord_indices();
+
+      Size_facet_indices_visitor size_visitor;
+      m_num_primitives =
+        boost::apply_visitor(size_visitor, m_facet_coord_indices);
     }
 
     // Create the polyhedral surface
