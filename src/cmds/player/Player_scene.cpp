@@ -649,6 +649,10 @@ void Player_scene::indulge_user()
   if (m_option_parser->get_split_ccs())
     m_scene_graph->split_connected_components();
 
+  // Split connected components.
+  if (m_option_parser->get_remove_degeneracies())
+    m_scene_graph->remove_degeneracies();
+
   if (m_option_parser->get_display_texture_info()) {
     SGAL_assertion(m_scene_graph);
     // Look for non instance containers:
