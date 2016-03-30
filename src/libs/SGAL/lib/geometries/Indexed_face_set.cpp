@@ -64,13 +64,23 @@
 #include "SGAL/Clean_facet_indices_from_polyhedron_visitor.hpp"
 #include "SGAL/Orient_polygon_soup_visitor.hpp"
 #include "SGAL/Delegate_surface_visitor.hpp"
-#include "SGAL/Number_of_connected_components_polyhedron_visitor.hpp"
+#include "SGAL/Connected_components_counter_visitor.hpp"
 #include "SGAL/Reverse_facet_indices_visitor.hpp"
 #include "SGAL/Clean_vertices_visitor.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Convex_hull_visitor.hpp"
 #include "SGAL/Compute_coords_visitor.hpp"
-#include "SGAL/Size_facet_indices_visitor.hpp"
+#include "SGAL/Polyhedron_vertices_counter_visitor.hpp"
+#include "SGAL/Polyhedron_halfedges_counter_visitor.hpp"
+#include "SGAL/Polyhedron_facets_counter_visitor.hpp"
+#include "SGAL/Faces_counter_visitor.hpp"
+#include "SGAL/Border_edges_counter_visitor.hpp"
+#include "SGAL/Empty_polyhedron_visitor.hpp"
+#include "SGAL/Clear_polyhedron_visitor.hpp"
+#include "SGAL/Border_normalizer_visitor.hpp"
+#include "SGAL/Volume_calculator_visitor.hpp"
+#include "SGAL/Surface_area_calculator_visitor.hpp"
+#include "SGAL/Faces_counter_visitor.hpp"
 // #include "SGAL/Collinear_facets_remesher_visitor.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -298,14 +308,14 @@ void Indexed_face_set::clean_coords()
   // If the polyhedron is empty, return.
   if (boost::apply_visitor(Empty_polyhedron_visitor(), m_polyhedron)) return;
 
-  Size_of_vertices_visitor indices_visitor;
-  auto size_of_vertices = boost::apply_visitor(indices_visitor, m_polyhedron);
+  Polyhedron_vertices_counter_visitor vertices_visitor;
+  auto num_vertices = boost::apply_visitor(vertices_visitor, m_polyhedron);
 
   if (!m_coord_array) {
-    m_coord_array.reset(new Coord_array_3d(size_of_vertices));
+    m_coord_array.reset(new Coord_array_3d(num_vertices));
     SGAL_assertion(m_coord_array);
   }
-  else m_coord_array->resize(size_of_vertices);
+  else m_coord_array->resize(num_vertices);
 
   /* Generate the coordinate array and assign the index into the coordinate
    * array of the vertex to the vertex.
@@ -356,7 +366,7 @@ void Indexed_face_set::clean_coord_indices()
   }
 
   auto num_primitives =
-    boost::apply_visitor(Size_of_facets_visitor(), m_polyhedron);
+    boost::apply_visitor(Polyhedron_facets_counter_visitor(), m_polyhedron);
   set_num_primitives(num_primitives);
 
   auto primitive_type =
@@ -405,8 +415,8 @@ void Indexed_face_set::repair()
 
   if (m_dirty_polyhedron) clean_polyhedron();
 
-  Number_of_connected_components_polyhedron_visitor num_ccs_visitor;
-  auto num_ccs = boost::apply_visitor(num_ccs_visitor, m_polyhedron);
+  Connected_components_counter_visitor ccs_counter_visitor;
+  auto num_ccs = boost::apply_visitor(ccs_counter_visitor, m_polyhedron);
   Is_closed_polyhedron_visitor is_closed_visitor;
   auto closed = boost::apply_visitor(is_closed_visitor, m_polyhedron);
   if ((num_ccs == 1) && closed && m_repair_orientation) {
@@ -572,21 +582,21 @@ void Indexed_face_set::clean_polyhedron()
         boost::apply_visitor(visitor, m_facet_coord_indices);
       clear_coord_indices();
 
-      Size_facet_indices_visitor size_visitor;
       m_num_primitives =
-        boost::apply_visitor(size_visitor, m_facet_coord_indices);
+        boost::apply_visitor(Faces_counter_visitor(), m_facet_coord_indices);
     }
 
     // Create the polyhedral surface
     if ((m_polyhedron_type == POLYHEDRON_INEXACT) && m_triangulate_holes)
       m_polyhedron_type = POLYHEDRON_EPIC;
+
     init_polyhedron();
     Delegate_surface_visitor visitor(m_primitive_type, m_num_primitives,
                                      m_coord_array, m_facet_coord_indices);
     m_consistent = boost::apply_visitor(visitor, m_polyhedron);
 
     // Normalize the border of the polyhedron.
-    boost::apply_visitor(Normalize_border_visitor(), m_polyhedron);
+    boost::apply_visitor(Border_normalizer_visitor(), m_polyhedron);
 
     auto closed =
       boost::apply_visitor(Is_closed_polyhedron_visitor(), m_polyhedron);
@@ -799,7 +809,7 @@ void Indexed_face_set::clean_volume()
 
   m_volume = 0;
   if (boost::apply_visitor(Empty_polyhedron_visitor(), m_polyhedron)) return;
-  m_volume = boost::apply_visitor(Volume_visitor(), m_polyhedron);
+  m_volume = boost::apply_visitor(Volume_calculator_visitor(), m_polyhedron);
 }
 
 //! \brief cleans (compute) the surface area.
@@ -809,7 +819,8 @@ void Indexed_face_set::clean_surface_area()
 
   m_surface_area = 0;
   if (boost::apply_visitor(Empty_polyhedron_visitor(), m_polyhedron)) return;
-   m_surface_area = boost::apply_visitor(Surface_area_visitor(), m_polyhedron);
+  Surface_area_calculator_visitor visitor;
+  m_surface_area = boost::apply_visitor(visitor, m_polyhedron);
 }
 
 //! \brief computes the volume of the polyhedron.
@@ -939,8 +950,8 @@ size_t Indexed_face_set::get_number_of_border_edges()
   }
   if (m_dirty_polyhedron) clean_polyhedron();
 
-  return boost::apply_visitor(Size_of_border_edges_polyhedron_visitor(),
-                              m_polyhedron);
+  Border_edges_counter_visitor visitor;
+  return boost::apply_visitor(visitor, m_polyhedron);
 }
 
 //! \bried obtains the number of connected components.
@@ -958,7 +969,7 @@ Size Indexed_face_set::get_number_of_connected_components()
   }
   if (m_dirty_polyhedron) clean_polyhedron();
 
-  Number_of_connected_components_polyhedron_visitor visitor;
+  Connected_components_counter_visitor visitor;
   return boost::apply_visitor(visitor, m_polyhedron);
 }
 
@@ -977,7 +988,8 @@ Size Indexed_face_set::get_number_of_vertices()
   }
   if (m_dirty_polyhedron) clean_polyhedron();
 
-  return boost::apply_visitor(Size_of_vertices_visitor(), m_polyhedron);
+  Polyhedron_vertices_counter_visitor visitor;
+  return boost::apply_visitor(visitor, m_polyhedron);
 }
 
 //! \brief obtains the number of edges.
@@ -995,7 +1007,8 @@ Size Indexed_face_set::get_number_of_edges()
   }
   if (m_dirty_polyhedron) clean_polyhedron();
 
-  return boost::apply_visitor(Size_of_halfedges_visitor(), m_polyhedron) / 2;
+  Polyhedron_halfedges_counter_visitor visitor;
+  return boost::apply_visitor(visitor, m_polyhedron) / 2;
 }
 
 //! \brief obtains the number of facets.
@@ -1013,7 +1026,8 @@ Size Indexed_face_set::get_number_of_facets()
   }
   if (m_dirty_polyhedron) clean_polyhedron();
 
-  return boost::apply_visitor(Size_of_facets_visitor(), m_polyhedron) / 2;
+  Polyhedron_facets_counter_visitor visitor;
+  return boost::apply_visitor(visitor, m_polyhedron);
 }
 
 //! \brief cleans the polyhedron facets.

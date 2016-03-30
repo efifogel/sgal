@@ -39,8 +39,7 @@ SGAL_BEGIN_NAMESPACE
  * are stored as a variant (multi-type, single value) of several possible
  * types of polyhedrons.
  */
-class Number_of_connected_components_polyhedron_visitor :
-  public boost::static_visitor<Size>
+class Connected_components_counter_visitor : public boost::static_visitor<Size>
 {
 public:
   /*! Count the number of connected components.
