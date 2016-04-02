@@ -126,13 +126,10 @@ void Stl_binary_formatter::write(const Vector3f& v)
 void Stl_binary_formatter::write_facet(const Vector3f& p1, const Vector3f& p2,
                                        const Vector3f& p3, Ushort spacer)
 {
-  if (Vector3f::collinear(p1, p2, p3)) {
-    std::cerr << "Cannot write a triangular facet using collinear points!"
-              << std::endl;
-    return;
-  }
   Vector3f n;
-  n.normal(p1, p2, p3);
+  auto is_collinear = Vector3f::collinear(p1, p2, p3);
+  if (! is_collinear) n.normal(p1, p2, p3);
+  SGAL_warning_msg(! is_collinear, "The facet is degenerate!");
   write(n);
   write(p1);
   write(p2);
