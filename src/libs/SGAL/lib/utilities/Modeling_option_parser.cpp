@@ -43,22 +43,16 @@ Modeling_option_parser::Modeling_option_parser() :
 {
   m_modeling_opts.add_options()
     ("make-consistent",
-     po::value<Boolean>(&m_make_consistent)->default_value(false),
+     po::value<Boolean>(&m_make_consistent),
      "make the orientation of facets consistent")
     ("triangulate-holes",
-     po::value<Boolean>(&m_triangulate_holes)->default_value(false),
-     "triangulate holes")
-    ("refine", po::value<Boolean>(&m_refine)->default_value(false),
-     "refine hole triangulation")
-    ("fair", po::value<Boolean>(&m_fair)->default_value(false),
-     "fair hole triangulation")
-    ("split-ccs", po::value<Boolean>(&m_split_ccs)->default_value(false),
-     "split connected components")
-    ("remove-degeneracies",
-     po::value<Boolean>(&m_remove_degeneracies)->default_value(false),
+     po::value<Boolean>(&m_triangulate_holes), "triangulate holes")
+    ("refine", po::value<Boolean>(&m_refine), "refine hole triangulation")
+    ("fair", po::value<Boolean>(&m_fair), "fair hole triangulation")
+    ("split-ccs", po::value<Boolean>(&m_split_ccs), "split connected components")
+    ("remove-degeneracies", po::value<Boolean>(&m_remove_degeneracies),
      "remove shape children the geometry of which is degenerate (zero volume)")
-    ("repair-orientation",
-     po::value<Boolean>(&m_repair_orientation)->default_value(false),
+    ("repair-orientation", po::value<Boolean>(&m_repair_orientation),
      "repair the orientation of facets reversing them all")
     ;
 }
@@ -96,7 +90,7 @@ void Modeling_option_parser::configure(Configuration* conf)
     modeling->set_fair(var_map["fair"].as<Boolean>());
 
   if (var_map.count("split-ccs"))
-    modeling->set_fair(var_map["split-ccs"].as<Boolean>());
+    modeling->set_split_ccs(var_map["split-ccs"].as<Boolean>());
 
   if (var_map.count("remove-degeneracies"))
     modeling->set_remove_degeneracies(var_map["remove-degeneracies"].as<Boolean>());
