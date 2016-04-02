@@ -26,6 +26,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Mesh_set.hpp"
+#include "SGAL/Polyhedron_geo_builder.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
