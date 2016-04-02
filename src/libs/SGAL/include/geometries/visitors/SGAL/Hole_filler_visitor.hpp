@@ -232,30 +232,11 @@ private:
     m_new_coords = Shared_coord_array(new_coords);
   }
 
-  /*! Assign an inexact point to a Vector3.
+  /*! Assign a point to a Vector3f.
    */
-  void assign(Vector3f& res, const Inexact_point_3& point) const
-  { res = Vector3f(point.x(), point.y(), point.z()); }
-
-  /*! Assign an epec point to a Vector3.
-   */
-  void assign(Vector3f& res, const Epec_point_3& point) const
-  {
-    auto x = static_cast<Float>(CGAL::to_double(point.x()));
-    auto y = static_cast<Float>(CGAL::to_double(point.y()));
-    auto z = static_cast<Float>(CGAL::to_double(point.z()));
-    res = Vector3f(x, y, z);
-  }
-
-  /*! Assign an ipec point to a Vector3.
-   */
-  void assign(Vector3f& res, const Epic_point_3& point) const
-  {
-    auto x = static_cast<Float>(CGAL::to_double(point.x()));
-    auto y = static_cast<Float>(CGAL::to_double(point.y()));
-    auto z = static_cast<Float>(CGAL::to_double(point.z()));
-    res = Vector3f(x, y, z);
-  }
+  template <typename Point_>
+  void assign(Vector3f& res, const Point_& point) const
+  { res = to_vector3f(point); }
 
   /*! Assign an inexact point to an epec point.
    */
