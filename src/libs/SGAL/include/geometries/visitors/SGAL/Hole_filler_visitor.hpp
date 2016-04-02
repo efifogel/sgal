@@ -116,63 +116,64 @@ private:
     m_num_filled_holes = 0;
     BOOST_FOREACH(Halfedge_handle h, halfedges(poly)) {
       if (!h->is_border()) continue;
+      ++m_num_filled_holes;
 
       std::vector<Facet_handle>  new_facets;
-      std::vector<Vertex_handle> new_vertices;
-      bool success = CGAL::cpp11::get<0>
-        (PMP::triangulate_refine_and_fair_hole
-         (poly,
-          h,
-          std::back_inserter(new_facets),
-          std::back_inserter(new_vertices),
-          PMP::parameters::vertex_point_map(get(CGAL::vertex_point, poly)).
-          geom_traits(kernel)));
-      // std::cout << "1 Number of facets in constructed patch: "
-      //           << new_facets.size() << std::endl;
-      // std::cout << "1 Number of vertices in constructed patch: "
-      //           << new_vertices.size() << std::endl;
-      // std::cout << " Fairing : " << (success ? "succeeded" : "failed")
-      //           << std::endl;
-      if (!success) {
+      if (m_refine || m_fair) {
+        std::vector<Vertex_handle> new_vertices;
+        bool success(true);
+        if (m_fair) {
+          success = CGAL::cpp11::get<0>
+            (PMP::triangulate_refine_and_fair_hole
+             (poly,
+              h,
+              std::back_inserter(new_facets),
+              std::back_inserter(new_vertices),
+              PMP::parameters::vertex_point_map(get(CGAL::vertex_point, poly)).
+                geom_traits(kernel)));
+          // std::cout << "1 Number of facets in constructed patch: "
+          //           << new_facets.size() << std::endl;
+          // std::cout << "1 Number of vertices in constructed patch: "
+          //           << new_vertices.size() << std::endl;
+          // std::cout << " Fairing : " << (success ? "succeeded" : "failed")
+          //           << std::endl;
+          if (success) {
+            if (! new_vertices.empty()) add_coords(new_vertices);
+            continue;
+          }
+        }
         PMP::triangulate_and_refine_hole
-         (poly,
-          h,
-          std::back_inserter(new_facets),
-          std::back_inserter(new_vertices),
-          PMP::parameters::vertex_point_map(get(CGAL::vertex_point, poly)).
-          geom_traits(kernel));
+          (poly,
+           h,
+           std::back_inserter(new_facets),
+           std::back_inserter(new_vertices),
+           PMP::parameters::vertex_point_map(get(CGAL::vertex_point, poly)).
+             geom_traits(kernel));
         // std::cout << "2 Number of facets in constructed patch: "
         //           << new_facets.size() << std::endl;
         // std::cout << "2 Number of vertices in constructed patch: "
         //           << new_vertices.size() << std::endl;
+
+        if (! new_vertices.empty()) add_coords(new_vertices);
+        continue;
       }
 
-      // {
-      //   PMP::triangulate_hole
-      //    (poly,
-      //     h,
-      //     std::back_inserter(new_facets),
-      //     PMP::parameters::vertex_point_map(get(CGAL::vertex_point, poly)).
-      //     geom_traits(kernel));
-      //   std::cout << "2 Number of facets in constructed patch: "
-      //             << new_facets.size() << std::endl;
-      //   std::cout << "2 Number of vertices in constructed patch: "
-      //             << new_vertices.size() << std::endl;
-      // }
-
-      ++m_num_filled_holes;
-
-      if (! new_vertices.empty()) add_coords(new_vertices);
-
+      PMP::triangulate_hole
+        (poly,
+         h,
+         std::back_inserter(new_facets),
+         PMP::parameters::vertex_point_map(get(CGAL::vertex_point, poly)).
+           geom_traits(kernel));
+      // std::cout << "2 Number of facets in constructed patch: "
+      //           << new_facets.size() << std::endl;
+      // std::cout << "2 Number of vertices in constructed patch: "
+      //           << new_vertices.size() << std::endl;
 
       // if (! new_facets.empty()) {
       //   for (auto facet: new_facets) {
       //   }
       // }
     }
-    // poly.normalize_border();
-    // std::cout << std::endl;
-    // std::cout << nb_holes << " holes have been filled" << std::endl;
   }
 
   /*! Add the new coordinates to a new coordinate array.
