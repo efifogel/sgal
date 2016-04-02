@@ -32,7 +32,7 @@ Container_proto* Modeling::s_prototype(nullptr);
 // Default values
 const Boolean Modeling::s_def_make_consistent(false);
 const Boolean Modeling::s_def_triangulate_holes(false);
-const Boolean Modeling::s_def_refine(false);
+const Boolean Modeling::s_def_refine(true);
 const Boolean Modeling::s_def_fair(false);
 const Boolean Modeling::s_def_split_ccs(false);
 const Boolean Modeling::s_def_remove_degeneracies(false);
