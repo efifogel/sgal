@@ -163,10 +163,9 @@ void Hole_filler::execute()
   auto result = boost::dynamic_pointer_cast<Indexed_face_set>(m_result);
   SGAL_assertion(result);
 
+  auto coords = surface->get_coord_array();
+  auto& indices = surface->get_facet_coord_indices();
   if (result != surface) {
-    result->set_coord_array(surface->get_coord_array());
-    auto& indices = surface->get_facet_coord_indices();
-    result->set_facet_coord_indices(indices);
     result->set_num_primitives(surface->get_num_primitives());
     result->set_primitive_type(surface->get_primitive_type());
   }
@@ -175,10 +174,10 @@ void Hole_filler::execute()
     // Fill the holes.
     result->set_polyhedron_type(Indexed_face_set::POLYHEDRON_EPIC);
 
-    // We obtain the polyhedron by const reference, cast way constness, and
+    // We obtain the polyhedron by const reference, cast away constness, and
     // apply the visitor on it. Then, we need to invalidate all fields that
     // depend on the altered polyhedron. This is a bit risky, cause a new field
-    // might be introduced.
+    // might be introduced after this code has been written.
     // A safer option, but less efficient, is to obtain the polyhedron by value,
     // apply the visotor, and then set the polyhedron back:
     // result->set_polyhedron(polyhedron);
@@ -186,10 +185,23 @@ void Hole_filler::execute()
 
     const auto& polyhedron = result->get_polyhedron();
     result->clear_polyhedron_facet_normals();
-    Hole_filler_visitor visitor(m_refine, m_fair);
+    Hole_filler_visitor visitor(m_refine, m_fair, coords);
     boost::apply_visitor(visitor,
-                         const_cast<Indexed_face_set::Polyhedron&>(polyhedron));
+                         const_cast<Indexed_face_set::Polyhedron&>(polyhedron),
+                         indices);
+    auto new_coords = visitor.get_new_coord_array();
+    if (new_coords) result->set_coord_array(new_coords);
+    else if (result != surface) result->set_coord_array(coords);
+
+    if (result != surface) result->set_facet_coord_indices(indices);
+
     result->polyhedron_changed();
+  }
+  else {
+    if (result != surface) {
+      result->set_coord_array(coords);
+      result->set_facet_coord_indices(indices);
+    }
   }
 
   // Cascade the result field:

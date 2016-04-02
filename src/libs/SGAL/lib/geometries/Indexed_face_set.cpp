@@ -56,7 +56,6 @@
 #include "SGAL/calculate_multiple_normals_per_vertex.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Field_info.hpp"
-#include "SGAL/Polyhedron_geo_builder.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Modeling.hpp"
 #include "SGAL/Scene_graph.hpp"
@@ -266,6 +265,10 @@ void Indexed_face_set::isect(Isect_action* action)
 //! \brief cleans the sphere bound.
 void Indexed_face_set::clean_bounding_sphere()
 {
+  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+                  std::cout << "Indexed_face_set::clean_bounding_sphere(): "
+                  << "name: " << get_name() << std::endl;);
+
   if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
   else if (is_dirty_polyhedron()) clean_polyhedron();
   if (is_dirty_coord_array() ||
@@ -303,6 +306,10 @@ void Indexed_face_set::clean_bounding_sphere()
 //! \brief cleans the coordinate array and coordinate indices.
 void Indexed_face_set::clean_coords()
 {
+  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+                  std::cout << "Indexed_face_set::clean_coords(): "
+                  << "name: " << get_name() << std::endl;);
+
   m_dirty_coord_array = false;
 
   // If the polyhedron is empty, return.
@@ -338,6 +345,10 @@ void Indexed_face_set::clean_coords()
 //! \brief clears the coordinates.
 void Indexed_face_set::clear_coord_array()
 {
+  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+                  std::cout << "Indexed_face_set::clear_coord_array(): "
+                  << "name: " << get_name() << std::endl;);
+
   m_dirty_coord_array = true;
 
   if (m_coord_array) m_coord_array->clear();
@@ -347,6 +358,10 @@ void Indexed_face_set::clear_coord_array()
 //! \brief obtains the coordinate array.
 Indexed_face_set::Shared_coord_array Indexed_face_set::get_coord_array()
 {
+  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+                  std::cout << "Indexed_face_set::get_coord_array(): "
+                  << "name: " << get_name() << std::endl;);
+
   if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
   else if (is_dirty_polyhedron()) clean_polyhedron();
   if (is_dirty_coord_array() ||
@@ -358,6 +373,10 @@ Indexed_face_set::Shared_coord_array Indexed_face_set::get_coord_array()
 //! \brief cleans the coordinate indices.
 void Indexed_face_set::clean_coord_indices()
 {
+  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+                  std::cout << "Indexed_face_set::clean_coord_indices(): "
+                  << "name: " << get_name() << std::endl;);
+
   // If the polyhedron is empty, return.
   if (boost::apply_visitor(Empty_polyhedron_visitor(), m_polyhedron)) {
     m_dirty_coord_indices = false;
@@ -384,6 +403,10 @@ void Indexed_face_set::clean_coord_indices()
 //! \brief cleans the normal array and the normal indices.
 void Indexed_face_set::clean_normals()
 {
+  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+                  std::cout << "Indexed_face_set:clean_normals(): "
+                  << "name: " << get_name() << std::endl;);
+
   if ((0 < m_crease_angle) && (m_crease_angle < SGAL_PI)) {
     if (m_dirty_polyhedron) clean_polyhedron();
     if (m_dirty_polyhedron_facet_normals) clean_polyhedron_facet_normals();
@@ -404,6 +427,10 @@ void Indexed_face_set::clean_normals()
 //! \brief repairs the data structures
 void Indexed_face_set::repair()
 {
+  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+                  std::cout << "Indexed_face_set::repair(): "
+                  << get_name() << std::endl;);
+
   if (is_dirty_coord_array() ||
       (is_dirty_coord_indices() && is_dirty_facet_coord_indices()))
     clean_coords();
@@ -564,6 +591,10 @@ void Indexed_face_set::convex_hull()
 // function at a later point after the indices have been cleaned.
 void Indexed_face_set::clean_polyhedron()
 {
+  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+                  std::cout << "Indexed_face_set::clean_polyhedron(): "
+                  << "name: " << get_name() << std::endl;);
+
   // If there are no coordinates bail out.
   if (!m_coord_array || m_coord_array->empty()) return;
 
@@ -601,12 +632,13 @@ void Indexed_face_set::clean_polyhedron()
     auto closed =
       boost::apply_visitor(Is_closed_polyhedron_visitor(), m_polyhedron);
     if (!closed && m_triangulate_holes) {
-      Hole_filler_visitor visitor(m_refine, m_fair);
-      boost::apply_visitor(visitor, m_polyhedron);
+      Hole_filler_visitor visitor(m_refine, m_fair, m_coord_array);
+      boost::apply_visitor(visitor, m_polyhedron, m_facet_coord_indices);
+      auto new_coord_array = visitor.get_new_coord_array();
+      if (new_coord_array) std::swap(m_coord_array, m_coord_array);
 
-      //! \todo instead of brutally clearing the coords and indices arrays,
+      //! \todo instead of brutally clearing the indices arrays,
       // update these arrays based on the results of the hole-filler visitor.
-      clear_coord_array();
       clear_coord_indices();
       clear_facet_coord_indices();
     }
@@ -637,6 +669,10 @@ void Indexed_face_set::clean_polyhedron()
 //! \brief clears the polyhedron.
 void Indexed_face_set::clear_polyhedron()
 {
+  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+                  std::cout << "Indexed_face_set::clear_polyhedron(): "
+                  << "name: " << get_name() << std::endl;);
+
   m_dirty_polyhedron = true;
   m_dirty_polyhedron_facet_normals = true;
   m_dirty_volume = true;
@@ -656,6 +692,10 @@ void Indexed_face_set::clear_polyhedron()
 //! \brief sets the polyhedron data-structure.
 void Indexed_face_set::set_polyhedron(Polyhedron& polyhedron)
 {
+  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+                  std::cout << "Indexed_face_set::set_polyhedron(): "
+                  << "name: " << get_name() << std::endl;);
+
   m_polyhedron = polyhedron;
   polyhedron_changed();
 }
@@ -664,6 +704,10 @@ void Indexed_face_set::set_polyhedron(Polyhedron& polyhedron)
 const Indexed_face_set::Polyhedron&
 Indexed_face_set::get_polyhedron(Boolean clean_facet_normals)
 {
+  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+                  std::cout << "Indexed_face_set::get_polyhedron(): "
+                  << "name: " << get_name() << std::endl;);
+
   // Clean the coordinates and the coordinate indices (without repairing).
   if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
   else {
@@ -768,6 +812,10 @@ void Indexed_face_set::write(Formatter* formatter)
                   << ", name: " << get_name()
                   << std::endl;);
 
+  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+                  std::cout << "Indexed_face_set:Lwrite(): "
+                  << ", name: " << get_name() << std::endl;);
+
   if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
   else if (is_dirty_polyhedron()) clean_polyhedron();
   if (is_dirty_coord_array() ||
@@ -866,6 +914,10 @@ Float Indexed_face_set::surface_area()
 //! \brief determines wheather the mesh is consistent.
 Boolean Indexed_face_set::is_consistent()
 {
+  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+                  std::cout << "Indexed_face_set::is_consistent(): "
+                  << "name: " << get_name() << std::endl;);
+
   if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
   else {
     if (is_dirty_coord_array() ||
@@ -920,6 +972,10 @@ bool Indexed_face_set::is_polyhedron_empty()
 //! \brief determines whether there are no border edges.
 Boolean Indexed_face_set::is_closed()
 {
+  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+                  std::cout << "Indexed_face_set::is_closed(): "
+                  << "name: " << get_name() << std::endl;);
+
   if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
   else {
     if (is_dirty_coord_array() ||
