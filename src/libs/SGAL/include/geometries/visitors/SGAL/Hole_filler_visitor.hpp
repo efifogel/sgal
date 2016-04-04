@@ -153,7 +153,6 @@ private:
         //           << new_facets.size() << std::endl;
         // std::cout << "2 Number of vertices in constructed patch: "
         //           << new_vertices.size() << std::endl;
-
         if (! new_vertices.empty()) add_coords(new_vertices);
         continue;
       }
@@ -174,6 +173,7 @@ private:
       //   }
       // }
     }
+    // std::cout << m_num_filled_holes << std::endl;
   }
 
   /*! Add the new coordinates to a new coordinate array.
