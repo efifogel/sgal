@@ -47,6 +47,12 @@ public:
   typedef std::list<Str_attr>                             Str_attr_list;
   typedef Str_attr_list::iterator                         Str_attr_iter;
 
+  typedef std::list<std::string>                          Str_list;
+  typedef Str_list::iterator                              Str_iter;
+  typedef std::pair<const std::string*, Str_list*>        Multi_str_attr;
+  typedef std::list<Multi_str_attr>                       Multi_str_attr_list;
+  typedef Multi_str_attr_list::iterator                   Multi_str_attr_iter;
+
   typedef std::pair<const std::string*, Shared_container> Cont_attr;
   typedef std::list<Cont_attr>                            Cont_attr_list;
   typedef Cont_attr_list::iterator                        Cont_attr_iter;
@@ -66,6 +72,14 @@ public:
   typedef std::list<Field_attr>                           Field_attr_list;
   typedef Field_attr_list::iterator                       Field_attr_iter;
 
+  typedef std::pair<const std::string*,
+                    std::tuple<Field_info::Field_rule,
+                               Field_info::Field_type,
+                               Str_list*> >               Field_multi_str_attr;
+
+  typedef std::list<Field_multi_str_attr>                 Field_multi_str_attr_list;
+  typedef Field_multi_str_attr_list::iterator             Field_multi_str_attr_iter;
+
 public:
   /*! Obtain the name of an attribute pointed by a given iterator.
    * \param ai the string-attribute iterator.
@@ -78,6 +92,12 @@ public:
    * \param back indicates whether to add at the back of the attribute list.
    */
   void add_attribute(Str_attr& attribute, bool back = true);
+
+  /*! Add a string-list attribute.
+   * \param attribute the attribute.
+   * \param back indicates whether to add at the back of the attribute list.
+   */
+  void add_attribute(Multi_str_attr& attribute, bool back = true);
 
   /*! Add a container attribute.
    * \param attribute the attribute.
@@ -97,6 +117,12 @@ public:
    */
   void add_attribute(Field_attr& attribute, bool back = true);
 
+  /*! Add a multi-string field attribute.
+   * \param attribute the attribute.
+   * \param back indicates whether to add at the back of the attribute list.
+   */
+  void add_attribute(Field_multi_str_attr& attribute, bool back = true);
+
   /* Transfer attributes from a given element into this element.
    * \param element the given element.
    */
@@ -104,6 +130,9 @@ public:
 
   /*! Obtain the string-attribute container. */
   Str_attr_list& get_str_attributes();
+
+  /*! Obtain the multi-string-attribute container. */
+  Multi_str_attr_list& get_multi_str_attributes();
 
   /*! Obtain the container-attribute container. */
   Cont_attr_list& get_cont_attributes();
@@ -113,6 +142,9 @@ public:
 
   /*! Obtain the field-attribute container. */
   Field_attr_list& get_field_attributes();
+
+  /*! Obtain the field-multi-string attribute container. */
+  Field_multi_str_attr_list& get_field_multi_str_attributes();
 
   /*! Delete the attribute pointed by a given iterator.
    * \param ai the string-attribute iterator.
@@ -129,6 +161,23 @@ public:
    * \param ai the string-attribute iterator.
    */
   const std::string& get_value(Str_attr_iter ai) const;
+
+  /*! Delete the attribute pointed by a given iterator.
+   * \param ai the string-attribute iterator.
+   */
+  void mark_delete(Multi_str_attr_iter ai);
+
+  /*! Obtain the begin iterator of the multi-string-attribute container. */
+  Multi_str_attr_iter multi_str_attrs_begin();
+
+  /*! Obtain the past-the-end iterator of the multi-string-attribute container.
+   */
+  Multi_str_attr_iter multi_str_attrs_end();
+
+  /*! Obtain the value of a multi-string-attribute pointed by a given iterator.
+   * \param ai the string-attribute iterator.
+   */
+  Str_list& get_value(Multi_str_attr_iter ai) const;
 
   /*! Delete the attribute pointed by a given iterator.
    * \param ai the string-attribute iterator.
@@ -191,12 +240,41 @@ public:
    */
   Field_info::Field_type get_type(Field_attr_iter ai) const;
 
+  /*! Delete the attribute pointed by a given iterator.
+   * \param ai the string-attribute iterator.
+   */
+  void mark_delete(Field_multi_str_attr_iter ai);
+
+  /*! Obtain the begin iterator of the field-attribute container. */
+  Field_multi_str_attr_iter field_multi_str_attrs_begin();
+
+  /*! Obtain the past-the-end iterator of the field-attribute container. */
+  Field_multi_str_attr_iter field_multi_str_attrs_end();
+
+  /*! Obtain the value of a field-attribute pointed by a given iterator.
+   * \param ai the field-attribute iterator.
+   */
+  const Str_list& get_value(Field_multi_str_attr_iter ai) const;
+
+  /*! Obtain the rule of a field-attribute pointed by a given iterator.
+   * \param ai the field-attribute iterator.
+   */
+  Field_info::Field_rule get_rule(Field_multi_str_attr_iter ai) const;
+
+  /*! Obtain the type of a field-attribute pointed by a given iterator.
+   * \param ai the field-attribute iterator.
+   */
+  Field_info::Field_type get_type(Field_multi_str_attr_iter ai) const;
+
   /*! Delete all attributes. */
   void delete_marked();
 
 protected:
   /*! The container of the string attributes. */
   Str_attr_list m_str_attrs;
+
+  /*! The container of the multi-string attributes. */
+  Multi_str_attr_list m_multi_str_attrs;
 
   /*! The container of the container attributes. */
   Cont_attr_list m_cont_attrs;
@@ -206,6 +284,9 @@ protected:
 
   /*! The container of the field attributes. */
   Field_attr_list m_field_attrs;
+
+  /*! The container of the field multi-string attributes. */
+  Field_multi_str_attr_list m_field_multi_str_attrs;
 };
 
 #if (defined _MSC_VER)
@@ -221,6 +302,10 @@ inline const std::string& Element::get_name(Iterator ai) const
 inline Element::Str_attr_list& Element::get_str_attributes()
 { return m_str_attrs; }
 
+//! \brief obtains the multi-string-attribute list.
+inline Element::Multi_str_attr_list& Element::get_multi_str_attributes()
+{ return m_multi_str_attrs; }
+
 //! \brief obtains the container-attribute list.
 inline Element::Cont_attr_list& Element::get_cont_attributes()
 { return m_cont_attrs; }
@@ -233,6 +318,11 @@ inline Element::Multi_cont_attr_list& Element::get_multi_cont_attributes()
 inline Element::Field_attr_list& Element::get_field_attributes()
 { return m_field_attrs; }
 
+//! \brief obtains the field-multi-string attribute container.
+inline Element::Field_multi_str_attr_list&
+Element::get_field_multi_str_attributes()
+{ return m_field_multi_str_attrs; }
+
 //! \brief obtains the begin iterator of the string-attribute container.
 inline Element::Str_attr_iter Element::str_attrs_begin()
 { return m_str_attrs.begin(); }
@@ -243,6 +333,22 @@ inline Element::Str_attr_iter Element::str_attrs_end()
 
 //! \brief obtains the value of a string-attribute pointed by a given iterator.
 inline const std::string& Element::get_value(Str_attr_iter ai) const
+{ return *(ai->second); }
+
+//! \brief obtains the begin iterator of the multi-string-attribute container.
+inline Element::Multi_str_attr_iter Element::multi_str_attrs_begin()
+{ return m_multi_str_attrs.begin(); }
+
+/*! \brief obtains the past-the-end iterator of the multi-string-attribute
+ * container.
+ */
+inline Element::Multi_str_attr_iter Element::multi_str_attrs_end()
+{ return m_multi_str_attrs.end(); }
+
+/*! \brief obtains the value of a multi-string-attribute pointed by a given
+ * iterator.
+ */
+inline Element::Str_list& Element::get_value(Multi_str_attr_iter ai) const
 { return *(ai->second); }
 
 //! \brief obtains the begin iterator of the container-attribute container.
@@ -287,6 +393,10 @@ inline Element::Field_attr_iter Element::field_attrs_begin()
 inline Element::Field_attr_iter Element::field_attrs_end()
 { return m_field_attrs.end(); }
 
+//! \brief obtains the value of a field-attribute pointed by a given iterator.
+inline const std::string& Element::get_value(Field_attr_iter ai) const
+{ return *(std::get<2>(ai->second)); }
+
 //! \brief obtains the rule of a field-attribute pointed by a given iterator.
 inline Field_info::Field_rule Element::get_rule(Field_attr_iter ai) const
 { return std::get<0>(ai->second); }
@@ -295,9 +405,28 @@ inline Field_info::Field_rule Element::get_rule(Field_attr_iter ai) const
 inline Field_info::Field_type Element::get_type(Field_attr_iter ai) const
 { return std::get<1>(ai->second); }
 
+//! \brief obtain the begin iterator of the field-attribute container.
+inline Element::Field_multi_str_attr_iter Element::field_multi_str_attrs_begin()
+{ m_field_multi_str_attrs.begin(); }
+
+//! \brief obtains the past-the-end iterator of the field-attribute container.
+inline Element::Field_multi_str_attr_iter Element::field_multi_str_attrs_end()
+{ m_field_multi_str_attrs.end(); }
+
 //! \brief obtains the value of a field-attribute pointed by a given iterator.
-inline const std::string& Element::get_value(Field_attr_iter ai) const
+inline const Element::Str_list& Element::get_value(Field_multi_str_attr_iter ai)
+  const
 { return *(std::get<2>(ai->second)); }
+
+//! \brief obtains the rule of a field-attribute pointed by a given iterator.
+inline Field_info::Field_rule Element::get_rule(Field_multi_str_attr_iter ai)
+  const
+{ return std::get<0>(ai->second); }
+
+//! \brief obtains the type of a field-attribute pointed by a given iterator.
+inline Field_info::Field_type Element::get_type(Field_multi_str_attr_iter ai)
+  const
+{ return std::get<1>(ai->second); }
 
 SGAL_END_NAMESPACE
 

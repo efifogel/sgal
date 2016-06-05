@@ -31,13 +31,13 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Accumulation.hpp"
 #include "SGAL/Gl_wrapper.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Window_item.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -327,10 +327,10 @@ void Accumulation::set_attributes(Element* elem)
       continue;
     }
     if (name == "quality") {
-      Uint num = sizeof(s_quality_names) / sizeof(char *);
-      const char** found = std::find(s_quality_names, &s_quality_names[num],
-                                      strip_double_quotes(value));
-      Uint index = found - s_quality_names;
+      auto num = sizeof(s_quality_names) / sizeof(char *);
+      const auto** found =
+        std::find(s_quality_names, &s_quality_names[num], value);
+      auto index = found - s_quality_names;
       if (index < num) m_quality = static_cast<Quality>(index);
       elem->mark_delete(ai);
       continue;

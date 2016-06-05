@@ -26,9 +26,9 @@
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Tex_coord_array.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Field_infos.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -180,11 +180,10 @@ void Geo_set::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "colorAttachment") {
-      Uint num = sizeof(s_attachment_names) / sizeof(char*);
-      const char** found = std::find(s_attachment_names,
-                                     &s_attachment_names[num],
-                                     strip_double_quotes(value));
-      Uint index = found - s_attachment_names;
+      auto num = sizeof(s_attachment_names) / sizeof(char*);
+      const auto** found =
+        std::find(s_attachment_names, &s_attachment_names[num], value);
+      auto index = found - s_attachment_names;
       if (index < num) m_color_attachment = static_cast<Attachment>(index);
       else {
         std::cerr << "Unrecognized color attachment \"" << value << "\"!"
@@ -252,7 +251,7 @@ void Geo_set::set_attributes(Element* elem)
     }
 
     if (name == "colorIndex") {
-      Uint num_values = get_num_tokens(value);
+      auto num_values = get_num_tokens(value);
       m_color_indices.resize(num_values);
       std::istringstream svalue(value, std::istringstream::in);
       for (Uint i = 0; i < num_values; ++i) svalue >> m_color_indices[i];
@@ -262,7 +261,7 @@ void Geo_set::set_attributes(Element* elem)
     }
 
     if (name == "normalIndex") {
-      Uint num_values = get_num_tokens(value);
+      auto num_values = get_num_tokens(value);
       m_normal_indices.resize(num_values);
       std::istringstream svalue(value, std::istringstream::in);
       for (Uint i = 0; i < num_values; ++i) svalue >> m_normal_indices[i];
@@ -272,7 +271,7 @@ void Geo_set::set_attributes(Element* elem)
     }
 
     if (name == "texCoordIndex") {
-      Uint num_values = get_num_tokens(value);
+      auto num_values = get_num_tokens(value);
       m_tex_coord_indices.resize(num_values);
       std::istringstream svalue(value, std::istringstream::in);
       for (Uint i = 0; i < num_values; ++i) svalue >> m_tex_coord_indices[i];
@@ -282,11 +281,10 @@ void Geo_set::set_attributes(Element* elem)
     }
 
     if (name == "primitiveType") {
-      Uint num = sizeof(s_primitive_type_names) / sizeof(char*);
-      const char** found = std::find(s_primitive_type_names,
-                                     &s_primitive_type_names[num],
-                                     strip_double_quotes(value));
-      Uint index = found - s_primitive_type_names;
+      auto num = sizeof(s_primitive_type_names) / sizeof(char*);
+      const auto** found =
+        std::find(s_primitive_type_names, &s_primitive_type_names[num], value);
+      auto index = found - s_primitive_type_names;
       if (index < num) set_primitive_type(static_cast<Primitive_type>(index));
       else
         std::cerr << "Illegal primitive type name (" << value << ")!"

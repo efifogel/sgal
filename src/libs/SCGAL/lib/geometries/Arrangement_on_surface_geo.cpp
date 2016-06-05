@@ -40,10 +40,10 @@
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Field_infos.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Context.hpp"
+#include "SGAL/Utilities.hpp"
 
 #include "SCGAL/Arrangement_on_surface_geo.hpp"
 
@@ -309,10 +309,9 @@ void Arrangement_on_surface_geo::set_attributes(Element* elem)
     const auto& value = elem->get_value(ai);
 
     if (name == "insertionStrategy") {
-      std::string req_strategy = strip_double_quotes(value);
-      for (unsigned int i = 0; i < NUM_INSERTION_STRATEGIES; ++i) {
-        const char* strategy = s_insertion_strategy_names[i];
-        if (req_strategy.compare(strategy) == 0) {
+      for (auto i = 0; i < NUM_INSERTION_STRATEGIES; ++i) {
+        const auto* strategy = s_insertion_strategy_names[i];
+        if (value.compare(strategy) == 0) {
           m_insertion_strategy = (Insertion_strategy) i;
           break;
         }
@@ -348,7 +347,7 @@ void Arrangement_on_surface_geo::set_attributes(Element* elem)
     }
 
     if (name == "aosVertexStyle") {
-      m_aos_vertex_style = Vertex_shape::style(strip_double_quotes(value));
+      m_aos_vertex_style = Vertex_shape::style(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -370,8 +369,7 @@ void Arrangement_on_surface_geo::set_attributes(Element* elem)
     }
 
     if (name == "aosIsolatedVertexStyle") {
-      m_aos_isolated_vertex_style =
-        Vertex_shape::style(strip_double_quotes(value));
+      m_aos_isolated_vertex_style = Vertex_shape::style(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -393,8 +391,7 @@ void Arrangement_on_surface_geo::set_attributes(Element* elem)
     }
 
     if (name == "aosBoundaryVertexStyle") {
-      m_aos_boundary_vertex_style =
-        Vertex_shape::style(strip_double_quotes(value));
+      m_aos_boundary_vertex_style = Vertex_shape::style(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -421,7 +418,7 @@ void Arrangement_on_surface_geo::set_attributes(Element* elem)
       continue;
     }
     if (name == "aosEdgeStyle") {
-      m_aos_edge_style = Edge_shape::style(strip_double_quotes(value));
+      m_aos_edge_style = Edge_shape::style(value);
       elem->mark_delete(ai);
       continue;
     }

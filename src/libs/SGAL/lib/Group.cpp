@@ -29,7 +29,6 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Formatter.hpp"
@@ -38,6 +37,7 @@
 #include "SGAL/Stl_binary_formatter.hpp"
 #include "SGAL/Obj_formatter.hpp"
 #include "SGAL/Trace.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

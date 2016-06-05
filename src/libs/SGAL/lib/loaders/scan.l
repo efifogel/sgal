@@ -53,6 +53,7 @@ typedef Element::Cont_list		Cont_list;
 SGAL_END_NAMESPACE
 
 #define YY_NO_UNISTD_H
+#define MAX_STR_CONST 			1025
 %}
 
 %option debug
@@ -92,7 +93,11 @@ idRestChar      	({idStartChar}|[0-9]|\-)
 #define YY_USER_ACTION  loc.columns(yyleng);
 %}
 
+%x str
+
 %% /*** Regular Expressions Part ***/
+
+                        std::string string_literal;
 
 %{
 loc.step();		// reset location
@@ -158,9 +163,40 @@ loc.step();		// reset location
 
 <vrml,stl>{idStartChar}{idRestChar}*	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_IDENTIFIER(*yylval, loc); }
 
-<vrml>\"(\\.|[^\\"])*\"	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_STRING_LITERAL(*yylval, loc); }
-<vrml>\'(\\.|[^\\'])*\'	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_STRING_LITERAL(*yylval, loc); }
+<vrml>\"        { string_literal.clear(); BEGIN(str); }
 
+<str>\"         { /* saw closing quote---all done */
+                  BEGIN(vrml);
+                  std::string* yylval = new std::string(string_literal);
+                  return Vrml_parser::make_STRING_LITERAL(*yylval, loc);
+                }
+
+<str>\n         {
+                  throw Vrml_parser::syntax_error(loc, "Unterminated string constant");
+                }
+
+<str>\\[0-7]{1,3} {
+                  /* octal escape sequence */
+                  int result;
+                  (void) sscanf(yytext + 1, "%o", &result);
+                  if (result > 0xff)
+                    throw Vrml_parser::syntax_error(loc, "constant is out-of-bounds");
+                  string_literal.append(std::to_string(result));
+                }
+
+<str>\\[0-9]+   {
+                  throw Vrml_parser::syntax_error(loc, "bad escape sequence");
+                }
+
+<str>\\n  	{ string_literal+= '\n'; }
+<str>\\t  	{ string_literal+= '\t'; }
+<str>\\r  	{ string_literal+= '\r'; }
+<str>\\b  	{ string_literal+= '\b'; }
+<str>\\f  	{ string_literal+= '\f'; }
+
+<str>\\(.|\n)  	{ string_literal+= yytext[1]; }
+
+<str>[^\\\n\"]+ { string_literal.append(yytext); }
 
 ";"		{ return Vrml_parser::make_SEMICOLON(loc); }
 <vrml>"("	{ return Vrml_parser::make_OPEN_PARENTHESES(loc); }

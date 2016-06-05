@@ -17,10 +17,14 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <stdexcept>
+#include <algorithm>
 
 #include <boost/assign/list_of.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/scope_exit.hpp>
+
+#include "SGAL/Attribute_error.hpp"
+#include "SGAL/Utilities.hpp"
 
 extern "C" {
 #include <ft2build.h>
@@ -59,7 +63,6 @@ extern "C" {
 #include "SGAL/Trace.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Container_factory.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Texture_font.hpp"
 #include "SGAL/Imagemagick_font.hpp"
 #include "SGAL/Font_outliner.hpp"
@@ -394,19 +397,10 @@ void Font_style::set_attributes(Element* elem)
 
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const auto& name = elem->get_name(ai);
-    const auto& value = elem->get_value(ai);
+    auto& value = elem->get_value(ai);
     if (name == "family") {
       m_families.clear();
-      auto start = value.find_first_of('\"');
-      while (start != std::string::npos) {
-        ++start;
-        auto end = value.find_first_of('\"', start);
-        if (end == std::string::npos) break;
-        m_families.push_back(value.substr(start, end-start));
-        ++end;
-        if (end == value.size()) break;
-        start = value.find_first_of('\"', end);
-      }
+      m_families.push_back(std::move(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -417,25 +411,8 @@ void Font_style::set_attributes(Element* elem)
     }
     if (name == "justify") {
       m_justify_str.clear();
-      auto start = value.find_first_of('\"');
-      while (start != std::string::npos) {
-        ++start;
-        auto end = value.find_first_of('\"', start);
-        if (end == std::string::npos) break;
-        m_justify_str.push_back(value.substr(start, end-start));
-        ++end;
-        if (end == value.size()) break;
-        start = value.find_first_of('\"', end);
-      }
-      // Reflect in the code
-      m_justify.clear();
-      for (auto it = m_justify_str.begin(); it != m_justify_str.end(); ++it) {
-        if (*it == "BEGIN") m_justify.push_back(JUSTIFY_BEGIN);
-        else if (*it == "FIRST") m_justify.push_back(JUSTIFY_FIRST);
-        else if (*it == "MIDDLE") m_justify.push_back(JUSTIFY_MIDDLE);
-        else if (*it == "END") m_justify.push_back(JUSTIFY_END);
-        else SGAL_error(); //! \todo throw---user error
-      }
+      m_justify_str.push_back(std::move(value));
+      set_justify(m_justify_str);
       elem->mark_delete(ai);
       continue;
     }
@@ -444,17 +421,7 @@ void Font_style::set_attributes(Element* elem)
       m_justify.resize(num_values);
       std::istringstream svalue(value, std::istringstream::in);
       for (Uint i = 0; i < num_values; ++i) svalue >> m_justify[i];
-      // Reflect in the strings
-      m_justify_str.clear();
-      for (auto it = m_justify.begin(); it != m_justify.end(); ++it) {
-        switch (m_justify[*it]) {
-         case JUSTIFY_BEGIN: m_justify_str.push_back("BEGIN"); break;
-         case JUSTIFY_FIRST: m_justify_str.push_back("FIRST"); break;
-         case JUSTIFY_MIDDLE: m_justify_str.push_back("MIDDLE"); break;
-         case JUSTIFY_END: m_justify_str.push_back("END"); break;
-         default: SGAL_error(); break;
-        }
-      }
+      set_justify(m_justify);
       elem->mark_delete(ai);
       continue;
     }
@@ -479,13 +446,37 @@ void Font_style::set_attributes(Element* elem)
       continue;
     }
     if (name == "style") {
-      set_style(strip_double_quotes(value));
+      set_style(value);
       elem->mark_delete(ai);
       continue;
     }
     if (name == "topToBottom") {
       set_top_to_bottom(compare_to_true(value));
       elem->mark_delete(ai);
+      continue;
+    }
+  }
+
+  auto msai = elem->multi_str_attrs_begin();
+  for (; msai != elem->multi_str_attrs_end(); ++msai) {
+    const auto& name = elem->get_name(msai);
+    auto& value = elem->get_value(msai);
+    if (name == "family") {
+      m_families.resize(value.size());
+      std::copy(std::make_move_iterator(value.begin()),
+                std::make_move_iterator(value.end()),
+                m_families.begin());
+      elem->mark_delete(msai);
+      continue;
+    }
+
+    if (name == "justify") {
+      m_justify_str.resize(value.size());
+      std::copy(std::make_move_iterator(value.begin()),
+                std::make_move_iterator(value.end()),
+                m_justify_str.begin());
+      set_justify(m_justify_str);
+      elem->mark_delete(msai);
       continue;
     }
   }
@@ -886,6 +877,40 @@ void Font_style::get_font_file_name(std::string& file_name, FT_Long& face_index)
   if (result != FcResultMatch) { throw Fontconfig_error(result); }
   face_index = FT_Long(face_index_int);
 # endif
+}
+
+//! \brief sets the alignment of the text layout relative to the origin.
+void Font_style::set_justify(const String_array& justify)
+{
+  m_justify.resize(justify.size());
+  std::transform(justify.begin(), justify.end(), m_justify.begin(),
+                 [](const std::string& type) {
+                   if (type == "BEGIN") return JUSTIFY_BEGIN;
+                   else if (type == "FIRST") return JUSTIFY_FIRST;
+                   else if (type == "MIDDLE") return JUSTIFY_MIDDLE;
+                   else if (type == "END") return JUSTIFY_END;
+                   else {
+                     throw Attribute_error(std::string("Unrecognized font-style justification \"").append(type).append("\"!"));
+                     return JUSTIFY_BEGIN;
+                   }
+                 });
+}
+
+//! \brief sets the alignment of the text layout relative to the origin.
+void Font_style::set_justify_str(const Uint_array& justify)
+{
+  m_justify_str.resize(justify.size());
+  std::transform(justify.begin(), justify.end(), m_justify_str.begin(),
+                 [](Uint type) {
+                   if (type == JUSTIFY_BEGIN) return "BEGIN";
+                   else if (type == JUSTIFY_FIRST) return "FIRST";
+                   else if (type == JUSTIFY_MIDDLE) return "MIDDLE";
+                   else if (type == JUSTIFY_END) return "END";
+                   else {
+                     throw Attribute_error(std::string("Unrecognized font-style justification \"").append(std::to_string(type)).append("\"!"));
+                     return "BEGIN";
+                   }
+                 });
 }
 
 SGAL_END_NAMESPACE

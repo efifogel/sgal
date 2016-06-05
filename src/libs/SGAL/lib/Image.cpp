@@ -31,7 +31,6 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_factory.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -633,10 +632,9 @@ void Image::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "format") {
-      const char** found = std::find(s_format_names,
-                                     &s_format_names[kNumFormats],
-                                     strip_double_quotes(value));
-      Uint index = found - s_format_names;
+      const auto** found =
+        std::find(s_format_names, &s_format_names[kNumFormats], value);
+      auto index = found - s_format_names;
       if (index >= kNumFormats) {
         std::cerr << "Illegal format name (" << value.c_str() << ")!"
                   << std::endl;

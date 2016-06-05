@@ -45,11 +45,11 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Element.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Epec_coord_array_3d.hpp"
+#include "SGAL/Utilities.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Arrangement_on_sphere_marked_geo.hpp"
@@ -192,8 +192,7 @@ set_attributes(Element* elem)
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "aosMarkedVertexStyle") {
-      m_aos_marked_vertex_style =
-        Vertex_shape::style(strip_double_quotes(value));
+      m_aos_marked_vertex_style = Vertex_shape::style(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -219,8 +218,7 @@ set_attributes(Element* elem)
       continue;
     }
      if (name == "aosMarkedEdgeStyle") {
-      m_aos_marked_edge_style =
-        Edge_shape::style(strip_double_quotes(value));
+      m_aos_marked_edge_style = Edge_shape::style(value);
       elem->mark_delete(ai);
       continue;
     }

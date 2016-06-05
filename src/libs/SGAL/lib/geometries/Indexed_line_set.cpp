@@ -34,10 +34,10 @@
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Gfx.hpp"
 #include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

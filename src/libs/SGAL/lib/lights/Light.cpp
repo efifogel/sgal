@@ -30,13 +30,13 @@
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Cull_context.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Action.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

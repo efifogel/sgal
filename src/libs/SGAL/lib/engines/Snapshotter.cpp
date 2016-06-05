@@ -31,10 +31,10 @@
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Scene_graph.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Field.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -204,8 +204,7 @@ void Snapshotter::set_attributes(Element* elem)
     const auto& value = elem->get_value(ai);
     if (name == "mode") {
       auto num = sizeof(s_mode_names) / sizeof(char *);
-      const auto** found =
-        std::find(s_mode_names, &s_mode_names[num], strip_double_quotes(value));
+      const auto** found = std::find(s_mode_names, &s_mode_names[num], value);
       // Do not use auto to prevent signed/unsigned mismatch
       size_t index = found - s_mode_names;
       if (index < num) set_mode(static_cast<Mode>(index));

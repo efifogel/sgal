@@ -27,6 +27,7 @@
 #include "SGAL/Container_proto.h"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Execution_function.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

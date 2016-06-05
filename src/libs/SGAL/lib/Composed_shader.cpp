@@ -29,7 +29,6 @@
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Trace.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 
@@ -71,9 +70,7 @@ void Composed_shader::set_attributes(Element* elem)
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "language") {
-      std::string language = strip_double_quotes(value);
-      set_language(language);
-      language.clear();
+      set_language(value);
       elem->mark_delete(ai);
       continue;
     }

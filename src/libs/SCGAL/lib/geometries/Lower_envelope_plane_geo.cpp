@@ -40,7 +40,6 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Trace.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Extrusion.hpp"
@@ -49,6 +48,7 @@
 #include "SGAL/Sphere.hpp"
 #include "SGAL/Epec_plane_array.hpp"
 #include "SGAL/Epec_coord_array_2d.hpp"
+#include "SGAL/Utilities.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Lower_envelope_plane_geo.hpp"

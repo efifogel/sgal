@@ -42,7 +42,6 @@
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Isect_action.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Field_infos.hpp"
@@ -53,6 +52,7 @@
 #include "SGAL/GL_error.hpp"
 #include "SGAL/Bounding_box.hpp"
 #include "SGAL/Gfx_conf.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

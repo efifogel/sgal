@@ -37,7 +37,6 @@
 #include "SGAL/Plane.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Element.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -599,10 +598,10 @@ void Frustum::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "type") {
-      Uint num = sizeof(s_type_strings) / sizeof(char*);
-      const char** found = std::find(s_type_strings, &s_type_strings[num],
-                                     strip_double_quotes(value));
-      Uint index = found - s_type_strings;
+      auto num = sizeof(s_type_strings) / sizeof(char*);
+      const auto**
+        found = std::find(s_type_strings, &s_type_strings[num], value);
+      auto index = found - s_type_strings;
       if (index < num)
         m_type = static_cast<Frustum_type>(index);
       elem->mark_delete(ai);

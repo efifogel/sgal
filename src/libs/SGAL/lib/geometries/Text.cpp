@@ -31,7 +31,6 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Context.hpp"
-#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -110,7 +109,7 @@ void Text::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "string") {
-      m_string = strip_double_quotes(value);
+      m_string = value;
       elem->mark_delete(ai);
       continue;               // Advance to next attribute
     }

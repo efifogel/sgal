@@ -51,8 +51,8 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Scene_graph.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -143,9 +143,7 @@ void Image_url::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "url") {
-      std::string url = strip_double_quotes(value);
-      set_url(url);
-      url.clear();
+      set_url(value);
       elem->mark_delete(ai);
       continue;
     }

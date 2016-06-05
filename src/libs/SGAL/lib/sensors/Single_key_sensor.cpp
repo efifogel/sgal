@@ -33,8 +33,8 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Trace.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Vrml_formatter.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -174,7 +174,7 @@ void Single_key_sensor::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "key") {
-      m_key = value[1];
+      m_key = value[0];
       elem->mark_delete(ai);
       continue;
     }

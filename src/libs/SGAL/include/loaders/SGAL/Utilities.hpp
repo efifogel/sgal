@@ -63,11 +63,6 @@ inline size_t get_num_values(const std::string& value)
   return num_values;
 }
 
-/*! Strip embedding double quotes.
- * \param str (in) the input string.
- */
-SGAL_SGAL_DECL std::string strip_double_quotes(std::string str);
-
 SGAL_END_NAMESPACE
 
 #endif

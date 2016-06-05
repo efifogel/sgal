@@ -25,7 +25,6 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Container_factory.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Script.hpp"
 #include "SGAL/Field_info.hpp"
@@ -34,6 +33,7 @@
 #include "SGAL/Field.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Vrml_formatter.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -1001,10 +1001,8 @@ void Script::add_field_info(Field_info::Field_rule rule,
 
    case Field_info::SF_STR:
     {
-     std::string initial_value = strip_double_quotes(value);
-     variant_field = initial_value;
-     add_fi<Field_info::SF_STR>(id, name, rule, initial_value, exec_func,
-                                prototype);
+     variant_field = value;
+     add_fi<Field_info::SF_STR>(id, name, rule, value, exec_func, prototype);
     }
     break;
 

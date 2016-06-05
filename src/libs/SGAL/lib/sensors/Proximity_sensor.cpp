@@ -27,10 +27,10 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Container_factory.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Mouse_event.hpp"
 #include "SGAL/Motion_event.hpp"
 #include "SGAL/Passive_motion_event.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

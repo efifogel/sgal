@@ -131,20 +131,6 @@ void Text_3d::set_attributes(Element* elem)
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
-    if (name == "string") {
-      auto start = value.find_first_of('\"');
-      while (start != std::string::npos) {
-        ++start;
-        auto end = value.find_first_of('\"', start);
-        if (end == std::string::npos) break;
-        m_strings.push_back(value.substr(start, end-start));
-        ++end;
-        if (end == value.size()) break;
-        start = value.find_first_of('\"', end);
-      }
-      elem->mark_delete(ai);
-      continue;
-    }
     if (name == "length") {
       auto num_values = get_num_tokens(value);
       m_lengths.resize(num_values);
@@ -164,9 +150,22 @@ void Text_3d::set_attributes(Element* elem)
     }
   }
 
-  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
-       ++cai)
-  {
+  auto msai = elem->multi_str_attrs_begin();
+  for (; msai != elem->multi_str_attrs_end(); ++msai) {
+    const auto& name = elem->get_name(msai);
+    auto& value = elem->get_value(msai);
+    if (name == "string") {
+      m_strings.resize(value.size());
+      std::copy(std::make_move_iterator(value.begin()),
+                std::make_move_iterator(value.end()),
+                m_strings.begin());
+      elem->mark_delete(msai);
+      continue;
+    }
+  }
+
+  auto cai = elem->cont_attrs_begin();
+  for (; cai != elem->cont_attrs_end(); ++cai) {
     const auto& name = elem->get_name(cai);
     auto cont = elem->get_value(cai);
     if (name == "fontStyle") {

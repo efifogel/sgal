@@ -38,11 +38,11 @@
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Tex_gen.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Sphere_environment.hpp"
 #include "SGAL/Cube_environment.hpp"
 #include "SGAL/Texture_2d.hpp"
 #include "SGAL/Vrml_formatter.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

@@ -53,11 +53,11 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Gfx.hpp"
 #include "SGAL/Field_infos.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Epec_coord_array_3d.hpp"
+#include "SGAL/Utilities.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Spherical_gaussian_map_marked_geo.hpp"
@@ -271,8 +271,7 @@ void Spherical_gaussian_map_marked_geo::set_attributes(Element* elem)
     const auto& value = elem->get_value(ai);
     // AOS marked vertex attributes:
     if (name == "aosMarkedVertexStyle") {
-      m_aos_marked_vertex_style =
-        Vertex_shape::style(strip_double_quotes(value));
+      m_aos_marked_vertex_style = Vertex_shape::style(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -294,7 +293,7 @@ void Spherical_gaussian_map_marked_geo::set_attributes(Element* elem)
       continue;
     }
      if (name == "aosMarkedEdgeStyle") {
-      m_aos_marked_edge_style = Edge_shape::style(strip_double_quotes(value));
+      m_aos_marked_edge_style = Edge_shape::style(value);
       elem->mark_delete(ai);
       continue;
     }

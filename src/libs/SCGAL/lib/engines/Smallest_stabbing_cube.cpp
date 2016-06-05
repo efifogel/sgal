@@ -33,8 +33,8 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Field.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Coord_transformer.hpp"
+#include "SGAL/Utilities.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Smallest_stabbing_cube.hpp"

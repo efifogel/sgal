@@ -28,9 +28,9 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Scene_graph.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/File_format_3d.hpp"
 #include "SGAL/Vrml_formatter.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -144,7 +144,7 @@ void Exporter::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "dirName") {
-      m_dir_name = strip_double_quotes(value);
+      m_dir_name = value;
       if (m_dir_name.empty()) m_dir_name = s_def_dir_name;
       Uint n = m_dir_name.size() - 1;
       if (m_dir_name[n] == '/') m_dir_name.resize(n);
@@ -152,15 +152,14 @@ void Exporter::set_attributes(Element* elem)
       continue;
     }
     if (name == "fileName") {
-      m_file_name = strip_double_quotes(value);
+      m_file_name = value;
       elem->mark_delete(ai);
       continue;
     }
     if (name == "fileFormat") {
-      auto str = strip_double_quotes(value);
-      Uint i;
+      size_t i;
       for (i = 0; i < File_format_3d::NUM_IDS; ++i) {
-        if (File_format_3d::compare_name(i, str)) {
+        if (File_format_3d::compare_name(i, value)) {
           set_file_format(static_cast<File_format_3d::Id>(i));
           break;
         }

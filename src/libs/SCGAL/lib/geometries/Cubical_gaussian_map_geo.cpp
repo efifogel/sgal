@@ -53,12 +53,12 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Gfx.hpp"
 #include "SGAL/Field_infos.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Extrusion.hpp"
 #include "SGAL/Epec_coord_array_3d.hpp"
+#include "SGAL/Utilities.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Cubical_gaussian_map_geo.hpp"
@@ -432,7 +432,7 @@ void Cubical_gaussian_map_geo::set_attributes(SGAL::Element* elem)
 
     // Dual vertex attributes:
     if (name == "dualVertexStyle") {
-      m_aos_vertex_style = Vertex_shape::style(strip_double_quotes(value));
+      m_aos_vertex_style = Vertex_shape::style(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -455,8 +455,7 @@ void Cubical_gaussian_map_geo::set_attributes(SGAL::Element* elem)
 
     // Dual nonreal vertex attributes:
     if (name == "dualNonrealVertexStyle") {
-      m_aos_nonreal_vertex_style =
-        Vertex_shape::style(strip_double_quotes(value));
+      m_aos_nonreal_vertex_style = Vertex_shape::style(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -484,7 +483,7 @@ void Cubical_gaussian_map_geo::set_attributes(SGAL::Element* elem)
       continue;
     }
     if (name == "aosEdgeStyle") {
-      m_aos_edge_style = Edge_shape::style(strip_double_quotes(value));
+      m_aos_edge_style = Edge_shape::style(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -524,8 +523,7 @@ void Cubical_gaussian_map_geo::set_attributes(SGAL::Element* elem)
 
     // Dual marked Vertex attributes:
     if (name == "dualMarkedVertexStyle") {
-      m_aos_marked_vertex_style =
-        Vertex_shape::style(strip_double_quotes(value));
+      m_aos_marked_vertex_style = Vertex_shape::style(value);
       elem->mark_delete(ai);
       continue;
     }

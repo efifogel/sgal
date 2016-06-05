@@ -36,9 +36,9 @@
 #include "SGAL/Texture.hpp"
 #include "SGAL/Url_image.hpp"
 #include "SGAL/Element.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Scene_graph.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -186,14 +186,11 @@ void Image_texture_template<T_Texture>::set_attributes(Element* elem)
   typedef Element::Str_attr_iter        Str_attr_iter;
 
   T_Texture::set_attributes(elem);
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "url") {
-      std::string url = strip_double_quotes(value);
-      set_url(url);
-      url.clear();
+      set_url(value);
       elem->mark_delete(ai);
       continue;
     }

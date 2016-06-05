@@ -25,13 +25,13 @@
 #include "SGAL/Shape.hpp"
 #include "SGAL/Image.hpp"
 #include "SGAL/Texture.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Scene_graph_int.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Execution_function.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

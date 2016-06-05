@@ -30,12 +30,12 @@
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Trace.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Tex_coord_array_2d.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

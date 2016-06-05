@@ -25,13 +25,13 @@
 #include "SGAL/Field.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_factory.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Accumulation.hpp"
 #include "SGAL/Multisample.hpp"
 #include "SGAL/Modeling.hpp"
 #include "SGAL/Window_item.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -300,20 +300,19 @@ void Configuration::set_attributes(Element* elem)
       continue;
     }
     if (name == "viewpointMode") {
-      Uint num = sizeof(s_viewpoint_mode_names) / sizeof(char *);
-      const char** found = std::find(s_viewpoint_mode_names,
-                                     &s_viewpoint_mode_names[num],
-                                     strip_double_quotes(value));
+      auto num = sizeof(s_viewpoint_mode_names) / sizeof(char *);
+      const auto** found =
+        std::find(s_viewpoint_mode_names, &s_viewpoint_mode_names[num], value);
       Uint index = found - s_viewpoint_mode_names;
       if (index < num) m_viewpoint_mode = static_cast<Viewpoint_mode>(index);
       elem->mark_delete(ai);
       continue;
     }
     if (name == "geometryDrawingMode") {
-      Uint num = sizeof(s_geometry_drawing_mode_names) / sizeof(char *);
-      const char** found = std::find(s_geometry_drawing_mode_names,
+      auto num = sizeof(s_geometry_drawing_mode_names) / sizeof(char *);
+      const auto** found = std::find(s_geometry_drawing_mode_names,
                                      &s_geometry_drawing_mode_names[num],
-                                     strip_double_quotes(value));
+                                     value);
       Uint index = found - s_geometry_drawing_mode_names;
       if (index < num)
         m_geometry_drawing_mode = static_cast<Geometry_drawing_mode>(index);
@@ -326,10 +325,9 @@ void Configuration::set_attributes(Element* elem)
       continue;
     }
     if (name == "polyMode") {
-      std::string tmp = strip_double_quotes(value);
-      if (tmp == "line") set_poly_mode(Gfx::LINE_PMODE);
-      else if (tmp == "point") set_poly_mode(Gfx::POINT_PMODE);
-      else std::cerr << "Unrecognized polygon mode \"" << tmp << "\"!"
+      if (value == "line") set_poly_mode(Gfx::LINE_PMODE);
+      else if (value == "point") set_poly_mode(Gfx::POINT_PMODE);
+      else std::cerr << "Unrecognized polygon mode \"" << value << "\"!"
                      << std::endl;
       elem->mark_delete(ai);
       continue;

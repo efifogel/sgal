@@ -30,35 +30,49 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! \brief adds a string attribute. */
+//! \brief adds a string attribute.
 void Element::add_attribute(Str_attr& attribute, bool back)
 {
   if (back) m_str_attrs.push_back(attribute);
-  else  m_str_attrs.push_front(attribute);
+  else m_str_attrs.push_front(attribute);
 }
 
-/*! \brief adds a container attribute. */
+//! \brief adds a string-list attribute.
+void Element::add_attribute(Multi_str_attr& attribute, bool back)
+{
+  if (back) m_multi_str_attrs.push_back(attribute);
+  else m_multi_str_attrs.push_front(attribute);
+}
+
+//! \brief adds a container attribute.
 void Element::add_attribute(Cont_attr& attribute, bool back)
 {
   if (back) m_cont_attrs.push_back(attribute);
-  else  m_cont_attrs.push_front(attribute);
+  else m_cont_attrs.push_front(attribute);
 }
 
-/*! \brief adds a container-list attribute. */
+//! \brief adds a container-list attribute.
 void Element::add_attribute(Multi_cont_attr& attribute, bool back)
 {
   if (back) m_multi_cont_attrs.push_back(attribute);
-  else  m_multi_cont_attrs.push_front(attribute);
+  else m_multi_cont_attrs.push_front(attribute);
 }
 
-/*! \brief adds a field attribute. */
+//! \brief adds a field attribute.
 void Element::add_attribute(Field_attr& attribute, bool back)
 {
   if (back) m_field_attrs.push_back(attribute);
-  else  m_field_attrs.push_front(attribute);
+  else m_field_attrs.push_front(attribute);
 }
 
-/*! \brief deletes the string-attribute pointed by a given iterator. */
+//! \brief adds a multi-string field attribute.
+void Element::add_attribute(Field_multi_str_attr& attribute, bool back)
+{
+  if (back) m_field_multi_str_attrs.push_back(attribute);
+  else m_field_multi_str_attrs.push_front(attribute);
+}
+
+//! \brief deletes the string-attribute pointed by a given iterator.
 void Element::mark_delete(Str_attr_iter ai)
 {
   delete ai->first;
@@ -67,39 +81,63 @@ void Element::mark_delete(Str_attr_iter ai)
   ai->second= nullptr;
 }
 
-/*! \brief deletes the container-attribute pointed by a given iterator. */
+//! \brief deletes the attribute pointed by a given iterator.
+void Element::mark_delete(Multi_str_attr_iter ai)
+{
+  delete ai->first;
+  ai->first = nullptr;
+}
+
+//! \brief deletes the container-attribute pointed by a given iterator.
 void Element::mark_delete(Cont_attr_iter ai)
 {
   delete ai->first;
   ai->first = nullptr;
 }
 
-/*! \brief deletes the multi-container-attribute pointed by a given iterator. */
+//! \brief deletes the multi-container-attribute pointed by a given iterator.
 void Element::mark_delete(Multi_cont_attr_iter ai)
 {
   delete ai->first;
   ai->first = nullptr;
 }
 
-/*! \brief deletes the Field-attribute pointed by a given iterator. */
+//! \brief deletes the Field-attribute pointed by a given iterator.
 void Element::mark_delete(Field_attr_iter ai)
 {
   delete ai->first;
   ai->first = nullptr;
-  std::string* value = std::get<2>(ai->second);
+  auto* value = std::get<2>(ai->second);
   if (value) delete value;
   ai->second = std::make_tuple(static_cast<Field_info::Field_rule>(0),
                                static_cast<Field_info::Field_type>(0),
                                nullptr);
 }
 
-/*! \brief deletes all attributes. */
+//! \brief deletes the attribute pointed by a given iterator.
+void Element::mark_delete(Field_multi_str_attr_iter ai)
+{
+  delete ai->first;
+  ai->first = nullptr;
+  auto* value = std::get<2>(ai->second);
+  if (value) value->clear();
+  ai->second = std::make_tuple(static_cast<Field_info::Field_rule>(0),
+                               static_cast<Field_info::Field_type>(0),
+                               nullptr);
+}
+
+//! \brief deletes all attributes.
 void Element::delete_marked()
 {
   m_str_attrs.erase(std::remove_if(m_str_attrs.begin(), m_str_attrs.end(),
                                    [](Str_attr attr)
                                    { return attr.first == nullptr; }),
                     m_str_attrs.end());
+  m_multi_str_attrs.erase(std::remove_if(m_multi_str_attrs.begin(),
+                                         m_multi_str_attrs.end(),
+                                         [](Multi_str_attr attr)
+                                         { return attr.first == nullptr; }),
+                           m_multi_str_attrs.end());
   m_cont_attrs.erase(std::remove_if(m_cont_attrs.begin(), m_cont_attrs.end(),
                                     [](Cont_attr attr)
                                    { return attr.first == nullptr; }),
@@ -113,16 +151,25 @@ void Element::delete_marked()
                                      [](Field_attr attr)
                                      { return attr.first == nullptr; }),
                       m_field_attrs.end());
+  m_field_multi_str_attrs.erase(std::remove_if(m_field_multi_str_attrs.begin(),
+                                               m_field_multi_str_attrs.end(),
+                                     [](Field_multi_str_attr attr)
+                                     { return attr.first == nullptr; }),
+                      m_field_multi_str_attrs.end());
 }
 
-/*! \brief transfers attributes from a given element into this element. */
+//! \brief transfers attributes from a given element into this element.
 void Element::splice(Element& element)
 {
   m_str_attrs.splice(m_str_attrs.end(), element.get_str_attributes());
+  m_multi_str_attrs.splice(m_multi_str_attrs.end(),
+                           element.get_multi_str_attributes());
   m_cont_attrs.splice(m_cont_attrs.end(), element.get_cont_attributes());
   m_multi_cont_attrs.splice(m_multi_cont_attrs.end(),
                             element.get_multi_cont_attributes());
   m_field_attrs.splice(m_field_attrs.end(), element.get_field_attributes());
+  m_field_multi_str_attrs.splice(m_field_multi_str_attrs.end(),
+                                 element.get_field_multi_str_attributes());
 }
 
 SGAL_END_NAMESPACE

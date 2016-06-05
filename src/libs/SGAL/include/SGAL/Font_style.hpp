@@ -186,12 +186,22 @@ public:
   /*! Set the alignment of the text layout relative to the origin
    * of the object coordinate system.
    */
+  void set_justify(const String_array& justify);
+
+  /*! Set the alignment of the text layout relative to the origin
+   * of the object coordinate system.
+   */
   void set_justify_str(const String_array& justify);
 
   /*! Obtain the alignment of the text layout relative to the origin
    * of the object coordinate system.
    */
   const String_array& get_justify_str() const;
+
+  /*! Set the alignment of the text layout relative to the origin
+   * of the object coordinate system.
+   */
+  void set_justify_str(const Uint_array& justify);
 
   /*! Set the context of the language for the text string.
    * \param labguage (in) the context of the language for the text string.

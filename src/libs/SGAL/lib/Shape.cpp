@@ -39,7 +39,6 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Trace.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Geometry.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Execution_function.hpp"
@@ -49,6 +48,7 @@
 #include "SGAL/Stl_formatter.hpp"
 #include "SGAL/Stl_binary_formatter.hpp"
 #include "SGAL/Obj_formatter.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -280,22 +280,19 @@ void Shape::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "cullFace") {
-      Uint num = sizeof(s_cull_face_names) / sizeof(char*);
-      const char** found = std::find(s_cull_face_names,
-                                     &s_cull_face_names[num],
-                                     strip_double_quotes(value));
-      Uint index = found - s_cull_face_names;
-      if (index < num)
-        m_cull_face = static_cast<Gfx::Cull_face>(index);
+      auto num = sizeof(s_cull_face_names) / sizeof(char*);
+      const auto** found =
+        std::find(s_cull_face_names, &s_cull_face_names[num], value);
+      auto index = found - s_cull_face_names;
+      if (index < num) m_cull_face = static_cast<Gfx::Cull_face>(index);
       elem->mark_delete(ai);
       continue;
     }
     if (name == "depthFunction") {
-      Uint num = sizeof(s_depth_function_names) / sizeof(char*);
-      const char** found = std::find(s_depth_function_names,
-                                      &s_depth_function_names[num],
-                                      strip_double_quotes(value));
-      Uint index = found - s_depth_function_names;
+      auto num = sizeof(s_depth_function_names) / sizeof(char*);
+      const auto** found =
+        std::find(s_depth_function_names, &s_depth_function_names[num], value);
+      auto index = found - s_depth_function_names;
       if (index < num)
         m_depth_function = static_cast<Gfx::Depth_func>(index);
       elem->mark_delete(ai);

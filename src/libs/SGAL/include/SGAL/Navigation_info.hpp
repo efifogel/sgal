@@ -122,7 +122,7 @@ private:
   Navigation_info_type m_type;
 
   /*! Parse the type string-attribute. */
-  int parse_type(const std::string& type);
+  void set_type(const std::string& type);
 };
 
 #if defined(_MSC_VER)

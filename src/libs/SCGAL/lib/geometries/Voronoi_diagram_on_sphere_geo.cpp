@@ -48,13 +48,13 @@
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Field_infos.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Sphere.hpp"
 #include "SGAL/Extrusion.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Epec_coord_array_3d.hpp"
+#include "SGAL/Utilities.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Voronoi_diagram_on_sphere_geo.hpp"
@@ -146,7 +146,7 @@ Container_proto* Voronoi_diagram_on_sphere_geo::get_prototype()
     const auto& value = elem->get_value(ai);
 
     if (name == "siteStyle") {
-      m_site_style = Site_shape::style(strip_double_quotes(value));
+      m_site_style = Site_shape::style(value);
       elem->mark_delete(ai);
       continue;
     }

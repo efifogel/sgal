@@ -49,7 +49,6 @@
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Field_infos.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Sphere.hpp"
@@ -62,6 +61,7 @@
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Material.hpp"
 #include "SGAL/Epec_plane_array.hpp"
+#include "SGAL/Utilities.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Power_diagram_on_sphere_geo.hpp"
@@ -187,7 +187,7 @@ Container_proto* Power_diagram_on_sphere_geo::get_prototype()
       continue;
     }
     if (name == "siteStyle") {
-      m_site_style = Site_shape::style(strip_double_quotes(value));
+      m_site_style = Site_shape::style(value);
       elem->mark_delete(ai);
       continue;
     }

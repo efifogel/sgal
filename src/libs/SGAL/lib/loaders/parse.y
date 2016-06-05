@@ -59,6 +59,7 @@
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Indexed_face_set.hpp"
+#include "SGAL/Attribute_error.hpp"
 #ifdef SGAL_USE_V8
   #include "SGAL/Script.hpp"
 #endif
@@ -68,6 +69,11 @@ SGAL_BEGIN_NAMESPACE
 typedef Element::Str_attr               Str_attr;
 typedef Element::Str_attr_list          Str_attr_list;
 typedef Element::Str_attr_iter          Str_attr_iter;
+
+typedef Element::Str_list               Str_list;
+typedef Element::Multi_str_attr         Multi_str_attr;
+typedef Element::Multi_str_attr_list    Multi_str_attr_list;
+typedef Element::Multi_str_attr_iter    Multi_str_attr_iter;
 
 typedef Element::Cont_attr              Cont_attr;
 typedef Element::Cont_attr_list         Cont_attr_list;
@@ -81,6 +87,10 @@ typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
 typedef Element::Field_attr             Field_attr;
 typedef Element::Field_attr_list        Field_attr_list;
 typedef Element::Field_attr_iter        Field_attr_iter;
+
+typedef Element::Field_multi_str_attr           Field_multi_str_attr;
+typedef Element::Field_multi_str_attr_list      Field_multi_str_attr_list;
+typedef Element::Field_multi_str_attr_iter      Field_multi_str_attr_iter;
 
 class Vrml_scanner;
 
@@ -106,34 +116,24 @@ SGAL_END_NAMESPACE
   static SGAL::Vrml_parser::symbol_type yylex(SGAL::Vrml_scanner& scanner);
 }
 
-/* %union { */
-/*   std::string* text; */
-/*   SGAL::Element* element; */
-/*   SGAL::Str_attr* attribute; */
-/*   SGAL::Container* container; */
-/*   SGAL::Cont_list* cont_list; */
-/*   SGAL::Node* node; */
-/*   SGAL::Group* group; */
-/*   SGAL::Transform* transform; */
-/* } */
-
 %type <Shared_group> vrmlScene
 %type <Shared_transform> statements
 %type <Shared_container> statement
 %type <Shared_container> nodeStatement protoStatement routeStatement
-%type <Shared_container> node sfnodeValue
+%type <Shared_container> node nodeContainer sfnodeValue
 %type <Shared_container> proto externproto
 
 %type <std::string> NUMBER STRING_LITERAL
 %type <std::string> IDENTIFIER
 %type <std::string> Id nodeTypeId fieldId nodeNameId eventInId eventOutId
 %type <std::string> mfValue sfValues sfValue
-%type <std::string> sfstringValue sfstringValues mfstringValue URLList
+%type <std::string> sfstringValue
 %type <std::string> sfboolValues
 %type <std::string> sfint32Values
 %type <std::string> sfboolValue
 %type <std::string> fieldValue
 %type <Field_info::Field_type> fieldType
+%type <Str_list*> sfstringValues mfstringValue URLList
 %type <Cont_list*> nodeStatements
 %type <Element*> nodeBody
 %type <Element*> scriptBody
@@ -389,7 +389,7 @@ protoStatement  : proto { std::swap($$, $1); }
                 | externproto { std::swap($$, $1); }
                 ;
 
-proto           : K_PROTO nodeTypeId "[" interfaceDeclarations "]" "{" statements "}" { $$ = Shared_container(); /*! \todo */ }
+proto           : K_PROTO nodeContainer "[" interfaceDeclarations "]" "{" statements "}" { $$ = $2; /*! \todo */ }
                 ;
 
 interfaceDeclarations   : /* empty */ { /*! \todo */ }
@@ -417,14 +417,22 @@ restrictedInterfaceDeclaration : K_EVENTIN fieldType eventInId
                                   std::make_tuple(Field_info::RULE_FIELD, $2, new std::string($4)));
                   $$->add_attribute(attr);
                 }
+                | K_FIELD fieldType fieldId mfstringValue
+                {
+                  $$ = new Element;
+                  Field_multi_str_attr attr(new std::string($3),
+                                            std::make_tuple(Field_info::RULE_FIELD, $2, $4));
+                  $$->add_attribute(attr);
+                }
                 ;
 
 interfaceDeclaration : restrictedInterfaceDeclaration { /*! \todo */ }
                 | K_EXPOSEDFIELD fieldType fieldId fieldValue { /*! \todo */ }
+                | K_EXPOSEDFIELD fieldType fieldId mfstringValue { /*! \todo */ }
                 | K_EXPOSEDFIELD fieldType fieldId sfnodeValue { /*! \todo */ }
                 ;
 
-externproto     : K_EXTERNPROTO nodeTypeId "[" externInterfaceDeclarations "]" URLList { $$ = Shared_container(); /*! \todo */ }
+externproto     : K_EXTERNPROTO nodeContainer "[" externInterfaceDeclarations "]" URLList { $$ = $2; /*! \todo */ }
                 ;
 
 externInterfaceDeclarations     : /* empty */ { /*! \todo */ }
@@ -452,14 +460,13 @@ routeStatement  : K_ROUTE nodeNameId "." eventOutId K_TO nodeNameId "." eventInI
 URLList         : mfstringValue { std::swap($$, $1); }
                 ;
 
-mfstringValue   : sfstringValue { std::swap($$, $1); }
-                | "[" "]" { ; }
+mfstringValue   : sfstringValue { $$ = new Str_list; $$->push_back(std::move($1)); }
                 | "[" sfstringValues "]" { std::swap($$, $2); }
                 ;
 
 /* nodes: */
 
-node            : nodeTypeId "{" nodeBody "}"
+nodeContainer   : nodeTypeId
                 {
                   $$ = Container_factory::get_instance()->create($1);
                   if (!$$) {
@@ -467,10 +474,19 @@ node            : nodeTypeId "{" nodeBody "}"
                           std::string("Unknown node type \"") + $1 + "\"");
                     YYERROR;
                   }
-                  else {
+                }
+                ;
+
+node            : nodeContainer "{" nodeBody "}"
+                {
+                  $$ = $1;
+                  try {
                     $$->set_attributes($3);
-                    $$->add_to_scene(scene_graph);
                   }
+                  catch(Attribute_error& e) {
+                    error(yyla.location, e.what());
+                  }
+                  $$->add_to_scene(scene_graph);
                 }
                 | K_SCRIPT "{" scriptBody "}"
                 {
@@ -487,7 +503,12 @@ node            : nodeTypeId "{" nodeBody "}"
                     YYERROR;
                   }
                   else {
-                    $$->set_attributes($3);
+                    try {
+                      $$->set_attributes($3);
+                    }
+                    catch(Attribute_error& e) {
+                      error(yyla.location, e.what());
+                    }
                     $$->add_to_scene(scene_graph);
                   }
 #endif
@@ -507,6 +528,14 @@ nodeBody        : /* empty */ { $$ = new Element; }
                   Str_attr attr(new std::string($2), new std::string($4));
                   $$->add_attribute(attr);
                 }
+
+                | nodeBody fieldId "[" sfstringValues "]"
+                {
+                  std::swap($$, $1);
+                  Multi_str_attr attr(new std::string($2), $4);
+                  $$->add_attribute(attr);
+                }
+
                 | nodeBody fieldId sfnodeValue
                 {
                   std::swap($$, $1);
@@ -637,9 +666,9 @@ sfint32Values   : NUMBER { std::swap($$, $1); }
                 | sfint32Values "," NUMBER { $1 += " " + $3; std::swap($$, $1); }
                 ;
 
-sfstringValues  : STRING_LITERAL { std::swap($$, $1); }
-                | sfstringValues STRING_LITERAL { $1 += $2; std::swap($$, $1); }
-                | sfstringValues "," STRING_LITERAL { $1 += $3; std::swap($$, $1); }
+sfstringValues  : sfstringValue { $$ = new Str_list; $$->push_back(std::move($1)); }
+                | sfstringValues sfstringValue { std::swap($$, $1); $$->push_back(std::move($2)); }
+                | sfstringValues "," sfstringValue { std::swap($$, $1); $$->push_back(std::move($3)); }
                 ;
 
 nodeStatements  : nodeStatement { $$ = new Cont_list; $$->push_back($1); }
@@ -651,7 +680,6 @@ mfValue         : "[" "]" { ; }
                 ;
 
 sfValues        : sfboolValues { std::swap($$, $1); }
-                | sfstringValues { std::swap($$, $1); }
                 | sfint32Values { std::swap($$, $1); }
                 ;
 

@@ -17,8 +17,8 @@
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Hole_filler.hpp"
 #include "SGAL/Hole_filler_visitor.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Modeling.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

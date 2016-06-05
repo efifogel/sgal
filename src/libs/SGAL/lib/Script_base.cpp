@@ -23,13 +23,13 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Container_factory.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Script_base.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Tick_event.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -100,9 +100,7 @@ void Script_base::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "url") {
-      std::string url = strip_double_quotes(value);
-      set_url(url);
-      url.clear();
+      set_url(value);
       elem->mark_delete(ai);
       continue;
     }

@@ -18,6 +18,7 @@
 
 #include <string.h>
 #include <boost/assign/list_of.hpp>
+#include <boost/algorithm/string/trim.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Math_defs.hpp"
@@ -29,6 +30,7 @@
 #include "SGAL/Field.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Scene_graph.hpp"
+#include "SGAL/Attribute_error.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -56,53 +58,31 @@ Navigation_info::Navigation_info(Boolean proto) :
 Navigation_info::~Navigation_info() {}
 
 //! \brief parses the type string-attribute.
-int Navigation_info::parse_type(const std::string& type)
+void Navigation_info::set_type(const std::string& type)
 {
+  auto trimmed_type = type;
+  boost::algorithm::trim(trimmed_type);
+
   m_types.clear();
 
-  Uint i;
-  for (i = 0; i < type.size(); ++i) {
-    // Skip white space:
-    while (i < type.size() && type[i] == ' ') i++;
-    if (i == type.size()) return 0;
-
-    // Match open double-quote (")
-    if (type[i++] != '\"') {
-      std::cerr << "Invalid type field!" << std::endl;
-      return -1;
+  // Compare with supported types:
+  for (size_t j = 0; j < SGAL::NUM_TYPES; ++j) {
+    const auto* nav_type = s_type_strings[j];
+    if (trimmed_type.compare(0, strlen(nav_type), nav_type) == 0) {
+      m_types.push_back(nav_type);
+      m_type = (Navigation_info_type) j;
+      return;
     }
-
-    // Compare with supported types:
-    unsigned int j;
-    Boolean found = false;
-
-    for (j = 0; j < SGAL::NUM_TYPES; ++j) {
-      const char* nav_type = s_type_strings[j];
-      if (type.compare(i, strlen(nav_type), nav_type) == 0) {
-        m_types.push_back(nav_type);
-        m_type = (Navigation_info_type) j;
-        found = true;
-        break;
-      }
-    }
-
-    // Compare with "ANY":
-    if (!found && !m_any) {
-      const char* nav_type = "ANY";
-      if (type.compare(i, strlen(nav_type), nav_type) == 0) m_any = true;
-    }
-
-    // Advance to close double-quote (")
-    while (i < type.size() && type[i] != '\"') i++;
-    if (i == type.size()) {
-      return -1;
-      std::cerr << "Invalid type field!" << std::endl;
-    }
-
-    if (found || m_any) break;
   }
 
-  return 0;
+  // Compare with "ANY":
+  const auto* nav_type = "ANY";
+  if (trimmed_type.compare(0, strlen(nav_type), nav_type) == 0) {
+    m_any = true;
+    return;
+  }
+
+  throw Attribute_error(std::string("Unrecognized navigation type \"").append(type).append("\"!"));
 }
 
 //! \brief sets the attributes of this node.
@@ -114,7 +94,7 @@ void Navigation_info::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "type") {
-      parse_type(value);
+      set_type(value);
       elem->mark_delete(ai);
       continue;
     }

@@ -36,15 +36,6 @@ Boolean compare_to_true(std::string::const_iterator begin,
                         std::string::const_iterator end)
 { return boost::iequals(std::string(begin, end), true_str); }
 
-//! \brief Strips embedding double quotes.
-std::string strip_double_quotes(std::string str)
-{
-  if (str[0] == '\"') str.erase(0, 1);
-  size_t n = str.size() - 1;
-  if (str[n] == '\"') str.resize(n);
-  return str;
-}
-
 //! \brief Obtains the number of tokens in a string.
 size_t get_num_tokens(const std::string& str)
 {

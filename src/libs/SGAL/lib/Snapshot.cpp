@@ -37,11 +37,11 @@
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Scene_graph.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Image_writer.hpp"
 #include "SGAL/Execution_function.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -164,7 +164,7 @@ void Snapshot::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "dirName") {
-      m_dir_name = strip_double_quotes(value);
+      m_dir_name = value;
       if (m_dir_name.empty()) m_dir_name = Image_writer::s_def_dir_name;
       Uint n = m_dir_name.size() - 1;
       if (m_dir_name[n] == '/') m_dir_name.resize(n);
@@ -172,15 +172,14 @@ void Snapshot::set_attributes(Element* elem)
       continue;
     }
     if (name == "fileName") {
-      set_file_name(strip_double_quotes(value));
+      set_file_name(value);
       elem->mark_delete(ai);
       continue;
     }
     if (name == "fileFormat") {
-      auto str = strip_double_quotes(value);
       size_t i;
       for (i = 0; i < File_format_2d::NUM_IDS; ++i) {
-        if (File_format_2d::compare_name(i, str)) {
+        if (File_format_2d::compare_name(i, value)) {
           set_file_format(static_cast<File_format_2d::Id>(i));
           break;
         }

@@ -46,13 +46,13 @@
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 // #include "SGAL/Trace.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Sphere.hpp"
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

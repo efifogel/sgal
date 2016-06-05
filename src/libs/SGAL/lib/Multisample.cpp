@@ -30,12 +30,12 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Multisample.hpp"
 #include "SGAL/Gl_wrapper.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Field_infos.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

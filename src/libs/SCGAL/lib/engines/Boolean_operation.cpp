@@ -43,7 +43,6 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Indexed_face_set.hpp"
@@ -197,23 +196,20 @@ void Boolean_operation::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "operation") {
-      Uint num = sizeof(s_operation_names) / sizeof(char*);
-      const char** found = std::find(s_operation_names,
-                                     &s_operation_names[num],
-                                     strip_double_quotes(value));
-      Uint index = found - s_operation_names;
+      auto num = sizeof(s_operation_names) / sizeof(char*);
+      const auto** found =
+        std::find(s_operation_names, &s_operation_names[num], value);
+      auto index = found - s_operation_names;
       if (index < num) set_operation(static_cast<Operation>(index));
       elem->mark_delete(ai);
       continue;
     }
   }
 
-  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
-       ++cai)
-  {
+  auto cai = elem->cont_attrs_begin();
+  for (; cai != elem->cont_attrs_end(); ++cai) {
     const auto& name = elem->get_name(cai);
     auto cont = elem->get_value(cai);
-
     if (name == "operand1") {
       auto mesh = boost::dynamic_pointer_cast<Indexed_face_set>(cont);
       set_operand1(mesh);

@@ -54,11 +54,11 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Gfx.hpp"
 #include "SGAL/Field_infos.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Extrusion.hpp"
+#include "SGAL/Utilities.hpp"
 
 #include "SCGAL/Spherical_gaussian_map_base_geo.hpp"
 
@@ -249,7 +249,7 @@ void Spherical_gaussian_map_base_geo::set_attributes(Element* elem)
 
     // AOS vertex attributes:
     if (name == "aosVertexStyle") {
-      m_aos_vertex_style = Vertex_shape::style(strip_double_quotes(value));
+      m_aos_vertex_style = Vertex_shape::style(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -277,7 +277,7 @@ void Spherical_gaussian_map_base_geo::set_attributes(Element* elem)
       continue;
     }
     if (name == "aosEdgeStyle") {
-      m_aos_edge_style = Edge_shape::style(strip_double_quotes(value));
+      m_aos_edge_style = Edge_shape::style(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -333,8 +333,7 @@ void Spherical_gaussian_map_base_geo::set_attributes(Element* elem)
     }
 
     if (name == "aosBoundaryVertexStyle") {
-      m_aos_boundary_vertex_style =
-        Vertex_shape::style(strip_double_quotes(value));
+      m_aos_boundary_vertex_style = Vertex_shape::style(value);
       elem->mark_delete(ai);
       continue;
     }

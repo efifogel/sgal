@@ -24,7 +24,6 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Context.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Image_texture.hpp"
 #include "SGAL/Gl_wrapper.hpp"
@@ -80,15 +79,13 @@ void Environment_background::set_attributes(Element* elem)
     }
     if (name == "backUrl") {
       //! \todo fix backUrl
-//       std::string url = strip_double_quotes(value);
 //       Appearance * app = new Appearance;
 //       m_back_texture = new Image_texture;
-//       m_back_texture->set_url(url);
+//       m_back_texture->set_url(value);
 //       m_back_texture->set_dirs(sg->get_data_dirs());
 //       app->set_texture(m_back_texture);
 //       app->set_tex_enable(true);
 //       set_back_appearance(app);
-//       url.clear();
       elem->mark_delete(ai);
       continue;
     }

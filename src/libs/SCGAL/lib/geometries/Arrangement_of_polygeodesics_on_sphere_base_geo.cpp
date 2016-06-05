@@ -45,7 +45,6 @@
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Field_infos.hpp"
-#include "SGAL/Utilities.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Sphere.hpp"
@@ -134,7 +133,7 @@ set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "pgVertexStyle") {
-      set_pg_vertex_style(Vertex_shape::style(strip_double_quotes(value)));
+      set_pg_vertex_style(Vertex_shape::style(value));
       elem->mark_delete(ai);
       continue;
     }
