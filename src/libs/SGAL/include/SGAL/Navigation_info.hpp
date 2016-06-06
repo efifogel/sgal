@@ -121,8 +121,10 @@ private:
   /*! The navigation type. */
   Navigation_info_type m_type;
 
-  /*! Parse the type string-attribute. */
-  void set_type(const std::string& type);
+  /*! Add a type from a string.
+   * \param[in] the input type as a string.
+   */
+  void add_type(const std::string& type);
 };
 
 #if defined(_MSC_VER)

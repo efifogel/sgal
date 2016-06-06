@@ -46,6 +46,12 @@
 // It is also defined by Eigen3...
 #undef Success
 
+// The following symbols are defined, possibly by the header file X.h
+// It is also defined by v8...
+#undef True
+#undef False
+#undef None
+
 #include "Player_scene.hpp"
 #include "Player_option_parser.hpp"
 #include "Player.hpp"

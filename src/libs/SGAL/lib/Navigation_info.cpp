@@ -51,25 +51,23 @@ Navigation_info::Navigation_info(Boolean proto) :
   Navigation_sensor(Vector3f(), Rotation(), proto),
   m_any(false),
   m_types(s_def_types),
-  m_type(SGAL::NONE)
+  m_type(SGAL::WALK)
 {}
 
 //! Destructor.
 Navigation_info::~Navigation_info() {}
 
 //! \brief parses the type string-attribute.
-void Navigation_info::set_type(const std::string& type)
+void Navigation_info::add_type(const std::string& type)
 {
   auto trimmed_type = type;
   boost::algorithm::trim(trimmed_type);
-
-  m_types.clear();
 
   // Compare with supported types:
   for (size_t j = 0; j < SGAL::NUM_TYPES; ++j) {
     const auto* nav_type = s_type_strings[j];
     if (trimmed_type.compare(0, strlen(nav_type), nav_type) == 0) {
-      m_types.push_back(nav_type);
+      m_types.push_back(std::move(trimmed_type));
       m_type = (Navigation_info_type) j;
       return;
     }
@@ -94,8 +92,25 @@ void Navigation_info::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "type") {
-      set_type(value);
+      m_types.clear();
+      m_any = false;
+      m_type = SGAL::NONE;
+      add_type(value);
       elem->mark_delete(ai);
+      continue;
+    }
+  }
+
+  auto msai = elem->multi_str_attrs_begin();
+  for (; msai != elem->multi_str_attrs_end(); ++msai) {
+    const auto& name = elem->get_name(msai);
+    auto& value = elem->get_value(msai);
+    if (name == "type") {
+      m_types.clear();
+      m_any = false;
+      m_type = SGAL::NONE;
+      for (auto type_p : value) add_type(*type_p);
+      elem->mark_delete(msai);
       continue;
     }
   }

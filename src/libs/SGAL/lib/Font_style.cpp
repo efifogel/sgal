@@ -463,18 +463,16 @@ void Font_style::set_attributes(Element* elem)
     auto& value = elem->get_value(msai);
     if (name == "family") {
       m_families.resize(value.size());
-      std::copy(std::make_move_iterator(value.begin()),
-                std::make_move_iterator(value.end()),
-                m_families.begin());
+      auto tit = m_families.begin();
+      for (auto sit : value) *tit++ = std::move(*sit);
       elem->mark_delete(msai);
       continue;
     }
 
     if (name == "justify") {
       m_justify_str.resize(value.size());
-      std::copy(std::make_move_iterator(value.begin()),
-                std::make_move_iterator(value.end()),
-                m_justify_str.begin());
+      auto tit = m_justify_str.begin();
+      for (auto sit : value) *tit++ = std::move(*sit);
       set_justify(m_justify_str);
       elem->mark_delete(msai);
       continue;

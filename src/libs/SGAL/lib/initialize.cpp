@@ -32,7 +32,7 @@
 #endif
 
 #if defined(SGAL_USE_V8)
-// #include <libplatform/libplatform.h>
+#include <libplatform/libplatform.h>
 #include <v8.h>
 #endif
 
@@ -45,10 +45,10 @@ SGAL_SGAL_DECL void initialize(int /* argc */, char* argv[])
 {
   Magick::InitializeMagick(*argv);
 #if defined(SGAL_USE_V8)
-  // v8::V8::InitializeICU();
-  // v8::V8::InitializeExternalStartupData(argv[0]);
-  // v8::Platform* platform = v8::platform::CreateDefaultPlatform();
-  // v8::V8::InitializePlatform(platform);
+  v8::V8::InitializeICU();
+  v8::V8::InitializeExternalStartupData(argv[0]);
+  v8::Platform* platform = v8::platform::CreateDefaultPlatform();
+  v8::V8::InitializePlatform(platform);
   v8::V8::Initialize();
 #endif
 

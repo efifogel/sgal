@@ -41,38 +41,39 @@ SGAL_BEGIN_NAMESPACE
 
 class SGAL_SGAL_DECL Element {
 public:
+  typedef boost::shared_ptr<std::string>                  Shared_string;
   typedef boost::shared_ptr<Container>                    Shared_container;
 
-  typedef std::pair<const std::string*, std::string*>     Str_attr;
+  typedef std::pair<Shared_string, Shared_string>         Str_attr;
   typedef std::list<Str_attr>                             Str_attr_list;
   typedef Str_attr_list::iterator                         Str_attr_iter;
 
-  typedef std::list<std::string>                          Str_list;
+  typedef std::list<Shared_string>                        Str_list;
   typedef Str_list::iterator                              Str_iter;
-  typedef std::pair<const std::string*, Str_list*>        Multi_str_attr;
+  typedef std::pair<Shared_string, Str_list*>             Multi_str_attr;
   typedef std::list<Multi_str_attr>                       Multi_str_attr_list;
   typedef Multi_str_attr_list::iterator                   Multi_str_attr_iter;
 
-  typedef std::pair<const std::string*, Shared_container> Cont_attr;
+  typedef std::pair<Shared_string, Shared_container>      Cont_attr;
   typedef std::list<Cont_attr>                            Cont_attr_list;
   typedef Cont_attr_list::iterator                        Cont_attr_iter;
 
   typedef std::list<Shared_container>                     Cont_list;
   typedef Cont_list::iterator                             Cont_iter;
-  typedef std::pair<const std::string*, Cont_list*>       Multi_cont_attr;
+  typedef std::pair<Shared_string, Cont_list*>            Multi_cont_attr;
   typedef std::list<Multi_cont_attr>                      Multi_cont_attr_list;
   typedef Multi_cont_attr_list::iterator                  Multi_cont_attr_iter;
 
   // <name, <rule, type, value> >
-  typedef std::pair<const std::string*,
+  typedef std::pair<Shared_string,
                     std::tuple<Field_info::Field_rule,
                                Field_info::Field_type,
-                               std::string*> >            Field_attr;
+                               Shared_string> >           Field_attr;
 
   typedef std::list<Field_attr>                           Field_attr_list;
   typedef Field_attr_list::iterator                       Field_attr_iter;
 
-  typedef std::pair<const std::string*,
+  typedef std::pair<Shared_string,
                     std::tuple<Field_info::Field_rule,
                                Field_info::Field_type,
                                Str_list*> >               Field_multi_str_attr;

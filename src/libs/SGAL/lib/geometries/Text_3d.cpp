@@ -156,9 +156,8 @@ void Text_3d::set_attributes(Element* elem)
     auto& value = elem->get_value(msai);
     if (name == "string") {
       m_strings.resize(value.size());
-      std::copy(std::make_move_iterator(value.begin()),
-                std::make_move_iterator(value.end()),
-                m_strings.begin());
+      auto tit = m_strings.begin();
+      for (auto sit : value) *tit++ = std::move(*sit);
       elem->mark_delete(msai);
       continue;
     }
@@ -169,8 +168,7 @@ void Text_3d::set_attributes(Element* elem)
     const auto& name = elem->get_name(cai);
     auto cont = elem->get_value(cai);
     if (name == "fontStyle") {
-      Shared_font_style font_style =
-        boost::dynamic_pointer_cast<Font_style>(cont);
+      auto font_style = boost::dynamic_pointer_cast<Font_style>(cont);
       set_font_style(font_style);
       elem->mark_delete(cai);
       continue;

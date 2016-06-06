@@ -75,50 +75,33 @@ void Element::add_attribute(Field_multi_str_attr& attribute, bool back)
 //! \brief deletes the string-attribute pointed by a given iterator.
 void Element::mark_delete(Str_attr_iter ai)
 {
-  delete ai->first;
-  ai->first = nullptr;
-  delete ai->second;
-  ai->second= nullptr;
+  ai->first.reset();
+  ai->second.reset();
 }
 
 //! \brief deletes the attribute pointed by a given iterator.
-void Element::mark_delete(Multi_str_attr_iter ai)
-{
-  delete ai->first;
-  ai->first = nullptr;
-}
+void Element::mark_delete(Multi_str_attr_iter ai) { ai->first.reset(); }
 
 //! \brief deletes the container-attribute pointed by a given iterator.
-void Element::mark_delete(Cont_attr_iter ai)
-{
-  delete ai->first;
-  ai->first = nullptr;
-}
+void Element::mark_delete(Cont_attr_iter ai) { ai->first.reset(); }
 
 //! \brief deletes the multi-container-attribute pointed by a given iterator.
-void Element::mark_delete(Multi_cont_attr_iter ai)
-{
-  delete ai->first;
-  ai->first = nullptr;
-}
+void Element::mark_delete(Multi_cont_attr_iter ai) { ai->first.reset(); }
 
 //! \brief deletes the Field-attribute pointed by a given iterator.
 void Element::mark_delete(Field_attr_iter ai)
 {
-  delete ai->first;
-  ai->first = nullptr;
-  auto* value = std::get<2>(ai->second);
-  if (value) delete value;
+  ai->first.reset();
+  auto value = std::get<2>(ai->second);
   ai->second = std::make_tuple(static_cast<Field_info::Field_rule>(0),
                                static_cast<Field_info::Field_type>(0),
-                               nullptr);
+                               Shared_string());
 }
 
 //! \brief deletes the attribute pointed by a given iterator.
 void Element::mark_delete(Field_multi_str_attr_iter ai)
 {
-  delete ai->first;
-  ai->first = nullptr;
+  ai->first.reset();
   auto* value = std::get<2>(ai->second);
   if (value) value->clear();
   ai->second = std::make_tuple(static_cast<Field_info::Field_rule>(0),

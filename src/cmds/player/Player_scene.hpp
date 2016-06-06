@@ -39,7 +39,7 @@
 #include "SGAL/Scene.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Box.hpp"
-// #include "SGAL/Array_buffer_allocator.hpp"
+#include "SGAL/Array_buffer_allocator.hpp"
 #if defined(_WIN32)
 #include "SGAL/Windows_window_manager.hpp"
 #endif
@@ -280,7 +280,8 @@ protected:
   SGAL::Uint m_offscreen_height;
 
   /*! An allocator. */
-  // SGAL::Array_buffer_allocator m_allocator;
+  SGAL::Array_buffer_allocator m_allocator;
+  v8::Isolate::CreateParams m_params;
 
   /*! An isolated instance of the V8 engine. */
   v8::Isolate* m_isolate;

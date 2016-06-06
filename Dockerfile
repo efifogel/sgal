@@ -15,18 +15,23 @@ FROM ubuntu:14.04
 RUN apt-get update && apt-get upgrade -y && apt-get clean
 # bzip2  libc6-dev-i386 g++-multilib openjdk-7-jdk
 
-RUN apt-get install -y dialog subversion gcc g++ make python curl
+RUN apt-get install -y dialog subversion gcc g++ make python curl software-properties-common
 
-ENV V8_VERSION 3.26.13
+# V8
+RUN add-apt-repository ppa:pinepain/v8
+RUN apt-get update && apt-get upgrade
+RUN apt-get install libv8-4.9.385 libv8-4.9-dev
 
-RUN mkdir /usr/src/v8
-RUN curl -SL https://github.com/v8/v8/archive/$V8_VERSION.tar.gz | tar -xzC /usr/src/v8
-RUN cd /usr/src/v8/v8-$V8_VERSION && make dependencies
-RUN cd /usr/src/v8/v8-$V8_VERSION && make library=shared native
-RUN cp /usr/src/v8/v8-$V8_VERSION/out/native/lib.target/* /usr/local/lib/
-RUN cp /usr/src/v8/v8-$V8_VERSION/include/v8.h /usr/local/include/
-RUN cp /usr/src/v8/v8-$V8_VERSION/include/v8config.h /usr/local/include/
-RUN cp /usr/src/v8/v8-$V8_VERSION/include/v8stdint.h /usr/local/include/
+# ENV V8_VERSION 3.26.13
+
+# RUN mkdir /usr/src/v8
+# RUN curl -SL https://github.com/v8/v8/archive/$V8_VERSION.tar.gz | tar -xzC /usr/src/v8
+# RUN cd /usr/src/v8/v8-$V8_VERSION && make dependencies
+# RUN cd /usr/src/v8/v8-$V8_VERSION && make library=shared native
+# RUN cp /usr/src/v8/v8-$V8_VERSION/out/native/lib.target/* /usr/local/lib/
+# RUN cp /usr/src/v8/v8-$V8_VERSION/include/v8.h /usr/local/include/
+# RUN cp /usr/src/v8/v8-$V8_VERSION/include/v8config.h /usr/local/include/
+# RUN cp /usr/src/v8/v8-$V8_VERSION/include/v8stdint.h /usr/local/include/
 
 RUN apt-get install -y cmake
 RUN apt-get install -y g++
