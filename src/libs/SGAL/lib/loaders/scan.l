@@ -44,6 +44,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
+typedef Element::Shared_string		Shared_string;
 typedef Element::Str_attr		Str_attr;
 typedef Element::Cont_list		Cont_list;
 
@@ -158,22 +159,40 @@ loc.step();		// reset location
 <vrml>"SFVec2f"		{ return Vrml_parser::make_SFVec2f(loc); }
 <vrml>"SFVec3f"		{ return Vrml_parser::make_SFVec3f(loc); }
 
-<vrml,stl>{quotion}	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_NUMBER(*yylval, loc); }
-<vrml,stl>{anynumber}	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_NUMBER(*yylval, loc); }
+<vrml,stl>{quotion}     {
+                          Shared_string yylval(new std::string(YYText()));
+                          return Vrml_parser::make_NUMBER(yylval, loc);
+                        }
+<vrml,stl>{anynumber}   {
+                          Shared_string yylval(new std::string(YYText()));
+                          return Vrml_parser::make_NUMBER(yylval, loc);
+                        }
 
-<vrml,stl>{idStartChar}{idRestChar}*	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_IDENTIFIER(*yylval, loc); }
+<vrml,stl>{idStartChar}{idRestChar}* {
+                          Shared_string yylval(new std::string(YYText()));
+                          return Vrml_parser::make_IDENTIFIER(yylval, loc);
+                        }
+
+ /* Comments must not start at the beginning og the line in the rule section. */
+ /* <vrml>\"(\\.|[^\\"])*\" { */
+ /*   Shared_string yylval(new std::string(YYText())); */
+ /*   return Vrml_parser::make_STRING_LITERAL(yylval, loc); */
+ /* } */
+
+ /* <vrml>\'(\\.|[^\\'])*\' { */
+ /*   Shared_string yylval(new std::string(YYText())); */
+ /*   return Vrml_parser::make_STRING_LITERAL(yylval, loc); */
+ /* } */
 
 <vrml>\"        { string_literal.clear(); BEGIN(str); }
 
 <str>\"         { /* saw closing quote---all done */
                   BEGIN(vrml);
-                  std::string* yylval = new std::string(string_literal);
-                  return Vrml_parser::make_STRING_LITERAL(*yylval, loc);
+                  Shared_string yylval(new std::string(string_literal));
+                  return Vrml_parser::make_STRING_LITERAL(yylval, loc);
                 }
 
-<str>\n         {
-                  throw Vrml_parser::syntax_error(loc, "Unterminated string constant");
-                }
+<str>\n         { string_literal+= '\n'; }
 
 <str>\\[0-7]{1,3} {
                   /* octal escape sequence */
@@ -184,9 +203,7 @@ loc.step();		// reset location
                   string_literal.append(std::to_string(result));
                 }
 
-<str>\\[0-9]+   {
-                  throw Vrml_parser::syntax_error(loc, "bad escape sequence");
-                }
+<str>\\[0-9]+   { throw Vrml_parser::syntax_error(loc, "bad escape sequence"); }
 
 <str>\\n  	{ string_literal+= '\n'; }
 <str>\\t  	{ string_literal+= '\t'; }

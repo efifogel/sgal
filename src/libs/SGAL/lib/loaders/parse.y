@@ -94,6 +94,7 @@ typedef Element::Field_multi_str_attr_iter      Field_multi_str_attr_iter;
 
 class Vrml_scanner;
 
+typedef boost::shared_ptr<std::string>        Shared_string;
 typedef boost::shared_ptr<Container>          Shared_container;
 typedef boost::shared_ptr<Node>               Shared_node;
 typedef boost::shared_ptr<Group>              Shared_group;
@@ -123,15 +124,15 @@ SGAL_END_NAMESPACE
 %type <Shared_container> node nodeContainer sfnodeValue
 %type <Shared_container> proto externproto
 
-%type <std::string> NUMBER STRING_LITERAL
-%type <std::string> IDENTIFIER
-%type <std::string> Id nodeTypeId fieldId nodeNameId eventInId eventOutId
-%type <std::string> mfValue sfValues sfValue
-%type <std::string> sfstringValue
-%type <std::string> sfboolValues
-%type <std::string> sfint32Values
-%type <std::string> sfboolValue
-%type <std::string> fieldValue
+%type <Shared_string> NUMBER STRING_LITERAL
+%type <Shared_string> IDENTIFIER
+%type <Shared_string> Id nodeTypeId fieldId nodeNameId eventInId eventOutId
+%type <Shared_string> mfValue sfValues sfValue
+%type <Shared_string> sfstringValue
+%type <Shared_string> sfboolValues
+%type <Shared_string> sfint32Values
+%type <Shared_string> sfboolValue
+%type <Shared_string> fieldValue
 %type <Field_info::Field_type> fieldType
 %type <Str_list*> sfstringValues mfstringValue URLList
 %type <Cont_list*> nodeStatements
@@ -333,9 +334,9 @@ facet           : K_FACET normal vertexLoop K_FACET_END { std::swap($$, $3); }
                 ;
 
 normal          : K_NORMAL NUMBER NUMBER NUMBER
-                { $$ = Vector3f(boost::lexical_cast<Float>($2),
-                                boost::lexical_cast<Float>($3),
-                                boost::lexical_cast<Float>($4)); }
+                { $$ = Vector3f(boost::lexical_cast<Float>(*$2),
+                                boost::lexical_cast<Float>(*$3),
+                                boost::lexical_cast<Float>(*$4)); }
                 ;
 
 vertexLoop      : K_LOOP vertices K_LOOP_END { std::swap($$, $2); }
@@ -351,9 +352,9 @@ vertices        : /* empty */
                 ;
 
 vertex          : K_VERTEX NUMBER NUMBER NUMBER
-                { $$ = Vector3f(boost::lexical_cast<Float>($2),
-                                boost::lexical_cast<Float>($3),
-                                boost::lexical_cast<Float>($4)); }
+                { $$ = Vector3f(boost::lexical_cast<Float>(*$2),
+                                boost::lexical_cast<Float>(*$3),
+                                boost::lexical_cast<Float>(*$4)); }
                 ;
 
 vrmlScene       : statements
@@ -381,15 +382,15 @@ statement       : nodeStatement { std::swap($$, $1); }
 
 nodeStatement   : node { scene_graph->add_container($1); std::swap($$, $1); }
                 | K_DEF nodeNameId node
-                { scene_graph->add_container($3, $2); std::swap($$, $3); }
-                | K_USE nodeNameId { $$ = scene_graph->get_container($2); }
+                { scene_graph->add_container($3, *$2); std::swap($$, $3); }
+                | K_USE nodeNameId { $$ = scene_graph->get_container(*$2); }
                 ;
 
 protoStatement  : proto { std::swap($$, $1); }
                 | externproto { std::swap($$, $1); }
                 ;
 
-proto           : K_PROTO nodeContainer "[" interfaceDeclarations "]" "{" statements "}" { $$ = $2; /*! \todo */ }
+proto           : K_PROTO nodeContainer "[" interfaceDeclarations "]" "{" statements "}" { std::swap($$, $2); /*! \todo */ }
                 ;
 
 interfaceDeclarations   : /* empty */ { /*! \todo */ }
@@ -399,29 +400,31 @@ interfaceDeclarations   : /* empty */ { /*! \todo */ }
 restrictedInterfaceDeclaration : K_EVENTIN fieldType eventInId
                 {
                   $$ = new Element;
-                  Field_attr attr(new std::string($3),
-                                  std::make_tuple(Field_info::RULE_IN, $2, new std::string("")));
+                  Shared_string empty_str(new std::string(""));
+                  Field_attr
+                    attr($3, std::make_tuple(Field_info::RULE_IN, $2, empty_str));
                   $$->add_attribute(attr);
                 }
                 | K_EVENTOUT fieldType eventOutId
                 {
                   $$ = new Element;
-                  Field_attr attr(new std::string($3),
-                                  std::make_tuple(Field_info::RULE_OUT, $2, new std::string("")));
+                  Shared_string empty_str(new std::string(""));
+                  Field_attr
+                    attr($3, std::make_tuple(Field_info::RULE_OUT, $2, empty_str));
                   $$->add_attribute(attr);
                 }
                 | K_FIELD fieldType fieldId fieldValue
                 {
                   $$ = new Element;
-                  Field_attr attr(new std::string($3),
-                                  std::make_tuple(Field_info::RULE_FIELD, $2, new std::string($4)));
+                  Field_attr
+                    attr($3, std::make_tuple(Field_info::RULE_FIELD, $2, $4));
                   $$->add_attribute(attr);
                 }
                 | K_FIELD fieldType fieldId mfstringValue
                 {
                   $$ = new Element;
-                  Field_multi_str_attr attr(new std::string($3),
-                                            std::make_tuple(Field_info::RULE_FIELD, $2, $4));
+                  Field_multi_str_attr
+                    attr($3, std::make_tuple(Field_info::RULE_FIELD, $2, $4));
                   $$->add_attribute(attr);
                 }
                 ;
@@ -432,7 +435,7 @@ interfaceDeclaration : restrictedInterfaceDeclaration { /*! \todo */ }
                 | K_EXPOSEDFIELD fieldType fieldId sfnodeValue { /*! \todo */ }
                 ;
 
-externproto     : K_EXTERNPROTO nodeContainer "[" externInterfaceDeclarations "]" URLList { $$ = $2; /*! \todo */ }
+externproto     : K_EXTERNPROTO nodeContainer "[" externInterfaceDeclarations "]" URLList { std::swap($$, $2); /*! \todo */ }
                 ;
 
 externInterfaceDeclarations     : /* empty */ { /*! \todo */ }
@@ -448,7 +451,7 @@ externInterfaceDeclaration      : K_EVENTIN fieldType eventInId { /*! \todo */ }
 routeStatement  : K_ROUTE nodeNameId "." eventOutId K_TO nodeNameId "." eventInId
                 {
                   Shared_route route = Shared_route(new Route);
-                  if (!scene_graph->route($2, $4, $6, $8, &*route)) {
+                  if (!scene_graph->route(*$2, *$4, *$6, *$8, &*route)) {
                     error(yyla.location, std::string("Cannot route"));
                     YYERROR;
                   }
@@ -460,18 +463,17 @@ routeStatement  : K_ROUTE nodeNameId "." eventOutId K_TO nodeNameId "." eventInI
 URLList         : mfstringValue { std::swap($$, $1); }
                 ;
 
-mfstringValue   : sfstringValue { $$ = new Str_list; $$->push_back(std::move($1)); }
-                | "[" sfstringValues "]" { std::swap($$, $2); }
+mfstringValue   : "[" sfstringValues "]" { std::swap($$, $2); }
                 ;
 
 /* nodes: */
 
 nodeContainer   : nodeTypeId
                 {
-                  $$ = Container_factory::get_instance()->create($1);
+                  $$ = Container_factory::get_instance()->create(*$1);
                   if (!$$) {
                     error(yyla.location,
-                          std::string("Unknown node type \"") + $1 + "\"");
+                          std::string("Unknown node type \"") + *$1 + "\"");
                     YYERROR;
                   }
                 }
@@ -479,7 +481,7 @@ nodeContainer   : nodeTypeId
 
 node            : nodeContainer "{" nodeBody "}"
                 {
-                  $$ = $1;
+                  std::swap($$, $1);
                   try {
                     $$->set_attributes($3);
                   }
@@ -519,42 +521,42 @@ nodeBody        : /* empty */ { $$ = new Element; }
                 | nodeBody fieldId sfValue
                 {
                   std::swap($$, $1);
-                  Str_attr str_attr(new std::string($2), new std::string($3));
+                  Str_attr str_attr($2, $3);
                   $$->add_attribute(str_attr);
                 }
                 | nodeBody fieldId "[" sfValues "]"
                 {
                   std::swap($$, $1);
-                  Str_attr attr(new std::string($2), new std::string($4));
+                  Str_attr attr($2, $4);
                   $$->add_attribute(attr);
                 }
 
                 | nodeBody fieldId "[" sfstringValues "]"
                 {
                   std::swap($$, $1);
-                  Multi_str_attr attr(new std::string($2), $4);
+                  Multi_str_attr attr($2, $4);
                   $$->add_attribute(attr);
                 }
 
                 | nodeBody fieldId sfnodeValue
                 {
                   std::swap($$, $1);
-                  Cont_attr attr(new std::string($2), $3);
+                  Cont_attr attr($2, $3);
                   $$->add_attribute(attr);
                 }
                 | nodeBody fieldId "[" "]"
                 {
                   std::swap($$, $1);
-                  Multi_cont_attr attr(new std::string($2), new Cont_list);
+                  Multi_cont_attr attr($2, new Cont_list);
                   $$->add_attribute(attr);
                 }
                 | nodeBody fieldId "[" nodeStatements "]"
                 {
                   std::swap($$, $1);
-                  Multi_cont_attr attr(new std::string($2), $4);
+                  Multi_cont_attr attr($2, $4);
                   $$->add_attribute(attr);
                 }
-                | nodeBody fieldId K_IS fieldId { $$ = 0; /*! \todo */ }
+                | nodeBody fieldId K_IS fieldId { std::swap($$, $1); /*! \todo */ }
                 /* | nodeBody eventInId K_IS eventInId */
                 /* | nodeBody eventOutId K_IS eventOutId */
                 | nodeBody routeStatement { std::swap($$, $1); /*! \todo */ }
@@ -573,7 +575,7 @@ scriptBody      : /* empty */ { $$ = new Element; }
 scriptBodyElement : fieldId sfValue
                 {
                   $$ = new Element;
-                  Str_attr attr(new std::string($1), new std::string($2));
+                  Str_attr attr($1, $2);
                   $$->add_attribute(attr);
                 }
 
@@ -645,8 +647,8 @@ sfValue         : sfint32Values { std::swap($$, $1); }
                 | sfstringValue { std::swap($$, $1); }
                 ;
 
-sfboolValue     : K_TRUE { $$ = std::string("TRUE"); }
-                | K_FALSE { $$ = std::string("FALSE"); }
+sfboolValue     : K_TRUE { $$ = Shared_string(new std::string("TRUE")); }
+                | K_FALSE { $$ = Shared_string(new std::string("FALSE")); }
                 ;
 
 sfnodeValue     : nodeStatement { std::swap($$, $1); }
@@ -656,19 +658,19 @@ sfnodeValue     : nodeStatement { std::swap($$, $1); }
 sfstringValue   : STRING_LITERAL { std::swap($$, $1); }
                 ;
 
-sfboolValues   : sfboolValue { std::swap($$, $1); }
-                | sfboolValues sfboolValue { $1 += " " + $2; std::swap($$, $1); }
-                | sfboolValues "," sfboolValue { $1 += " " + $3; std::swap($$, $1); }
+sfboolValues    : sfboolValue { std::swap($$, $1); }
+                | sfboolValues sfboolValue { *$1 += " " + *$2; std::swap($$, $1); }
+                | sfboolValues "," sfboolValue { *$1 += " " + *$3; std::swap($$, $1); }
                 ;
 
 sfint32Values   : NUMBER { std::swap($$, $1); }
-                | sfint32Values NUMBER { $1 += " " + $2; std::swap($$, $1); }
-                | sfint32Values "," NUMBER { $1 += " " + $3; std::swap($$, $1); }
+                | sfint32Values NUMBER { *$1 += " " + *$2; std::swap($$, $1); }
+                | sfint32Values "," NUMBER { *$1 += " " + *$3; std::swap($$, $1); }
                 ;
 
-sfstringValues  : sfstringValue { $$ = new Str_list; $$->push_back(std::move($1)); }
-                | sfstringValues sfstringValue { std::swap($$, $1); $$->push_back(std::move($2)); }
-                | sfstringValues "," sfstringValue { std::swap($$, $1); $$->push_back(std::move($3)); }
+sfstringValues  : sfstringValue { $$ = new Str_list; $$->push_back($1); }
+                | sfstringValues sfstringValue { std::swap($$, $1); $$->push_back($2); }
+                | sfstringValues "," sfstringValue { std::swap($$, $1); $$->push_back($3); }
                 ;
 
 nodeStatements  : nodeStatement { $$ = new Cont_list; $$->push_back($1); }
