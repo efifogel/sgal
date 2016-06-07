@@ -1,4 +1,4 @@
-// Copyright (c) 2014 Israel.
+// Copyright (c) 2016  Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -16,16 +16,30 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_SGAL_HPP
-#define SGAL_SGAL_HPP
+/*! \file
+ * Clean the Scene Graph Algorithm Library (SGAL).
+ * The sole purpose of this file is to wrap a function that cleans the
+ * V8 library.
+ */
+
+#if defined(SGAL_USE_V8)
+#include <libplatform/libplatform.h>
+#include <v8.h>
+#endif
 
 #include "SGAL/basic.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-extern void initialize(int argc, char* argv[]);
-extern void clean();
+extern v8::Platform* s_platform;
+
+SGAL_SGAL_DECL void clean()
+{
+#if defined(SGAL_USE_V8)
+  // auto* platform = v8::V8::GetCurrentPlatform();
+  v8::V8::ShutdownPlatform();
+  if (s_platform) delete s_platform;
+#endif
+}
 
 SGAL_END_NAMESPACE
-
-#endif

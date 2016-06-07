@@ -46,6 +46,12 @@ public:
   /*! Initialize the player. */
   void init(int argc, char* argv[]);
 
+  /*! Initialize the player. */
+  void init(Arguments args);
+
+  /*! Clean the player. */
+  void clean();
+
   /*! Operator */
   void operator()();
 

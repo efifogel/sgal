@@ -194,31 +194,12 @@ void Player::visualize()
 Player::Player() : m_option_parser(nullptr) {}
 
 //! \brief constructs
-Player::Player(int argc, char* argv[]) :
-  m_option_parser(nullptr)
+Player::Player(int argc, char* argv[]) : m_option_parser(nullptr)
 { init(argc, argv); }
 
 //! \brief constructs.
-Player::Player(Arguments arguments) :
-  m_option_parser(nullptr)
-{
-  int argc = static_cast<int>(arguments.size()) + 1;
-  char** argv = new char*[argc];
-  char const * progname = "player";
-  argv[0] = const_cast<char*>(progname);
-  size_t i(1);
-  std::for_each(arguments.begin(), arguments.end(),
-                [&](const std::string& arg)
-                { argv[i++] = const_cast<char*>(arg.c_str()); });
-
-  init(argc, argv);
-
-  if (argv) {
-    delete [] argv;
-    argv = nullptr;
-  }
-  argc = 0;
-}
+Player::Player(Arguments arguments) : m_option_parser(nullptr)
+{ init(arguments); }
 
 //! \brief destructs.
 Player::~Player()
@@ -229,7 +210,7 @@ Player::~Player()
   }
 }
 
-//! \brief initializes
+//! \brief initializes the player.
 void Player::init(int argc, char* argv[])
 {
   SGAL::initialize(argc, argv);
@@ -257,14 +238,38 @@ void Player::init(int argc, char* argv[])
                                    });
 }
 
-//! \brief creates
+//! \brief initializes the player.
+void Player::init(Arguments args)
+{
+  int argc = static_cast<int>(args.size()) + 1;
+  char** argv = new char*[argc];
+  char const * progname = "player";
+  argv[0] = const_cast<char*>(progname);
+  size_t i(1);
+  std::for_each(args.begin(), args.end(),
+                [&](const std::string& arg)
+                { argv[i++] = const_cast<char*>(arg.c_str()); });
+
+  init(argc, argv);
+
+  if (argv) {
+    delete [] argv;
+    argv = nullptr;
+  }
+  argc = 0;
+}
+
+//! \brief cleans the player.
+void Player::clean() { SGAL::clean(); }
+
+//! \brief creates the player.
 void Player::create()
 {
   m_scene.set(m_option_parser);
   m_scene.create_scene();
 }
 
-//! \brief creates
+//! \brief creates the player.
 void Player::create(char* data, int size)
 {
   m_scene.set(m_option_parser);
@@ -272,10 +277,7 @@ void Player::create(char* data, int size)
 }
 
 //! \brief destroys
-void Player::destroy()
-{
-  m_scene.destroy_scene();
-}
+void Player::destroy() { m_scene.destroy_scene(); }
 
 //! operator()
 void Player::operator()()
@@ -294,12 +296,10 @@ void Player::operator()(char* data, int size)
 }
 
 //! \brief obtains the accumulated volume of all polyhedrons in the scene.
-float Player::volume()
-{ return m_scene.volume(); }
+float Player::volume() { return m_scene.volume(); }
 
 //! \brief obtains the accumulated surface area of all polyhedrons in the scene.
-float Player::surface_area()
-{ return m_scene.surface_area(); }
+float Player::surface_area() { return m_scene.surface_area(); }
 
 //! \brief obtains the attributes of all polyhedrons.
 const SGAL::Polyhedron_attributes_array&
@@ -338,6 +338,6 @@ int main(int argc, char* argv[])
     std::cerr << e.what() << std::endl;
     return -1;
   }
-
+  player.clean();
   return 0;
 }

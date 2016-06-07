@@ -94,6 +94,7 @@ BOOST_PYTHON_MODULE(player)
          static_cast<void(Player::*)(char*, int)>(&Player::create))
     .def("visualize", &Player::visualize)
     .def("destroy", &Player::destroy)
+    .def("clean", &Player::clean)
     .def("volume", &Player::volume)
     .def("surface_area", &Player::surface_area)
     .def("get_polyhedron_attributes_array",

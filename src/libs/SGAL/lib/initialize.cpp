@@ -19,7 +19,7 @@
 /*! \file
  * Initialize the Scene Graph Algorithm Library (SGAL).
  * The sole purpose of this file is to wrap a function that initializes the
- * ImageMagick library.
+ * ImageMagick and V8 libraries.
  */
 
 #if defined(_MSC_VER)
@@ -41,14 +41,17 @@
 
 SGAL_BEGIN_NAMESPACE
 
+v8::Platform* s_platform(nullptr);
+
 SGAL_SGAL_DECL void initialize(int /* argc */, char* argv[])
 {
   Magick::InitializeMagick(*argv);
 #if defined(SGAL_USE_V8)
   v8::V8::InitializeICU();
   v8::V8::InitializeExternalStartupData(argv[0]);
-  v8::Platform* platform = v8::platform::CreateDefaultPlatform();
-  v8::V8::InitializePlatform(platform);
+  v8::Platform* s_platform = v8::platform::CreateDefaultPlatform();
+  SGAL_assertion(s_platform);
+  v8::V8::InitializePlatform(s_platform);
   v8::V8::Initialize();
 #endif
 
