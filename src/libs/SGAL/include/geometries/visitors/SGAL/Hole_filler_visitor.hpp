@@ -104,76 +104,113 @@ private:
   size_t m_num_filled_holes;
 
   // Incrementally fill the holes
-  template <typename Polyhedron_, typename Kernel, typename Indices_>
-  void fill_holes(Polyhedron_& poly, Kernel& kernel, Indices_& indices)
+  template <typename PolygonMesh, typename Kernel, typename Indices_>
+  void fill_holes(PolygonMesh& pmesh, Kernel& kernel, Indices_& indices)
   {
-    typedef Polyhedron_                                 Polyhedron;
-    typedef Indices_                                    Indices;
+    typedef PolygonMesh                                 Polyhedron;
     typedef typename Polyhedron::Halfedge_handle        Halfedge_handle;
     typedef typename Polyhedron::Facet_handle           Facet_handle;
-    typedef typename Polyhedron::Vertex_handle          Vertex_handle;
 
     m_num_filled_holes = 0;
-    BOOST_FOREACH(Halfedge_handle h, halfedges(poly)) {
+    BOOST_FOREACH(Halfedge_handle h, halfedges(pmesh)) {
       if (!h->is_border()) continue;
       ++m_num_filled_holes;
 
       std::vector<Facet_handle>  new_facets;
-      if (m_refine || m_fair) {
-        std::vector<Vertex_handle> new_vertices;
-        bool success(true);
-        if (m_fair) {
-          success = CGAL::cpp11::get<0>
-            (PMP::triangulate_refine_and_fair_hole
-             (poly,
-              h,
-              std::back_inserter(new_facets),
-              std::back_inserter(new_vertices),
-              PMP::parameters::vertex_point_map(get(CGAL::vertex_point, poly)).
-                geom_traits(kernel)));
-          // std::cout << "1 Number of facets in constructed patch: "
-          //           << new_facets.size() << std::endl;
-          // std::cout << "1 Number of vertices in constructed patch: "
-          //           << new_vertices.size() << std::endl;
-          // std::cout << " Fairing : " << (success ? "succeeded" : "failed")
-          //           << std::endl;
-          if (success) {
-            if (! new_vertices.empty()) add_coords(new_vertices);
-            continue;
-          }
-        }
-        PMP::triangulate_and_refine_hole
-          (poly,
-           h,
-           std::back_inserter(new_facets),
-           std::back_inserter(new_vertices),
-           PMP::parameters::vertex_point_map(get(CGAL::vertex_point, poly)).
-             geom_traits(kernel));
-        // std::cout << "2 Number of facets in constructed patch: "
-        //           << new_facets.size() << std::endl;
-        // std::cout << "2 Number of vertices in constructed patch: "
-        //           << new_vertices.size() << std::endl;
-        if (! new_vertices.empty()) add_coords(new_vertices);
-        continue;
+      triangulate_hole(pmesh, h, std::back_inserter(new_facets), kernel);
+    }
+    // std::cout << m_num_filled_holes << std::endl;
+  }
+  /*!
+   */
+  template <typename PolygonMesh, typename OutputIterator, class Kernel_>
+  OutputIterator triangulate_hole(PolygonMesh& pmesh,
+                                  typename boost::graph_traits<PolygonMesh>::
+                                    halfedge_descriptor border_halfedge,
+                                  OutputIterator oi,
+                                  Kernel_& kernel)
+  {
+    typedef Kernel_                                     Kernel;
+    typedef PolygonMesh                                 Polyhedron;
+    typedef typename Polyhedron::Vertex_handle          Vertex_handle;
+
+    typedef CGAL::Halfedge_around_face_circulator<PolygonMesh>
+      Hedge_around_face_circulator;
+    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
+      halfedge_descriptor;
+
+    auto collinear = kernel.collinear_3_object();
+    auto strictly_ordered =
+      kernel.collinear_are_strictly_ordered_along_line_3_object();
+
+    halfedge_descriptor h0(border_halfedge);
+    auto h1 = CGAL::next(h0, pmesh);
+    auto h2 = CGAL::next(h1, pmesh);
+
+    const auto& p1 = CGAL::target(h0, pmesh)->point();
+    const auto& p2 = CGAL::target(h1, pmesh)->point();
+    const auto& p3 = CGAL::target(h2, pmesh)->point();
+
+    if (collinear(p1, p2, p3)) {
+      if (h0 == CGAL::next(h2, pmesh)) {
+        std::cout << "Case 0" << std::endl;
+        // The hole is a single triangle (of collinear vertices).
+        CGAL::Euler::fill_hole(h0, pmesh);
+        *oi++ = CGAL::face(h0, pmesh);
+        return oi;
       }
 
-      PMP::triangulate_hole
-        (poly,
-         h,
-         std::back_inserter(new_facets),
-         PMP::parameters::vertex_point_map(get(CGAL::vertex_point, poly)).
-           geom_traits(kernel));
+      auto h = CGAL::Euler::add_face_to_border(h0, h2, pmesh);
+      *oi++ = CGAL::face(h, pmesh);
+      return oi;
+    }
+
+    if (m_refine || m_fair) {
+      std::vector<Vertex_handle> new_vertices;
+      bool success(true);
+      if (m_fair) {
+        success = CGAL::cpp11::get<0>
+          (PMP::triangulate_refine_and_fair_hole
+           (pmesh, border_halfedge, oi, std::back_inserter(new_vertices),
+            PMP::parameters::vertex_point_map(get(CGAL::vertex_point, pmesh)).
+            geom_traits(kernel)));
+        // std::cout << "1 Number of facets in constructed patch: "
+        //           << new_facets.size() << std::endl;
+        // std::cout << "1 Number of vertices in constructed patch: "
+        //           << new_vertices.size() << std::endl;
+        // std::cout << " Fairing : " << (success ? "succeeded" : "failed")
+        //           << std::endl;
+        if (success) {
+          if (! new_vertices.empty()) add_coords(new_vertices);
+          return oi;
+        }
+      }
+      PMP::triangulate_and_refine_hole
+        (pmesh, border_halfedge, oi, std::back_inserter(new_vertices),
+         PMP::parameters::vertex_point_map(get(CGAL::vertex_point, pmesh)).
+         geom_traits(kernel));
       // std::cout << "2 Number of facets in constructed patch: "
       //           << new_facets.size() << std::endl;
       // std::cout << "2 Number of vertices in constructed patch: "
       //           << new_vertices.size() << std::endl;
-
-      // if (! new_facets.empty()) {
-      //   for (auto facet: new_facets) {
-      //   }
-      // }
+      if (! new_vertices.empty()) add_coords(new_vertices);
+      return oi;
     }
-    // std::cout << m_num_filled_holes << std::endl;
+
+    PMP::triangulate_hole
+      (pmesh, border_halfedge, oi,
+       PMP::parameters::vertex_point_map(get(CGAL::vertex_point, pmesh)).
+       geom_traits(kernel));
+    // std::cout << "2 Number of facets in constructed patch: "
+    //           << new_facets.size() << std::endl;
+    // std::cout << "2 Number of vertices in constructed patch: "
+    //           << new_vertices.size() << std::endl;
+
+    // if (! new_facets.empty()) {
+    //   for (auto facet: new_facets) {
+    //   }
+    // }
+    return oi;
   }
 
   /*! Add the new coordinates to a new coordinate array.

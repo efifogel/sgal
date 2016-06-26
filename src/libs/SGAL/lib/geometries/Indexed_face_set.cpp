@@ -59,7 +59,6 @@
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Modeling.hpp"
 #include "SGAL/Scene_graph.hpp"
-#include "SGAL/Zero_area_hole_filler_visitor.hpp"
 #include "SGAL/Hole_filler_visitor.hpp"
 #include "SGAL/Clean_facet_indices_from_polyhedron_visitor.hpp"
 #include "SGAL/Orient_polygon_soup_visitor.hpp"
@@ -638,9 +637,6 @@ void Indexed_face_set::clean_polyhedron()
     // std::cout << "# border edge: " << num_border_edges << std::endl;
 
     if (!closed && m_triangulate_holes) {
-      // Zero_area_hole_filler_visitor zahf_visitor(m_refine, m_fair, m_coord_array);
-      // boost::apply_visitor(zahf_visitor, m_polyhedron, m_facet_coord_indices);
-
       Hole_filler_visitor visitor(m_refine, m_fair, m_coord_array);
       boost::apply_visitor(visitor, m_polyhedron, m_facet_coord_indices);
       auto new_coord_array = visitor.get_new_coord_array();
