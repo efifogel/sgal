@@ -24,7 +24,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Class thrown when the opening of a file failed. */
+/*! Class thrown when the opening of a file fails. */
 class SGAL_SGAL_DECL Loader_error : public error {
  private:
   std::string m_filename;
@@ -38,7 +38,7 @@ class SGAL_SGAL_DECL Loader_error : public error {
   ~Loader_error() SGAL_NOTHROW {}
 };
 
-/*! Class thrown when the parsing of a stream failed. */
+/*! Class thrown when the parsing of a stream fails. */
 class SGAL_SGAL_DECL Parse_error : public Loader_error {
 public:
   Parse_error(const std::string& filename) :
@@ -62,7 +62,7 @@ public:
   ~Overflow_error() SGAL_NOTHROW {}
 };
 
-/*! Class thrown when the reading of a stream failed. */
+/*! Class thrown when the reading of a stream fails. */
 class SGAL_SGAL_DECL Read_error : public Loader_error {
 public:
   Read_error(const std::string& filename) :
@@ -72,15 +72,15 @@ public:
 
 /*! Class thrown when the opening of a file failed. */
 class SGAL_SGAL_DECL Open_file_error : public Loader_error {
- public:
+public:
   Open_file_error(const std::string& filename) :
     Loader_error(std::string("Error: Failed to open file"), filename) {}
   ~Open_file_error() SGAL_NOTHROW {}
 };
 
-/*! Class thrown when the opening of an empty file. */
+/*! Class thrown when the file is empty. */
 class SGAL_SGAL_DECL Empty_error : public Loader_error {
- public:
+public:
   Empty_error(const std::string& filename) :
     Loader_error(std::string("Error: Empty"), filename) {}
   ~Empty_error() SGAL_NOTHROW {}

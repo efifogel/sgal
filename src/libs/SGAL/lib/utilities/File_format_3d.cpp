@@ -26,6 +26,7 @@ const Char* File_format_3d::s_names[] = {
   "none",
   "wrl",
   "x3d",
+  "off",
   "stl",
   "obj"
 };

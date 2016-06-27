@@ -47,83 +47,174 @@ SGAL_BEGIN_NAMESPACE
 //! \brief constructs.
 Loader::Loader() : m_multiple_shapes(false) {}
 
-//! \brief loads a scene graph from an input stream.
-Loader::Return_code Loader::load_stl(std::istream& stl_stream, size_t size,
-                                     Scene_graph* sg, bool force)
+//! \brief loads a scene graph from a file.
+Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
 {
-  if (stl_stream.peek() == std::char_traits<char>::eof()) {
-    throw Empty_error(m_filename);
+  SGAL_assertion(filename);
+
+  // Record the filename
+  m_filename = filename;
+
+  // Open source file.
+  std::ifstream is(filename);
+  if (!is.good()) {
+    throw Open_file_error(m_filename);
     return FAILURE;
   }
+
+  // Verify that the file is not empty.
+  if (is.peek() == std::char_traits<char>::eof()) {
+    throw Empty_error(m_filename);
+    is.close();
+    return FAILURE;
+  }
+
+  // Obtain the file extension.
+  auto file_extension = boost::filesystem::extension(filename);
+
+  // Obtain the first line and examine the magic string
+  std::string magic;
+  std::getline(is, magic);
+
+  // If the magic string is "OFF" the file is either in the off format, or in
+  // the binary stl format.
+  if (magic.compare(0, 3, "OFF") == 0) {
+    // If the extension is off, first try "off"
+    if (boost::iequals(file_extension, ".off")) {
+      auto rc = load_off(is, sg);
+      is.close();
+      if (rc <= 0) return rc;
+
+      // RETRY, try stl binary as last resort.
+      rc = load_stl(filename, sg);
+      if (rc == SUCCESS) {
+        if (!boost::iequals(file_extension, ".stl"))
+          std::cerr << "Warning: File extension " << file_extension
+                    << " does not match file format (binary stl)" << std::endl;
+        return SUCCESS;
+      }
+      return rc;
+    }
+
+    // Otherwise, first try stl.
+    auto rc = load_stl(filename, sg);
+    if (rc == SUCCESS) {
+      if (!boost::iequals(file_extension, ".stl"))
+        std::cerr << "Warning: File extension " << file_extension
+                  << " does not match file format (binary stl)" << std::endl;
+      return SUCCESS;
+    }
+    if (rc < 0) return rc;
+
+    // RETRY, try off as last resort.
+    rc = load_off(is, sg);
+    is.close();
+    if (rc == SUCCESS) {
+      SGAL_assertion(!boost::iequals(file_extension, ".stl"));
+      std::cerr << "Warning: File extension " << file_extension
+                << " does not match file format (binary stl)" << std::endl;
+      return SUCCESS;
+    }
+    return rc;
+  }
+
+  // If the file has the .stl extension, attempt to load in the stl format.
+  if (boost::iequals(file_extension, ".stl")) {
+    if (0 != magic.compare(0, 5, "solid")) {
+      auto rc = load_stl(filename, sg);
+      return rc;
+    }
+  }
+
+  // Load the scene via the parser.
+  is.seekg(0, is.beg);
+  auto rc = load(is, sg);
+  is.close();
+  if (rc <= 0) return rc;
+
+  // RETRY, try stl binary as last resort.
+  rc = load_stl(filename, sg);
+  if (rc == SUCCESS) {
+    if (!boost::iequals(file_extension, ".stl"))
+      std::cerr << "Warning: The file extension " << file_extension
+                << " does not match the file format (binary stl)" << std::endl;
+
+    if (0 == magic.compare(0, 5, "solid")) {
+      std::cerr << "Warning: The file magic string " << "\"solid\""
+                << " does not match the file format (binary stl)" << std::endl;
+    }
+    return SUCCESS;
+  }
+  return rc;
+}
+
+//! \brief loads a scene graph from an input stream.
+Loader::Return_code Loader::load_stl(std::istream& is, size_t size,
+                                     Scene_graph* sg)
+{
   char str[81];
-  stl_stream.read(str, 80);
-  if (!stl_stream) {
+  is.read(str, 80);
+  if (!is) {
     throw Read_error(m_filename);
     return FAILURE;
   }
 
   std::string title(str);
-  if (force || (0 != title.compare(0, 5, "solid"))) {
-    Vector3f color;
-    auto pos = title.find("COLOR=");
-    if ((pos != std::string::npos) && (pos < 70)) {
-      pos += 6;
-      Float red = static_cast<Float>(static_cast<Uchar>(str[pos])) / 255.0f;
-      Float green = static_cast<Float>(static_cast<Uchar>(str[pos+1])) / 255.0f;
-      Float blue = static_cast<Float>(static_cast<Uchar>(str[pos+2])) / 255.0f;
-      Float alpha = static_cast<Float>(static_cast<Uchar>(str[pos+3])) / 255.0f;
-      color.set(red, green, blue);
-    }
-    auto rc = read_stl(stl_stream, size, sg, color);
-    if (rc < 0) return rc;
-    return SUCCESS;
+  Vector3f color;
+  auto pos = title.find("COLOR=");
+  if ((pos != std::string::npos) && (pos < 70)) {
+    pos += 6;
+    Float red = static_cast<Float>(static_cast<Uchar>(str[pos])) / 255.0f;
+    Float green = static_cast<Float>(static_cast<Uchar>(str[pos+1])) / 255.0f;
+    Float blue = static_cast<Float>(static_cast<Uchar>(str[pos+2])) / 255.0f;
+    Float alpha = static_cast<Float>(static_cast<Uchar>(str[pos+3])) / 255.0f;
+    color.set(red, green, blue);
   }
-  return RETRY;
+  auto rc = read_stl(is, size, sg, color);
+  if (rc < 0) return rc;
+  return SUCCESS;
 }
 
 //! \brief loads a scene graph from an stl file.
 Loader::Return_code Loader::load_stl(char* data, size_t size,
-                                     Scene_graph* sg, bool force)
+                                     Scene_graph* sg)
 {
-  boost::interprocess::bufferstream stl_stream(data, size);
-  if (!stl_stream.good()) {
+  boost::interprocess::bufferstream is(data, size);
+  if (!is.good()) {
     throw Overflow_error(m_filename);
     return FAILURE;
   }
-  return load_stl(stl_stream, size, sg, force);
+  return load_stl(is, size, sg);
 }
 
 //! \brief loads a scene graph from an stl file.
-Loader::Return_code Loader::load_stl(const char* filename, Scene_graph* sg,
-                                     bool force)
+Loader::Return_code Loader::load_stl(const char* filename, Scene_graph* sg)
 {
-  // Record the filename
-  m_filename = filename ? filename : std::string();
-
-  std::ifstream stl_stream(filename, std::ios::in|std::ios::binary);
-  if (!stl_stream.good()) {
+  std::ifstream is(filename, std::ios::in|std::ios::binary);
+  if (!is.good()) {
     throw Open_file_error(m_filename);
     return FAILURE;
   }
-  stl_stream.seekg(0, stl_stream.end);
-  size_t size = stl_stream.tellg();
-  stl_stream.seekg(0, stl_stream.beg);
+  is.seekg(0, is.end);
+  size_t size = is.tellg();
+  is.seekg(0, is.beg);
 
-  auto rc = load_stl(stl_stream, size, sg, force);
-  stl_stream.close();
+  auto rc = load_stl(is, size, sg);
+  is.close();
   return rc;
 }
 
 //! \brief load a scene graph from a stream.
-Loader::Return_code Loader::load(std::istream& src_stream, Scene_graph* sg)
+Loader::Return_code Loader::load(std::istream& is, Scene_graph* sg)
 {
-  Vrml_scanner scanner(&src_stream);
+  Vrml_scanner scanner(&is);
   // scanner.set_debug(1);
 
   // Parse & export:
   bool maybe_binary_stl(false);
   Vrml_parser parser(scanner, sg, maybe_binary_stl);
-  if (parser.parse()) {
+  auto rc = parser.parse();
+  if (0 != rc) {
     if (maybe_binary_stl) return RETRY;
     throw Parse_error(m_filename);
     return FAILURE;
@@ -149,90 +240,56 @@ Loader::Return_code Loader::load(char* data, size_t size,
 //! \brief loads a scene graph from a buffer.
 Loader::Return_code Loader::load(char* data, size_t size, Scene_graph* sg)
 {
-  boost::interprocess::bufferstream src_stream(data, size);
-  if (!src_stream.good()) {
+  boost::interprocess::bufferstream is(data, size);
+  if (!is.good()) {
     throw Overflow_error(m_filename);
     return FAILURE;
   }
 
-  auto rc = load(src_stream, sg);
+  auto rc = load(is, sg);
   if (rc < 0) {
-    src_stream.clear();
+    is.clear();
     return rc;
   }
 
-  src_stream.clear();
+  is.clear();
 
-  if (rc == RETRY) rc = load_stl(data, size, sg, true);
-  return rc;
-}
-
-//! \brief loads a scene graph from a file.
-Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
-{
-  // Record the filename
-  m_filename = filename ? filename : std::string();
-
-  // Try to determine the file type from its extension.
-  SGAL_assertion(filename);
-  std::string file_extension = boost::filesystem::extension(filename);
-  if (boost::iequals(file_extension, ".stl")) {
-    auto rc = load_stl(filename, sg);
-    if (rc <= 0) return rc;
-  }
-
-  // Open source file:
-  std::ifstream src_stream(filename);
-  if (!src_stream.good()) {
-    throw Open_file_error(m_filename);
-    return FAILURE;
-  }
-
-  auto rc = load(src_stream, sg);
-  if (rc < 0) {
-    src_stream.close();
-    return rc;
-  }
-
-  src_stream.close();
-
-  if (rc == RETRY) rc = load_stl(filename, sg, true);
+  if (rc == RETRY) rc = load_stl(data, size, sg);
   return rc;
 }
 
 //! \bried read a traingle (1 normal and 3 vertices)
-Loader::Return_code Loader::read_triangle(std::istream& stl_stream,
-                                          Triangle& triangle)
+Loader::Return_code Loader::read_triangle(std::istream& is, Triangle& triangle)
 {
   Float x, y, z;
 
   // Read normal
-  stl_stream.read((char*)&x, sizeof(Float));
-  stl_stream.read((char*)&y, sizeof(Float));
-  stl_stream.read((char*)&z, sizeof(Float));
+  is.read((char*)&x, sizeof(Float));
+  is.read((char*)&y, sizeof(Float));
+  is.read((char*)&z, sizeof(Float));
 
   // Read vertex 1:
-  stl_stream.read((char*)&x, sizeof(Float));
-  stl_stream.read((char*)&y, sizeof(Float));
-  stl_stream.read((char*)&z, sizeof(Float));
+  is.read((char*)&x, sizeof(Float));
+  is.read((char*)&y, sizeof(Float));
+  is.read((char*)&z, sizeof(Float));
   triangle.v0.set(x, y, z);
 
   // Read vertex 2:
-  stl_stream.read((char*)&x, sizeof(Float));
-  stl_stream.read((char*)&y, sizeof(Float));
-  stl_stream.read((char*)&z, sizeof(Float));
+  is.read((char*)&x, sizeof(Float));
+  is.read((char*)&y, sizeof(Float));
+  is.read((char*)&z, sizeof(Float));
   triangle.v1.set(x, y, z);
 
   // Read vertex 3:
-  stl_stream.read((char*)&x, sizeof(Float));
-  stl_stream.read((char*)&y, sizeof(Float));
-  stl_stream.read((char*)&z, sizeof(Float));
+  is.read((char*)&x, sizeof(Float));
+  is.read((char*)&y, sizeof(Float));
+  is.read((char*)&z, sizeof(Float));
   triangle.v2.set(x, y, z);
 
-  stl_stream.read((char*)&(triangle.spacer), sizeof(unsigned short));
+  is.read((char*)&(triangle.spacer), sizeof(unsigned short));
   //std::cout << std::hex << spacer << std::endl;
 
-  if (!stl_stream) {
+  if (!is) {
     throw Read_error(m_filename);
     return FAILURE;
   }
@@ -252,7 +309,7 @@ Loader::compute_ifs(Scene_graph* scene_graph, size_t count,
   ifs->set_make_consistent(true);
 
   auto num_vertices = count * 3;
-  Coord_array_3d* coords = new Coord_array_3d(num_vertices);
+  auto* coords = new Coord_array_3d(num_vertices);
   Shared_coord_array_3d shared_coords(coords);
   ifs->set_coord_array(shared_coords);
   auto& indices = ifs->get_empty_triangle_coord_indices();
@@ -393,7 +450,7 @@ void Loader::add_colored_shape(Scene_graph* scene_graph,
 }
 
 //! \brief reads a scene graph from a stream in the STL binary format.
-Loader::Return_code Loader::read_stl(std::istream& stl_stream, size_t size,
+Loader::Return_code Loader::read_stl(std::istream& is, size_t size,
                                      Scene_graph* scene_graph,
                                      const Vector3f& color)
 {
@@ -401,7 +458,7 @@ Loader::Return_code Loader::read_stl(std::istream& stl_stream, size_t size,
   auto transform = scene_graph->initialize();       // initialize
 
   Int32 total_num_tris;
-  stl_stream.read((char*)&total_num_tris, sizeof(Int32));
+  is.read((char*)&total_num_tris, sizeof(Int32));
   // std::cout << "# size: " << size << std::endl;
   // std::cout << "# triangles: " << total_num_tris << std::endl;
   // Header---80
@@ -420,14 +477,14 @@ Loader::Return_code Loader::read_stl(std::istream& stl_stream, size_t size,
   while (i != total_num_tris) {
     Triangle triangle;
     do {
-      auto rc = read_triangle(stl_stream, triangle);
+      auto rc = read_triangle(is, triangle);
       if (rc < 0) return rc;
       ++i;
     } while (Vector3f::collinear(triangle.v0, triangle.v1, triangle.v2));
     triangles.push_back(triangle);
   }
   // Check end condition:
-  if (!stl_stream) {
+  if (!is) {
     throw Read_error(m_filename);
     return FAILURE;
   }
@@ -438,6 +495,63 @@ Loader::Return_code Loader::read_stl(std::istream& stl_stream, size_t size,
 
   if (! use_colors) add_shapes(scene_graph, transform, triangles, color);
   else add_colored_shape(scene_graph, transform, triangles, color);
+
+  return SUCCESS;
+}
+
+/*! \brief load a scene graph represented in the off file format from a stream.
+ * Observe that the magic string has been consumed.
+ */
+Loader::Return_code Loader::load_off(std::istream& is, Scene_graph* sg)
+{
+  sg->set_input_format_id(File_format_3d::ID_OFF);
+
+  // Obtain root.
+  auto transform = sg->initialize();
+
+  // Add Shape
+  Shared_shape shape(new Shape);
+  SGAL_assertion(shape);
+  shape->add_to_scene(sg);
+  sg->add_container(shape);
+  transform->add_child(shape);
+
+  // Add IndexedFaceSet
+  Shared_indexed_face_set ifs(new Indexed_face_set);
+  ifs->add_to_scene(sg);
+  sg->add_container(ifs);
+  shape->set_geometry(ifs);
+
+  size_t num_vertices;
+  size_t num_facets;
+  size_t num_edges;
+  is >> num_vertices >> num_facets >> num_edges;
+
+  // std::cout << num_vertices << std::endl;
+  // std::cout << num_facets << std::endl;
+  // std::cout << num_edges << std::endl;
+
+  auto* coords = new Coord_array_3d(num_vertices);
+  Shared_coord_array_3d shared_coords(coords);
+  coords->add_to_scene(sg);
+  sg->add_container(shared_coords);
+  for (auto i = 0; i < num_vertices; ++i) {
+    float x, y, z;
+    is >> x >> y >> z;
+    (*coords)[i].set(x, y, z);
+  }
+
+  auto& indices = ifs->get_empty_polygon_coord_indices();
+  indices.resize(num_facets);
+  for (auto i = 0; i < num_facets; ++i) {
+    size_t n;
+    is >> n;
+    indices[i].resize(n);
+    for (auto j = 0; j < n; ++j) is >> indices[i][j];
+  }
+  ifs->set_coord_array(shared_coords);
+  ifs->set_primitive_type(Geo_set::PT_POLYGONS);
+  ifs->set_num_primitives(num_facets);
 
   return SUCCESS;
 }

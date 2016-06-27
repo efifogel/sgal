@@ -61,7 +61,7 @@ public:
 
   /*! Load a scene graph from a stream.
    */
-  Return_code load(std::istream& src_stream, Scene_graph* sg);
+  Return_code load(std::istream& is, Scene_graph* sg);
 
   /*! Load a scene graph from a buffer.
    */
@@ -80,42 +80,37 @@ public:
   /*! Load a scene graph from an stl stream.
    * \param[in] stl_stream the stream to load.
    * \param[in] sg the scene graph
-   * \param[in] force indicates whether to force reading, assuming that the
-   *            file is in the STL binary format. (Do not check whether the
-   *            file starts with the token "solid".)
    */
-  Return_code load_stl(std::istream& stl_stream, size_t size, Scene_graph* sg,
-                       bool force = false);
+  Return_code load_stl(std::istream& is, size_t size, Scene_graph* sg);
 
   /*! Load a scene graph from an stl buffer.
    * \param[in] data the buffer that contains a model in the stl format.
    * \param[in] size the size of the buffer.
    * \param[in] sg the scene graph
-   * \param[in] force indicates whether to force reading, assuming that the
-   *            file is in the STL binary format. (Do not check whether the
-   *            file starts with the token "solid".)
    */
-  Return_code load_stl(char* data, size_t size, Scene_graph* sg,
-                       bool force = false);
+  Return_code load_stl(char* data, size_t size, Scene_graph* sg);
 
   /*! Load a scene graph from an stl file.
    * \param[in] filename the name of the STL file to load.
    * \param[in] sg the scene graph
-   * \param[in] force indicates whether to force reading, assuming that the
-   *            file is in the STL binary format. (Do not check whether the
-   *            file starts with the token "solid".)
    */
-  Return_code load_stl(const char* filename, Scene_graph* sg,
-                       bool force = false);
+  Return_code load_stl(const char* filename, Scene_graph* sg);
 
   /*! Read a scene graph from a file in the STL binary format.
    */
-  Return_code read_stl(std::istream& stl_stream, size_t size, Scene_graph* sg,
+  Return_code read_stl(std::istream& is, size_t size, Scene_graph* sg,
                        const Vector3f& color);
+
+  /*! Load a scene graph represented in the off file format from a stream.
+   * Observe that the magic string has been consumed.
+   * \param[in] stl_stream the stream to load.
+   * \param[in] sg the scene graph
+   */
+  Return_code load_off(std::istream& is, Scene_graph* sg);
 
   /*! Read a traingle (1 normal and 3 vertices)
    */
-  Return_code read_triangle(std::istream& stl_stream, Triangle& triangle);
+  Return_code read_triangle(std::istream& is, Triangle& triangle);
 
 private:
   typedef boost::shared_ptr<Transform>              Shared_transform;

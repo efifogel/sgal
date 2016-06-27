@@ -33,6 +33,7 @@ public:
     NONE = 0,
     ID_WRL,
     ID_X3D,
+    ID_OFF,
     ID_STL,
     ID_OBJ,
     NUM_IDS

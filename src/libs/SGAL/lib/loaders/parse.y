@@ -271,12 +271,11 @@ Start           : VRML vrmlScene
                   delete $2.second;
                   $2.second = nullptr;
                 }
-                | K_SOLID facets error
-                | K_SOLID error
                   /* It is possible that even though the file starts with the
                    * token "solid", the file is in the binary stl format.
                    */
-                { maybe_binary_stl = true; }
+                | K_SOLID facets { maybe_binary_stl = true; } error { YYERROR; }
+                | K_SOLID { maybe_binary_stl = true; } error { YYERROR; }
                 ;
 
 facets          : /* empty */
@@ -692,7 +691,10 @@ SGAL_BEGIN_NAMESPACE
 /*! */
 void Vrml_parser::error(const Vrml_parser::location_type& l,
                         const std::string& err_message)
-{ std::cerr << "Error at " << l << ": " << err_message << std::endl; }
+{
+  if (!maybe_binary_stl)
+    std::cerr << "Error at " << l << ": " << err_message << std::endl;
+}
 
 SGAL_END_NAMESPACE
 

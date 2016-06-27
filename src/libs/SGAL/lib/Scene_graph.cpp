@@ -932,10 +932,13 @@ void Scene_graph::write(const std::string& filename, std::ostream& os,
   switch (format_id) {
    case File_format_3d::ID_WRL: write_vrml(filename, os); break;
    case File_format_3d::ID_X3D: break;
+   case File_format_3d::ID_OFF: break;
    case File_format_3d::ID_STL: write_stl(filename, os, is_binary); break;
    case File_format_3d::ID_OBJ: write_obj(filename, os);break;
+
    case File_format_3d::NONE:
-   case File_format_3d::NUM_IDS: return;
+   case File_format_3d::NUM_IDS:
+   default: return;
   }
 }
 
