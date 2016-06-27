@@ -56,7 +56,7 @@ Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
   m_filename = filename;
 
   // Open source file.
-  std::ifstream is(filename);
+  std::ifstream is(filename, std::ifstream::binary);
   if (!is.good()) {
     throw Open_file_error(m_filename);
     return FAILURE;
@@ -76,81 +76,87 @@ Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
   std::string magic;
   std::getline(is, magic);
 
-  // If the magic string is "OFF" the file is either in the off format, or in
-  // the binary stl format.
-  if (magic.compare(0, 3, "OFF") == 0) {
-    // If the extension is off, first try "off"
+  // If the magic string is "OFF",
+  // the file format can be either OFF or binary STL.
+  if (0 == magic.compare(0, 3, "OFF")) {
+    // If the magic string is "OFF" and the file extension is off,
+    // assume that the file format is OFF.
     if (boost::iequals(file_extension, ".off")) {
+      is.seekg(0, is.beg);
       auto rc = load_off(is, sg);
       is.close();
-      if (rc <= 0) return rc;
-
-      // RETRY, try stl binary as last resort.
-      rc = load_stl(filename, sg);
-      if (rc == SUCCESS) {
-        if (!boost::iequals(file_extension, ".stl"))
-          std::cerr << "Warning: File extension " << file_extension
-                    << " does not match file format (binary stl)" << std::endl;
-        return SUCCESS;
-      }
       return rc;
     }
 
-    // Otherwise, first try stl.
-    auto rc = load_stl(filename, sg);
-    if (rc == SUCCESS) {
-      if (!boost::iequals(file_extension, ".stl"))
-        std::cerr << "Warning: File extension " << file_extension
-                  << " does not match file format (binary stl)" << std::endl;
-      return SUCCESS;
+    // If the magic string is "OFF" and the file extension is stl,
+    // assume that the file format is binary STL.
+    if (boost::iequals(file_extension, ".stl")) {
+      is.seekg(0, is.beg);
+      auto rc = load_stl(is, sg);
+      is.close();
+      return rc;
     }
-    if (rc < 0) return rc;
 
-    // RETRY, try off as last resort.
-    rc = load_off(is, sg);
+    // As last resort assume that file format is OFF.
+    is.seekg(0, is.beg);
+    auto rc = load_off(is, sg);
+    is.close();
+    if (rc == SUCCESS)
+      std::cerr << "Warning: File extension " << file_extension
+                << " does not match file format (OFF)" << std::endl;
+    return rc;
+  }
+
+  // If the magic string is nor "solid" neither #VRL,
+  // assume that the file is in the binary STL format.
+  if ((0 != magic.compare(0, 5, "solid")) &&
+      (0 != magic.compare(0, 5, "#VRML")))
+  {
+    is.seekg(0, is.beg);
+    auto rc = load_stl(is, sg);
     is.close();
     if (rc == SUCCESS) {
-      SGAL_assertion(!boost::iequals(file_extension, ".stl"));
-      std::cerr << "Warning: File extension " << file_extension
-                << " does not match file format (binary stl)" << std::endl;
-      return SUCCESS;
+      if (!boost::iequals(file_extension, ".stl"))
+        std::cerr << "Warning: The file extension " << file_extension
+                  << " does not match the file format (binary STL)" << std::endl;
     }
     return rc;
   }
 
-  // If the file has the .stl extension, attempt to load in the stl format.
-  if (boost::iequals(file_extension, ".stl")) {
-    if (0 != magic.compare(0, 5, "solid")) {
-      auto rc = load_stl(filename, sg);
-      return rc;
-    }
+  // Assume that the file is either in the VRML or the text STL format.
+  // Open source file as text.
+  std::ifstream its(filename);
+  if (!its.good()) {
+    throw Open_file_error(m_filename);
+    return FAILURE;
+  }
+  auto rc = parse(its, sg);
+  its.close();
+  if (rc <= 0) {
+    is.close();
+    return rc;
   }
 
-  // Load the scene via the parser.
+  // Assume that the file format is binary STL.
   is.seekg(0, is.beg);
-  auto rc = load(is, sg);
+  rc = load_stl(is, sg);
   is.close();
-  if (rc <= 0) return rc;
-
-  // RETRY, try stl binary as last resort.
-  rc = load_stl(filename, sg);
   if (rc == SUCCESS) {
     if (!boost::iequals(file_extension, ".stl"))
       std::cerr << "Warning: The file extension " << file_extension
-                << " does not match the file format (binary stl)" << std::endl;
+                << " does not match the file format (binary STL)" << std::endl;
 
     if (0 == magic.compare(0, 5, "solid")) {
       std::cerr << "Warning: The file magic string " << "\"solid\""
-                << " does not match the file format (binary stl)" << std::endl;
+                << " does not match the file format (binary STL)" << std::endl;
     }
-    return SUCCESS;
   }
   return rc;
 }
 
 //! \brief loads a scene graph from an input stream.
-Loader::Return_code Loader::load_stl(std::istream& is, size_t size,
-                                     Scene_graph* sg)
+Loader::Return_code
+Loader::load_stl(std::istream& is, size_t size, Scene_graph* sg)
 {
   char str[81];
   is.read(str, 80);
@@ -188,26 +194,19 @@ Loader::Return_code Loader::load_stl(char* data, size_t size,
 }
 
 //! \brief loads a scene graph from an stl file.
-Loader::Return_code Loader::load_stl(const char* filename, Scene_graph* sg)
+Loader::Return_code Loader::load_stl(std::istream& is, Scene_graph* sg)
 {
-  std::ifstream is(filename, std::ios::in|std::ios::binary);
-  if (!is.good()) {
-    throw Open_file_error(m_filename);
-    return FAILURE;
-  }
   is.seekg(0, is.end);
   size_t size = is.tellg();
   is.seekg(0, is.beg);
-
   auto rc = load_stl(is, size, sg);
-  is.close();
   return rc;
 }
 
-//! \brief load a scene graph from a stream.
-Loader::Return_code Loader::load(std::istream& is, Scene_graph* sg)
+//! \brief parses a scene graph from a stream.
+Loader::Return_code Loader::parse(std::istream& its, Scene_graph* sg)
 {
-  Vrml_scanner scanner(&is);
+  Vrml_scanner scanner(&its);
   // scanner.set_debug(1);
 
   // Parse & export:
@@ -223,8 +222,8 @@ Loader::Return_code Loader::load(std::istream& is, Scene_graph* sg)
 }
 
 //! \brief loads a scene graph from a buffer.
-Loader::Return_code Loader::load(char* data, size_t size,
-                                 const char* filename, Scene_graph* sg)
+Loader::Return_code
+Loader::load(char* data, size_t size, const char* filename, Scene_graph* sg)
 {
   // Try to determine the file type from its extension.
   if (filename) {
@@ -246,7 +245,7 @@ Loader::Return_code Loader::load(char* data, size_t size, Scene_graph* sg)
     return FAILURE;
   }
 
-  auto rc = load(is, sg);
+  auto rc = parse(is, sg);
   if (rc < 0) {
     is.clear();
     return rc;
@@ -505,6 +504,10 @@ Loader::Return_code Loader::read_stl(std::istream& is, size_t size,
 Loader::Return_code Loader::load_off(std::istream& is, Scene_graph* sg)
 {
   sg->set_input_format_id(File_format_3d::ID_OFF);
+
+  // Consume first line.
+  std::string magic;
+  std::getline(is, magic);
 
   // Obtain root.
   auto transform = sg->initialize();

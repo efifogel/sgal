@@ -1,0 +1,13 @@
+player triangle.off
+player triangle.stl
+player triangle.wrl
+player tetrahedron.wrl
+player tetrahedron_binary_stl.stl
+player tetrahedron_text_stl.stl
+player tetrahedron.off
+player tetrahedron_binary_stl_with_off.stl
+player tetrahedron_binary_stl_with_solid.stl
+player tetrahedron_off.stl
+player tetrahedron_binary_stl.ext
+player tetrahedron_wrl.ext
+player tetrahedron_binary_stl_with_solid.ext
