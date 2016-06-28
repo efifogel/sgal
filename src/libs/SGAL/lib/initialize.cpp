@@ -49,7 +49,7 @@ SGAL_SGAL_DECL void initialize(int /* argc */, char* argv[])
 #if defined(SGAL_USE_V8)
   v8::V8::InitializeICU();
   v8::V8::InitializeExternalStartupData(argv[0]);
-  v8::Platform* s_platform = v8::platform::CreateDefaultPlatform();
+  s_platform = v8::platform::CreateDefaultPlatform();
   SGAL_assertion(s_platform);
   v8::V8::InitializePlatform(s_platform);
   v8::V8::Initialize();
