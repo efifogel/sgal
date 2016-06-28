@@ -5,33 +5,19 @@
 
 FROM ubuntu:14.04
 
-# ubuntu:14.04 comes with V8 engine version 3.14.5.8. This version is too old.
-# First, compile a suitable version of the V8 engine.
-# V8 has gone through some changes recently. For example, it now resides in
-# a git repository and there is no easy way to build from a tarball.
-# I've picked 3.26.13, which on the one hand is sufficiently recent, but on
-# the other still uses "make dependencies" (which uses subversion...
-
 RUN apt-get update && apt-get upgrade -y && apt-get clean
 # bzip2  libc6-dev-i386 g++-multilib openjdk-7-jdk
 
 RUN apt-get install -y dialog subversion gcc g++ make python curl software-properties-common
 
-# V8
+# Ubuntu 14.04 comes with V8 engine version 3.14.5.8. This version is too old.
+# Version 4.9 or higher is required. The ppa 'ppa:pinepain/v8' includes a
+# suitable version even though depricated. Other ppa's include more recent
+# versions, but are targeted at vivid (ubuntu 15.04).
+
 RUN add-apt-repository ppa:pinepain/v8
 RUN apt-get update && apt-get upgrade
 RUN apt-get install libv8-4.9.385 libv8-4.9-dev
-
-# ENV V8_VERSION 3.26.13
-
-# RUN mkdir /usr/src/v8
-# RUN curl -SL https://github.com/v8/v8/archive/$V8_VERSION.tar.gz | tar -xzC /usr/src/v8
-# RUN cd /usr/src/v8/v8-$V8_VERSION && make dependencies
-# RUN cd /usr/src/v8/v8-$V8_VERSION && make library=shared native
-# RUN cp /usr/src/v8/v8-$V8_VERSION/out/native/lib.target/* /usr/local/lib/
-# RUN cp /usr/src/v8/v8-$V8_VERSION/include/v8.h /usr/local/include/
-# RUN cp /usr/src/v8/v8-$V8_VERSION/include/v8config.h /usr/local/include/
-# RUN cp /usr/src/v8/v8-$V8_VERSION/include/v8stdint.h /usr/local/include/
 
 RUN apt-get install -y cmake
 RUN apt-get install -y g++
