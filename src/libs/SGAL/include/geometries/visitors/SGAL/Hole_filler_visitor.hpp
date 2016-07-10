@@ -123,7 +123,7 @@ private:
   }
   /*!
    */
-  template <typename PolygonMesh, typename OutputIterator, class Kernel_>
+  template <typename PolygonMesh, typename OutputIterator, typename Kernel_>
   OutputIterator triangulate_hole(PolygonMesh& pmesh,
                                   typename boost::graph_traits<PolygonMesh>::
                                     halfedge_descriptor border_halfedge,
