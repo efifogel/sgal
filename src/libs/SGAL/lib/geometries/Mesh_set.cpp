@@ -636,31 +636,37 @@ void Mesh_set::init_facet_coord_indices()
 //! \brief initializes the normal coordinate indices.
 void Mesh_set::init_facet_normal_indices()
 {
-  switch (m_primitive_type) {
-   case PT_TRIANGLES: m_facet_normal_indices = Triangle_indices(); break;
-   case PT_QUADS: m_facet_normal_indices = Quad_indices(); break;
-   case PT_POLYGONS: m_facet_normal_indices = Polygon_indices(); break;
+  if (m_normal_attachment == AT_PER_VERTEX) {
+    switch (m_primitive_type) {
+     case PT_TRIANGLES: m_facet_normal_indices = Triangle_indices(); return;
+     case PT_QUADS: m_facet_normal_indices = Quad_indices(); return;
+     case PT_POLYGONS: m_facet_normal_indices = Polygon_indices(); return;
 
-   case PT_TRIANGLE_STRIP:
-   case PT_TRIANGLE_FAN:
-   case PT_QUAD_STRIP:
-   default: break;
+     case PT_TRIANGLE_STRIP:
+     case PT_TRIANGLE_FAN:
+     case PT_QUAD_STRIP:
+     default: return;
+    }
   }
+  m_facet_normal_indices = Flat_indices();
 }
 
 //! \brief initializes the color coordinate indices.
 void Mesh_set::init_facet_color_indices()
 {
-  switch (m_primitive_type) {
-   case PT_TRIANGLES: m_facet_color_indices = Triangle_indices(); break;
-   case PT_QUADS: m_facet_color_indices = Quad_indices(); break;
-   case PT_POLYGONS: m_facet_color_indices = Polygon_indices(); break;
+  if (m_color_attachment == AT_PER_VERTEX) {
+    switch (m_primitive_type) {
+     case PT_TRIANGLES: m_facet_color_indices = Triangle_indices(); return;
+     case PT_QUADS: m_facet_color_indices = Quad_indices(); return;
+     case PT_POLYGONS: m_facet_color_indices = Polygon_indices(); return;
 
-   case PT_TRIANGLE_STRIP:
-   case PT_TRIANGLE_FAN:
-   case PT_QUAD_STRIP:
-   default: break;
+     case PT_TRIANGLE_STRIP:
+     case PT_TRIANGLE_FAN:
+     case PT_QUAD_STRIP:
+     default: return;
+    }
   }
+  m_facet_color_indices = Flat_indices();
 }
 
 //! \brief initializes the facet texture-coordinate indices.
