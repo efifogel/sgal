@@ -29,8 +29,8 @@ SGAL_BEGIN_NAMESPACE
 /*! Empty facet indices visitor */
 class Empty_facet_indices_visitor : public boost::static_visitor<Boolean> {
 public:
-  template <typename Indices>
-  Boolean operator()(const Indices& indices) const { return indices.empty(); }
+  template <typename Indices_>
+  Boolean operator()(const Indices_& indices) const { return indices.empty(); }
 };
 
 SGAL_END_NAMESPACE
