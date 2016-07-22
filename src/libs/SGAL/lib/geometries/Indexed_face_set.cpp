@@ -79,7 +79,6 @@
 #include "SGAL/Border_normalizer_visitor.hpp"
 #include "SGAL/Volume_calculator_visitor.hpp"
 #include "SGAL/Surface_area_calculator_visitor.hpp"
-#include "SGAL/Faces_counter_visitor.hpp"
 // #include "SGAL/Collinear_facets_remesher_visitor.hpp"
 
 SGAL_BEGIN_NAMESPACE
