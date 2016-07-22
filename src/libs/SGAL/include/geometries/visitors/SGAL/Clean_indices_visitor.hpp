@@ -82,7 +82,9 @@ public:
   }
 
   void operator()(Flat_indices& flats)
-  { std::copy(m_indices.begin(), m_indices.end(), flats.begin()); }
+  {
+    flats.resize(m_num_primitives);
+    std::copy(m_indices.begin(), m_indices.end(), flats.begin()); }
 };
 
 SGAL_END_NAMESPACE
