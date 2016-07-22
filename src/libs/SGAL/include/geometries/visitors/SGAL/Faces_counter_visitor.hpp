@@ -26,12 +26,11 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! A visitor that normalizes the border of a polyhedron. */
+/*! A visitor that counts the number of facets of a polyhedron. */
 class Faces_counter_visitor : public boost::static_visitor<Size> {
 public:
   template <typename Indices_>
-  Size operator()(const Indices_& indices) const
-  { return indices.size(); }
+  Size operator()(const Indices_& indices) const { return indices.size(); }
 
   Size operator()(const Flat_indices& indices) const
   { return std::count(indices.begin(), indices.end(), -1); }
