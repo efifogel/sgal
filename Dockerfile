@@ -15,7 +15,7 @@ RUN apt-get install -y dialog subversion gcc g++ make python curl software-prope
 # suitable version even though depricated. Other ppa's include more recent
 # versions, but are targeted at vivid (ubuntu 15.04).
 
-RUN add-apt-repository ppa:pinepain/v8-5.2
+RUN add-apt-repository ppa:pinepain/libv8-5.2
 RUN apt-get update && apt-get upgrade
 RUN apt-get install libv8-4.9.385 libv8-4.9-dev
 
