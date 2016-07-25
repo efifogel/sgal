@@ -17,7 +17,7 @@ RUN apt-get install -y dialog subversion gcc g++ make python curl software-prope
 
 RUN add-apt-repository ppa:pinepain/libv8-5.2
 RUN apt-get update && apt-get upgrade
-RUN apt-get install libv8-4.9.385 libv8-4.9-dev
+RUN apt-get install -y libv8-5.2.371 libv8-5.2-dev
 
 RUN apt-get install -y cmake
 RUN apt-get install -y g++
