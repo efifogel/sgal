@@ -60,22 +60,19 @@ Ellipsoid::~Ellipsoid(){}
 void Ellipsoid::clean_coords()
 {
   m_dirty_coord_array = false;
-  m_dirty_coord_indices = false;
 
   // Clear internal representation:
   if (!m_coord_array) m_coord_array.reset(new Coord_array_3d);
 
   // Generate points:
-  Uint size = 2 + m_slices * (m_stacks - 1);
+  auto size = 2 + m_slices * (m_stacks - 1);
   m_coord_array->resize(size);
 
-  boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  auto coord_array = boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
   SGAL_assertion(coord_array);
 
-  Uint k = 0;
-  Uint i;
-  for (i = 0; i <= m_stacks; ++i) {
+  size_t k(0);
+  for (size_t i = 0; i <= m_stacks; ++i) {
     if (i == 0) {
       Float x = m_width;
       Float y = 0;
@@ -91,8 +88,7 @@ void Ellipsoid::clean_coords()
       continue;
     }
     Float theta = SGAL_PI * i / m_stacks;
-    unsigned int j;
-    for (j =  0; j < m_slices; ++j) {
+    for (size_t j =  0; j < m_slices; ++j) {
       Float phi = SGAL_PI * j * 2 / m_slices;
       Float x = m_width * cosf(theta);
       Float y = m_height * sinf(theta) * cosf(phi);
@@ -101,18 +97,24 @@ void Ellipsoid::clean_coords()
     }
   }
 
-  // Generates coordinate indices:
+  coord_content_changed(get_field_info(COORD_ARRAY));
+}
+
+//! \brief cleans the facet coordinate indices.
+void Ellipsoid::clean_coord_indices()
+{
+  m_dirty_coord_indices = false;
 
   // Generate start:
   m_num_primitives = m_slices * m_stacks;
-  size = 5 * m_stacks * m_slices - 2 * m_slices;
+  auto size = 5 * m_stacks * m_slices - 2 * m_slices;
   m_coord_indices.resize(size);
 
-  k = 0;
-  Uint start = 0;
-  Uint end = m_slices;
-  for (i = 1; i <= end; ++i) {
-    Uint j = i + 1;
+  size_t k(0);
+  size_t start(0);
+  auto end = m_slices;
+  for (size_t i = 1; i <= end; ++i) {
+    auto j = i + 1;
     if (j == end + 1) j = 1;
     m_coord_indices[k++] = 0;
     m_coord_indices[k++] = i;
@@ -121,15 +123,15 @@ void Ellipsoid::clean_coords()
   }
 
   // Gen middle
-  for (Uint l = 1; l < m_stacks - 1; ++l) {
-    Uint start = m_slices * (l - 1) + 1;
-    Uint end = start + m_slices - 1;
-    for (i = start; i <= end; ++i) {
-      Uint a = i;
-      Uint b = i + 1;
+  for (size_t l = 1; l < m_stacks - 1; ++l) {
+    auto start = m_slices * (l - 1) + 1;
+    auto end = start + m_slices - 1;
+    for (size_t i = start; i <= end; ++i) {
+      auto a = i;
+      auto b = i + 1;
       if (b == end + 1) b = start;
-      Uint c = b + m_slices;
-      Uint d = a + m_slices;
+      auto c = b + m_slices;
+      auto d = a + m_slices;
       m_coord_indices[k++] = b;
       m_coord_indices[k++] = a;
       m_coord_indices[k++] = d;
@@ -141,16 +143,14 @@ void Ellipsoid::clean_coords()
   // Gen end
   start = m_slices * (m_stacks - 2) + 1;
   end = m_slices * (m_stacks - 1);
-  for (i  = start; i <= end; ++i) {
-    Uint j = i + 1;
+  for (size_t i  = start; i <= end; ++i) {
+    auto j = i + 1;
     if (j == end + 1) j = start;
     m_coord_indices[k++] = end + 1;
     m_coord_indices[k++] = j;
     m_coord_indices[k++] = i;
     m_coord_indices[k++] = static_cast<Uint>(-1);
   }
-
-  coord_content_changed(get_field_info(COORD_ARRAY));
 }
 
 //! \brief sets the attributes of this object.

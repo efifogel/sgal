@@ -93,6 +93,10 @@ public:
   /*! Clean the ellipsoid coordinate array and coordinate indices. */
   virtual void clean_coords();
 
+  /*! Clean the coordinate indices.
+   */
+  virtual void clean_coord_indices();
+
   /*! Set the width of the ellipsoid. */
   void set_width(Float width);
 
