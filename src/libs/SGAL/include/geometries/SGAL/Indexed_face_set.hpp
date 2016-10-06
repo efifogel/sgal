@@ -143,19 +143,22 @@ public:
    */
   virtual void clean_bounding_sphere();
 
-  /*! Clean the coordinate array and coordinate indices.
-   */
-  virtual void clean_coords();
-
   /*! Obtain the coordinate array.
    * \return the coordinate array.
    */
   virtual Shared_coord_array get_coord_array();
 
+  /*! Clean the coordinate array. */
+  virtual void clean_coords();
+
   /*! Repair the data structures, either the coordinates and the coordinate
    * indices, or the polyhedron.
    */
   void repair();
+
+  /*! Clean the facet coordinate indices.
+   */
+  void clean_facet_coord_indices_from_polyhedron();
 
   /// \name Indices Change Reactors
   //@{
@@ -694,10 +697,6 @@ private:
    * and duplicate singular vertices (and edges).
    */
   Boolean m_make_consistent;
-
-  /*! Clean the coordinate indices.
-   */
-  void clean_coord_indices();
 
   /*! Computes the convex hull of the coordinate set. */
   void convex_hull();
