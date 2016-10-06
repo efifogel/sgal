@@ -117,7 +117,7 @@ public:
    */
   virtual void clean_coords();
 
-  /*! Clean the coordinate indices.
+  /*! Clean the facet coordinate indices.
    */
   virtual void clean_facet_coord_indices();
 

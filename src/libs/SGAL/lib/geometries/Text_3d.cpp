@@ -36,6 +36,7 @@
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Font_style.hpp"
 #include "SGAL/Trace.hpp"
+#include "SGAL/Field.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -391,6 +392,21 @@ void Text_3d::clean_coords()
     ++line_num;
   }
 
+  // coord_content_changed(get_field_info(COORD_ARRAY));
+
+  auto* coord_field = get_field(COORD_ARRAY);
+  if (coord_field) coord_field->cascade();
+  else coord_content_changed(get_field_info(COORD_ARRAY));
+}
+
+//! \brief cleans the facet coordinate indices.
+void Text_3d::clean_facet_coord_indices()
+{
+  if (!m_font_style) m_font_style = Shared_font_style(new Font_style());
+  SGAL_assertion(m_font_style);
+  if (m_dirty_ucs4_strings) clean_ucs4_strings();
+  if (m_dirty_text_geometry) clean_text_geometry();
+
   // Calculate the number of primitives
   Uint num_primitives = 0;
   for (auto tit = m_text_geometry.begin(); tit != m_text_geometry.end(); ++tit)
@@ -426,7 +442,7 @@ void Text_3d::clean_coords()
     for (auto lit = line_geometry.begin(); lit != line_geometry.end(); ++lit) {
       const auto* glyph_geom = *lit;
       const auto& tri = glyph_geom->get_triangulation();
-      size = tri.number_of_vertices();
+      auto size = tri.number_of_vertices();
       // Set the front indices
       for (auto it = tri.finite_faces_begin(); it != tri.finite_faces_end();
            ++it)
@@ -477,15 +493,8 @@ void Text_3d::clean_coords()
   set_num_primitives(num_primitives);
   set_solid(true);
 
-  coord_content_changed(get_field_info(COORD_ARRAY));
-
   m_dirty_coord_indices = true;
   m_dirty_facet_coord_indices = false;
-}
-
-//! \brief cleans the coordinate indices.
-void Text_3d::clean_facet_coord_indices()
-{
 }
 
 //! calculates the default 2D texture-mapping oordinates.
