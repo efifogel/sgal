@@ -299,6 +299,7 @@ void Coord_transformer::apply()
 void Coord_transformer::execute(const Field_info* /* field_info */)
 {
   if (!m_enabled) return;
+  if (!m_coord_array) return;
 
   auto size = m_coord_array->size();
   if (!m_coord_array_changed) {
