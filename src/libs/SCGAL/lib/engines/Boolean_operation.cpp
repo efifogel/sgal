@@ -103,10 +103,16 @@ void Boolean_operation::execute()
   m_operand1->set_polyhedron_type(Indexed_face_set::POLYHEDRON_EPEC);
   const auto& p_var1 = m_operand1->get_polyhedron();
   const Epec_polyhedron& polyhedron1 = boost::get<Epec_polyhedron>(p_var1);
+  SGAL_warning_msg(polyhedron1.size_of_vertices() == 0,
+                   "Operand 1 has zero vertices!");
+  if (polyhedron1.size_of_vertices() == 0) return;
 
   m_operand2->set_polyhedron_type(Indexed_face_set::POLYHEDRON_EPEC);
   const auto& p_var2 = m_operand2->get_polyhedron();
   const Epec_polyhedron& polyhedron2 = boost::get<Epec_polyhedron>(p_var2);
+  SGAL_warning_msg(polyhedron1.size_of_vertices() == 0,
+                   "Operand 2 has zero vertices!");
+  if (polyhedron2.size_of_vertices() == 0) return;
 
   m_result.clear();
 
