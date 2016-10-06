@@ -521,7 +521,6 @@ Loader::Return_code Loader::load_off(std::istream& is, Scene_graph* sg)
 
   // Add IndexedFaceSet
   Shared_indexed_face_set ifs(new Indexed_face_set);
-  ifs->add_to_scene(sg);
   sg->add_container(ifs);
   shape->set_geometry(ifs);
 
@@ -555,6 +554,8 @@ Loader::Return_code Loader::load_off(std::istream& is, Scene_graph* sg)
   ifs->set_coord_array(shared_coords);
   ifs->set_primitive_type(Geo_set::PT_POLYGONS);
   ifs->set_num_primitives(num_facets);
+  ifs->facet_coord_indices_changed();
+  ifs->add_to_scene(sg);
 
   return SUCCESS;
 }
