@@ -115,7 +115,7 @@ public:
 
   /// \name field handlers
   //@{
-  std::string* url_handle(const Field_info*) { return &m_url; }
+  String_array* url_handle(const Field_info*) { return &m_url; }
   Boolean* direct_output_handle(const Field_info*) { return &m_direct_output; }
   Boolean* must_evaluate_handle(const Field_info*) { return &m_must_evaluate; }
 
@@ -158,10 +158,10 @@ public:
   virtual void identify();
 
   /*! Set the URL. */
-  void set_url(const std::string& url);
+  void set_url(const String_array& url);
 
   /*! Obtain the URL. */
-  const std::string get_url() const;
+  const String_array& get_url() const;
 
   /*! Determine whether it is possible to send events directly to any node to
    * which this script node has access, and may dynamically establish or break
@@ -180,7 +180,7 @@ public:
 
 protected:
   /*! The script. */
-  std::string m_url;
+  String_array m_url;
 
   /*! Specifies how to evaluate the script.
    * If TRUE, the script may also send events directly to any node to which it
@@ -230,6 +230,11 @@ protected:
     prototype->add_field_info(field_info);
   }
 
+  /*! Add a url.
+   * \param[in] the input url.
+   */
+  void add_url(const std::string& url);
+
  private:
   /*! The node prototype. */
   static Container_proto* s_prototype;
@@ -247,10 +252,10 @@ protected:
 #endif
 
 //! \brief sets the URL.
-inline void Script_base::set_url(const std::string& url) { m_url = url; }
+inline void Script_base::set_url(const String_array& url) { m_url = url; }
 
 //! \brief obtains the URL.
-inline const std::string Script_base::get_url() const { return m_url; }
+inline const String_array& Script_base::get_url() const { return m_url; }
 
 //! \brief determines whether it is possible to send events directly.
 inline bool Script_base::is_direct_output() const { return m_direct_output; }

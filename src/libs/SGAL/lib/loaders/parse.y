@@ -577,7 +577,12 @@ scriptBodyElement : fieldId sfValue
                   Str_attr attr($1, $2);
                   $$->add_attribute(attr);
                 }
-
+                | fieldId "[" sfstringValues "]"
+                {
+                  $$ = new Element;
+                  Multi_str_attr attr($1, $3);
+                  $$->add_attribute(attr);
+                }
                 | restrictedInterfaceDeclaration { std::swap($$, $1); }
                 /*! | K_EVENTIN fieldType eventInId K_IS eventInId { \todo } */
                 /*! | K_EVENTOUT fieldType eventOutId K_IS eventOutId { \todo } */

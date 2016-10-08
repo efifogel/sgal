@@ -18,6 +18,7 @@
 
 #include <regex>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/trim.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Element.hpp"
@@ -56,20 +57,20 @@ void Script_base::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Container::get_prototype());
 
-  String_handle_function url_func =
-    static_cast<String_handle_function>(&Script_base::url_handle);
-  s_prototype->add_field_info(new SF_string(URL, "url",
+  auto url_func =
+    static_cast<String_array_handle_function>(&Script_base::url_handle);
+  s_prototype->add_field_info(new MF_string(URL, "url",
                                             Field_info::RULE_EXPOSED_FIELD,
                                             url_func));
 
-  Boolean_handle_function direct_output_func =
+  auto direct_output_func =
     static_cast<Boolean_handle_function>(&Script_base::direct_output_handle);
   s_prototype->add_field_info(new SF_bool(DIRECT_OUTPUT, "directOutput",
                                           Field_info::RULE_FIELD,
                                           direct_output_func,
                                           s_def_direct_output));
 
-  Boolean_handle_function must_evaluate_func =
+  auto must_evaluate_func =
     static_cast<Boolean_handle_function>(&Script_base::must_evaluate_handle);
   s_prototype->add_field_info(new SF_bool(MUST_EVALUATE, "mustEvaluate",
                                           Field_info::RULE_FIELD,
@@ -92,6 +93,14 @@ Container_proto* Script_base::get_prototype()
   return s_prototype;
 }
 
+//! \brief adds a url.
+void Script_base::add_url(const std::string& url)
+{
+  auto trimmed_url = url;
+  boost::algorithm::trim(trimmed_url);
+  m_url.push_back(std::move(trimmed_url));
+}
+
 //! \brief sets the attributes of the object extracted from the input file.
 void Script_base::set_attributes(Element* elem)
 {
@@ -100,7 +109,7 @@ void Script_base::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "url") {
-      set_url(value);
+      add_url(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -112,6 +121,17 @@ void Script_base::set_attributes(Element* elem)
     if (name == "mustEvaluate") {
       if (compare_to_true(value)) set_must_evaluate();
       elem->mark_delete(ai);
+      continue;
+    }
+  }
+
+  auto msai = elem->multi_str_attrs_begin();
+  for (; msai != elem->multi_str_attrs_end(); ++msai) {
+    const auto& name = elem->get_name(msai);
+    auto& value = elem->get_value(msai);
+    if (name == "url") {
+      for (auto type_p : value) add_url(*type_p);
+      elem->mark_delete(msai);
       continue;
     }
   }

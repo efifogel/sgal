@@ -176,8 +176,7 @@ void Script::getter(v8::Local<v8::String> property,
 
    case Field_info::SF_STR:
     {
-     auto* tmp = (id == URL) ? script_node->url_handle(field_info) :
-       script_node->field_handle<std::string>(field_info);
+     auto* tmp = script_node->field_handle<std::string>(field_info);
      v8::Handle<v8::String> str =
        v8::String::NewFromUtf8(isolate, tmp->c_str());
      info.GetReturnValue().Set(str);
@@ -281,8 +280,7 @@ void Script::setter(v8::Local<v8::String> property,
 
    case Field_info::SF_STR:
     {
-     auto* tmp = (id == URL) ? script_node->url_handle(field_info) :
-       script_node->field_handle<std::string>(field_info);
+     auto* tmp = script_node->field_handle<std::string>(field_info);
      v8::Local<v8::String> str = value->ToString();
      v8::String::Utf8Value utf8(str);
      tmp->assign(*utf8);
@@ -1124,8 +1122,7 @@ v8::Handle<v8::Value> Script::get_single_boolean(const Field_info* field_info)
 v8::Handle<v8::Value> Script::get_single_string(const Field_info* field_info)
 {
   auto id = field_info->get_id();
-  std::string* tmp = (id == URL) ? url_handle(field_info) :
-    field_handle<std::string>(field_info);
+  std::string* tmp = field_handle<std::string>(field_info);
   return v8::String::NewFromUtf8(m_isolate, tmp->c_str());
 }
 
@@ -1341,49 +1338,52 @@ void Script::cascade_assigned()
 //! \brief bounds the script.
 void Script::bound_script()
 {
-  // Extract the script
-  auto pos = m_url.find(':');
-  if (std::string::npos == pos) {
-    std::cerr << "Invalid script!" << std::endl;
-    return;
-  }
-  if (m_url.compare(0, pos, "javascript") == 0)
-    m_protocol = PROTOCOL_CUSTOM_ECMASCRIPT;
-  else if (std::regex_match(m_url, std::regex("http://.*\\.js")))
-    m_protocol = PROTOCOL_ECMASCRIPT;
-  else if (std::regex_match(m_url, std::regex("http://.*\\.class")))
-    m_protocol = PROTOCOL_JAVA_BYTECODE;
-  else {
-    std::cerr << "Invalid script!" << std::endl;
-    return;
-  }
+  for (const auto& url : m_url) {
+    // Extract the script
+    auto pos = url.find(':');
+    if (std::string::npos == pos) {
+      std::cerr << "Invalid script!" << std::endl;
+      continue;
+    }
+    //! \todo m_protocol is overriden each iteration
+    if (url.compare(0, pos, "javascript") == 0)
+      m_protocol = PROTOCOL_CUSTOM_ECMASCRIPT;
+    else if (std::regex_match(url, std::regex("http://.*\\.js")))
+      m_protocol = PROTOCOL_ECMASCRIPT;
+    else if (std::regex_match(url, std::regex("http://.*\\.class")))
+      m_protocol = PROTOCOL_JAVA_BYTECODE;
+    else {
+      std::cerr << "Invalid script!" << std::endl;
+      continue;
+    }
 
-  pos = m_url.find_first_not_of(" \t\r\n", pos + 1);
-  std::string source_str = m_url.substr(pos);
+    pos = url.find_first_not_of(" \t\r\n", pos + 1);
+    std::string source_str = url.substr(pos);
 
-  // std::cout << "source_str.c_str(): " << source_str.c_str() << std::endl;
+    // std::cout << "source_str.c_str(): " << source_str.c_str() << std::endl;
 
-  // Create a string containing the JavaScript source code.
-  v8::Handle<v8::String> source =
-    v8::String::NewFromUtf8(m_isolate, source_str.c_str());
+    // Create a string containing the JavaScript source code.
+    v8::Handle<v8::String> source =
+      v8::String::NewFromUtf8(m_isolate, source_str.c_str());
 
-  // set up an error handler to catch any exceptions the script might throw.
-  v8::TryCatch try_catch;
+    // set up an error handler to catch any exceptions the script might throw.
+    v8::TryCatch try_catch;
 
-  v8::Handle<v8::Script> script = v8::Script::Compile(source);
-  if (script.IsEmpty()) {
-    // The script failed to compile; bail out.
-    v8::String::Utf8Value error(try_catch.Exception());
-    std::cerr << *error << std::endl;
-    return;
-  }
+    v8::Handle<v8::Script> script = v8::Script::Compile(source);
+    if (script.IsEmpty()) {
+      // The script failed to compile; bail out.
+      v8::String::Utf8Value error(try_catch.Exception());
+      std::cerr << *error << std::endl;
+      return;
+    }
 
-  v8::Handle<v8::Value> result = script->Run(); // run the script
-  if (result.IsEmpty()) {
-    // The TryCatch above is still in effect and will have caught the error.
-    v8::String::Utf8Value error(try_catch.Exception());
-    std::cerr << *error << std::endl;
-    return;
+    v8::Handle<v8::Value> result = script->Run(); // run the script
+    if (result.IsEmpty()) {
+      // The TryCatch above is still in effect and will have caught the error.
+      v8::String::Utf8Value error(try_catch.Exception());
+      std::cerr << *error << std::endl;
+      return;
+    }
   }
 }
 
