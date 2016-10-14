@@ -802,7 +802,7 @@ void Indexed_face_set::write(Formatter* formatter)
                   << std::endl;);
 
   SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
-                  std::cout << "Indexed_face_set:Lwrite(): "
+                  std::cout << "Indexed_face_set:write(): "
                   << ", name: " << get_name() << std::endl;);
 
   if (is_dirty_coord_array()) clean_coords();
