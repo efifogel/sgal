@@ -441,9 +441,9 @@ void Loader::add_colored_shape(Scene_graph* scene_graph,
     ++i;
   }
   auto shape = compute_shape(scene_graph, transform, color);
-  ifs->collapse_identical_coordinates();
   ifs->facet_coord_indices_changed();
   ifs->facet_color_indices_changed();
+  ifs->collapse_identical_coordinates();
   ifs->add_to_scene(scene_graph);
   shape->set_geometry(ifs);
 }
