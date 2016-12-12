@@ -1,13 +1,14 @@
 #VRML V2.0 utf8
-ColorBackground {
-  color 1 1 1
-  clearStencil TRUE
-}
 DEF CONFIG Configuration {
+  accumulation Accumulation { enabled TRUE }
   stencilBits 1
 }
 DEF SIM Simulation {}
 
+ColorBackground {
+  color 1 1 1 1
+  clearStencil TRUE
+}
 DEF HIDE1_KEY SingleKeySensor {
   boolean FALSE
   key "Y"
@@ -22,13 +23,22 @@ DEF HIDE2_KEY SingleKeySensor {
 
 DEF SNAP_MINK_PRIMAL_KEY SingleKeySensor { key "X" }
 DEF SNAP_MINK_DUAL_KEY SingleKeySensor { key "C" }
+DEF SNAP_MINK_KEY SingleKeySensor { key "S" }
+
+DEF SNAP_MINK Snapshot {
+  image Image { }
+  fileFormat "png"
+  sequence FALSE
+  dirName "./figs"
+  fileName "sgm_mink_pent_hex_trun_icosido"
+}
 
 DEF SNAP_DUAL Snapshot {
   fileFormat "jpg"
   quality 98
   sequence FALSE
   dirName "."
-  fileName "pent_hexecontahedron_truncated_icosidodecahedron_cgm"
+  fileName "sgm_mink_pent_hex_trun_icosido"
 }
 
 DEF SNAP_PRIMAL Snapshot {
@@ -59,14 +69,14 @@ DEF DRAW_DUAL_MINK_SPHERE_KEY SingleKeySensor { key "b" state TRUE }
 
 DEF ROBOT_NAVIGATION NavigationInfo {
   type [ "TRANSFORM" ]
-  translation 3 0 0
+  translation 4 0 0
 }
 
 DEF DRAW_DUAL_ROBOT_KEY SingleKeySensor { key "d" }
 DEF FLATTEN_ROBOT_KEY SingleKeySensor { key "f" }
 
 DEF ROBOT_TRANSFORMER CoordinateTransformer {
-  translation 3 0 0
+  translation 4 0 0
   coord DEF ROBOT_COORD Coordinate {
      point [-0.000000 -0.000000 1.000000,
 	    0.451209 -0.000000 0.892418,
@@ -134,7 +144,7 @@ DEF ROBOT_TRANSFORMER CoordinateTransformer {
 
 DEF OBSTACLE_NAVIGATION NavigationInfo {
   type [ "TRANSFORM" ]
-  translation -3 0 0
+  translation -4 0 0
   rotation 1 0 0 1.57079632679489661922
 }
 
@@ -142,7 +152,7 @@ DEF DRAW_DUAL_OBSTACLE_KEY SingleKeySensor { key "e" }
 DEF FLATTEN_OBSTACLE_KEY SingleKeySensor { key "g" }
 
 DEF OBSTACLE_TRANSFORMER CoordinateTransformer {
-  translation -3 0 0
+  translation -4 0 0
   rotation 1 0 0 1.57079632679489661922
   coord DEF OBSTACLE_COORD Coordinate {
     point [0 0 1.008759,
@@ -291,6 +301,12 @@ DEF TRANS Transform {
 		  }
 		  geometry DEF ROBOT SphericalGaussianMapColored {
 		    drawAos FALSE
+                    aosVertexColor 0.4 0.3 0.4
+                    aosEdgeColor 0.6 0.3 0.2
+                    aosVertexStyle "disc"
+                    aosEdgeStyle "strip"
+                    aosVertexRadius 0.02
+                    aosEdgeRadius 0.01
 		    coord USE ROBOT_COORD
 		    coordIndex [0,1,2,-1,
 				0,2,3,-1,
@@ -399,6 +415,12 @@ DEF TRANS Transform {
 		  }
 		  geometry DEF OBSTACLE SphericalGaussianMapColored {
 		    drawAos FALSE
+                    aosEdgeColor 0.2 0.3 0.6
+                    aosVertexColor 0.4 0.3 0.4
+                    aosVertexStyle "disc"
+                    aosEdgeStyle "strip"
+                    aosVertexRadius 0.02
+                    aosEdgeRadius 0.01
 		    coord USE OBSTACLE_COORD
 		    coordIndex [0,1,4,2,-1,
 				3,8,14,7,-1,
@@ -476,13 +498,17 @@ DEF TRANS Transform {
       children [
 	Shape {
 	  appearance Appearance {
-	    material Material { diffuseColor 0.4 0.4 0.4 }
+	    material Material { diffuseColor 0.8 1.0 0.3 }
 	  }
 	  geometry DEF MINK SphericalGaussianMapColored {
 	    drawAos FALSE
 	    aosEdgeColor1 1 0 0
 	    aosEdgeColor2 0 0 1
 	    aosVertexColor 0 0.5 0
+            aosVertexStyle "disc"
+            aosEdgeStyle "strip"
+            aosVertexRadius 0.02
+            aosEdgeRadius 0.01
 	    drawAosSphere FALSE
 	    geometries [USE ROBOT
 			USE OBSTACLE
@@ -541,3 +567,4 @@ ROUTE HIDE1_KEY.intState TO HIDE1_SWITCH.whichChoice
 ROUTE HIDE2_KEY.intState TO HIDE2_SWITCH.whichChoice
 ROUTE SNAP_MINK_DUAL_KEY.state TO SNAP_DUAL.trigger
 ROUTE SNAP_MINK_PRIMAL_KEY.state TO SNAP_PRIMAL.trigger
+ROUTE SNAP_MINK_KEY.state TO SNAP_MINK.trigger

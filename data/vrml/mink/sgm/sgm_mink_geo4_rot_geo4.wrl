@@ -1,8 +1,10 @@
 #VRML V2.0 utf8
-DEF CONFIG Configuration {}
+DEF CONFIG Configuration {
+  accumulation Accumulation { enabled TRUE }
+  stencilBits 1
+}
 DEF SIM Simulation {}
 
-# ColorBackground { color 0.5 0.5 0.5 1 }
 ColorBackground {
   color 1 1 1 1
   clearStencil TRUE
@@ -25,6 +27,15 @@ DEF DRAW_DUAL_MINK_KEY SingleKeySensor { key "c" }
 DEF DRAW_DUAL_MINK_OPAQUE_KEY SingleKeySensor { key "o" }
 DEF DRAW_DUAL_MINK_HALOED_KEY SingleKeySensor { key "l" }
 DEF DRAW_DUAL_MINK_SPHERE_KEY SingleKeySensor { key "b" state TRUE }
+DEF SNAP_MINK_KEY SingleKeySensor { key "S" }
+
+DEF SNAP_MINK Snapshot {
+  image Image { }
+  fileFormat "png"
+  sequence FALSE
+  dirName "./figs"
+  fileName "sgm_mink_geo4_rot_geo4"
+}
 
 DEF PRIMAL_VIEW Viewpoint {}
 DEF DUAL_VIEW Viewpoint {
@@ -35,14 +46,14 @@ DEF DUAL_VIEW Viewpoint {
 
 DEF ROBOT_NAVIGATION NavigationInfo {
   type [ "TRANSFORM" ]
-  translation 3 0 0
+  translation 4 0 0
 }
 
 DEF DRAW_DUAL_ROBOT_KEY SingleKeySensor { key "d" }
 DEF FLATTEN_ROBOT_KEY SingleKeySensor { key "f" }
 
 DEF ROBOT_TRANSFORMER CoordinateTransformer {
-  translation 3 0 0
+  translation 4 0 0
   coord DEF ROBOT_COORD Coordinate {
     point [.5257 0 .8507,
 	   .3477 0 .9376,
@@ -302,7 +313,7 @@ DEF ROBOT_TRANSFORMER CoordinateTransformer {
 
 DEF OBSTACLE_NAVIGATION NavigationInfo {
   type [ "TRANSFORM" ]
-  translation -3 0 0
+  translation -4 0 0
   rotation 1 1 0 3.14
 }
 
@@ -310,7 +321,7 @@ DEF DRAW_DUAL_OBSTACLE_KEY SingleKeySensor { key "e" }
 DEF FLATTEN_OBSTACLE_KEY SingleKeySensor { key "g" }
 
 DEF OBSTACLE_TRANSFORMER CoordinateTransformer {
-  translation -3 0 0
+  translation -4 0 0
   rotation 1 1 0 3.14
   coord DEF OBSTACLE_COORD Coordinate {
     point [.5257 0 .8507,
@@ -588,6 +599,12 @@ Transform {
 	  }
 	  geometry DEF ROBOT SphericalGaussianMapColored {
 	    drawAos FALSE
+            aosVertexColor 0.4 0.3 0.4
+            aosEdgeColor 0.6 0.3 0.2
+            aosVertexStyle "disc"
+            aosEdgeStyle "strip"
+            aosVertexRadius 0.02
+            aosEdgeRadius 0.01
 	    coord USE ROBOT_COORD
 	    coordIndex [2 1 0 -1,
 			4 3 1 -1,
@@ -1096,7 +1113,7 @@ Transform {
     }
        ]
     }
-    
+
     DEF HIDE_SWITCH2 Switch {
       whichChoice 0
       children [
@@ -1109,6 +1126,12 @@ Transform {
 	  }
 	  geometry DEF OBSTACLE SphericalGaussianMapColored {
 	    drawAos FALSE
+            aosEdgeColor 0.2 0.3 0.6
+            aosVertexColor 0.4 0.3 0.4
+            aosVertexStyle "disc"
+            aosEdgeStyle "strip"
+            aosVertexRadius 0.02
+            aosEdgeRadius 0.01
 	    coord USE OBSTACLE_COORD
 	    coordIndex [2 1 0 -1,
 			4 3 1 -1,
@@ -1617,13 +1640,13 @@ Transform {
     }
        ]
     }
-    
+
     DEF MINK_SWITCH Switch {
       whichChoice 0
       children [
 	Shape {
 	  appearance Appearance {
-	    material Material { diffuseColor 0.4 0.4 0.4 }
+	    material Material { diffuseColor 0.8 1.0 0.3 }
 	  }
 	  geometry DEF MINK SphericalGaussianMapColored {
 	    drawAos FALSE
@@ -1632,6 +1655,10 @@ Transform {
     	    aosEdgeColor1 0.9 0.3 0.2
     	    aosEdgeColor2 0.2 0.3 0.9
 	    aosVertexColor 0.2 0.9 0.3
+            aosVertexStyle "disc"
+            aosEdgeStyle "strip"
+            aosVertexRadius 0.02
+            aosEdgeRadius 0.01
 	    geometries [
               USE ROBOT
               USE OBSTACLE
@@ -1665,19 +1692,19 @@ ROUTE ROBOT_NAVIGATION.translation TO ROBOT_TRANSFORMER.translation
 ROUTE ROBOT_TRANSFORMER.coord_changed TO ROBOT.coord
 ROUTE SELECT_ROBOT.isOver TO ROBOT_NAVIGATION.set_bind
 ROUTE FLATTEN_ROBOT_KEY.press TO ROBOT_NAVIGATION.set_bind
-    
+
 ROUTE DRAW_DUAL_OBSTACLE_KEY.state TO OBSTACLE.drawAos
 ROUTE OBSTACLE_NAVIGATION.rotation TO OBSTACLE_TRANSFORMER.rotation
 ROUTE OBSTACLE_NAVIGATION.translation TO OBSTACLE_TRANSFORMER.translation
 ROUTE OBSTACLE_TRANSFORMER.coord_changed TO OBSTACLE.coord
 ROUTE SELECT_OBSTACLE.isOver TO OBSTACLE_NAVIGATION.set_bind
 ROUTE FLATTEN_OBSTACLE_KEY.press TO OBSTACLE_NAVIGATION.set_bind
-    
+
 ROUTE DRAW_DUAL_MINK_KEY.state TO MINK.drawAos
 ROUTE DRAW_DUAL_MINK_OPAQUE_KEY.state TO MINK.drawAosOpaque
 ROUTE DRAW_DUAL_MINK_SPHERE_KEY.state TO MINK.drawAosSphere
 ROUTE DRAW_DUAL_MINK_HALOED_KEY.state TO MINK.drawAosHaloed
-    
+
 ROUTE SIM.start TO ROBOT_TRANSFORMER.execute
 ROUTE SIM.start TO OBSTACLE_TRANSFORMER.execute
 
@@ -1691,3 +1718,5 @@ ROUTE SWITCH_KEY.intState TO MINK_SWITCH.whichChoice
 
 ROUTE HIDE_KEY.intState TO HIDE_SWITCH1.whichChoice
 ROUTE HIDE_KEY.intState TO HIDE_SWITCH2.whichChoice
+
+ROUTE SNAP_MINK_KEY.state TO SNAP_MINK.trigger

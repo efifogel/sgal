@@ -1,11 +1,12 @@
 #VRML V2.0 utf8
 DEF CONFIG Configuration {
+  accumulation Accumulation { enabled TRUE }
   stencilBits 1
 }
 DEF SIM Simulation {}
 
 ColorBackground {
-  color 0.5 0.5 0.5 1
+  color 1 1 1 1
   clearStencil TRUE
 }
 
@@ -27,6 +28,15 @@ DEF DRAW_DUAL_MINK_KEY SingleKeySensor { key "c" }
 DEF DRAW_DUAL_MINK_OPAQUE_KEY SingleKeySensor { key "o" }
 DEF DRAW_DUAL_MINK_HALOED_KEY SingleKeySensor { key "l" }
 DEF DRAW_DUAL_MINK_SPHERE_KEY SingleKeySensor { key "b" state TRUE }
+DEF SNAP_MINK_KEY SingleKeySensor { key "S" }
+
+DEF SNAP_MINK Snapshot {
+  image Image { }
+  fileFormat "png"
+  sequence FALSE
+  dirName "./figs"
+  fileName "sgm_mink_exact_icos_icos"
+}
 
 DEF ROBOT_NAVIGATION NavigationInfo {
   type [ "TRANSFORM" ]
@@ -93,7 +103,12 @@ Transform {
 	      }
 	      geometry DEF ROBOT SphericalGaussianMapColored {
 		drawAos FALSE
+		aosVertexColor 0.4 0.3 0.4
 		aosEdgeColor 0.6 0.3 0.2
+                aosVertexStyle "disc"
+                aosEdgeStyle "strip"
+                aosVertexRadius 0.02
+                aosEdgeRadius 0.01
 		coord USE ROBOT_COORD
 		coordIndex [3 2 1 0 -1 4 5 6 7 -1
 			    2 6 5 1 -1 0 4 7 3 -1
@@ -119,6 +134,11 @@ Transform {
 	      geometry DEF OBSTACLE SphericalGaussianMapColored {
 		drawAos FALSE
 		aosEdgeColor 0.2 0.3 0.6
+		aosVertexColor 0.4 0.3 0.4
+                aosVertexStyle "disc"
+                aosEdgeStyle "strip"
+                aosVertexRadius 0.02
+                aosEdgeRadius 0.01
 		coord USE OBSTACLE_COORD
 		coordIndex [2 1 0 -1, 0 1 3 -1, 1 2 3 -1 2 0 3 -1]
 	      }
@@ -133,14 +153,17 @@ Transform {
       children [
 	Shape {
 	  appearance Appearance {
-	    material Material { diffuseColor 0.4 0.4 0.4 }
+	    material Material { diffuseColor 0.8 1.0 0.3 }
 	  }
 	  geometry DEF MINK SphericalGaussianMapColored {
 	    drawAos FALSE
-	    dualLineWidth 2
 	    aosEdgeColor1 0.6 0.3 0.2
 	    aosEdgeColor2 0.2 0.3 0.6
-	    aosVertexColor 0.2 0.6 0.6
+	    aosVertexColor 0.4 0.6 0.2
+            aosVertexStyle "disc"
+            aosEdgeStyle "strip"
+            aosVertexRadius 0.02
+            aosEdgeRadius 0.01
 	    geometries [
               USE ROBOT
               USE OBSTACLE
@@ -194,3 +217,4 @@ ROUTE COORD_ADDER.coord_changed TO MINK_CH.coord
 ROUTE SIM.start TO COORD_ADDER.execute
 
 ROUTE MINK_SWITCH_KEY.intState TO MINK_SWITCH.whichChoice
+ROUTE SNAP_MINK_KEY.state TO SNAP_MINK.trigger
