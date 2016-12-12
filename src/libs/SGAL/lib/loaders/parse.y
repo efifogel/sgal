@@ -382,7 +382,14 @@ statement       : nodeStatement { std::swap($$, $1); }
 nodeStatement   : node { scene_graph->add_container($1); std::swap($$, $1); }
                 | K_DEF nodeNameId node
                 { scene_graph->add_container($3, *$2); std::swap($$, $3); }
-                | K_USE nodeNameId { $$ = scene_graph->get_container(*$2); }
+                | K_USE nodeNameId {
+                  $$ = scene_graph->get_container(*$2);
+                  if (!$$) {
+                    error(yyla.location,
+                          std::string("Unknown node name \"") + *$2 + "\"");
+                    YYERROR;
+                  }
+                }
                 ;
 
 protoStatement  : proto { std::swap($$, $1); }
