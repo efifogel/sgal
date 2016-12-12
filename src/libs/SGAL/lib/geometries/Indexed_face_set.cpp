@@ -270,9 +270,11 @@ void Indexed_face_set::clean_bounding_sphere()
     if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
   }
 
-  if (m_coord_array) {
-    auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-    if (coords) m_bounding_sphere.set_around(coords->begin(), coords->end());
+  if (!m_coord_array) return;
+
+  auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  if (coords) {
+    m_bounding_sphere.set_around(coords->begin(), coords->end());
     return;
   }
 
