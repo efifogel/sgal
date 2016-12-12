@@ -88,7 +88,7 @@ source_group(src\\engines FILES ${SCGAL_ENGINES_SOURCE_FILES} ${SCGAL_ENGINES_HE
 
 set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/init.cpp)
 set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Exact_coord_minkowski.cpp)
-set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Transformer_with_exact_coords.cpp)
+set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Transformer_with_epec_coords.cpp)
 set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Triangulation_geo.cpp)
 
 if (SGAL_USE_ENV)

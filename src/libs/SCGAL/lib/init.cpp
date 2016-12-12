@@ -32,7 +32,7 @@
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Boolean_operation.hpp"
 #include "SCGAL/Exact_coord_minkowski.hpp"
-#include "SCGAL/Transformer_with_exact_coords.hpp"
+#include "SCGAL/Transformer_with_epec_coords.hpp"
 #include "SCGAL/Triangulation_geo.hpp"
 #if defined(SGAL_USE_ENV)
 #include "SCGAL/Lower_envelope_tri_geo.hpp"
@@ -94,7 +94,7 @@ SGAL_SCGAL_DECL void scgal_init()
 {
   Container_factory::get_instance()->doregister(Boolean_operation::prototype());
   Container_factory::get_instance()->doregister(Exact_coord_minkowski::prototype());
-  Container_factory::get_instance()->doregister(Transformer_with_exact_coords::prototype());
+  Container_factory::get_instance()->doregister(Transformer_with_epec_coords::prototype());
   Container_factory::get_instance()->doregister(Triangulation_geo::prototype());
 #if defined(SGAL_USE_ENV)
   Container_factory::get_instance()->doregister(Lower_envelope_tri_geo::prototype());
