@@ -89,25 +89,25 @@ public:
     m_expr(expr),
     m_file(file),
     m_line(line),
-    m_msg( msg)
+    m_msg(msg)
   {}
 
-    ~Failure_exception() throw() {}
+  ~Failure_exception() throw() {}
 
-    //! the name of the library that issues this message.
-    std::string library() const { return m_lib; }
+  //! the name of the library that issues this message.
+  std::string library() const { return m_lib; }
 
-    //! expression that failed in assertion, pre-, or postcondition.
-    std::string expression() const { return m_expr; }
+  //! expression that failed in assertion, pre-, or postcondition.
+  std::string expression() const { return m_expr; }
 
-    //! source code filename where the failure was detected.
-    std::string filename() const { return m_file; }
+  //! source code filename where the failure was detected.
+  std::string filename() const { return m_file; }
 
-    //! line number in source code file where the failure was detected.
-    int line_number() const { return m_line; }
+  //! line number in source code file where the failure was detected.
+  int line_number() const { return m_line; }
 
-    //! an optional message explaining the kind of failure.
-    std::string message() const { return m_msg; }
+  //! an optional message explaining the kind of failure.
+  std::string message() const { return m_msg; }
 };
 
 //! Exception thrown for \c SGAL_error_msg.
