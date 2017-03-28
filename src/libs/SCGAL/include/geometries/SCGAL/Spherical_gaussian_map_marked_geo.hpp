@@ -69,6 +69,10 @@ class SGAL_SCGAL_DECL Spherical_gaussian_map_marked_geo :
   public Spherical_gaussian_map_base_geo
 {
 public:
+  typedef CGAL::Arr_polyhedral_sgm_polyhedron_3<Spherical_gaussian_map_marked,
+                                                Epec_kernel>
+                                                  Polyhedron;
+
   /*! Fields */
   enum {
     FIRST = Spherical_gaussian_map_base_geo::LAST - 1,
@@ -84,9 +88,6 @@ private:
     Shared_spherical_gaussian_map_marked_geo;
 
   typedef Spherical_gaussian_map_marked           Sgm;
-  typedef CGAL::Arr_polyhedral_sgm_polyhedron_3<Sgm, Epec_kernel>
-                                                  Polyhedron;
-
   typedef Sgm::Geometry_traits_2                  Geometry_traits_2;
   typedef Geometry_traits_2::Point_2              Point_2;
   typedef Geometry_traits_2::Curve_2              Curve_2;
@@ -155,14 +156,8 @@ private:
      */
     virtual void update_dual_halfedge(Polyhedron_halfedge_const_handle src,
                                       Sgm_halfedge_handle trg)
-    {
-      trg->set_marked(src->marked());
-    }
+    { trg->set_marked(src->marked()); }
   };
-
-  typedef CGAL::
-  Arr_polyhedral_sgm_initializer<Sgm, Polyhedron, Sgm_geo_initializer_visitor>
-                                                  Sgm_initializer;
 
 protected:
   typedef Spherical_gaussian_map_marked_geo            Self;
@@ -327,35 +322,6 @@ protected:
   void destroy_renderers();
 
 private:
-  template <typename CoordArray>
-  class Cleaner_visitor : public boost::static_visitor<> {
-  private:
-    Spherical_gaussian_map_marked_geo* m_sgm_geo;
-    CoordArray m_coord_array;
-
-  public:
-    Cleaner_visitor(Spherical_gaussian_map_marked_geo* sgm_geo,
-                    CoordArray coord_array) :
-      m_sgm_geo(sgm_geo), m_coord_array(coord_array) {}
-
-    template <typename Indices>
-    void operator()(const Indices& indices)
-    {
-      Sgm_geo_initializer_visitor visitor;
-      Sgm_initializer sgm_initializer(*(m_sgm_geo->m_sgm));
-      sgm_initializer.set_marked_vertex_index(m_sgm_geo->m_marked_vertex_index);
-      sgm_initializer.set_marked_edge_index(m_sgm_geo->m_marked_edge_index);
-      sgm_initializer.set_marked_facet_index(m_sgm_geo->m_marked_facet_index);
-      sgm_initializer(m_coord_array->begin(), m_coord_array->end(),
-                      m_coord_array->size(),
-                      indices.begin(), indices.end(),
-                      m_sgm_geo->get_num_primitives(), &visitor);
-    }
-
-    /*! The operator() should never be invoked with flat indices. */
-    void operator()(const Flat_indices& indices) { SGAL_error(); }
-  };
-
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
 

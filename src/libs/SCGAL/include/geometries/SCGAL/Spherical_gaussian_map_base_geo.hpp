@@ -30,6 +30,7 @@
 #include <fstream>
 
 #include <CGAL/Cartesian.h>
+#include <CGAL/convex_hull_3.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector3f.hpp"
@@ -44,6 +45,8 @@
 #include "SCGAL/Arrangement_renderer.hpp"
 #include "SCGAL/Arrangement_on_sphere_renderers.hpp"
 #include "SCGAL/Arrangement_renderers.hpp"
+#include "SGAL/Coord_array_3d.hpp"
+#include "SGAL/Epec_coord_array_3d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -163,20 +166,48 @@ protected:
    * the vertices of the planar map
    */
   template <typename Sgm>
-  void update_facets(Sgm* sgm)
-  {
-    typename Sgm::Vertex_iterator vit;
-    for (vit = sgm->vertices_begin(); vit != sgm->vertices_end(); ++vit) {
-      // Vertices with boundary conditions may have degree 2. Skip them:
-      if (vit->degree() < 3) continue;
-      Vector3f normal = to_vector3f(vit->point());
-      normal.normalize();
-      vit->set_rendered_normal(normal);
-    }
-  }
+  void update_facets(Sgm* sgm);
 
-  /*! An adapter from a container of Spherical gaussian map geometry nodes to
-   * the a container of arrangements they hold.
+  /*! Compute the convex hull of the coordinates.
+   * \param[out] polyhedron The convex hull of the coordinates.
+   */
+  template <typename Polyhedron>
+  void convex_hull(Polyhedron& polyhedron);
+
+  /*! Initialize the gaussian map from the coordinate and indices arrays.
+   * \param[in] initializer
+   */
+  template <typename Initializer>
+  void init(Initializer& initializer);
+
+  /*! Initialize a gaussian map from a polyhedron.
+   * \param[in] polyhedron the input polyhedron.
+   * \param[in] initializer
+   * \todo The polyhedron should be const and the fields used therein should be
+   *       made property maps.
+   */
+  template <typename Polyhedron, typename Initializer>
+  void init_polyhedron(Polyhedron& polyhedron, Initializer& initializer);
+
+  /*! Initialize the gaussian map from the coordinate and indices arrays.
+   * \param[in] initializer
+   * \param[in] visitor
+   */
+  template <typename Initializer, typename Visitor>
+  void init(Initializer& initializer, Visitor& visitor);
+
+  /*! Initialize a gaussian map from a polyhedron.
+   * \param[in] polyhedron the input polyhedron.
+   * \param[in] initializer
+   * \param[in] visitor
+   * \todo The polyhedron should be const and the fields used therein should be
+   *       made property maps.
+   */
+  template <typename Polyhedron, typename Initializer, typename Visitor>
+  void init_polyhedron(Polyhedron& polyhedron, Initializer& initializer,
+                       Visitor& visitor);
+
+  /*!
    */
   template <typename Iterator, typename Sgm>
   class Sgm_iterator {
@@ -237,6 +268,68 @@ protected:
       Iterator& base = m_it;
       return &((*base)->get_sgm());
     }
+  };
+
+  /*
+   */
+  template <typename Initializer, typename CoordArray, typename Visitor = void>
+  class Cleaner_visitor : public boost::static_visitor<> {
+  private:
+    Initializer& m_initializer;
+    Visitor& m_visitor;
+    size_t m_num_primitives;
+    CoordArray m_coord_array;
+
+  public:
+    Cleaner_visitor(Initializer& initializer, Visitor& visitor,
+                    size_t num_primitives, CoordArray coord_array) :
+      m_initializer(initializer),
+      m_visitor(visitor),
+      m_num_primitives(num_primitives),
+      m_coord_array(coord_array)
+    {}
+
+    template <typename Indices>
+    void operator()(const Indices& indices)
+    {
+      m_initializer(m_coord_array->begin(), m_coord_array->end(),
+                    m_coord_array->size(), indices.begin(), indices.end(),
+                    m_num_primitives, &m_visitor);
+    }
+
+    /*! The operator() should never be invoked with flat indices. */
+    void operator()(const Flat_indices& indices) { SGAL_error(); }
+  };
+
+  /*
+   */
+  template <typename Initializer, typename CoordArray>
+  class Cleaner_visitor<Initializer, CoordArray, void> :
+    public boost::static_visitor<>
+  {
+  private:
+    Initializer& m_initializer;
+    size_t m_num_primitives;
+    CoordArray m_coord_array;
+
+  public:
+    Cleaner_visitor(Initializer& initializer,
+                    size_t num_primitives, CoordArray coord_array) :
+      m_initializer(initializer),
+      m_num_primitives(num_primitives),
+      m_coord_array(coord_array)
+    {}
+
+    template <typename Indices>
+    void operator()(const Indices& indices)
+    {
+      m_initializer(m_coord_array->begin(), m_coord_array->end(),
+                    m_coord_array->size(), indices.begin(), indices.end(),
+                    m_num_primitives);
+    }
+
+    /*! The operator() should never be invoked with flat indices. */
+    void operator()(const Flat_indices& indices) { SGAL_error(); }
   };
 
   typedef Spherical_gaussian_map_base_geo       Self;
@@ -339,6 +432,9 @@ protected:
 
   /*! The angle of a single line strip of a spherical arc. */
   Float m_aos_delta_angle;
+
+  /*! Indicates whether to compute the convex hull. */
+  Boolean m_convex_hull;
 
   /*! Indicates whether (sphearical) Gaussian map must be cleaned. */
   Boolean m_dirty_sgm;
@@ -501,6 +597,15 @@ public:
    */
   virtual void draw_aos_edges(Draw_action* /* action */) {}
 
+  /*! Determine whether to compute the convex hull of the coordinate set.
+   */
+  Boolean is_convex_hull() const;
+
+  /*! Set the flag that indicates whether to compute the convex hull
+   * of the coordinate set.
+   */
+  void set_convex_hull(Boolean flag);
+
   /*! Obtain the aos surface color. */
   const Vector3f& get_aos_surface_color(void) const;
 
@@ -655,6 +760,141 @@ inline Float Spherical_gaussian_map_base_geo::get_aos_edge_line_width() const
 inline const Vector3f&
 Spherical_gaussian_map_base_geo::get_aos_surface_color(void) const
 { return m_aos_surface_color; }
+
+//! \brief determines whether to compute the convex hull of the coordinate set.
+inline Boolean Spherical_gaussian_map_base_geo::is_convex_hull() const
+{ return m_convex_hull; }
+
+/*! \brief computes the planes and the normals of the aos facets and store them
+ * at the vertices of the planar map
+ */
+template <typename Sgm>
+void Spherical_gaussian_map_base_geo::update_facets(Sgm* sgm)
+{
+  for (auto vit = sgm->vertices_begin(); vit != sgm->vertices_end(); ++vit) {
+    // Vertices with boundary conditions may have degree 2. Skip them:
+    if (vit->degree() < 3) continue;
+    Vector3f normal = to_vector3f(vit->point());
+    normal.normalize();
+    vit->set_rendered_normal(normal);
+  }
+}
+
+//! \brief computes the convex hull of the coordinates.
+template <typename Polyhedron>
+void Spherical_gaussian_map_base_geo::convex_hull(Polyhedron& polyhedron)
+{
+  auto exact_coords =
+    boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
+  if (exact_coords) {
+    if (exact_coords->size() > 0) {
+      CGAL::convex_hull_3(exact_coords->begin(), exact_coords->end(),
+                          polyhedron);
+
+    }
+    return;
+  }
+
+  auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  if (coords) {
+    if (coords->size() > 0) {
+      std::vector<Epec_point_3> points;
+      points.resize(coords->size());
+      std::transform(coords->begin(), coords->end(), points.begin(),
+                     [](const Vector3f& vec)
+                     {return Epec_point_3(vec[0], vec[1], vec[2]);});
+      CGAL::convex_hull_3(points.begin(), points.end(), polyhedron);
+    }
+    return;
+  }
+
+  SGAL_error();
+}
+
+//! \brief initializes the gaussian map from the coordinate and indices arrays.
+template <typename Initializer>
+void Spherical_gaussian_map_base_geo::init(Initializer& initializer)
+{
+  if (!m_coord_array) return;
+
+  auto exact_coords =
+    boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
+  if (exact_coords) {
+    if (!exact_coords->empty()) {
+      typedef boost::shared_ptr<Epec_coord_array_3d>
+        Shared_exact_coord_array_3d;
+      Cleaner_visitor<Initializer, Shared_exact_coord_array_3d>
+        cleaner_visitor(initializer, get_num_primitives(), exact_coords);
+      const auto& indices = get_facet_coord_indices();
+      boost::apply_visitor(cleaner_visitor, indices);
+    }
+    return;
+  }
+
+  auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  if (coords) {
+    if (!coords->empty()) {
+      typedef boost::shared_ptr<Coord_array_3d>   Shared_coord_array_3d;
+      Cleaner_visitor<Initializer, Shared_coord_array_3d>
+        cleaner_visitor(initializer, get_num_primitives(), coords);
+      const auto& indices = get_facet_coord_indices();
+      boost::apply_visitor(cleaner_visitor, indices);
+    }
+    return;
+  }
+
+  SGAL_error();
+}
+
+//! \brief initializes a gaussian map from a polyhedron.
+template <typename Polyhedron, typename Initializer>
+void Spherical_gaussian_map_base_geo::init_polyhedron(Polyhedron& polyhedron,
+                                                      Initializer& initializer)
+{ initializer(polyhedron); }
+
+//! \brief initializes the gaussian map from the coordinate and indices arrays.
+template <typename Initializer, typename Visitor>
+void Spherical_gaussian_map_base_geo::
+init(Initializer& initializer, Visitor& visitor)
+{
+  if (!m_coord_array) return;
+
+  auto exact_coords =
+    boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
+  if (exact_coords) {
+    if (!exact_coords->empty()) {
+      typedef boost::shared_ptr<Epec_coord_array_3d>
+        Shared_exact_coord_array_3d;
+      Cleaner_visitor<Initializer, Shared_exact_coord_array_3d, Visitor>
+        cleaner_visitor(initializer, visitor, get_num_primitives(),
+                        exact_coords);
+      const auto& indices = get_facet_coord_indices();
+      boost::apply_visitor(cleaner_visitor, indices);
+    }
+    return;
+  }
+
+  auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  if (coords) {
+    if (!coords->empty()) {
+      typedef boost::shared_ptr<Coord_array_3d>   Shared_coord_array_3d;
+      Cleaner_visitor<Initializer, Shared_coord_array_3d, Visitor>
+        cleaner_visitor(initializer, visitor, get_num_primitives(), coords);
+      const auto& indices = get_facet_coord_indices();
+      boost::apply_visitor(cleaner_visitor, indices);
+    }
+    return;
+  }
+
+  SGAL_error();
+}
+
+//! \brief initializes a gaussian map from a polyhedron.
+template <typename Polyhedron, typename Initializer, typename Visitor>
+void Spherical_gaussian_map_base_geo::init_polyhedron(Polyhedron& polyhedron,
+                                                      Initializer& initializer,
+                                                      Visitor& visitor)
+{ initializer(polyhedron, &visitor); }
 
 SGAL_END_NAMESPACE
 

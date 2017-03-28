@@ -62,6 +62,10 @@ public:
   typedef boost::shared_ptr<Spherical_gaussian_map_geo>
     Shared_spherical_gaussian_map_geo;
 
+  typedef CGAL::Arr_polyhedral_sgm_polyhedron_3<Spherical_gaussian_map,
+                                                Epec_kernel>
+                                                        Polyhedron;
+
   /*! Fields */
   enum {
     FIRST = Spherical_gaussian_map_base_geo::LAST - 1,
@@ -92,31 +96,6 @@ protected:
   void destroy_renderers();
 
 private:
-  template <typename CoordArray>
-  class Cleaner_visitor : public boost::static_visitor<> {
-  private:
-    Spherical_gaussian_map_geo* m_sgm_geo;
-    CoordArray m_coord_array;
-
-  public:
-    Cleaner_visitor(Spherical_gaussian_map_geo* sgm_geo,
-                    CoordArray coord_array) :
-      m_sgm_geo(sgm_geo), m_coord_array(coord_array) {}
-
-    template <typename Indices>
-    void operator()(const Indices& indices)
-    {
-      Sgm_initializer sgm_initializer(*(m_sgm_geo->m_sgm));
-      sgm_initializer(m_coord_array->begin(), m_coord_array->end(),
-                      m_coord_array->size(),
-                      indices.begin(), indices.end(),
-                      m_sgm_geo->get_num_primitives());
-    }
-
-    /*! The operator() should never be invoked with flat indices. */
-    void operator()(const Flat_indices& indices) { SGAL_error(); }
-  };
-
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
 

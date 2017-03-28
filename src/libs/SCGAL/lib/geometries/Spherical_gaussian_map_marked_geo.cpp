@@ -56,11 +56,12 @@
 #include "SGAL/Context.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Gl_wrapper.hpp"
-#include "SGAL/Epec_coord_array_3d.hpp"
 #include "SGAL/Utilities.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Spherical_gaussian_map_marked_geo.hpp"
+#include "SCGAL/merge_coplanar_facets.hpp"
+#include "SCGAL/compute_planes.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -193,47 +194,66 @@ void Spherical_gaussian_map_marked_geo::clean_sgm()
     SGAL_assertion(m_sgm);
     m_owned_sgm = true;
   }
-  if (m_minkowski_sum) {
-    clock_t start_time = clock();
-    Sgm_node_iter ni = m_sgm_nodes.begin();
-    Shared_spherical_gaussian_map_marked_geo geo1 = *ni++;
-    Shared_spherical_gaussian_map_marked_geo geo2 = *ni;
-    m_sgm->minkowski_sum(*(geo1->get_sgm()), *(geo2->get_sgm()));
-    clock_t end_time = clock();
-    m_time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
-  }
-  else if (m_coord_array) {
-    clock_t start_time = clock();
-    auto exact_coord_array =
-      boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
-    if (exact_coord_array) {
-      if (!exact_coord_array->empty()) {
-        typedef boost::shared_ptr<Epec_coord_array_3d>
-          Shared_exact_coord_array_3d;
-        Cleaner_visitor<Shared_exact_coord_array_3d>
-          cleaner_visitor(this, exact_coord_array);
-        const auto& indices = get_facet_coord_indices();
-        boost::apply_visitor(cleaner_visitor, indices);
-      }
-    }
-    else {
-      auto coord_array =
-        boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-      if (coord_array) {
-        if (!coord_array->empty()) {
-          typedef boost::shared_ptr<Coord_array_3d>     Shared_coord_array_3d;
-          Cleaner_visitor<Shared_coord_array_3d>
-            cleaner_visitor(this, coord_array);
-          const auto& indices = get_facet_coord_indices();
-          boost::apply_visitor(cleaner_visitor, indices);
-        }
-      }
-      else SGAL_error();
-    }
 
-    clock_t end_time = clock();
-    m_time = static_cast<Float>(end_time - start_time) / CLOCKS_PER_SEC;
+  clock_t start_time = clock();
+  if (is_convex_hull()) {
+    Polyhedron polyhedron;
+    convex_hull(polyhedron);
+    typedef boost::is_same<Polyhedron::Plane_3, Epec_plane_3>
+      Polyhedron_has_plane;
+
+    //! \todo Use an existing kernel.
+    Epec_kernel kernel;
+
+    compute_planes(kernel, polyhedron, Polyhedron_has_plane());
+    merge_coplanar_facets(kernel, polyhedron, Polyhedron_has_plane());
+
+    CGAL::Arr_polyhedral_sgm_initializer<Sgm, Polyhedron,
+                                         Sgm_geo_initializer_visitor>
+      initializer(*m_sgm);
+    Sgm_geo_initializer_visitor visitor;
+    init_polyhedron(polyhedron, initializer, visitor);
   }
+  else if (m_minkowski_sum) {
+    auto ni = m_sgm_nodes.begin();
+    auto geo1 = *ni++;
+    auto geo2 = *ni;
+    m_sgm->minkowski_sum(*(geo1->get_sgm()), *(geo2->get_sgm()));
+  }
+  // else if (m_polyhedron) {
+  //   /*! This is a suspicious option, cause an external object, namely the
+  //    * polyhedron, is altered.
+  //    */
+  //   typedef boost::is_same<Polyhedron::Plane_3, Epec_plane_3>
+  //     Polyhedron_has_plane;
+
+  //   //! \todo Use an existing kernel.
+  //   Epec_kernel kernel;
+
+  //   compute_planes(kernel, *m_polyhedron, Polyhedron_has_plane());
+  //   merge_coplanar_facets(kernel, *m_polyhedron, Polyhedron_has_plane());
+  //   CGAL::Arr_polyhedral_sgm_initializer<Sgm, Polyhedron,
+  //                                        Sgm_geo_initializer_visitor>
+  //     initializer(*m_sgm);
+  //   initializer.set_marked_vertex_index(m_marked_vertex_index);
+  //   initializer.set_marked_edge_index(m_marked_edge_index);
+  //   initializer.set_marked_facet_index(m_marked_facet_index);
+  //   Sgm_geo_initializer_visitor visitor;
+  //   init_polyhedron(*m_polyhedron, initializer, visitor);
+  // }
+  else {
+    CGAL::Arr_polyhedral_sgm_initializer<Sgm, Polyhedron,
+                                         Sgm_geo_initializer_visitor>
+      initializer(*m_sgm);
+    initializer.set_marked_vertex_index(m_marked_vertex_index);
+    initializer.set_marked_edge_index(m_marked_edge_index);
+    initializer.set_marked_facet_index(m_marked_facet_index);
+    Sgm_geo_initializer_visitor visitor;
+    init(initializer, visitor);
+  }
+  clock_t end_time = clock();
+  m_time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
+
   update_facets();
 
 #if 0
@@ -244,9 +264,9 @@ void Spherical_gaussian_map_marked_geo::clean_sgm()
   m_sgm.process_boundary_faces(fi, Face_set_marked_op());
 #endif
 
-  Uint num_vertices = m_sgm->number_of_vertices();
-  Uint num_edges = m_sgm->number_of_edges();
-  Uint num_facets = m_sgm->number_of_facets();
+  auto num_vertices = m_sgm->number_of_vertices();
+  auto num_edges = m_sgm->number_of_edges();
+  auto num_facets = m_sgm->number_of_facets();
   if (m_marked_vertex_index >= num_vertices)
     m_marked_vertex_index = num_vertices;
   if (m_marked_edge_index >= num_edges) m_marked_edge_index = num_edges;
@@ -558,12 +578,12 @@ draw_primal_marked_vertex(Draw_action* action)
   Sphere vertex_geom;
   vertex_geom.set_radius(m_marked_vertex_radius);
 
-  Context* context = action->get_context();
+  auto* context = action->get_context();
 
   for (auto fi = m_sgm->faces_begin(); fi != m_sgm->faces_end(); ++fi) {
     if (!fi->marked()) continue;
 
-    Vector3f vec = to_vector3f(fi->point());
+    auto vec = to_vector3f(fi->point());
 
     glPushMatrix();
     glTranslatef(vec[0], vec[1], vec[2]);
@@ -588,8 +608,8 @@ draw_primal_marked_edge(Draw_action* action)
   for (auto hi = m_sgm->halfedges_begin(); hi != m_sgm->halfedges_end(); ++hi) {
     if (!hi->marked()) continue;
 
-    Sgm_face_const_handle face1 = hi->face();
-    Sgm_face_const_handle face2 = hi->twin()->face();
+    auto face1 = hi->face();
+    auto face2 = hi->twin()->face();
 
     Vector3f vec1 = to_vector3f(face1->point());
     Vector3f vec2 = to_vector3f(face2->point());
@@ -803,7 +823,9 @@ void Spherical_gaussian_map_marked_geo::draw_aos_vertices(Draw_action* action)
     if (m_draw_marked_facet && vi->marked()) continue;
     Vector3f center = to_vector3f(vi->point());
     center.normalize();
-    draw_aos_vertex(action, center);
+    if (vi->point().is_no_boundary() || (vi->degree() > 2))
+      draw_aos_vertex(action, center);
+    else draw_aos_boundary_vertex(action, center);
   }
 }
 
@@ -813,9 +835,9 @@ void Spherical_gaussian_map_marked_geo::draw_aos_edges(Draw_action* action)
   for (auto hei = m_sgm->edges_begin(); hei != m_sgm->edges_end(); ++hei) {
     if (get_draw_marked_edge() && hei->marked()) continue;
     const X_monotone_curve_2& curve = hei->curve();
-    Vector3f src = to_vector3f(curve.source());
-    Vector3f trg = to_vector3f(curve.target());
-    Vector3f normal = to_vector3f(curve.normal());
+    auto src = to_vector3f(curve.source());
+    auto trg = to_vector3f(curve.target());
+    auto normal = to_vector3f(curve.normal());
     src.normalize();
     trg.normalize();
     draw_aos_edge(action, src, trg, normal);
@@ -884,10 +906,10 @@ operator()(Draw_action* action)
   {
     if (m_geo.get_draw_marked_edge() && hei->marked()) continue;
 
-    const X_monotone_curve_2& curve = hei->curve();
-    Vector3f src = to_vector3f(curve.source());
-    Vector3f trg = to_vector3f(curve.target());
-    Vector3f normal = to_vector3f(curve.normal());
+    const auto& curve = hei->curve();
+    auto src = to_vector3f(curve.source());
+    auto trg = to_vector3f(curve.target());
+    auto normal = to_vector3f(curve.normal());
     src.normalize();
     trg.normalize();
     if (m_geo.m_minkowski_sum) {
@@ -916,10 +938,10 @@ operator()(Draw_action* action)
        ++hei)
   {
     if (!hei->marked()) continue;
-    const X_monotone_curve_2& curve = hei->curve();
-    Vector3f src = to_vector3f(curve.source());
-    Vector3f trg = to_vector3f(curve.target());
-    Vector3f normal = to_vector3f(curve.normal());
+    const auto& curve = hei->curve();
+    auto src = to_vector3f(curve.source());
+    auto trg = to_vector3f(curve.target());
+    auto normal = to_vector3f(curve.normal());
     src.normalize();
     trg.normalize();
     m_geo.draw_aos_marked_edge(action, src, trg, normal);

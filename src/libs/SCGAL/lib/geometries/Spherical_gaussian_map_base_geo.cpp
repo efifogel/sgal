@@ -136,6 +136,7 @@ Spherical_gaussian_map_base_geo(Boolean proto) :
   m_aos_edge_radius(s_def_aos_edge_radius),
   m_aos_edge_line_width(s_def_aos_edge_line_width),
   m_aos_delta_angle(s_def_aos_delta_angle),
+  m_convex_hull(false),
   m_dirty_sgm(true),
   m_renderer_dirty(true),
   m_surface_renderer(nullptr),
@@ -350,6 +351,11 @@ void Spherical_gaussian_map_base_geo::set_attributes(Element* elem)
     if (name == "aosBoundaryVertexColor") {
       Vector3f col(value);
       m_aos_boundary_vertex_color = col;
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "convexHull") {
+      set_convex_hull(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -620,6 +626,16 @@ void Spherical_gaussian_map_base_geo::draw(Draw_action* action)
   if (is_sgm_empty()) return;
 
   draw_mesh(action);
+}
+
+/*! \brief Sets the flag that indicates whether to compute the convex hull
+ * of the coordinate set.
+ */
+void Spherical_gaussian_map_base_geo::set_convex_hull(Boolean flag)
+{
+  if (m_convex_hull == flag) return;
+  m_convex_hull = flag;
+  clear_sgm();
 }
 
 SGAL_END_NAMESPACE

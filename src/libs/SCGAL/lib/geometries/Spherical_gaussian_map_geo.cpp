@@ -57,6 +57,8 @@
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Spherical_gaussian_map_geo.hpp"
+#include "SCGAL/merge_coplanar_facets.hpp"
+#include "SCGAL/compute_planes.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -111,47 +113,51 @@ void Spherical_gaussian_map_geo::clean_sgm()
     SGAL_assertion(m_sgm);
     m_owned_sgm = true;
   }
-  if (m_minkowski_sum) {
-    clock_t start_time = clock();
-    Sgm_node_iter ni = m_sgm_nodes.begin();
-    Shared_spherical_gaussian_map_geo geo1 = *ni++;
-    Shared_spherical_gaussian_map_geo geo2 = *ni;
-    m_sgm->minkowski_sum(*(geo1->get_sgm()), *(geo2->get_sgm()));
-    clock_t end_time = clock();
-    m_time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
-  }
-  else if (m_coord_array) {
-    clock_t start_time = clock();
-    auto exact_coord_array =
-      boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
-    if (exact_coord_array) {
-      if (!exact_coord_array->empty()) {
-        typedef boost::shared_ptr<Epec_coord_array_3d>
-          Shared_exact_coord_array_3d;
-        Cleaner_visitor<Shared_exact_coord_array_3d>
-          cleaner_visitor(this, exact_coord_array);
-        const auto& indices = get_facet_coord_indices();
-        boost::apply_visitor(cleaner_visitor, indices);
-      }
-    }
-    else {
-      auto coord_array =
-        boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-      if (coord_array) {
-        if (!coord_array->empty()) {
-          typedef boost::shared_ptr<Coord_array_3d>     Shared_coord_array_3d;
-          Cleaner_visitor<Shared_coord_array_3d>
-            cleaner_visitor(this, coord_array);
-          const auto& indices = get_facet_coord_indices();
-          boost::apply_visitor(cleaner_visitor, indices);
-        }
-      }
-      else SGAL_error();
-    }
 
-    clock_t end_time = clock();
-    m_time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
+  auto start_time = clock();
+  if (is_convex_hull()) {
+    Polyhedron polyhedron;
+    convex_hull(polyhedron);
+    typedef boost::is_same<Polyhedron::Plane_3, Epec_plane_3>
+      Polyhedron_has_plane;
+
+    //! \todo Use an existing kernel.
+    Epec_kernel kernel;
+
+    compute_planes(kernel, polyhedron, Polyhedron_has_plane());
+    merge_coplanar_facets(kernel, polyhedron, Polyhedron_has_plane());
+
+    Sgm_initializer initializer(*m_sgm);
+    init_polyhedron(polyhedron, initializer);
   }
+  else if (m_minkowski_sum) {
+    auto ni = m_sgm_nodes.begin();
+    auto geo1 = *ni++;
+    auto geo2 = *ni;
+    m_sgm->minkowski_sum(*(geo1->get_sgm()), *(geo2->get_sgm()));
+  }
+  // else if (m_polyhedron) {
+  //   /*! This is a suspicious option, cause an external object, namely the
+  //    * polyhedron, is altered.
+  //    */
+  //   typedef boost::is_same<Polyhedron::Plane_3, Epec_plane_3>
+  //     Polyhedron_has_plane;
+
+  //   //! \todo Use an existing kernel.
+  //   Epec_kernel kernel;
+
+  //   compute_planes(kernel, *m_polyhedron, Polyhedron_has_plane());
+  //   merge_coplanar_facets(kernel, *m_polyhedron, Polyhedron_has_plane());
+  //   Sgm_initializer initializer(*m_sgm);
+  //   init_polyhedron(*m_polyhedron, initializer);
+  // }
+  else {
+    Sgm_initializer initializer(*m_sgm);
+    init(initializer);
+  }
+
+  clock_t end_time = clock();
+  m_time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
   update_facets();
 
   m_dirty_sgm = false;
@@ -312,7 +318,9 @@ void Spherical_gaussian_map_geo::print_stat()
   if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
   if (m_dirty_sgm) clean_sgm();
 
-  if (m_minkowski_sum)
+  if (m_convex_hull)
+    std::cout << "Convex hull took " << m_time << " seconds.\n";
+  else if (m_minkowski_sum)
     std::cout << "Minkowski sum took " << m_time << " seconds.\n";
   else
     std::cout << "Construction took " << m_time << " seconds." << std::endl;
@@ -386,7 +394,8 @@ void Spherical_gaussian_map_geo::draw_aos_vertices(Draw_action* action)
   for (vi = m_sgm->vertices_begin(); vi != m_sgm->vertices_end(); ++vi) {
     Vector3f center = to_vector3f(vi->point());
     center.normalize();
-    if (vi->point().is_no_boundary()) draw_aos_vertex(action, center);
+    if (vi->point().is_no_boundary() || (vi->degree() > 2))
+      draw_aos_vertex(action, center);
     else draw_aos_boundary_vertex(action, center);
   }
 }

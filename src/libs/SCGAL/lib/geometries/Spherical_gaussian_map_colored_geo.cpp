@@ -54,7 +54,6 @@
 #include "SGAL/Context.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Gl_wrapper.hpp"
-#include "SGAL/Epec_coord_array_3d.hpp"
 
 #include "SCGAL/Spherical_gaussian_map_colored_geo.hpp"
 #include "SCGAL/Sgm_color_overlay_traits.hpp"
@@ -117,74 +116,74 @@ void Spherical_gaussian_map_colored_geo::clean_sgm()
     SGAL_assertion(m_sgm);
     m_owned_sgm = true;
   }
-  if (m_minkowski_sum) {
-    clock_t start_time = clock();
-    Sgm_node_iter ni = m_sgm_nodes.begin();
-    Shared_spherical_gaussian_map_colored_geo geo1 = *ni++;
-    Shared_spherical_gaussian_map_colored_geo geo2 = *ni;
-    Sgm_color_overlay_traits<Sgm> sgm_overlay;
-    m_sgm->minkowski_sum(*(geo1->get_sgm()), *(geo2->get_sgm()), sgm_overlay);
-    clock_t end_time = clock();
-    m_time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
-  }
-  else if (m_polyhedron) {
+
+  auto start_time = clock();
+  if (is_convex_hull()) {
+    Polyhedron polyhedron;
+    convex_hull(polyhedron);
     typedef boost::is_same<Polyhedron::Plane_3, Epec_plane_3>
       Polyhedron_has_plane;
 
-    // TBD: Use an existing kernel.
+    //! \todo Use an existing kernel.
+    Epec_kernel kernel;
+
+    compute_planes(kernel, polyhedron, Polyhedron_has_plane());
+    merge_coplanar_facets(kernel, polyhedron, Polyhedron_has_plane());
+
+    CGAL::Arr_polyhedral_sgm_initializer<Sgm, Polyhedron,
+                                         Sgm_geo_initializer_visitor>
+      initializer(*m_sgm);
+    Sgm_geo_initializer_visitor visitor;
+    init_polyhedron(polyhedron, initializer, visitor);
+    set_colors();
+  }
+  else if (m_minkowski_sum) {
+    auto ni = m_sgm_nodes.begin();
+    auto geo1 = *ni++;
+    auto geo2 = *ni;
+    Sgm_color_overlay_traits<Sgm> sgm_overlay;
+    m_sgm->minkowski_sum(*(geo1->get_sgm()), *(geo2->get_sgm()), sgm_overlay);
+  }
+  else if (m_polyhedron) {
+    /*! This is a suspicious option, cause an external object, namely the
+     * polyhedron, is altered.
+     */
+    typedef boost::is_same<Polyhedron::Plane_3, Epec_plane_3>
+      Polyhedron_has_plane;
+
+    //! \todo Use an existing kernel.
     Epec_kernel kernel;
 
     compute_planes(kernel, *m_polyhedron, Polyhedron_has_plane());
     merge_coplanar_facets(kernel, *m_polyhedron, Polyhedron_has_plane());
-    clock_t start_time = clock();
-    Sgm_initializer sgm_initializer(*m_sgm);
+    CGAL::Arr_polyhedral_sgm_initializer<Sgm, Polyhedron,
+                                         Sgm_geo_initializer_visitor>
+      initializer(*m_sgm);
     Sgm_geo_initializer_visitor visitor;
-    sgm_initializer(*m_polyhedron, &visitor);
-    Sgm_halfedge_iterator hei;
-    for (hei = m_sgm->halfedges_begin(); hei != m_sgm->halfedges_end(); ++hei)
-      hei->set_color(get_aos_edge_color());
-    clock_t end_time = clock();
-    m_time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
+    init_polyhedron(*m_polyhedron, initializer, visitor);
+    set_colors();
   }
   else {
-    clock_t start_time = clock();
-    if (m_coord_array) {
-      auto exact_coord_array =
-        boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
-      if (exact_coord_array) {
-        if (!exact_coord_array->empty()) {
-          typedef boost::shared_ptr<Epec_coord_array_3d>
-            Shared_exact_coord_array_3d;
-          Cleaner_visitor<Shared_exact_coord_array_3d>
-            cleaner_visitor(this, exact_coord_array);
-          const auto& indices = get_facet_coord_indices();
-          boost::apply_visitor(cleaner_visitor, indices);
-        }
-      }
-      else {
-        boost::shared_ptr<Coord_array_3d> coord_array =
-          boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-        if (coord_array) {
-          if (!coord_array->empty()) {
-            typedef boost::shared_ptr<Coord_array_3d>   Shared_coord_array_3d;
-            Cleaner_visitor<Shared_coord_array_3d>
-              cleaner_visitor(this, coord_array);
-            const auto& indices = get_facet_coord_indices();
-            boost::apply_visitor(cleaner_visitor, indices);
-          }
-        }
-        else SGAL_error();
-      }
-    }
-    Sgm_halfedge_iterator hei;
-    for (hei = m_sgm->halfedges_begin(); hei != m_sgm->halfedges_end(); ++hei)
-      hei->set_color(get_aos_edge_color());
-    clock_t end_time = clock();
-    m_time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
+    CGAL::Arr_polyhedral_sgm_initializer<Sgm, Polyhedron,
+                                         Sgm_geo_initializer_visitor>
+      initializer(*m_sgm);
+    Sgm_geo_initializer_visitor visitor;
+    init(initializer, visitor);
+    set_colors();
   }
+  clock_t end_time = clock();
+  m_time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
+
   update_facets();
 
   m_dirty_sgm = false;
+}
+
+//! \brief sets colors of all edges.
+void Spherical_gaussian_map_colored_geo::set_colors()
+{
+  for (auto it = m_sgm->halfedges_begin(); it != m_sgm->halfedges_end(); ++it)
+    it->set_color(get_aos_edge_color());
 }
 
 //! \brief clears the internal representation and auxiliary data structures.
@@ -204,16 +203,16 @@ void Spherical_gaussian_map_colored_geo::set_attributes(Element* elem)
   typedef Element::Cont_iter              Cont_iter;
 
   // Sets the multi-container attributes of this node:
-  for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
-       mcai != elem->multi_cont_attrs_end(); mcai++)
+  for (auto mcai = elem->multi_cont_attrs_begin();
+       mcai != elem->multi_cont_attrs_end(); ++mcai)
   {
-    const std::string& name = elem->get_name(mcai);
-    Cont_list& cont_list = elem->get_value(mcai);
+    const auto& name = elem->get_name(mcai);
+    auto& cont_list = elem->get_value(mcai);
     if (name == "geometries") {
       set_minkowski_sum(true);
-      for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
-        Element::Shared_container cont = *ci;
-        Shared_spherical_gaussian_map_colored_geo sgm =
+      for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++) {
+        auto cont = *ci;
+        auto sgm =
           boost::dynamic_pointer_cast<Spherical_gaussian_map_colored_geo>(cont);
         if (sgm) insert_sgm(sgm);
         else {
@@ -298,19 +297,18 @@ void Spherical_gaussian_map_colored_geo::draw_primal(Draw_action* action)
 
   glFrontFace((is_ccw()) ? GL_CW : GL_CCW);
 
-  Sgm_vertex_const_iterator vit;
-  for (vit = m_sgm->vertices_begin(); vit != m_sgm->vertices_end(); ++vit) {
+  for (auto vit = m_sgm->vertices_begin(); vit != m_sgm->vertices_end(); ++vit) {
     // Vertices with boundary conditions may have degree 2. Skip them:
     if (vit->degree() < 3) continue;
 
     glBegin(GL_POLYGON);
-    const Vector3f& normal = vit->get_rendered_normal();
+    const auto& normal = vit->get_rendered_normal();
     glNormal3fv((float*)&normal);
 
-    Sgm_halfedge_around_vertex_const_circulator hec(vit->incident_halfedges());
-    Sgm_halfedge_around_vertex_const_circulator begin_hec = hec;
+    auto hec(vit->incident_halfedges());
+    auto begin_hec = hec;
     do {
-      Vector3f vec = to_vector3f((*hec).face()->point());
+      auto vec = to_vector3f((*hec).face()->point());
       glVertex3fv((float*)&vec);
       ++hec;
     } while (hec != begin_hec);
@@ -323,16 +321,15 @@ void Spherical_gaussian_map_colored_geo::draw_primal(Draw_action* action)
 //! \brief
 void Spherical_gaussian_map_colored_geo::isect_primary()
 {
-  Sgm_vertex_const_iterator vit;
-  for (vit = m_sgm->vertices_begin(); vit != m_sgm->vertices_end(); ++vit) {
+  for (auto vit = m_sgm->vertices_begin(); vit != m_sgm->vertices_end(); ++vit) {
     // Vertices with boundary conditions may have degree 2. Skip them:
     if (vit->degree() < 3) continue;
 
     glBegin(GL_POLYGON);
-    Sgm_halfedge_around_vertex_const_circulator hec(vit->incident_halfedges());
-    Sgm_halfedge_around_vertex_const_circulator begin_hec = hec;
+    auto hec(vit->incident_halfedges());
+    auto begin_hec = hec;
     do {
-      Vector3f vec = to_vector3f((*hec).face()->point());
+      auto vec = to_vector3f((*hec).face()->point());
       glVertex3fv((float*)&vec);
       ++hec;
     } while (hec != begin_hec);
@@ -347,7 +344,9 @@ void Spherical_gaussian_map_colored_geo::print_stat()
   if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
   if (m_dirty_sgm) clean_sgm();
 
-  if (m_minkowski_sum)
+  if (m_convex_hull)
+    std::cout << "Convex hull took " << m_time << " seconds.\n";
+  else if (m_minkowski_sum)
     std::cout << "Minkowski sum took " << m_time << " seconds.\n";
   else
     std::cout << "Construction took " << m_time << " seconds." << std::endl;
@@ -357,7 +356,7 @@ void Spherical_gaussian_map_colored_geo::print_stat()
 //! \brief draws the arrangement on sphere opaque.
 void Spherical_gaussian_map_colored_geo::draw_aos_opaque(Draw_action* action)
 {
-  Context* context = action->get_context();
+  auto* context = action->get_context();
   context->draw_cull_face(Gfx::BACK_CULL);
   context->draw_material_mode_enable(Gfx::COLOR_MATERIAL);
 
@@ -419,23 +418,23 @@ void Spherical_gaussian_map_colored_geo::draw_aos_opaque(Draw_action* action)
 //! \brief draws the arrangement vertices.
 void Spherical_gaussian_map_colored_geo::draw_aos_vertices(Draw_action* action)
 {
-  Sgm_vertex_const_iterator vi;
-  for (vi = m_sgm->vertices_begin(); vi != m_sgm->vertices_end(); ++vi) {
+  for (auto vi = m_sgm->vertices_begin(); vi != m_sgm->vertices_end(); ++vi) {
     Vector3f center = to_vector3f(vi->point());
     center.normalize();
-    draw_aos_vertex(action, center);
+    if (vi->point().is_no_boundary() || (vi->degree() > 2))
+      draw_aos_vertex(action, center);
+    else draw_aos_boundary_vertex(action, center);
   }
 }
 
 //! \brief draws the arrangement vertices.
 void Spherical_gaussian_map_colored_geo::draw_aos_edges(Draw_action* action)
 {
-  Sgm_edge_const_iterator hei;
-  for (hei = m_sgm->edges_begin(); hei != m_sgm->edges_end(); ++hei) {
-    const X_monotone_curve_2& curve = hei->curve();
-    Vector3f src = to_vector3f(curve.source());
-    Vector3f trg = to_vector3f(curve.target());
-    Vector3f normal = to_vector3f(curve.normal());
+  for (auto hei = m_sgm->edges_begin(); hei != m_sgm->edges_end(); ++hei) {
+    const auto& curve = hei->curve();
+    auto src = to_vector3f(curve.source());
+    auto trg = to_vector3f(curve.target());
+    auto normal = to_vector3f(curve.normal());
     src.normalize();
     trg.normalize();
     draw_aos_edge(action, src, trg, normal);
@@ -446,13 +445,13 @@ void Spherical_gaussian_map_colored_geo::draw_aos_edges(Draw_action* action)
 void Spherical_gaussian_map_colored_geo::Colored_edges_renderer::
 operator()(Draw_action* action)
 {
-  Sgm_edge_const_iterator hei;
-  for (hei = m_geo.m_sgm->edges_begin(); hei != m_geo.m_sgm->edges_end(); ++hei)
+  for (auto hei = m_geo.m_sgm->edges_begin(); hei != m_geo.m_sgm->edges_end();
+       ++hei)
   {
-    const X_monotone_curve_2& curve = hei->curve();
-    Vector3f src = to_vector3f(curve.source());
-    Vector3f trg = to_vector3f(curve.target());
-    Vector3f normal = to_vector3f(curve.normal());
+    const auto& curve = hei->curve();
+    auto src = to_vector3f(curve.source());
+    auto trg = to_vector3f(curve.target());
+    auto normal = to_vector3f(curve.normal());
     src.normalize();
     trg.normalize();
     const Vector3f& color = hei->color();
