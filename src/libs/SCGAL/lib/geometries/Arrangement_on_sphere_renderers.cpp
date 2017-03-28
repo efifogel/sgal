@@ -184,9 +184,12 @@ void draw_strip_edge_on_sphere(Draw_action* action,
     rot.make(source, target);
   auto& axis = rot.get_axis();
 
-  if ((CGAL::sign(normal[0]) != CGAL::sign(axis[0])) ||
-      (CGAL::sign(normal[1]) != CGAL::sign(axis[1])) ||
-      (CGAL::sign(normal[2]) != CGAL::sign(axis[2])))
+  if (((abs(normal[0]) > SGAL_EPSILON) &&
+       (CGAL::sign(normal[0]) != CGAL::sign(axis[0]))) ||
+      ((abs(normal[1]) > SGAL_EPSILON) &&
+       (CGAL::sign(normal[1]) != CGAL::sign(axis[1]))) ||
+      ((abs(normal[2]) > SGAL_EPSILON) &&
+       (CGAL::sign(normal[2]) != CGAL::sign(axis[2]))))
   {
     axis.scale(-1.0f);
     rot.set_axis(axis);
