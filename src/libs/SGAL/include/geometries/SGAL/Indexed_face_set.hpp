@@ -328,8 +328,7 @@ public:
    */
   Polyhedron_type get_polyhedron_type() const;
 
-  /*! Obtain the flag that indicates whether to compute the convex hull
-   * of the coordinate set.
+  /*! Determine whether to compute the convex hull of the coordinate set.
    */
   Boolean is_convex_hull() const;
 
@@ -774,9 +773,7 @@ inline Boolean Indexed_face_set::is_repaired() { return m_repaired; }
 inline void Indexed_face_set::set_consistent(Boolean flag)
 { m_consistent = flag; }
 
-/*! \brief obtainss the flag that indicates whether to compute the convex hull
- * of the coordinate set.
- */
+//! \brief determines whether to compute the convex hull of the coordinate set.
 inline Boolean Indexed_face_set::is_convex_hull() const
 { return m_convex_hull; }
 
