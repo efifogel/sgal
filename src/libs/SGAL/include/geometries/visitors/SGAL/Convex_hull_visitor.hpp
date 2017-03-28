@@ -21,6 +21,8 @@
 
 #include <boost/variant.hpp>
 
+#include <CGAL/convex_hull_3.h>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Indices_types.hpp"
 
