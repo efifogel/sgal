@@ -151,14 +151,16 @@ public:
   /*! Clean the coordinate array. */
   virtual void clean_coords();
 
+   /*! Clean (validate) the facet coordinate indices.
+   * If the polyhedron got cleaned, extract the indices from the polyhedron;
+   * otherwise, call the inherited member function.
+   */
+  virtual void clean_facet_coord_indices();
+
   /*! Repair the data structures, either the coordinates and the coordinate
    * indices, or the polyhedron.
    */
   void repair();
-
-  /*! Clean the facet coordinate indices.
-   */
-  void clean_facet_coord_indices_from_polyhedron();
 
   /// \name Indices Change Reactors
   //@{
@@ -479,6 +481,10 @@ protected:
   /*! Obtain the ith 3D coordinate.
    */
   virtual const Vector3f& get_coord_3d(Uint i) const;
+
+  /*! Clean the facet coordinate indices.
+   */
+  void clean_facet_coord_indices_from_polyhedron();
 
   /*! Clean the polyhedron facets. (Compute their attributes.)
    */
