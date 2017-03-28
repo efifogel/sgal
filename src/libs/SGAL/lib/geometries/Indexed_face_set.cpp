@@ -30,7 +30,6 @@
 #include <GL/glext.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/convex_hull_3.h>
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/enum.h>
 
@@ -239,6 +238,10 @@ void Indexed_face_set::draw(Draw_action* action)
     if (is_dirty_coord_array()) clean_coords();
     if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
   }
+  else if (is_convex_hull() && is_dirty_polyhedron()) {
+    clean_polyhedron();
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
   Boundary_set::draw(action);
 }
 
@@ -250,6 +253,10 @@ void Indexed_face_set::isect(Isect_action* action)
   if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) {
     repair();
     if (is_dirty_coord_array()) clean_coords();
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
+  else if (is_convex_hull() && is_dirty_polyhedron()) {
+    clean_polyhedron();
     if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
   }
   Boundary_set::isect(action);
@@ -405,6 +412,13 @@ void Indexed_face_set::clean_facet_coord_indices_from_polyhedron()
    * case we do not want to invalidate the polyhedron.
    */
   Boundary_set::coord_content_changed(get_field_info(COORD_INDEX_ARRAY));
+}
+
+//! \brief cleans (validate) the facet coordinate indices.
+void Indexed_face_set::clean_facet_coord_indices()
+{
+  if (! is_dirty_polyhedron()) clean_facet_coord_indices_from_polyhedron();
+  Boundary_set::clean_facet_coord_indices();
 }
 
 //! \brief cleans the normal array and the normal indices.
@@ -577,7 +591,7 @@ void Indexed_face_set::convex_hull()
 // or the coordinate indices are empty and the m_dirty_polyhedron must retain
 // its (true) value; this is imperative as explained next.
 // When we need the clean (valid) polyhedron (e.g., when we need to determine
-// whether the polyhedron is closed) we first attempt to cleanl the
+// whether the polyhedron is closed) we first attempt to clean the
 // coordinates & coordinate indices and immediately after we attempt to
 // clean the polyhedron. If, on the other hand, we need the clean (valid)
 // coordinates & coordinate indices, we attemp the cleaning the other way
@@ -809,8 +823,15 @@ void Indexed_face_set::write(Formatter* formatter)
 
   if (is_dirty_coord_array()) clean_coords();
   if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
-  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) repair();
-  if (is_dirty_polyhedron()) clean_polyhedron();
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) {
+    repair();
+    if (is_dirty_coord_array()) clean_coords();
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
+  else if (is_convex_hull() && is_dirty_polyhedron()) {
+    clean_polyhedron();
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
 
   Boundary_set::write(formatter);
 }
