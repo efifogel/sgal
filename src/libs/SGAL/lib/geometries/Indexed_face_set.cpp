@@ -1041,6 +1041,7 @@ void Indexed_face_set::set_polyhedron_type(Polyhedron_type type)
 //! \brief adds the container to a given scene.
 void Indexed_face_set::add_to_scene(Scene_graph* sg)
 {
+  Boundary_set::add_to_scene(sg);
   const auto* conf = sg->get_configuration();
 
   if (!conf) return;
