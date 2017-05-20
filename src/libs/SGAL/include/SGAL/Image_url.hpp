@@ -26,6 +26,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Image.hpp"
+#include "SGAL/Array_types.hpp"
 
 namespace fi = boost::filesystem;
 
@@ -76,7 +77,7 @@ public:
 
   /// \name field handlers
   //@{
-  std::string* url_handle(const Field_info*) { return &m_url; }
+  String_array* url_handle(const Field_info*) { return &m_url; }
   Boolean* flip_handle(const Field_info*) { return &m_flip; }
   Float* rotation_handle(const Field_info*) { return &m_rotation; }
   Boolean* alpha_handle(const Field_info*) { return &m_alpha; }
@@ -92,10 +93,10 @@ public:
   virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Set the URL. */
-  void set_url(const std::string& url);
+  void set_url(const String_array& url);
 
   /*! Obtain the URL. */
-  const std::string get_url() const;
+  const String_array& get_url() const;
 
   /*! Set the flag that indicates whether the image should be reflected. */
   void set_flip(Boolean flag);
@@ -149,7 +150,7 @@ private:
   /*! The uniform resource locator (url) that refers to the (Internet)
    * resource that contains the image.
    */
-  std::string m_url;
+  String_array m_url;
 
   /*! Indicates whether the image should be reflected when read from file. */
   Boolean m_flip;
@@ -193,7 +194,7 @@ inline Container* Image_url::clone() { return new Image_url(); }
 inline const std::string& Image_url::get_tag() const { return s_tag; }
 
 //! \brief obtains the URL.
-inline const std::string Image_url::get_url() const { return m_url; }
+inline const String_array& Image_url::get_url() const { return m_url; }
 
 //! \brief sets the flag that indicates whether the image should be reflected.
 inline void Image_url::set_flip(Boolean flag) { m_flip = flag; }

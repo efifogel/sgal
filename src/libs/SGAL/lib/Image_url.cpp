@@ -86,33 +86,33 @@ void Image_url::init_prototype()
   s_prototype = new Container_proto(Image::get_prototype());
 
   // url
-  String_handle_function url_func =
-    static_cast<String_handle_function>(&Image_url::url_handle);
-  s_prototype->add_field_info(new SF_string(URL, "url",
+  auto url_func =
+    static_cast<String_array_handle_function>(&Image_url::url_handle);
+  s_prototype->add_field_info(new MF_string(URL, "url",
                                             Field_info::RULE_EXPOSED_FIELD,
                                             url_func));
 
-  Boolean_handle_function flip_func =
+  auto flip_func =
     static_cast<Boolean_handle_function>(&Image_url::flip_handle);
   s_prototype->add_field_info(new SF_bool(FLIP, "flip",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           flip_func,
                                           s_def_flip));
 
-  Float_handle_function rotation_func =
+  auto rotation_func =
     static_cast<Float_handle_function>(&Image_url::rotation_handle);
   s_prototype->add_field_info(new SF_float(ROTATION, "rotation",
                                            Field_info::RULE_EXPOSED_FIELD,
                                            rotation_func, s_def_rotation));
 
-  Boolean_handle_function alpha_func =
+  auto alpha_func =
     static_cast<Boolean_handle_function>(&Image_url::alpha_handle);
   s_prototype->add_field_info(new SF_bool(ALPHA, "alpha",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           alpha_func,
                                           s_def_alpha));
 
-  Float_handle_function transparency_func =
+  auto transparency_func =
     static_cast<Float_handle_function>(&Image_url::transparency_handle);
   s_prototype->add_field_info(new SF_float(TRANSPARENCY, "transparency",
                                            Field_info::RULE_EXPOSED_FIELD,
@@ -143,7 +143,8 @@ void Image_url::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "url") {
-      set_url(value);
+      m_url.clear();
+      m_url.push_back(std::move(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -169,6 +170,19 @@ void Image_url::set_attributes(Element* elem)
     }
   }
 
+  auto msai = elem->multi_str_attrs_begin();
+  for (; msai != elem->multi_str_attrs_end(); ++msai) {
+    const auto& name = elem->get_name(msai);
+    auto& value = elem->get_value(msai);
+    if (name == "url") {
+      m_url.resize(value.size());
+      auto tit = m_url.begin();
+      for (auto sit : value) *tit++ = std::move(*sit);
+      elem->mark_delete(msai);
+      continue;
+    }
+  }
+
   // Remove all the marked attributes:
   elem->delete_marked();
 }
@@ -180,30 +194,29 @@ void Image_url::clean()
 
   std::string fullname;
 
-#if BOOST_VERSION >= 103400
-  fi::path file_path(m_url);
-#else
-  fi::path file_path(m_url, fi::native);
-#endif
-  if (file_path.is_complete()) {
-#if BOOST_VERSION >= 103400
-    if (fi::exists(file_path)) fullname = file_path.string();
-#else
-    if (fi::exists(file_path)) fullname = file_path.native_file_string();
-#endif
-  }
-  else {
-    for (Path_iter pi = m_dirs.begin(); pi != m_dirs.end(); ++pi) {
-      fi::path full_file_path = *pi / file_path;
-      if (!fi::exists(full_file_path)) continue;
-      // As of Boost 1.34?
-      fullname = full_file_path.string();
-      // fullname = full_file_path.native_file_string();
-      break;
+  for (auto url : m_url) {
+    fi::path file_path(url);
+    if (file_path.is_complete()) {
+      if (fi::exists(file_path)) fullname = file_path.string();
     }
+    else {
+      for (auto pi = m_dirs.begin(); pi != m_dirs.end(); ++pi) {
+        fi::path full_file_path = *pi / file_path;
+        if (!fi::exists(full_file_path)) continue;
+        fullname = full_file_path.string();
+        break;
+      }
+    }
+    if (fullname.empty()) continue;
   }
+
   if (fullname.empty()) {
-    throw File_not_found_error(m_url);
+    std::string str;
+    for (auto url : m_url) {
+      if (str.empty()) str.assign(url);
+      else str.append(" ").append(url);
+    }
+    throw File_not_found_error(str);
     return;
   }
 
@@ -258,6 +271,7 @@ void Image_url::clean()
 
      case Magick::PaletteType:         // Indexed color (palette) img
       // std::cout << "PaletteType" << std::endl;
+      image.type(Magick::TrueColorType);
       format = Image::kRGB8_8_8;
       magick_map = "RGB";
       magick_type = Magick::CharPixel;
@@ -290,12 +304,12 @@ void Image_url::clean()
                 << ") in file " << fullname.c_str() << "!" << std::endl;
       break;
     }
-    Uint width = image.columns();
-    Uint height = image.rows();
+    auto width = image.columns();
+    auto height = image.rows();
     m_width = width;
     m_height = height;
     m_format = format;
-    Uint size = Image::get_size(width, height, format);
+    auto size = Image::get_size(width, height, format);
     m_pixels = new char[size];
     SGAL_assertion(m_pixels);
     m_owned_pixels = true;
@@ -314,7 +328,7 @@ void Image_url::add_to_scene(Scene_graph* scene_graph)
 { set_dirs(scene_graph->get_data_dirs()); }
 
 //! \brief sets the URL.
-void Image_url::set_url(const std::string& url)
+void Image_url::set_url(const String_array& url)
 {
   m_url = url;
   m_dirty = true;

@@ -90,7 +90,7 @@ public:
 
   /// \name field handlers
   //@{
-  std::string* url_handle(const Field_info*) { return &m_url; }
+  String_array* url_handle(const Field_info*) { return &m_url; }
   Boolean* flip_handle(const Field_info*) { return &m_flip; }
   //@}
 
@@ -107,10 +107,10 @@ public:
   const Shared_image get_image();
 
   /*! Set the URL. */
-  void set_url(const std::string& url);
+  void set_url(const String_array& url);
 
   /*! Obtain the URL. */
-  const std::string get_url();
+  const String_array& get_url();
 
   /*! Set the flag that indicates whether to reflect the image. */
   void set_flip(Boolean flag);
@@ -142,7 +142,7 @@ protected:
   /*! The uniform resource locator (url) that refers to the (Internet)
    * resource that contains the image.
    */
-  std::string m_url;
+  String_array m_url;
 
   /*! Indicates whether the image should be reflected when read from file. */
   Boolean m_flip;

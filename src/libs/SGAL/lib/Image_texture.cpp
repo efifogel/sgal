@@ -60,18 +60,18 @@ void Image_texture::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Texture_2d::get_prototype());
 
-  Execution_function exec_func =
+  auto exec_func =
     static_cast<Execution_function>(&Image_texture::field_changed);
 
   // url
-  String_handle_function url_func =
-    static_cast<String_handle_function>(&Image_url::url_handle);
-  s_prototype->add_field_info(new SF_string(URL, "url",
+  auto url_func =
+    static_cast<String_array_handle_function>(&Image_url::url_handle);
+  s_prototype->add_field_info(new MF_string(URL, "url",
                                             Field_info::RULE_EXPOSED_FIELD,
                                             url_func, exec_func));
 
   // flip
-  Boolean_handle_function flip_func =
+  auto flip_func =
     static_cast<Boolean_handle_function>(&Image_url::flip_handle);
   s_prototype->add_field_info(new SF_bool(FLIP, "flip",
                                           Field_info::RULE_EXPOSED_FIELD,
@@ -101,7 +101,8 @@ void Image_texture::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "url") {
-      m_url = value;
+      m_url.clear();
+      m_url.push_back(std::move(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -137,6 +138,20 @@ void Image_texture::set_attributes(Element* elem)
     }
 #endif
   }
+
+  auto msai = elem->multi_str_attrs_begin();
+  for (; msai != elem->multi_str_attrs_end(); ++msai) {
+    const auto& name = elem->get_name(msai);
+    auto& value = elem->get_value(msai);
+    if (name == "url") {
+      m_url.resize(value.size());
+      auto tit = m_url.begin();
+      for (auto sit : value) *tit++ = std::move(*sit);
+      elem->mark_delete(msai);
+      continue;
+    }
+  }
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
@@ -166,7 +181,7 @@ const Image_texture::Shared_image Image_texture::get_image()
 }
 
 //! \brief sets the URL.
-void Image_texture::set_url(const std::string& url)
+void Image_texture::set_url(const String_array& url)
 {
   m_url = url;
   m_dirty_image = true;
@@ -174,7 +189,7 @@ void Image_texture::set_url(const std::string& url)
 }
 
 //! \brief obtains the URL.
-const std::string Image_texture::get_url()
+const String_array& Image_texture::get_url()
 {
   if (m_dirty_url) clean_attributes();
   return m_url;
