@@ -1,5 +1,5 @@
 #VRML V2.0 utf8 CosmoWorlds V1.0
-NavigationInfo { type [ "EXAMINE" "WALK" "FLY" "ANY" ] }
+NavigationInfo { type [ "EXAMINE" ] }
 Transform {
   translation 0 0 0
   children [
