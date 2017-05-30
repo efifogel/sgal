@@ -379,7 +379,7 @@ Indexed_face_set::Shared_coord_array Indexed_face_set::get_coord_array()
 void Indexed_face_set::clean_facet_coord_indices_from_polyhedron()
 {
   SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
-                  std::cout << "Indexed_face_set::clean_facet_coord_indices(): "
+                  std::cout << "Indexed_face_set::clean_facet_coord_indices_from_polyhedron(): "
                   << "name: " << get_name() << std::endl;);
 
   // If the polyhedron is empty, return.
@@ -417,15 +417,19 @@ void Indexed_face_set::clean_facet_coord_indices_from_polyhedron()
 //! \brief cleans (validate) the facet coordinate indices.
 void Indexed_face_set::clean_facet_coord_indices()
 {
+  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+                  std::cout << "Indexed_face_set::clean_facet_coord_indices(): "
+                  << "name: " << get_name() << std::endl;);
+
   if (! is_dirty_polyhedron()) clean_facet_coord_indices_from_polyhedron();
-  Boundary_set::clean_facet_coord_indices();
+  else Boundary_set::clean_facet_coord_indices();
 }
 
 //! \brief cleans the normal array and the normal indices.
 void Indexed_face_set::clean_normals()
 {
   SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
-                  std::cout << "Indexed_face_set:clean_normals(): "
+                  std::cout << "Indexed_face_set::clean_normals(): "
                   << "name: " << get_name() << std::endl;);
 
   if ((0 < m_crease_angle) && (m_crease_angle < SGAL_PI)) {
