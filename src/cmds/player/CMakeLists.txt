@@ -52,16 +52,17 @@ if (SGAL_BUILD_PYBINDINGS)
 
   # don't prepend wrapper library name with lib
   set_target_properties(player PROPERTIES PREFIX "")
+  target_link_libraries(player SGAL ${CMAKE_DL_LIBS})
 endif()
 
 add_executable(player-bin ${PLAYER_SOURCE_FILES})
 set_target_properties(player-bin PROPERTIES OUTPUT_NAME player)
 
-target_link_libraries(player SGAL ${CMAKE_DL_LIBS})
 target_link_libraries(player-bin SGAL ${CMAKE_DL_LIBS})
 if (SGAL_USE_SCGAL)
-  # No need to add SCGAL to the list of linked libraries
-  target_link_libraries(player SCGAL)
+  if (SGAL_BUILD_PYBINDINGS)
+    target_link_libraries(player SCGAL)
+  endif()
   target_link_libraries(player-bin SCGAL)
 endif()
 
@@ -73,18 +74,24 @@ endif()
 # set_property(TARGET player PROPERTY BUILD_WITH_INSTALL_RPATH TRUE)
 
 # the RPATH to be used when installing
-set_property(TARGET player PROPERTY INSTALL_RPATH "${V8_LIBRARY_DIR}")
+if (SGAL_BUILD_PYBINDINGS)
+  set_property(TARGET player PROPERTY INSTALL_RPATH "${V8_LIBRARY_DIR}")
+endif()
 set_property(TARGET player-bin PROPERTY INSTALL_RPATH "${V8_LIBRARY_DIR}")
 
 # don't add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH
-set_property(TARGET player PROPERTY INSTALL_RPATH_USE_LINK_PATH TRUE)
+if (SGAL_BUILD_PYBINDINGS)
+  set_property(TARGET player PROPERTY INSTALL_RPATH_USE_LINK_PATH TRUE)
+endif()
 set_property(TARGET player-bin PROPERTY INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-install(TARGETS player
-        RUNTIME DESTINATION ${SGAL_INSTALL_BIN_DIR}
-	LIBRARY DESTINATION ${SGAL_INSTALL_LIB_DIR}
-	ARCHIVE DESTINATION ${SGAL_INSTALL_LIB_DIR})
+if (SGAL_BUILD_PYBINDINGS)
+  install(TARGETS player
+          RUNTIME DESTINATION ${SGAL_INSTALL_BIN_DIR}
+	  LIBRARY DESTINATION ${SGAL_INSTALL_LIB_DIR}
+	  ARCHIVE DESTINATION ${SGAL_INSTALL_LIB_DIR})
+endif()
 
 install(TARGETS player-bin
         RUNTIME DESTINATION ${SGAL_INSTALL_BIN_DIR}
