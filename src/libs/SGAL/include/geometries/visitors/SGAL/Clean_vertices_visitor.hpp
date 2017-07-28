@@ -51,7 +51,6 @@ public:
       Size index(0);
       for (auto cit = m_begin; cit != m_end; ++cit, ++index)
         if (vit->point() == *cit) break;
-      SGAL_assertion(cit != end);
       vit->set_id(index);
     }
   }
