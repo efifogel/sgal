@@ -349,11 +349,11 @@ build CGAL. The sequence of commands bellow will merge all CGAL branches
 used to develope relevant CGAL features.
 
   git checkout -b combined --no-track cgal/master
-  git merge cgal-dev/Cubical_gaussian_map-efif
-  git merge cgal-dev/Envelope_voronoi_2-ophirset
-  git merge cgal-dev/Lines_through_segments-pmoeller
-  git merge cgal-dev/Aos_2-sgm-efif
-  git merge cgal-dev/Aos_2-flatgeodesics_on_torus-tau
+  git merge cgal-public-dev/Cubical_gaussian_map-efif
+  git merge cgal-public-dev/Envelope_voronoi_2-ophirset
+  git merge cgal-public-dev/Lines_through_segments-pmoeller
+  git merge cgal-public-dev/Aos_2-sgm-efif
+  git merge cgal-public-dev/Aos_2-flatgeodesics_on_torus-tau
 
 2.5.7. GMP and MPFR
 The SGAL library SCGAL requires CGAL with unlimited precision, and
