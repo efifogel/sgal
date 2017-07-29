@@ -382,7 +382,7 @@ void Player_scene::snapshot_scene()
   if (!m_option_parser->is_output_file_empty())
     file_path = fi::path(m_option_parser->get_output_file());
   else {
-    SGAL_assertion(0 < get_num_input_files());
+    SGAL_assertion(0 < m_option_parser->get_num_input_files());
     file_path = fi::path(m_option_parser->get_input_file(0)).filename();
   }
   // Remove extension
@@ -451,7 +451,7 @@ void Player_scene::export_scene()
   if (!m_option_parser->is_output_file_empty())
     file_path = fi::path(m_option_parser->get_output_file());
   else {
-    SGAL_assertion(0 < get_num_input_files());
+    SGAL_assertion(0 < m_option_parser->get_num_input_files());
     file_path = fi::path(m_option_parser->get_input_file(0)).filename();
   }
   fi::path parent_path(m_option_parser->get_output_path());
