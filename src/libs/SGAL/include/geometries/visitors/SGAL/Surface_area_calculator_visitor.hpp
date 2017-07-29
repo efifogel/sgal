@@ -52,7 +52,7 @@ private:
     std::for_each(polyhedron.facets_begin(), polyhedron.facets_end(),
                   [&](const Polyhedron_facet& facet)
                   {
-                    SGAL_assertion(3 == CGAL::circulator_size(fit->facet_begin()));
+                    SGAL_assertion(3 == CGAL::circulator_size(facet.facet_begin()));
                     auto h = facet.halfedge();
                     const auto& p1 = h->vertex()->point();
                     const auto& p2 = h->next()->vertex()->point();

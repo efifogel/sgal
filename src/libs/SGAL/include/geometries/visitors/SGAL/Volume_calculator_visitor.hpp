@@ -54,7 +54,8 @@ private:
     std::for_each(polyhedron.facets_begin(), polyhedron.facets_end(),
                   [&](const Polyhedron_facet& facet)
                   {
-                    SGAL_assertion(3 == CGAL::circulator_size(fit->facet_begin()));
+                    SGAL_assertion(3 ==
+                                   CGAL::circulator_size(facet.facet_begin()));
                     auto h1 = facet.halfedge();
                     auto h2 = h1->next();
                     auto h3 = h2->next();

@@ -228,29 +228,18 @@ void Stl_binary_formatter::write(Shared_container container)
 
 //! \brief obtains the number of triangles.
 size_t Stl_binary_formatter::Count_triangles_visitor::
-operator()(const Triangle_indices& indices)
-{
-  SGAL_assertion (Geo_set::PT_TRIANGLES == m_mesh->get_primitive_type());
-  return indices.size();
-}
+operator()(const Triangle_indices& indices) { return indices.size(); }
 
 //! \brief obtains the number of triangles.
 size_t Stl_binary_formatter::Count_triangles_visitor::
-operator()(const Quad_indices& indices)
-{
-  SGAL_assertion (Geo_set::PT_QUADS == m_mesh->get_primitive_type());
-  return 2 * indices.size();
-}
+operator()(const Quad_indices& indices) { return 2 * indices.size(); }
 
 //! \brief obtains the number of triangles.
 size_t Stl_binary_formatter::Count_triangles_visitor::
 operator()(const Polygon_indices& indices)
 {
-  SGAL_assertion(Geo_set::PT_POLYGONS == m_mesh->get_primitive_type());
   size_t count(0);
-  for (const auto& polygon: indices) {
-    count += polygon.size() - 2;
-  }
+  for (const auto& polygon: indices) count += polygon.size() - 2;
   return count;
 }
 
