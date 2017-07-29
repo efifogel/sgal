@@ -54,7 +54,9 @@
 
 SGAL_BEGIN_NAMESPACE
 
+#if defined(SGAL_USE_V8)
 extern v8::Platform* s_platform;
+#endif
 
 SGAL_SGAL_DECL void clean()
 {

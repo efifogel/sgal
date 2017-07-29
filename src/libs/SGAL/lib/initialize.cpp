@@ -41,7 +41,9 @@
 
 SGAL_BEGIN_NAMESPACE
 
+#if defined(SGAL_USE_V8)
 v8::Platform* s_platform(nullptr);
+#endif
 
 SGAL_SGAL_DECL void initialize(int /* argc */, char* argv[])
 {

@@ -39,7 +39,9 @@
 #include "SGAL/Scene.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Box.hpp"
+#if defined(SGAL_USE_V8)
 #include "SGAL/Array_buffer_allocator.hpp"
+#endif
 #if defined(_WIN32)
 #include "SGAL/Windows_window_manager.hpp"
 #endif
@@ -48,9 +50,11 @@
 
 namespace fi = boost::filesystem;
 
+#if defined(SGAL_USE_V8)
 namespace v8 {
   class Isolate;
 };
+#endif
 
 SGAL_BEGIN_NAMESPACE
 
@@ -208,10 +212,12 @@ public:
   /*! Obtain the scene scene-graph. */
   SGAL::Scene_graph* get_scene_graph() const;
 
+#if defined(SGAL_USE_V8)
   /*! Obtain an isolated instance of the V8 engine.
    * \return an isolated instance of the V8 engine.
    */
   v8::Isolate* get_isolate();
+#endif
 
   /*! Determine whether the scene does simulate something. */
   SGAL::Boolean is_simulating(void) const;
@@ -279,12 +285,15 @@ protected:
   /* The height of the offscreen framebuffer. */
   SGAL::Uint m_offscreen_height;
 
+#if defined(SGAL_USE_V8)
   /*! An allocator. */
   SGAL::Array_buffer_allocator m_allocator;
+
   v8::Isolate::CreateParams m_params;
 
   /*! An isolated instance of the V8 engine. */
   v8::Isolate* m_isolate;
+#endif
 
   /*! The scene graph. */
   SGAL::Scene_graph* m_scene_graph;
@@ -416,8 +425,10 @@ inline void Player_scene::set_option_parser(Player_option_parser* option_parser)
 inline SGAL::Scene_graph* Player_scene::get_scene_graph() const
 { return m_scene_graph; }
 
+#if defined(SGAL_USE_V8)
 //! \brief obtains an isolated instance of the V8 engine.
 inline v8::Isolate* Player_scene::get_isolate() { return m_isolate; }
+#endif
 
 //! \brief sets the player option parser.
 inline void Player_scene::set(Player_option_parser* option_parser)

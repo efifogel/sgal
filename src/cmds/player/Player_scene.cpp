@@ -137,7 +137,9 @@ Player_scene::Player_scene() :
   m_window_item(nullptr),
   m_win_width(0), m_win_height(0),
   m_offscreen_width(0), m_offscreen_height(0),
+#if defined(SGAL_USE_V8)
   m_isolate(nullptr),
+#endif
   m_scene_graph(nullptr),
   m_configuration(nullptr),
   m_context(nullptr),
@@ -151,7 +153,9 @@ Player_scene::Player_scene(Player_option_parser* option_parser) :
   m_window_item(nullptr),
   m_win_width(0), m_win_height(0),
   m_offscreen_width(0), m_offscreen_height(0),
+#if defined(SGAL_USE_V8)
   m_isolate(nullptr),
+#endif
   m_scene_graph(nullptr),
   m_context(nullptr),
   m_option_parser(option_parser),
