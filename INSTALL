@@ -260,12 +260,12 @@ ImageMagick® is a software suite to create, edit, compose, or convert
 bitmap images; see http://www.imagemagick.org/
 
 2.5.4. V8
-V8 is Google's open source JavaScript engine. Ubuntu distribution includes
-a development package. However, the code of SGAL is using a recent
-API, which is different than the API of the precompiled library object
-included in the standard distribution. Thus, you need to build v8 from
-sources of a certain version both in Linux and in Windows. You need
-to obtain the sources; then, build the engine.
+V8 is Google's open source JavaScript engine. Ubuntu distribution
+includes a development package. However, the code of SGAL is using a
+recent API, which is different than the API of the precompiled library
+object included in the standard distribution. Thus, you need to build
+v8 of a certain version from sources both in Linux and in Windows. You
+need to obtain the sources; then, build the engine.
 
 You must install python before you start the build, as the build tool uses
 python.
@@ -273,22 +273,29 @@ python.
 2.5.4.1. Linux
 
 ubuntu:14.04, for example, comes with V8 engine version 3.14.5.8. This
-version is too old. V8 has gone through some changes recently. For
-example, it now resides in a git repository and there is no easy way
-to build from a tarball. I've picked 3.26.13, which on the one hand
-is sufficiently recent, but on the other still uses "make dependencies"
-(which uses subversion...
+version is too old. V8 resides in a git repository and there is no easy way
+to build from a tarball.
 
-To obtain v8 and build, type:
+To obtain v8 and build,
+  1. Clone the depot tools:
+  git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
 
-  export V8_VERSION=3.26.13
-  curl -SL https://github.com/v8/v8/archive/$V8_VERSION.tar.gz | tar -xzC .
-  cd v8-$V8_VERSION && make dependencies
-  cd v8-$V8_VERSION && make library=shared native
+  2. Add depot_tools to your PATH, e.g.,:
+  export PATH=`pwd`/depot_tools:"$PATH"
 
-For some reason, the v8 has no "make install". Therefore, if you want the code to work out of the box,
-just copy all files under ./v8/out/native/lib.target/ to /usr/local/lib and copy ./v8/include/v8.h
-./v8/include/v8config.h, and ./v8/include/v8stdint.h to /usr/local/include.
+  3. Fetch, checkout the latest stable version, and build
+  export V8_BUILD_DIR=<build-directory>
+  cd $V8_BUILD_DIR
+  fetch v8
+  cd v8
+  git checkout -b 5.8 -t branch-heads/5.8
+  gclient sync
+  gn gen out.gn/x64.release --args='is_debug=false target_cpu="x64" is_component_build=true v8_use_external_startup_data=false'
+  ninja -C out.gn/x64.release
+
+  4. Export the include and lib directories
+  export V8_INC_DIR=$V8_BUILD_DIR/v8/include
+  export V8_LIB_DIR=$V8_BUILD_DIR/v8/out.gn/x64.release
 
 2.5.4.1. Windows
   svn co http://gyp.googlecode.com/svn/trunk build/gyp
