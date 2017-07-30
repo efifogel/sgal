@@ -9,10 +9,10 @@ file(MAKE_DIRECTORY ${GENERATED_DIR})
 
 # Create custom command for flex
 add_custom_command(
-	OUTPUT ${GENERATED_DIR}/scan.cpp
-	COMMAND ${FLEX_EXECUTABLE}
-	ARGS -d -+ --nounistd -o ${GENERATED_DIR}/scan.cpp ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/scan.l
-	DEPENDS ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/scan.l)
+  OUTPUT ${GENERATED_DIR}/scan.cpp
+  COMMAND ${FLEX_EXECUTABLE}
+  ARGS -d -+ --nounistd -o ${GENERATED_DIR}/scan.cpp ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/scan.l
+  DEPENDS ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/scan.l)
 
 # Create custom command for bison (note the DEPENDS)
 set(SGAL_BISON_OUTPUT ${GENERATED_DIR}/parse.cpp
@@ -22,10 +22,10 @@ set(SGAL_BISON_OUTPUT ${GENERATED_DIR}/parse.cpp
 		      ${GENERATED_DIR}/stack.hh)
 
 add_custom_command(
-	OUTPUT ${SGAL_BISON_OUTPUT}
-	COMMAND ${BISON_EXECUTABLE}
-	ARGS -y ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/parse.y -o ${GENERATED_DIR}/parse.cpp
-	DEPENDS ${GENERATED_DIR}/scan.cpp ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/parse.y)
+  OUTPUT ${SGAL_BISON_OUTPUT}
+  COMMAND ${BISON_EXECUTABLE}
+  ARGS -y ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/parse.y -o ${GENERATED_DIR}/parse.cpp
+  DEPENDS ${GENERATED_DIR}/scan.cpp ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/parse.y)
 
 # Add parser.c to the list of sources
 set(SGAL_AUTO_GENERATED_FILES ${SGAL_AUTO_GENERATED_FILES} ${GENERATED_DIR}/parse.cpp)
@@ -328,11 +328,11 @@ set(SGAL_UTILITIES_SOURCE_FILES ${SGAL_UTILITIES_SOURCE_FILES} lib/utilities/Opt
 set(SGAL_UTILITIES_SOURCE_FILES ${SGAL_UTILITIES_SOURCE_FILES} lib/utilities/Native_window_item.cpp)
 set(SGAL_UTILITIES_SOURCE_FILES ${SGAL_UTILITIES_SOURCE_FILES} lib/utilities/Window_option_parser.cpp)
 if (WIN32)
-	set(SGAL_UTILITIES_SOURCE_FILES ${SGAL_UTILITIES_SOURCE_FILES} lib/utilities/Windows_window_item.cpp)
-	set(SGAL_UTILITIES_SOURCE_FILES ${SGAL_UTILITIES_SOURCE_FILES} lib/utilities/Windows_window_manager.cpp)
+  set(SGAL_UTILITIES_SOURCE_FILES ${SGAL_UTILITIES_SOURCE_FILES} lib/utilities/Windows_window_item.cpp)
+  set(SGAL_UTILITIES_SOURCE_FILES ${SGAL_UTILITIES_SOURCE_FILES} lib/utilities/Windows_window_manager.cpp)
 else()
-	set(SGAL_UTILITIES_SOURCE_FILES ${SGAL_UTILITIES_SOURCE_FILES} lib/utilities/X11_window_item.cpp)
-	set(SGAL_UTILITIES_SOURCE_FILES ${SGAL_UTILITIES_SOURCE_FILES} lib/utilities/X11_window_manager.cpp)
+  set(SGAL_UTILITIES_SOURCE_FILES ${SGAL_UTILITIES_SOURCE_FILES} lib/utilities/X11_window_item.cpp)
+  set(SGAL_UTILITIES_SOURCE_FILES ${SGAL_UTILITIES_SOURCE_FILES} lib/utilities/X11_window_manager.cpp)
 endif()
 
 set(SGAL_UTILITIES_HEADER_FILES ${SGAL_UTILITIES_HEADER_FILES} include/utilities/SGAL/App_error_handle_int.hpp)
@@ -349,11 +349,11 @@ set(SGAL_UTILITIES_HEADER_FILES ${SGAL_UTILITIES_HEADER_FILES} include/utilities
 set(SGAL_UTILITIES_HEADER_FILES ${SGAL_UTILITIES_HEADER_FILES} include/utilities/SGAL/Window_manager.hpp)
 set(SGAL_UTILITIES_HEADER_FILES ${SGAL_UTILITIES_HEADER_FILES} include/utilities/SGAL/Window_option_parser.hpp)
 if (WIN32)
-	set(SGAL_UTILITIES_HEADER_FILES ${SGAL_UTILITIES_HEADER_FILES} include/utilities/SGAL/Windows_window_item.hpp)
-	set(SGAL_UTILITIES_HEADER_FILES ${SGAL_UTILITIES_HEADER_FILES} include/utilities/SGAL/Windows_window_manager.hpp)
+  set(SGAL_UTILITIES_HEADER_FILES ${SGAL_UTILITIES_HEADER_FILES} include/utilities/SGAL/Windows_window_item.hpp)
+  set(SGAL_UTILITIES_HEADER_FILES ${SGAL_UTILITIES_HEADER_FILES} include/utilities/SGAL/Windows_window_manager.hpp)
 else()
-	set(SGAL_UTILITIES_HEADER_FILES ${SGAL_UTILITIES_HEADER_FILES} include/utilities/SGAL/X11_window_item.hpp)
-	set(SGAL_UTILITIES_HEADER_FILES ${SGAL_UTILITIES_HEADER_FILES} include/utilities/SGAL/X11_window_manager.hpp)
+  set(SGAL_UTILITIES_HEADER_FILES ${SGAL_UTILITIES_HEADER_FILES} include/utilities/SGAL/X11_window_item.hpp)
+  set(SGAL_UTILITIES_HEADER_FILES ${SGAL_UTILITIES_HEADER_FILES} include/utilities/SGAL/X11_window_manager.hpp)
 endif()
 
 set(SGAL_SOURCE_FILES ${SGAL_SOURCE_FILES} ${SGAL_UTILITIES_SOURCE_FILES} ${SGAL_UTILITIES_HEADER_FILES})
@@ -493,6 +493,7 @@ source_group(src FILES ${SGAL_OTHER_SOURCE_FILES} ${SGAL_OTHER_HEADER_FILES})
 if (SGAL_USE_V8)
   add_definitions(-DSGAL_USE_V8)
   set(SGAL_SOURCE_FILES ${SGAL_SOURCE_FILES} lib/Script.cpp)
+  set(SGAL_V8_LIBRARIES ${V8_LIBRARY} v8_libplatform)
 endif()
 
 #Add all include directories
@@ -535,10 +536,10 @@ endif(APPLE)
 
 #Add library
 if (BUILD_SHARED_LIBS)
-	add_definitions(-DSGAL_ALL_DYN_LINK)
-	add_library(SGAL SHARED ${SGAL_SOURCE_FILES})
+  add_definitions(-DSGAL_ALL_DYN_LINK)
+  add_library(SGAL SHARED ${SGAL_SOURCE_FILES})
 else()
-	add_library(SGAL STATIC ${SGAL_SOURCE_FILES})
+  add_library(SGAL STATIC ${SGAL_SOURCE_FILES})
 endif()
 
 
@@ -560,8 +561,8 @@ target_link_libraries(SGAL
                       ${Boost_SYSTEM_LIBRARY}
                       ${Boost_PROGRAM_OPTIONS_LIBRARY}
                       ${ImageMagick_Magick++_LIBRARY}
-		      ${FREETYPE_LIBRARIES}
-		      ${V8_LIBRARY} v8_libplatform
+                      ${FREETYPE_LIBRARIES}
+                      ${SGAL_V8_LIBRARIES}
                       ${OPENGL_LIBRARIES}
                       ${NON_WIN32_LIBRARIES})
 

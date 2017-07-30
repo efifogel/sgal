@@ -74,10 +74,12 @@ endif()
 # set_property(TARGET player PROPERTY BUILD_WITH_INSTALL_RPATH TRUE)
 
 # the RPATH to be used when installing
-if (SGAL_BUILD_PYBINDINGS)
-  set_property(TARGET player PROPERTY INSTALL_RPATH "${V8_LIBRARY_DIR}")
+if (SGAL_USE_V8)
+  if (SGAL_BUILD_PYBINDINGS)
+    set_property(TARGET player PROPERTY INSTALL_RPATH "${V8_LIBRARY_DIR}")
+  endif()
+  set_property(TARGET player-bin PROPERTY INSTALL_RPATH "${V8_LIBRARY_DIR}")
 endif()
-set_property(TARGET player-bin PROPERTY INSTALL_RPATH "${V8_LIBRARY_DIR}")
 
 # don't add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH
