@@ -51,6 +51,7 @@
 #undef True
 #undef False
 #undef None
+#undef Status
 
 #include "Player_scene.hpp"
 #include "Player_option_parser.hpp"
