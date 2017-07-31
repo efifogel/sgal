@@ -567,6 +567,9 @@ target_link_libraries(SGAL
                       ${NON_WIN32_LIBRARIES})
 
 # Installation
+set_property(TARGET SGAL PROPERTY INSTALL_RPATH_USE_LINK_PATH TRUE)
+set_property(TARGET SGAL PROPERTY INSTALL_RPATH "${CGAL_DIR}/lib")
+
 set(SGAL_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/include/engines

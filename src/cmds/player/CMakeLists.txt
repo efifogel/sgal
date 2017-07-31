@@ -84,8 +84,10 @@ endif()
 # don't add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH
 if (SGAL_BUILD_PYBINDINGS)
+  set_property(TARGET player PROPERTY INSTALL_RPATH "${CGAL_DIR}/lib")
   set_property(TARGET player PROPERTY INSTALL_RPATH_USE_LINK_PATH TRUE)
 endif()
+set_property(TARGET player-bin PROPERTY INSTALL_RPATH "${CGAL_DIR}/lib")
 set_property(TARGET player-bin PROPERTY INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 if (SGAL_BUILD_PYBINDINGS)
