@@ -876,7 +876,7 @@ void Boundary_set::calculate_normal_per_polygon(Normal_array& normals)
       else normals[i].normal(v2, v1, v0);
       break;
     }
-    SGAL_assertion_msg(collinear, "All vertices are collinear!");
+    SGAL_assertion_msg(!collinear, "All vertices are collinear!");
   }
 }
 
