@@ -157,7 +157,7 @@ void Snapshotter::init_prototype()
   // mode
   auto mode_func =
     reinterpret_cast<Uint_handle_function>(&Snapshotter::mode_handle);
-  s_prototype->add_field_info(new SF_uint(FLIP, "mode",
+  s_prototype->add_field_info(new SF_uint(MODE, "mode",
                                           Field_info::RULE_EXPOSED_FIELD,
                                           mode_func,
                                           s_def_mode));

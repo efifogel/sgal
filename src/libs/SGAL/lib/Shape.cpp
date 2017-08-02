@@ -341,13 +341,13 @@ void Shape::set_attributes(Element* elem)
     const auto& name = elem->get_name(cai);
     auto cont = elem->get_value(cai);
     if (name == "appearance") {
-      Shared_appearance app = boost::dynamic_pointer_cast<Appearance>(cont);
+      auto app = boost::dynamic_pointer_cast<Appearance>(cont);
       set_appearance(app);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "geometry") {
-      Shared_geometry geo = boost::dynamic_pointer_cast<Geometry>(cont);
+      auto geo = boost::dynamic_pointer_cast<Geometry>(cont);
       set_geometry(geo);
       elem->mark_delete(cai);
       continue;

@@ -54,7 +54,7 @@ class Image_writer;
 class SGAL_SGAL_DECL Snapshot : public Snapshotter {
 public:
   enum {
-    FIRST = Node::LAST - 1,
+    FIRST = Snapshotter::LAST - 1,
     DIR_NAME,
     FILE_NAME,
     FILE_FORMAT,
