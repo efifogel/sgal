@@ -81,19 +81,21 @@ inline void Vrml_formatter::write(Shared_container container)
     return;
   }
 
-  // If the number of shared objects (including this one) is greater than 2,
-  // generate a unique name and use it, so that the container can be referred
-  // to by the name later on.
-  if (container.use_count() > 2) {
+  /* If the number of shared objects (including this one) is greater than 3,
+   * generate a unique name and use it, so that the container can be referred
+   * to by the name later on.
+   * Check whether 'container' is shared among at least 4 holders.
+   * It is held in
+   *   (i) Scene_graph::m_containers or Scene_graph::m_instances,
+   *  (ii) the parent node, and
+   * (iii) the local variable in this function.
+   */
+  if (container.use_count() > 3) {
     const auto& name = container->get_name();
     if (name.empty()) {
       auto addr = reinterpret_cast<size_t>(&*container);
-      std::string name =
-#if !(defined _MSC_VER) || (_MSC_VER <= 1600)
-        std::string("_").append(boost::lexical_cast<std::string>(addr));
-#else
-      std::string("_").append(std::to_string(addr));
-#endif
+      std::string name("_");
+      name.append(std::to_string(addr));
       container->set_name(name);
     }
   }

@@ -519,8 +519,15 @@ Loader::Return_code Loader::load_off(std::istream& is, Scene_graph* sg)
   sg->add_container(shape);
   transform->add_child(shape);
 
+  // Add Appearance
+  Shared_appearance app(new Appearance);
+  SGAL_assertion(app);
+  shape->set_appearance(app);
+
   // Add IndexedFaceSet
   Shared_indexed_face_set ifs(new Indexed_face_set);
+  SGAL_assertion(ifs);
+  ifs->add_to_scene(sg);
   sg->add_container(ifs);
   shape->set_geometry(ifs);
 
@@ -535,6 +542,7 @@ Loader::Return_code Loader::load_off(std::istream& is, Scene_graph* sg)
 
   auto* coords = new Coord_array_3d(num_vertices);
   Shared_coord_array_3d shared_coords(coords);
+  SGAL_assertion(coords);
   coords->add_to_scene(sg);
   sg->add_container(shared_coords);
   for (auto i = 0; i < num_vertices; ++i) {

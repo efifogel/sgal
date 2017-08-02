@@ -63,7 +63,7 @@ public:
   void operator()(const Polygon_indices& polygons)
   {
     size_t size(0);
-    for (size_t i = 0; i < polygons.size(); ++i) size += polygons[i].size();
+    for (size_t i = 0; i < polygons.size(); ++i) size += polygons[i].size() + 1;
     m_indices.resize(size);
     size_t k(0);
     for (size_t i = 0; i < polygons.size(); ++i) {
