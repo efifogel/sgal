@@ -41,7 +41,9 @@ target_link_libraries(knot SGAL)
 # set_property(TARGET player PROPERTY BUILD_WITH_INSTALL_RPATH TRUE)
 
 # the RPATH to be used when installing
-set_property(TARGET knot PROPERTY INSTALL_RPATH "${V8_LIBRARY_DIR}")
+if (SGAL_USE_V8)
+  set_property(TARGET knot PROPERTY INSTALL_RPATH "${V8_LIBRARY_DIR}")
+endif()
 
 # don't add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH
