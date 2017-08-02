@@ -73,7 +73,7 @@ public:
     target.resize(source.size());
     for (size_t i = 0; i < source.size(); ++i) {
       target[i][0] = source[i][3];
-      target[i][1] = source[i][3];
+      target[i][1] = source[i][2];
       target[i][2] = source[i][1];
       target[i][3] = source[i][0];
     }
@@ -96,6 +96,7 @@ public:
   {
     target.resize(source.size());
     for (size_t i = 0; i < source.size(); ++i) {
+      target[i].resize(source[i].size());
       size_t j(0);
       for (auto it = source[i].rbegin(); it != source[i].rend(); ++it)
         target[i][j++] = *it;
