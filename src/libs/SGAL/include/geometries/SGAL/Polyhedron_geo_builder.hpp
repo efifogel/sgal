@@ -217,7 +217,7 @@ protected:
     if (!B.test_facet(begin, end))
       throw(std::runtime_error("Error: inconsistent mesh!"));
     auto he = B.add_facet(begin, end);
-    SGAL_assertion(B.error());
+    SGAL_assertion(!B.error());
     he->set_id(j);
     he->next()->set_id(j+1);
     he->next()->next()->set_id(j+2);
@@ -239,6 +239,7 @@ protected:
     if (!B.test_facet(begin, end))
       throw(std::runtime_error("Error: inconsistent mesh!"));
     auto he = B.add_facet(begin, end);
+    SGAL_assertion(!B.error());
     he->set_id(j);
     he->next()->set_id(j+1);
     he->next()->next()->set_id(j+2);
@@ -261,6 +262,7 @@ protected:
     if (!B.test_facet(begin, end))
       throw(std::runtime_error("Error: inconsistent mesh!"));
     auto he = B.add_facet(begin, end);
+    SGAL_assertion(!B.error());
     auto start_he = he;
     do {
       he->set_id(j++);
@@ -287,7 +289,7 @@ protected:
   {
     const auto& indices = boost::get<Quad_indices>(m_coord_indices);
     size_t j(0);
-    for (Uint i = 0; i < indices.size(); ++i)
+    for (size_t i = 0; i < indices.size(); ++i)
       j = insert_quad(B, indices[i].begin(), indices[i].end(), j);
   }
 
@@ -336,7 +338,7 @@ public:
     }
     catch (std::exception& e) {
       m_consistent = false;
-      // std::cerr << e.what() << std::endl;
+      std::cerr << e.what() << std::endl;
       B.rollback();
     }
   }
