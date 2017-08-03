@@ -688,7 +688,7 @@ nodeStatements  : nodeStatement { $$ = new Cont_list; $$->push_back($1); }
                 | nodeStatements nodeStatement { std::swap($$, $1); $$->push_back($2); }
                 ;
 
-mfValue         : "[" "]" { ; }
+mfValue         : "[" "]" { $$ = Shared_string(new std::string("")); }
                 | "[" sfValues "]" { std::swap($$, $2); }
                 ;
 
