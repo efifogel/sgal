@@ -136,9 +136,9 @@ void Assembly_part::clean_sgm_geos(Group* /* group */)
 void Assembly_part::clean_sgm_geos(Container* node)
 {
   static float total_duration_time = 0;
-  static Uint total_number_of_vertices = 0;
-  static Uint total_number_of_edges = 0;
-  static Uint total_number_of_facets = 0;
+  static size_t total_number_of_vertices(0);
+  static size_t total_number_of_edges(0);
+  static size_t total_number_of_facets(0);
 
   auto* shape = dynamic_cast<Shape*>(node);
   if (shape) {
@@ -165,7 +165,9 @@ void Assembly_part::clean_sgm_geos(Container* node)
        * Nef_polyhedron
        */
       auto& polyhedron = const_cast<Epec_polyhedron&>(p_const);
-      std::cout << "# vertives: " << polyhedron.size_of_vertices()
+      std::cout << "# Piece: " << polyhedron.size_of_vertices() << ", "
+                << polyhedron.size_of_halfedges() << ", "
+                << polyhedron.size_of_facets()
                 << std::endl;
       Nef_polyhedron nef_polyhedron = Nef_polyhedron(polyhedron);
       CGAL::convex_decomposition_3(nef_polyhedron);
@@ -176,9 +178,9 @@ void Assembly_part::clean_sgm_geos(Container* node)
       // The first volume is the outer volume, which is ignored in the
       // decomposition
       Volume_const_iterator ci = ++nef_polyhedron.volumes_begin();
-      Uint number_of_vertices = 0;
-      Uint number_of_edges = 0;
-      Uint number_of_facets = 0;
+      size_t number_of_vertices(0);
+      size_t number_of_edges(0);
+      size_t number_of_facets(0);
       for (; ci != nef_polyhedron.volumes_end(); ++ci) {
         if (!ci->mark()) continue;
         Sgm_geo::Polyhedron p;
