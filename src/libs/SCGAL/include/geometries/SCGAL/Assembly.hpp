@@ -14,7 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel <efifogel@gmail.com>
+//            Tzvika Geft <zvigreg@mail.tau.ac.il>
 
 #ifndef SCGAL_ASSEMBLY_HPP
 #define SCGAL_ASSEMBLY_HPP
@@ -41,6 +42,7 @@
 #include "SCGAL/Arrangement_on_sphere_marked.hpp"
 #include "SCGAL/Arrangement_on_sphere_graph.hpp"
 #include "SCGAL/Spherical_gaussian_map_colored_geo.hpp"
+#include "SCGAL/Connectivity_tester.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -146,6 +148,7 @@ protected:
   typedef Appearance_list::iterator                 Appearance_iter;
 
   typedef std::pair<Uint, Uint>                     Key;
+  typedef std::vector<Key>                          Delta;
   struct Key_comparer {
     bool operator()(Key key1, Key key2) const
     {
@@ -282,6 +285,9 @@ private:
 
   /*! The final arrangement. */
   Aos_graph* m_aos_graph;
+
+  /* The (only) NDBG face which stores a graph*/
+  Aos_graph::Face_handle m_aos_face_with_graph;
 
   /*! Space holder. */
   Shared_appearance m_appearance;
@@ -431,6 +437,20 @@ private:
 
   /*! Process the NDBG. */
   void process_aos_graph();
+
+  /* Visit NDBG parts for processing*/
+  void propagate_aos_face(Aos_graph::Face_handle f,
+                          boost::adjacency_matrix<boost::directedS>& g,
+                          Connectivity_tester<Cell_const_handle>& ct);
+  void visit_aos_face(Aos_graph::Halfedge_handle crossing_h,
+                      boost::adjacency_matrix<boost::directedS>& g,
+                      Connectivity_tester<Cell_const_handle>& ct);
+  void visit_aos_edge(Aos_graph::Halfedge_handle h,
+                      boost::adjacency_matrix<boost::directedS>& g,
+                      Connectivity_tester<Cell_const_handle>& ct);
+  void visit_aos_vertex(Aos_graph::Vertex_handle v,
+                        boost::adjacency_matrix<boost::directedS>& g,
+                        Connectivity_tester<Cell_const_handle>& ct);
 
   /* Construct the sgm geometry nodes. */
   void construct_sgms_nodes();

@@ -14,7 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel <efifogel@gmail.com>
+//            Tzvika Geft <zvigreg@mail.tau.ac.il>
 
 #if defined(_WIN32)
 #pragma warning ( disable : 4996 )
@@ -1286,6 +1287,7 @@ void Assembly::compute_aos_graph()
     m_aos_graph->clear();
     const Key& key = (*pli).first;
     overlay_traits.set_key(key);
+    overlay_traits.require_graph_update();
     Aos_mark* aos = (*pli).second;
     // std::cout << "compute_aos_graph m_number_of_parts: befor overlay"
     //           << ", cnt: " << cnt++
@@ -1294,6 +1296,8 @@ void Assembly::compute_aos_graph()
     // std::cout << "compute_aos_graph m_number_of_parts: after overlay"
     //           << std::endl;
   }
+  m_aos_face_with_graph = overlay_traits.graph_face();
+
   clock_t end_time = clock();
   float duration_time =
     static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
@@ -1321,6 +1325,164 @@ void Assembly::construct_graph_node()
   aos_geo->set_aos_vertex_radius(.03f);
 }
 
+
+void Assembly::propagate_aos_face(Aos_graph::Face_handle f, boost::adjacency_matrix<boost::directedS> &g, Connectivity_tester<Cell_const_handle> &ct)
+{
+  for (auto vit = f->isolated_vertices_begin();
+       vit != f->isolated_vertices_end(); ++vit)
+  {
+    visit_aos_vertex(vit, g, ct);
+  }
+
+  // Traverse the inner boundary
+  for (auto hit = f->holes_begin(); hit != f->holes_end(); ++hit) {
+    auto cch = *hit;
+    do {
+      visit_aos_edge(cch, g, ct);
+
+      auto inner_face = cch->twin()->face();
+      if (inner_face == cch->face()) continue; // antenna case
+
+      visit_aos_face(cch, g, ct);
+    } while (++cch != *hit);
+  }
+
+  // Traverse the outer boundary
+  if (f->number_of_outer_ccbs() != 1){
+    return;
+  }
+  auto cco = f->outer_ccb();
+  do {
+    visit_aos_edge(cco, g, ct);
+    visit_aos_face(cco, g, ct);
+  } while (++cco != f->outer_ccb());
+
+}
+
+void Assembly::visit_aos_face(Aos_graph::Halfedge_handle crossing_h,
+                              boost::adjacency_matrix<boost::directedS>& g,
+                              Connectivity_tester<Cell_const_handle>& ct)
+{
+  Aos_graph::Face_handle f = crossing_h->twin()->face();
+
+  if (f->visited()) return;
+  f->set_visited(true);
+
+  Delta remove, add;
+
+  if (crossing_h->delta() != NULL) {
+    for (auto key_it = crossing_h->delta()->begin();
+         key_it != crossing_h->delta()->end(); ++key_it)
+    {
+      if (boost::edge(key_it->second, key_it->first, g).second) {
+        remove.push_back(*key_it);
+        boost::remove_edge(key_it->second, key_it->first, g);
+      }
+      else {
+        add.push_back(*key_it);
+        boost::add_edge(key_it->second, key_it->first, g);
+      }
+    }
+  }
+
+  ct.test(f, add, remove);
+  propagate_aos_face(f, g, ct);
+
+  // restore g
+  for (auto key_it = remove.begin(); key_it != remove.end(); ++key_it) {
+    boost::add_edge(key_it->second, key_it->first, g);
+  }
+  for (auto key_it = add.begin(); key_it != add.end(); ++key_it) {
+    boost::remove_edge(key_it->second, key_it->first, g);
+  }
+  ct.update(remove, add);
+}
+
+void Assembly::visit_aos_edge(Aos_graph::Halfedge_handle h,
+                              boost::adjacency_matrix<boost::directedS>& g,
+                              Connectivity_tester<Cell_const_handle>& ct)
+{
+  if (h->visited()) return;
+  h->set_visited(true);
+
+  Delta remove, empty;
+
+  if (h->local_delta() != NULL){
+    for (auto key_it = h->local_delta()->begin();
+         key_it != h->local_delta()->end(); ++key_it)
+    {
+      boost::remove_edge(key_it->second, key_it->first, g);
+      remove.push_back(*key_it);
+    }
+  }
+
+  if (h->delta() != NULL){
+    for (auto key_it = h->delta()->begin(); key_it != h->delta()->end();
+         ++key_it)
+    {
+      if (boost::edge(key_it->second, key_it->first, g).second){
+        boost::remove_edge(key_it->second, key_it->first, g);
+        remove.push_back(*key_it);
+      }
+    }
+  }
+
+  ct.test(h, empty, remove);
+  visit_aos_vertex(h->source(), g, ct);
+  visit_aos_vertex(h->target(), g, ct);
+  ct.update(remove, empty);
+
+  // restore g
+  for (auto key_it = remove.begin(); key_it != remove.end(); ++key_it) {
+    boost::add_edge(key_it->second, key_it->first, g);
+  }
+}
+
+void Assembly::visit_aos_vertex(Aos_graph::Vertex_handle v,
+                                boost::adjacency_matrix<boost::directedS>& g,
+                                Connectivity_tester<Cell_const_handle>& ct)
+{
+  if (v->visited()) return;
+  v->set_visited(true);
+
+  Delta remove, empty;
+  if (v->delta() != NULL)
+    remove = *(v->delta());
+
+  if (!v->is_isolated()) {
+    auto first = v->incident_halfedges() ;
+    auto curr_h = first;
+    do {
+      if (curr_h->delta() != NULL){
+        for (auto key_it = curr_h->delta()->begin(); key_it != curr_h->delta()->end(); ++key_it) {
+					if (boost::edge(key_it->second, key_it->first, g).second){
+						boost::remove_edge(key_it->second, key_it->first, g);
+						remove.push_back(*key_it);
+					}
+				}
+			}
+
+			if (curr_h->local_delta() != NULL){
+				for (auto key_it = curr_h->local_delta()->begin(); key_it != curr_h->local_delta()->end(); ++key_it) {
+					if (boost::edge(key_it->second, key_it->first, g).second){
+						boost::remove_edge(key_it->second, key_it->first, g);
+						remove.push_back(*key_it);
+					}
+				}
+			}
+		}
+		while (++curr_h != first);
+	}
+
+	ct.test(v, empty, remove);
+	ct.update(remove, empty);
+
+	// restore g
+  for (auto key_it = remove.begin(); key_it != remove.end(); ++key_it) {
+		boost::add_edge(key_it->second, key_it->first, g);
+	}
+}
+
 //! \brief processes the NDBG.
 void Assembly::process_aos_graph()
 {
@@ -1338,94 +1500,12 @@ void Assembly::process_aos_graph()
   typedef Aos_graph::Edge_const_iterator                Edge_const_iterator;
   typedef Aos_graph::Face_const_iterator                Face_const_iterator;
 
-  Solution* solution = new Solution;
-
   clock_t start_time = clock();
 
-  Face_const_iterator fit = m_aos_graph->faces_begin();
-  for (; fit != m_aos_graph->faces_end(); ++fit) {
-    const Graph* graph = fit->graph();
-    // boost::print_graph(*graph);
-    // std::vector<int> discover_time(boost::num_vertices(*graph));
-    // std::vector<default_color_type> color(num_vertices(*graph));
-    // std::vector<Vertex> root(num_vertices(G));
-    Components& components = (solution->second).second;
-    components.resize(m_number_of_parts);
-#if defined(_MSC_VER)
-    (solution->second).first =
-      boost::strong_components
-      (*graph,
-       boost::make_iterator_property_map(components.begin(),
-                                         boost::get(boost::vertex_index,
-                                                    *graph),
-                                         components[0]));
-#else
-    (solution->second).first = boost::strong_components(*graph, &components[0]);
-#endif
-    if ((solution->second).first > 1) {
-      solution->first = fit;
-      m_solutions.push_front(solution);
-      solution = new Solution;
-    }
-  }
-
-  Edge_const_iterator eit = m_aos_graph->edges_begin();
-  for (; eit != m_aos_graph->edges_end(); ++eit) {
-    const Graph* graph = eit->graph();
-    // boost::print_graph(*graph);
-    // std::vector<int> discover_time(boost::num_vertices(*graph));
-    // std::vector<default_color_type> color(num_vertices(*graph));
-    // std::vector<Vertex> root(num_vertices(G));
-
-    Components& components = (solution->second).second;
-    components.resize(m_number_of_parts);
-#if defined(_MSC_VER)
-    (solution->second).first =
-      boost::strong_components
-      (*graph,
-       boost::make_iterator_property_map(components.begin(),
-                                         boost::get(boost::vertex_index,
-                                                    *graph),
-                                         components[0]));
-#else
-    (solution->second).first = boost::strong_components(*graph, &components[0]);
-#endif
-    if ((solution->second).first > 1) {
-      solution->first = eit;
-      m_solutions.push_front(solution);
-      solution = new Solution;
-    }
-  }
-
-  Vertex_const_iterator vit = m_aos_graph->vertices_begin();
-  for (; vit != m_aos_graph->vertices_end(); ++vit) {
-    const Graph* graph = vit->graph();
-    // boost::print_graph(*graph);
-    // std::vector<int> discover_time(boost::num_vertices(*graph));
-    // std::vector<default_color_type> color(num_vertices(*graph));
-    // std::vector<Vertex> root(num_vertices(G));
-
-    Components& components = (solution->second).second;
-    components.resize(m_number_of_parts);
-
-#if defined(_MSC_VER)
-    (solution->second).first =
-      boost::strong_components
-      (*graph,
-       boost::make_iterator_property_map(components.begin(),
-                                         boost::get(boost::vertex_index,
-                                                    *graph),
-                                         components[0]));
-#else
-    (solution->second).first = boost::strong_components(*graph, &components[0]);
-#endif
-    if ((solution->second).first > 1) {
-      solution->first = vit;
-      m_solutions.push_front(solution);
-      solution = new Solution;
-    }
-  }
-  delete solution;
+  Connectivity_tester<Cell_const_handle> ct (m_number_of_parts, *(m_aos_face_with_graph->graph()), m_solutions, m_aos_face_with_graph, true);
+  m_aos_face_with_graph->set_visited(true);
+  propagate_aos_face(m_aos_face_with_graph, *(m_aos_face_with_graph->graph()), ct);
+  ct.finish();
 
   clock_t end_time = clock();
   float duration_time =
