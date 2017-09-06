@@ -168,7 +168,7 @@ void Lines_through_segments_geo::clean()
       const auto& ep1 = (*coord_array)[coord_indices[j++]];
       const auto& ep2 = (*coord_array)[coord_indices[j++]];
       // Ensure that every polyline consists of a single segment
-      SGAL_assertion(m_coord_indices[j] == static_cast<Uint>(-1));
+      SGAL_assertion(coord_indices[j] == static_cast<Uint>(-1));
       ++j;
 
       Rat_point_3 p1(ep1[0], ep1[1], ep1[2]);

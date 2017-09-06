@@ -263,7 +263,7 @@ protected:
       return traits->construct_x_monotone_curve_2_object()(points.begin(),
                                                            points.end());
 
-    SGAL_assertion(2 = points.size());
+    SGAL_assertion(2 == points.size());
     Uint index = m_normal_indices[i];
     Epec_vector_3& v = (*exact_normal_array)[index];
     Epec_direction_3 normal = ctr_direction(v);
@@ -306,7 +306,7 @@ protected:
     if (!exact_normal_array || (m_normal_indices.size() <= i))
       return traits->construct_curve_2_object()(points.begin(), points.end());
 
-    SGAL_assertion(2 = points.size());
+    SGAL_assertion(2 == points.size());
     Uint index = m_normal_indices[i];
     Epec_vector_3& v = (*exact_normal_array)[index];
     Epec_direction_3 normal = ctr_direction(v);
