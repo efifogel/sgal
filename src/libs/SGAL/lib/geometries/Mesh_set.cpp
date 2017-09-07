@@ -537,6 +537,40 @@ void Mesh_set::set_facet_tex_coord_indices(const Facet_indices& indices)
   m_dirty_tex_coord_indices = true;
 }
 
+//! \brief sets the facet coordinate indices and dispose the input indices.
+void Mesh_set::set_facet_coord_indices(const Facet_indices&& indices)
+{
+  m_facet_coord_indices = indices;
+  m_dirty_facet_coord_indices = false;
+  m_dirty_coord_indices = true;
+}
+
+//! \brief sets the facet normal indices and dispose the input indices.
+void Mesh_set::set_facet_normal_indices(const Facet_indices&& indices)
+{
+  m_facet_normal_indices = indices;
+  m_dirty_facet_normal_indices = false;
+  m_dirty_normal_indices = true;
+}
+
+//! \brief sets the facet color indices and dispose the input indices.
+void Mesh_set::set_facet_color_indices(const Facet_indices&& indices)
+{
+  m_facet_color_indices = indices;
+  m_dirty_facet_color_indices = false;
+  m_dirty_color_indices = true;
+}
+
+/*! \brief sets the facet texture coordinate indices and dispose the input
+ * indices.
+ */
+void Mesh_set::set_facet_tex_coord_indices(const Facet_indices&& indices)
+{
+  m_facet_tex_coord_indices = indices;
+  m_dirty_facet_tex_coord_indices = false;
+  m_dirty_tex_coord_indices = true;
+}
+
 //! \brief cleans the facet coordinate-index vector.
 void Mesh_set::clean_facet_coord_indices()
 {

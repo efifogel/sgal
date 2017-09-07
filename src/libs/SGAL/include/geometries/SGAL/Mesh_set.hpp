@@ -319,7 +319,23 @@ public:
    */
   void set_facet_tex_coord_indices(const Facet_indices& indices);
 
-   /*! Clean (validate) the facet coordinate indices.
+  /*! Set the facet coordinate indices and dispose the input indices.
+   */
+  void set_facet_coord_indices(const Facet_indices&& indices);
+
+  /*! Set the facet normal indices and dispose the input indices.
+   */
+  void set_facet_normal_indices(const Facet_indices&& indices);
+
+  /*! Set the facet color indices and dispose the input indices.
+   */
+  void set_facet_color_indices(const Facet_indices&& indices);
+
+  /*! Set the facet texture-coordinate indices and dispose the input indices.
+   */
+  void set_facet_tex_coord_indices(const Facet_indices&& indices);
+
+  /*! Clean (validate) the facet coordinate indices.
    * In case of triangles or quads, remove the '-1' end-of-polygon indication
    * from the indices. This operation changes the structure of the
    * indices, and must be reflected in the drawing routines.
