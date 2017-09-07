@@ -1,6 +1,6 @@
 # Find required libraries
 set(Boost_USE_STATIC_LIBS OFF)
-find_package(Boost REQUIRED COMPONENTS system filesystem program_options)
+find_package(Boost REQUIRED COMPONENTS system filesystem program_options regex)
 find_package(ImageMagick REQUIRED COMPONENTS Magick++)
 find_package(Freetype REQUIRED)
 find_package(OpenGL REQUIRED)
