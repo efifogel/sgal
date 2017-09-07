@@ -22,6 +22,7 @@
 #include <sstream>
 #include <vector>
 #include <list>
+#include <boost/regex.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/interprocess/streams/bufferstream.hpp>
@@ -78,7 +79,9 @@ Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
 
   // If the magic string is "OFF",
   // the file format can be either OFF or binary STL.
-  if (0 == magic.compare(0, 3, "OFF")) {
+  boost::smatch what;
+  boost::regex re("(ST)?(C)?(N)?(4)?(n)?OFF\\s*(\\s#.*)?");
+  if (boost::regex_match(magic, what, re)) {
     // If the magic string is "OFF" and the file extension is off,
     // assume that the file format is OFF.
     if (boost::iequals(file_extension, ".off")) {
@@ -508,6 +511,16 @@ Loader::Return_code Loader::load_off(std::istream& is, Scene_graph* sg)
   // Consume first line.
   std::string magic;
   std::getline(is, magic);
+  boost::smatch what;
+  boost::regex re("(ST)?(C)?(N)?(4)?(n)?OFF\\s*(\\s#.*)?");
+  boost::regex_match(magic, what, re);
+  // what[0]---entire string
+  // what[1]---texture coordinate
+  // what[2]---color
+  // what[3]---normal
+  // what[4]---4 components including a final homogeneous component
+  // what[5]---n components
+  bool has_colors = what.length(2);
 
   // Obtain root.
   auto transform = sg->initialize();
@@ -541,28 +554,84 @@ Loader::Return_code Loader::load_off(std::istream& is, Scene_graph* sg)
   // std::cout << num_edges << std::endl;
 
   auto* coords = new Coord_array_3d(num_vertices);
-  Shared_coord_array_3d shared_coords(coords);
   SGAL_assertion(coords);
+  Shared_coord_array_3d shared_coords(coords);
   coords->add_to_scene(sg);
   sg->add_container(shared_coords);
+
+  Color_array* colors;
+  Shared_color_array shared_colors;
+  float scale;
+  if (has_colors) {
+    colors = new Color_array(num_vertices);
+    SGAL_assertion(colors);
+    shared_colors = Shared_color_array(colors);
+    colors->add_to_scene(sg);
+    sg->add_container(shared_colors);
+    scale = 1.0 / 255.0;
+  }
+
   for (auto i = 0; i < num_vertices; ++i) {
     float x, y, z;
     is >> x >> y >> z;
     (*coords)[i].set(x, y, z);
+
+    if (has_colors) {
+      float r, g, b, a;
+      is >> r >> g >> b >> a;
+      (*colors)[i].set(scale * r, scale * g, scale * b);
+    }
   }
 
-  auto& indices = ifs->get_empty_polygon_coord_indices();
+  Polygon_indices indices;
   indices.resize(num_facets);
+  Boolean tris(true), quads(true);
   for (auto i = 0; i < num_facets; ++i) {
     size_t n;
     is >> n;
+    SGAL_assertion(2 != n);
+    if (3 != n) tris = false;
+    if (4 != n) quads = false;
     indices[i].resize(n);
     for (auto j = 0; j < n; ++j) is >> indices[i][j];
   }
-  ifs->set_coord_array(shared_coords);
-  ifs->set_primitive_type(Geo_set::PT_POLYGONS);
-  ifs->set_num_primitives(num_facets);
+  if (tris) {
+    ifs->set_primitive_type(Geo_set::PT_TRIANGLES);
+    auto& tris = ifs->get_empty_triangle_coord_indices();
+    tris.resize(num_facets);
+    for (auto i = 0; i < num_facets; ++i) {
+      tris[i][0] = indices[i][0];
+      tris[i][1] = indices[i][1];
+      tris[i][2] = indices[i][2];
+      indices[i].clear();
+    }
+    indices.clear();
+  }
+  else if (quads) {
+    ifs->set_primitive_type(Geo_set::PT_QUADS);
+    auto& quads = ifs->get_empty_quad_coord_indices();
+    quads.resize(num_facets);
+    for (auto i = 0; i < num_facets; ++i) {
+      quads[i][0] = indices[i][0];
+      quads[i][1] = indices[i][1];
+      quads[i][2] = indices[i][2];
+      quads[i][3] = indices[i][3];
+      indices[i].clear();
+    }
+    indices.clear();
+  }
+  else {
+    ifs->set_primitive_type(Geo_set::PT_POLYGONS);
+    ifs->set_facet_coord_indices(std::move(indices));
+  }
+
   ifs->facet_coord_indices_changed();
+  ifs->set_coord_array(shared_coords);
+  if (has_colors) {
+    ifs->set_color_array(shared_colors);
+    ifs->set_color_per_vertex(true);
+  }
+  ifs->set_num_primitives(num_facets);
   ifs->add_to_scene(sg);
 
   return SUCCESS;
