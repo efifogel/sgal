@@ -1,0 +1,39 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest}
+\usepackage{mathptmx}
+\usetikzlibrary{calc,patterns,decorations.pathmorphing,decorations.markings,matrix,fit,decorations.pathreplacing,arrows.meta,automata,positioning,shapes,chains,spy}
+\usetikzlibrary{intersections,through,backgrounds}
+\usetikzlibrary{shadows,fadings}
+\usepackage[active,tightpage,pdftex]{preview}
+\PreviewEnvironment{tikzpicture}
+\tikzset{%
+  point/.style={circle,inner sep=1.5pt,minimum size=1.5pt,draw,fill=#1},
+  point/.default=red}
+\begin{document}
+  \large
+  \centerline{%
+    \begin{tikzpicture}[thick]
+      \draw[dashed] (0.5,0.5) rectangle +(1,1);
+      \coordinate (a) at (0,0);
+      \node[point,label={[label distance=-3pt]north west:{\scriptsize$(0.5,0.5)$}}] (b) at (0.5,0.5) {};
+      \coordinate (c) at (1.5,1.5);
+      \coordinate (d) at (1.8,1.8);
+      \coordinate (e) at (2.2,2.2);
+      \node[point,label={[label distance=-3pt]south east:{\scriptsize$q(12,12)$}}] (q) at (2.5,2.5) {};
+      \node[point,label={[label distance=-3pt]north west:{\scriptsize$r(24,24)$}}] (r) at (5,5) {};
+      \draw (a)--(b);
+      \draw (b)--(c);
+      \draw (c)--(d);
+      \draw[dotted] (d)--(e);
+      \draw (e)--(q);
+      \draw (q)--(r);
+      \node[point,label={[align=left,label distance=5pt]east:{\scriptsize$p (0.5+x \cdot \epsilon,0.5+y \cdot \epsilon)$\\\scriptsize$0 \leq x,y \leq 256$, $\epsilon = 2^{-53}$}}] at (1.25,0.75) {};
+      \coordinate (c1) at (-1,0);
+      \coordinate (c2) at (-1,5);
+      \draw[dotted] (c1)--($(b)+(1,0)$);
+      \draw[dotted] (c2)--(c);
+    \end{tikzpicture}
+  }
+\end{document}

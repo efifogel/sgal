@@ -1,0 +1,32 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest}
+\usepackage{mathptmx}
+\usetikzlibrary{calc,patterns,decorations.pathmorphing,decorations.markings,matrix,fit,decorations.pathreplacing,arrows.meta,automata,positioning,shapes,chains,spy}
+\usetikzlibrary{intersections,through,backgrounds}
+\usetikzlibrary{shadows,fadings}
+\usepackage[active,tightpage,pdftex]{preview}
+\PreviewEnvironment{tikzpicture}
+\tikzset{%
+  point/.style={circle,inner sep=1.5pt,minimum size=1.5pt,draw,fill=#1},
+  point/.default=red}
+\begin{document}
+  \large
+  \centerline{%
+    \begin{tikzpicture}[very thick]
+      \tikzstyle{vertex}=[circle,inner sep=3pt,minimum size=4pt,draw,fill=lightgray]
+      \draw(-3,0)--(3,0)--(0,3.6)--cycle;
+      \node[vertex] (a) at (0,0) {};
+      \node[vertex] (b) at (0.5,0.6) {};
+      \coordinate (c) at (0.25,0.9);
+      \coordinate (d) at (0.5 ,1.2);
+      \coordinate (e) at (0.25,1.5);
+      \node[vertex] (f) at (0.5,1.8) {};
+      \node[vertex] (g) at (0,2.4) {};
+      \node[vertex] (h) at (0.5,3) {};
+      \node[vertex] (i) at (0,3.6) {};
+      \draw (a)--(b)--(c)--(d)--(e)--(f)--(g)--(h)--(i);
+    \end{tikzpicture}
+  }
+\end{document}

@@ -1,0 +1,38 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest}
+\usepackage{mathptmx}
+\usetikzlibrary{calc,patterns,decorations.pathmorphing,decorations.markings,matrix,fit,decorations.pathreplacing,arrows.meta,automata,positioning,shapes,chains,spy}
+\usetikzlibrary{intersections,through,backgrounds}
+\usetikzlibrary{shadows,fadings}
+\usepackage[active,tightpage,pdftex]{preview}
+\PreviewEnvironment{tikzpicture}
+\tikzset{%
+  point/.style={circle,inner sep=1.5pt,minimum size=1.5pt,draw,fill=#1},
+  point/.default=red}
+\begin{document}
+  \large
+  \centerline{%
+    \begin{tikzpicture}[-{Stealth},thick,label distance=-3pt]
+      \node[point,label=north:$s$] (s) at (0,0) {};
+      \node[point,rotate=30,label=right:$r$] (r) at (30:2) {};
+      \node[point,rotate=150,label=right:$p$] (p) at (150:2) {};
+      \node[point,rotate=270,label=right:$q$] (q) at (270:2) {};
+      \draw[thick] (p) -- (q);
+      \draw[thick] (q) -- (r);
+      \draw[thick] (r) -- (p);
+      \draw[thick] (s) -- (p);
+      \draw[thick] (s) -- (q);
+      \draw[thick] (s) -- (r);
+      \draw (150:2.5) arc (150:390:2.5);
+      \draw[shift={(0,.5517)}] (150:0.23) arc (150:390:0.23);
+      \begin{scope}[rotate=120]
+        \draw[shift={(0,.5517)}] (150:0.23) arc (150:390:0.23);
+      \end{scope}
+      \begin{scope}[rotate=240]
+        \draw[shift={(0,.5517)}] (150:0.23) arc (150:390:0.23);
+      \end{scope}
+    \end{tikzpicture}
+  }
+\end{document}
