@@ -84,8 +84,9 @@ anynumber 		([+-]?{number}|{hexnumber}|{octnumber})
 
 idStartChar		([a-zA-Z\$_\x80-\xFF])
 idRestChar      	({idStartChar}|[0-9]|\-)
+idAnyChar    		({idRestChar}|\.|,)
 
-%s vrml js stl
+%s vrml js stl obj objname mtl
 
 /* The following paragraph suffices to track locations accurately. Each time
  * yylex is invoked, the begin position is moved onto the end position.
@@ -103,6 +104,27 @@ idRestChar      	({idStartChar}|[0-9]|\-)
 %{
 loc.step();		// reset location
 %}
+
+<mtl>"Ns"		{ return Vrml_parser::make_K_SPECULAR_EXPONENT(loc); }
+<mtl>"Ka"		{ return Vrml_parser::make_K_AMBIENT_COLOR(loc); }
+<mtl>"Kd"		{ return Vrml_parser::make_K_DIFFUSE_COLOR(loc); }
+<mtl>"Ks"		{ return Vrml_parser::make_K_SPECULAR_COLOR(loc); }
+<mtl>"Ke"		{ return Vrml_parser::make_K_EMISSIVE_COLOR(loc); }
+<mtl>"Ni"		{ return Vrml_parser::make_K_OPTICAL_DENSITY(loc); }
+<mtl>"d"		{ return Vrml_parser::make_K_DISSOLVE(loc); }
+<mtl>"Tr"		{ return Vrml_parser::make_K_TRANSPARENCY(loc); }
+<mtl>"illum"		{ return Vrml_parser::make_K_ILLUMINATION(loc); }
+
+<obj,mtl>"#"		{ comment_to_eol(); }
+<obj>"vt"               { return Vrml_parser::make_K_TEXTURE_COORDINATE(loc); }
+<obj>"vn"               { return Vrml_parser::make_K_NORMAL(loc); }
+<obj>"v"                { return Vrml_parser::make_K_VERTEX(loc); }
+<obj>"f"                { return Vrml_parser::make_K_FACET(loc); }
+<obj>"s"                { return Vrml_parser::make_K_SMOOTH(loc); }
+<obj>"mtllib"           { yy_push_state(objname); return Vrml_parser::make_K_MATERIAL_LIB(loc); }
+<mtl>"newmtl"           { yy_push_state(objname); return Vrml_parser::make_K_NEW_MATERIAL(loc); }
+<obj>"usemtl"           { yy_push_state(objname); return Vrml_parser::make_K_USE_MATERIAL(loc); }
+<obj,mtl>"\n"           { loc.lines(yyleng); loc.step(); return Vrml_parser::make_K_LINE_END(loc); }
 
 <INITIAL>"#VRML V2.0"[^\n]*	{ BEGIN(vrml); return Vrml_parser::make_VRML(loc); }
 
@@ -163,7 +185,7 @@ loc.step();		// reset location
                           Shared_string yylval(new std::string(YYText()));
                           return Vrml_parser::make_NUMBER(yylval, loc);
                         }
-<vrml,stl>{anynumber}   {
+<vrml,stl,obj,mtl>{anynumber}   {
                           Shared_string yylval(new std::string(YYText()));
                           return Vrml_parser::make_NUMBER(yylval, loc);
                         }
@@ -171,6 +193,11 @@ loc.step();		// reset location
 <vrml,stl>{idStartChar}{idRestChar}* {
                           Shared_string yylval(new std::string(YYText()));
                           return Vrml_parser::make_IDENTIFIER(yylval, loc);
+                        }
+
+<objname>{idAnyChar}+ {
+                          Shared_string yylval(new std::string(YYText()));
+                          yy_pop_state(); return Vrml_parser::make_IDENTIFIER(yylval, loc);
                         }
 
  /* Comments must not start at the beginning og the line in the rule section. */
@@ -291,5 +318,10 @@ void Vrml_scanner::comment_to_eol()
   if (c == '\n') unput(c);
   else { /* putchar(c) */; }
 }
+
+void Vrml_scanner::push_state(int new_state)
+{ yyFlexLexer::yy_push_state(new_state); }
+
+void Vrml_scanner::pop_state() { yyFlexLexer::yy_pop_state(); }
 
 SGAL_END_NAMESPACE

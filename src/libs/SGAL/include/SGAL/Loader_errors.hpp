@@ -38,6 +38,14 @@ class SGAL_SGAL_DECL Loader_error : public error {
   ~Loader_error() SGAL_NOTHROW {}
 };
 
+/*! Class thrown when a source file cannot be found. */
+class SGAL_SGAL_DECL Find_file_error : public Loader_error {
+public:
+  Find_file_error(const std::string& filename) :
+    Loader_error(std::string("Error: Failed to find file"), filename) {}
+  ~Find_file_error() SGAL_NOTHROW {}
+};
+
 /*! Class thrown when the parsing of a stream fails. */
 class SGAL_SGAL_DECL Parse_error : public Loader_error {
 public:

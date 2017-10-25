@@ -37,8 +37,14 @@ public:
   /*! */
   Vrml_parser::symbol_type mylex();
 
-  /*! */
-  void yyerror(const char* message, int cur_token);
+  /*! Push the current start condition onto the top of the start condition
+   * stack and switches to new_state.
+   */
+  void push_state(int new_state);
+
+  /*! Pop the top of the stack and switches to it.
+   */
+  void pop_state();
 
 private:
   Vrml_parser::location_type loc;

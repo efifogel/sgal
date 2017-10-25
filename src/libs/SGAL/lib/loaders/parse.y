@@ -159,6 +159,21 @@ SGAL_END_NAMESPACE
 %token K_LOOP
 %token K_LOOP_END
 %token K_VERTEX
+%token K_TEXTURE_COORDINATE
+%token K_SMOOTH
+%token K_MATERIAL_LIB
+%token K_NEW_MATERIAL
+%token K_USE_MATERIAL
+%token K_LINE_END
+%token K_SPECULAR_EXPONENT
+%token K_AMBIENT_COLOR
+%token K_DIFFUSE_COLOR
+%token K_SPECULAR_COLOR
+%token K_EMISSIVE_COLOR
+%token K_OPTICAL_DENSITY
+%token K_DISSOLVE
+%token K_TRANSPARENCY
+%token K_ILLUMINATION
 
 %token
   END               0   "end of file"

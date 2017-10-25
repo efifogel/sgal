@@ -20,10 +20,12 @@
 #define SGAL_LOADER_HPP
 
 #include <boost/shared_ptr.hpp>
+#include <boost/regex.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Loader_errors.hpp"
 #include "SGAL/Vector3f.hpp"
+#include "SGAL/Indices_types.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -33,6 +35,8 @@ class Shape;
 class Indexed_face_set;
 class Coord_array_3d;
 class Color_array;
+class Normal_array;
+class Tex_coord_array_2d;
 class Appearance;
 class Material;
 
@@ -100,7 +104,16 @@ public:
    * \param[in] is the stream to load.
    * \param[in] sg the scene graph
    */
-  Return_code load_off(std::istream& is, Scene_graph* sg);
+  Return_code load_off(std::istream& is, Scene_graph* sg,
+                       const boost::smatch& what);
+
+  /*! Load a scene graph represented in the obj file format from a stream.
+   */
+  Return_code parse_obj(std::istream& is, Scene_graph* sg);
+
+  /*! Prase a material library file, which is part of the obj format.
+   */
+  Return_code parse_mtl(const std::string& filename, Scene_graph* sg);
 
 protected:
   class Triangle {
@@ -129,6 +142,8 @@ private:
   typedef boost::shared_ptr<Indexed_face_set>       Shared_indexed_face_set;
   typedef boost::shared_ptr<Coord_array_3d>         Shared_coord_array_3d;
   typedef boost::shared_ptr<Color_array>            Shared_color_array;
+  typedef boost::shared_ptr<Normal_array>           Shared_normal_array;
+  typedef boost::shared_ptr<Tex_coord_array_2d>     Shared_tex_coord_array_2d;
   typedef boost::shared_ptr<Appearance>             Shared_appearance;
   typedef boost::shared_ptr<Material>               Shared_material;
 
@@ -165,6 +180,40 @@ private:
    */
   void add_colored_shape(Scene_graph* scene_graph, Shared_transform transform,
                          std::list<Triangle>& triangles, const Vector3f& color);
+
+  /*! Create a new Shape node.
+   */
+  Shared_shape create_shape(Scene_graph* sg) const;
+
+  /*! Create a new Appearance container.
+   */
+  Shared_appearance create_appearance(Scene_graph* sg) const;
+
+  /*! Create a new Appearance container.
+   */
+  Shared_appearance create_appearance(Scene_graph* sg,
+                                      const std::string& name) const;
+
+  /*! Create a new Material container.
+   */
+  Shared_material create_material(Scene_graph* sg) const;
+
+  /*! Create a new IndexedFaceSet container.
+   */
+  Shared_indexed_face_set create_ifs(Scene_graph* sg) const;
+
+  /*! Update an IndexedFaceSet container.
+   */
+  Return_code update_ifs(Scene_graph* sg,
+                         Shared_indexed_face_set ifs,
+                         Shared_coord_array_3d shared_coords,
+                         Shared_normal_array shared_normals,
+                         Shared_color_array shared_colors,
+                         Shared_tex_coord_array_2d shared_tex_coords,
+                         Polygon_indices& coord_indices,
+                         Polygon_indices& normal_indices,
+                         Polygon_indices& tex_coord_indices);
+
 };
 
 SGAL_END_NAMESPACE
