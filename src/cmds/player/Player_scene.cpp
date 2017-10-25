@@ -48,6 +48,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/errors.hpp"
+#include "SGAL/find_file.hpp"
 #include "SGAL/Event_handler.hpp"
 #include "SGAL/Tick_event.hpp"
 #include "SGAL/Keyboard_event.hpp"
@@ -210,49 +211,6 @@ Player_scene::~Player_scene(void)
   m_fullname.clear();
 }
 
-//! \brief finds the input file.
-void Player_scene::find_input_file(const std::string& const_filename)
-{
-  std::string filename(const_filename);
-
-  SGAL_assertion(!filename.empty());
-
-#if (defined _MSC_VER)
-  // Convert the ROOT from cygwin path to windows path, if relevant:
-  std::string cygdrive = filename.substr(0, 10);
-  if (cygdrive == std::string("/cygdrive/")) {
-    filename.erase(0, 10);
-    filename.insert(1, ":");
-  }
-#endif
-
-#if BOOST_VERSION >= 103400
-  fi::path file_path(filename);
-#else
-  fi::path file_path(filename, fi::native);
-#endif
-  if (file_path.is_complete()) {
-#if BOOST_VERSION >= 103400
-    if (fi::exists(file_path)) m_fullname = file_path.string();
-#else
-    if (fi::exists(file_path)) m_fullname = file_path.native_file_string();
-#endif
-    return;
-  }
-
-  m_option_parser->for_each_dir(Add_dir(m_dirs));
-  for (Path_iter pi = m_dirs.begin(); pi != m_dirs.end(); ++pi) {
-    fi::path full_file_path = *pi / file_path;
-    if (!fi::exists(full_file_path)) continue;
-#if BOOST_VERSION >= 103400
-    m_fullname = full_file_path.string();
-#else
-    m_fullname = full_file_path.native_file_string();
-#endif
-    return;
-  }
-}
-
 //! \brief creates the scene.
 void Player_scene::create_scene(char* data, int size)
 {
@@ -332,6 +290,7 @@ void Player_scene::create_scene()
 
   update_data_dirs();
   m_option_parser->configure_scene_graph(m_scene_graph);
+  m_option_parser->for_each_dir(Add_dir(m_dirs));
 
   // Find the input file full name.
   if (0 == m_option_parser->get_num_input_files()) {
@@ -340,7 +299,7 @@ void Player_scene::create_scene()
     return;
   }
   const auto& filename = m_option_parser->get_input_file(0);
-  find_input_file(filename);
+  SGAL::find_file(filename, m_dirs, m_fullname);
   if (m_fullname.empty()) {
     throw Illegal_input(FILE_NOT_FOUND, "cannot find file", filename);
     return;

@@ -240,10 +240,6 @@ public:
    */
   SGAL::Boolean is_interactive() const;
 
-  /*! Find the input file.
-   */
-  void find_input_file(const std::string& filename);
-
   /*! Obtain the camera projection matrix.
    */
   void get_proj_mat(SGAL::Matrix4f& mat);
