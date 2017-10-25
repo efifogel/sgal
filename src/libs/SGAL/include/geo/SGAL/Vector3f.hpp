@@ -93,6 +93,7 @@ public:
   Float distance(const Vector3f& v) const;
   void xform_pt(const Vector3f& v, const Matrix4f& m);
   void div(Float, const Vector3f& v);
+  void div(const Vector3f& v1, const Vector3f& v2);
   void round();
 
   Boolean less(const Vector3f& v) const;
@@ -363,6 +364,14 @@ inline void Vector3f::div(Float c, const Vector3f& v)
   m_vector[0] = c / v[0];
   m_vector[1] = c / v[1];
   m_vector[2] = c / v[2];
+}
+
+//! \brief
+inline void Vector3f::div(const Vector3f& v1, const Vector3f& v2)
+{
+  m_vector[0] = v1[0] / v2[0];
+  m_vector[1] = v1[1] / v2[1];
+  m_vector[2] = v1[2] / v2[2];
 }
 
 //! \brief
