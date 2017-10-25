@@ -57,6 +57,7 @@ public:
   enum {
     FIRST = Container::LAST - 1,
     AMBIENT_INTENSITY,
+    AMBIENT_COLOR,
     DIFFUSE_COLOR,
     SPECULAR_COLOR,
     EMISSIVE_COLOR,
@@ -72,7 +73,7 @@ public:
   };
 
   /*! Constructor */
-  Material(Boolean proto = false);
+  Material(bool proto = false);
 
   /*! Destructor */
   virtual ~Material();
@@ -84,16 +85,25 @@ public:
   virtual Container* clone();
 
   /*! Set the ambient intensity */
-  void set_ambient_intensity(Float intensity);
+  void set_ambient_intensity(float intensity);
 
   /*! Obtain the ambient intensity */
-  Float get_ambient_intensity() const;
+  float get_ambient_intensity();
+
+  /*! Set the ambient color */
+  void set_ambient_color(const Vector3f& color);
+
+  /*! Set the ambient color */
+  void set_ambient_color(float red, float green, float blue);
+
+  /*! Obtain the ambient color */
+  const Vector3f& get_ambient_color();
 
   /*! Set the diffuse color */
   void set_diffuse_color(const Vector3f& color);
 
   /*! Set the diffuse color */
-  void set_diffuse_color(Float v0, Float v1, Float v2);
+  void set_diffuse_color(float red, float green, float blue);
 
   /*! Obtain the diffuse color */
   const Vector3f& get_diffuse_color() const;
@@ -105,7 +115,7 @@ public:
   void set_specular_color(const Vector3f& color);
 
   /*! Set the specular color */
-  void set_specular_color(Float v0, Float v1, Float v2);
+  void set_specular_color(float red, float green, float blue);
 
   /*! Obtain the specular color */
   void get_specular_color(Vector3f& color) const;
@@ -117,7 +127,7 @@ public:
   void set_emissive_color(const Vector3f& color);
 
   /*! Set the emissive color */
-  void set_emissive_color(Float v0, Float v1, Float v2);
+  void set_emissive_color(float red, float green, float blue);
 
   /*! Obtain the emissive color */
   const Vector3f& get_emissive_color() const;
@@ -126,16 +136,16 @@ public:
   void get_emissive_color(Vector3f& color) const;
 
   /*! Set the shininess */
-  void set_shininess(Float shininess);
+  void set_shininess(float shininess);
 
   /*! Obtain the shininess */
-  Float get_shininess() const;
+  float get_shininess() const;
 
   /*! Set the transparency */
-  void set_transparency(Float transparency);
+  void set_transparency(float transparency);
 
   /*! Obtain the transparency */
-  Float get_transparency() const;
+  float get_transparency() const;
 
   /*! The callback invoked when the material chages. */
   virtual void material_changed(const Field_info* field_info = nullptr);
@@ -154,15 +164,16 @@ public:
 
   /// \name field handlers
   //@{
-  Float* ambient_intensity_handle(const Field_info*)
+  float* ambient_intensity_handle(const Field_info*)
   { return &m_ambient_intensity; }
+  Vector3f* ambient_color_handle(const Field_info*) { return &m_ambient_color; }
   Vector3f* diffuse_color_handle(const Field_info*) { return &m_diffuse_color; }
   Vector3f* specular_color_handle(const Field_info*)
   { return &m_specular_color; }
   Vector3f* emissive_color_handle(const Field_info*)
   { return &m_emissive_color; }
-  Float* shininess_handle(const Field_info*) { return &m_shininess; }
-  Float* transparency_handle(const Field_info*) { return &m_transparency; }
+  float* shininess_handle(const Field_info*) { return &m_shininess; }
+  float* transparency_handle(const Field_info*) { return &m_transparency; }
   //@}
 
   /*! Set the attributes of this container */
@@ -183,16 +194,11 @@ private:
   /*! the node prototype */
   static Container_proto* s_prototype;
 
-  /*! Default Values */
-  static const Float s_def_ambient_intensity;
-  static const Vector3f s_def_diffuse_color;
-  static const Vector3f s_def_specular_color;
-  static const Vector3f s_def_emissive_color;
-  static const Float s_def_shininess;
-  static const Float s_def_transparency;
-
   /*! the ambient intensity */
-  Float m_ambient_intensity;
+  float m_ambient_intensity;
+
+  /*! the ambient color */
+  Vector3f m_ambient_color;
 
   /*! the diffuse color */
   Vector3f m_diffuse_color;
@@ -204,10 +210,25 @@ private:
   Vector3f m_emissive_color;
 
   /*! the shininess */
-  Float m_shininess;
+  float m_shininess;
 
   /*! the transparancy */
-  Float m_transparency;
+  float m_transparency;
+
+  //! Indicates whether the ambient intensity should be cleaned.
+  bool m_dirty_ambient_intensity;
+
+  //! Indicates whether the ambient color should be cleaned.
+  bool m_dirty_ambient_color;
+
+  //! Default Values
+  static const float s_def_ambient_intensity;
+  static const Vector3f s_def_ambient_color;
+  static const Vector3f s_def_diffuse_color;
+  static const Vector3f s_def_specular_color;
+  static const Vector3f s_def_emissive_color;
+  static const float s_def_shininess;
+  static const float s_def_transparency;
 };
 
 #if defined(_MSC_VER)
@@ -220,9 +241,9 @@ inline Material* Material::prototype() { return new Material(true); }
 //! \brief clones.
 inline Container* Material::clone() { return new Material(); }
 
-//! \brief obtains the ambient intensity.
-inline Float Material::get_ambient_intensity() const
-{ return m_ambient_intensity; }
+//! \brief sets the ambient color.
+inline void Material::set_ambient_color(const Vector3f& color)
+{ set_ambient_color(color[0], color[1], color[2]); }
 
 //! \brief sets the diffuse color.
 inline void Material::set_diffuse_color(const Vector3f& color)
@@ -261,11 +282,11 @@ inline void Material::get_emissive_color(Vector3f& color) const
 { color = m_emissive_color; }
 
 //! \brief obtains the shininess.
-inline Float Material::get_shininess() const
+inline float Material::get_shininess() const
 { return m_shininess; }
 
 //! \brief obtains the transparency.
-inline Float Material::get_transparency() const { return m_transparency;}
+inline float Material::get_transparency() const { return m_transparency;}
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Material::get_tag() const { return s_tag; }

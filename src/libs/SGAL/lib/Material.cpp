@@ -44,12 +44,13 @@ const std::string Material::s_tag = "Material";
 Container_proto* Material::s_prototype(nullptr);
 
 // Default values:
-const Float Material::s_def_ambient_intensity = 0.2f;
-const Vector3f Material::s_def_diffuse_color(0.8f, 0.8f,0.8f);
+const float Material::s_def_ambient_intensity = 0.2f;
+const Vector3f Material::s_def_ambient_color(0.16f, 0.16f, 0.16f);
+const Vector3f Material::s_def_diffuse_color(0.8f, 0.8f, 0.8f);
 const Vector3f Material::s_def_emissive_color(0, 0, 0);
-const Float Material::s_def_shininess = 0.2f;
+const float Material::s_def_shininess = 0.2f;
 const Vector3f Material::s_def_specular_color(0, 0, 0);
-const Float Material::s_def_transparency = 0;
+const float Material::s_def_transparency = 0;
 
 REGISTER_TO_FACTORY(Material, "Material");
 
@@ -57,54 +58,93 @@ REGISTER_TO_FACTORY(Material, "Material");
 Material::Material(Boolean proto) :
   Container(proto),
   m_ambient_intensity(s_def_ambient_intensity),
+  m_ambient_color(s_def_ambient_color),
   m_diffuse_color(s_def_diffuse_color),
   m_specular_color(s_def_specular_color),
   m_emissive_color(s_def_emissive_color),
   m_shininess(s_def_shininess),
-  m_transparency(s_def_transparency)
+  m_transparency(s_def_transparency),
+  m_dirty_ambient_intensity(false),
+  m_dirty_ambient_color(false)
 {}
 
 //! \brief Destructor
 Material::~Material() {}
 
 //! \brief sets the transparency.
-void Material::set_transparency(Float transparency)
+void Material::set_transparency(float transparency)
 {
   const Field_info* field_info = get_field_info(TRANSPARENCY);
   field_changed(field_info);
   m_transparency = transparency;
 }
 
+//! \brief obtains the ambient intensity.
+float Material::get_ambient_intensity()
+{
+  if (m_dirty_ambient_intensity) {
+    m_ambient_intensity =(m_diffuse_color[0] / m_ambient_color[0] +
+                          m_diffuse_color[1] / m_ambient_color[1] +
+                          m_diffuse_color[2] / m_ambient_color[2]) * 0.333;
+    m_dirty_ambient_intensity = false;
+  }
+  return m_ambient_intensity;
+}
+
 //! \brief sets the ambient intensity.
-void Material::set_ambient_intensity(Float intensity)
-{ m_ambient_intensity = intensity; }
+void Material::set_ambient_intensity(float intensity)
+{
+  m_ambient_intensity = intensity;
+  m_dirty_ambient_intensity = false;
+  m_dirty_ambient_color = true;
+}
+
+//! \brief sets the ambient color.
+void Material::set_ambient_color(float red, float green, float blue)
+{
+  m_ambient_color[0] = red;
+  m_ambient_color[1] = green;
+  m_ambient_color[2] = blue;
+  m_dirty_ambient_color = false;
+  m_dirty_ambient_intensity = true;
+}
+
+//! \brief obtains the ambient color.
+const Vector3f& Material::get_ambient_color()
+{
+  if (m_dirty_ambient_color) {
+    m_ambient_color.scale(m_ambient_intensity, m_diffuse_color);
+    m_dirty_ambient_color = false;
+  }
+  return m_ambient_color;
+}
 
 //! \brief sets the diffuse color.
-void Material::set_diffuse_color(Float v0, Float v1, Float v2)
+void Material::set_diffuse_color(float red, float green, float blue)
 {
-  m_diffuse_color[0] = v0;
-  m_diffuse_color[1] = v1;
-  m_diffuse_color[2] = v2;
+  m_diffuse_color[0] = red;
+  m_diffuse_color[1] = green;
+  m_diffuse_color[2] = blue;
 }
 
 //! \brief sets the specular color.
-void Material::set_specular_color(Float v0, Float v1, Float v2)
+void Material::set_specular_color(float red, float green, float blue)
 {
-  m_specular_color[0] = v0;
-  m_specular_color[1] = v1;
-  m_specular_color[2] = v2;
+  m_specular_color[0] = red;
+  m_specular_color[1] = green;
+  m_specular_color[2] = blue;
 }
 
 //! \brief sets the amissive color.
-void Material::set_emissive_color(Float v0, Float v1, Float v2)
+void Material::set_emissive_color(float red, float green, float blue)
 {
-  m_emissive_color[0] = v0;
-  m_emissive_color[1] = v1;
-  m_emissive_color[2] = v2;
+  m_emissive_color[0] = red;
+  m_emissive_color[1] = green;
+  m_emissive_color[2] = blue;
 }
 
 //! \brief sets the shininess factor.
-void Material::set_shininess(Float shininess)
+void Material::set_shininess(float shininess)
 {
   if (shininess > 1) m_shininess = 1;
   else m_shininess = shininess;
@@ -123,15 +163,16 @@ void Material::draw(Face which_face, Context* /* context */)
   Vector4f specular(m_specular_color);
   Vector4f emissive(m_emissive_color);
   Vector4f ambient;
-
-  ambient.scale(m_ambient_intensity, m_diffuse_color);
+  SGAL_assertion(m_dirty_ambient_color && m_dirty_ambient_intensity);
+  if (m_dirty_ambient_intensity) ambient = m_ambient_color;
+  else ambient.scale(m_ambient_intensity, m_diffuse_color);
 
   ambient[3] = diffuse[3] = specular[3] = emissive[3] = 1.0f - m_transparency;
 
-  glMaterialfv(face, GL_AMBIENT, (Float *)&ambient);
-  glMaterialfv(face, GL_DIFFUSE, (Float *)&diffuse);
-  glMaterialfv(face, GL_SPECULAR, (Float *)&specular);
-  glMaterialfv(face, GL_EMISSION, (Float *)&emissive);
+  glMaterialfv(face, GL_AMBIENT, (float*)&ambient);
+  glMaterialfv(face, GL_DIFFUSE, (float*)&diffuse);
+  glMaterialfv(face, GL_SPECULAR, (float*)&specular);
+  glMaterialfv(face, GL_EMISSION, (float*)&emissive);
   glMaterialf(face, GL_SHININESS, 128 * m_shininess);
 }
 
@@ -160,6 +201,16 @@ void Material::init_prototype()
                                            ambient_intensity_func,
                                            s_def_ambient_intensity,
                                            exec_func));
+
+  // ambientColor
+  exec_func = static_cast<Execution_function>(&Material::material_changed);
+  Vector3f_handle_function ambient_color_func =
+    static_cast<Vector3f_handle_function>(&Material::ambient_color_handle);
+  s_prototype->add_field_info(new SF_vector3f(AMBIENT_COLOR,
+                                              "ambientColor",
+                                              Field_info::RULE_EXPOSED_FIELD,
+                                              ambient_color_func,
+                                              s_def_ambient_color, exec_func));
 
   // diffuseColor
   exec_func = static_cast<Execution_function>(&Material::material_changed);
@@ -234,7 +285,13 @@ void Material::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "ambientIntensity") {
-      set_ambient_intensity(boost::lexical_cast<Float>(value));
+      set_ambient_intensity(boost::lexical_cast<float>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "ambientColor") {
+      Vector3f col(value);
+      set_ambient_color(col);
       elem->mark_delete(ai);
       continue;
     }
@@ -257,12 +314,12 @@ void Material::set_attributes(Element* elem)
       continue;
     }
     if (name == "shininess") {
-      set_shininess(boost::lexical_cast<Float>(value));
+      set_shininess(boost::lexical_cast<float>(value));
       elem->mark_delete(ai);
       continue;
     }
     if (name == "transparency") {
-      set_transparency(boost::lexical_cast<Float>(value));
+      set_transparency(boost::lexical_cast<float>(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -309,13 +366,13 @@ Attribute_list Material::get_attributes()
   }
   if (m_shininess != s_def_shininess) {
     attrib.first = "shininess";
-    sprintf(buf, "%g", (Float)get_shininess());
+    sprintf(buf, "%g", (float)get_shininess());
     attrib.second = buf;
     attribs.push_back(attrib);
   }
   if (m_transparency != s_def_transparency) {
     attrib.first = "transparency";
-    sprintf(buf, "%f", (Float)get_transparency());
+    sprintf(buf, "%f", (float)get_transparency());
     attrib.second = buf;
     attribs.push_back(attrib);
   }
