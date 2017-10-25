@@ -19,6 +19,8 @@
 #ifndef SGAL_INDICES_TYPES_HPP
 #define SGAL_INDICES_TYPES_HPP
 
+#include <boost/variant.hpp>
+
 #include "SGAL/basic.hpp"
 
 SGAL_BEGIN_NAMESPACE
