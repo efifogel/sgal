@@ -16,11 +16,11 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#include <vector>
-#include <string>
-
 #ifndef SGAL_IO_OPTION_PARSER_HPP
 #define SGAL_IO_OPTION_PARSER_HPP
+
+#include <vector>
+#include <string>
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -36,9 +36,9 @@
 #include "SGAL/File_format_2d.hpp"
 #include "SGAL/File_format_3d.hpp"
 
-SGAL_BEGIN_NAMESPACE
-
 namespace po = boost::program_options;
+
+SGAL_BEGIN_NAMESPACE
 
 #if defined(_MSC_VER)
 #pragma warning( push )
