@@ -163,7 +163,7 @@ void Material::draw(Face which_face, Context* /* context */)
   Vector4f specular(m_specular_color);
   Vector4f emissive(m_emissive_color);
   Vector4f ambient;
-  SGAL_assertion(m_dirty_ambient_color && m_dirty_ambient_intensity);
+  SGAL_assertion(!m_dirty_ambient_color || !m_dirty_ambient_intensity);
   if (m_dirty_ambient_intensity) ambient = m_ambient_color;
   else ambient.scale(m_ambient_intensity, m_diffuse_color);
 
