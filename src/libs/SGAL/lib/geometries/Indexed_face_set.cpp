@@ -135,6 +135,7 @@ SGAL_BEGIN_NAMESPACE
  * an stl file, call the following corespnding member functions:
  *   set_consistent(false) - enables consistency enforcing.
  *   set_repaired(flase) - enables hole-triangulation and orientation-repairing.
+ * \todo if (!closed) set_solid(false);
  */
 
 const std::string Indexed_face_set::s_tag = "IndexedFaceSet";
@@ -150,6 +151,7 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   m_consistent(true),
   m_has_singular_vertices(false),
   m_repaired(true),
+  m_normals_repaired(true),
   m_dirty_volume(true),
   m_dirty_surface_area(true),
   m_convex_hull(false),
@@ -164,6 +166,7 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   m_refine(Modeling::s_def_refine),
   m_fair(Modeling::s_def_refine),
   m_repair_orientation(Modeling::s_def_repair_orientation),
+  m_repair_normals(Modeling::s_def_repair_normals),
   m_make_consistent(Modeling::s_def_make_consistent)
 {
   if (proto) return;
@@ -242,6 +245,7 @@ void Indexed_face_set::draw(Draw_action* action)
     clean_polyhedron();
     if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
   }
+  if (!m_normals_repaired && m_repair_normals) repair_normals();
   Boundary_set::draw(action);
 }
 
@@ -485,8 +489,25 @@ void Indexed_face_set::repair()
       m_dirty_coord_indices = true;
       boost::apply_visitor(Clear_polyhedron_visitor(), m_polyhedron);
       m_dirty_polyhedron = true;
+
+      //! \todo Instead of brutally clearing the normals, colors, and texture
+      // coordinat, reorder them appropriately.
       m_dirty_polyhedron_facet_normals = true;
       m_dirty_normal_attributes = true;
+      clear_normal_indices();
+      clear_facet_normal_indices();
+      set_normal_array(Shared_normal_array());
+
+      // Clean the normals
+      clear_color_indices();
+      clear_facet_color_indices();
+      set_color_array(Shared_color_array());
+
+      // Clean the texture coordinate
+      clear_tex_coord_indices();
+      clear_facet_tex_coord_indices();
+      set_tex_coord_array(Shared_tex_coord_array());
+
       m_dirty_volume = true;
       m_dirty_surface_area = true;
       m_repaired = true;
@@ -494,6 +515,16 @@ void Indexed_face_set::repair()
   }
 
   m_repaired = true;
+}
+
+//! \brief repairs the data structures
+void Indexed_face_set::repair_normals()
+{
+  clear_normal_indices();
+  clear_facet_normal_indices();
+  set_normal_array(Shared_normal_array());
+  set_normal_per_vertex(false);
+  m_normals_repaired = true;
 }
 
 //! \brief initializes the polyhedron.
@@ -836,7 +867,7 @@ void Indexed_face_set::write(Formatter* formatter)
     clean_polyhedron();
     if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
   }
-
+  if (!m_normals_repaired && m_repair_normals) repair_normals();
   Boundary_set::write(formatter);
 }
 
@@ -1058,6 +1089,8 @@ void Indexed_face_set::add_to_scene(Scene_graph* sg)
              modeling->get_repair_orientation());
   m_refine = modeling->get_refine();
   m_fair = modeling->get_fair();
+  m_repair_normals = modeling->get_repair_normals();
+  if (m_repair_normals) m_normals_repaired = false;
 }
 
 //! \brief responds to a change in the coordinate-index array.

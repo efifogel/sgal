@@ -162,6 +162,10 @@ public:
    */
   void repair();
 
+  /*! Repair the normals.
+   */
+  void repair_normals();
+
   /// \name Indices Change Reactors
   //@{
   /*! Respond to a change in the coordinate-index array.
@@ -448,6 +452,9 @@ protected:
   //*! Indicates whether the geometry is reapired. */
   Boolean m_repaired;
 
+  //*! Indicates whether the normals are reapired. */
+  Boolean m_normals_repaired;
+
   /*! Indicates whether the volume is dirty and thus must be cleaned. */
   Boolean m_dirty_volume;
 
@@ -692,6 +699,10 @@ private:
    * as-smooth-as-possible shape deformation.
    */
   Boolean m_fair;
+
+  /*! Indicates whether to repair the normals of facets..
+   */
+  Boolean m_repair_normals;
 
   /*! Indicates whether to repair the orientation of facets of closed polyhedral
    * surfaces.

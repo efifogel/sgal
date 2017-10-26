@@ -41,7 +41,8 @@ public:
     FAIR,
     SPLIT_CCS,
     REMOVE_DEGENERACIES,
-    REPAIR_ORIENTATION
+    REPAIR_ORIENTATION,
+    REPAIR_NORMALS
   };
 
   /*! Construct. */
@@ -78,6 +79,7 @@ public:
   { return &m_remove_degeneracies; }
   Boolean* repair_orientation_handle(const Field_info*)
   { return &m_repair_orientation; }
+  Boolean* repair_normals_handle(const Field_info*) { return &m_repair_normals; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -166,6 +168,16 @@ public:
    */
   Boolean get_repair_orientation() const;
 
+  /*! Set the flag that indicates whether to repair the normals of facets.
+   * \param[in] flag indicates whether the repairing is desired
+   */
+  void set_repair_normals(Boolean flag);
+
+  /*! Obtain the flag that indicates whether to repair the normals of facets.
+   * \return true if the repairing is desired, and false otherwise.
+   */
+  Boolean get_repair_normals() const;
+
   /*! Set defualt values. */
   void reset(Boolean def_make_consistent = s_def_make_consistent,
              Boolean def_triangulate_holes = s_def_triangulate_holes,
@@ -173,7 +185,8 @@ public:
              Boolean def_fair = s_def_fair,
              Boolean def_split_ccs = s_def_split_ccs,
              Boolean def_remove_degeneracies = s_def_remove_degeneracies,
-             Boolean def_repair_orientation = s_def_repair_orientation);
+             Boolean def_repair_orientation = s_def_repair_orientation,
+             Boolean def_repair_normals = s_def_repair_normals);
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -216,6 +229,10 @@ private:
    */
   Boolean m_repair_orientation;
 
+  /*! Indicates whether to repair the normals of facets.
+   */
+  Boolean m_repair_normals;
+
   // default values
   static const Boolean s_def_make_consistent;
   static const Boolean s_def_triangulate_holes;
@@ -224,6 +241,7 @@ private:
   static const Boolean s_def_split_ccs;
   static const Boolean s_def_remove_degeneracies;
   static const Boolean s_def_repair_orientation;
+  static const Boolean s_def_repair_normals;
 };
 
 //! \brief constructs the prototype.
@@ -284,6 +302,14 @@ inline void Modeling::set_repair_orientation(Boolean flag)
 //! Obtain the flag that indicates whether to repair the orientation of facets.
 inline Boolean Modeling::get_repair_orientation() const
 { return m_repair_orientation; }
+
+//! Set the flag that indicates whether to repair the normals of facets.
+inline void Modeling::set_repair_normals(Boolean flag)
+{ m_repair_normals = flag; }
+
+//! Obtain the flag that indicates whether to repair the normals of facets.
+inline Boolean Modeling::get_repair_normals() const
+{ return m_repair_normals; }
 
 /*! \brief sets the flag that indicates Determine to remove shapes the geometry
  * of which is degenerate; that is, the volume of the geometry has zero volume.

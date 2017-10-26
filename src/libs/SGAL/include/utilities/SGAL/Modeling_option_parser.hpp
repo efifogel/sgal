@@ -106,6 +106,12 @@ public:
    */
   Boolean get_repair_orientation() const;
 
+  /*! Determine whether to repair the normals of facets of closed polyhedral
+   * surfaces.
+   * \return true if repairing is desired, and false otherwise.
+   */
+  Boolean get_repair_normals() const;
+
   /*! Obtain the font paths.
    * \param variable_map (in)
    * \return the font paths.
@@ -146,7 +152,12 @@ private:
    */
   Boolean m_repair_orientation;
 
-  // The assignment operator cannot be generated (because some of the data
+  /*! Indicates whether to repair the normals of facets of closed polyhedral
+   * surfaces.
+   */
+  Boolean m_repair_normals;
+
+// The assignment operator cannot be generated (because some of the data
   // members are const pointers), so we suppress it explicitly.
   // We also suppress the copy constructor.
   Modeling_option_parser& operator=(const Modeling_option_parser&);
@@ -190,6 +201,12 @@ inline Boolean Modeling_option_parser::get_remove_degeneracies() const
  */
 inline Boolean Modeling_option_parser::get_repair_orientation() const
 {return m_repair_orientation; }
+
+/*! \brief determines whether to repair the normals of facets of closed
+ * polyhedral surfaces.
+ */
+inline Boolean Modeling_option_parser::get_repair_normals() const
+{return m_repair_normals; }
 
 SGAL_END_NAMESPACE
 

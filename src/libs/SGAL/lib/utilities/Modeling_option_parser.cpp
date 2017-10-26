@@ -39,7 +39,8 @@ Modeling_option_parser::Modeling_option_parser() :
   m_fair(false),
   m_split_ccs(false),
   m_remove_degeneracies(false),
-  m_repair_orientation(false)
+  m_repair_orientation(false),
+  m_repair_normals(false)
 {
   m_modeling_opts.add_options()
     ("make-consistent",
@@ -54,6 +55,8 @@ Modeling_option_parser::Modeling_option_parser() :
      "remove shape children the geometry of which is degenerate (zero volume)")
     ("repair-orientation", po::value<Boolean>(&m_repair_orientation),
      "repair the orientation of facets reversing them all")
+    ("repair-normals", po::value<Boolean>(&m_repair_normals),
+     "repair the normals of facets")
     ;
 }
 
@@ -97,6 +100,9 @@ void Modeling_option_parser::configure(Configuration* conf)
 
   if (var_map.count("repair-orientation"))
     modeling->set_repair_orientation(var_map["repair-orientation"].as<Boolean>());
+
+  if (var_map.count("repair-normals"))
+    modeling->set_repair_normals(var_map["repair-normals"].as<Boolean>());
 }
 
 SGAL_END_NAMESPACE
