@@ -1105,7 +1105,7 @@ Loader::update_ifs(Scene_graph* sg,
 
   if (!normal_indices.empty()) {
     SGAL_assertion(!normals->empty());
-    ifs->set_color_per_vertex(false);
+    ifs->set_normal_per_vertex(true);
   }
   else if (!colors->empty()) {
     SGAL_assertion(!colors->empty());
