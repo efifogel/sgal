@@ -671,7 +671,7 @@ void Boundary_set::normal_content_changed(const Field_info* field_info)
   destroy_display_list();
   m_dirty_normal_buffer = true;
   m_dirty_local_vertex_buffers = true;
-  m_dirty_normal_array = false;
+  m_dirty_normal_array = !m_normal_array;
   m_normal_array_cleaned = false;
   Mesh_set::normal_content_changed(field_info);
 }
@@ -691,7 +691,7 @@ void Boundary_set::tex_coord_content_changed(const Field_info* field_info)
   destroy_display_list();
   m_dirty_tex_coord_buffer = true;
   m_dirty_local_vertex_buffers = true;
-  m_dirty_tex_coord_array = false;
+  m_dirty_tex_coord_array = !m_tex_coord_array;
   m_tex_coord_array_cleaned = false;
   Mesh_set::tex_coord_content_changed(field_info);
 }
