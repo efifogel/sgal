@@ -34,7 +34,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-const std::string Epec_normal_array::s_tag = "ExactNormal";
+const std::string Epec_normal_array::s_tag = "EpecNormal";
 Container_proto* Epec_normal_array::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Epec_normal_array, "Epec_normal_array");
