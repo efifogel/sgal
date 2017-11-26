@@ -108,7 +108,7 @@ Arrangement_on_sphere_marked_geo::
 Arrangement_on_sphere_marked_geo(Boolean proto) :
   Arrangement_on_sphere_base_geo(proto),
   m_owned_aos(false),
-  m_aos(NULL),
+  m_aos(nullptr),
   m_aos_marked_vertex_style(s_def_aos_marked_vertex_style),
   m_aos_marked_vertex_radius(s_def_aos_marked_vertex_radius),
   m_aos_marked_vertex_point_size(s_def_aos_marked_vertex_point_size),
@@ -122,7 +122,7 @@ Arrangement_on_sphere_marked_geo(Boolean proto) :
   m_aos_marked_edge_color(s_def_aos_marked_edge_color),
   m_aos_marked_face_color(s_def_aos_marked_face_color),
   m_aos_marked_face_transparency(s_def_aos_marked_face_transparency),
-  m_marked_face_renderer(NULL)
+  m_marked_face_renderer(nullptr)
 { if (!proto) create_renderers(); }
 
 /*! Destructor */
@@ -132,7 +132,7 @@ Arrangement_on_sphere_marked_geo::~Arrangement_on_sphere_marked_geo()
   if (m_owned_aos) {
     if (m_aos) {
       delete m_aos;
-      m_aos = NULL;
+      m_aos = nullptr;
     }
     m_owned_aos = false;
   }
@@ -146,7 +146,7 @@ void Arrangement_on_sphere_marked_geo::init_prototype()
     new Container_proto(Arrangement_on_sphere_base_geo::get_prototype());
 
   // aosMarkedVertexRadius
-  Float_handle_function aos_marked_vertex_radius_func =
+  auto aos_marked_vertex_radius_func =
     static_cast<Float_handle_function>
     (&Arrangement_on_sphere_marked_geo::aos_marked_vertex_radius_handle);
   s_prototype->add_field_info(new SF_float(AOS_MARKED_VERTEX_RADIUS,
@@ -155,7 +155,7 @@ void Arrangement_on_sphere_marked_geo::init_prototype()
                                            aos_marked_vertex_radius_func));
 
   // aosMarkedEdgeRadius
-  Float_handle_function aos_marked_edge_radius_func =
+  auto aos_marked_edge_radius_func =
     static_cast<Float_handle_function>
     (&Arrangement_on_sphere_marked_geo::aos_marked_edge_radius_handle);
   s_prototype->add_field_info(new SF_float(AOS_MARKED_EDGE_RADIUS,
@@ -186,11 +186,9 @@ set_attributes(Element* elem)
   typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
   boost::char_separator<char> sep(", \t\n\r");
 
-  typedef Element::Str_attr_iter        Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "aosMarkedVertexStyle") {
       m_aos_marked_vertex_style = Vertex_shape::style(value);
       elem->mark_delete(ai);
@@ -303,7 +301,7 @@ set_attributes(Element* elem)
 
     if (name == "aosMarkedVertexIndex") {
       tokenizer tokens(value, sep);
-      Uint size = std::distance(tokens.begin(), tokens.end());
+      auto size = std::distance(tokens.begin(), tokens.end());
       if (size == 0) {
         m_marked_vertices_indices.clear();
         std::cerr << "Error!" << std::endl;
@@ -322,13 +320,13 @@ set_attributes(Element* elem)
     }
   }
 
-  typedef Element::Cont_attr_iter       Cont_attr_iter;
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
-    const std::string& name = elem->get_name(cai);
-    Element::Shared_container cont = elem->get_value(cai);
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
+    const auto& name = elem->get_name(cai);
+    auto cont = elem->get_value(cai);
     if (name == "overlay") {
-      Shared_arrangement_on_sphere_marked_geo aos_geo =
+      auto aos_geo =
         boost::dynamic_pointer_cast<Arrangement_on_sphere_marked_geo>(cont);
       if (aos_geo) add_aos_geo(aos_geo);
       elem->mark_delete(cai);
@@ -336,20 +334,16 @@ set_attributes(Element* elem)
     }
   }
 
-  typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
-  typedef Element::Cont_list              Cont_list;
-  typedef Element::Cont_iter              Cont_iter;
-
   // Sets the multi-container attributes of this node:
-  for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
+  for (auto mcai = elem->multi_cont_attrs_begin();
        mcai != elem->multi_cont_attrs_end(); ++mcai)
   {
-    const std::string& name = elem->get_name(mcai);
-    Cont_list& cont_list = elem->get_value(mcai);
+    const auto& name = elem->get_name(mcai);
+    auto& cont_list = elem->get_value(mcai);
     if (name == "overlay") {
-      for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
-        Element::Shared_container cont = *ci;
-        Shared_arrangement_on_sphere_marked_geo aos_geo =
+      for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++) {
+        auto cont = *ci;
+        auto aos_geo =
           boost::dynamic_pointer_cast<Arrangement_on_sphere_marked_geo>(cont);
         if (aos_geo) add_aos_geo(aos_geo);
       }
@@ -380,16 +374,15 @@ void Arrangement_on_sphere_marked_geo::clean()
               std::distance(m_aoses.begin(), m_aoses.end()), this);
 
   // Locate points:
-  boost::shared_ptr<Epec_coord_array_3d> exact_coord_array =
+  auto exact_coord_array =
     boost::dynamic_pointer_cast<Epec_coord_array_3d>(m_coord_array);
   if (exact_coord_array && (exact_coord_array->size() > 0)) {
     Aos_point_location_strategy naive_pl(*m_aos);
-    std::vector<Uint>::iterator it;
     Epec_kernel kernel;
-    for (it = m_point_location_indices.begin();
+    for (auto it = m_point_location_indices.begin();
          it != m_point_location_indices.end(); ++it)
     {
-      Epec_point_3& point = (*exact_coord_array)[*it];
+      auto& point = (*exact_coord_array)[*it];
       Epec_vector_3 vec =
         kernel.construct_vector_3_object()(CGAL::ORIGIN, point);
       Epec_direction_3 dir = kernel.construct_direction_3_object()(vec);
@@ -402,10 +395,11 @@ void Arrangement_on_sphere_marked_geo::clean()
         // std::cout << "face" << std::endl;
         m_aos->non_const_handle(f)->set_mark(true);
         // Mark the boundaries, since we cannot draw the face (yet):
-        Aos_marked::Outer_ccb_const_iterator oit;
-        for (oit = f->outer_ccbs_begin(); oit != f->outer_ccbs_end(); ++oit) {
-          Aos_marked::Halfedge_const_iterator first = *oit;
-          Aos_marked::Halfedge_const_iterator curr = first;
+        for (auto oit = f->outer_ccbs_begin(); oit != f->outer_ccbs_end();
+             ++oit)
+        {
+          auto first = *oit;
+          auto curr = first;
           do {
             m_aos->non_const_handle(curr)->set_mark(true);
             m_aos->non_const_handle(curr)->twin()->set_mark(true);
@@ -413,10 +407,11 @@ void Arrangement_on_sphere_marked_geo::clean()
             curr = curr->next();
           } while (curr != first);
         }
-        Aos_marked::Inner_ccb_const_iterator iit;
-        for (iit = f->inner_ccbs_begin(); iit != f->inner_ccbs_end(); ++iit) {
-          Aos_marked::Halfedge_const_iterator first = *iit;
-          Aos_marked::Halfedge_const_iterator curr = first;
+        for (auto iit = f->inner_ccbs_begin(); iit != f->inner_ccbs_end();
+             ++iit)
+        {
+          auto first = *iit;
+          auto curr = first;
           do {
             m_aos->non_const_handle(curr)->set_mark(true);
             m_aos->non_const_handle(curr)->twin()->set_mark(true);
@@ -424,14 +419,17 @@ void Arrangement_on_sphere_marked_geo::clean()
             curr = curr->next();
           } while (curr != first);
         }
-      } else if (CGAL::assign(e, obj)) {
+      }
+      else if (CGAL::assign(e, obj)) {
         // std::cout << "edge" << std::endl;
         m_aos->non_const_handle(e)->set_mark(true);
         m_aos->non_const_handle(e)->twin()->set_mark(true);
-      } else if (CGAL::assign(v, obj)) {
+      }
+      else if (CGAL::assign(v, obj)) {
         // std::cout << "vertex" << std::endl;
         m_aos->non_const_handle(v)->set_mark(true);
-      } else {
+      }
+      else {
         // std::cout << "none" << std::endl;
         SGAL_assertion(0);
       }
@@ -440,12 +438,11 @@ void Arrangement_on_sphere_marked_geo::clean()
 
   if (!m_marked_faces_indices.empty()) {
     Uint i = 0;
-    Aos_marked::Face_iterator fit = m_aos->faces_begin();
-    Uint_vector::const_iterator fiit;
-    for (fiit = m_marked_faces_indices.begin();
+    auto fit = m_aos->faces_begin();
+    for (auto fiit = m_marked_faces_indices.begin();
          fiit != m_marked_faces_indices.end(); ++fiit)
     {
-      Uint index = *fiit;
+      auto index = *fiit;
       if (index >= m_aos->number_of_faces()) break;
       std::advance(fit, index - i);
       i = index;
@@ -455,12 +452,11 @@ void Arrangement_on_sphere_marked_geo::clean()
 
   if (!m_marked_edges_indices.empty()) {
     Uint i = 0;
-    Aos_marked::Edge_iterator eit = m_aos->edges_begin();
-    Uint_vector::const_iterator eiit;
-    for (eiit = m_marked_edges_indices.begin();
+    auto eit = m_aos->edges_begin();
+    for (auto eiit = m_marked_edges_indices.begin();
          eiit != m_marked_edges_indices.end(); ++eiit)
     {
-      Uint index = *eiit;
+      auto index = *eiit;
       if (index >= m_aos->number_of_edges()) break;
       std::advance(eit, index - i);
       i = index;
@@ -470,12 +466,11 @@ void Arrangement_on_sphere_marked_geo::clean()
 
   if (!m_marked_vertices_indices.empty()) {
     Uint i = 0;
-    Aos_marked::Vertex_iterator vit = m_aos->vertices_begin();
-    Uint_vector::const_iterator viit;
-    for (viit = m_marked_vertices_indices.begin();
+    auto vit = m_aos->vertices_begin();
+    for (auto viit = m_marked_vertices_indices.begin();
          viit != m_marked_vertices_indices.end(); ++viit)
     {
-      Uint index = *viit;
+      auto index = *viit;
       if (index >= m_aos->number_of_vertices()) break;
       std::advance(vit, index - i);
       i = index;
@@ -529,19 +524,19 @@ void Arrangement_on_sphere_marked_geo::clear()
 void Arrangement_on_sphere_marked_geo::
 Sphere_marked_colored_vertices_renderer::operator()(Draw_action* action)
 {
-  Aos_marked::Vertex_const_iterator vi;
-  for (vi = m_geo.m_aos->vertices_begin(); vi != m_geo.m_aos->vertices_end();
-       ++vi)
+  for (auto vi = m_geo.m_aos->vertices_begin();
+       vi != m_geo.m_aos->vertices_end(); ++vi)
   {
     if (vi->is_isolated()) continue;
-    Vector3f center = to_vector3f(vi->point());
+    auto center = to_vector3f(vi->point());
     center.normalize();
     if (vi->mark()) {
-      const Vector3f& color = m_geo.get_aos_marked_vertex_color();
+      const auto& color = m_geo.get_aos_marked_vertex_color();
       glColor3fv((float*)&color);
       m_geo.draw_aos_marked_vertex(action, center);
-    } else {
-      const Vector3f& color = m_geo.get_aos_vertex_color();
+    }
+    else {
+      const auto& color = m_geo.get_aos_vertex_color();
       glColor3fv((float*)&color);
       m_geo.draw_aos_vertex(action, center);
     }
@@ -554,20 +549,19 @@ Arrangement_on_sphere_marked_geo::
 Sphere_marked_colored_isolated_vertices_renderer::
 operator()(Draw_action* action)
 {
-  Aos_marked::Vertex_const_iterator vi;
-  for (vi = m_geo.m_aos->vertices_begin(); vi != m_geo.m_aos->vertices_end();
-       ++vi)
+  for (auto vi = m_geo.m_aos->vertices_begin();
+       vi != m_geo.m_aos->vertices_end(); ++vi)
   {
     if (!(vi->is_isolated())) continue;
-    Vector3f center = to_vector3f(vi->point());
+    auto center = to_vector3f(vi->point());
     center.normalize();
     if (vi->mark()) {
-      const Vector3f& color = m_geo.get_aos_marked_vertex_color();
+      const auto& color = m_geo.get_aos_marked_vertex_color();
       glColor3fv((float*)&color);
       m_geo.draw_aos_marked_vertex(action, center);
     }
     else {
-      const Vector3f& color = m_geo.get_aos_isolated_vertex_color();
+      const auto& color = m_geo.get_aos_isolated_vertex_color();
       glColor3fv((float*)&color);
       m_geo.draw_aos_isolated_vertex(action, center);
     }
@@ -578,23 +572,23 @@ operator()(Draw_action* action)
 void Arrangement_on_sphere_marked_geo::
 Sphere_marked_colored_edges_renderer::operator()(Draw_action* action)
 {
-  Aos_marked::Edge_const_iterator hei;
-  for (hei = m_geo.m_aos->edges_begin(); hei != m_geo.m_aos->edges_end(); ++hei)
+  for (auto hei = m_geo.m_aos->edges_begin(); hei != m_geo.m_aos->edges_end();
+       ++hei)
   {
-    const Aos_marked::Geometry_traits_2::X_monotone_curve_2& curve =
-      hei->curve();
-    Vector3f src = to_vector3f(curve.source());
-    Vector3f trg = to_vector3f(curve.target());
-    Vector3f normal = to_vector3f(curve.normal());
+    const auto& curve = hei->curve();
+    auto src = to_vector3f(curve.source());
+    auto trg = to_vector3f(curve.target());
+    auto normal = to_vector3f(curve.normal());
     src.normalize();
     trg.normalize();
 
     if (hei->mark() && m_geo.is_aos_marked_edge_enabled()) {
-      const Vector3f& color = m_geo.get_aos_marked_edge_color();
+      const auto& color = m_geo.get_aos_marked_edge_color();
       glColor3fv((float*)&color);
       m_geo.draw_aos_marked_edge(action, src, trg, normal);
-    } else {
-      const Vector3f& color = m_geo.get_aos_edge_color();
+    }
+    else {
+      const auto& color = m_geo.get_aos_edge_color();
       glColor3fv((float*)&color);
       m_geo.draw_aos_edge(action, src, trg, normal);
     }
@@ -612,8 +606,7 @@ draw_aos_marked_face(Draw_action* action)
   typedef Partition_traits_2::Polygon_2                   Polygon_2;
   typedef std::list<Polygon_2>                            Polygons_container;
 
-  Aos_marked::Face_const_iterator fi;
-  for (fi = m_aos->faces_begin(); fi != m_aos->faces_end(); ++fi) {
+  for (auto fi = m_aos->faces_begin(); fi != m_aos->faces_end(); ++fi) {
     if (!fi->mark()) continue;
 
     // First, if the face is non-convex then we assume that it does no
@@ -623,10 +616,9 @@ draw_aos_marked_face(Draw_action* action)
     // space.)
     Polygon_2 polygon;
     Polygons_container polys;
-    Aos_marked::Outer_ccb_const_iterator oit;
-    for (oit = fi->outer_ccbs_begin(); oit != fi->outer_ccbs_end(); ++oit) {
-      Aos_marked::Halfedge_const_iterator first = *oit;
-      Aos_marked::Halfedge_const_iterator curr = first;
+    for (auto oit = fi->outer_ccbs_begin(); oit != fi->outer_ccbs_end(); ++oit) {
+      auto first = *oit;
+      auto curr = first;
       do {
         polygon.push_back(curr->target()->point());
         curr = curr->next();
@@ -643,11 +635,8 @@ draw_aos_marked_face(Draw_action* action)
      * all curves have the same normal:
      */
     std::list<Vector3f> points;
-    Polygons_container::iterator pit;
-    for (pit = polys.begin(); pit != polys.end(); ++pit) {
-      Polygon_2::Vertex_const_iterator vit;
-      for (vit = pit->vertices_begin(); vit != pit->vertices_end();
-           ++vit) {
+    for (auto pit = polys.begin(); pit != polys.end(); ++pit) {
+      for (auto vit = pit->vertices_begin(); vit != pit->vertices_end(); ++vit) {
         Vector3f vec = to_vector3f(*vit);
         vec.normalize();
         points.push_back(vec);
@@ -679,8 +668,8 @@ draw_aos_marked_face(Draw_action* action)
 void Arrangement_on_sphere_marked_geo::Marked_face_renderer::
 operator()(Draw_action* action)
 {
-  const Vector3f& color = m_geo.get_aos_marked_face_color();
-  Context* context = action->get_context();
+  const auto& color = m_geo.get_aos_marked_face_color();
+  auto* context = action->get_context();
   Gfx::Cull_face cull_save = Gfx::BACK_CULL;
   Gfx::Light_model_sides lms_save = Gfx::ONE_SIDE;
   if (!m_geo.m_draw_aos_surface) {

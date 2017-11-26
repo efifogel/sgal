@@ -168,17 +168,16 @@ void Arrangement_on_sphere_overlay_geo::clear()
 void Arrangement_on_sphere_overlay_geo::Sphere_overlay_colored_edges_renderer::
 operator()(Draw_action* action)
 {
-  Aos_overlay::Edge_const_iterator hei;
-  for (hei = m_geo.m_aos->edges_begin(); hei != m_geo.m_aos->edges_end(); ++hei)
+  for (auto hei = m_geo.m_aos->edges_begin(); hei != m_geo.m_aos->edges_end();
+       ++hei)
   {
-    const Aos_overlay::Geometry_traits_2::X_monotone_curve_2& curve =
-      hei->curve();
-    Vector3f src = to_vector3f(curve.source());
-    Vector3f trg = to_vector3f(curve.target());
-    Vector3f normal = to_vector3f(curve.normal());
+    const auto& curve = hei->curve();
+    auto src = to_vector3f(curve.source());
+    auto trg = to_vector3f(curve.target());
+    auto normal = to_vector3f(curve.normal());
     src.normalize();
     trg.normalize();
-    const Vector3f& color = hei->color();
+    const auto& color = hei->color();
     glColor3fv((float*)&color);
     m_geo.draw_aos_edge(action, src, trg, normal);
   }
