@@ -530,10 +530,8 @@ else(WIN32)
   add_definitions(-DGL_GLEXT_PROTOTYPES)
 endif(WIN32)
 
-if (APPLE)
-  add_definitions(-DMAGICKCORE_QUANTUM_DEPTH=16)
-  add_definitions(-DMAGICKCORE_HDRI_ENABLE=0)
-endif(APPLE)
+add_definitions(-DMAGICKCORE_QUANTUM_DEPTH=16)
+add_definitions(-DMAGICKCORE_HDRI_ENABLE=0)
 
 #Add library
 if (BUILD_SHARED_LIBS)
@@ -564,6 +562,7 @@ target_link_libraries(SGAL
                       ${Boost_REGEX_LIBRARY}
                       ${ImageMagick_Magick++_LIBRARY}
                       ${FREETYPE_LIBRARIES}
+                      ${FONTCONFIG_LIBRARIES}
                       ${SGAL_V8_LIBRARIES}
                       ${OPENGL_LIBRARIES}
                       ${NON_WIN32_LIBRARIES})
