@@ -1,3 +1,13 @@
+# Use C++11 for this directory and its sub-directories.
+list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_generalized_initializers has_cpp11)
+if (has_cpp11 LESS 0)
+  message(STATUS "NOTICE: These examples requires a C++11 compiler and will not be compiled.")
+  return()
+endif()
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
 # Find required libraries
 set(Boost_USE_STATIC_LIBS OFF)
 find_package(Boost REQUIRED COMPONENTS system filesystem program_options regex)
@@ -27,9 +37,15 @@ if (NOT EIGEN3_FOUND)
 endif()
 include(${EIGEN3_USE_FILE})
 
+find_package(Fontconfig)
+if (NOT FONTCONFIG_FOUND)
+  message(STATUS "This library cannot be compiled, as it requires Fontconfig.")
+  return()
+endif()
+
 # Add includes and libs
 include_directories(${Boost_INCLUDE_DIR})
-include_directories(${ImageMagick_Magick++_INCLUDE_DIR})
+include_directories(${ImageMagick_Magick++_INCLUDE_DIRS})
 include_directories(${FREETYPE_INCLUDE_DIRS})
 include_directories(${V8_INCLUDE_DIR})
 if (NOT WIN32)
@@ -47,10 +63,6 @@ endif(WIN32)
 if (WIN32)
   add_definitions(-GR)
   add_definitions(-vmg)
-endif()
-
-if (CMAKE_COMPILER_IS_GNUCXX)
-  add_definitions(-std=c++0x)
 endif()
 
 # Use dynamic link for all SGAL libraries
