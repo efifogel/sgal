@@ -6,7 +6,8 @@ DEF CONFIG Configuration {
 }
 Viewpoint {
   type "ORTHOGONAL"
-  left -5 right 5 bottom -5 top 5 near -1 far 1
+  # left -5 right 5 bottom -5 top 5 near -1 far 1
+  fieldOfView 3.137
 }
 Transform {
   rotation 1 0 0 .78539816
