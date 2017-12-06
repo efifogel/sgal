@@ -227,11 +227,11 @@ void Image_url::clean()
     if (m_rotation != 0) image.rotate(rad2deg(m_rotation));
     if (m_alpha) {
       image.matte(true);
-      Float quantum_range;
+      Magick::Quantum quantum_range;
       // Workaround a bug in ImageMagick.
       {
         using namespace Magick;
-        quantum_range = QuantumRange;
+        quantum_range = MaxRGB;
       }
       image.opacity(boost::lexical_cast<Uint>(quantum_range * m_transparency));
       image.colorSpace(Magick::TransparentColorspace);
