@@ -1326,7 +1326,9 @@ void Assembly::construct_graph_node()
 }
 
 
-void Assembly::propagate_aos_face(Aos_graph::Face_handle f, boost::adjacency_matrix<boost::directedS> &g, Connectivity_tester<Cell_const_handle> &ct)
+void Assembly::propagate_aos_face(Aos_graph::Face_handle f,
+                                  boost::adjacency_matrix<boost::directedS> &g,
+                                  Connectivity_tester<Cell_const_handle> &ct)
 {
   for (auto vit = f->isolated_vertices_begin();
        vit != f->isolated_vertices_end(); ++vit)
@@ -1454,7 +1456,8 @@ void Assembly::visit_aos_vertex(Aos_graph::Vertex_handle v,
     auto curr_h = first;
     do {
       if (curr_h->delta() != NULL){
-        for (auto key_it = curr_h->delta()->begin(); key_it != curr_h->delta()->end(); ++key_it) {
+        for (auto key_it = curr_h->delta()->begin();
+             key_it != curr_h->delta()->end(); ++key_it) {
 					if (boost::edge(key_it->second, key_it->first, g).second){
 						boost::remove_edge(key_it->second, key_it->first, g);
 						remove.push_back(*key_it);
@@ -1463,7 +1466,8 @@ void Assembly::visit_aos_vertex(Aos_graph::Vertex_handle v,
 			}
 
 			if (curr_h->local_delta() != NULL){
-				for (auto key_it = curr_h->local_delta()->begin(); key_it != curr_h->local_delta()->end(); ++key_it) {
+				for (auto key_it = curr_h->local_delta()->begin();
+             key_it != curr_h->local_delta()->end(); ++key_it) {
 					if (boost::edge(key_it->second, key_it->first, g).second){
 						boost::remove_edge(key_it->second, key_it->first, g);
 						remove.push_back(*key_it);
@@ -1502,7 +1506,10 @@ void Assembly::process_aos_graph()
 
   clock_t start_time = clock();
 
-  Connectivity_tester<Cell_const_handle> ct (m_number_of_parts, *(m_aos_face_with_graph->graph()), m_solutions, m_aos_face_with_graph, true);
+  Connectivity_tester<Cell_const_handle> ct (m_number_of_parts,
+                                             *(m_aos_face_with_graph->graph()),
+                                             m_solutions, m_aos_face_with_graph,
+                                             true);
   m_aos_face_with_graph->set_visited(true);
   propagate_aos_face(m_aos_face_with_graph, *(m_aos_face_with_graph->graph()), ct);
   ct.finish();

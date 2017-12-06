@@ -19,6 +19,12 @@
 #ifndef SCGAL_CONNECTIVITY_TESTER_HPP
 #define SCGAL_CONNECTIVITY_TESTER_HPP
 
+/*! \file
+ * A class template for strong connectivity testing of NDBG cells utlizing
+ * lookahead. The implementation is based on the paper 'On certificates and lookahead in dynamic graph problems' [Khanna-Motwani-
+Wilson ‘98] 
+ */
+
 #include <boost/graph/graph_utility.hpp>
 #include <boost/graph/strong_components.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
@@ -31,16 +37,18 @@ SGAL_BEGIN_NAMESPACE
 template <typename Cell_const_handle>
 class Connectivity_tester {
 public:
-  typedef boost::adjacency_matrix<boost::directedS> Graph;
-  typedef std::pair<Uint, Uint>                     Key;
-  typedef std::vector<Key>                          Delta;
-  typedef std::tuple<boost::optional<Cell_const_handle>, Delta, Delta, bool, std::vector<Cell_const_handle>*>    Step;
-  typedef std::vector<Step>                         Lookahead;
+  typedef boost::adjacency_matrix<boost::directedS>           Graph;
+  typedef std::pair<Uint, Uint>                               Key;
+  typedef std::vector<Key>                                    Delta;
+  typedef std::tuple<boost::optional<Cell_const_handle>,
+                     Delta, Delta, bool,
+                     std::vector<Cell_const_handle>*>         Step;
+  typedef std::vector<Step>                                   Lookahead;
 
-  typedef std::vector<Uint>                             Components;
-  typedef std::pair<Uint, Components>                   Component_data;
-  typedef std::pair<Cell_const_handle, Component_data>  Solution;
-  typedef std::list<Solution*>                          Solutions;
+  typedef std::vector<Uint>                                   Components;
+  typedef std::pair<Uint, Components>                         Component_data;
+  typedef std::pair<Cell_const_handle, Component_data>        Solution;
+  typedef std::list<Solution*>                                Solutions;
 
 private:
   Uint m_number_of_pieces;
@@ -49,8 +57,11 @@ private:
   Solutions &m_solutions;
   Lookahead m_lookahead;
   bool m_use_naive_mult;
-  static const int base_number_of_tests = 8; // Number of tests below which recursion stops
-  static const int phase_reduction_factor = 8; // Reduce phase size by this factor for recursive calls
+  
+  // Number of tests below which recursion stops
+  static const int base_number_of_tests = 8;
+  // Reduce phase size by this factor for recursive calls
+  static const int phase_reduction_factor = 8;
 
 
 public:
@@ -70,8 +81,11 @@ public:
   void test(Cell_const_handle c, Delta add, Delta remove)
   {
 
-    // If the graph is the same as in the last step (also makes sure prev step wasn't an update)
-    if (add.size() == 0 && remove.size() == 0 && m_lookahead.size() && (std::get<0>(m_lookahead.back()))) {
+    // If the graph is the same as in the last step (also makes sure prev step
+    // wasn't an update)
+    if (add.size() == 0 && remove.size() == 0 && m_lookahead.size()
+        && std::get<0>(m_lookahead.back()))
+    {
         auto prev_step = m_lookahead.back();
         if (std::get<4>(prev_step) == NULL){
           std::get<4>(prev_step) = new std::vector<Cell_const_handle>();
@@ -81,13 +95,15 @@ public:
     }
 
 
-    m_number_of_tests++;
+    ++m_number_of_tests;
 
     std::vector<Cell_const_handle>* cells_with_same_sol = NULL;
-    Step s = std::make_tuple(boost::optional<Cell_const_handle>{c}, add, remove, false, cells_with_same_sol);
+    Step s = std::make_tuple(boost::optional<Cell_const_handle>{c}, add, remove,
+                             false, cells_with_same_sol);
     m_lookahead.push_back(s);
 
-    int phase_size = m_number_of_pieces/phase_reduction_factor + (m_number_of_pieces % phase_reduction_factor != 0);
+    int phase_size = (m_number_of_pieces/phase_reduction_factor)
+                     + (m_number_of_pieces % phase_reduction_factor != 0);
 
     if (m_number_of_tests == phase_size) {
       process_top_level_phase(m_number_of_tests);
@@ -96,9 +112,12 @@ public:
 
   void update(Delta add, Delta remove)
   {
-    if (add.size() == 0 && remove.size() == 0) return;
+    if (add.size() == 0 && remove.size() == 0){
+      return;
+    }
     std::vector<Cell_const_handle>* cells_with_same_sol = NULL;
-    Step s = std::make_tuple(boost::optional<Cell_const_handle>{}, add, remove, false, cells_with_same_sol);
+    Step s = std::make_tuple(boost::optional<Cell_const_handle>{}, add, remove,
+                             false, cells_with_same_sol);
     m_lookahead.push_back(s);
   }
 
@@ -111,7 +130,7 @@ public:
 
 
 private:
-  static void update_graph(Graph &g, Step &s)
+  void update_graph(Graph &g, Step &s)
   {
     Delta &add = std::get<1>(s), &remove = std::get<2>(s);
 
@@ -120,12 +139,11 @@ private:
     }
 
     for (auto key_it = remove.begin(); key_it != remove.end(); ++key_it) {
-      //assert (boost::edge(key_it->second, key_it->first, g).second && "Edge not there before removing");
       boost::remove_edge(key_it->second, key_it->first, g);
     }
   }
 
-  static bool is_connected(Graph& g)
+  bool is_connected(Graph& g)
   {
     Components components;
     components.resize(boost::num_vertices(g));
@@ -171,7 +189,8 @@ private:
 
       auto cells_with_same_sol = std::get<4> (s);
       if (cells_with_same_sol != NULL) {
-        for (auto cell_it = cells_with_same_sol->begin(); cell_it != cells_with_same_sol->end(); cell_it++) {
+        for (auto cell_it = cells_with_same_sol->begin();
+             cell_it != cells_with_same_sol->end(); ++cell_it) {
           auto solution = new Solution;
           (solution->second).second = components;
           (solution->second).first = num_components;
@@ -195,7 +214,7 @@ private:
     else {
       process_phase(m_graph, 0, m_lookahead.size(), phase_size);
       for (auto step_it = m_lookahead.begin(); step_it != m_lookahead.end();
-           step_it++)
+           ++step_it)
       {
         update_graph(m_graph, *step_it);
 
@@ -209,7 +228,7 @@ private:
 
     // Clean up
     for (auto step_it = m_lookahead.begin(); step_it != m_lookahead.begin();
-         step_it++)
+         ++step_it)
     {
       if (std::get<4> (*step_it) != NULL) {
         delete std::get<4> (*step_it);
@@ -225,9 +244,9 @@ private:
 
     // Mark active vertices for this phase
     for (auto step_it = m_lookahead.begin() + start;
-         step_it != m_lookahead.begin() + end; step_it++)
+         step_it != m_lookahead.begin() + end; ++step_it)
     {
-      for (int i=1; i!=3; i++){
+      for (int i=1; i!=3; ++i){
         Delta& delta = (i==1) ? std::get<1> (*step_it) : std::get<2> (*step_it);
         for (auto key_it = delta.begin(); key_it != delta.end(); ++key_it) {
           active_vertices.at(key_it->first) = 1;
@@ -238,7 +257,7 @@ private:
 
     // Compute G+p (= Gp U E^A)
     std::vector<Uint> active_vert_indices;
-    for (int i=0; i<active_vertices.size(); i++) {
+    for (int i=0; i<active_vertices.size(); ++i) {
       if (active_vertices.at(i)) {
         active_vert_indices.push_back(i);
       }
@@ -246,10 +265,10 @@ private:
 
     Graph g_p_plus = g;
     for (auto vert_it = active_vert_indices.begin();
-         vert_it !=active_vert_indices.end(); vert_it++)
+         vert_it !=active_vert_indices.end(); ++vert_it)
     {
       for (auto vert_it2 = active_vert_indices.begin();
-           vert_it2 !=active_vert_indices.end(); vert_it2++)
+           vert_it2 !=active_vert_indices.end(); ++vert_it2)
       {
         boost::add_edge(*vert_it, *vert_it2, g_p_plus);
       }
@@ -264,10 +283,10 @@ private:
     // Compute G-p (= Gp \ E^A)
     Graph g_p_minus = g;
     for (auto vert_it = active_vert_indices.begin();
-         vert_it != active_vert_indices.end(); vert_it++)
+         vert_it != active_vert_indices.end(); ++vert_it)
     {
       for (auto vert_it2 = active_vert_indices.begin();
-           vert_it2 != active_vert_indices.end(); vert_it2++)
+           vert_it2 != active_vert_indices.end(); ++vert_it2)
       {
         if (boost::edge(*vert_it, *vert_it2, g_p_minus).second) {
           boost::remove_edge(*vert_it, *vert_it2, g_p_minus);
@@ -279,8 +298,8 @@ private:
 
     // Compute H_p
     Graph h_p(active_vert_indices.size());
-    for (int i=0; i<active_vert_indices.size(); i++) {
-      for (int j=0; j<active_vert_indices.size(); j++) {
+    for (int i=0; i<active_vert_indices.size(); ++i) {
+      for (int j=0; j<active_vert_indices.size(); ++j) {
         if (boost::edge(active_vert_indices.at(i), active_vert_indices.at(j),
                         g_p_minus).second ||
             boost::edge(active_vert_indices.at(i),
@@ -292,19 +311,19 @@ private:
     }
 
     // Update active_vertices to hold their indices in the subgraph
-    for (int i = 0; i < active_vert_indices.size(); i++) {
+    for (int i = 0; i < active_vert_indices.size(); ++i) {
       active_vertices.at(active_vert_indices.at(i)) = i;
     }
 
     // Solve recursively by dividing into sub-phases
     int c = 0, prev_end = start;
-    int rec_phase_size = phase_size/phase_reduction_factor +
-      (phase_size % phase_reduction_factor != 0);
+    int rec_phase_size = (phase_size/phase_reduction_factor)
+                         + (phase_size % phase_reduction_factor != 0);
     bool is_next_rec_call_base = (rec_phase_size <= base_number_of_tests);
 
-    for (int j = start; j<end; j++){
+    for (int j = start; j<end; ++j){
       // Adjust Delta keys to match subgraph indices (in H_p)
-      for (int i=1; i!=3; i++) {
+      for (int i=1; i!=3; ++i) {
         Delta& delta = (i==1) ? std::get<1>(m_lookahead.at(j)) :
           std::get<2> (m_lookahead.at(j));
         for (auto key_it = delta.begin(); key_it != delta.end(); ++key_it) {
@@ -314,7 +333,7 @@ private:
       }
 
       if (std::get<0> (m_lookahead.at(j))) {
-        c++;
+        ++c;
         if (c == rec_phase_size){
           if (is_next_rec_call_base){
             process_base_phase(h_p, prev_end, j+1, false);
@@ -328,7 +347,7 @@ private:
           // Recursive call won't update H_p (for next phase) if it's not the
           // base call
           if (!is_next_rec_call_base) {
-            for (; prev_end<=j; prev_end++) {
+            for (; prev_end<=j; ++prev_end) {
                update_graph(h_p, m_lookahead.at(prev_end));
             }
           }
@@ -351,8 +370,8 @@ private:
     }
 
     // Adjust Delta keys back
-    for (int j = start; j<end; j++) {
-      for (int i = 1; i != 3; i++){
+    for (int j = start; j<end; ++j) {
+      for (int i = 1; i != 3; ++i){
         Delta& delta = (i == 1) ? std::get<1> (m_lookahead.at(j)) :
           std::get<2> (m_lookahead.at(j));
         for (auto key_it = delta.begin(); key_it != delta.end(); ++key_it) {
@@ -366,7 +385,7 @@ private:
   void process_base_phase(Graph &g, int start, int end, bool get_solution)
   {
     for (auto step_it = m_lookahead.begin() + start;
-         step_it != m_lookahead.begin() + end; step_it++)
+         step_it != m_lookahead.begin() + end; ++step_it)
     {
       update_graph(g, *step_it);
 

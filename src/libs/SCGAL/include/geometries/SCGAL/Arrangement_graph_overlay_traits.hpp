@@ -212,7 +212,9 @@ public:
     if (h2->mark()) return;
     Delta* delta = new Delta();
     delta->push_back(m_key);
-    if (h2->face()->mark() && h2->twin()->face()->mark()) { // isolated unmarked edge
+    
+    // isolated unmarked edge
+    if (h2->face()->mark() && h2->twin()->face()->mark()) {
         h->set_local_delta(delta);
         h->twin()->set_local_delta(delta);
         return;
