@@ -25,7 +25,7 @@
 
 /*! \file
  * An arrangement DCEL, the vertex, halfedge, and face of which are extended
- * each with an adjacency matrix graph .
+ * each with a vector of edges (that change in the DBG).
  */
 
 #include <boost/graph/adjacency_matrix.hpp>

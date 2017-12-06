@@ -19,6 +19,15 @@
 #ifndef SCGAL_GRAPH_ALGORITHMS_HPP
 #define SCGAL_GRAPH_ALGORITHMS_HPP
 
+/*! \file
+ * A transitive closure implementation for a directed graph given as an 
+ * adjacency matrix. The recursive calculation is based on the algorithm in
+ * 'The Design  and Analysis of Computer Algorithms' (Aho, Ullman,  Hopcroft).
+ * Strassen's algorithm is used for boolean matrix multiplication, and its
+ * implementation is based on one presented here:
+ * https://martin-thoma.com/strassen-algorithm-in-python-java-cpp/  
+ */
+
 #include <vector>
 #include <algorithm>
 #include <cmath>
@@ -37,10 +46,10 @@ inline void ikjalgorithm(std::vector< std::vector<int> >& A,
                          std::vector< std::vector<int> >& B,
                          std::vector< std::vector<int> >& C, int n)
 {
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-      C[i][j] = 0; // In case it wasn't 0
-      for (int k = 0; k < n; k++) {
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < n; ++j) {
+      C[i][j] = 0; // In case C stores a result from a previous calculation
+      for (int k = 0; k < n; ++k) {
         C[i][j] += A[i][k] * B[k][j];
       }
     }
@@ -57,8 +66,8 @@ inline void sum(std::vector< std::vector<int> >& A,
 {
   int i, j;
 
-  for (i = 0; i < size; i++) {
-    for (j = 0; j < size; j++) {
+  for (i = 0; i < size; ++i) {
+    for (j = 0; j < size; ++j) {
       C[i][j] = A[i][j] + B[i][j];
     }
   }
@@ -70,8 +79,8 @@ inline void subtract(std::vector< std::vector<int> >& A,
 {
   int i, j;
 
-  for (i = 0; i < size; i++) {
-    for (j = 0; j < size; j++) {
+  for (i = 0; i < size; ++i) {
+    for (j = 0; j < size; ++j) {
       C[i][j] = A[i][j] - B[i][j];
     }
   }
@@ -83,23 +92,25 @@ inline void or_inplace(std::vector< std::vector<int> >& A,
 {
     int i, j;
 
-    for (i = 0; i < size; i++) {
-        for (j = 0; j < size; j++) {
+    for (i = 0; i < size; ++i) {
+        for (j = 0; j < size; ++j) {
             A[i][j] = (A[i][j] > 0) || (B[i][j] > 0);
         }
     }
 }
 
+// Performs Strassen matrix multiplication or a naive one if the the flag is
+// true
 inline void mult(std::vector< std::vector<int> >& A,
                  std::vector< std::vector<int> >& B,
                  std::vector< std::vector<int> >& C, int size,
                  bool naive)
 {
   if (naive) {
-    for (int i = 0; i < size; i++) {
-      for (int j = 0; j < size; j++) {
-        C[i][j] = 0; // In case it wasn't 0
-        for (int k = 0; k < size; k++) {
+    for (int i = 0; i < size; ++i) {
+      for (int j = 0; j < size; ++j) {
+        C[i][j] = 0; // In case C stores a result from a previous calculation
+        for (int k = 0; k < size; ++k) {
           if (A[i][k] && B[k][j]){
             C[i][j] = 1;
             break;
@@ -133,8 +144,8 @@ inline void mult(std::vector< std::vector<int> >& A,
     int i, j;
 
     //dividing the matrices in 4 sub-matrices:
-    for (i = 0; i < newSize; i++) {
-      for (j = 0; j < newSize; j++) {
+    for (i = 0; i < newSize; ++i) {
+      for (j = 0; j < newSize; ++j) {
         a11[i][j] = A[i][j];
         a12[i][j] = A[i][j + newSize];
         a21[i][j] = A[i + newSize][j];
@@ -187,8 +198,8 @@ inline void mult(std::vector< std::vector<int> >& A,
     subtract(bResult, p2, c22, newSize); // c22 = p1 + p3 - p2 + p6
 
     // Grouping the results obtained in a single matrix:
-    for (i = 0; i < newSize ; i++) {
-      for (j = 0 ; j < newSize ; j++) {
+    for (i = 0; i < newSize ; ++i) {
+      for (j = 0 ; j < newSize ; ++j) {
         C[i][j] = c11[i][j];
         C[i][j + newSize] = c12[i][j];
         C[i + newSize][j] = c21[i][j];
@@ -204,9 +215,9 @@ inline void transitive_closureR(std::vector< std::vector<int> > &M, int size,
   if (size <= leafsize) {
     // Repeated squaring (with boolean multiplication)
     for (int c=0; c<int(ceil(log2(size))); c++){
-      for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-          for (int k = 0; k < size; k++) {
+      for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+          for (int k = 0; k < size; ++k) {
             if (M[i][k] && M[k][j]){
               M[i][j] = 1;
               break;
@@ -228,8 +239,8 @@ inline void transitive_closureR(std::vector< std::vector<int> > &M, int size,
     int i, j;
 
     // Dividing the matrices in 4 sub-matrices:
-    for (i = 0; i < newSize; i++) {
-      for (j = 0; j < newSize; j++) {
+    for (i = 0; i < newSize; ++i) {
+      for (j = 0; j < newSize; ++j) {
         A[i][j] = M[i][j];
         B[i][j] = M[i][j + newSize];
         C[i][j] = M[i + newSize][j];
@@ -255,8 +266,8 @@ inline void transitive_closureR(std::vector< std::vector<int> > &M, int size,
     B = aux; // B = EBD*
 
     // Grouping the results obtained in a single matrix:
-    for (i = 0; i < newSize ; i++) {
-      for (j = 0 ; j < newSize ; j++) {
+    for (i = 0; i < newSize ; ++i) {
+      for (j = 0 ; j < newSize ; ++j) {
         M[i][j] = A[i][j];
         M[i][j + newSize] = B[i][j];
         M[i + newSize][j] = C[i][j];
@@ -271,12 +282,13 @@ inline void transitive_closure(Graph& g, bool naive = false)
   unsigned int orig_n = boost::num_vertices(g);
   if (orig_n <= 1) return;
 
-  unsigned int n = (orig_n > leafsize) ? nextPowerOfTwo(orig_n) : orig_n; // Only pad if there will be recursive calls
+  // Only pad if there will be recursive calls
+  unsigned int n = (orig_n > leafsize) ? nextPowerOfTwo(orig_n) : orig_n;
   std::vector<int> inner(n);
   std::vector< std::vector<int> > MPrep(n, inner);
 
-  for(unsigned int i=0; i<orig_n; i++) {
-    for (unsigned int j=0; j<orig_n; j++) {
+  for(unsigned int i=0; i<orig_n; ++i) {
+    for (unsigned int j=0; j<orig_n; ++j) {
       if (i == j) {
         MPrep[i][j] = 1;
         continue;
@@ -290,8 +302,8 @@ inline void transitive_closure(Graph& g, bool naive = false)
 
   transitive_closureR(MPrep, n, naive);
 
-  for (unsigned int i=0; i<orig_n; i++) {
-    for (unsigned int j=0; j<orig_n; j++) {
+  for (unsigned int i=0; i<orig_n; ++i) {
+    for (unsigned int j=0; j<orig_n; ++j) {
       if (MPrep[i][j] > 0) {
         boost::add_edge(i, j, g);
       }
