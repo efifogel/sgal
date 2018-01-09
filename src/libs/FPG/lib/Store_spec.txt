@@ -1,9 +1,9 @@
 Container
-# Name                 Type                             Pass       Compound Default Value    Description
-# -------------------- -------------------------------- ---------- -------- ---------------- --------------------
-outer_boundary,        std::vector<Vector2f>,           reference, 1,       ,                "outer boundary as a ccw sequence of 2D points on the horizontal plane"
-height,                float,                           value,     0,       400,             "height of the store walls"
-walls,                 boost::shared_ptr<Walls>,        value,     1,       ,                "walls"
-columns,               boost::shared_ptr<Column>,       value,     1,       ,                "columns"
-counter_areas,         boost::shared_ptr<Counter_area>, value,     1,       ,                "counter areas"
-storage_rooms,         boost::shared_ptr<Storage_room>, value,     1,       ,                "storage rooms"
+# Name                 Type                 Rule           Default Value    Description
+# -------------------- -------------------- -------------- ---------------- --------------------
+outer_boundary,        Vector2f_array,      EXPOSED_FIELD, ,                "outer boundary as a ccw sequence of 2D points on the horizontal plane"
+height,                Float,               EXPOSED_FIELD, 400,             "height of the store walls"
+walls,                 Shared_wall,         EXPOSED_FIELD, ,                "walls"
+columns,               Shared_column,       EXPOSED_FIELD, ,                "columns"
+counter_areas,         Shared_counter_area, EXPOSED_FIELD, ,                "counter areas"
+storage_rooms,         Shared_storage_room, EXPOSED_FIELD, ,                "storage rooms"
