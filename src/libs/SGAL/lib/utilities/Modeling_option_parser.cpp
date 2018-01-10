@@ -40,7 +40,8 @@ Modeling_option_parser::Modeling_option_parser() :
   m_split_ccs(false),
   m_remove_degeneracies(false),
   m_repair_orientation(false),
-  m_repair_normals(false)
+  m_repair_normals(false),
+  m_multiple_shapes(false)
 {
   m_modeling_opts.add_options()
     ("make-consistent",
@@ -57,6 +58,8 @@ Modeling_option_parser::Modeling_option_parser() :
      "repair the orientation of facets reversing them all")
     ("repair-normals", po::value<Boolean>(&m_repair_normals),
      "repair the normals of facets")
+    ("mulitple-shapes", po::value<Boolean>(&m_multiple_shapes),
+     "construct multiple shapes when colors are present in the input")
     ;
 }
 

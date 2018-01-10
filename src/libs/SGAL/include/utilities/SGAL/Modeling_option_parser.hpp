@@ -112,6 +112,11 @@ public:
    */
   Boolean get_repair_normals() const;
 
+  /*! Determine whether to construct multiple shapes when colors are present
+   * (one shape per color).
+   */
+  bool multiple_shapes() const;
+
   /*! Obtain the font paths.
    * \param variable_map (in)
    * \return the font paths.
@@ -157,7 +162,18 @@ private:
    */
   Boolean m_repair_normals;
 
-// The assignment operator cannot be generated (because some of the data
+  /*! Indicates whether multiple shape nodes should represent the entire mesh
+   * when colors are present in the input. When colors are not present this
+   * flag has no effect.
+   * By default a single Shape node represents the entire mesh. When colors are
+   * present, we store the colors in the color array. When m_multiple_shapes is
+   * set to true and colors are present, we split the mesh into as many Shape
+   * nodes as different colors.
+   * \todo use a shader to combine the colors, when present, and phong shading.
+   */
+  Boolean m_multiple_shapes;
+
+  // The assignment operator cannot be generated (because some of the data
   // members are const pointers), so we suppress it explicitly.
   // We also suppress the copy constructor.
   Modeling_option_parser& operator=(const Modeling_option_parser&);
@@ -200,13 +216,19 @@ inline Boolean Modeling_option_parser::get_remove_degeneracies() const
  * polyhedral surfaces.
  */
 inline Boolean Modeling_option_parser::get_repair_orientation() const
-{return m_repair_orientation; }
+{ return m_repair_orientation; }
 
 /*! \brief determines whether to repair the normals of facets of closed
  * polyhedral surfaces.
  */
 inline Boolean Modeling_option_parser::get_repair_normals() const
-{return m_repair_normals; }
+{ return m_repair_normals; }
+
+/*! \brief determines whether to construct multiple shapes when colors are
+ * present.
+ */
+inline bool Modeling_option_parser::multiple_shapes() const
+{ return m_multiple_shapes; }
 
 SGAL_END_NAMESPACE
 

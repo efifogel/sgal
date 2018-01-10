@@ -115,6 +115,16 @@ public:
    */
   Return_code parse_mtl(const std::string& filename, Scene_graph* sg);
 
+  /*! Set the flag that indicates whether to construct multiple shapes when
+   * colors are present (one shape per color).
+   */
+  void set_multiple_shapes(bool multiple_shapes);
+
+  /*! Determine whether to construct multiple shapes when colors are present
+   * (one shape per color).
+   */
+  bool multiple_shapes() const;
+
 protected:
   class Triangle {
   public:
@@ -152,7 +162,7 @@ private:
    * effect.
    * By default a single Shape node represents the entire mesh. When colors are
    * present, we store the colors in the color array. When m_multiple_shapes is
-   * set to false and colors are present, we split the mesh into as many Shape
+   * set to true and colors are present, we split the mesh into as many Shape
    * nodes as different colors.
    * \todo use a shader to combine the colors, when present, and phong shading.
    */
@@ -170,6 +180,11 @@ private:
   Shared_shape compute_shape(Scene_graph* scene_graph,
                              Shared_transform transform,
                              const Vector3f& color);
+
+  /*! Add a single shape for all triangles.
+   */
+  void add_shape(Scene_graph* scene_graph, Shared_transform transform,
+                  std::list<Triangle>& triangles);
 
   /*! Add a shape for every sub sequence of triangles with a distinguish color.
    */
@@ -215,6 +230,17 @@ private:
                          Polygon_indices& tex_coord_indices);
 
 };
+
+/*! \brief sets the flag that indicates whether to construct multiple shapes when
+ * colors are present.
+ */
+inline void Loader::set_multiple_shapes(bool multiple_shapes)
+{ m_multiple_shapes = multiple_shapes; }
+
+/*! \brief determines whether to construct multiple shapes when colors are
+ * present.
+ */
+inline bool Loader::multiple_shapes() const { return m_multiple_shapes; }
 
 SGAL_END_NAMESPACE
 

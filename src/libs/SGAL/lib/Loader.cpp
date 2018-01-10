@@ -291,7 +291,7 @@ Loader::Return_code Loader::read_triangle(std::istream& is, Triangle& triangle)
   triangle.v2.set(x, y, z);
 
   is.read((char*)&(triangle.spacer), sizeof(unsigned short));
-  //std::cout << std::hex << spacer << std::endl;
+  // std::cout << std::hex << triangle.spacer << std::endl;
 
   if (!is) {
     throw Read_error(m_filename);
@@ -356,6 +356,16 @@ Loader::compute_shape(Scene_graph* scene_graph, Shared_transform transform,
   material->set_emissive_color(color);
   material->set_ambient_intensity(0.0f);
   return shape;
+}
+
+//! \brief adds a single shape for all triangles.
+void Loader::add_shape(Scene_graph* scene_graph, Shared_transform transform,
+                       std::list<Triangle>& tris)
+{
+  Vector3f color;       // Place holder
+  auto shape = compute_shape(scene_graph, transform, color);
+  auto ifs = compute_ifs(scene_graph, tris.size(), tris.begin(), tris.end());
+  shape->set_geometry(ifs);
 }
 
 /*! \brief adds a shape for every sub sequence of triangles with a distinguish
@@ -494,11 +504,12 @@ Loader::Return_code Loader::read_stl(std::istream& is, size_t size,
   }
 
   // Construct shape nodes
-  bool use_colors((color[0] != .0f) || (color[1] != .0f) ||(color[2] != .0f));
-  if (use_colors && m_multiple_shapes) use_colors = false;
-
-  if (! use_colors) add_shapes(scene_graph, transform, triangles, color);
-  else add_colored_shape(scene_graph, transform, triangles, color);
+  if (m_multiple_shapes) add_shapes(scene_graph, transform, triangles, color);
+  else {
+    bool use_colors((color[0] != .0f) || (color[1] != .0f) ||(color[2] != .0f));
+    if (use_colors) add_colored_shape(scene_graph, transform, triangles, color);
+    else add_shape(scene_graph, transform, triangles);
+  }
 
   return SUCCESS;
 }
