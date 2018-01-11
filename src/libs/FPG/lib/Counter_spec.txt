@@ -1,0 +1,9 @@
+Geometry
+# Name                 Type                 Default Value    Description
+# -------------------- -------------------- ---------------- --------------------
+location,              SFVec2f,             "0,0",           "Location of the counter relative to the Counter-area coordinate system"
+outerBoundary,         MFVec2f,             ,                "Outer boundary as a ccw sequence of 2D points on the horizontal plane"
+depth,                 SFFloat,             60,              "The cabinet depth"
+width,                 SFFloat,             60,              "The cabinet width"
+height,                SFFloat,             400,             "The cabinet height"
+cashRegisters          MFSharedContainer,   ,                "The cash registers"

@@ -1,0 +1,8 @@
+Container
+# Name                 Type                 Default Value    Description
+# -------------------- -------------------- ---------------- --------------------
+location,              SFVec2f,             "0,0",           "Location of the counter area relative to the store floor-plane coordinate system"
+outerBoundary,         MFVec2f,             ,                "Outer boundary as a ccw sequence of 2D points on the horizontal plane"
+width,                 SFFloat,             ,                "The height of the storage room"
+height,                SFFloat,             ,                "The height of the storage room"
+walls,                 MFSharedContainer,   ,                "The walls of the storage room"
