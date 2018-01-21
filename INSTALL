@@ -98,14 +98,8 @@ is in the LD_LIBRARY_PATH.
 2.5.1. List of required packages.
 
 2.5.1.1. Required packages of Ubuntu 14.04:
-* libboost-dev
-* libboost-system-dev
-* libboost-thread-dev
-* libboost-filesystem-dev
-* libboost-program-options-dev
+* libboost-all-dev
 * libmagick++-dev
-* libgl2ps-dev
-* libxxf86vm-dev
 * libgmp-dev
 * libmpfr-dev
 * libv8-dev
