@@ -384,7 +384,9 @@ Transform {
               }
             }
             Shape {
-              appearance USE AXES_APP
+              appearance DEF AXES_APP Appearance {
+                material Material { diffuseColor 0.5 0.5 0.5 }
+              }
               geometry Sphere {
                 center 0 0 -1
                 radius 0.05
@@ -454,9 +456,7 @@ Transform {
       scale 0.1 0.1 0.1
       children [
         Shape {
-          appearance DEF AXES_APP Appearance {
-            material Material { diffuseColor 0.5 0.5 0.5 }
-          }
+          appearance USE AXES_APP
           geometry Sphere { radius 0.1 }
         }
         DEF CS_AXIS Transform {
