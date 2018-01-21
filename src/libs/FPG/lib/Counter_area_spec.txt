@@ -1,6 +1,7 @@
 StoreElement
-# Name                 Type                 Default Value    Description
-# -------------------- -------------------- ---------------- --------------------
-height,                SFFloat,             400,             "The height of the store walls"
-cabinet,               SFSharedContainer,   Cabinet,         "The counter cabinet (typically located behind the cashier area)"
-counter,               SFSharedContainer,   Counter,         "The counter itself"
+# Name                 Type                       Rule           Default Value    Description
+# -------------------- -------------------------- -------------- ---------------- --------------------
+height,                Float,                     EXPOSED_FIELD, 400,             "The height of the store walls"
+cabinet,               Shared_container,          EXPOSED_FIELD, Cabinet,         "The counter cabinet (typically located behind the cashier area)"
+counter,               Shared_container,          EXPOSED_FIELD, Counter,         "The counter itself"
+shapes,                Shared_container_array,    EXPOSED_FIELD, ,                "Other shapes"

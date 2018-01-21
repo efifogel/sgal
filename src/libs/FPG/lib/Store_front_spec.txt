@@ -1,0 +1,5 @@
+Container
+# Name                 Type                       Rule           Default Value    Description
+# -------------------- -------------------------- -------------- ---------------- --------------------
+outer_boundary,        Vector2f_array,            EXPOSED_FIELD, ,                "outer boundary as a ccw sequence of 2D points on the horizontal plane"
+height,                Float,                     EXPOSED_FIELD, 400,             "height of the store front"

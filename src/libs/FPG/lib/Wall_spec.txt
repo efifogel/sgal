@@ -1,9 +1,10 @@
 Geometry
-# Name                 Type                 Default Value    Description
-# -------------------- -------------------- ---------------- --------------------
-location,              SFVec2f,             "0,0",           "Location of the wall relative to the store floor-plane coordinate system"
-outerBoundary,         MFVec2f,             ,                "Outer boundary as a ccw sequence of 2D points on the horizontal plane"
-depth,                 SFFloat,             20,              "The wall depth"
-width,                 SFFloat,             ,                "The wall width"
-height,                SFFloat,             400,             "The wall height"
-holes,                 MFSharedContainer,   ,                "Holes in the wall, e.g., windows and doors"
+# Name                 Type                       Rule           Default Value    Description
+# -------------------- -------------------------- -------------- ---------------- --------------------
+location,              Vector2f,                  EXPOSED_FIELD, "0,0",           "Location of the wall relative to the store floor-plane coordinate system"
+outerBoundary,         Vector2f_array,            EXPOSED_FIELD, ,                "Outer boundary as a ccw sequence of 2D points on the horizontal plane"
+depth,                 Float,                     EXPOSED_FIELD, 20,              "The wall depth"
+width,                 Float,                     EXPOSED_FIELD,                  "The wall width"
+height,                Float,                     EXPOSED_FIELD, 400,             "The wall height"
+holes,                 Shared_container_array,    EXPOSED_FIELD,                  "Holes in the wall, e.g., windows and doors"
+appearance,            Shared_appearance,         EXPOSED_FIELD, ,                "The appearance of the wall"

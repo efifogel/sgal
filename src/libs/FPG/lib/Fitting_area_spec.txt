@@ -1,7 +1,8 @@
 Container
-# Name                 Type                 Default Value    Description
-# -------------------- -------------------- ---------------- --------------------
-location,              SFVec2f,             "0,0",           "Location of the fitting area relative to the store floor-plane coordinate system"
-outerBoundary,         MFVec2f,             ,                "Outer boundary as a ccw sequence of 2D points on the horizontal plane"
-height,                SFFloat,             400,             "The height of the store walls"
-fiitingRooms,          MFSharedContainer,   Cabinet,         "The fitting rooms"
+# Name                 Type                       Rule,          Default Value    Description
+# -------------------- -------------------------- -------------- ---------------- --------------------
+location,              SFVec2f,                   EXPOSED_FIELD, "0,0",           "Location of the fitting area relative to the store floor-plane coordinate system"
+outerBoundary,         MFVec2f,                   EXPOSED_FIELD, ,                "Outer boundary as a ccw sequence of 2D points on the horizontal plane"
+height,                SFFloat,                   EXPOSED_FIELD, 400,             "The height of the store walls"
+fiitingRooms,          MFSharedContainer,         EXPOSED_FIELD, Cabinet,         "The fitting rooms"
+shapes,                Shared_container_array,    EXPOSED_FIELD, ,                "Other shapes"

@@ -1,7 +1,6 @@
 #Set some values...
 
 # packages
-find_package(SCGAL REQUIRED)
 find_package(SGAL REQUIRED)
 
 # var - should be somehow taken from the SCGAL compilation.
@@ -11,20 +10,48 @@ set(SCGAL_NT "3" CACHE STRING "CGAL number type")
 add_definitions(-DSCGAL_NT=${SCGAL_NT})
 add_definitions(-DSCGAL_KERNEL=${SCGAL_KERNEL})
 
+# Create custom commands for nodes
+set(GENERATED_BASE_DIR "${CMAKE_BINARY_DIR}/src/libs/FPG")
+set(GENERATED_LIB_DIR "${GENERATED_BASE_DIR}/lib")
+set(GENERATED_INC_DIR "${GENERATED_BASE_DIR}/include/FPG")
+file(MAKE_DIRECTORY ${GENERATED_LIB_DIR})
+file(MAKE_DIRECTORY ${GENERATED_INC_DIR})
+set (GEN_NODE "${CMAKE_CURRENT_LIST_DIR}/gen_node.py")
+
+########
+function(add_node name)
+  set(MY_NODE_OUTPUT
+      ${GENERATED_INC_DIR}/${name}.hpp
+      ${GENERATED_LIB_DIR}/${name}.cpp)
+  add_custom_command(OUTPUT ${MY_NODE_OUTPUT}
+                     COMMAND ${GEN_NODE}
+	             ARGS --name ${name}
+	             DEPENDS ${CMAKE_CURRENT_LIST_DIR}/${node}_spec.txt ${GEN_NODE})
+  set(FPG_AUTO_GENERATED_SRC_FILES ${FPG_AUTO_GENERATED_SRC_FILES} ${GENERATED_LIB_DIR}/${name}.cpp CACHE INTERNAL "")
+  set(FPG_AUTO_GENERATED_HDR_FILES ${FPG_AUTO_GENERATED_HDR_FILES} ${GENERATED_INC_DIR}/${name}.hpp CACHE INTERNAL "")
+
+endfunction()
+########
+
+set(FPG_AUTO_GENERATED_SRC_FILES "" CACHE INTERNAL "")
+add_node(Counter)
+add_node(Enterance)
+add_node(Fitting_room)
+add_node(Fitting_room_lobby)
+add_node(Room)
+add_node(Storage_room)
+add_node(Store)
+add_node(Store_front)
+add_node(Wall)
+
 # Add source files
-set(FPG_SOURCE_FILES ${FPG_SOURCE_FILES} lib/Store.cpp)
-set(FPG_SOURCE_FILES ${FPG_SOURCE_FILES} lib/Wall.cpp)
-set(FPG_SOURCE_FILES ${FPG_SOURCE_FILES} lib/Store_front.cpp)
-set(FPG_SOURCE_FILES ${FPG_SOURCE_FILES} lib/init.cpp)
-set(FPG_SOURCE_FILES ${FPG_SOURCE_FILES} lib/Enterance.cpp)
-set(FPG_SOURCE_FILES ${FPG_SOURCE_FILES} lib/Counter.cpp)
-set(FPG_SOURCE_FILES ${FPG_SOURCE_FILES} lib/Room.cpp)
-set(FPG_SOURCE_FILES ${FPG_SOURCE_FILES} lib/Fitting_room.cpp)
-set(FPG_SOURCE_FILES ${FPG_SOURCE_FILES} lib/Storage_room.cpp)
-set(FPG_SOURCE_FILES ${FPG_SOURCE_FILES} lib/Fitting_room_lobby.cpp)
+set(FPG_SRC_FILES ${FPG_SRC_FILES} lib/init.cpp)
 
 # Engines
-set(FPG_SOURCE_FILES ${FPG_SOURCE_FILES} lib/engines/Floor_plan_evaluator.cpp)
+set(FPG_SRC_FILES ${FPG_SRC_FILES} lib/engines/Floor_plan_evaluator.cpp)
+
+# Add the generated files
+set(FPG_SRC_FILES ${FPG_SRC_FILES} ${FPG_AUTO_GENERATED_SRC_FILES})
 
 # Add all include directories
 include_directories(include)
@@ -43,19 +70,16 @@ else(WIN32)
   add_definitions(-DGL_GLEXT_PROTOTYPES)
 endif(WIN32)
 
-if (APPLE)
-  add_definitions(-DMAGICKCORE_QUANTUM_DEPTH=16)
-  add_definitions(-DMAGICKCORE_HDRI_ENABLE=0)
-endif(APPLE)
+add_definitions(-DMAGICKCORE_QUANTUM_DEPTH=16)
+add_definitions(-DMAGICKCORE_HDRI_ENABLE=0)
 
 # Add library
 if (BUILD_SHARED_LIBS)
   add_definitions(-DSGAL_ALL_DYN_LINK)
-  add_library(FPG SHARED ${FPG_SOURCE_FILES})
+  add_library(FPG SHARED ${FPG_SRC_FILES})
 else(BUILD_SHARED_LIBS)
-  add_library(FPG STATIC ${FPG_SOURCE_FILES})
+  add_library(FPG STATIC ${FPG_SRC_FILES})
 endif(BUILD_SHARED_LIBS)
-
 
 set_target_properties(FPG PROPERTIES
   VERSION "${FPG_SOVERSION}"
