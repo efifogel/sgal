@@ -1,0 +1,6 @@
+Geometry
+# Name                 Type                       Rule           Default Value    Description
+# -------------------- -------------------------- -------------- ---------------- --------------------
+location,              Vector2f                   EXPOSED_FIELD, "0,0",           "Location of the cach register relative to the Counter coordinate system"
+outerBoundary,         Vector2f_array,            EXPOSED_FIELD, ,                "Outer boundary as a ccw sequence of 2D points on the horizontal plane"
+height,                Float,                     EXPOSED_FIELD, 400,             "height of the lobby"

@@ -1,0 +1,10 @@
+Container
+# Name                 Type                       Rule           Default Value    Description
+# -------------------- -------------------------- -------------- ---------------- --------------------
+outer_boundary,        Vector2f_array,            EXPOSED_FIELD, ,                "outer boundary as a ccw sequence of 2D points on the horizontal plane"
+height,                Float,                     EXPOSED_FIELD, 400,             "height of the store walls"
+walls,                 Shared_wall_array,         EXPOSED_FIELD, ,                "walls"
+columns,               Shared_column_array,       EXPOSED_FIELD, ,                "columns"
+counter_areas,         Shared_counter_area_array, EXPOSED_FIELD, ,                "counter areas"
+storage_rooms,         Shared_storage_room_array, EXPOSED_FIELD, ,                "storage rooms"
+shapes,                Shared_container_array,    EXPOSED_FIELD, ,                "Other shapes"

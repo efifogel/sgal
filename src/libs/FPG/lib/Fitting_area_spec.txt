@@ -1,7 +1,0 @@
-Container
-# Name                 Type                 Default Value    Description
-# -------------------- -------------------- ---------------- --------------------
-location,              SFVec2f,             "0,0",           "Location of the fitting area relative to the store floor-plane coordinate system"
-outerBoundary,         MFVec2f,             ,                "Outer boundary as a ccw sequence of 2D points on the horizontal plane"
-height,                SFFloat,             400,             "The height of the store walls"
-fiitingRooms,          MFSharedContainer,   Cabinet,         "The fitting rooms"

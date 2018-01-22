@@ -1,8 +1,0 @@
-Geometry
-# Name                 Type                 Default Value    Description
-# -------------------- -------------------- ---------------- --------------------
-location,              SFVec2f,             "0,0",           "Location of the column relative to the store floor-plane coordinate system"
-outerBoundary,         MFVec2f,             ,                "Outer boundary as a ccw sequence of 2D points on the horizontal plane"
-depth,                 SFFloat,             60,              "The column depth"
-width,                 SFFloat,             60,              "The column width"
-height,                SFFloat,             400,             "The column height"
