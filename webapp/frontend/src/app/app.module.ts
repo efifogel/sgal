@@ -20,6 +20,13 @@ import {ResendCodeComponent} from "./public/auth/resend/resendCode.component";
 import {NewPasswordComponent} from "./public/auth/newpassword/newpassword.component";
 
 
+/* UI Libraries */
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { CovalentLayoutModule } from '@covalent/core/layout';
+
+/* End of UI Libraries */
+
+
 @NgModule({
     declarations: [
         NewPasswordComponent,
@@ -39,6 +46,8 @@ import {NewPasswordComponent} from "./public/auth/newpassword/newpassword.compon
     imports: [
         BrowserModule,
         FormsModule,
+        BrowserAnimationsModule,
+        CovalentLayoutModule,
         HttpModule,
         routing
     ],
