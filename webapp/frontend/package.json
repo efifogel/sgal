@@ -22,7 +22,7 @@
   },
   "private": true,
   "dependencies": {
-     "@angular/animations": "^5.2.1",
+    "@angular/animations": "^5.2.1",
     "@angular/cdk": "^5.1.0",
     "@angular/common": "^5.1.0",
     "@angular/compiler": "^5.1.0",
@@ -33,31 +33,31 @@
     "@angular/platform-browser": "^5.1.0",
     "@angular/platform-browser-dynamic": "^5.1.0",
     "@angular/router": "^5.1.0",
-    "@covalent/core": "^1.0.0-rc.2",
-    "core-js": "^2.4.1",
-    "rxjs": "^5.5.6",
-    "zone.js": "^0.8.19",
+    "@covalent/core": "^1.0.0-rc.3",
     "@types/selenium-webdriver": "2.44.26",
     "amazon-cognito-identity-js": "^1.10.0",
     "aws-sdk": "2.67.0",
     "body-parser": "~1.15.1",
     "cookie-parser": "~1.4.3",
+    "core-js": "^2.4.1",
     "debug": "~2.2.0",
     "ejs": "^2.5.2",
     "enhanced-resolve": "^3.3.0",
     "express": "~4.13.4",
     "extract-text-webpack-plugin": "2.1.0",
     "morgan": "~1.7.0",
+    "rxjs": "^5.5.6",
     "serve-favicon": "~2.3.0",
     "ts-helpers": "1.1.1",
     "webpack": "2.2.1",
     "webpack-dev-middleware": "1.10.1",
     "webpack-dev-server": "2.4.2",
     "webpack-md5-hash": "0.0.5",
-    "webpack-merge": "4.1.0"
+    "webpack-merge": "4.1.0",
+    "zone.js": "^0.8.19"
   },
   "devDependencies": {
- "@angular/cli": "1.6.4",
+    "@angular/cli": "1.6.4",
     "@angular/compiler-cli": "^5.1.0",
     "@angular/language-service": "^5.1.0",
     "@types/jasmine": "~2.8.3",
@@ -75,5 +75,6 @@
     "protractor": "~5.1.2",
     "ts-node": "~3.2.0",
     "tslint": "~5.9.1",
-    "typescript": "~2.5.3"}
+    "typescript": "~2.5.3"
+  }
 }

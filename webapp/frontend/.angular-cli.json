@@ -19,7 +19,8 @@
       "prefix": "app",
       "mobile": false,
       "styles": [
-        "styles.css"
+        "styles.css",
+        "../node_modules/@covalent/core/common/platform.scss"
       ],
       "scripts": [],
       "environmentSource": "environments/environment.ts",
