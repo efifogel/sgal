@@ -1,0 +1,19 @@
+<div class="mat-elevation-z8 white-bk radius">
+  <form id="login-form">
+    <div layout="row" layout-align="center center">
+      <span class="form-logo">Xenia</span>
+    </div>
+    <div class="alert alert-danger mt-3" *ngIf="errorMessage">
+      <small>{{errorMessage}}</small>
+    </div>
+    <input type="text" class="form-control form-input" name="name" placeholder="name" [(ngModel)]="user.nickName">
+    <input type="text" class="form-control form-input" name="email" placeholder="Email" [(ngModel)]="user.email">
+    <input type="password" class="form-control form-input" name="password" placeholder="Password" [(ngModel)]="user.password">
+    <div layout="column">
+      <button type="button" class="text-center btn btn-outline-primary" (click)="registerUser(user)">REGISTER</button>
+      <small class="mt-4">Already have an account ?
+        <a [routerLink]="['/home/login']">Log in</a>
+      </small>
+    </div>
+  </form>
+</div>
