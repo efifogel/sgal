@@ -37,3 +37,14 @@ form{
 .full-height {
   height: 100% !important; 
 }
+
+.outline-dark-blue{
+  background-color: white;
+  color: #292D3E;
+  border: solid 1px #292D3E !important;
+  text-transform: uppercase;
+}
+.outline-dark-blue:hover{
+  background-color: #292D3E;
+  color:white;
+}

@@ -24,7 +24,7 @@ export class RegisterComponent {
     if (message != null) {
       this.errorMessage = message;
     } else {
-      this.router.navigate(['/home/confirmAccount', result.user.username]);
+      this.router.navigate(['/auth/confirmAccount', result.user.username]);
     }
   }
 }

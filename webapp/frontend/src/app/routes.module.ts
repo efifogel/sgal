@@ -1,21 +1,23 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from './public/home.component';
-import { RegisterComponent } from './public/auth/register/register.component';
-import { LoginComponent } from './public/auth/login/login.component';
-import { ConfirmAccountComponent } from './public/auth/confirm-account/confirm-account.component';
+import { AuthentificationComponent } from './public/authentification.component';
+import { RegisterComponent } from './public/authentification/register/register.component';
+import { LoginComponent } from './public/authentification/login/login.component';
+import { ConfirmAccountComponent } from './public/authentification/confirm-account/confirm-account.component';
 import { DashboardComponent } from './secured/dashboard/dashboard.component';
 import { SecuredComponent } from './secured/secured.component';
+import { ForgotPasswordComponent } from './public/authentification/forgot/forgot.component';
 
 
-const homeRoutes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+const authRoutes: Routes = [
+  { path: '', redirectTo: 'auth', pathMatch: 'full' },
   {
-    path: 'home', component: HomeComponent,
+    path: 'auth', component: AuthentificationComponent,
     children: [
       { path: 'register', component: RegisterComponent },
       { path: 'confirmAccount/:username', component: ConfirmAccountComponent },
-      { path: 'login', component: LoginComponent }
+      { path: 'login', component: LoginComponent },
+      { path: 'forgotPassword', component: ForgotPasswordComponent}
     ]
   }
 ];
@@ -40,11 +42,11 @@ const routes: Routes = [
   {
     path: '',
     children: [
-      ...homeRoutes,
+      ...authRoutes,
       ...secureHomeRoutes,
       {
         path: '',
-        component: HomeComponent
+        component: AuthentificationComponent
       }
     ]
   },
@@ -59,9 +61,10 @@ export class AppRoutingModule { }
 
 
 export const RoutableComponents = [
-  HomeComponent,
+  AuthentificationComponent,
   RegisterComponent,
   LoginComponent,
+  ForgotPasswordComponent,
   ConfirmAccountComponent,
   SecuredComponent,
   DashboardComponent

@@ -71,8 +71,26 @@ export class CognitoService {
       },
 
     });
-
   }
-
+  forgotPassword(user: User) {
+    const userData = {
+      Username: user.email,
+      Pool: this.userPool
+    };
+    const cognitoUser = new AWSCognito.CognitoUser(userData);
+    cognitoUser.forgotPassword({
+      onSuccess: function (result) {
+          console.log('call result: ' + result);
+      },
+      onFailure: function(err) {
+          alert(err);
+      },
+      inputVerificationCode() {
+          const verificationCode = prompt('Please input verification code ', '');
+          const newPassword = prompt('Enter new password ', '');
+          cognitoUser.confirmPassword(verificationCode, newPassword, this);
+      }
+  });
+  }
 
 }

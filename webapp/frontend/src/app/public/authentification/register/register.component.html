@@ -10,9 +10,9 @@
     <input type="text" class="form-control form-input" name="email" placeholder="Email" [(ngModel)]="user.email">
     <input type="password" class="form-control form-input" name="password" placeholder="Password" [(ngModel)]="user.password">
     <div layout="column">
-      <button type="button" class="text-center btn btn-outline-primary" (click)="registerUser(user)">REGISTER</button>
+      <button type="button" class="text-center btn outline-dark-blue" (click)="registerUser(user)">REGISTER</button>
       <small class="mt-4">Already have an account ?
-        <a [routerLink]="['/home/login']">Log in</a>
+        <a [routerLink]="['/auth/login']">Log in</a>
       </small>
     </div>
   </form>

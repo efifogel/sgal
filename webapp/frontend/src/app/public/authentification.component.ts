@@ -11,7 +11,7 @@ declare let AWSCognito: any;
     <router-outlet></router-outlet>
   </div>`
 })
-export class HomeComponent {
+export class AuthentificationComponent {
 
   constructor() {
   }

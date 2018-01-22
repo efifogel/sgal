@@ -1,0 +1,14 @@
+<div class="mat-elevation-z8 white-bk radius">
+  <form id="login-form">
+    <div layout="row" layout-align="center center">
+      <span class="form-logo">Reset Password</span>
+    </div>
+    <div class="alert alert-danger mt-3" *ngIf="errorMessage">
+      <small>{{errorMessage}}</small>
+    </div>
+    <input type="text" class="form-control form-input" name="email" placeholder="Email" [(ngModel)]="user.email">
+    <div layout="column">
+      <button type="button" class="text-center btn outline-dark-blue" (click)="onForgotSubmit()">Reset Password</button>
+    </div>
+  </form>
+</div>
