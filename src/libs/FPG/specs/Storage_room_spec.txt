@@ -6,3 +6,4 @@ outerBoundary,         Vector2f_array,            EXPOSED_FIELD, ,              
 width,                 Float,                     EXPOSED_FIELD, ,                "The height of the storage room"
 height,                Float,                     EXPOSED_FIELD, ,                "The height of the storage room"
 walls,                 Shared_walls_array,        EXPOSED_FIELD, ,                "The walls of the storage room"
+shapes,                Shared_container_array,    EXPOSED_FIELD, ,                "Other shapes"

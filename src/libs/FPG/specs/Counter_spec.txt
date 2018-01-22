@@ -1,9 +1,7 @@
-Geometry
+Container
 # Name                 Type                       Rule           Default Value    Description
 # -------------------- -------------------------- -------------- ---------------- --------------------
-location,              SFVec2f,                   EXPOSED_FIELD, "0,0",           "Location of the counter relative to the Counter-area coordinate system"
-outerBoundary,         MFVec2f,                   EXPOSED_FIELD, ,                "Outer boundary as a ccw sequence of 2D points on the horizontal plane"
-depth,                 SFFloat,                   EXPOSED_FIELD, 60,              "The cabinet depth"
-width,                 SFFloat,                   EXPOSED_FIELD, 60,              "The cabinet width"
-height,                SFFloat,                   EXPOSED_FIELD, 400,             "The cabinet height"
-cashRegisters          Shared_appearance,         EXPOSED_FIELD, ,                "The cash registers"
+location,              Vector2f,                  EXPOSED_FIELD, "0,0",           "Location of the counter relative to the Counter-area coordinate system"
+outerBoundary,         Vector2f_array,            EXPOSED_FIELD, ,                "Outer boundary as a ccw sequence of 2D points on the horizontal plane"
+counterDeck,           Shared_counter_deck,       EXPOSED_FIELD, ,                "The counter deck"
+cashRegisters,         Shared_cash_register_array,EXPOSED_FIELD, ,                "The cash registers"

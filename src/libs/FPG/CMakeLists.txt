@@ -12,36 +12,44 @@ add_definitions(-DSCGAL_KERNEL=${SCGAL_KERNEL})
 
 # Create custom commands for nodes
 set(GENERATED_BASE_DIR "${CMAKE_BINARY_DIR}/src/libs/FPG")
-set(GENERATED_LIB_DIR "${GENERATED_BASE_DIR}/lib")
-set(GENERATED_INC_DIR "${GENERATED_BASE_DIR}/include/FPG")
+set(GEN_NODE "${CMAKE_SOURCE_DIR}/src/scripts/gen_node.py")
+set(SPECS_DIR ${CMAKE_CURRENT_LIST_DIR}/specs)
+set(GENERATED_LIB_DIR "${GENERATED_BASE_DIR}/lib/generated")
+set(GENERATED_INC_DIR "${GENERATED_BASE_DIR}/include/generated")
 file(MAKE_DIRECTORY ${GENERATED_LIB_DIR})
-file(MAKE_DIRECTORY ${GENERATED_INC_DIR})
-set (GEN_NODE "${CMAKE_CURRENT_LIST_DIR}/gen_node.py")
+file(MAKE_DIRECTORY ${GENERATED_INC_DIR}/FPG)
 
 ########
 function(add_node name)
-  set(MY_NODE_OUTPUT
-      ${GENERATED_INC_DIR}/${name}.hpp
+  set(GEN_NODE_OUTPUT
+      ${GENERATED_INC_DIR}/FPG/${name}.hpp
       ${GENERATED_LIB_DIR}/${name}.cpp)
-  add_custom_command(OUTPUT ${MY_NODE_OUTPUT}
+  set(GEN_NODE_ARGS --name ${name}
+    --input-path ${SPECS_DIR}
+    --output-inc-path ${GENERATED_INC_DIR}/FPG
+    --output-lib-path ${GENERATED_LIB_DIR})
+  add_custom_command(OUTPUT ${GEN_NODE_OUTPUT}
                      COMMAND ${GEN_NODE}
-	             ARGS --name ${name}
-	             DEPENDS ${CMAKE_CURRENT_LIST_DIR}/${node}_spec.txt ${GEN_NODE})
+	             ARGS ${GEN_NODE_ARGS}
+	             DEPENDS ${SPECS_DIR}/${name}_spec.txt ${GEN_NODE})
+  set(FPG_AUTO_GENERATED_HDR_FILES ${FPG_AUTO_GENERATED_HDR_FILES} ${GENERATED_INC_DIR}/FPG/${name}.hpp CACHE INTERNAL "")
   set(FPG_AUTO_GENERATED_SRC_FILES ${FPG_AUTO_GENERATED_SRC_FILES} ${GENERATED_LIB_DIR}/${name}.cpp CACHE INTERNAL "")
-  set(FPG_AUTO_GENERATED_HDR_FILES ${FPG_AUTO_GENERATED_HDR_FILES} ${GENERATED_INC_DIR}/${name}.hpp CACHE INTERNAL "")
 
 endfunction()
 ########
 
 set(FPG_AUTO_GENERATED_SRC_FILES "" CACHE INTERNAL "")
+add_node(Column)
 add_node(Counter)
-add_node(Enterance)
+add_node(Counter_area)
+add_node(Counter_deck)
+# add_node(Enterance)
 add_node(Fitting_room)
 add_node(Fitting_room_lobby)
-add_node(Room)
+# add_node(Room)
 add_node(Storage_room)
 add_node(Store)
-add_node(Store_front)
+# add_node(Store_front)
 add_node(Wall)
 
 # Add source files
@@ -56,6 +64,7 @@ set(FPG_SRC_FILES ${FPG_SRC_FILES} ${FPG_AUTO_GENERATED_SRC_FILES})
 # Add all include directories
 include_directories(include)
 include_directories(include/engines)
+include_directories(${GENERATED_INC_DIR})
 include_directories(${SCGAL_INCLUDE_DIR})
 include_directories(${SGAL_INCLUDE_DIR})
 

@@ -1,4 +1,4 @@
-Geometry
+Shape
 # Name                 Type                 Default Value    Description
 # -------------------- -------------------- ---------------- --------------------
 location,              SFVec2f,             "0,0",           "Location of the cabinet relative to the Counter-area coordinate system"

@@ -1,7 +1,10 @@
-cmake_minimum_required(VERSION 2.6)
 project(XENIA)
+cmake_minimum_required(VERSION 2.6)
+if(POLICY CMP0011)
+  cmake_policy(SET CMP0011 NEW)
+endif()
 
-#Define options
+# Define options
 option(BUILD_SHARED_LIBS "Build shared libs instead of static libs" ON)
 
 # General
@@ -31,7 +34,7 @@ set( XENIA_SOVERSION      "0.1.0" )
 message( STATUS "XENIA_SONAME_VERSION=${XENIA_SONAME_VERSION}" )
 message( STATUS "XENIA_SOVERSION     =${XENIA_SOVERSION}" )
 
-#Add src subdirectory
+# Add src subdirectory
 add_subdirectory(src)
 
 include (InstallRequiredSystemLibraries)

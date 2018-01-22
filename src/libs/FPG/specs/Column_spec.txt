@@ -1,4 +1,4 @@
-Geometry
+Shape
 # Name                 Type                       Rule           Default Value    Description
 # -------------------- -------------------------- -------------- ---------------- --------------------
 location,              Vector2f,                  EXPOSED_FIELD, "0,0",           "Location of the column relative to the store floor-plane coordinate system"
@@ -6,4 +6,3 @@ outerBoundary,         Vector2f_array,            EXPOSED_FIELD, ,              
 depth,                 Float,                     EXPOSED_FIELD, 60,              "The column depth"
 width,                 Float,                     EXPOSED_FIELD, 60,              "The column width"
 height,                Float,                     EXPOSED_FIELD, 400,             "The column height"
-appearance,            Shared_appearance,         EXPOSED_FIELD, ,                "The appearance of the column"
