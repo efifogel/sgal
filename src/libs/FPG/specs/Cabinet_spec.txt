@@ -1,8 +1,8 @@
 Shape
-# Name                 Type                 Default Value    Description
-# -------------------- -------------------- ---------------- --------------------
-location,              SFVec2f,             "0,0",           "Location of the cabinet relative to the Counter-area coordinate system"
-outerBoundary,         MFVec2f,             ,                "Outer boundary as a ccw sequence of 2D points on the horizontal plane"
-depth,                 SFFloat,             60,              "The cabinet depth"
-width,                 SFFloat,             60,              "The cabinet width"
-height,                SFFloat,             400,             "The cabinet height"
+# Name                 Type                       Rule           Default  Execution Function             Description
+# -------------------- -------------------------- -------------- -------- ------------------------------ --------------------
+location               Vector2f                   EXPOSED_FIELD  "0,0"    Node::bounding_sphere_changed  "location of the cabinet relative to the Counter-area coordinate system"
+outer_boundary         Vector2f_array             EXPOSED_FIELD  ""       Node::bounding_sphere_changed  "outer boundary as a ccw sequence of 2D points on the horizontal plane"
+depth                  Float                      EXPOSED_FIELD  60       Node::bounding_sphere_changed  "cabinet depth"
+width                  Float                      EXPOSED_FIELD  60       Node::bounding_sphere_changed  "cabinet width"
+height                 Float                      EXPOSED_FIELD  400      Node::bounding_sphere_changed  "cabinet height"

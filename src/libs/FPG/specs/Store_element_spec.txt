@@ -1,5 +1,5 @@
 Geometry
-# Name                 Type                       Rule           Default Value    Description
-# -------------------- -------------------------- -------------- ---------------- --------------------
-location,              Vector2f,                  EXPOSED_FIELD, "0,0",           "Location of the counter area relative to the store floor-plane coordinate system"
-outerBoundary,         Vector2f_array,            EXPOSED_FIELD, ,                "Outer boundary as a ccw sequence of 2D points on the horizontal plane"
+# Name                 Type                       Rule           Default  Execution Function             Description
+# -------------------- -------------------------- -------------- -------- ------------------------------ --------------------
+location               Vector2f                   EXPOSED_FIELD  "0,0"    ""                             "location of the counter area relative to the store coordinate system"
+outerBoundary          Vector2f_array             EXPOSED_FIELD  ""       ""                             "outer boundary as a ccw sequence of 2D points on the horizontal plane"

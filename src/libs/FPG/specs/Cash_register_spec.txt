@@ -1,8 +1,8 @@
 Shape
-# Name                 Type                       Rule           Default Value    Description
-# -------------------- -------------------------- -------------- ---------------- --------------------
-location,              Vector2f                   EXPOSED_FIELD, "0,0",           "Location of the cach register relative to the Counter coordinate system"
-outerBoundary,         Vector2f_array,            EXPOSED_FIELD, ,                "Outer boundary as a ccw sequence of 2D points on the horizontal plane"
-depth,                 Float,                     EXPOSED_FIELD, 60,              "The cash-register depth"
-width,                 Float,                     EXPOSED_FIELD, 60,              "The cash-register width"
-height,                Float,                     EXPOSED_FIELD, 400,             "The cash-register height"
+# Name                 Type                       Rule           Default  Execution Function             Description
+# -------------------- -------------------------- -------------- -------- ------------------------------ --------------------
+location               Vector2f                   EXPOSED_FIELD  "0,0"    ""                             "location of the cach register relative to the Counter coordinate system"
+outer_boundary         Vector2f_array             EXPOSED_FIELD  ""       ""                             "outer boundary as a ccw sequence of 2D points on the horizontal plane"
+depth                  Float                      EXPOSED_FIELD  60       ""                             "cash-register depth"
+width                  Float                      EXPOSED_FIELD  60       ""                             "cash-register width"
+height                 Float                      EXPOSED_FIELD  400      ""                             "cash-register height"

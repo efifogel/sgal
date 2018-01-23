@@ -1,7 +1,7 @@
 Container
-# Name                 Type                       Rule           Default Value    Description
-# -------------------- -------------------------- -------------- ---------------- --------------------
-location,              Vector2f,                  EXPOSED_FIELD, "0,0",           "Location of the counter relative to the Counter-area coordinate system"
-outerBoundary,         Vector2f_array,            EXPOSED_FIELD, ,                "Outer boundary as a ccw sequence of 2D points on the horizontal plane"
-counterDeck,           Shared_counter_deck,       EXPOSED_FIELD, ,                "The counter deck"
-cashRegisters,         Shared_cash_register_array,EXPOSED_FIELD, ,                "The cash registers"
+# Name                 Type                       Rule           Default  Execution Function             Description
+# -------------------- -------------------------- -------------- -------- ------------------------------ --------------------
+location               Vector2f                   EXPOSED_FIELD  "0,0"    ""                             "location of the counter relative to the counter-area coordinate system"
+outer_boundary         Vector2f_array             EXPOSED_FIELD  ""       ""                             "outer boundary as a ccw sequence of 2D points on the horizontal plane"
+counter_deck           Shared_counter_deck        EXPOSED_FIELD  ""       ""                             "counter deck"
+cash_registers         Shared_cash_register_array EXPOSED_FIELD  ""       ""                             "cash registers"

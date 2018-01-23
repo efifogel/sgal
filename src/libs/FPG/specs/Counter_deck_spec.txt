@@ -1,8 +1,8 @@
 Shape
-# Name                 Type                       Rule           Default Value    Description
-# -------------------- -------------------------- -------------- ---------------- --------------------
-location,              Vector2f,                  EXPOSED_FIELD, "0,0",           "Location of the counter deck relative to the Counter-area coordinate system"
-outerBoundary,         Vector2f_array,            EXPOSED_FIELD, ,                "Outer boundary as a ccw sequence of 2D points on the horizontal plane"
-depth,                 Float,                     EXPOSED_FIELD, 60,              "The counter deck depth"
-width,                 Float,                     EXPOSED_FIELD, 60,              "The counter deck width"
-height,                Float,                     EXPOSED_FIELD, 400,             "The counter deck height"
+# Name                 Type                       Rule           Default  Execution Function             Description
+# -------------------- -------------------------- -------------- -------- ------------------------------ --------------------
+location               Vector2f                   EXPOSED_FIELD  "0,0"    Node::bounding_sphere_changed  "Location of the counter deck relative to the Counter-area coordinate system"
+outer_boundary         Vector2f_array             EXPOSED_FIELD  ""       Node::bounding_sphere_changed  "Outer boundary as a ccw sequence of 2D points on the horizontal plane"
+depth                  Float                      EXPOSED_FIELD  60       Node::bounding_sphere_changed  "The counter deck depth"
+width                  Float                      EXPOSED_FIELD  60       Node::bounding_sphere_changed  "The counter deck width"
+height                 Float                      EXPOSED_FIELD  400      Node::bounding_sphere_changed  "The counter deck height"

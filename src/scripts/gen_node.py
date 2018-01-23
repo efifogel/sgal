@@ -4,6 +4,7 @@ from __future__ import print_function
 import os.path
 import argparse
 import json
+import shlex
 
 def is_valid_file(parser, arg):
   if not os.path.exists(arg):
@@ -266,8 +267,10 @@ def print_field_enumeration(out, derived_class_name, fields):
   print_line(out, "};", dec=True)
   print_empty_line(out)
 
-# Print field typedefs
-def print_field_typedefs(out, fields):
+#! Print forward declarations
+def print_forward_declarations(out, fields):
+  print_line(out, 'class Container_proto;')
+  print_line(out, 'class Element;')
   for field in fields[:]:
     type = field['type']
     if not type.startswith('Shared_'):
@@ -275,10 +278,37 @@ def print_field_typedefs(out, fields):
     main_type = type[7:]
     if main_type.endswith('_array'):
       main_type = main_type[:-6]
-    # print_line(out, "typedef boost::shared_ptr<{}{:46>10}Shared_{}>".format(main_type, main_type))
-    statement = 'typedef boost::shared_ptr<{}>'.format(main_type.title())
-    statement = '{:<46}Shared_{}'.format(statement, main_type)
-    print_line(out, statement)
+    print_line(out, 'class {};'.format(main_type.title()))
+  print_empty_line(out)
+
+# Print field typedefs
+def print_typedefs(out, fields):
+  hst = has_shared_type(fields)
+  if (hst):
+    for field in fields[:]:
+      type = field['type']
+      if not type.startswith('Shared_'):
+        continue
+      main_type = type[7:]
+      if main_type.endswith('_array'):
+        main_type = main_type[:-6]
+      statement = 'typedef boost::shared_ptr<{}>'.format(main_type.title())
+      statement = '{:<46}Shared_{};'.format(statement, main_type)
+      print_line(out, statement)
+    print_empty_line(out)
+    # Print declarations of vector arrays:
+    if has_array_type(fields):
+      for field in fields[:]:
+        type = field['type']
+        if not type.startswith('Shared_'):
+          continue
+        main_type = type[7:]
+        if main_type.endswith('_array'):
+          main_type = main_type[:-6]
+          statement = 'typedef std::vector<Shared_{}>'.format(main_type)
+          statement = '{:<46}Shared_{}_array;'.format(statement, main_type)
+          print_line(out, statement)
+      print_empty_line(out)
 
 # Constructor description.
 constructor_desc = '''/*! Construct from prototype.
@@ -416,9 +446,9 @@ def print_field_setter_definition(out, class_name, field):
   desc = field['desc']
   print_line(out, "//! \\brief sets the %s." % desc)
   if pass_method == 'value':
-    print_line(out, "inline void %s::set_%s(%s %s)" % (class_name, name, type, name));
+    print_line(out, "inline void %s::set_%s(%s %s)" % (class_name, name, type, name))
   elif pass_method == 'reference':
-    print_line(out, "inline void %s::set_%s(const %s& %s);" % (class_name, name, type, name));
+    print_line(out, "inline void %s::set_%s(const %s& %s)" % (class_name, name, type, name))
   else:
     raise Exception("Pass method %s is invalid!" % pass_method)
   print_line(out , "{ m_%s = %s; }" % (name, name))
@@ -434,25 +464,28 @@ def print_field_getter_definition(out, class_name, field):
   desc = field['desc']
   if pass_method == 'value':
     if not compound:
-      print_line(out, "//! \\brief obtains the %s." % desc)
-      print_line(out, "inline %s %s::get_%s() const" % (type, class_name, name))
-      print_line(out, "{ return m_%s; }" % name)
+      print_line(out, '//! \\brief obtains the {}.'.format(desc))
+      print_line(out, 'inline {} {}::get_{}() const'.format(type, class_name, name))
+      print_line(out, '{{ return m_{}; }}'.format(name))
     else:
-      print_line(out, "//! \\brief obtains the %s." % desc)
-      print_line(out, "const %s %s::get_%s() const" % (type, class_name, name))
-      print_line(out, "{ return m_%s; }" % name)
+      print_line(out, '//! \\brief obtains the {}.'.format(desc))
+      print_line(out, 'const {} {}::get_{}() const'.format(type, class_name, name))
+      print_line(out, '{{ return m_{}; }}'.format(name))
       print_empty_line(out)
-      print_line(out, "//! \\brief obtains the %s." % desc)
-      print_line(out, "%s get_%s();" % (type, name))
-      print_line(out, "{ return m_%s; }" % name)
+      print_line(out, '//! \\brief obtains the {}.'.format(desc))
+      print_line(out, '{} {}::get_{}()'.format(type, class_name, name))
+      print_line(out, '{{ return m_{}; }}'.format(name))
   elif pass_method == 'reference':
-    print_line(out, "//! \\brief obtains the %s." % desc)
-    print_line(out, "const %s& %s::get_%s() const" % (type, class_name, name))
-    print_line(out, "{ return m_%s; }" % name)
+    ext_type = type
+    if type.startswith('Shared_'):
+      ext_type = class_name + '::' + type
+    print_line(out, '//! \\brief obtains the {}.'.format(desc))
+    print_line(out, 'const {}& {}::get_{}() const'.format(ext_type, class_name, name))
+    print_line(out, '{{ return m_{}; }}'.format(name))
     print_empty_line(out)
-    print_line(out, "//! \\brief obtains the %s." % desc)
-    print_line(out, "%s& get_%s();" % (type, name))
-    print_line(out, "{ return m_%s; }" % name)
+    print_line(out, '//! \\brief obtains the {}.'.format(desc))
+    print_line(out, '{}& {}::get_{}()'.format(ext_type, class_name, name))
+    print_line(out, '{{ return m_{}; }}'.format(name))
   else:
     raise Exception("Pass method %s is invalid!" % pass_method)
 
@@ -481,6 +514,11 @@ def print_data_members(out, fields):
     print_line(out, "%s m_%s;" % (type, name))
     print_empty_line(out)
 
+def print_get_tag_declaration(out):
+  print_line(out, '/*! Obtain the tag (type) of the container. */')
+  print_line(out, 'virtual const std::string& get_tag() const;')
+  print_empty_line(out)
+
 #! Print the field static members
 def print_static_member_declarations(out, fields):
   for field in fields[:]:
@@ -488,11 +526,10 @@ def print_static_member_declarations(out, fields):
     type = field['type']
     desc = field['desc']
     print_line(out, "static const %s s_def_%s;" % (type, name))
-  print_empty_line(out)
 
 def print_tag_data_member(out):
   print_line(out, "/*! The tag that identifies this container type. */")
-  print_line(out, "static Container_proto* s_prototype;")
+  print_line(out, "static const std::string s_tag;")
   print_empty_line(out)
 
 def print_prototype_data_member(out):
@@ -529,17 +566,22 @@ def print_get_tag_definition(out, class_name):
   print_line(out, "inline const std::string& %s::get_tag() const { return s_tag; }" % class_name)
 
 #! Print the include directives in the hpp
-def print_hpp_include_directives(out):
-  if has_shared_type(fields):
-    print_line(out, "#include <boost/shared_ptr.hpp>")
-    print_empty_line(out)
-  print_line(out, "#include \"SGAL/basic.hpp\"")
-  print_line(out, "#include \"SGAL/Types.hpp\"")
-  if has_array_type(fields):
-    print_line(out, "#include \"SGAL/Array_types.hpp\"")
-  print_line(out, "#include \"SGAL/Container.hpp\"")
+def print_hpp_include_directives(out, derived_class_name):
+  hat = has_array_type(fields)
+  print_line(out, '#include <string>')
+  if (hat):
+    print_line(out, '#include <vector>')
   print_empty_line(out)
-  print_line(out, "#include \"FPG/basic.hpp\"")
+  if has_shared_type(fields):
+    print_line(out, '#include <boost/shared_ptr.hpp>')
+    print_empty_line(out)
+  print_line(out, '#include \"SGAL/basic.hpp\"')
+  print_line(out, '#include \"SGAL/Types.hpp\"')
+  if hat:
+    print_line(out, '#include \"SGAL/Array_types.hpp\"')
+  print_line(out, '#include \"SGAL/{}.hpp\"'.format(derived_class_name))
+  print_empty_line(out)
+  print_line(out, '#include \"FPG/basic.hpp\"')
 
 #! Generate the .hpp file
 #! \param name
@@ -554,17 +596,18 @@ def generate_hpp(output_path, class_name, derived_class_name, fields):
     print_line(out, "#ifndef FPG_%s_HPP" % class_name.upper())
     print_line(out, "#define FPG_%s_HPP" % class_name.upper())
     print_empty_line(out)
-    print_hpp_include_directives(out)
+    print_hpp_include_directives(out, derived_class_name)
     print_empty_line(out)
     print_line(out, "SGAL_BEGIN_NAMESPACE")
     print_empty_line(out)
+    print_forward_declarations(out, fields)
 
     print_line(out, "class SGAL_FPG_DECL %s : public %s {" % (class_name, derived_class_name))
     print_line(out, "public:")
     increase_indent()
 
     print_field_enumeration(out, derived_class_name, fields)	# enumerations
-    print_field_typedefs(out, fields)				# typedefs
+    print_typedefs(out, fields)					# typedefs
 
     # Print misc. member function declarations:
     print_constructor_declaration(out, class_name)
@@ -593,6 +636,7 @@ def generate_hpp(output_path, class_name, derived_class_name, fields):
     increase_indent()
 
     print_data_members(out, fields)
+    print_get_tag_declaration(out)
 
     decrease_indent()
     print_line(out, "private:")
@@ -622,10 +666,14 @@ def generate_hpp(output_path, class_name, derived_class_name, fields):
     print_line(out, "#endif")
 
 def print_cpp_include_directives(out):
-  print_line(out, "#include \"FPG/Element.hpp\"")
-  print_line(out, "#include \"FPG/Container_proto.hpp\"")
-  print_line(out, "#include \"FPG/Field_infos.hpp\"")
-  print_line(out, "#include \"FPG/Field.hpp\"")
+  print_line(out, '#include <boost/lexical_cast.hpp>')
+  print_empty_line(out)
+  print_line(out, "#include \"SGAL/Element.hpp\"")
+  print_line(out, "#include \"SGAL/Container_proto.hpp\"")
+  print_line(out, "#include \"SGAL/Field_infos.hpp\"")
+  print_line(out, "#include \"SGAL/Field.hpp\"")
+  print_empty_line(out)
+  print_line(out, '#include \"FPG/{}.hpp\"'.format(class_name))
 
 def print_static_member_definitions(out, class_name):
   print_line(out, "// Default values:")
@@ -633,8 +681,10 @@ def print_static_member_definitions(out, class_name):
     name = field['name']
     type = field['type']
     default_value = field['default-value']
-    print_line(out, "const %s %s::s_%s(%s);" %
-               (type, class_name, name, default_value))
+    if default_value:
+      print_line(out, 'const {} {}::s_def_{}({});'.format(type, class_name, name, default_value))
+    else:
+      print_line(out, 'const {} {}::s_def_{};'.format(type, class_name, name))
   print_empty_line(out)
 
 #! Print constructor definition.
@@ -658,9 +708,7 @@ def print_destructor_definition(out, class_name, fields):
   for field in fields[:]:
     name = field['name']
     type = field['type']
-    general_type = get_general_type(type)
-    pass_method = s_field_passing_method[general_type]
-    if pass_method == 'reference':
+    if type.endswith('_array'):
       field_names.append(name)
   if 0 == len(field_names):
     print_line(out, "%s::~%s() {}" % (class_name, class_name))
@@ -682,21 +730,32 @@ def print_init_prototype_definition(out, class_name, derived_class_name, fields)
              derived_class_name)
   print_empty_line(out)
   print_line(out, "// Add the field-info records to the prototype:")
-  print_line(out, "auto exec_func = static_cast<Execution_function>(&%s::structure_changed);" % class_name)
+  # print_line(out, "auto exec_func = static_cast<Execution_function>(&%s::structure_changed);" % class_name)
+  print_line(out, 'Execution_function exec_func;')
   for field in fields[:]:
     name = field['name']
     type = field['type']
     rule = field['rule']
+    default_value = field['default-value']
+    execution_function = field['execution-function']
     tmp = name.replace('_', ' ').title().replace(' ', '')
     field_name = tmp[:1].lower() + tmp[1:]
     print_line(out, "// %s" % field_name)
     general_type = get_general_type(type)
     field_handle_type = s_field_handle_type[general_type]
     print_empty_line(out)
-    print_line(out, "auto %s_func = static_cast<%s>(&%s::%s_handle);" % (name, field_handle_type, class_name, name))
+    if (execution_function):
+      print_line(out, 'exec_func = static_cast<Execution_function>(&{});'.format(execution_function))
+    print_line(out, 'auto {}_func = static_cast<{}>(&{}::{}_handle);'.format(name, field_handle_type, class_name, name))
     field_enum = name.upper()
     field_type = s_field_type[general_type]
-    print_line(out, "s_prototype->add_field_info(new %s(%s, \"%s\",  Field_info::RULE_%s, %s_func, s_def_%s, exec_func));" % (field_type, field_enum, field_name, rule, name, name))
+    statement = 's_prototype->add_field_info(new {}({}, \"{}\",  Field_info::RULE_{}, {}_func'.format(field_type, field_enum, field_name, rule, name)
+    if (default_value):
+      statement = statement + ', s_def_{}'.format(name)
+    if (execution_function):
+      statement = statement + ', exec_func'
+    statement = statement + '));'
+    print_line(out, statement)
   print_line(out, "}", dec=True)
   print_empty_line(out)
 
@@ -713,7 +772,7 @@ def print_get_prototype_definition(out):
   print_line(out, "//! \\brief obtains the node prototype.")
   print_line(out, "Container_proto* %s::get_prototype()" % class_name)
   print_line(out, "{", inc=True)
-  print_line(out, "if (s_prototype == nullptr) Piece::init_prototype();");
+  print_line(out, 'if (s_prototype == nullptr) {}::init_prototype();'.format(class_name));
   print_line(out, "return s_prototype;")
   print_line(out, "}", dec=True)
   print_empty_line(out)
@@ -751,17 +810,17 @@ def print_set_attributes_definition(out, class_name, derived_class_name, fields)
   # String fields
   if 0 < len(string_fields):
     print_line(out, "for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {", inc=True)
-    print_line(out, "const std::string& name = elem->get_name(ai);")
-    print_line(out, "const std::string& value = elem->get_value(ai);")
+    print_line(out, "const auto& name = elem->get_name(ai);")
+    print_line(out, "const auto& value = elem->get_value(ai);")
 
     for field in string_fields[:]:
       name = field['name']
       type = field['type']
       print_line(out, "if (name == \"%s\") {" % name, inc=True)
       if type == 'Boolean':
-        print_line(out, "set_%s(compare_to_true(value));" % name)
+        print_line(out, 'set_{}(compare_to_true(value));'.format(name))
       else:
-        print_line(out, "set_%s(value);" % name)
+        print_line(out, 'set_{}(boost::lexical_cast<{}>(value));'.format(name, type))
       print_line(out, "elem->mark_delete(ai);");
       print_line(out, "continue;")
       print_line(out, "}", dec=True)
@@ -844,9 +903,7 @@ def generate_cpp(output_path, class_name, derived_class_name, fields):
     print_destructor_definition(out, class_name, fields)
     print_prototype_handling_definitions(out, class_name, derived_class_name, fields)
     print_set_attributes_definition(out, class_name, derived_class_name, fields)
-    # xxx
 
-    print_empty_line(out)
     print_line(out, "SGAL_END_NAMESPACE")
 
 # Main function
@@ -895,24 +952,25 @@ if __name__ == '__main__':
     for line in ins:
       if line[0] == '#':
         continue
-      vals = line.split(',')
+      vals = shlex.split(line)
       vals = map(lambda s: s.strip(), vals)
       name = vals[0]
       type = vals[1]
       rule = vals[2]
       default_value = vals[3]
-      desc = vals[4].strip('\"')
+      execution_function = vals[4]
+      desc = vals[5].strip('\"')
       # Assume that a type that starts with 'Shared' is either a shared
       # container or a shared container array.
       if not type.startswith('Shared_'):
         if not type in s_field_type:
-          raise Exception("Type %s of field \"%s::%s\" is unknown!" %
-                          (type, class_name, name))
+          raise Exception('Type {} of field \"{}::{}\" is unknown!'.format(type, class_name, name))
       field = {
         'name': name,
         'type': type,
         'rule': rule,
         'default-value': default_value,
+        'execution-function': execution_function,
         'desc': desc
       }
       fields.append(field)
