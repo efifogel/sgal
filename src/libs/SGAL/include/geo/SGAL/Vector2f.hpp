@@ -26,9 +26,6 @@
  *
  */
 
-#include <string>
-#include <sstream>
-
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector2sh.hpp"
 #include "SGAL/Types.hpp"
@@ -43,7 +40,6 @@ public:
   Vector2f();
   Vector2f(Float a, Float b);
   Vector2f(const Vector2f& v);
-  Vector2f(const std::string& text);
 
   void set(Float a, Float b);
   void get(Float* a, Float* b) const;
@@ -60,7 +56,7 @@ public:
   void sub(const Vector2f& v);
   void div(float c, const Vector2f& v);
   void round();
-    
+
   bool almost_equal(const Vector2f& v, Float tol) const;
   void negate(const Vector2f& v);
   Float dot(const Vector2f&  v) const;
@@ -98,15 +94,6 @@ inline void Vector2f::mul(const Vector2sh& v1, const Vector2f& v2)
   m_vector[1] = v1[1] * v2[1];
 }
 
-/*!
- */
-inline Vector2f::Vector2f(const std::string& text)
-{
-  std::istringstream tmp(text, std::istringstream::in);
-  tmp >> m_vector[0];
-  tmp >> m_vector[1];
-}
-
 #if defined(SOLARIS_251)
 
 /*!
@@ -142,19 +129,19 @@ inline bool operator>(const Vector2f& _v1, const Vector2f& _v2)
 /*!
  */
 inline Vector2f operator+(const Vector2f& _v1, const Vector2f& _v2)
-{                                 
-  Vector2f *c = new Vector2f;     
+{
+  Vector2f *c = new Vector2f;
   c->set(_v1[0] + _v2[0], _v1[1] + _v2[1]);
-  return(*c);                   
-}                                 
-                                  
+  return(*c);
+}
+
 /*!
  */
 inline Vector2f operator*(const Vector2f v, const Float f)
 {
-  Vector2f *c = new Vector2f;     
-  c->set(v[0] * f, v[1] + f);   
-  return(*c);                   
+  Vector2f *c = new Vector2f;
+  c->set(v[0] * f, v[1] + f);
+  return(*c);
 }
 
 /*!
@@ -167,14 +154,6 @@ inline Vector2f operator*(const Float f, const Vector2f v)
 }
 
 #endif
-
-/*!
- */
-inline std::ostream& operator<<(std::ostream& os, const Vector2f& vec)
-{
-  os << vec[0] << ", " << vec[1];
-  return os;
-}  
 
 SGAL_END_NAMESPACE
 
