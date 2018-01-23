@@ -1,0 +1,11 @@
+<div class="mat-elevation-z8 white-bk radius">
+  <form id="login-form">
+    <div class="alert alert-danger mt-3" *ngIf="errorMessage">
+      <small>{{errorMessage}}</small>
+    </div>
+    <input type="text" class="form-control form-input" name="code" placeholder="Enter confirmation code" [(ngModel)]="code">
+    <div layout="column">
+      <button type="button" class="text-center btn outline-dark-blue" (click)="confirmCode()">SEND</button>
+    </div>
+  </form>
+</div>
