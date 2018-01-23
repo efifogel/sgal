@@ -29,6 +29,7 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
+#include "SGAL/lexical_cast_vector2f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -124,8 +125,7 @@ void Texture_transform::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "center") {
-      Vector2f vec(value);
-      set_center(vec);
+      set_center(boost::lexical_cast<Vector2f>(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -135,14 +135,12 @@ void Texture_transform::set_attributes(Element* elem)
       continue;
     }
     if (name == "scale") {
-      Vector2f vec(value);
-      set_scale(vec);
+      set_scale(boost::lexical_cast<Vector2f>(value));
       elem->mark_delete(ai);
       continue;
     }
     if (name == "translation") {
-      Vector2f vec(value);
-      set_translation(vec);
+      set_translation(boost::lexical_cast<Vector2f>(value));
       elem->mark_delete(ai);
       continue;
     }

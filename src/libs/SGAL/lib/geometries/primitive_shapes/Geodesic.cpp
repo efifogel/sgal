@@ -37,6 +37,7 @@
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Utilities.hpp"
+#include "SGAL/lexical_cast_vector2f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -310,12 +311,12 @@ void Geodesic::set_attributes(Element * elem)
     }
 
     if (name == "start") {
-      set_start(Vector2f(value));
+      set_start(boost::lexical_cast<Vector2f>(value));
       elem->mark_delete(ai);
       continue;
     }
     if (name == "end") {
-      set_end(Vector2f(value));
+      set_end(boost::lexical_cast<Vector2f>(value));
       elem->mark_delete(ai);
       continue;
     }

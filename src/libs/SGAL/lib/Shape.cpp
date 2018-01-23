@@ -49,6 +49,7 @@
 #include "SGAL/Stl_binary_formatter.hpp"
 #include "SGAL/Obj_formatter.hpp"
 #include "SGAL/Utilities.hpp"
+#include "SGAL/lexical_cast_vector2f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -314,7 +315,7 @@ void Shape::set_attributes(Element* elem)
       continue;
     }
     if (name == "depthRange") {
-      m_depth_range = Vector2f(value);
+      m_depth_range = boost::lexical_cast<Vector2f>(value);
       elem->mark_delete(ai);
       continue;
     }

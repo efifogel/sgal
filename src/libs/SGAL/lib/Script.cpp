@@ -34,6 +34,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Utilities.hpp"
+#include "SGAL/lexical_cast_vector2f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -963,7 +964,7 @@ void Script::add_field_info(Field_info::Field_rule rule,
 
    case Field_info::SF_VEC2F:
     {
-     Vector2f initial_value(value);
+      Vector2f initial_value(boost::lexical_cast<Vector2f>(value));
      variant_field = initial_value;
      add_fi<Field_info::SF_VEC2F>(id, name, rule, initial_value, exec_func,
                                   prototype);
