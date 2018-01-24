@@ -31,6 +31,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Vector3f.hpp"
+#include "SGAL/io_vector2f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
