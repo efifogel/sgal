@@ -48,3 +48,6 @@ form{
   background-color: #292D3E;
   color:white;
 }
+.alert-danger{
+  max-width: 350px !important;
+}

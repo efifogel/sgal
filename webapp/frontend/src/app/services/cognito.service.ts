@@ -72,7 +72,7 @@ export class CognitoService {
 
     });
   }
-  forgotPassword(user: User) {
+  forgotPassword(user: User, callback: CognitoCallback) {
     const userData = {
       Username: user.email,
       Pool: this.userPool
@@ -80,17 +80,24 @@ export class CognitoService {
     const cognitoUser = new AWSCognito.CognitoUser(userData);
     cognitoUser.forgotPassword({
       onSuccess: function (result) {
-          console.log('call result: ' + result);
+        callback.cognitoCallback(null, result);
       },
-      onFailure: function(err) {
-          alert(err);
+      onFailure: function (err) {
+        callback.cognitoCallback(err.message, null);
       },
       inputVerificationCode() {
-          const verificationCode = prompt('Please input verification code ', '');
-          const newPassword = prompt('Enter new password ', '');
-          cognitoUser.confirmPassword(verificationCode, newPassword, this);
+        const verificationCode = prompt('Please enter the verification code ', '');
+        const newPassword = prompt('Enter new password ', '');
+        cognitoUser.confirmPassword(verificationCode, newPassword, {
+          onSuccess: () => {
+            callback.cognitoCallback(null, true);
+          },
+          onFailure: (error) => {
+            callback.cognitoCallback(error.message, false);
+          }
+        });
       }
-  });
+    });
   }
 
 }

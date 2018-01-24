@@ -10,12 +10,21 @@ import { User } from '../../../models/user';
 export class ForgotPasswordComponent {
 
   user: User = {};
+  errorMessage: string;
 
   constructor(private cognito: CognitoService) {
   }
 
   onForgotSubmit() {
-    this.cognito.forgotPassword(this.user);
+    this.cognito.forgotPassword(this.user, this);
+  }
+
+  cognitoCallback(errMessage: string, result: any) {
+    if (errMessage != null) {
+      this.errorMessage = errMessage;
+    } else {
+      console.log(result);
+    }
   }
 
 }

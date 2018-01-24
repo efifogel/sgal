@@ -1,17 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
-
+export class DashboardComponent {
+  dataHasLoaded = false;
+  wrlFile: any;
+  documentTitle: string;
+  list = ['File1.wrl', 'file2.wrl', 'file3.wrl', 'file4.wrl', 'file5.wrl'];
   constructor() { }
-
-  ngOnInit() {
+  onFileUpload(event: any) {
+    const element = event.element;
+    this.documentTitle = element.files[0].name;
+    console.log(this.documentTitle);
+    this.wrlFile = element.target.value;
   }
-
-  onFileSelected() { }
-
+  broadcastFileName(title: string) {
+    this.documentTitle = title;
+  }
 }

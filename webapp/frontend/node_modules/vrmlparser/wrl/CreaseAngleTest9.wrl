@@ -1,0 +1,84 @@
+#VRML V2.0 utf8
+
+# Tests if duplication of edges works correctly on a closed shape with a smooth edge and sharp edges
+
+# Initially, this shape has several problems:
+## 1. When the left and right panels are enabled, the edge between them is smooth, as by design and by the defined creaseAngle
+#     but when the top panel is enabled too, all edges are sharp. The edges between the top and side panels should be sharp, but the edge
+#     between the right and left panel should still be smooth.
+## 2. When the bottom panel is also enabled, a diagonal line appears in the right panel, exposing the triangulation of that panel.
+#     In this case, the same error as in situation 1 is also visible.
+
+
+NavigationInfo {
+
+}
+
+
+Viewpoint {
+    fieldOfView    1
+    jump           TRUE
+    orientation    0 0 1 0
+    position       0 0 10
+
+    description    "Positive z"
+}
+
+DirectionalLight {
+    ambientIntensity  0
+    color             1 1 0.9
+    direction         0.5 -1.5 -1
+    intensity         2
+    on                TRUE
+}
+
+DirectionalLight {
+    ambientIntensity  0
+    color             1 1 0.9
+    direction         -0.5 1 1
+    intensity        2
+    on                TRUE
+}
+
+Transform {
+	children [
+		Shape {
+            appearance Appearance {
+                material Material {
+                  diffuseColor 1 1 0
+                }
+            }
+            geometry IndexedFaceSet {
+                creaseAngle 0.5
+                coord  Coordinate {
+                    point [
+                        0 0 0, # for left frontal panel
+                        1 0 0.2,
+                        1 1 0.2,
+                        0 1 0, #3
+
+                        2 0 0, #4 for right frontal panel
+                        2 1 0, #5
+                    ]
+                }
+                normal            NULL
+                solid FALSE
+
+                ccw               TRUE
+                coordIndex  [
+                    # front left
+                    0, 1, 2, 3, -1,
+                    # front right side
+                    1, 4, 5, 2, -1,
+                    # top
+                    3, 2, 5, -1,
+                    #bottom
+                    0, 4, 1 -1,
+                    #rear
+                    #0, 3, 5, 4, -1,
+                ]
+            }
+        }
+	]
+}
+

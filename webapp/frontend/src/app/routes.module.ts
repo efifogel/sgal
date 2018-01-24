@@ -7,24 +7,25 @@ import { ConfirmAccountComponent } from './public/authentification/confirm-accou
 import { DashboardComponent } from './secured/dashboard/dashboard.component';
 import { SecuredComponent } from './secured/secured.component';
 import { ForgotPasswordComponent } from './public/authentification/forgot/forgot.component';
+import { SceneComponent } from './secured/dashboard/components/scene/scene.component';
+import { DashboardPanelComponent } from './secured/dashboard/components/left-panel/dashboard-panel.component';
 
 
 const authRoutes: Routes = [
-  { path: '', redirectTo: 'auth', pathMatch: 'full' },
+  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
   {
     path: 'auth', component: AuthentificationComponent,
     children: [
       { path: 'register', component: RegisterComponent },
       { path: 'confirmAccount/:username', component: ConfirmAccountComponent },
       { path: 'login', component: LoginComponent },
-      { path: 'forgotPassword', component: ForgotPasswordComponent}
+      { path: 'forgotPassword', component: ForgotPasswordComponent }
     ]
   }
 ];
 
 const secureHomeRoutes: Routes = [
   {
-
     path: '',
     redirectTo: '/secured',
     pathMatch: 'full'
@@ -32,7 +33,8 @@ const secureHomeRoutes: Routes = [
   {
     path: 'secured', component: SecuredComponent,
     children: [
-      { path: 'dashboard', component: DashboardComponent }
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'scene', component: SceneComponent }
     ]
   }
 ];
@@ -46,7 +48,7 @@ const routes: Routes = [
       ...secureHomeRoutes,
       {
         path: '',
-        component: AuthentificationComponent
+        component: LoginComponent
       }
     ]
   },
@@ -67,5 +69,7 @@ export const RoutableComponents = [
   ForgotPasswordComponent,
   ConfirmAccountComponent,
   SecuredComponent,
-  DashboardComponent
+  DashboardComponent,
+  SceneComponent,
+  DashboardPanelComponent
 ];

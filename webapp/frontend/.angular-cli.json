@@ -23,7 +23,10 @@
                 "../node_modules/@covalent/core/common/platform.scss",
                 "../node_modules/bootstrap/dist/css/bootstrap.css"
             ],
-            "scripts": [],
+            "scripts": [
+                "../node_modules/three/build/three.js",
+                "VRMLLoader.js"
+            ],
             "environmentSource": "environments/environment.ts",
             "environments": {
                 "dev": "environments/environment.ts",
