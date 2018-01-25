@@ -5,8 +5,8 @@ import {
   ViewChild,
   ElementRef
 } from '@angular/core';
-// import * as THREE from 'three';
-import * as THREE from 'three';
+
+declare var THREE: any;
 
 @Component({
   selector: 'app-scene',
@@ -16,50 +16,51 @@ import * as THREE from 'three';
 export class SceneComponent implements AfterViewInit {
   @Input() wrlFile: any;
   @Input() title: string;
-  renderer = new THREE.WebGLRenderer();
   @ViewChild('rendererContainer') rendererContainer: ElementRef;
-  scene = null;
-  camera = null;
-  loader = null;
-  mesh = null;
   constructor() {}
 
   ngAfterViewInit() {
-    const canvasElement = this.rendererContainer.nativeElement;
-    this.initScene(this.rendererContainer);
-    canvasElement.appendChild(this.renderer.domElement);
-    this.renderer.setSize(
-      canvasElement.offsetWidth,
-      canvasElement.offsetHeight
-    );
-    this.animate();
-  }
-  animate() {
-    window.requestAnimationFrame(() => this.animate());
-    this.mesh.rotation.x += 0.01;
-    this.mesh.rotation.y += 0.02;
-    this.renderer.render(this.scene, this.camera);
+    this.initCanvas();
   }
 
-  initiateReader = ($img: any) => {
-    if (typeof FileReader !== 'undefined') {
-      const reader = new FileReader();
-      reader.readAsArrayBuffer($img.files[0]);
+  initCanvas() {
+    const canvasContainer = this.rendererContainer.nativeElement;
+    let camera, controls, scene, renderer;
+    init();
+    animate();
+    function init() {
+      camera = new THREE.PerspectiveCamera(
+        60,
+        canvasContainer.offsetWidth / canvasContainer.offsetHeight,
+        0.01,
+        1e10
+      );
+      camera.position.z = 6;
+      controls = new THREE.OrbitControls(camera);
+      scene = new THREE.Scene();
+      scene.add(camera);
+      const dirLight = new THREE.DirectionalLight(0xffffff);
+      dirLight.position.set(200, 200, 1000).normalize();
+      camera.add(dirLight);
+      camera.add(dirLight.target);
+      const loader = new THREE.VRMLLoader();
+      loader.load('assets/wrl/house.wrl', (object) => {
+        scene.add(object);
+      });
+      renderer = new THREE.WebGLRenderer({ antialias: false });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(canvasContainer.offsetWidth, canvasContainer.offsetHeight);
+      canvasContainer.appendChild(renderer.domElement);
+      window.addEventListener('resize', onWindowResize, false);
     }
-  }
-  initScene = (element: ElementRef) => {
-    const nativeElement = element.nativeElement;
-    this.scene = new THREE.Scene();
-    const winh = window.innerHeight;
-    const winw = window.innerWidth;
-    this.camera = new THREE.PerspectiveCamera(75, winw / winh, 1, 10000);
-    this.camera.position.z = 1000;
-    const geometry = new THREE.BoxGeometry(200, 200, 200);
-    const material = new THREE.MeshBasicMaterial({
-      color: 0xff0000,
-      wireframe: true
-    });
-    this.mesh = new THREE.Mesh(geometry, material);
-    this.scene.add(this.mesh);
+    function onWindowResize() {
+      camera.aspect = canvasContainer.offsetWidth / canvasContainer.offsetHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(canvasContainer.offsetWidth, canvasContainer.offsetHeight);
+    }
+    function animate() {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    }
   }
 }
