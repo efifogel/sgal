@@ -5,7 +5,6 @@ import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {FormsModule} from '@angular/forms';
 
-
 /* Base Component */
 
 import {AppComponent} from './app.component';
@@ -22,7 +21,7 @@ import {AppRoutingModule, RoutableComponents} from './routes.module';
 /* Services */
 
 import { CognitoService } from './services/cognito.service';
-
+import { AWSBucketService } from './services/bucket.service';
 
 @NgModule({
   declarations: [
@@ -37,7 +36,7 @@ import { CognitoService } from './services/cognito.service';
     MatInputModule,
     AppRoutingModule
   ],
-  providers: [CognitoService],
+  providers: [CognitoService, AWSBucketService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
