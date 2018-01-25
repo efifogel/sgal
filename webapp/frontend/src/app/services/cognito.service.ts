@@ -69,7 +69,6 @@ export class CognitoService {
       onFailure: (err) => {
         callback.cognitoCallback(err.message, null);
       },
-
     });
   }
   forgotPassword(user: User, callback: CognitoCallback) {
@@ -99,5 +98,4 @@ export class CognitoService {
       }
     });
   }
-
 }

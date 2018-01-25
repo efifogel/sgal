@@ -14,7 +14,6 @@ export class DashboardComponent {
   onFileUpload(event: any) {
     const element = event.element;
     this.documentTitle = element.files[0].name;
-    console.log(this.documentTitle);
     this.wrlFile = element.target.value;
   }
   broadcastFileName(title: string) {

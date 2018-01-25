@@ -1,4 +1,10 @@
-import { Component, Input, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component,
+  Input,
+  AfterViewInit,
+  ViewChild,
+  ElementRef
+} from '@angular/core';
 // import * as THREE from 'three';
 import * as THREE from 'three';
 
@@ -8,32 +14,24 @@ import * as THREE from 'three';
   styleUrls: ['./scene.component.scss']
 })
 export class SceneComponent implements AfterViewInit {
-
-  @Input()
-  wrlFile: any;
-  @Input()
-  title: string;
+  @Input() wrlFile: any;
+  @Input() title: string;
   renderer = new THREE.WebGLRenderer();
   @ViewChild('rendererContainer') rendererContainer: ElementRef;
   scene = null;
   camera = null;
   loader = null;
   mesh = null;
-  constructor() {
-    this.scene = new THREE.Scene();
-    // this.loader = new THREE.VRMLLoader();
-
-    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
-    this.camera.position.z = 1000;
-    const geometry = new THREE.BoxGeometry(200, 200, 200);
-    const material = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
-    this.mesh = new THREE.Mesh(geometry, material);
-    this.scene.add(this.mesh);
-  }
+  constructor() {}
 
   ngAfterViewInit() {
-   // this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
+    const canvasElement = this.rendererContainer.nativeElement;
+    this.initScene(this.rendererContainer);
+    canvasElement.appendChild(this.renderer.domElement);
+    this.renderer.setSize(
+      canvasElement.offsetWidth,
+      canvasElement.offsetHeight
+    );
     this.animate();
   }
   animate() {
@@ -44,12 +42,24 @@ export class SceneComponent implements AfterViewInit {
   }
 
   initiateReader = ($img: any) => {
-    if (typeof (FileReader) !== 'undefined') {
+    if (typeof FileReader !== 'undefined') {
       const reader = new FileReader();
       reader.readAsArrayBuffer($img.files[0]);
     }
   }
-  initiateCanvas = () => {
-    
+  initScene = (element: ElementRef) => {
+    const nativeElement = element.nativeElement;
+    this.scene = new THREE.Scene();
+    const winh = window.innerHeight;
+    const winw = window.innerWidth;
+    this.camera = new THREE.PerspectiveCamera(75, winw / winh, 1, 10000);
+    this.camera.position.z = 1000;
+    const geometry = new THREE.BoxGeometry(200, 200, 200);
+    const material = new THREE.MeshBasicMaterial({
+      color: 0xff0000,
+      wireframe: true
+    });
+    this.mesh = new THREE.Mesh(geometry, material);
+    this.scene.add(this.mesh);
   }
 }
