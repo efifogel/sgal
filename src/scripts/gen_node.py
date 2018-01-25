@@ -46,7 +46,7 @@ s_field_type = {
   'Vector4f': 'SF_vector4f',
   'Rotation': 'SF_rotation',
   'Bounding_sphere': 'SF_bounding_sphere',
-  'std::string': 'SF_string',
+  'String': 'SF_string',
   'Shared_container': 'SF_shared_container',
   # Multi field
   'Boolean_array': 'MF_bool',
@@ -78,7 +78,7 @@ s_field_handle_type = {
   'Vector4f': 'Vector4f_handle_function',
   'Rotation': 'Rotation_handle_function',
   'Bounding_sphere': ' Bounding_sphere_handle_function',
-  'std::string': 'String_handle_function',
+  'String': 'String_handle_function',
   'Shared_container': 'Shared_container_handle_function',
   # Multi field handle functions
   'Boolean_array': 'Boolean_array_handle_function',
@@ -110,7 +110,7 @@ s_field_passing_method = {
   'Vector4f': 'reference',
   'Rotation': 'reference',
   'Bounding_sphere': 'reference',
-  'std::string': 'reference',
+  'String': 'reference',
   'Shared_container': 'value',
   # Multi field handle functions
   'Boolean_array': 'reference',
@@ -144,7 +144,7 @@ s_field_return_qualification = {
   'Vector4f': True,
   'Rotation': True,
   'Bounding_sphere': True,
-  'std::string': True,
+  'String': True,
   'Shared_container': True,
   # Multi field handle functions
   'Boolean_array': True,
@@ -176,7 +176,7 @@ s_field_element_type = {
   'Vector4f': 'string',
   'Rotation': 'string',
   'Bounding_sphere': 'string',
-  'std::string': 'string',
+  'String': 'string',
   'Shared_container': 'container',
   # Multi field handle functions
   'Boolean_array': 'string',
@@ -194,12 +194,12 @@ s_field_element_type = {
   'Shared_container_array': 'multi-container'
 }
 
-# Map from a C++ type to a pair of Booleans:
-# 1. The 1st indicating whether lexical cast should be performed.
-# 2. The 2nd indicating whether a lexical caster header should be included
+# Map from a C++ type to a tuple:
+# 1. Indicating whether lexical cast should be performed.
+# 2. Indicating whether a dedicated lexical caster header should be included
 s_field_lexical_cast = {
   # Single field handle functions
-  'Boolean': [ False, False ],
+  'Boolean': [ True, True ],
   'Float': [ True, False ],
   'Uint': [ True, False ],
   'Int32': [ True, False ],
@@ -210,20 +210,20 @@ s_field_lexical_cast = {
   'Vector4f': [ True, True ],
   'Rotation': [ True, True ],
   'Bounding_sphere': [ True, True ],
-  'std::string': [ False, False ],
+  'String': [ False, False ],
   'Shared_container': [ False, False ],
   # Multi field handle functions
-  'Boolean_array': [ False, False ],
-  'Float_array': [ False, False ],
-  'Uint_array': [ False, False ],
-  'Int32_array': [ False, False ],
-  'Scene_time_array': [ False, False ],
-  'Vector2f_array': [ False, False ],
-  'Vector3f_array': [ False, False ],
-  'Vector3f_array': [ False, False ],
-  'Vector4f_array': [ False, False ],
-  'Rotation_array': [ False, False ],
-  'Bounding_sphere_array': [ False, False ],
+  'Boolean_array': [ True, True ],
+  'Float_array': [ True, False ],
+  'Uint_array': [ True, False ],
+  'Int32_array': [ True, False ],
+  'Scene_time_array': [ True, False ],
+  'Vector2f_array': [ True, True ],
+  'Vector3f_array': [ True, True ],
+  'Vector3f_array': [ True, True ],
+  'Vector4f_array': [ True, True ],
+  'Rotation_array': [ True, True ],
+  'Bounding_sphere_array': [ True, True ],
   'String_array': [ False, False ],
   'Shared_container_array': [ False, False ]
 }
@@ -235,6 +235,12 @@ def has_array_type(fields):
     if type.endswith('_array'):
       return True
   return False
+
+def get_single_type(type):
+  if type.endswith('_array'):
+    return type[:-6]
+  else:
+    return type
 
 #! Determines whether the fileds contains a shared-container field
 def has_shared_type(fields):
@@ -269,6 +275,10 @@ def print_line(out, line, eol=True, inc=False, dec=False):
   if (dec): decrease_indent()
   print ("%s%s" % (indent * ' ', line), file=out, end='\n' if eol else '')
   if (inc): increase_indent()
+
+#! Print a call to a function that might exceed 80 characters.
+def print_call(out, statement):
+  print_line(out, statement)
 
 #! Print a block of lines equally indented.
 def print_block(out, block):
@@ -309,10 +319,8 @@ def print_forward_declarations(out, fields):
     type = field['type']
     if not type.startswith('Shared_'):
       continue
-    main_type = type[7:]
-    if main_type.endswith('_array'):
-      main_type = main_type[:-6]
-    print_line(out, 'class {};'.format(main_type.title()))
+    main_type = get_single_type(type[7:])
+    print_line(out, 'class {};'.format(main_type.capitalize()))
   print_empty_line(out)
 
 # Print field typedefs
@@ -326,7 +334,7 @@ def print_typedefs(out, fields):
       main_type = type[7:]
       if main_type.endswith('_array'):
         main_type = main_type[:-6]
-      statement = 'typedef boost::shared_ptr<{}>'.format(main_type.title())
+      statement = 'typedef boost::shared_ptr<{}>'.format(main_type.capitalize())
       statement = '{:<46}Shared_{};'.format(statement, main_type)
       print_line(out, statement)
     print_empty_line(out)
@@ -491,28 +499,27 @@ def print_field_setter_definition(out, class_name, field):
 def print_field_getter_definition(out, class_name, field):
   type = field['type']
   name = field['name']
-  type = field['type']
   general_type = get_general_type(type)
   pass_method = s_field_passing_method[general_type]
   compound = s_field_return_qualification[general_type]
   desc = field['desc']
+  ext_type = type
+  if type.startswith('Shared_'):
+    ext_type = class_name + '::' + type
   if pass_method == 'value':
     if not compound:
       print_line(out, '//! \\brief obtains the {}.'.format(desc))
-      print_line(out, 'inline {} {}::get_{}() const'.format(type, class_name, name))
+      print_line(out, 'inline {} {}::get_{}() const'.format(ext_type, class_name, name))
       print_line(out, '{{ return m_{}; }}'.format(name))
     else:
       print_line(out, '//! \\brief obtains the {}.'.format(desc))
-      print_line(out, 'const {} {}::get_{}() const'.format(type, class_name, name))
+      print_line(out, 'const {} {}::get_{}() const'.format(ext_type, class_name, name))
       print_line(out, '{{ return m_{}; }}'.format(name))
       print_empty_line(out)
       print_line(out, '//! \\brief obtains the {}.'.format(desc))
-      print_line(out, '{} {}::get_{}()'.format(type, class_name, name))
+      print_line(out, '{} {}::get_{}()'.format(ext_type, class_name, name))
       print_line(out, '{{ return m_{}; }}'.format(name))
   elif pass_method == 'reference':
-    ext_type = type
-    if type.startswith('Shared_'):
-      ext_type = class_name + '::' + type
     print_line(out, '//! \\brief obtains the {}.'.format(desc))
     print_line(out, 'const {}& {}::get_{}() const'.format(ext_type, class_name, name))
     print_line(out, '{{ return m_{}; }}'.format(name))
@@ -550,20 +557,23 @@ def print_data_members(out, fields):
 
 def print_get_tag_declaration(out):
   print_line(out, '/*! Obtain the tag (type) of the container. */')
-  print_line(out, 'virtual const std::string& get_tag() const;')
+  print_line(out, 'virtual const String& get_tag() const;')
   print_empty_line(out)
 
 #! Print the field static members
 def print_static_member_declarations(out, fields):
+  print_line(out, "// Default values:")
   for field in fields[:]:
-    name = field['name']
     type = field['type']
+    if type.startswith('Shared_'):
+      continue
+    name = field['name']
     desc = field['desc']
     print_line(out, "static const %s s_def_%s;" % (type, name))
 
 def print_tag_data_member(out):
   print_line(out, "/*! The tag that identifies this container type. */")
-  print_line(out, "static const std::string s_tag;")
+  print_line(out, "static const String s_tag;")
   print_empty_line(out)
 
 def print_prototype_data_member(out):
@@ -597,7 +607,7 @@ def print_field_getters_setters_definitions(out, class_name, fields):
 #! Print get_tag() definition.
 def print_get_tag_definition(out, class_name):
   print_line(out, "//! \\brief obtains the tag (type) of the container.")
-  print_line(out, "inline const std::string& %s::get_tag() const { return s_tag; }" % class_name)
+  print_line(out, "inline const String& %s::get_tag() const { return s_tag; }" % class_name)
 
 #! Print the include directives in the hpp
 def print_hpp_include_directives(out, derived_class_name):
@@ -700,26 +710,70 @@ def generate_hpp(output_path, class_name, derived_class_name, fields):
     print_line(out, "#endif")
 
 def print_cpp_include_directives(out, fields):
-  print_line(out, '#include <boost/lexical_cast.hpp>')
-  print_empty_line(out)
+  include_sstream = False
+  include_iterator = False
+  include_algorithm = False
+  include_std = False
+  include_boost_algorithm_string = False
+  include_boost_lexical_case = False
+  include_boost = False
+
+  field_names_lexical_cast = []
+  for field in fields[:]:
+    type = field['type']
+    if type == 'String':
+      include_boost_algorithm_string = True
+    else:
+      general_type = get_general_type(type)
+      lexical_cast = s_field_lexical_cast[general_type]
+      if lexical_cast[0]:
+        if not lexical_cast[1]:
+          include_boost_lexical_case = True
+        else:
+          single_type = get_single_type(type)
+          field_names_lexical_cast.append(single_type.lower())
+          if type.endswith('_array'):
+            include_sstream = True
+            include_iterator = True
+            include_algorithm = True
+
+  if (include_sstream):
+    print_line(out, '#include <sstream>')
+    include_std = True
+  if (include_iterator):
+    print_line(out, '#include <iterator>')
+    include_std = True
+  if (include_algorithm):
+    print_line(out, '#include <algorithm>')
+    include_std = True
+  if (include_std):
+    print_empty_line(out)
+
+  if (include_boost_algorithm_string):
+    print_line(out, '#include <boost/algorithm/string.hpp>')
+    include_boost = True
+  if (include_boost_lexical_case):
+    print_line(out, '#include <boost/lexical_cast.hpp>')
+    include_boost = True
+  if (include_boost):
+    print_empty_line(out)
+
   print_line(out, "#include \"SGAL/Element.hpp\"")
   print_line(out, "#include \"SGAL/Container_proto.hpp\"")
   print_line(out, "#include \"SGAL/Field_infos.hpp\"")
   print_line(out, "#include \"SGAL/Field.hpp\"")
-  for field in fields[:]:
-    type = field['type']
-    general_type = get_general_type(type)
-    lexical_cast = s_field_lexical_cast[general_type]
-    if lexical_cast[1]:
-      print_line(out, '#include \"SGAL/lexical_cast_{}.hpp\"'.format(type.lower()))
+  for item in field_names_lexical_cast[:]:
+    print_line(out, '#include \"SGAL/lexical_cast_{}.hpp\"'.format(item))
   print_empty_line(out)
   print_line(out, '#include \"FPG/{}.hpp\"'.format(class_name))
 
 def print_static_member_definitions(out, class_name):
   print_line(out, "// Default values:")
   for field in fields[:]:
-    name = field['name']
     type = field['type']
+    if type.startswith('Shared_'):
+      continue
+    name = field['name']
     default_value = field['default-value']
     if default_value:
       print_line(out, 'const {} {}::s_def_{}({});'.format(type, class_name, name, default_value))
@@ -729,16 +783,26 @@ def print_static_member_definitions(out, class_name):
 
 #! Print constructor definition.
 def print_constructor_definition(out, class_name, derived_class_name, fields):
-  print_line(out, "//! \\brief construct from prototype.")
-  print_line(out, "%s::%s(Boolean proto) :" % (class_name, class_name), inc=True)
-  print_line(out, "%s(proto)," % derived_class_name)
-  for field in fields[:-1]:
+  print_line(out, '//! \\brief construct from prototype.')
+  initializable_fields = []
+  for field in fields[:]:
+    type = field['type']
+    if not type.startswith('Shared_'):
+      initializable_fields.append(field)
+
+  if 0 == len(initializable_fields):
+    print_line(out, '{}::{}(Boolean proto) : {}(proto) {{}}'.format(class_name, class_name, derived_class_name))
+  else:
+    print_line(out, '{}::{}(Boolean proto) :'.format(class_name, class_name),
+               inc=True)
+    print_line(out, '{}(proto),'.format(derived_class_name))
+    for field in initializable_fields[:-1]:
+      name = field['name']
+      print_line(out, 'm_{}(s_def_{}),'.format(name, name))
+    field = initializable_fields[-1]
     name = field['name']
-    print_line(out, "m_%s(s_def_%s)," % (name, name))
-  field = fields[-1]
-  name = field['name']
-  print_line(out, "m_%s(s_def_%s)" % (name, name))
-  print_line(out, "{}", dec=True)
+    print_line(out, 'm_{}(s_def_{})'.format(name, name))
+    print_line(out, "{}", dec=True)
   print_empty_line(out)
 
 #! Print destructor definition.
@@ -825,6 +889,38 @@ def print_prototype_handling_definitions(out, class_name, derived_class_name, fi
   print_empty_line(out)
   print_get_prototype_definition(out)
 
+def print_set_field(out, field, op):
+  name = field['name']
+  type = field['type']
+  print_line(out, "if (name == \"%s\") {" % name, inc=True)
+  op(out, field)
+  print_line(out, "elem->mark_delete(ai);");
+  print_line(out, "continue;")
+  print_line(out, "}", dec=True)
+
+def print_set_field_from_string(out, field):
+  name = field['name']
+  type = field['type']
+  if type == 'String':
+    print_line(out, 'set_{}(boost::algorithm::trim_copy(value));'.format(name))
+    return
+
+  general_type = get_general_type(type)
+  lexical_cast = s_field_lexical_cast[general_type]
+  if not lexical_cast[0]:
+    raise Exception('I do not know how to set field {} of type {} from a string!'.format(name, type))
+  if not type.endswith('_array'):
+    print_line(out, 'set_{}(boost::lexical_cast<{}>(value));'.format(name, type))
+    return
+
+  print_line(out, 'std::stringstream ss(value);')
+  single_type = get_single_type(type)
+  statement = '''std::transform(std::istream_iterator<String>(ss),
+                     std::istream_iterator<String>(),
+                     std::back_inserter(m_{}),
+                     &boost::lexical_cast<{}, String>);'''.format(name, single_type)
+  print_call(out, statement)
+
 def print_set_attributes_definition(out, class_name, derived_class_name, fields):
   print_line(out, "//! \\brief sets the attributes of this node.")
   print_line(out, "void %s::set_attributes(Element* elem)" % class_name)
@@ -845,31 +941,14 @@ def print_set_attributes_definition(out, class_name, derived_class_name, fields)
     elif field_element_type == 'container': container_fields.append(field)
     elif field_element_type == 'multi-container': multi_container_fields.append(field)
     else:
-      raise Exception("Element type %s of field \"%s::%s\" is unknown!" %
-                      (field_element_type, class_name, name))
+      raise Exception('Element type {} of field \"{}::{}\" is unknown!'.format(field_element_type, class_name, name))
   # String fields
   if 0 < len(string_fields):
     print_line(out, "for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {", inc=True)
     print_line(out, "const auto& name = elem->get_name(ai);")
     print_line(out, "const auto& value = elem->get_value(ai);")
-
     for field in string_fields[:]:
-      name = field['name']
-      type = field['type']
-      print_line(out, "if (name == \"%s\") {" % name, inc=True)
-      if type == 'Boolean':
-        print_line(out, 'set_{}(compare_to_true(value));'.format(name))
-      else:
-        general_type = get_general_type(type)
-        lexical_cast = s_field_lexical_cast[general_type]
-        if lexical_cast[0]:
-          print_line(out, 'set_{}(boost::lexical_cast<{}>(value));'.format(name, type))
-        else:
-          print_line(out, '/* */')
-      print_line(out, "elem->mark_delete(ai);");
-      print_line(out, "continue;")
-      print_line(out, "}", dec=True)
-
+      print_set_field(out, field, print_set_field_from_string)
     print_line(out, "}", dec=True)
 
   # Multi string fields:
@@ -880,7 +959,8 @@ def print_set_attributes_definition(out, class_name, derived_class_name, fields)
     for field in multi_string_fields[:]:
       name = field['name']
       type = field['type']
-      print_line(out, "if (name == \"%s\") {" % name)
+      tmp = name.replace('_', ' ').title().replace(' ', '')
+      print_line(out, 'if (name == \"{}\") {'.format(tmp))
       print_line(out, "m_%s.resize(value.size());" % name)
       print_line(out, "auto tit = m_%s.begin();" % name)
       print_line(out, "for (auto sit : value) *tit++ = std::move(*sit);")
@@ -935,8 +1015,8 @@ def generate_cpp(output_path, class_name, derived_class_name, fields):
     # 1. Split class name to single words (separated by '_'),
     # 2. convert first character of each word to uppper case, and
     # 3. re-concatenate.
-    node_name = class_name.replace('_', ' ').title().replace(' ', '')
-    print_line(out, "const std::string %s::s_tag = \"%s\";" %
+    node_name = class_name.replace('_', ' ').capitalize().replace(' ', '')
+    print_line(out, "const String %s::s_tag = \"%s\";" %
                (class_name, node_name))
 
     # Print prototype defintion:
