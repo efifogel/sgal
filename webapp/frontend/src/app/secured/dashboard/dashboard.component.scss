@@ -1,7 +1,19 @@
-#dashboard-wrapper {
-    height: 95%;
-    width: 98%;
+#dashboard-wrapper, #scene-wrapper {
+    height: 95% !important;
+    width: 98% !important;
 }
+
+#scene-wrapper{
+  color: #252936;
+  border-radius: 4px;
+  border: solid 2px #E61A58;
+  overflow: scroll;
+}
+
+#list-holder{
+  margin-top: 3em;
+}
+
 .fileContainer {
     overflow: hidden;
     position: relative;
@@ -19,3 +31,15 @@
     text-align: right;
     top: 0;
   }
+
+.upload-btn{
+  background-color: #E91E63;
+  border-radius: 30px !important;
+  color: white;
+  font-size: 13px;
+  font-weight: 400;
+  border: solid 1px white;
+}
+.upload-btn:hover{
+  background-color: #E91E63;
+}
