@@ -39,6 +39,8 @@ endfunction()
 ########
 
 set(FPG_AUTO_GENERATED_SRC_FILES "" CACHE INTERNAL "")
+add_node(Cabinet)
+add_node(Cash_register)
 add_node(Column)
 add_node(Counter)
 add_node(Counter_area)
