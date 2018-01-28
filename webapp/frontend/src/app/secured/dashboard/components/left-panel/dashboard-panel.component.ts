@@ -7,7 +7,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 })
 export class DashboardPanelComponent implements OnInit {
   @Input()
-  list: any[];
+  files: any[];
   dataHasLoaded: boolean;
   // tslint:disable-next-line:no-output-on-prefix
   @Output()

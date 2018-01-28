@@ -24,6 +24,8 @@ export class LoginComponent {
     if (errorMessage != null) {
       this.errorMessage = errorMessage;
     } else {
+      const clientId = result.accessToken.payload.client_id;
+      localStorage.setItem('cognitoClientId', JSON.stringify(clientId));
       this.token = result.getAccessToken().getJwtToken();
       this.router.navigate(['/secured/dashboard']);
     }

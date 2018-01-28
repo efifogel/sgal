@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import * as AWSCognito from 'amazon-cognito-identity-js';
 import { User } from '../models/user';
 
-interface CognitoCallback {
+export interface CognitoCallback {
   cognitoCallback(message: string, result: any): void;
 }
 

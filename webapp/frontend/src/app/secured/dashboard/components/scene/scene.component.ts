@@ -17,11 +17,13 @@ export class SceneComponent implements AfterViewInit {
   @Input() wrlFile: any;
   @Input() title: string;
   @ViewChild('rendererContainer') rendererContainer: ElementRef;
-  constructor() {}
+  constructor() {
+  }
 
   ngAfterViewInit() {
     this.initCanvas();
   }
+
 
   initCanvas() {
     const canvasContainer = this.rendererContainer.nativeElement;
@@ -44,19 +46,26 @@ export class SceneComponent implements AfterViewInit {
       camera.add(dirLight);
       camera.add(dirLight.target);
       const loader = new THREE.VRMLLoader();
-      loader.load('assets/wrl/house.wrl', (object) => {
+      loader.load('assets/wrl/house.wrl', object => {
         scene.add(object);
       });
       renderer = new THREE.WebGLRenderer({ antialias: false });
       renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.setSize(canvasContainer.offsetWidth, canvasContainer.offsetHeight);
+      renderer.setSize(
+        canvasContainer.offsetWidth,
+        canvasContainer.offsetHeight
+      );
       canvasContainer.appendChild(renderer.domElement);
       window.addEventListener('resize', onWindowResize, false);
     }
     function onWindowResize() {
-      camera.aspect = canvasContainer.offsetWidth / canvasContainer.offsetHeight;
+      camera.aspect =
+        canvasContainer.offsetWidth / canvasContainer.offsetHeight;
       camera.updateProjectionMatrix();
-      renderer.setSize(canvasContainer.offsetWidth, canvasContainer.offsetHeight);
+      renderer.setSize(
+        canvasContainer.offsetWidth,
+        canvasContainer.offsetHeight
+      );
     }
     function animate() {
       requestAnimationFrame(animate);

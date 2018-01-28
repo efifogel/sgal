@@ -3,8 +3,8 @@
     <input (change)="onFileSelected($event)" type="file" accepted=".wrl" id="file" #fileUploader> UPLOAD DOCUMENT
   </button>
   <div id="list-holder">
-    <div layout="row" layout-align="start center" layout-padding *ngFor="let element of list" class="list-item" (click)="selectElement(element)">
-      <span>{{ element }}</span>
+    <div layout="row" layout-align="start center" layout-padding *ngFor="let file of files" class="list-item" (click)="selectElement(file)">
+      <span>{{ file.Key }}</span>
     </div>
   </div>
 </div>

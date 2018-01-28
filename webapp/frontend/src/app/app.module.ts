@@ -21,12 +21,17 @@ import {AppRoutingModule, RoutableComponents} from './routes.module';
 /* Services */
 
 import { CognitoService } from './services/cognito.service';
-import { AWSBucketService } from './services/bucket.service';
+import { AWS3Service } from './services/bucket.service';
+
+/* Utils (Pipes ..) */
+
+import { TrimStringPipe } from './utils/pipes/trimString';
 
 @NgModule({
   declarations: [
     AppComponent,
-    RoutableComponents
+    RoutableComponents,
+    TrimStringPipe
   ],
   imports: [
     BrowserModule,
@@ -36,7 +41,7 @@ import { AWSBucketService } from './services/bucket.service';
     MatInputModule,
     AppRoutingModule
   ],
-  providers: [CognitoService, AWSBucketService],
+  providers: [CognitoService, AWS3Service],
   bootstrap: [AppComponent]
 })
 export class AppModule {
