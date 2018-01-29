@@ -10,31 +10,49 @@ import * as S3 from 'aws-sdk/clients/s3';
 export class DashboardComponent {
   dataHasLoaded = false;
   wrlFile: any;
+  fileBody: any;
   documentTitle: string;
   files: any[];
-  list = ['File1.wrl', 'file2.wrl', 'file3.wrl', 'file4.wrl', 'file5.wrl'];
   clientId: string;
   constructor(private s3: AWS3Service) {
-    this.clientId = localStorage.getItem('cognitoClientId');
-    console.log(this.clientId);
-    this.s3.listAlbums('2lar6nm448283r9khoegrd7p8h', this);
+    this.clientId = JSON.parse(localStorage.getItem('cognitoClientId'));
+    this.s3.listAlbums(this.clientId, this);
   }
-  onFileUpload(event: any) {
-    const element = event.element;
-    this.documentTitle = element.files[0].name;
-    this.wrlFile = element.target.value;
-  }
-  broadcastFileName(title: string) {
-    this.documentTitle = title;
+  getFileObject(key: string) {
+    this.s3.getBucketObject(key, this);
   }
 
-  cognitoCallback(errorMessage: string, data: any) {
+  uploadFile(event: any) {
+    const files = event.element.target.files;
+    const directory = JSON.parse(localStorage.getItem('cognitoClientId'));
+    this.s3.uploadDocumentToBucket(directory, files, this);
+  }
+  /* Callbacks interfaces */
+  ListobjectCallBack(errorMessage: string, data: any) {
     if (!errorMessage) {
-      this.files = data.Contents.splice(0, 1);
-      this.s3.getBucketObject(data.Contents[0].Key);
-      console.log(data);
+      if (data.Contents.length) {
+        data.Contents.shift();
+        this.s3.getBucketObject(data.Contents[0].Key, this);
+        this.files = data.Contents;
+      }
     } else {
       alert(errorMessage);
     }
   }
+  UploadCallback(errorMessage: string, data: any) {
+    if (!errorMessage) {
+      this.s3.listAlbums(this.clientId, this);
+    } else {
+      alert(errorMessage);
+    }
+  }
+  GetObjectCallback(errorMessage: string, data: any) {
+    if (!errorMessage) {
+      console.log(data);
+      this.wrlFile = data.Body;
+    } else {
+      alert(errorMessage);
+    }
+  }
+
 }

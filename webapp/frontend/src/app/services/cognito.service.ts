@@ -21,6 +21,7 @@ export class CognitoService {
   userPool = new AWSCognito.CognitoUserPool(this.poolData);
 
   constructor() {}
+  
   getUserPool() {
     return this.userPool;
   }

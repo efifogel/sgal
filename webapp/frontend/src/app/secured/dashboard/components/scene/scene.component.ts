@@ -1,6 +1,8 @@
 import {
   Component,
   Input,
+  Output,
+  EventEmitter,
   AfterViewInit,
   ViewChild,
   ElementRef
@@ -14,8 +16,13 @@ declare var THREE: any;
   styleUrls: ['./scene.component.scss']
 })
 export class SceneComponent implements AfterViewInit {
-  @Input() wrlFile: any;
-  @Input() title: string;
+  @Input()
+  wrlFile: any;
+  @Input()
+  title: string;
+  // tslint:disable-next-line:no-output-on-prefix
+  @Output()
+  onFileSelection: EventEmitter<string> = new EventEmitter<string>();
   @ViewChild('rendererContainer') rendererContainer: ElementRef;
   constructor() {
   }

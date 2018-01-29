@@ -14,15 +14,14 @@ export class DashboardPanelComponent implements OnInit {
   onFileUpload: EventEmitter<any> = new EventEmitter<any>();
   // tslint:disable-next-line:no-output-on-prefix
   @Output()
-  onFileSelection: EventEmitter<string> = new EventEmitter<string>();
+  onFileClick: EventEmitter<string> = new EventEmitter<string>();
   constructor() { }
-
   ngOnInit() {
   }
-  selectElement(title: string) {
-    this.onFileSelection.emit(title);
-  }
   onFileSelected(event: any) {
-    this.onFileUpload.emit({ element: event.target });
+    this.onFileUpload.emit({ element: event });
+  }
+  selectElement(key: string) {
+    this.onFileClick.emit(key);
   }
 }
