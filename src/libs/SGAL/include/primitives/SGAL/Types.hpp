@@ -67,6 +67,8 @@ typedef unsigned long long int  Double_word;
 // Bool is already defined in X11/Xlib.h
 typedef bool            Boolean;
 
+typedef std::string     String;
+
 SGAL_END_NAMESPACE
 
 #endif
