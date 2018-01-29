@@ -6,6 +6,8 @@ import argparse
 import json
 import shlex
 from sets import Set
+import ConfigParser, os
+import ast
 
 def is_valid_file(parser, arg):
   if not os.path.exists(arg):
@@ -628,11 +630,27 @@ def print_hpp_include_directives(out, derived_class_name):
   print_empty_line(out)
   print_line(out, '#include \"FPG/basic.hpp\"')
 
+# Print additional public functions:
+def print_public_functions(config, out):
+  public_functions = {}
+  if config.has_option('class', 'public_functions'):
+    public_functions = ast.literal_eval(config.get('class', 'public_functions'))
+  for fnc in public_functions:
+    desc = config.get(fnc, 'desc')
+    signature = config.get(fnc, 'signature')
+    print_line(out, '/* {}'.format(desc))
+    print_line(out, ' */')
+    print_line(out, signature)
+    print_empty_line(out)
+
 #! Generate the .hpp file
-#! \param name
-#! \param derived_class_name
+#! \param config
+#! \param output_path
 #! \param fields
-def generate_hpp(output_path, class_name, derived_class_name, fields):
+def generate_hpp(config, output_path, fields):
+  class_name = config.get('DEFAULT', 'name')
+  derived_class_name = config.get('class', 'base')
+
   hpp_filename = os.path.join(output_path, class_name + ".hpp")
   with open(hpp_filename, 'w') as out:
     print_line(out, copyright_text)
@@ -675,6 +693,9 @@ def generate_hpp(output_path, class_name, derived_class_name, fields):
     # Print declarations of field setters and getters:
     print_group(out, "getters & setters",
                 print_field_getters_setters_declarations, fields)
+
+    # Print additional public functions:
+    print_public_functions(config, out)
 
     decrease_indent()
     print_line(out, "protected:")
@@ -1008,10 +1029,13 @@ def print_set_attributes_definition(out, class_name, derived_class_name, fields)
   print_empty_line(out)
 
 #! Generate the .cpp file
-#! \param name
-#! \param derived_class_name
+#! \param config
+#! \param output_path
 #! \param fields
-def generate_cpp(output_path, class_name, derived_class_name, fields):
+def generate_cpp(config, output_path, fields):
+  class_name = config.get('DEFAULT', 'name')
+  derived_class_name = config.get('class', 'base')
+
   hpp_filename = os.path.join(output_path, class_name + ".cpp")
   with open(hpp_filename, 'w') as out:
     print_line(out, copyright_text)
@@ -1056,8 +1080,8 @@ if __name__ == '__main__':
   args = parser.parse_args()
 
   # Extract node name:
-  class_name = args.name
-  if not class_name:
+  name = args.name
+  if not name:
     parser.error("The class name is missing!")
     exit(-1)
 
@@ -1066,9 +1090,9 @@ if __name__ == '__main__':
   if args.filename:
     filename = args.filename
   else:
-    filename = class_name + "_spec.txt"
+    filename = name + ".cfg"
 
-  # Extract full file name:
+  # Extract configuration full file name:
   fullname = None
   for path in args.input_paths:
     tmp = os.path.join(path, filename)
@@ -1080,38 +1104,57 @@ if __name__ == '__main__':
     parser.error("The file %s cannot be found!" % filename)
     exit(-1)
 
-  with open(fullname, 'r') as ins:
-    derived_class_name = ins.readline().rstrip()
+  config = ConfigParser.ConfigParser()
+  config.readfp(open(fullname))
 
-    fields = []
-    for line in ins:
-      if line[0] == '#':
-        continue
-      vals = shlex.split(line)
-      vals = map(lambda s: s.strip(), vals)
-      name = vals[0]
-      type = vals[1]
-      rule = vals[2]
-      default_value = vals[3]
-      execution_function = vals[4]
-      desc = vals[5].strip('\"')
-      # Assume that a type that starts with 'Shared' is either a shared
-      # container or a shared container array.
-      if not type.startswith('Shared_'):
-        if not type in s_field_type:
-          raise Exception('Type {} of field \"{}::{}\" is unknown!'.format(type, class_name, name))
-      field = {
-        'name': name,
-        'type': type,
-        'rule': rule,
-        'default-value': default_value,
-        'execution-function': execution_function,
-        'desc': desc
-      }
-      fields.append(field)
+  with open(fullname, 'r') as confis:
+    config.readfp(confis)
+    class_name = config.get('DEFAULT', 'name')
+    derived_class_name = config.get('class', 'base')
+    fields_filename = config.get('fields', 'spec')
 
-    # map(lambda x: print(x), fields)
-    generate_hpp(args.output_inc_path, class_name, derived_class_name, fields)
-    generate_cpp(args.output_lib_path, class_name, derived_class_name, fields)
+    # Extract field specification full file name:
+    fields_fullname = None
+    for path in args.input_paths:
+      tmp = os.path.join(path, fields_filename)
+      if os.path.exists(tmp):
+        fields_fullname = tmp
+        break
+
+    if not fields_fullname:
+      parser.error('The file {} cannot be found!"'.format(fields_filename))
+      exit(-1)
+
+    with open(fields_fullname, 'r') as ins:
+      fields = []
+      for line in ins:
+        if line[0] == '#':
+          continue
+        vals = shlex.split(line)
+        vals = map(lambda s: s.strip(), vals)
+        name = vals[0]
+        type = vals[1]
+        rule = vals[2]
+        default_value = vals[3]
+        execution_function = vals[4]
+        desc = vals[5].strip('\"')
+        # Assume that a type that starts with 'Shared' is either a shared
+        # container or a shared container array.
+        if not type.startswith('Shared_'):
+          if not type in s_field_type:
+            raise Exception('Type {} of field \"{}::{}\" is unknown!'.format(type, class_name, name))
+        field = {
+          'name': name,
+          'type': type,
+          'rule': rule,
+          'default-value': default_value,
+          'execution-function': execution_function,
+          'desc': desc
+        }
+        fields.append(field)
+
+      # map(lambda x: print(x), fields)
+      generate_hpp(config, args.output_inc_path, fields)
+      generate_cpp(config, args.output_lib_path, fields)
 
   exit()

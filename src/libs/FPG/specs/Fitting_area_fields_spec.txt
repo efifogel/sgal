@@ -1,4 +1,3 @@
-Container
 # Name                 Type                       Rule           Default  Execution Function             Description
 # -------------------- -------------------------- -------------- -------- ------------------------------ --------------------
 location               SFVec2f                    EXPOSED_FIELD  "0,0"    ""                             "location of the fitting area relative to the store floor-plane coordinate system"

@@ -1,4 +1,3 @@
-Shape
 # Name                 Type                       Rule           Default  Execution Function             Description
 # -------------------- -------------------------- -------------- -------- ------------------------------ --------------------
 location               Vector2f                   EXPOSED_FIELD  "0,0"    Node::bounding_sphere_changed  "Location of the wall relative to the embedding coordinate system"
