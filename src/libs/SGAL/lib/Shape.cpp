@@ -83,8 +83,9 @@ Shape::Shape(Boolean proto) :
   m_is_visible(s_def_is_visible),
   m_priority(0),
   m_draw_backface(false),
-  m_dirty(true),
+  m_dirty_geometry(true),
   m_dirty_appearance(true),
+  m_dirty_appearance_fields(true),
   m_texture_map(Configuration::s_def_texture_map),
   m_override_material(Configuration::s_def_override_material),
   m_override_tex_enable(Configuration::s_def_override_tex_enable),
@@ -108,9 +109,6 @@ Shape::~Shape()
 void Shape::set_appearance(Shared_appearance app)
 {
   m_appearance = app;
-  m_dirty = true;
-  m_dirty_appearance = true;
-
   const auto* field_info = get_field_info(APPEARANCE);
   field_changed(field_info);
 }
@@ -122,8 +120,6 @@ void Shape::set_geometry(Shared_geometry geometry)
   if (m_geometry) m_geometry->unregister_observer(observer);
   m_geometry = geometry;
   if (m_geometry) m_geometry->register_observer(observer);
-  m_dirty = true;
-  m_dirty_bounding_sphere = true;
 
   const Field_info* field_info = get_field_info(GEOMETRY);
   field_changed(field_info);
@@ -149,6 +145,7 @@ void Shape::clean_bounding_sphere()
     return;
   }
 
+  if (m_dirty_geometry) clean_geometry();
   if (m_geometry) m_bounding_sphere = m_geometry->get_bounding_sphere();
   m_dirty_bounding_sphere = false;
 }
@@ -156,8 +153,14 @@ void Shape::clean_bounding_sphere()
 //! \brief draws the appearance and then all the geometries.
 Action::Trav_directive Shape::draw(Draw_action* draw_action)
 {
-  if (!m_geometry || !is_visible()) return Action::TRAV_CONT;
-  if (m_dirty) clean();
+  if (!is_visible()) return Action::TRAV_CONT;
+
+  if (m_dirty_geometry) clean_geometry();
+  if (!m_geometry) return Action::TRAV_CONT;
+
+  if (m_dirty_appearance) clean_appearance();
+  if (!m_appearance) return Action::TRAV_CONT;
+  if (m_dirty_appearance_fields) clean_appearance_fields();
 
   int pass_no = draw_action->get_pass_no();
   if (!m_draw_backface && m_appearance->is_transparent() && (pass_no == 0)) {
@@ -172,8 +175,7 @@ Action::Trav_directive Shape::draw(Draw_action* draw_action)
 }
 
 //! \brief culls the node if invisible and prepare for rendering.
-void Shape::cull(Cull_context& cull_context)
-{ cull_context.add_shape(this); }
+void Shape::cull(Cull_context& cull_context) { cull_context.add_shape(this); }
 
 //! \brief draws the geometry.
 void Shape::draw_geometry(Draw_action* action)
@@ -210,6 +212,7 @@ void Shape::draw_geometry(Draw_action* action)
 void Shape::isect(Isect_action* isect_action)
 {
   if (!is_visible()) return;
+  if (m_dirty_geometry) clean_geometry();
   if (!m_geometry) return;
 
   Uint id = isect_action->get_id();
@@ -220,10 +223,8 @@ void Shape::isect(Isect_action* isect_action)
 }
 
 //! \brief cleans the apperances.
-void Shape::clean()
+void Shape::clean_appearance_fields()
 {
-  // Create an appearance if missing:
-  if (m_dirty_appearance) clean_appearance();
   // Create a material if missing:
   if (m_override_material) m_appearance->clean_material();
   // Enable texture if texture exists and not empty:
@@ -249,8 +250,6 @@ void Shape::clean()
       m_appearance->clean_tex_gen();
   }
 
-  if (m_dirty_appearance) m_dirty_appearance = false;
-
 #if 0
   //! \todo
   Shared_text text = boost::dynamic_pointer_cast<Text>(m_geometry);
@@ -260,16 +259,23 @@ void Shape::clean()
   }
 #endif
 
-  m_dirty = false;
+  m_dirty_appearance_fields = false;
 }
 
-//! \brief cleans the apperance.
+//! \brief cleans the apperance. Construct a new appearance if does not exist.
 void Shape::clean_appearance()
 {
   if (!m_appearance) {
     m_appearance = Shared_appearance(new Appearance);
     SGAL_assertion(m_appearance);
   }
+  m_dirty_appearance = false;
+}
+
+//! \brief clean the geometry.
+void Shape::clean_geometry()
+{
+  m_dirty_geometry = false;
 }
 
 //! \brief sets the attributes of the shape.
@@ -439,11 +445,8 @@ Boolean Shape::detach_context(Context* context)
 }
 
 //! \brief processes change of appearance.
-void Shape::appearance_changed(const Field_info* /* field_info. */)
-{
-  m_dirty = true;
-  m_dirty_appearance = true;
-}
+void Shape::appearance_changed(const Field_info* field_info)
+{ Container::field_changed(field_info); }
 
 //! \brief processes change of geometry.
 void Shape::geometry_changed(const Field_info* field_info)
@@ -455,7 +458,6 @@ void Shape::geometry_changed(const Field_info* field_info)
     Observer observer(this, field_info);
     if (m_geometry) m_geometry->register_observer(observer);
   }
-  m_dirty_bounding_sphere = true;
   Container::field_changed(field_info);
 }
 
@@ -495,13 +497,15 @@ void Shape::field_changed(const Field_info* field_info)
 {
   switch (field_info->get_id()) {
    case GEOMETRY:
+    m_dirty_geometry = false;
     m_dirty_bounding_sphere = true;
     break;
 
    case APPEARANCE:
-    m_dirty = true;
-    m_dirty_appearance = true;
+    m_dirty_appearance = false;
+    if (m_appearance) m_dirty_appearance_fields = true;
     break;
+
    default: break;
   }
   Node::field_changed(field_info);
@@ -522,7 +526,10 @@ void Shape::write(Formatter* formatter)
    */
   SGAL_assertion(!dynamic_cast<Stl_binary_formatter*>(formatter));
 
-  if (m_dirty) clean();
+  if (m_dirty_geometry) clean_geometry();
+  if (m_dirty_appearance) clean_appearance();
+  if (m_dirty_appearance_fields) clean_appearance_fields();
+
   auto* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
   auto* obj_formatter = dynamic_cast<Obj_formatter*>(formatter);
   if (stl_formatter || obj_formatter) {

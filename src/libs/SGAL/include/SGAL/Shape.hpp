@@ -240,8 +240,17 @@ public:
   /*! Set the rendering priority. */
   void set_priority(Float priority);
 
-  /*! Clean the node before drawing. */
-  void clean();
+  /*! Cleane the geometry.
+   */
+  virtual void clean_geometry();
+
+  /*! Cleane the appearance.
+   */
+  void clean_appearance();
+
+  /*! Clean the appearance fields.
+   */
+  void clean_appearance_fields();
 
   /*! Process change of appearance. */
   void appearance_changed(const Field_info* field_info);
@@ -334,13 +343,16 @@ private:
   /* A flag that indicates whether backface drawing is required. */
   Boolean m_draw_backface;
 
-  /*! Indicates whether the shape is dirty, and thus needs cleaning. */
-  Boolean m_dirty;
+  /*! Indicates whether the shape geometry is dirty, and thus needs cleaning.
+   */
+  Boolean m_dirty_geometry;
 
-  /*! Indicates whether the shape appearance is dirty, and thus needs
-   * cleaning.
+  /*! Indicates whether the shape appearance is dirty, and thus needs cleaning.
    */
   Boolean m_dirty_appearance;
+
+  /*! Indicates whether the shape is dirty, and thus needs cleaning. */
+  Boolean m_dirty_appearance_fields;
 
   /*! Indicates whether to apply texture mapping. */
   Boolean m_texture_map;
@@ -399,11 +411,9 @@ private:
    */
   Boolean m_override_light_enable;
 
-  /*! Draw the geometry. */
+  /*! Draw the geometry.
+   */
   void draw_geometry(Draw_action* draw_action);
-
-  /*! Cleane the appearance. */
-  void clean_appearance();
 
   static const Boolean s_def_is_visible;
   static const Vector2f s_def_depth_range;
