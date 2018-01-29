@@ -1,4 +1,3 @@
-Container
 # Name                 Type                       Rule           Default  Execution Function             Description
 # -------------------- -------------------------- -------------- -------- ------------------------------ --------------------
 height                 Float                      EXPOSED_FIELD  400      ""                             "height of the store walls"
