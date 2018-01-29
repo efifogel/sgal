@@ -31,7 +31,7 @@ function(add_node name)
   add_custom_command(OUTPUT ${GEN_NODE_OUTPUT}
                      COMMAND ${GEN_NODE}
 	             ARGS ${GEN_NODE_ARGS}
-	             DEPENDS ${SPECS_DIR}/${name}_spec.txt ${GEN_NODE})
+	             DEPENDS ${SPECS_DIR}/${name}.cfg ${GEN_NODE})
   set(FPG_AUTO_GENERATED_HDR_FILES ${FPG_AUTO_GENERATED_HDR_FILES} ${GENERATED_INC_DIR}/FPG/${name}.hpp CACHE INTERNAL "")
   set(FPG_AUTO_GENERATED_SRC_FILES ${FPG_AUTO_GENERATED_SRC_FILES} ${GENERATED_LIB_DIR}/${name}.cpp CACHE INTERNAL "")
 
@@ -56,6 +56,7 @@ add_node(Wall)
 
 # Add source files
 set(FPG_SRC_FILES ${FPG_SRC_FILES} lib/init.cpp)
+set(FPG_SRC_FILES ${FPG_SRC_FILES} lib/Column_impl.cpp)
 
 # Engines
 set(FPG_SRC_FILES ${FPG_SRC_FILES} lib/engines/Floor_plan_evaluator.cpp)
