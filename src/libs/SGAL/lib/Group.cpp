@@ -116,7 +116,6 @@ void Group::add_child(Shared_container node)
   }
 
   m_childs.push_back(node);
-  m_dirty_bounding_sphere = true;
   const auto* field_info = get_field_info(BOUNDING_SPHERE);
   Observer observer(this, field_info);
   node->register_observer(observer);
@@ -143,7 +142,6 @@ void Group::remove_child(Shared_container node)
   const auto* field_info = get_field_info(BOUNDING_SPHERE);
   Observer observer(this, field_info);
   node->unregister_observer(observer);
-  m_dirty_bounding_sphere = true;
   m_childs.erase(std::remove(m_childs.begin(), m_childs.end(), node),
                  m_childs.end());
 
@@ -492,6 +490,7 @@ void Group::field_changed(const Field_info* field_info)
    case BOUNDING_SPHERE:
     m_dirty_bounding_sphere = true;
     break;
+
    default: break;
   }
   Node::field_changed(field_info);
