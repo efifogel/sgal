@@ -28,10 +28,14 @@ function(add_node name)
     --input-path ${SPECS_DIR}
     --output-inc-path ${GENERATED_INC_DIR}/FPG
     --output-lib-path ${GENERATED_LIB_DIR})
+  set (GEN_NODE_DEPENDS
+      ${SPECS_DIR}/${name}.cfg
+      ${SPECS_DIR}/${name}_fields_spec.txt
+      ${GEN_NODE})
   add_custom_command(OUTPUT ${GEN_NODE_OUTPUT}
                      COMMAND ${GEN_NODE}
 	             ARGS ${GEN_NODE_ARGS}
-	             DEPENDS ${SPECS_DIR}/${name}.cfg ${GEN_NODE})
+	             DEPENDS ${GEN_NODE_DEPENDS})
   set(FPG_AUTO_GENERATED_HDR_FILES ${FPG_AUTO_GENERATED_HDR_FILES} ${GENERATED_INC_DIR}/FPG/${name}.hpp CACHE INTERNAL "")
   set(FPG_AUTO_GENERATED_SRC_FILES ${FPG_AUTO_GENERATED_SRC_FILES} ${GENERATED_LIB_DIR}/${name}.cpp CACHE INTERNAL "")
 
