@@ -29,7 +29,7 @@
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Vector3f.hpp"
-#include "SGAL/Vector2f.hpp"
+#include "SGAL/add_triangle_indices.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -271,18 +271,6 @@ private:
   static const Boolean s_def_cross_section_closed;
   static const Float s_def_cross_section_radius;
   static const Uint s_def_cross_section_slices;
-
-  /*! Add triangle indices given four points that form a quad.
-   * \param k (in) the index into the coordinate indices array.
-   * \param indices (out) the array of indices.
-   * \param ll (in) lower left corner.
-   * \param lr (in) lower right corner.
-   * \param ur (in) upper right corner.
-   * \param ul (in) upper left corner.
-   * \return the size of the coordinate indices array after the addition.
-   */
-  size_t add_triangle_indices(size_t k, Triangle_indices& indices,
-                              Uint ll, Uint lr, Uint ur, Uint ul);
 };
 
 #if defined(_MSC_VER)

@@ -418,10 +418,11 @@ void Extrusion::clean_coords()
   size_t cross_section_size =
     (cross_section_loop) ? m_cross_section.size() - 1 : m_cross_section.size();
 
-  Uint size = cross_section_size * m_spine.size();
+  auto spine_size = m_spine.size();
+  auto size = cross_section_size * spine_size;
   coord_array->resize(size);
 
-  Uint j, i, k = 0;
+  size_t k(0);
   const Vector3f vert(0, 1, 0);
   const Vector3f hor(0, 0, 1);
   Vector3f vec(vert);
@@ -430,7 +431,7 @@ void Extrusion::clean_coords()
 
   // First:
   if (m_loop) {
-    vec.sub(m_spine[0], m_spine[m_spine.size()-1]);
+    vec.sub(m_spine[0], m_spine[spine_size-1]);
     vec.normalize();
     float my_cos = vec.dot(vert);
     float angle = arccosf(my_cos);
@@ -478,7 +479,7 @@ void Extrusion::clean_coords()
   else {
     mat.make_rot(rot.get_axis(), rot.get_angle());
   }
-  for (i = 0; i < cross_section_size; ++i) {
+  for (size_t i = 0; i < cross_section_size; ++i) {
     Vector3f point(m_cross_section[i][0], 0, m_cross_section[i][1]);
     if (m_scale.size() > 0) {
       point[0] *= m_scale[0][0];
@@ -489,7 +490,7 @@ void Extrusion::clean_coords()
   }
 
   // Middle:
-  for (j = 1; j < m_spine.size() - 1; ++j) {
+  for (size_t j = 1; j < spine_size - 1; ++j) {
     Rotation prev_rot(rot);
     Vector3f prev_vec(vec);
     vec.sub(m_spine[j+1], m_spine[j]);
@@ -515,7 +516,7 @@ void Extrusion::clean_coords()
     Rotation applied_rot;
     applied_rot.slerp(0.5f, prev_rot, rot);
     mat.make_rot(applied_rot.get_axis(), applied_rot.get_angle());
-    for (i = 0; i < cross_section_size; ++i) {
+    for (size_t i = 0; i < cross_section_size; ++i) {
       Vector3f point(m_cross_section[i][0], 0, m_cross_section[i][1]);
       if (m_scale.size() > j) {
         point[0] *= m_scale[j][0];
@@ -529,7 +530,7 @@ void Extrusion::clean_coords()
   // Last:
   if (m_loop) {
     Vector3f prev_vec(vec);
-    vec.sub(m_spine[0], m_spine[j]);
+    vec.sub(m_spine[0], m_spine[spine_size - 1]);
     vec.normalize();
     float my_cos = vec.dot(prev_vec);
     angle = arccosf(my_cos);
@@ -556,35 +557,21 @@ void Extrusion::clean_coords()
   else {
     mat.make_rot(rot.get_axis(), rot.get_angle());
   }
-  for (i = 0; i < cross_section_size; ++i) {
+
+  for (size_t i = 0; i < cross_section_size; ++i) {
     Vector3f point(m_cross_section[i][0], 0, m_cross_section[i][1]);
-    if (m_scale.size() > j) {
-      point[0] *= m_scale[j][0];
-      point[2] *= m_scale[j][1];
+    if (m_scale.size() > (spine_size-1)) {
+      point[0] *= m_scale[spine_size-1][0];
+      point[2] *= m_scale[spine_size-1][1];
     }
     point.xform_pt(point, mat);
-    (*coord_array)[k++].add(m_spine[j], point);
+    (*coord_array)[k++].add(m_spine[spine_size-1], point);
   }
 
   set_primitive_type(PT_TRIANGLES);
   set_solid(m_loop || (m_begin_cap && m_end_cap));
 
   coord_content_changed(get_field_info(COORD_ARRAY));
-}
-
-//! \brief adds triangle indices given four points that form a quad.
-size_t Extrusion::add_triangle_indices(size_t k, Triangle_indices& indices,
-                                       Uint ll, Uint lr, Uint ur, Uint ul)
-{
-  indices[k][0] = ll;
-  indices[k][1] = lr;
-  indices[k][2] = ur;
-  ++k;
-  indices[k][0] = ll;
-  indices[k][1] = ur;
-  indices[k][2] = ul;
-  ++k;
-  return k;
 }
 
 //! \brief cleans the coordinate indices.
@@ -603,7 +590,8 @@ void Extrusion::clean_facet_coord_indices()
     cross_section_size : cross_section_size + 1;
 
   // Count:
-  Uint stacks = (m_loop) ? m_spine.size() : m_spine.size() - 1;
+  auto spine_size = m_spine.size();
+  auto stacks = (m_loop) ? spine_size : spine_size - 1;
   m_num_primitives = slices * stacks * 2;
   // Caps are always closed
   if (m_begin_cap) m_num_primitives += cross_section_size - 2;
@@ -612,19 +600,19 @@ void Extrusion::clean_facet_coord_indices()
   // Generate:
   auto& coord_indices = get_empty_triangle_coord_indices();
   coord_indices.resize(m_num_primitives);
-  size_t j, i, k = 0;
-  for (j = 0; j < m_spine.size() - 1; ++j) {
-    Uint start = j * cross_section_size;
+  size_t j, i, k(0);
+  for (j = 0; j < spine_size - 1; ++j) {
+    auto start = j * cross_section_size;
     for (i = 0; i < slices - 1; ++i) {
-      Uint ll = start + i;
-      Uint ul = ll + cross_section_size;
-      Uint lr = ll + 1;
-      Uint ur = ul + 1;
+      auto ll = start + i;
+      auto ul = ll + cross_section_size;
+      auto lr = ll + 1;
+      auto ur = ul + 1;
       k = add_triangle_indices(k, coord_indices, ll, lr, ur, ul);
     }
-    Uint ll = start + i;
-    Uint ul = ll + cross_section_size;
-    Uint lr, ur;
+    auto ll = start + i;
+    auto ul = ll + cross_section_size;
+    size_t lr, ur;
     if (cross_section_closed) {
       lr = ll + 1 - cross_section_size;
       ur = ul + 1 - cross_section_size;
@@ -637,17 +625,17 @@ void Extrusion::clean_facet_coord_indices()
   }
 
   if (m_loop) {
-    Uint start = j * cross_section_size;
+    auto start = j * cross_section_size;
     for (i = 0; i < slices - 1; ++i) {
-      Uint ll = start + i;
-      Uint ul = i;
-      Uint lr = ll + 1;
-      Uint ur = ul + 1;
+      auto ll = start + i;
+      auto ul = i;
+      auto lr = ll + 1;
+      auto ur = ul + 1;
       k = add_triangle_indices(k, coord_indices, ll, lr, ur, ul);
     }
-    Uint ll = start + i;
-    Uint ul = i;
-    Uint lr, ur;
+    auto ll = start + i;
+    auto ul = i;
+    size_t lr, ur;
     if (cross_section_closed) {
       lr = ll + 1 - cross_section_size;
       ur = ul + 1 - cross_section_size;
@@ -661,7 +649,7 @@ void Extrusion::clean_facet_coord_indices()
 
   // Generate caps:
   if (m_begin_cap) {
-    Uint anchor = 0;
+    size_t anchor(0);
     for (i = 0; i < cross_section_size-2; ++i) {
       coord_indices[k][0] = anchor;
       coord_indices[k][1] = anchor + cross_section_size - i - 1;
@@ -671,8 +659,8 @@ void Extrusion::clean_facet_coord_indices()
   }
 
   if (m_end_cap) {
-    Uint offset = cross_section_size * (m_spine.size() - 1);
-    Uint anchor = offset;
+    auto offset = cross_section_size * (spine_size - 1);
+    auto anchor = offset;
     for (i = 0; i < cross_section_size-2; ++i) {
       coord_indices[k][0] = anchor;
       coord_indices[k][1] = anchor + i + 1;
