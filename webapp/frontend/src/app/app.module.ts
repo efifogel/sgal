@@ -27,6 +27,8 @@ import { AWS3Service } from './services/bucket.service';
 
 import { TrimStringPipe } from './utils/pipes/trimString';
 
+const pipes = [TrimStringPipe];
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -41,7 +43,7 @@ import { TrimStringPipe } from './utils/pipes/trimString';
     MatInputModule,
     AppRoutingModule
   ],
-  providers: [CognitoService, AWS3Service],
+  providers: [CognitoService, AWS3Service, ...pipes],
   bootstrap: [AppComponent]
 })
 export class AppModule {

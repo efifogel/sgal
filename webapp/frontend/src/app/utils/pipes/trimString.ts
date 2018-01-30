@@ -1,9 +1,15 @@
-import {Pipe, PipeTransform, Directive, ElementRef, AfterViewInit, Input} from '@angular/core';
+import {
+  Pipe,
+  PipeTransform,
+  Directive,
+  ElementRef,
+  AfterViewInit,
+  Input
+} from '@angular/core';
 
-
-@Pipe({name: 'trimStringUntil'})
+@Pipe({ name: 'trimString' })
 export class TrimStringPipe implements PipeTransform {
-  transform(text: string, delimiter: string): string {
-   return text + delimiter;
+  transform(str: string): string {
+    return str.substring(str.indexOf('/') + 1);
   }
 }
