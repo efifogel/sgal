@@ -8,6 +8,7 @@ import shlex
 from sets import Set
 import ConfigParser, os
 import ast
+import distutils.util
 
 def is_valid_file(parser, arg):
   if not os.path.exists(arg):
@@ -231,6 +232,14 @@ s_field_lexical_cast = {
   'Shared_container_array': [ False, False ]
 }
 
+#! Determines whether the fields contain a geometry node
+def has_geometry_type(fields):
+  for field in fields[:]:
+    geometry = field['geometry']
+    if geometry:
+      return True
+  return False
+
 #! Determines whether the fileds contains an array field
 def has_array_type(fields):
   for field in fields[:]:
@@ -432,22 +441,21 @@ get_prototype_desc = '''/*! Set the attributes of the transform.
 '''
 
 #! Print attribute handling declarations.
-def print_attribute_handlin_declaration(out):
+def print_attribute_handling_declaration(out):
   print_line(out, "virtual void set_attributes(Element* elem);")
 
 #! Print field handling declarations
-def print_field_handlin_declaration(out, args):
+def print_fields_handling_declaration(out, args):
   fields = args[0]
   for field in fields[:]:
     type = field['type']
     name = field['name']
     print_line(out, "%s* %s_handle(const Field_info*) { return &m_%s; }" % (type, name, name));
 
-#! Print setter declaration
+#! Print setter and declaration
 def print_field_setter_declaration(out, field):
   type = field['type']
   name = field['name']
-  type = field['type']
   general_type = get_general_type(type)
   pass_method = s_field_passing_method[general_type]
   desc = field['desc']
@@ -458,6 +466,13 @@ def print_field_setter_declaration(out, field):
     print_line(out, "void set_%s(const %s& %s);" % (name, type, name));
   else:
     raise Exception("Pass method %s is invalid!" % pass_method)
+
+def print_field_adder_declaration(out, field):
+  name = field['name']
+  type = field['type']
+  desc = field['desc']
+  print_line(out, '/*! Add a {} to the array of {}. */'.format(desc[:-1], desc))
+  print_line(out, 'void add_{}({} {});'.format(name[:-1], type[:-6], name[:-1]));
 
 #! Print setter declaration
 def print_field_getter_declaration(out, field):
@@ -482,23 +497,31 @@ def print_field_getter_declaration(out, field):
     raise Exception("Pass method %s is invalid!" % pass_method)
 
 #! Print setter definition
-def print_field_setter_definition(out, class_name, field):
+def print_hpp_field_setter_definition(out, class_name, field):
   type = field['type']
   name = field['name']
-  type = field['type']
   general_type = get_general_type(type)
   pass_method = s_field_passing_method[general_type]
   desc = field['desc']
-  print_line(out, "//! \\brief sets the %s." % desc)
+  print_line(out, '//! \\brief sets the {}.'.format(desc))
   if pass_method == 'value':
-    print_line(out, "inline void %s::set_%s(%s %s)" % (class_name, name, type, name))
+    print_line(out, 'inline void {}::set_{}({} {})'.format(class_name, name, type, name))
   elif pass_method == 'reference':
-    print_line(out, "inline void %s::set_%s(const %s& %s)" % (class_name, name, type, name))
+    print_line(out, 'inline void {}::set_{}(const {}& {})'.format(class_name, name, type, name))
   else:
-    raise Exception("Pass method %s is invalid!" % pass_method)
-  print_line(out , "{ m_%s = %s; }" % (name, name))
+    raise Exception('Pass method {} is invalid!'.format(pass_method))
+  print_line(out , '{{ m_{} = {}; }}'.format(name, name))
 
 #! Print setter definition
+def print_hpp_field_adder_definition(out, class_name, field):
+  type = field['type']
+  name = field['name']
+  desc = field['desc']
+  print_line(out, '//! \\brief adds a {} to the array of {}..'.format(desc[:-1], desc))
+  print_line(out, 'inline void {}::add_{}({} {})'.format(class_name, name[:-1], type[:-6], name[:-1]))
+  print_line(out , '{{ m_{}.push_back({}); }}'.format(name, name[:-1]))
+
+#! Print getter definition
 def print_field_getter_definition(out, class_name, field):
   type = field['type']
   name = field['name']
@@ -534,19 +557,25 @@ def print_field_getter_definition(out, class_name, field):
     raise Exception("Pass method %s is invalid!" % pass_method)
 
 #! Handle field setter & getter declarations
-def print_field_setter_getter_declarations(out, field, last=False):
+def print_field_manipulators_declarations(out, field, last=False):
   print_field_setter_declaration(out, field)
   print_empty_line(out)
+  type = field['type']
+  general_type = get_general_type(type)
+  field_element_type = s_field_element_type[general_type]
+  if field_element_type == 'multi-container':
+    print_field_adder_declaration(out, field)
+    print_empty_line(out)
   print_field_getter_declaration(out, field)
   if not last: print_empty_line(out)
 
 #! Print getters and setters.
-def print_field_getters_setters_declarations(out, args):
+def print_fields_manipulators_declarations(out, args):
   fields = args[0]
   for field in fields[:-1]:
-    print_field_setter_getter_declarations(out, field)
+    print_field_manipulators_declarations(out, field)
   field = fields[-1]
-  print_field_setter_getter_declarations(out, field, last=True)
+  print_field_manipulators_declarations(out, field, last=True)
 
 #! Print the field data members.
 def print_data_members(out, fields):
@@ -594,18 +623,27 @@ def print_clone_definition(out, class_name):
   print_line(out, "inline Container* %s::clone() { return new %s(); }" %
              (class_name, class_name))
 
-def print_field_setter_getter_definition(out, class_name, field, last=False):
-  print_field_setter_definition(out, class_name, field)
-  print_empty_line(out)
+#! Print the setter, getter, adder, and remover function definition.
+# As a convension, if the field has geometry, the definition of the
+# corresponding setter, adder, remover are placed in the cpp file.
+def print_hpp_field_manipulators_definition(out, class_name, field):
+  geometry = field['geometry']
+  if not geometry:
+    print_hpp_field_setter_definition(out, class_name, field)
+    print_empty_line(out)
+  type = field['type']
+  general_type = get_general_type(type)
+  field_element_type = s_field_element_type[general_type]
+  if not geometry and field_element_type == 'multi-container':
+    print_hpp_field_adder_definition(out, class_name, field)
+    print_empty_line(out)
   print_field_getter_definition(out, class_name, field)
-  if not last: print_empty_line(out)
+  print_empty_line(out)
 
-#! Print declarations of field setters and getters:
-def print_field_getters_setters_definitions(out, class_name, fields):
-  for field in fields[:-1]:
-    print_field_setter_getter_definition(out, class_name, field)
-  field = fields[-1]
-  print_field_setter_getter_definition(out, class_name, field, last=True)
+#! Print declarations of field setters, getters, adders, and removers:
+def print_hpp_field_manipulators_definitions(out, class_name, fields):
+  for field in fields[:]:
+    print_hpp_field_manipulators_definition(out, class_name, field)
 
 #! Print get_tag() definition.
 def print_get_tag_definition(out, class_name):
@@ -642,6 +680,17 @@ def print_public_functions(config, out):
     print_line(out, ' */')
     print_line(out, signature)
     print_empty_line(out)
+
+# Prototype description.
+field_changed_desc = '''/*! Process change of field.
+ * \param field_info The information record of the field that changed.
+ */
+'''
+#! Print the declaration of the field_changed() member function:
+def print_field_changed_declaration(out):
+  print_block(out, field_changed_desc)
+  print_line(out, "virtual void field_changed(const Field_info* field_info);")
+  print_empty_line(out)
 
 #! Generate the .hpp file
 #! \param config
@@ -684,15 +733,18 @@ def generate_hpp(config, output_path, fields):
 
     # Print attribute handling declarations:
     print_group(out, "Attribute handlers",
-                print_attribute_handlin_declaration)
+                print_attribute_handling_declaration)
 
     # Print field handling declarations:
     print_group(out, "Field handlers",
-                print_field_handlin_declaration, fields)
+                print_fields_handling_declaration, fields)
 
     # Print declarations of field setters and getters:
     print_group(out, "getters & setters",
-                print_field_getters_setters_declarations, fields)
+                print_fields_manipulators_declarations, fields)
+
+    #! Print the declaration of the field_changed() member function:
+    print_field_changed_declaration(out)
 
     # Print additional public functions:
     print_public_functions(config, out)
@@ -722,8 +774,8 @@ def generate_hpp(config, output_path, fields):
     print_empty_line(out)
 
     # Print declarations of field setters and getters:
-    print_field_getters_setters_definitions(out, class_name, fields)
-    print_empty_line(out)
+    print_hpp_field_manipulators_definitions(out, class_name, fields)
+
     print_get_tag_definition(out, class_name)
 
     print_empty_line(out)
@@ -957,7 +1009,6 @@ def print_set_field_from_string(out, field):
 #! Print the code that handles a multi-string attribute.
 def print_set_field_from_multi_string(out, filed):
   name = field['name']
-  print_line(out, 'if (name == \"{}\") {'.format(tmp))
   print_line(out, 'm_{}.resize(value.size());'.format(name))
   print_line(out, 'auto tit = m_{}.begin();'.format(name))
   print_line(out, 'for (auto sit : value) *tit++ = std::move(*sit);')
@@ -968,6 +1019,14 @@ def print_set_field_from_container(out, field):
   type = field['type']
   field_class_type = type[7:].capitalize()
   print_line(out, 'set_{}(boost::dynamic_pointer_cast<{}>(cont));'.format(name, field_class_type))
+
+def print_set_field_from_multi_container(out, field):
+  name = field['name']
+  type = field['type']
+  field_class_type = type[7:][:-6].capitalize()
+  print_line(out, "for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++) {", inc=True)
+  print_line(out, 'add_{}(boost::dynamic_pointer_cast<{}>(*ci));'.format(name[:-1], field_class_type))
+  print_line(out, "}", dec=True)
 
 def print_set_attributes_definition(out, class_name, derived_class_name, fields):
   print_line(out, "//! \\brief sets the attributes of this node.")
@@ -1000,9 +1059,9 @@ def print_set_attributes_definition(out, class_name, derived_class_name, fields)
     print_line(out, "}", dec=True)
     print_empty_line(out)
 
-  # Multi string fields:
+  # Multi-string fields:
   if 0 < len(multi_string_fields):
-    print_line(out, "for (auto msai = elem->multi_str_attrs_begin(); msai != elem->multi_str_attrs_end(); ++msai) {")
+    print_line(out, "for (auto msai = elem->multi_str_attrs_begin(); msai != elem->multi_str_attrs_end(); ++msai) {", inc=True)
     print_line(out, "const auto& name = elem->get_name(msai);")
     print_line(out, "auto& value = elem->get_value(msai);")
     for field in multi_string_fields[:]:
@@ -1020,11 +1079,102 @@ def print_set_attributes_definition(out, class_name, derived_class_name, fields)
       print_set_field(out, field, 'cai', print_set_field_from_container)
     print_line(out, "}", dec=True)
 
-  #! \todo multi-container fields
+  #! Multi-container fields
+  if 0 < len(multi_container_fields):
+    print_line(out, "for (auto mcai = elem->multi_cont_attrs_begin(); mcai != elem->multi_cont_attrs_end(); ++mcai) {", inc=True)
+    print_line(out, "const auto& name = elem->get_name(mcai);")
+    print_line(out, "auto& cont_list = elem->get_value(mcai);")
+    for field in multi_container_fields[:]:
+      print_set_field(out, field, 'mcai', print_set_field_from_multi_container)
+    print_line(out, "}", dec=True)
+    print_empty_line(out)
 
   print_line(out, "// Remove all the deleted attributes:")
   print_line(out, "elem->delete_marked();")
 
+  print_line(out, "}", dec=True)
+  print_empty_line(out)
+
+#! Print statements that register an observer
+def print_register_observer(out, field, single=True):
+  name = field['name']
+  type = field['type']
+  print_line(out, "const auto* field_info = get_field_info(BOUNDING_SPHERE);")
+  print_line(out, "Observer observer(this, field_info);")
+  if single:
+    single_name = name
+    if type.endswith('_array'):
+      single_name = name[:-1]
+    print_line(out, '{}->register_observer(observer);'.format(single_name))
+  else:
+    print_line(out, 'for (auto it = m_{}.begin(); it != m_{}.end(); ++it)'.format(name, name))
+    increase_indent()
+    print_line(out, "(*it)->register_observer(observer);")
+    decrease_indent()
+  print_line(out, "field_changed(field_info);")
+
+#! Print setter definition
+def print_cpp_field_setter_definition(out, class_name, field):
+  type = field['type']
+  name = field['name']
+  general_type = get_general_type(type)
+  pass_method = s_field_passing_method[general_type]
+  desc = field['desc']
+  print_line(out, '//! \\brief sets the {}.'.format(desc))
+  if pass_method == 'value':
+    print_line(out, 'void {}::set_{}({} {})'.format(class_name, name, type, name))
+  elif pass_method == 'reference':
+    print_line(out, 'void {}::set_{}(const {}& {})'.format(class_name, name, type, name))
+  else:
+    raise Exception('Pass method {} is invalid!'.format(pass_method))
+  print_line(out, "{", inc=True)
+  print_line(out, 'm_{} = {};'.format(name, name));
+  is_single_type = not type.endswith('_array')
+  print_register_observer(out, field, single=is_single_type)
+  print_line(out, "}", dec=True)
+
+#! Print setter definition
+def print_cpp_field_adder_definition(out, class_name, field):
+  type = field['type']
+  name = field['name']
+  desc = field['desc']
+  print_line(out, '//! \\brief adds a {} to the array of {}..'.format(desc[:-1], desc))
+  print_line(out, 'void {}::add_{}({} {})'.format(class_name, name[:-1], type[:-6], name[:-1]))
+  print_line(out, "{", inc=True)
+  print_line(out , 'm_{}.push_back({});'.format(name, name[:-1]))
+  print_register_observer(out, field, single=True)
+  print_line(out, "}", dec=True)
+
+#! Print the setter, getter, adder, and remover function definition.
+# As a convension, if the field has geometry, the definition of the
+# corresponding setter, adder, remover are placed in the cpp file.
+def print_cpp_field_manipulators_definition(out, class_name, field):
+  geometry = field['geometry']
+  if geometry:
+    print_cpp_field_setter_definition(out, class_name, field)
+    print_empty_line(out)
+  type = field['type']
+  general_type = get_general_type(type)
+  field_element_type = s_field_element_type[general_type]
+  if geometry and field_element_type == 'multi-container':
+    print_cpp_field_adder_definition(out, class_name, field)
+    print_empty_line(out)
+
+#! Print declarations of field setters and getters:
+def print_cpp_field_manipulators_definitions(out, class_name, fields):
+  for field in fields[:]:
+    print_cpp_field_manipulators_definition(out, class_name, field)
+
+ #! Print the definition of the field_changed() member function.
+def print_field_changed_definition(out, class_name):
+  print_line(out, "//! \\brief processes change of field.")
+  print_line(out, 'void {}::field_changed(const Field_info* field_info)'.format(class_name))
+  print_line(out, "{", inc=True)
+  print_line(out, "switch (field_info->get_id()) {", inc=True)
+  print_line(out, "case BOUNDING_SPHERE: m_dirty_bounding_sphere = true; break;")
+  print_line(out, "default: break;")
+  print_line(out, "}", dec=True)
+  print_line(out, "Node::field_changed(field_info);")
   print_line(out, "}", dec=True)
   print_empty_line(out)
 
@@ -1062,6 +1212,17 @@ def generate_cpp(config, output_path, fields):
     print_destructor_definition(out, class_name, fields)
     print_prototype_handling_definitions(out, class_name, derived_class_name, fields)
     print_set_attributes_definition(out, class_name, derived_class_name, fields)
+
+    # Print getters, setters, adders, and removers:
+    cpp_fields = []
+    for field in fields[:]:
+      geometry = field['geometry']
+      if geometry:
+        cpp_fields.append(field)
+
+    if 0 < len(cpp_fields):
+      print_cpp_field_manipulators_definitions(out, class_name, cpp_fields)
+      print_field_changed_definition(out, class_name)
 
     print_line(out, "SGAL_END_NAMESPACE")
 
@@ -1137,7 +1298,8 @@ if __name__ == '__main__':
         rule = vals[2]
         default_value = vals[3]
         execution_function = vals[4]
-        desc = vals[5].strip('\"')
+        geometry = vals[5]
+        desc = vals[6].strip('\"')
         # Assume that a type that starts with 'Shared' is either a shared
         # container or a shared container array.
         if not type.startswith('Shared_'):
@@ -1149,6 +1311,7 @@ if __name__ == '__main__':
           'rule': rule,
           'default-value': default_value,
           'execution-function': execution_function,
+          'geometry': distutils.util.strtobool(geometry),
           'desc': desc
         }
         fields.append(field)

@@ -1,6 +1,6 @@
-# Name                 Type                       Rule           Default  Execution Function             Description
-# -------------------- -------------------------- -------------- -------- ------------------------------ --------------------
-height                 Float                      EXPOSED_FIELD  400      ""                             "height of the store walls"
-cabinet                Shared_cabinet             EXPOSED_FIELD  ""       ""                             "counter cabinet (typically located behind the cashier area)"
-counter                Shared_counter             EXPOSED_FIELD  ""       ""                             "counter itself"
-shapes                 Shared_container_array     EXPOSED_FIELD  ""       ""                             "other shapes"
+# Name                 Type                       Rule           Default  Execution Function             Geometry Description
+# -------------------- -------------------------- -------------- -------- ------------------------------ -------- --------------------
+height                 Float                      EXPOSED_FIELD  400      ""                             false    "height of the store walls"
+cabinet                Shared_cabinet             EXPOSED_FIELD  ""       ""                             true     "counter cabinet (typically located behind the cashier area)"
+counter                Shared_counter             EXPOSED_FIELD  ""       ""                             true     "counter itself"
+shapes                 Shared_container_array     EXPOSED_FIELD  ""       ""                             true     "other shapes"

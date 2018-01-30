@@ -1,4 +1,4 @@
-# Name                 Type                       Rule           Default  Execution Function             Description
-# -------------------- -------------------------- -------------- -------- ------------------------------ --------------------
-location               Vector2f                   EXPOSED_FIELD  "0,0"    ""                             "location of the counter area relative to the store coordinate system"
-outerBoundary          Vector2f_array             EXPOSED_FIELD  ""       ""                             "outer boundary as a ccw sequence of 2D points on the horizontal plane"
+# Name                 Type                       Rule           Default  Execution Function             Geometry Description
+# -------------------- -------------------------- -------------- -------- ------------------------------ -------- --------------------
+location               Vector2f                   EXPOSED_FIELD  "0,0"    ""                             false    "location of the counter area relative to the store coordinate system"
+outerBoundary          Vector2f_array             EXPOSED_FIELD  ""       ""                             false    "outer boundary as a ccw sequence of 2D points on the horizontal plane"

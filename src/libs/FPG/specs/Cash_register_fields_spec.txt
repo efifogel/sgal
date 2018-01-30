@@ -1,7 +1,7 @@
-# Name                 Type                       Rule           Default  Execution Function             Description
-# -------------------- -------------------------- -------------- -------- ------------------------------ --------------------
-location               Vector2f                   EXPOSED_FIELD  "0,0"    ""                             "location of the cach register relative to the Counter coordinate system"
-outer_boundary         Vector2f_array             EXPOSED_FIELD  ""       ""                             "outer boundary as a ccw sequence of 2D points on the horizontal plane"
-depth                  Float                      EXPOSED_FIELD  60       ""                             "cash-register depth"
-width                  Float                      EXPOSED_FIELD  60       ""                             "cash-register width"
-height                 Float                      EXPOSED_FIELD  400      ""                             "cash-register height"
+# Name                 Type                       Rule           Default  Execution Function             Geometry Description
+# -------------------- -------------------------- -------------- -------- ------------------------------ -------- --------------------
+location               Vector2f                   EXPOSED_FIELD  "0,0"    ""                             false    "location of the cach register relative to the Counter coordinate system"
+outer_boundary         Vector2f_array             EXPOSED_FIELD  ""       ""                             false    "outer boundary as a ccw sequence of 2D points on the horizontal plane"
+depth                  Float                      EXPOSED_FIELD  60       ""                             false    "cash-register depth"
+width                  Float                      EXPOSED_FIELD  60       ""                             false    "cash-register width"
+height                 Float                      EXPOSED_FIELD  400      ""                             false    "cash-register height"
