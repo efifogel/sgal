@@ -240,6 +240,23 @@ def has_geometry_type(fields):
       return True
   return False
 
+#! A geometry node is either a geometry container, or a container that
+# inherits from a geometry node, or a container node that contains
+# at least one geometry node.
+# Each field has a Boolean atribute called 'geometry' that determines whether
+# the field is a geometry node. In addition the configuration file of each node
+# has an attribute called 'geometry' that determines wheher the node inherits
+# from a geometry node.
+def is_geometry_node(config, fields):
+  if has_geometry_type(fields):
+    return True
+
+  if not config.has_option('class', 'geometry'):
+    return False
+
+  opt = config.get('class', 'geometry')
+  return distutils.util.strtobool(opt)
+
 #! Determines whether the fileds contains an array field
 def has_array_type(fields):
   for field in fields[:]:
@@ -744,7 +761,8 @@ def generate_hpp(config, output_path, fields):
                 print_fields_manipulators_declarations, fields)
 
     #! Print the declaration of the field_changed() member function:
-    print_field_changed_declaration(out)
+    if is_geometry_node(config, fields):
+      print_field_changed_declaration(out)
 
     # Print additional public functions:
     print_public_functions(config, out)
@@ -1222,6 +1240,8 @@ def generate_cpp(config, output_path, fields):
 
     if 0 < len(cpp_fields):
       print_cpp_field_manipulators_definitions(out, class_name, cpp_fields)
+
+    if is_geometry_node(config, fields):
       print_field_changed_definition(out, class_name)
 
     print_line(out, "SGAL_END_NAMESPACE")
