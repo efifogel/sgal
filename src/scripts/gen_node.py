@@ -595,13 +595,24 @@ def print_fields_manipulators_declarations(out, args):
   print_field_manipulators_declarations(out, field, last=True)
 
 #! Print the field data members.
-def print_data_members(out, fields):
+def print_field_data_members(out, fields):
   for field in fields[:]:
     name = field['name']
     type = field['type']
     desc = field['desc']
     print_line(out, "/*! The %s. */" % desc)
     print_line(out, "%s m_%s;" % (type, name))
+    print_empty_line(out)
+
+def print_protected_data_members(config, out):
+  protected_data = {}
+  if config.has_option('class', 'protected_data'):
+    protected_data = ast.literal_eval(config.get('class', 'protected_data'))
+  for datum in protected_data:
+    desc = config.get(datum, 'desc')
+    declaration = config.get(datum, 'declaration')
+    print_line(out, '/* {} */'.format(desc))
+    print_line(out, declaration)
     print_empty_line(out)
 
 def print_get_tag_declaration(out):
@@ -766,7 +777,8 @@ def generate_hpp(config, fields, out):
   print_line(out, "protected:")
   increase_indent()
 
-  print_data_members(out, fields)
+  print_protected_data_members(config, out)
+  print_field_data_members(out, fields)
   print_get_tag_declaration(out)
 
   decrease_indent()
@@ -890,7 +902,7 @@ def print_static_member_definitions(out, class_name):
   print_empty_line(out)
 
 #! Print constructor definition.
-def print_constructor_definition(out, class_name, derived_class_name, fields):
+def print_constructor_definition(config, out, class_name, derived_class_name, fields):
   print_line(out, '//! \\brief construct from prototype.')
   initializable_fields = []
   for field in fields[:]:
@@ -904,6 +916,13 @@ def print_constructor_definition(out, class_name, derived_class_name, fields):
     print_line(out, '{}::{}(Boolean proto) :'.format(class_name, class_name),
                inc=True)
     print_line(out, '{}(proto),'.format(derived_class_name))
+    protected_data = {}
+    if config.has_option('class', 'protected_data'):
+      protected_data = ast.literal_eval(config.get('class', 'protected_data'))
+      for datum in protected_data:
+        init = config.get(datum, 'initialization')
+        print_line(out, '{},'.format(init))
+
     for field in initializable_fields[:-1]:
       name = field['name']
       print_line(out, 'm_{}(s_def_{}),'.format(name, name))
@@ -1228,7 +1247,7 @@ def generate_cpp(config, fields, out):
   print_empty_line(out)
 
   print_static_member_definitions(out, class_name)
-  print_constructor_definition(out, class_name, derived_class_name, fields)
+  print_constructor_definition(config, out, class_name, derived_class_name, fields)
   print_destructor_definition(out, class_name, fields)
   print_prototype_handling_definitions(out, class_name, derived_class_name, fields)
   print_set_attributes_definition(out, class_name, derived_class_name, fields)

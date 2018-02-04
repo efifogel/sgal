@@ -10,9 +10,14 @@
 
 SGAL_BEGIN_NAMESPACE
 
+//! Associate the node engine with a scene graph.
+void Column::add_to_scene(Scene_graph* scene_graph)
+{ m_scene_graph = scene_graph; }
+
 //! \brief cleans the geometry.
 void Column::clean_geometry()
 {
+  std::cout << "Column::clean_geometry()" << std::endl;
   typedef boost::shared_ptr<Indexed_face_set>       Shared_indexed_face_set;
   Shared_indexed_face_set ifs(new Indexed_face_set);
   SGAL_assertion(ifs);
@@ -20,6 +25,10 @@ void Column::clean_geometry()
 
   const auto& outer_boundary = get_outer_boundary();
   auto size = outer_boundary.size();
+  if (0 == size) {
+    Shape::clean_geometry();
+    return;
+  }
   auto num_vertices = 2 * size;
   auto num_triangles = 4 * (size - 1);
 
@@ -37,8 +46,10 @@ void Column::clean_geometry()
   }
 
   // Construct coord indices
-  auto& indices = ifs->get_empty_triangle_coord_indices();
+  Facet_indices facet_indices;
+  auto& indices = boost::get<Triangle_indices>(facet_indices);
   indices.resize(num_triangles);
+
   // Side:
   size_t k(0);
   for (i = 0; i < size-1; ++i) {
@@ -73,11 +84,13 @@ void Column::clean_geometry()
   }
 
   // Update the Indexed_face_set geometry node:
+  ifs->add_to_scene(m_scene_graph);
+  ifs->set_facet_coord_indices(std::move(facet_indices));
+  ifs->set_coord_array(shared_coords);
   ifs->set_primitive_type(Geo_set::PT_TRIANGLES);
   ifs->set_num_primitives(num_triangles);
   ifs->set_make_consistent(true);
   ifs->set_solid(true);
-  ifs->set_coord_array(shared_coords);
 
   Shape::clean_geometry();
 }
