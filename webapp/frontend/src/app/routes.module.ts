@@ -27,7 +27,7 @@ const authRoutes: Routes = [
 const secureHomeRoutes: Routes = [
   {
     path: '',
-    redirectTo: '/secured',
+    redirectTo: '/secured/dashboard',
     pathMatch: 'full'
   },
   {

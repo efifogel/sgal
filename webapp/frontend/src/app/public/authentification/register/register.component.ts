@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../../../models/user';
-import { CognitoService } from '../../../services/cognito.service';
+import { CognitoService } from '../../../services/AWS/cognito.service';
 
 @Component({
   selector: 'app-register',

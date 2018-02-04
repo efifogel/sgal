@@ -24,7 +24,8 @@
         "../Three-libs/Three.min.js",
         "../Three-libs/OrbitControls.js",
         "../Three-libs/VRMLLoader.js",
-        "../Three-libs/Detector.js"
+        "../Three-libs/Detector.js",
+        "../node_modules/browserfs/dist/browserfs.min.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

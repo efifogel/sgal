@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CognitoService } from '../../../services/cognito.service';
+import { CognitoService } from '../../../services/AWS/cognito.service';
 import { User } from '../../../models/user';
 
 @Component({

@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
-import { AWS3Service } from '../../services/bucket.service';
-import * as S3 from 'aws-sdk/clients/s3';
+import { Component } from "@angular/core";
+import { AWS3Service } from "../../services/AWS/bucket.service";
+import * as S3 from "aws-sdk/clients/s3";
+import { PlayerNotifier } from "../../services/RxJS/player.notify.service";
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  selector: "app-dashboard",
+  templateUrl: "./dashboard.component.html",
+  styleUrls: ["./dashboard.component.scss"]
 })
 export class DashboardComponent {
   dataHasLoaded = false;
@@ -14,9 +15,10 @@ export class DashboardComponent {
   documentTitle: string;
   files: any[];
   clientId: string;
-  constructor(private s3: AWS3Service) {
-    this.clientId = JSON.parse(localStorage.getItem('cognitoClientId'));
+  constructor(private s3: AWS3Service, private playerNotifier: PlayerNotifier) {
+    this.clientId = JSON.parse(localStorage.getItem("cognitoClientId"));
     this.s3.listAlbums(this.clientId, this);
+
   }
   getFileObject(key: string) {
     this.s3.getBucketObject(key, this);
@@ -24,7 +26,7 @@ export class DashboardComponent {
 
   uploadFile(event: any) {
     const files = event.element.target.files;
-    const directory = JSON.parse(localStorage.getItem('cognitoClientId'));
+    const directory = JSON.parse(localStorage.getItem("cognitoClientId"));
     this.s3.uploadDocumentToBucket(directory, files, this);
   }
   /* Callbacks interfaces */
@@ -48,11 +50,11 @@ export class DashboardComponent {
   }
   GetObjectCallback(errorMessage: string, data: any) {
     if (!errorMessage) {
-      console.log(data);
-      this.wrlFile = data.Body;
+      const fileToWrite = atob(String.fromCharCode.apply(null, new Uint16Array(data.Body)));
+      this.wrlFile = fileToWrite;
+      this.playerNotifier.setSelectedFile(fileToWrite);
     } else {
       alert(errorMessage);
     }
   }
-
 }
