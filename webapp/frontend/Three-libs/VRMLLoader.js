@@ -32,6 +32,7 @@ THREE.VRMLLoader.prototype = {
     loader.load(
       url,
       function(text) {
+        console.log(text);
         onLoad(scope.parse(text));
       },
       onProgress,

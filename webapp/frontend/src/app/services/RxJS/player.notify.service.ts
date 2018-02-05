@@ -6,7 +6,7 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 export class PlayerNotifier {
     private selectedFile$: BehaviorSubject<any>;
     constructor() {
-        this.selectedFile$ = new BehaviorSubject<any>({});
+        this.selectedFile$ = new BehaviorSubject<any>('');
     }
     setSelectedFile(buffer: any) {
         this.selectedFile$.next(buffer);
