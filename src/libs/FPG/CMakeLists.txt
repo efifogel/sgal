@@ -60,7 +60,11 @@ add_node(Wall)
 
 # Add source files
 set(FPG_SRC_FILES ${FPG_SRC_FILES} lib/init.cpp)
+set(FPG_SRC_FILES ${FPG_SRC_FILES} lib/Cabinet_impl.cpp)
+set(FPG_SRC_FILES ${FPG_SRC_FILES} lib/Cash_register_impl.cpp)
 set(FPG_SRC_FILES ${FPG_SRC_FILES} lib/Column_impl.cpp)
+set(FPG_SRC_FILES ${FPG_SRC_FILES} lib/Counter_deck_impl.cpp)
+set(FPG_SRC_FILES ${FPG_SRC_FILES} lib/Wall_impl.cpp)
 
 # Engines
 set(FPG_SRC_FILES ${FPG_SRC_FILES} lib/engines/Floor_plan_evaluator.cpp)

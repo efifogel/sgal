@@ -3,4 +3,4 @@
 location               Vector2f                   EXPOSED_FIELD  "0,0"    ""                             false    "location of the counter relative to the embedding coordinate system"
 outer_boundary,        Vector2f_array,            EXPOSED_FIELD, ,        ""                             false    "outer boundary as a ccw sequence of 2D points on the horizontal plane"
 height,                Float,                     EXPOSED_FIELD, 400,     ""                             false    "height of the room"
-shapes,                Shared_container_array,    EXPOSED_FIELD, ,        ""                             true     "other shapes"
+# shapes,                Shared_container_array,    EXPOSED_FIELD, ,        ""                             true     "other shapes"

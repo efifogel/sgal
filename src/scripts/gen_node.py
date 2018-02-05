@@ -46,7 +46,6 @@ s_field_type = {
   'Scene_time': 'SF_time',
   'Vector2f': 'SF_vector2f',
   'Vector3f': 'SF_vector3f',
-  'Vector3f': 'SF_color',
   'Vector4f': 'SF_vector4f',
   'Rotation': 'SF_rotation',
   'Bounding_sphere': 'SF_bounding_sphere',
@@ -60,7 +59,6 @@ s_field_type = {
   'Scene_time_array': 'MF_time',
   'Vector2f_array': 'MF_vector2f',
   'Vector3f_array': 'MF_vector3f',
-  'Vector3f_array': 'MF_color',
   'Vector4f_array': 'MF_vector4f',
   'Rotation_array': 'MF_rotation',
   'Bounding_sphere_array': 'MF_bounding_sphere',
@@ -78,7 +76,6 @@ s_field_handle_type = {
   'Scene_time': 'Scene_time_handle_function',
   'Vector2f': 'Vector2f_handle_function',
   'Vector3f': 'Vector3f_handle_function',
-  'Vector3f': 'Vector3f_handle_function',
   'Vector4f': 'Vector4f_handle_function',
   'Rotation': 'Rotation_handle_function',
   'Bounding_sphere': ' Bounding_sphere_handle_function',
@@ -91,7 +88,6 @@ s_field_handle_type = {
   'Int32_array': 'Int32_array_handle_function',
   'Scene_time_array': 'Scene_time_array_handle_function',
   'Vector2f_array': 'Vector2f_array_handle_function',
-  'Vector3f_array': 'Vector3f_array_handle_function',
   'Vector3f_array': 'Vector3f_array_handle_function',
   'Vector4f_array': 'Vector4f_array_handle_function',
   'Rotation_array': 'Rotation_array_handle_function',
@@ -110,7 +106,6 @@ s_field_passing_method = {
   'Scene_time': 'value',
   'Vector2f': 'reference',
   'Vector3f': 'reference',
-  'Vector3f': 'reference',
   'Vector4f': 'reference',
   'Rotation': 'reference',
   'Bounding_sphere': 'reference',
@@ -123,7 +118,6 @@ s_field_passing_method = {
   'Int32_array': 'reference',
   'Scene_time_array': 'reference',
   'Vector2f_array': 'reference',
-  'Vector3f_array': 'reference',
   'Vector3f_array': 'reference',
   'Vector4f_array': 'reference',
   'Rotation_array': 'reference',
@@ -144,7 +138,6 @@ s_field_return_qualification = {
   'Scene_time': False,
   'Vector2f': True,
   'Vector3f': True,
-  'Vector3f': True,
   'Vector4f': True,
   'Rotation': True,
   'Bounding_sphere': True,
@@ -157,7 +150,6 @@ s_field_return_qualification = {
   'Int32_array': True,
   'Scene_time_array': True,
   'Vector2f_array': True,
-  'Vector3f_array': True,
   'Vector3f_array': True,
   'Vector4f_array': True,
   'Rotation_array': True,
@@ -176,7 +168,6 @@ s_field_element_type = {
   'Scene_time': 'string',
   'Vector2f': 'string',
   'Vector3f': 'string',
-  'Vector3f': 'string',
   'Vector4f': 'string',
   'Rotation': 'string',
   'Bounding_sphere': 'string',
@@ -189,7 +180,6 @@ s_field_element_type = {
   'Int32_array': 'string',
   'Scene_time_array': 'string',
   'Vector2f_array': 'string',
-  'Vector3f_array': 'string',
   'Vector3f_array': 'string',
   'Vector4f_array': 'string',
   'Rotation_array': 'string',
@@ -210,7 +200,6 @@ s_field_lexical_cast = {
   'Scene_time': [ True, False ],
   'Vector2f': [ True, True ],
   'Vector3f': [ True, True ],
-  'Vector3f': [ True, True ],
   'Vector4f': [ True, True ],
   'Rotation': [ True, True ],
   'Bounding_sphere': [ True, True ],
@@ -224,12 +213,41 @@ s_field_lexical_cast = {
   'Scene_time_array': [ True, False ],
   'Vector2f_array': [ True, True ],
   'Vector3f_array': [ True, True ],
-  'Vector3f_array': [ True, True ],
   'Vector4f_array': [ True, True ],
   'Rotation_array': [ True, True ],
   'Bounding_sphere_array': [ True, True ],
   'String_array': [ False, False ],
   'Shared_container_array': [ False, False ]
+}
+
+# Map from C++ types to feild size
+s_field_size = {
+  # Single field
+  'Boolean': 1,
+  'Float': 1,
+  'Uint': 1,
+  'Int32': 1,
+  'Scene_time': 1,
+  'Vector2f': 2,
+  'Vector3f': 3,
+  'Vector4f': 4,
+  'Rotation': 4,
+  'Bounding_sphere': 4,
+  'String': 1,
+  'Shared_container': 1,
+  # Multi field
+  'Boolean_array': 0,
+  'Float_array': 0,
+  'Uint_array': 0,
+  'Int32_array': 0,
+  'Scene_time_array': 0,
+  'Vector2f_array': 0,
+  'Vector3f_array': 0,
+  'Vector4f_array': 0,
+  'Rotation_array': 0,
+  'Bounding_sphere_array': 0,
+  'String_array': 0,
+  'Shared_container_array': 0
 }
 
 #! Determines whether the fields contain a geometry node
@@ -829,6 +847,8 @@ def print_cpp_include_directives(out, fields):
   include_boost_lexical_case = False
   include_boost = False
 
+  include_multi_istream_iterator = False;
+
   field_names_shared_container = set()
   field_names_lexical_cast = set()
   for field in fields[:]:
@@ -849,6 +869,7 @@ def print_cpp_include_directives(out, fields):
             include_sstream = True
             include_iterator = True
             include_algorithm = True
+            include_multi_istream_iterator = True
 
       if single_type.startswith('Shared_'):
         field_class_type = single_type[7:].capitalize()
@@ -880,6 +901,8 @@ def print_cpp_include_directives(out, fields):
   print_line(out, "#include \"SGAL/Container_proto.hpp\"")
   print_line(out, "#include \"SGAL/Field_infos.hpp\"")
   print_line(out, "#include \"SGAL/Field.hpp\"")
+  if include_multi_istream_iterator:
+    print_line(out, "#include \"SGAL/multi_istream_iterator.hpp\"")
   for item in set(field_names_lexical_cast):
     print_line(out, '#include \"SGAL/lexical_cast_{}.hpp\"'.format(item))
   print_empty_line(out)
@@ -1044,10 +1067,11 @@ def print_set_field_from_string(out, field):
 
   print_line(out, 'std::stringstream ss(value);')
   single_type = get_single_type(type)
-  statement = '''std::transform(std::istream_iterator<String>(ss),
-                     std::istream_iterator<String>(),
+  size = s_field_size[single_type]
+  statement = '''std::transform(multi_istream_iterator<{}>(ss),
+                     multi_istream_iterator<{}>(),
                      std::back_inserter(m_{}),
-                     &boost::lexical_cast<{}, String>);'''.format(name, single_type)
+                     &boost::lexical_cast<{}, String>);'''.format(size, size, name, single_type)
   print_call(out, statement)
 
 #! Print the code that handles a multi-string attribute.

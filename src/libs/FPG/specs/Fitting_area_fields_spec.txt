@@ -3,5 +3,5 @@
 location               Vector2f                   EXPOSED_FIELD  "0,0"    ""                             false    "location of the fitting area relative to the store floor-plane coordinate system"
 outer_boundary         Vector2f_array             EXPOSED_FIELD  ""       ""                             false    "outer boundary as a ccw sequence of 2D points on the horizontal plane"
 height                 Float                      EXPOSED_FIELD  400      ""                             false    "height of the store walls"
-fitting_rooms          Shared_fitting_room_array  EXPOSED_FIELD  Cabinet  ""                             true     "fitting rooms"
-shapes                 Shared_container_array     EXPOSED_FIELD  ""       ""                             true     "other shapes"
+# fitting_rooms          Shared_fitting_room_array  EXPOSED_FIELD  ""       ""                             true     "fitting rooms"
+# shapes                 Shared_container_array     EXPOSED_FIELD  ""       ""                             true     "other shapes"

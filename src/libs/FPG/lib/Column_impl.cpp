@@ -17,7 +17,6 @@ void Column::add_to_scene(Scene_graph* scene_graph)
 //! \brief cleans the geometry.
 void Column::clean_geometry()
 {
-  std::cout << "Column::clean_geometry()" << std::endl;
   typedef boost::shared_ptr<Indexed_face_set>       Shared_indexed_face_set;
   Shared_indexed_face_set ifs(new Indexed_face_set);
   SGAL_assertion(ifs);
@@ -42,7 +41,7 @@ void Column::clean_geometry()
     auto x = (*it)[0];
     auto y = (*it)[1];
     (*coords)[i].set(x, y, z);
-    (*coords)[i + size].set(x, y, z + get_height());
+    (*coords)[size + i++].set(x, y, z + get_height());
   }
 
   // Construct coord indices

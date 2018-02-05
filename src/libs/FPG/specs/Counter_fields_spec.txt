@@ -2,5 +2,5 @@
 # -------------------- -------------------------- -------------- -------- ------------------------------ -------- --------------------
 location               Vector2f                   EXPOSED_FIELD  "0,0"    ""                             false    "location of the counter relative to the counter-area coordinate system"
 outer_boundary         Vector2f_array             EXPOSED_FIELD  ""       ""                             false    "outer boundary as a ccw sequence of 2D points on the horizontal plane"
-counter_deck           Shared_counter_deck        EXPOSED_FIELD  ""       ""                             true     "counter deck"
-cash_registers         Shared_cash_register_array EXPOSED_FIELD  ""       ""                             true     "cash registers"
+# counter_deck           Shared_counter_deck        EXPOSED_FIELD  ""       ""                             true     "counter deck"
+# cash_registers         Shared_cash_register_array EXPOSED_FIELD  ""       ""                             true     "cash registers"
