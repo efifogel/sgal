@@ -3,6 +3,8 @@ import { AWS3Service } from "../../services/AWS/bucket.service";
 import * as S3 from "aws-sdk/clients/s3";
 import { PlayerNotifier } from "../../services/RxJS/player.notify.service";
 
+
+
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",
@@ -50,7 +52,7 @@ export class DashboardComponent {
   }
   GetObjectCallback(errorMessage: string, data: any) {
     if (!errorMessage) {
-      const fileToWrite = atob(String.fromCharCode.apply(null, new Uint16Array(data.Body)));
+      const fileToWrite = String.fromCharCode.apply(null, new Uint16Array(data.Body));
       this.wrlFile = fileToWrite;
       this.playerNotifier.setSelectedFile(fileToWrite);
     } else {
