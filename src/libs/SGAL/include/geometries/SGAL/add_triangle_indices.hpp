@@ -26,8 +26,8 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! Add triangle indices given four points that form a quad.
- * \param k[in] the size of the coordinate indices array before the addition.
  * \param indices[out] the array of indices into triangles.
+ * \param index[in] the size of the coordinate indices array before the addition.
  * \param[in] ll lower left corner.
  * \param[in] lr lower right corner.
  * \param[in] ur upper right corner.
@@ -35,18 +35,18 @@ SGAL_BEGIN_NAMESPACE
  * \return the size of the coordinate indices array after the addition.
  * \pre The indicaes array has the capacity to store additional 2 triangles.
  */
-inline size_t add_triangle_indices(size_t k, Triangle_indices& indices,
+inline size_t add_triangle_indices(Triangle_indices& indices, size_t index,
                                    size_t ll, size_t lr, size_t ur, size_t ul)
 {
-  indices[k][0] = ll;
-  indices[k][1] = lr;
-  indices[k][2] = ur;
-  ++k;
-  indices[k][0] = ll;
-  indices[k][1] = ur;
-  indices[k][2] = ul;
-  ++k;
-  return k;
+  indices[index][0] = ll;
+  indices[index][1] = lr;
+  indices[index][2] = ur;
+  ++index;
+  indices[index][0] = ll;
+  indices[index][1] = ur;
+  indices[index][2] = ul;
+  ++index;
+  return index;
 }
 
 SGAL_END_NAMESPACE

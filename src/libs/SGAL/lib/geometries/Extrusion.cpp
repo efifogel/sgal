@@ -36,6 +36,7 @@
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Tex_coord_array_2d.hpp"
 #include "SGAL/Utilities.hpp"
+#include "SGAL/add_triangle_indices.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -608,7 +609,7 @@ void Extrusion::clean_facet_coord_indices()
       auto ul = ll + cross_section_size;
       auto lr = ll + 1;
       auto ur = ul + 1;
-      k = add_triangle_indices(k, coord_indices, ll, lr, ur, ul);
+      k = add_triangle_indices(coord_indices, k, ll, lr, ur, ul);
     }
     auto ll = start + i;
     auto ul = ll + cross_section_size;
@@ -621,7 +622,7 @@ void Extrusion::clean_facet_coord_indices()
       lr = ll + 1;
       ur = ul + 1;
     }
-    k = add_triangle_indices(k, coord_indices, ll, lr, ur, ul);
+    k = add_triangle_indices(coord_indices, k, ll, lr, ur, ul);
   }
 
   if (m_loop) {
@@ -631,7 +632,7 @@ void Extrusion::clean_facet_coord_indices()
       auto ul = i;
       auto lr = ll + 1;
       auto ur = ul + 1;
-      k = add_triangle_indices(k, coord_indices, ll, lr, ur, ul);
+      k = add_triangle_indices(coord_indices, k, ll, lr, ur, ul);
     }
     auto ll = start + i;
     auto ul = i;
@@ -644,7 +645,7 @@ void Extrusion::clean_facet_coord_indices()
       lr = ll + 1;
       ur = ul + 1;
     }
-    k = add_triangle_indices(k, coord_indices, ll, lr, ur, ul);
+    k = add_triangle_indices(coord_indices, k, ll, lr, ur, ul);
   }
 
   // Generate caps:
@@ -763,7 +764,7 @@ void Extrusion::clean_facet_tex_coord_indices()
       Uint ul = ll + (slices + 1);
       Uint lr = ll + 1;
       Uint ur = ul + 1;
-      k = add_triangle_indices(k, tex_coord_indices, ll, lr, ur, ul);
+      k = add_triangle_indices(tex_coord_indices, k, ll, lr, ur, ul);
     }
   }
 
