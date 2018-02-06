@@ -30,6 +30,8 @@
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_infos.hpp"
+#include "SGAL/multi_istream_iterator.hpp"
+#include "SGAL/lexical_cast_vector2f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -89,13 +91,11 @@ void Coord_array_2d::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "point") {
-      auto num_values = get_num_tokens(value);
-      auto size = num_values / 3;
-      m_array.resize(size);
-      //! svalue.seekg(0); why this doesn't work?
-      std::istringstream svalue(value, std::istringstream::in);
-      for (auto i = 0; i < size; ++i)
-        svalue >> m_array[i][0] >> m_array[i][1] >> m_array[i][2];
+      std::stringstream ss(value);
+      std::transform(multi_istream_iterator<2>(ss),
+                     multi_istream_iterator<2>(),
+                     std::back_inserter(m_array),
+                     &boost::lexical_cast<Vector2f, String>);
       elem->mark_delete(ai);
     }
   }
