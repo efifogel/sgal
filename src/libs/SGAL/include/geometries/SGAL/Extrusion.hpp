@@ -29,7 +29,6 @@
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Vector3f.hpp"
-#include "SGAL/add_triangle_indices.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
