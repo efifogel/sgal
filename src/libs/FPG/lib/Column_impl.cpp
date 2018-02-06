@@ -23,6 +23,7 @@ void Column::add_to_scene(Scene_graph* scene_graph)
 //! \brief cleans the geometry.
 void Column::clean_geometry()
 {
+#if 0
   typedef boost::shared_ptr<Indexed_face_set>       Shared_indexed_face_set;
   Shared_indexed_face_set ifs(new Indexed_face_set);
   SGAL_assertion(ifs);
@@ -139,6 +140,7 @@ void Column::clean_geometry()
   ifs->set_solid(true);
 
   Shape::clean_geometry();
+#endif
 }
 
 SGAL_END_NAMESPACE

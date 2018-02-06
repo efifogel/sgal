@@ -660,7 +660,7 @@ def print_protected_data_members(config, out):
     desc = config.get(datum, 'desc')
     declaration = config.get(datum, 'declaration')
     print_line(out, '/* {} */'.format(desc))
-    print_line(out, declaration)
+    print_line(out, '{};'.format(declaration))
     print_empty_line(out)
 
 def print_get_tag_declaration(out):
@@ -754,7 +754,7 @@ def print_public_functions(config, out):
     signature = config.get(fnc, 'signature')
     print_line(out, '/* {}'.format(desc))
     print_line(out, ' */')
-    print_line(out, signature)
+    print_line(out, '{};'.format(signature))
     print_empty_line(out)
 
 # Prototype description.

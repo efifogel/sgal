@@ -1,6 +1,7 @@
 #VRML V2.0 utf8
 Configuration {
-  geometryDrawingMode "direct"
+  # geometryDrawingMode "direct"
+  accumulation Accumulation { enabled TRUE }
 }
 Store {
   outerBoundary [0 0, 800 0, 800 800, 0 800]
@@ -8,18 +9,20 @@ Store {
   children
   [
     # Walls
-    Wall {
-      # top FALSE
-      # bottom FALSE
-      outerCcb Coordinate2D {
-        point [0 0, 800 0, 800 800, 0 800]
+    Shape {
+      geometry Wall {
+        # top FALSE
+        # bottom FALSE
+        outerCcb Coordinate2D {
+          point [0 0, 800 0, 800 800, 0 800]
+        }
+        innerCcbs
+        [
+         Coordinate2D {
+           point [20 780, 780 780, 780 20, 20 20]
+         }
+        ]
       }
-      innerCcbs
-      [
-       Coordinate2D {
-         point [20 780, 780 780, 780 20, 20 20]
-       }
-      ]
       appearance DEF APP_WALL Appearance {
         material Material {
           diffuseColor 0.4 0.6 0.4
@@ -27,15 +30,18 @@ Store {
         }
       }
     }
-    Wall {
+    Shape {
+      geometry Wall {}
       appearance USE APP_WALL
     }
 
     # Columns
-    DEF COLUMN1 Column {
-      location 200 200
-      outerCcb DEF COLUMN_COORDS Coordinate2D {
-        point [0 0 40 0 40 40 0 40]
+    Shape {
+      geometry Column {
+        location 200 200
+        outerCcb DEF COLUMN_COORDS Coordinate2D {
+          point [0 0 40 0 40 40 0 40]
+        }
       }
       appearance DEF APP_COLUMN Appearance {
         material Material {
@@ -43,19 +49,25 @@ Store {
         }
       }
     }
-    DEF COLUMN2 Column {
-      location 600 200
-      outerCcb USE COLUMN_COORDS
+    Shape {
+      geometry Column {
+        location 600 200
+        outerCcb USE COLUMN_COORDS
+      }
       appearance USE APP_COLUMN
     }
-    DEF COLUMN2 Column {
-      location 600 600
-      outerCcb USE COLUMN_COORDS
+    Shape {
+      geometry Column {
+        location 600 600
+        outerCcb USE COLUMN_COORDS
+      }
       appearance USE APP_COLUMN
     }
-    DEF COLUMN2 Column {
-      location 200 600
-      outerCcb USE COLUMN_COORDS
+    Shape {
+      geometry Column {
+        location 200 600
+        outerCcb USE COLUMN_COORDS
+      }
       appearance USE APP_COLUMN
     }
 
