@@ -29,8 +29,8 @@ namespace boost {
 template<>
 inline SGAL::Boolean lexical_cast<SGAL::Boolean>(const std::string& str)
 {
-  if (boost::iequals(value, "true")) return true;
-  if (boost::iequals(value, "false")) return false;
+  if (boost::iequals(str, "true")) return true;
+  if (boost::iequals(str, "false")) return false;
   boost::bad_lexical_cast();
 }
 
