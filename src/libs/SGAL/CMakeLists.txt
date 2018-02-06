@@ -149,6 +149,9 @@ set(SGAL_GEOMETRIES_SOURCE_FILES ${SGAL_GEOMETRIES_SOURCE_FILES} lib/geometries/
 set(SGAL_GEOMETRIES_SOURCE_FILES ${SGAL_GEOMETRIES_SOURCE_FILES} lib/geometries/Tex_coord_array_4d.cpp)
 set(SGAL_GEOMETRIES_SOURCE_FILES ${SGAL_GEOMETRIES_SOURCE_FILES} lib/geometries/Text.cpp)
 set(SGAL_GEOMETRIES_SOURCE_FILES ${SGAL_GEOMETRIES_SOURCE_FILES} lib/geometries/Text_3d.cpp)
+
+set(SGAL_GEOMETRIES_HEADER_FILES ${SGAL_GEOMETRIES_HEADER_FILES} include/geometries/SGAL/add_triangle_indices.hpp)
+set(SGAL_GEOMETRIES_HEADER_FILES ${SGAL_GEOMETRIES_HEADER_FILES} include/geometries/SGAL/add_strip_triangle_indices.hpp)
 set(SGAL_GEOMETRIES_HEADER_FILES ${SGAL_GEOMETRIES_HEADER_FILES} include/geometries/SGAL/calculate_multiple_normals_per_vertex.hpp)
 set(SGAL_GEOMETRIES_HEADER_FILES ${SGAL_GEOMETRIES_HEADER_FILES} include/geometries/SGAL/Color_array.hpp)
 set(SGAL_GEOMETRIES_HEADER_FILES ${SGAL_GEOMETRIES_HEADER_FILES} include/geometries/SGAL/Coord_array.hpp)
@@ -480,7 +483,7 @@ set(SGAL_OTHER_SOURCE_FILES ${SGAL_OTHER_SOURCE_FILES} lib/Vertex_shader.cpp)
 set(SGAL_OTHER_SOURCE_FILES ${SGAL_OTHER_SOURCE_FILES} lib/Volume_action.cpp)
 set(SGAL_OTHER_SOURCE_FILES ${SGAL_OTHER_SOURCE_FILES} lib/Surface_area_action.cpp)
 set(SGAL_OTHER_SOURCE_FILES ${SGAL_OTHER_SOURCE_FILES} lib/World_info.cpp)
-set(SGAL_OTHER_HEADER_FILES ${SGAL_OTHER_HEADER_FILES} include/SGAL/Split_connected_components_action.hpp)
+
 set(SGAL_OTHER_HEADER_FILES ${SGAL_OTHER_HEADER_FILES} include/SGAL/construct_triangulation.hpp)
 set(SGAL_OTHER_HEADER_FILES ${SGAL_OTHER_HEADER_FILES} include/SGAL/Font_outliner.hpp)
 set(SGAL_OTHER_HEADER_FILES ${SGAL_OTHER_HEADER_FILES} include/SGAL/Face_nesting_level.hpp)
@@ -488,6 +491,8 @@ set(SGAL_OTHER_HEADER_FILES ${SGAL_OTHER_HEADER_FILES} include/SGAL/Font_style.h
 set(SGAL_OTHER_HEADER_FILES ${SGAL_OTHER_HEADER_FILES} include/SGAL/Polyhedron_attributes.hpp)
 set(SGAL_OTHER_HEADER_FILES ${SGAL_OTHER_HEADER_FILES} include/SGAL/Polyhedron_attributes_action.hpp)
 set(SGAL_OTHER_HEADER_FILES ${SGAL_OTHER_HEADER_FILES} include/SGAL/Polyhedron_attributes_array.hpp)
+set(SGAL_OTHER_HEADER_FILES ${SGAL_OTHER_HEADER_FILES} include/SGAL/multi_istream_iterator.hpp)
+set(SGAL_OTHER_HEADER_FILES ${SGAL_OTHER_HEADER_FILES} include/SGAL/Split_connected_components_action.hpp)
 set(SGAL_SOURCE_FILES ${SGAL_SOURCE_FILES} ${SGAL_OTHER_SOURCE_FILES} ${SGAL_OTHER_HEADER_FILES})
 source_group(src FILES ${SGAL_OTHER_SOURCE_FILES} ${SGAL_OTHER_HEADER_FILES})
 
