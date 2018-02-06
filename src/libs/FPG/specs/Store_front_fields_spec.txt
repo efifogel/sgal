@@ -1,4 +1,5 @@
-# Name                 Type                       Rule           Default  Execution Function             Geometry Description
-# -------------------- -------------------------- -------------- -------- ------------------------------ -------- --------------------
-outer_boundary         Vector2f_array             EXPOSED_FIELD  ""       ""                             false    "outer boundary as a ccw sequence of 2D points on the horizontal plane"
-height                 Float                      EXPOSED_FIELD  400      ""                             false    "height of the store front"
+# Name                 Type                        Rule           Default  Execution Function             Geometry Description
+# -------------------- --------------------------- -------------- -------- ------------------------------ -------- --------------------
+location               Vector2f                    EXPOSED_FIELD  "0,0"    Node::bounding_sphere_changed  false    "Location of the wall relative to the embedding coordinate system"
+outer_ccb              Shared_coord_array_2d       EXPOSED_FIELD  ""       Node::bounding_sphere_changed  false    "outer connected components of the boundary; a ccw sequence of 2D points on the horizontal plane"
+height                 Float                       EXPOSED_FIELD  400      Node::bounding_sphere_changed  false    "height of the store front"

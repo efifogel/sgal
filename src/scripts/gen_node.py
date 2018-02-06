@@ -32,9 +32,22 @@ def find(name, path):
 copyright_text = '''// Copyright (c) 2018 Israel.
 // All rights reserved to Xenia Optimal Ltd.
 '''
-
 indent = 0
 delta = 2
+
+# A set of types defined in SGAL:
+s_sgal_types = {
+  'Color_array',
+  'Coord_array_1d',
+  'Coord_array_2d',
+  'Coord_array_3d',
+  'Coord_array',
+  'Normal_array',
+  'Tex_coord_array_2d',
+  'Tex_coord_array_3d',
+  'Tex_coord_array_4d',
+  'Tex_coord_array'
+}
 
 # Map from C++ types to feild types
 s_field_type = {
@@ -362,42 +375,59 @@ def print_field_enumeration(out, derived_class_name, fields):
 def print_forward_declarations(out, fields):
   print_line(out, 'class Container_proto;')
   print_line(out, 'class Element;')
+  forward_types = set()
   for field in fields[:]:
     type = field['type']
-    if not type.startswith('Shared_'):
-      continue
-    main_type = get_single_type(type[7:])
-    print_line(out, 'class {};'.format(main_type.capitalize()))
+    if type.startswith('Shared_'):
+      main_type = get_single_type(type[7:])
+      forward_types.add(main_type)
+
+  if 0 == len(forward_types):
+    return
+
+  for item in forward_types:
+    print_line(out, 'class {};'.format(item.capitalize()))
   print_empty_line(out)
 
-# Print field typedefs
-def print_typedefs(out, fields):
-  hst = has_shared_type(fields)
-  if (hst):
-    for field in fields[:]:
-      type = field['type']
-      if not type.startswith('Shared_'):
-        continue
+# Print typedef definitions of shared containers.
+def print_shared_typedefs(out, fields):
+  shared_container_types = set()
+  for field in fields[:]:
+    type = field['type']
+    if type.startswith('Shared_'):
       main_type = type[7:]
       if main_type.endswith('_array'):
         main_type = main_type[:-6]
-      statement = 'typedef boost::shared_ptr<{}>'.format(main_type.capitalize())
-      statement = '{:<46}Shared_{};'.format(statement, main_type)
-      print_line(out, statement)
-    print_empty_line(out)
-    # Print declarations of vector arrays:
-    if has_array_type(fields):
-      for field in fields[:]:
-        type = field['type']
-        if not type.startswith('Shared_'):
-          continue
-        main_type = type[7:]
-        if main_type.endswith('_array'):
-          main_type = main_type[:-6]
-          statement = 'typedef std::vector<Shared_{}>'.format(main_type)
-          statement = '{:<46}Shared_{}_array;'.format(statement, main_type)
-          print_line(out, statement)
-      print_empty_line(out)
+      shared_container_types.add(main_type)
+
+  if 0 == len(shared_container_types):
+    return
+
+  for item in shared_container_types:
+    statement = 'typedef boost::shared_ptr<{}>'.format(item.capitalize())
+    statement = '{:<46}Shared_{};'.format(statement, item)
+    print_line(out, statement)
+  print_empty_line(out)
+
+# Print typedef definitions of vectors of shared container.
+def print_array_typedefs(out, fields):
+  shared_array_container_types = set()
+  for field in fields[:]:
+    type = field['type']
+    if type.startswith('Shared_'):
+      main_type = type[7:]
+      if main_type.endswith('_array'):
+        main_type = main_type[:-6]
+        shared_array_container_types.add(main_type)
+
+  if 0 == len(shared_array_container_types):
+    return
+
+  for item in shared_array_container_types:
+    statement = 'typedef std::vector<Shared_{}>'.format(item)
+    statement = '{:<46}Shared_{}_array;'.format(statement, item)
+    print_line(out, statement)
+  print_empty_line(out)
 
 # Constructor description.
 constructor_desc = '''/*! Construct from prototype.
@@ -760,7 +790,8 @@ def generate_hpp(config, fields, out):
   increase_indent()
 
   print_field_enumeration(out, derived_class_name, fields)	# enumerations
-  print_typedefs(out, fields)					# typedefs
+  print_shared_typedefs(out, fields)				# typedefs
+  print_array_typedefs(out, fields)				# typedefs
 
   # Print misc. member function declarations:
   print_constructor_declaration(out, class_name)
@@ -897,6 +928,7 @@ def print_cpp_include_directives(out, fields):
   if (include_boost):
     print_empty_line(out)
 
+  # Print include SGAL headers:
   print_line(out, "#include \"SGAL/Element.hpp\"")
   print_line(out, "#include \"SGAL/Container_proto.hpp\"")
   print_line(out, "#include \"SGAL/Field_infos.hpp\"")
@@ -905,10 +937,17 @@ def print_cpp_include_directives(out, fields):
     print_line(out, "#include \"SGAL/multi_istream_iterator.hpp\"")
   for item in set(field_names_lexical_cast):
     print_line(out, '#include \"SGAL/lexical_cast_{}.hpp\"'.format(item))
+  for item in set(field_names_shared_container):
+    if item in s_sgal_types:
+      print_line(out, '#include \"SGAL/{}.hpp\"'.format(item))
   print_empty_line(out)
+
+  # Print include FPG headers:
   print_line(out, '#include \"FPG/{}.hpp\"'.format(class_name))
   for item in set(field_names_shared_container):
-    print_line(out, '#include \"FPG/{}.hpp\"'.format(item))
+    if item not in s_sgal_types:
+      print_line(out, '#include \"FPG/{}.hpp\"'.format(item))
+  print_empty_line(out)
 
 def print_static_member_definitions(out, class_name):
   print_line(out, "// Default values:")
@@ -1255,7 +1294,6 @@ def generate_cpp(config, fields, out):
   print_line(out, "// Generated by " + os.path.basename(__file__))
   print_empty_line(out)
   print_cpp_include_directives(out, fields)
-  print_empty_line(out)
   print_line(out, "SGAL_BEGIN_NAMESPACE")
   print_empty_line(out)
 

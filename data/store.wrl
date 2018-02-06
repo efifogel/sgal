@@ -9,7 +9,17 @@ Store {
   [
     # Walls
     Wall {
-      outerBoundary [0 0, 20 0, 20 780, 800 780, 800 800, 0 800]
+      # top FALSE
+      # bottom FALSE
+      outerCcb Coordinate2D {
+        point [0 0, 800 0, 800 800, 0 800]
+      }
+      innerCcbs
+      [
+       Coordinate2D {
+         point [20 780, 780 780, 780 20, 20 20]
+       }
+      ]
       appearance DEF APP_WALL Appearance {
         material Material {
           diffuseColor 0.4 0.6 0.4
@@ -24,7 +34,9 @@ Store {
     # Columns
     DEF COLUMN1 Column {
       location 200 200
-      outerBoundary [0 0 40 0 40 40 0 40]
+      outerCcb DEF COLUMN_COORDS Coordinate2D {
+        point [0 0 40 0 40 40 0 40]
+      }
       appearance DEF APP_COLUMN Appearance {
         material Material {
           diffuseColor 0.6 0.4 0.4
@@ -33,17 +45,17 @@ Store {
     }
     DEF COLUMN2 Column {
       location 600 200
-      outerBoundary [0 0, 40 0, 40 40, 0 40]
+      outerCcb USE COLUMN_COORDS
       appearance USE APP_COLUMN
     }
     DEF COLUMN2 Column {
       location 600 600
-      outerBoundary [0 0, 40 0, 40 40, 0 40]
+      outerCcb USE COLUMN_COORDS
       appearance USE APP_COLUMN
     }
     DEF COLUMN2 Column {
       location 200 600
-      outerBoundary [0 0, 40 0, 40 40, 0 40]
+      outerCcb USE COLUMN_COORDS
       appearance USE APP_COLUMN
     }
 

@@ -10,6 +10,7 @@
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/add_triangle_indices.hpp"
 #include "SGAL/io_vector2f.hpp"
+#include "SGAL/Coord_array_2d.hpp"
 
 #include "FPG/Column.hpp"
 
@@ -28,8 +29,13 @@ void Column::clean_geometry()
   set_geometry(ifs);
 
   const auto& location = get_location();
-  const auto& outer_boundary = get_outer_boundary();
-  auto size = outer_boundary.size();
+  const auto outer_ccb = get_outer_ccb();
+  if (! outer_ccb) {
+    Shape::clean_geometry();
+    return;
+  }
+
+  auto size = outer_ccb->size();
   if (0 == size) {
     Shape::clean_geometry();
     return;
@@ -43,7 +49,7 @@ void Column::clean_geometry()
   Shared_coord_array_3d shared_coords(coords);
   size_t i(0);
   float z(0);
-  for (auto it = outer_boundary.begin(); it != outer_boundary.end(); ++it) {
+  for (auto it = outer_ccb->begin(); it != outer_ccb->end(); ++it) {
     auto x = (*it)[0] + location[0];
     auto y = (*it)[1] + location[1];
     (*coords)[i].set(x, y, z);
@@ -62,13 +68,13 @@ void Column::clean_geometry()
     auto ul = ll + size;
     auto lr = ll + 1;
     auto ur = ul + 1;
-    k = add_triangle_indices(k, indices, ll, lr, ur, ul);
+    k = add_triangle_indices(indices, k, ll, lr, ur, ul);
   }
   auto ll = i;
   auto ul = ll + size;
   auto lr = 0;
   auto ur = size;
-  k = add_triangle_indices(k, indices, ll, lr, ur, ul);
+  k = add_triangle_indices(indices, k, ll, lr, ur, ul);
 
   // Bottom & top:
   // Triangulation.
@@ -90,7 +96,7 @@ void Column::clean_geometry()
   // Insert outer boundary points:
   std::vector<Vertex_handle> vertex_handles(size);
   i = 0;
-  for (auto it = outer_boundary.begin(); it != outer_boundary.end(); ++it) {
+  for (auto it = outer_ccb->begin(); it != outer_ccb->end(); ++it) {
     Point p((*it)[0], (*it)[1]);
     vertex_handles[i] = tri.insert(Point((*it)[0], (*it)[1]));
     vertex_handles[i]->info() = i;
