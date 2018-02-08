@@ -467,6 +467,12 @@ public:
    * \param[in] os The output stream.
    */
   void write_obj(const std::string& filename, std::ostream& os);
+
+  /*! Export the scene to an output stream in Json format.
+   * \param[in] filename The file name.
+   * \param[in] os The output stream.
+   */
+  void write_json(const std::string& filename, std::ostream& os);
   //@}
 
   /*! Obtain an isolated instance of the V8 engine.

@@ -66,6 +66,7 @@
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Obj_formatter.hpp"
+#include "SGAL/Json_formatter.hpp"
 #include "SGAL/Stl_formatter.hpp"
 #include "SGAL/Stl_binary_formatter.hpp"
 #include "SGAL/Group.hpp"
@@ -935,6 +936,7 @@ void Scene_graph::write(const std::string& filename, std::ostream& os,
    case File_format_3d::ID_OFF: break;
    case File_format_3d::ID_STL: write_stl(filename, os, is_binary); break;
    case File_format_3d::ID_OBJ: write_obj(filename, os);break;
+   case File_format_3d::ID_JSON: write_json(filename, os);break;
 
    case File_format_3d::NONE:
    case File_format_3d::NUM_IDS:
@@ -983,6 +985,23 @@ void Scene_graph::write_stl(const std::string& filename, std::ostream& os,
 void Scene_graph::write_obj(const std::string& filename, std::ostream& os)
 {
   Obj_formatter formatter(filename, os);
+  formatter.begin();
+  auto root = get_root();
+  for (auto it1 = root->children_begin(); it1 != root->children_end(); ++it1) {
+    auto transform = boost::dynamic_pointer_cast<Transform>(*it1);
+    if (!transform) continue;
+    SGAL_assertion(transform->get_name().compare(g_navigation_root_name) == 0);
+    auto it2 = transform->children_begin();
+    for (; it2 != transform->children_end(); ++it2) formatter.write(*it2);
+  }
+  formatter.end();
+}
+
+//! \brief exports the scene to an output stream in the Json format.
+void Scene_graph::write_json(const std::string& filename, std::ostream& os)
+{
+  Json_formatter formatter(filename, os);
+
   formatter.begin();
   auto root = get_root();
   for (auto it1 = root->children_begin(); it1 != root->children_end(); ++it1) {

@@ -29,8 +29,9 @@
 #include "SGAL/Transform.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Mesh_set.hpp"
-#include "SGAL/Coord_array.hpp"
 #include "SGAL/Inexact_kernel.hpp"
+#include "SGAL/Matrix4f.hpp"
+#include "SGAL/Coord_array.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -42,7 +43,7 @@ Stl_binary_formatter::Stl_binary_formatter(const std::string& filename) :
   m_matrices.push(mat);
 }
 
-//! \brief Construct an output formatter.
+//! \brief constructs an output formatter.
 Stl_binary_formatter::Stl_binary_formatter(const std::string& filename,
                                            std::ostream& os) :
   Formatter(filename, os)
@@ -204,7 +205,7 @@ void Stl_binary_formatter::write(Shared_container container)
   auto transform = boost::dynamic_pointer_cast<Transform>(container);
   if (transform) {
     // Push the transform matrix
-    const Matrix4f& curr_mat = transform->get_matrix();
+    const auto& curr_mat = transform->get_matrix();
     auto last_mat = m_matrices.top();
     Shared_matrix4f next_mat(new Matrix4f);
     next_mat->mult(*last_mat, curr_mat);

@@ -36,6 +36,7 @@ public:
     ID_OFF,
     ID_STL,
     ID_OBJ,
+    ID_JSON,
     NUM_IDS
   };
 

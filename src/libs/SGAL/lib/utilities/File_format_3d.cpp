@@ -28,7 +28,8 @@ const Char* File_format_3d::s_names[] = {
   "x3d",
   "off",
   "stl",
-  "obj"
+  "obj",
+  "json"
 };
 
 //! \brief compares the name of the ith format to a given token.

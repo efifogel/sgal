@@ -32,10 +32,11 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Field_info;
+class Container;
 class Shape;
 class Mesh_set;
 class Matrix4f;
+class Vector3f;
 
 /*! A pure class that can be the base of specific formatter that exports a
  * scene graph to an output stream.
@@ -190,7 +191,7 @@ private:
   };
 };
 
-//! \brief Destructor
+//! \brief destructs.
 inline Stl_binary_formatter::~Stl_binary_formatter() {}
 
 SGAL_END_NAMESPACE

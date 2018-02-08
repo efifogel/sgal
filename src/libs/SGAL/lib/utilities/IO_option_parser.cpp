@@ -48,7 +48,8 @@ IO_option_parser::IO_option_parser() :
        "  wrl\n"
        "  x3d\n"
        "  stl\n"
-       "  obj")
+       "  obj\n"
+       "  json")
     ("snapshot,S", po::value<Boolean>(&m_snapshot)->default_value(false),
      "snapshot")
     ("export,E", po::value<Boolean>(&m_export)->default_value(false), "export")
