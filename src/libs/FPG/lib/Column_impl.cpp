@@ -16,38 +16,36 @@
 
 SGAL_BEGIN_NAMESPACE
 
-//! Associate the node engine with a scene graph.
-void Column::add_to_scene(Scene_graph* scene_graph)
-{ m_scene_graph = scene_graph; }
-
-//! \brief cleans the geometry.
-void Column::clean_geometry()
+//! \brief processes change of structure.
+void Column::structure_changed(const Field_info* field_info)
 {
-#if 0
-  typedef boost::shared_ptr<Indexed_face_set>       Shared_indexed_face_set;
-  Shared_indexed_face_set ifs(new Indexed_face_set);
-  SGAL_assertion(ifs);
-  set_geometry(ifs);
+  clear_coord_array();
+  clear_facet_coord_indices();
+  field_changed(field_info);
+}
 
-  const auto& location = get_location();
+//! \brief cleans (generate) the coordinate array.
+void Column::clean_coords()
+{
+  // Calculate sizes:
   const auto outer_ccb = get_outer_ccb();
-  if (! outer_ccb) {
-    Shape::clean_geometry();
-    return;
-  }
+  if (! outer_ccb) return;
 
   auto size = outer_ccb->size();
-  if (0 == size) {
-    Shape::clean_geometry();
-    return;
-  }
+  if (0 == size) return;
+
   auto num_vertices = 2 * size;
-  auto num_triangles = 4 * (size - 1);
+  auto num_horizontal_triangles = size - 2;
+  auto num_triangles = num_vertices;
+  if (get_top()) num_triangles += num_horizontal_triangles;
+  if (get_bottom()) num_triangles += num_horizontal_triangles;
 
   // Construct coord array
   typedef boost::shared_ptr<Coord_array_3d>         Shared_coord_array_3d;
   auto* coords = new Coord_array_3d(num_vertices);
   Shared_coord_array_3d shared_coords(coords);
+
+  const auto& location = get_location();
   size_t i(0);
   float z(0);
   for (auto it = outer_ccb->begin(); it != outer_ccb->end(); ++it) {
@@ -57,21 +55,42 @@ void Column::clean_geometry()
     (*coords)[size + i++].set(x, y, z + get_height());
   }
 
-  // Construct coord indices
+  set_coord_array(shared_coords);
+  coord_content_changed(get_field_info(COORD_ARRAY));
+}
+
+void Column::clean_facet_coord_indices()
+{
+  m_dirty_coord_indices = true;
+  m_dirty_facet_coord_indices = false;
+
+  const auto outer_ccb = get_outer_ccb();
+  if (! outer_ccb) return;
+
+  auto size = outer_ccb->size();
+  if (0 == size) return;
+
+  auto num_vertices = 2 * size;
+  auto num_horizontal_triangles = size - 2;
+  auto num_triangles = num_vertices;
+  if (get_top()) num_triangles += num_horizontal_triangles;
+  if (get_bottom()) num_triangles += num_horizontal_triangles;
+
+  // Construct coord indices:
   Facet_indices facet_indices;
   auto& indices = boost::get<Triangle_indices>(facet_indices);
   indices.resize(num_triangles);
 
   // Side:
   size_t k(0);
-  for (i = 0; i < size-1; ++i) {
+  for (auto i = 0; i < size-1; ++i) {
     auto ll = i;
     auto ul = ll + size;
     auto lr = ll + 1;
     auto ur = ul + 1;
     k = add_triangle_indices(indices, k, ll, lr, ur, ul);
   }
-  auto ll = i;
+  auto ll = size-1;
   auto ul = ll + size;
   auto lr = 0;
   auto ur = size;
@@ -96,7 +115,7 @@ void Column::clean_geometry()
 
   // Insert outer boundary points:
   std::vector<Vertex_handle> vertex_handles(size);
-  i = 0;
+  size_t i(0);
   for (auto it = outer_ccb->begin(); it != outer_ccb->end(); ++it) {
     Point p((*it)[0], (*it)[1]);
     vertex_handles[i] = tri.insert(Point((*it)[0], (*it)[1]));
@@ -130,17 +149,12 @@ void Column::clean_geometry()
   }
   SGAL_assertion(k == indices.size());
 
-  // Update the Indexed_face_set geometry node:
-  ifs->add_to_scene(m_scene_graph);
-  ifs->set_facet_coord_indices(std::move(facet_indices));
-  ifs->set_coord_array(shared_coords);
-  ifs->set_primitive_type(Geo_set::PT_TRIANGLES);
-  ifs->set_num_primitives(num_triangles);
-  ifs->set_make_consistent(true);
-  ifs->set_solid(true);
-
-  Shape::clean_geometry();
-#endif
+  // Update the Indexed_face_set geometry base container:
+  set_facet_coord_indices(std::move(facet_indices));
+  set_primitive_type(Geo_set::PT_TRIANGLES);
+  set_num_primitives(num_triangles);
+  set_make_consistent(true);
+  set_solid(get_top() && get_bottom());
 }
 
 SGAL_END_NAMESPACE

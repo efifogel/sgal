@@ -1,7 +1,7 @@
-# Name                 Type                        Rule           Default  Execution Function             Geometry Description
-# -------------------- --------------------------- -------------- -------- ------------------------------ -------- --------------------
-location               Vector2f                    EXPOSED_FIELD  "0,0"    Node::bounding_sphere_changed  false    "location of the fitting area relative to the store floor-plane coordinate system"
-outer_ccb              Shared_coord_array_2d       EXPOSED_FIELD  ""       Node::bounding_sphere_changed  false    "outer connected component of the boundary; a ccw sequence of 2D points on the horizontal plane"
-height                 Float                       EXPOSED_FIELD  400      Node::bounding_sphere_changed  false    "height of the store walls"
-# fitting_rooms          Shared_fitting_room_array   EXPOSED_FIELD  ""       Node::bounding_sphere_changed  true     "fitting rooms"
-# shapes                 Shared_container_array      EXPOSED_FIELD  ""       Node::bounding_sphere_changed  true     "other shapes"
+# Name                 Type                        Rule           Default  Execution Function               Geometry Description
+# -------------------- --------------------------- -------------- -------- -------------------------------- -------- --------------------
+location               Vector2f                    EXPOSED_FIELD  "0,0"    Node::bounding_sphere_changed    false    "location of the fitting area relative to the store floor-plane coordinate system"
+outer_ccb              Shared_coord_array_2d       EXPOSED_FIELD  ""       Node::bounding_sphere_changed    false    "outer connected component of the boundary; a ccw sequence of 2D points on the horizontal plane"
+height                 Float                       EXPOSED_FIELD  400      Node::bounding_sphere_changed    false    "height of the store walls"
+# fitting_rooms          Shared_fitting_room_array   EXPOSED_FIELD  ""       Node::bounding_sphere_changed    true     "fitting rooms"
+# shapes                 Shared_container_array      EXPOSED_FIELD  ""       Node::bounding_sphere_changed    true     "other shapes"

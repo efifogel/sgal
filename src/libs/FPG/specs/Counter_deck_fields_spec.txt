@@ -1,7 +1,7 @@
-# Name                 Type                        Rule           Default  Execution Function             Geometry Description
-# -------------------- --------------------------- -------------- -------- ------------------------------ -------- -------------------
-location               Vector2f                    EXPOSED_FIELD  "0,0"    Node::bounding_sphere_changed  false    "Location of the counter deck relative to the Counter-area coordinate system"
-outer_ccb              Shared_coord_array_2d       EXPOSED_FIELD  ""       Node::bounding_sphere_changed  false    "Outer connected component of the boundary; a ccw sequence of 2D points on the horizontal plane"
-depth                  Float                       EXPOSED_FIELD  60       Node::bounding_sphere_changed  false    "The counter deck depth"
-width                  Float                       EXPOSED_FIELD  60       Node::bounding_sphere_changed  false    "The counter deck width"
-height                 Float                       EXPOSED_FIELD  400      Node::bounding_sphere_changed  false    "The counter deck height"
+# Name                 Type                        Rule           Default  Execution Function               Geometry Description
+# -------------------- --------------------------- -------------- -------- -------------------------------- -------- -------------------
+location               Vector2f                    EXPOSED_FIELD  "0,0"    Counter_deck::structure_changed  false    "Location of the counter deck relative to the Counter-area coordinate system"
+outer_ccb              Shared_coord_array_2d       EXPOSED_FIELD  ""       Counter_deck::structure_changed  false    "Outer connected component of the boundary; a ccw sequence of 2D points on the horizontal plane"
+depth                  Float                       EXPOSED_FIELD  60       Counter_deck::structure_changed  false    "The counter deck depth"
+width                  Float                       EXPOSED_FIELD  60       Counter_deck::structure_changed  false    "The counter deck width"
+height                 Float                       EXPOSED_FIELD  400      Counter_deck::structure_changed  false    "The counter deck height"

@@ -75,36 +75,27 @@ void mark_domains(CDT& cdt)
   }
 }
 
-//! Associate the node engine with a scene graph.
-void Wall::add_to_scene(Scene_graph* scene_graph)
-{ m_scene_graph = scene_graph; }
-
-//! \brief cleans the geometry.
-void Wall::clean_geometry()
+//! \brief processes change of structure.
+void Wall::structure_changed(const Field_info* field_info)
 {
-  typedef boost::shared_ptr<Coord_array_2d>         Shared_coord_array_2d;
-  typedef boost::shared_ptr<Coord_array_3d>         Shared_coord_array_3d;
-  typedef boost::shared_ptr<Indexed_face_set>       Shared_indexed_face_set;
-  Shared_indexed_face_set ifs(new Indexed_face_set);
-  SGAL_assertion(ifs);
-  set_geometry(ifs);
+  clear_coord_array();
+  clear_facet_coord_indices();
+  field_changed(field_info);
+}
 
-  const auto& location = get_location();
+//! \brief cleans (generate) the coordinate array.
+void Wall::clean_coords()
+{
+  // Calculate sizes:
   const auto outer_ccb = get_outer_ccb();
-  if (! outer_ccb) {
-    Shape::clean_geometry();
-    return;
-   }
+  if (! outer_ccb) return;
+
+  auto outer_ccb_size = outer_ccb->size();
+  if (0 == outer_ccb_size) return;
+
+  auto ccb_size = outer_ccb_size;
 
   const auto& inner_ccbs = get_inner_ccbs();
-
-  // Calculate sizes:
-  auto outer_ccb_size = outer_ccb->size();
-  if (0 == outer_ccb_size) {
-    Shape::clean_geometry();
-    return;
-  }
-  auto ccb_size = outer_ccb_size;
   for (auto inner_ccb : inner_ccbs) ccb_size += inner_ccb->size();
 
   auto num_vertices = 2 * ccb_size;
@@ -115,9 +106,11 @@ void Wall::clean_geometry()
   if (get_bottom()) num_triangles += num_horizontal_triangles;
 
   // Construct coord array
+  typedef boost::shared_ptr<Coord_array_3d>         Shared_coord_array_3d;
   auto* coords = new Coord_array_3d(num_vertices);
   Shared_coord_array_3d shared_coords(coords);
 
+  const auto& location = get_location();
   size_t i(0);
   float z(0);
   // Insert bottom coordinates:
@@ -137,10 +130,37 @@ void Wall::clean_geometry()
       (*coords)[ccb_size + i++].set(x, y, z + get_height());
     }
   }
-
   SGAL_assertion(i == ccb_size);
 
-  // Construct coord indices
+  set_coord_array(shared_coords);
+  coord_content_changed(get_field_info(COORD_ARRAY));
+}
+
+void Wall::clean_facet_coord_indices()
+{
+  m_dirty_coord_indices = true;
+  m_dirty_facet_coord_indices = false;
+
+  // Calculate sizes:
+  const auto outer_ccb = get_outer_ccb();
+  if (! outer_ccb) return;
+
+  auto outer_ccb_size = outer_ccb->size();
+  if (0 == outer_ccb_size) return;
+
+  auto ccb_size = outer_ccb_size;
+
+  const auto& inner_ccbs = get_inner_ccbs();
+  for (auto inner_ccb : inner_ccbs) ccb_size += inner_ccb->size();
+
+  auto num_vertices = 2 * ccb_size;
+  auto num_holes = inner_ccbs.size();
+  auto num_horizontal_triangles = ccb_size - 2 + 2 * num_holes;
+  auto num_triangles = num_vertices;
+  if (get_top()) num_triangles += num_horizontal_triangles;
+  if (get_bottom()) num_triangles += num_horizontal_triangles;
+
+  // Construct coord indices:
   Facet_indices facet_indices;
   auto& indices = boost::get<Triangle_indices>(facet_indices);
   indices.resize(num_triangles);
@@ -179,7 +199,7 @@ void Wall::clean_geometry()
 
     // Insert outer ccb points:
     std::vector<Vertex_handle> vertex_handles(ccb_size);
-    i = 0;
+    size_t i(0);
     for (auto it = outer_ccb->begin(); it != outer_ccb->end(); ++it) {
       Point p((*it)[0], (*it)[1]);
       vertex_handles[i] = cdt.insert(Point((*it)[0], (*it)[1]));
@@ -237,16 +257,12 @@ void Wall::clean_geometry()
   }
   SGAL_assertion(k == indices.size());
 
-  // Update the Indexed_face_set geometry node:
-  ifs->add_to_scene(m_scene_graph);
-  ifs->set_facet_coord_indices(std::move(facet_indices));
-  ifs->set_coord_array(shared_coords);
-  ifs->set_primitive_type(Geo_set::PT_TRIANGLES);
-  ifs->set_num_primitives(num_triangles);
-  ifs->set_make_consistent(true);
-  ifs->set_solid(true);
-
-  Shape::clean_geometry();
+  // Update the Indexed_face_set geometry base container:
+  set_facet_coord_indices(std::move(facet_indices));
+  set_primitive_type(Geo_set::PT_TRIANGLES);
+  set_num_primitives(num_triangles);
+  set_make_consistent(true);
+  set_solid(get_top() && get_bottom());
 }
 
 SGAL_END_NAMESPACE

@@ -1,9 +1,9 @@
-# Name                 Type                        Rule           Default  Execution Function             Geometry Description
-# -------------------- --------------------------- -------------- -------- ------------------------------ -------- --------------------
-outer_ccb              Shared_coord_array_2d       EXPOSED_FIELD  ""       Node::bounding_sphere_changed  false    "outer connected component of the boundary; a ccw sequence of 2D points on the horizontal plane"
-height                 Float                       EXPOSED_FIELD  400      Node::bounding_sphere_changed  false    "height of the store walls"
-# walls                  Shared_wall_array           EXPOSED_FIELD  ""       ""                             true     "walls of the store"
-# columns                Shared_column_array         EXPOSED_FIELD  ""       ""                             true     "columns inside the store"
-# counter_areas          Shared_counter_area_array   EXPOSED_FIELD  ""       ""                             true     "counter areas"
-# storage_rooms          Shared_storage_room_array   EXPOSED_FIELD  ""       ""                             true     "storage rooms"
-# shapes                 Shared_container_array      EXPOSED_FIELD  ""       ""                             true     "other shapes"
+# Name                 Type                        Rule           Default  Execution Function               Geometry Description
+# -------------------- --------------------------- -------------- -------- -------------------------------- -------- --------------------
+outer_ccb              Shared_coord_array_2d       EXPOSED_FIELD  ""       Node::bounding_sphere_changed    false    "outer connected component of the boundary; a ccw sequence of 2D points on the horizontal plane"
+height                 Float                       EXPOSED_FIELD  400      Node::bounding_sphere_changed    false    "height of the store walls"
+# walls                  Shared_wall_array           EXPOSED_FIELD  ""       ""                               true     "walls of the store"
+# columns                Shared_column_array         EXPOSED_FIELD  ""       ""                               true     "columns inside the store"
+# counter_areas          Shared_counter_area_array   EXPOSED_FIELD  ""       ""                               true     "counter areas"
+# storage_rooms          Shared_storage_room_array   EXPOSED_FIELD  ""       ""                               true     "storage rooms"
+# shapes                 Shared_container_array      EXPOSED_FIELD  ""       ""                               true     "other shapes"

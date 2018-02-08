@@ -1,10 +1,10 @@
-# Name                 Type                        Rule           Default  Execution Function             Geometry Description
-# -------------------- --------------------------- -------------- -------- ------------------------------ -------- --------------------
-location               Vector2f                    EXPOSED_FIELD  "0,0"    Node::bounding_sphere_changed  false    "location of the wall relative to the embedding coordinate system"
-outer_ccb              Shared_coord_array_2d       EXPOSED_FIELD  ""       Node::bounding_sphere_changed  false    "outer connected component of the boundary; a ccw sequence of 2D points on the horizontal plane"
-inner_ccbs             Shared_coord_array_2d_array EXPOSED_FIELD  ""       Node::bounding_sphere_changed  false    "inner connected components of the boundary; cw sequences of 2D points on the horizontal plane"
-depth                  Float                       EXPOSED_FIELD  20       Node::bounding_sphere_changed  false    "wall depth"
-height                 Float                       EXPOSED_FIELD  400      Node::bounding_sphere_changed  false    "wall height"
-holes                  Shared_container_array      EXPOSED_FIELD  ""       Node::bounding_sphere_changed  false    "holes in the wall, e.g., windows and doors"
-top                    Boolean                     EXPOSED_FIELD  true     Node::bounding_sphere_changed  false    "flag that indicates whether to generate the top surface of the wall"
-bottom                 Boolean                     EXPOSED_FIELD  true     Node::bounding_sphere_changed  false    "flag that indicates whether to generate the bottom surface of the wall"
+# Name                 Type                        Rule           Default  Execution Function               Geometry Description
+# -------------------- --------------------------- -------------- -------- -------------------------------- -------- --------------------
+location               Vector2f                    EXPOSED_FIELD  "0,0"    Wall::structure_changed          false    "location of the wall relative to the embedding coordinate system"
+outer_ccb              Shared_coord_array_2d       EXPOSED_FIELD  ""       Wall::structure_changed          false    "outer connected component of the boundary; a ccw sequence of 2D points on the horizontal plane"
+inner_ccbs             Shared_coord_array_2d_array EXPOSED_FIELD  ""       Wall::structure_changed          false    "inner connected components of the boundary; cw sequences of 2D points on the horizontal plane"
+depth                  Float                       EXPOSED_FIELD  20       Wall::structure_changed          false    "wall depth"
+height                 Float                       EXPOSED_FIELD  400      Wall::structure_changed          false    "wall height"
+holes                  Shared_container_array      EXPOSED_FIELD  ""       Wall::structure_changed          false    "holes in the wall, e.g., windows and doors"
+top                    Boolean                     EXPOSED_FIELD  true     Wall::structure_changed          false    "flag that indicates whether to generate the top surface of the wall"
+bottom                 Boolean                     EXPOSED_FIELD  true     Wall::structure_changed          false    "flag that indicates whether to generate the bottom surface of the wall"
