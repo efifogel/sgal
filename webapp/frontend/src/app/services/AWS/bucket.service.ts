@@ -1,16 +1,16 @@
-import { HTTPStatus } from './../RxJS/HTTPListener.service';
-import { S3Callback } from './bucket.service';
-import { environment } from './../../../environments/environment';
-import { Injectable } from '@angular/core';
-import * as AWS from 'aws-sdk/global';
-import * as S3 from 'aws-sdk/clients/s3';
-import { User } from '../../models/user';
-import { CognitoCallback } from './cognito.service';
+import { HTTPStatus } from "./../RxJS/HTTPListener.service";
+import { S3Callback } from "./bucket.service";
+import { environment } from "./../../../environments/environment";
+import { Injectable } from "@angular/core";
+import * as AWS from "aws-sdk/global";
+import * as S3 from "aws-sdk/clients/s3";
+import { User } from "../../models/user";
+import { CognitoCallback } from "./cognito.service";
 
 export interface S3Callback {
   ListobjectCallBack(message: string, result: any): void;
   UploadCallback(message: string, result: any): void;
-  GetObjectCallback(message: string, result: any): void;
+  GetObjectCallback(filetype: string, message: string, result: any): void;
 }
 
 @Injectable()
@@ -21,7 +21,7 @@ export class AWS3Service {
   s3: any;
   constructor(private httpStatus: HTTPStatus) {
     this.setBucketConfig();
-    const userId = JSON.parse(window.localStorage.getItem('cognitoClientId'));
+    const userId = JSON.parse(window.localStorage.getItem("cognitoClientId"));
     this.setBucketParams(userId);
   }
   setBucketConfig = () => {
@@ -31,13 +31,13 @@ export class AWS3Service {
         IdentityPoolId: this.IdentityPoolId
       })
     });
-  }
+  };
   setBucketParams = (userId: string) => {
     this.s3 = new S3({
-      apiVersion: '2006-03-01',
+      apiVersion: "2006-03-01",
       params: { Bucket: this.albumBucketName, Prefix: userId }
     });
-  }
+  };
 
   listAlbums(userId: string, callback: S3Callback) {
     this.httpStatus.setHttpStatus(true);
@@ -50,36 +50,38 @@ export class AWS3Service {
       this.httpStatus.setHttpStatus(false);
     });
   }
-  
-  getBucketObject(key: string, callback: S3Callback) {
+  getBucketObject(filetype: string, key: string,  callback: S3Callback) {
     this.httpStatus.setHttpStatus(true);
-    this.s3.getObject({
-      Bucket: this.albumBucketName,
-      Key: key
-  }, (err, data) => {
-      if (err) {
-        callback.GetObjectCallback(err.message, null);
-      } else {
-        callback.GetObjectCallback(null, data);
+    this.s3.getObject(
+      {
+        Bucket: this.albumBucketName,
+        Key: key
+      },
+      (err, data) => {
+        if (err) {
+          callback.GetObjectCallback(filetype, err.message, null);
+        } else {
+          callback.GetObjectCallback(filetype, null, data);
+        }
+        this.httpStatus.setHttpStatus(false);
       }
-      this.httpStatus.setHttpStatus(false);
-  });
+    );
   }
-
   uploadDocumentToBucket(dir: string, files: any, callback: S3Callback) {
     this.httpStatus.setHttpStatus(true);
     if (!files.length) {
-      callback.UploadCallback('Please chose a file to upload', null);
+      callback.UploadCallback("Please chose a file to upload", null);
     }
     const file = files[0];
+    file.extension = "wrl";
     const fileName = file.name;
-    const fileNameKey = encodeURIComponent(dir) + '/';
+    const fileNameKey = encodeURIComponent(dir) + "/";
     const fileKey = fileNameKey + fileName;
     const params = {
       Bucket: this.albumBucketName,
       Key: fileKey,
       Body: file,
-      ACL: 'public-read-write'
+      ACL: "public-read-write"
     };
     this.s3.upload(params, (err, data) => {
       if (err) {

@@ -1,15 +1,20 @@
 import { Injectable } from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
+interface SelectedBuffer {
+    type?: string;
+    buffer?: any;
+}
+
 @Injectable()
 
 export class PlayerNotifier {
-    private selectedFile$: BehaviorSubject<any>;
+    private selectedFile$: BehaviorSubject<SelectedBuffer>;
     constructor() {
-        this.selectedFile$ = new BehaviorSubject<any>('');
+        this.selectedFile$ = new BehaviorSubject<SelectedBuffer>({});
     }
-    setSelectedFile(buffer: any) {
-        this.selectedFile$.next(buffer);
+    setSelectedFile(file: any) {
+        this.selectedFile$.next(file);
     }
     getSelectedFile = () => {
         return this.selectedFile$.asObservable();
