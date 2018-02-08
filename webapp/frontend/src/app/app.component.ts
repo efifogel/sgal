@@ -1,6 +1,8 @@
 import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { HTTPStatus } from './services/RxJS/HTTPListener.service';
+
 declare var bodymovin: any;
+declare var $: any;
 
 @Component({
   selector: 'app-root',

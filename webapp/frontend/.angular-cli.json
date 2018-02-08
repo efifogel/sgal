@@ -21,11 +21,14 @@
         "../node_modules/bootstrap/dist/css/bootstrap.css"
       ],
       "scripts": [
+        "../node_modules/jquery/dist/jquery.min.js",
         "../Three-libs/Three.min.js",
         "../Three-libs/OrbitControls.js",
         "../Three-libs/VRMLLoader.js",
         "../Three-libs/Detector.js",
-        "../node_modules/browserfs/dist/browserfs.min.js"
+        "../Three-libs/dxf.parser.js",
+        "../Three-libs/three.dxf.js",
+        "../node_modules/text-encoding/index.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

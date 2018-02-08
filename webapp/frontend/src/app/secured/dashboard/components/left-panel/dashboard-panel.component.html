@@ -1,6 +1,6 @@
 <div id="list-wrapper" class="mat-elevation-z12">
   <button type="button" class="fileContainer btn upload-btn mat-elvation-z24">
-    <input (change)="onFileSelected($event)" type="file" accepted=".wrl" id="file" #fileUploader> UPLOAD DOCUMENT
+    <input (change)="onFileSelected($event)" type="file" accepted=".wrl, .dxf" id="file" #fileUploader> UPLOAD DOCUMENT
   </button>
   <div id="list-holder">
     <div layout="row" layout-align="start center" layout-padding *ngFor="let file of files" class="list-item"
