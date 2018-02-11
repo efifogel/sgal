@@ -9,7 +9,7 @@ Store {
   children
   [
     # Walls
-    Shape {
+    DEF WALL1 Shape {
       geometry Wall {
         # top FALSE
         # bottom FALSE
@@ -30,13 +30,13 @@ Store {
         }
       }
     }
-    Shape {
-      geometry Wall {}
-      appearance USE APP_WALL
-    }
+    # DEF WALL2 Shape {
+    #   geometry Wall {}
+    #   appearance USE APP_WALL
+    # }
 
     # Columns
-    Shape {
+    DEF COLUMN1 Shape {
       geometry Column {
         location 200 200
         outerCcb DEF COLUMN_COORDS Coordinate2D {
@@ -49,21 +49,21 @@ Store {
         }
       }
     }
-    Shape {
+    DEF COLUMN2 Shape {
       geometry Column {
         location 600 200
         outerCcb USE COLUMN_COORDS
       }
       appearance USE APP_COLUMN
     }
-    Shape {
+    DEF COLUMN3 Shape {
       geometry Column {
         location 600 600
         outerCcb USE COLUMN_COORDS
       }
       appearance USE APP_COLUMN
     }
-    Shape {
+    DEF COLUMN4 Shape {
       geometry Column {
         location 200 600
         outerCcb USE COLUMN_COORDS
