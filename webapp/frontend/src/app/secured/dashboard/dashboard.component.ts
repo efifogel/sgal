@@ -64,7 +64,6 @@ export class DashboardComponent {
     if (!errorMessage) {
       if (filetype === 'json') {
        const jsonData =  this.binArrayToJson(data.Body);
-       console.log(typeof jsonData);
        const fileToSend = {type: filetype, buffer: jsonData};
        this.playerNotifier.setSelectedFile(fileToSend);
       } else {
