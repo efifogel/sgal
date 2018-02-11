@@ -1001,6 +1001,7 @@ void Scene_graph::write_obj(const std::string& filename, std::ostream& os)
 void Scene_graph::write_json(const std::string& filename, std::ostream& os)
 {
   Json_formatter formatter(filename, os);
+  formatter.pre_process(m_containers, m_instances);
 
   formatter.begin();
   auto root = get_root();
