@@ -48,7 +48,7 @@ export class DashboardComponent {
         this.files = data.Contents;
       }
     } else {
-      alert(errorMessage);
+      console.log(errorMessage);
     }
   }
 
@@ -56,7 +56,7 @@ export class DashboardComponent {
     if (!errorMessage) {
       this.s3.listAlbums(this.clientId, this);
     } else {
-      alert(errorMessage);
+      console.log(errorMessage);
     }
   }
 
@@ -73,7 +73,7 @@ export class DashboardComponent {
         this.playerNotifier.setSelectedFile(file);
       }
     } else {
-      alert(errorMessage);
+      console.log(errorMessage);
     }
   }
 

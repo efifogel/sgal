@@ -1,0 +1,55 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "type": "Object",
+    "generator": "SGAL"
+  },
+  "geometries": [
+    {
+      "uuid": "3bae0a57-ae04-410e-8c59-9de629417a42",
+      "type": "Geometry",
+      "data": {
+        "metadata": {
+          "version": "1.0",
+          "vertices": 8,
+          "normals": 12,
+          "uvs": 36,
+          "faces": 12
+        },
+        "vertices": [200,200,0,240,200,0,240,240,0,200,240,0,200,200,400,240,200,400,240,240,400,200,240,400],
+        "normals": [0,-1,0,0,-1,0,1,0,0,1,0,-0,0,1,-0,0,1,-0,-1,0,0,-1,0,0,-0,-0,-1,-0,0,1,0,0,-1,-0,0,1],
+        "uvs": [0,0,0,0.1,1,0.1,0,0,1,0.1,1,0,0,0.1,0,0.1,1,0.1,0,0.1,1,0.1,1,0.1,0,0.1,0,0,1,0,0,0.1,1,0,1,0.1,0,0,0,0,1,0,0,0,1,0,1,0,0,0.1,0,0.1,0,0,1,0,1,0.1,1,0.1,0,0.1,0,0,0,0,1,0,1,0,1,0.1],
+        "faces": [0,1,5]
+      }
+    }
+  ],
+  "materials": [
+    {
+      "uuid": "3bae0a57-ae04-410e-8c59-9de629417a42",
+      "type": "MeshPhongMaterial",
+      "name": "APP_COLUMN",
+      "color": 10053222,
+      "specular": 0,
+      "emissive": 0,
+      "ambient": 2631720,
+      "shininess": 0.2,
+      "blending": "NormalBlending"
+    }
+  ],
+  "object": {
+    "uuid": "3bae0a57-ae04-410e-8c59-9de629417a42",
+    "type": "Scene",
+    "matrix": [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+    "children": [
+      {
+        "name": "COLUMN1",
+        "uuid": "3bae0a57-ae04-410e-8c59-9de629417a42",
+        "matrix": [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+        "visible": true,
+        "type": "Mesh",
+        "geometry": "3bae0a57-ae04-410e-8c59-9de629417a42",
+        "material": "3bae0a57-ae04-410e-8c59-9de629417a42"
+      }
+    ]
+  }
+}
