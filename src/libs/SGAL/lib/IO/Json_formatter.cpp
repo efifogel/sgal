@@ -22,6 +22,10 @@
 #include <iterator>
 #include <utility>
 
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/version.hpp"
 #include "SGAL/Container.hpp"
@@ -36,6 +40,7 @@
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Normal_array.hpp"
 #include "SGAL/Vector3f.hpp"
+#include "SGAL/Context.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -55,7 +60,6 @@ Json_formatter::Json_formatter(const std::string& filename, std::ostream& os) :
 {
   Shared_matrix4f mat(new Matrix4f);
   m_matrices.push(mat);
-  m_uuid = boost::uuids::random_generator()();
 }
 
 //! \brief constructs an input formatter.
@@ -79,13 +83,15 @@ pre_process(const std::list<Shared_container>& containers,
   for (auto container : containers) {
     auto geom = boost::dynamic_pointer_cast<Geometry>(container);
     if (geom) {
-      m_geometries[geom] = boost::uuids::to_string(m_uuid);
+      auto uuid = boost::uuids::random_generator()();
+      m_geometries[geom] = boost::uuids::to_string(uuid);
       continue;
     }
 
     auto app = boost::dynamic_pointer_cast<Appearance>(container);
     if (app) {
-      m_apperances[app] = boost::uuids::to_string(m_uuid);
+      auto uuid = boost::uuids::random_generator()();
+      m_apperances[app] = boost::uuids::to_string(uuid);
       continue;
     }
   }
@@ -93,13 +99,15 @@ pre_process(const std::list<Shared_container>& containers,
   for (auto instance : instances) {
     auto geom = boost::dynamic_pointer_cast<Geometry>(instance.second);
     if (geom) {
-      m_geometries[geom] = boost::uuids::to_string(m_uuid);
+      auto uuid = boost::uuids::random_generator()();
+      m_geometries[geom] = boost::uuids::to_string(uuid);
       continue;
     }
 
     auto app = boost::dynamic_pointer_cast<Appearance>(instance.second);
     if (app) {
-      m_apperances[app] = boost::uuids::to_string(m_uuid);
+      auto uuid = boost::uuids::random_generator()();
+      m_apperances[app] = boost::uuids::to_string(uuid);
       continue;
     }
   }
@@ -184,11 +192,12 @@ void Json_formatter::vertex(const Vector2f& p, bool compact)
 }
 
 //! \brief writes a triangular facet.
-void Json_formatter::facet(const std::array<Index_type, 3>& tri, bool compact)
+void Json_formatter::facet(const std::array<Index_type, 3>& tri, Uint i,
+                           bool compact)
 {
   object_separator(compact);
   if (!compact) indent();
-  out() << tri[0] << "," << tri[1] << "," << tri[2];
+  out() << tri[0] << "," << tri[1] << "," << tri[2] << "," << i;
   if (!compact) new_line();
   m_separated = false;
 }
@@ -288,7 +297,8 @@ void Json_formatter::export_object(const World_shape& world_shape)
   auto matrix = world_shape.second;
   const auto& name = shape->get_name();
   if (! name.empty()) attribute("name", name);
-  attribute("uuid", boost::uuids::to_string(m_uuid));
+  auto uuid = boost::uuids::random_generator()();
+  attribute("uuid", boost::uuids::to_string(uuid));
 
   attribute_multiple("matrix",
                      [&]() {
@@ -313,7 +323,8 @@ void Json_formatter::export_object(const World_shape& world_shape)
 //! \brief exports the main scene object.
 void Json_formatter::export_scene()
 {
-  attribute("uuid", boost::uuids::to_string(m_uuid));
+  auto uuid = boost::uuids::random_generator()();
+  attribute("uuid", boost::uuids::to_string(uuid));
   attribute("type", "Scene");
   // Matrix4f identity;
   attribute_multiple("matrix",
@@ -381,8 +392,9 @@ void Json_formatter::export_geometry_data(Shared_geometry geometry)
     }
 
     auto normal_array = mesh_set->get_normal_array();
-    auto tex_coord_array = mesh_set->get_tex_coord_array();
     auto color_array = mesh_set->get_normal_array();
+
+    auto tex_coord_array = mesh_set->get_tex_coord_array();
     auto tex_coord_array_2d =
       boost::dynamic_pointer_cast<Tex_coord_array_2d>(tex_coord_array);
 
@@ -420,8 +432,9 @@ void Json_formatter::export_geometry_data(Shared_geometry geometry)
 
     attribute_multiple("faces",
                        [&]() {
+                         Uint i(0);
                          const auto& tris = mesh_set->triangle_coord_indices();
-                         for (const auto& t : tris) facet(t, true);
+                         for (const auto& t : tris) facet(t, i++, true);
                        },
                        true);
   }

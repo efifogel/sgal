@@ -27,9 +27,6 @@
 #include <map>
 
 #include <boost/shared_ptr.hpp>
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/io/ios_state.hpp>
 
@@ -131,7 +128,7 @@ public:
    * \param[in] i2
    * \param[in] i3
    */
-  void facet(const std::array<Index_type, 3>& tri, bool compact = false);
+  void facet(const std::array<Index_type, 3>& tri, Uint i, bool compact = false);
   //@}
 
 private:
@@ -287,8 +284,6 @@ private:
 
   boost::unordered_map<Shared_geometry, String> m_geometries;
   boost::unordered_map<Shared_apperance, String> m_apperances;
-
-  boost::uuids::uuid m_uuid;
 
   //! The stack of viewing matrices.
   std::stack<Shared_matrix4f> m_matrices;
