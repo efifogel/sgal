@@ -287,6 +287,9 @@ public:
 
   bool is_dynamic_loaded() { return false; }
 
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
+
 protected:
   /*! Indicates whether the group is visible and thus should be rendered. */
   Boolean m_is_visible;
@@ -311,9 +314,6 @@ protected:
 
   /*! Allocate the selection ids for this group. */
   void allocate_selection_ids();
-
-  /*! Obtain the tag (type) of the container. */
-  virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that represents the container. */
