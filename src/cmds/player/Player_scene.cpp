@@ -261,6 +261,9 @@ void Player_scene::create_scene(char* data, int size)
   create_defaults();
   indulge_user();
 
+  //! \todo FIX! FIX! FIX!
+  m_scene_graph->bind();
+
   if (m_option_parser->do_snapshot()) snapshot_scene();
   if (m_option_parser->do_export()) export_scene();
 }
@@ -331,6 +334,9 @@ void Player_scene::create_scene()
 
   create_defaults();
   indulge_user();
+
+  //! \todo FIX! FIX! FIX!
+  m_scene_graph->bind();
 
   if (m_option_parser->do_snapshot()) snapshot_scene();
   if (m_option_parser->do_export()) export_scene();
@@ -882,7 +888,6 @@ void Player_scene::handle(SGAL::Reshape_event* event)
 //! \brief handles a draw event.
 void Player_scene::handle(SGAL::Draw_event* event)
 {
-  std::cout << "Player_scene::handle()" << std::endl;
   auto* window_item = event->get_window_item();
   SGAL::Boolean dont_accumulate = event->get_suppress_accumulation();
   draw_window(window_item, dont_accumulate);
