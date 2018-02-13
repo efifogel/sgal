@@ -80,13 +80,6 @@ void Light::set_ambient_intensity(Float ambient_intensity)
 //! \brief obtains the ambient intensity of the light.
 Float Light::get_ambient_intensity() { return m_ambient_intensity; }
 
-/*! \brief sets the light color. It is used for diffuse and specular components.
- */
-void Light::set_color(const Vector3f& color) { m_color = color; }
-
-//! \brief obtains the light color.
-void Light::get_color(Vector3f& color) { color = m_color; }
-
 //! \brief initializes the node prototype.
 void Light::init_prototype()
 {

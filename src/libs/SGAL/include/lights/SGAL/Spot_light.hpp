@@ -96,17 +96,41 @@ public:
   // virtual Attribute_list get_attributes();
 
   void set_direction(const Vector3f& direction);
-  void get_direction(Vector3f& direction);
+
+  /*! Obtain the (const) direction.
+   */
+  const Vector3f& get_direction() const;
+
+  /*! Obtain the (non-const) direction.
+   */
+  Vector3f& get_direction();
+
   void set_beam_width(const Float& beam_width);
+
   Float get_beam_width();
+
   void set_cutoff_angle(const Float& cutoff_angle);
+
   Float get_cutoff_angle();
+
   float get_exponent();
+
   void set_attenuation(const Vector3f& attenuation);
+
   void get_attenuation(Vector3f& attenuation);
+
   void set_location(const Vector3f& location);
-  void get_location(Vector3f& location);
+
+  /*! Obtain the (const) location of the light.
+   */
+  const Vector3f& get_location() const;
+
+  /*! Obtain the (non-const) location of the light.
+   */
+  Vector3f& get_location();
+
   void set_radius(const Float& radius);
+
   Float get_radius();
 
 protected:
@@ -165,49 +189,53 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Spot_light* Spot_light::prototype() { return new Spot_light(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Spot_light::clone() { return new Spot_light(); }
 
-/*! \brief sets the direction of the light. */
+//! \brief sets the direction of the light.
 inline void Spot_light::set_direction(const Vector3f& direction)
 { m_direction = direction; }
 
-/*! \brief obtains the direction of the light. */
-inline void Spot_light::get_direction(Vector3f & direction)
-{ direction = m_direction; }
+//! \brief obtains the (const) direction of the light.
+inline const Vector3f& Spot_light::get_direction() const { return m_direction; }
 
-/*! \brief sets the beam_width (iner cone angel) of the light. */
+//! \brief obtains the (non-const) direction of the light.
+inline Vector3f& Spot_light::get_direction() { return m_direction; }
+
+//! \brief sets the beam_width (iner cone angel) of the light.
 inline void Spot_light::set_beam_width(const Float& beam_width)
 { m_beam_width = beam_width * 180.0f / SGAL_PI; }
 
-/*! \brief obtains the beam_width (iner cone angle) of the light. */
+//! \brief obtains the beam_width (iner cone angle) of the light.
 inline Float Spot_light::get_beam_width()
 { return m_beam_width / 180.0f * SGAL_PI; }
 
-/*! \brief sets the attenuation factor of the light. */
+//! \brief sets the attenuation factor of the light.
 inline void Spot_light::set_attenuation(const Vector3f & attenuation)
 { m_attenuation = attenuation; }
 
-/*! \brief sets the attenuation factor of the light. */
+//! \brief sets the attenuation factor of the light.
 inline void Spot_light::get_attenuation(Vector3f & attenuation)
 { attenuation = m_attenuation; }
 
-/*! \brief sets the location of the light. */
+//! \brief sets the location of the light.
 inline void Spot_light::set_location(const Vector3f & location)
 { m_location = location; }
 
-/*! \brief sets the location of the light. */
-inline void Spot_light::get_location(Vector3f & location)
-{ location = m_location; }
+//! \brief obtains the (const) location of the light.
+inline const Vector3f& Spot_light::get_location() const { return m_location; }
 
-/*! \brief sets the radius. */
+//! \brief obtains the (non-const) location of the light.
+inline Vector3f& Spot_light::get_location() { return m_location; }
+
+//! \brief sets the radius.
 inline void Spot_light::set_radius(const Float & radius)
 { m_radius = radius; }
 
-/*! \brief obtains the radius of the light. */
+//! \brief obtains the radius of the light.
 inline Float Spot_light::get_radius()
 { return m_radius; }
 

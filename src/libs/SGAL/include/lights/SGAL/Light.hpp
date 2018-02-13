@@ -97,7 +97,13 @@ public:
 
   void set_color(const Vector3f& color);
 
-  void get_color(Vector3f& color);
+  /*! Obtain the (const) light color.
+   */
+  const Vector3f& get_color() const;
+
+  /*! Obtain the (non-const) light color.
+   */
+  Vector3f& get_color();
 
   // void pop(const Matrix4f& mat);
 
@@ -156,6 +162,15 @@ private:
 
 //! \brief clones.
 inline Container* Light::clone() { SGAL_error(); return 0; }
+
+//! \brief sets the light color.
+inline void Light::set_color(const Vector3f& color) { m_color = color; }
+
+//! \brief obtains the (const) light color.
+inline const Vector3f& Light::get_color() const { return m_color; }
+
+//! \brief obtains the (non-const) light color.
+inline Vector3f& Light::get_color() { return m_color; }
 
 SGAL_END_NAMESPACE
 
