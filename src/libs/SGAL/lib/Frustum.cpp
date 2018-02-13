@@ -52,12 +52,12 @@ Frustum::Frustum() :
   m_right(30.0f),
   m_top(22.5f),
   m_bottom(-22.5f),
-  m_horiz_fov(m_vert_fov / m_aspect_ratio),
-  m_vert_fov(0.785398f),        //! \todo SGAL_PI * 0.25f),
-  m_xcenter(0.0f),
-  m_ycenter(0.0f),
   m_aspect_mode(Frustum::CALC_HORIZ),
   m_aspect_ratio(1.333333f),
+  m_vert_fov(0.785398f),        //! \todo SGAL_PI * 0.25f),
+  m_horiz_fov(m_vert_fov / m_aspect_ratio),
+  m_xcenter(0.0f),
+  m_ycenter(0.0f),
   m_dirty_corners(true),
   m_dirty_planes(true),
   m_x_perturbation_scale(0), m_y_perturbation_scale(0)
@@ -150,7 +150,7 @@ void Frustum::set_fov(float fov)
 //! \brief
 Float Frustum::get_fov()
 {
-  // FIX - what to do here?
+  if (m_dirty_corners) clean_corners();
   return m_horiz_fov;
 }
 
@@ -212,7 +212,7 @@ void Frustum::make_ortho(float left, float right, float bottom, float top)
   m_right = right;
   m_top = top;
   m_bottom = bottom;
-  m_type = Frustum::ORTHOGONAL;
+  m_type = ORTHOGONAL;
   m_dirty_corners = true;
   m_dirty_planes = true;
 }
@@ -228,7 +228,7 @@ void Frustum::make_ortho(Float left, Float right, Float bottom, Float top,
   m_bottom = bottom;
   m_near_dist = near_dist;
   m_far_dist = far_dist;
-  m_type = Frustum::ORTHOGONAL;
+  m_type = ORTHOGONAL;
   m_dirty_corners = true;
   m_dirty_planes = true;
 }
@@ -241,7 +241,7 @@ void Frustum::make_persp(Float left, Float right, Float bottom, Float top)
   m_right = right;
   m_top = top;
   m_bottom = bottom;
-  m_type = Frustum::PERSPECTIVE;
+  m_type = PERSPECTIVE;
   m_dirty_corners = true;
   m_dirty_planes = true;
 }
@@ -257,7 +257,7 @@ void Frustum::make_persp(Float left, Float right, Float bottom, Float top,
   m_bottom = bottom;
   m_near_dist = near_dist;
   m_far_dist = far_dist;
-  m_type = Frustum::PERSPECTIVE;
+  m_type = PERSPECTIVE;
   m_dirty_corners = true;
   m_dirty_planes = true;
 }
