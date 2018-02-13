@@ -410,22 +410,22 @@ bool Navigation_sensor::allow_zoom_in(const Vector3f& trans)
   // get the angle between the looking direction and the
   // vector connecting the camera position and the center
   // of the model
-  Vector3f cam_pos = camera->get_position();
+  Vector3f cam_offset = camera->get_offset();
   Vector3f cam2_model_vector = trans;
-  cam2_model_vector.sub(cam_pos);
+  cam2_model_vector.sub(cam_offset);
   cam2_model_vector.normalize();
   float cosa = cam2_model_vector.dot(view_dir);
 
   Vector3f pos = trans;
-  float dist = pos.distance(cam_pos) * cosa;
+  float dist = pos.distance(cam_offset) * cosa;
 
   Vector3f old_cam_2p = m_translation;
-  old_cam_2p.sub(cam_pos);
+  old_cam_2p.sub(cam_offset);
   old_cam_2p.normalize();
   float old_cosa = old_cam_2p.dot(view_dir);
 
   Vector3f old_pos = m_translation;
-  float old_dist = old_pos.distance(cam_pos) * old_cosa;
+  float old_dist = old_pos.distance(cam_offset) * old_cosa;
 
   return (abs(dist) > m_min_zoom_distance  && dist * old_dist >= 0);
 }

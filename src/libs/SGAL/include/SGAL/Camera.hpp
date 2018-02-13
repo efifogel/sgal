@@ -65,6 +65,7 @@ public:
     FIELDOFVIEW,
     DESCRIPTION,
     TYPE,
+    OFFSET,
     RADIUS_SCALE,
     FAR_PLANE_SCALE,
     LAST
@@ -92,10 +93,11 @@ public:
   /// \name field handlers
   //@{
   // position
-  Vector3f* position_handle(const Field_info*) { return &m_position; }
+  // Vector3f* position_handle(const Field_info*) { return &m_position; }
   Rotation* orientation_handle(const Field_info*) { return &m_orientation; }
   Float* fov_handle(const Field_info*) { return &m_field_of_view; }
   std::string* description_handle(const Field_info*) { return &m_description; }
+  Vector3f* offset_handle(const Field_info*) { return &m_offset; }
   Float* radius_scale_handle(const Field_info*) { return &m_radius_scale; }
   //@}
 
@@ -132,13 +134,28 @@ public:
   void components_changed(const Field_info* info);
 
   /*! Set the camera relative position. */
-  void set_position(const Vector3f& position);
+  void set_offset(const Vector3f& position);
 
   /*! Set the camera relative position. */
-  void set_position(Float x, Float y, Float z);
+  void set_offset(Float x, Float y, Float z);
 
   /*! Obtain the camera relative position. */
-  const Vector3f& get_position() const;
+  const Vector3f& get_offset() const;
+
+  /*! Obtain the camera (eye) position. */
+  Vector3f get_position() const;
+
+  /*! Obtain the normalized "right" vector.
+   */
+  const Vector3f& get_right() const;
+
+  /*! Obtain the normalized "up" vector.
+   */
+  const Vector3f& get_up() const;
+
+  /*! Obtain the normalized "forward" vector.
+   */
+  const Vector3f& get_forward() const;
 
   /*! Set the camera relative orientation. */
   void set_orientation(const Rotation& orientation);
@@ -244,8 +261,8 @@ protected:
   /*! Indicates whether the cliping planes are set dynamically. */
   bool m_is_dynamic;
 
-  /*! The position relative to the local coordinate system. */
-  Vector3f m_position;
+  /*! The offset of the camera. */
+  // Vector3f m_position;
 
   /* The rotation relative to the local coordinate system. */
   Rotation m_orientation;
@@ -280,6 +297,9 @@ protected:
   /*! The nearest clipping plane. */
   float m_nearest_clipping_plane;
 
+  /*! The offset of the camera. */
+  Vector3f m_offset;
+
   /*! The scale factor the radius of the bounding sphere is extended by. */
   float m_radius_scale;
 
@@ -308,7 +328,7 @@ private:
   // Defaults values
   static const Vector3f s_def_line_of_sight;
   static const Vector3f s_def_up;
-  static const Vector3f s_def_position;
+  static const Vector3f s_def_offset;
   static const Rotation s_def_orientation;
   static const float s_def_field_of_view;
   static Frustum s_def_frustum;
@@ -332,38 +352,47 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Camera* Camera::prototype() { return new Camera(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Camera::clone() { return new Camera(); }
 
-/*! \brief sets the camera position. */
-inline void Camera::set_position(Float x, Float y, Float z)
-{ set_position(Vector3f(x, y, z)); }
+//! \brief sets the camera offset.
+inline void Camera::set_offset(Float x, Float y, Float z)
+{ set_offset(Vector3f(x, y, z)); }
 
-/*! \brief sets the camera orientation. */
+//! \brief sets the camera orientation. */
 inline void Camera::set_orientation(Float v0, Float v1, Float v2, Float v3)
 { set_orientation(Rotation(v0, v1, v2, v3)); }
 
-/*! \brief obtains the camera position. */
-inline const Vector3f& Camera::get_position() const { return m_position; }
+//! \brief obtains the camera offset.
+inline const Vector3f& Camera::get_offset() const { return m_offset; }
 
-/*! \brief obtains the camera orientation. */
+//! \brief obtains the camera orientation.
 inline const Rotation& Camera::get_orientation() const { return m_orientation; }
 
-/*! \brief sets the textual description of the camera. */
+//! \brief obtains the normalized "right" vector.
+inline const Vector3f& Camera::get_right() const { return m_xaxis; }
+
+//! \brief obtain the normalized "up" vector.
+inline const Vector3f& Camera::get_up() const { return m_yaxis; }
+
+//! \brief obtain the normalized "forward" vector.
+inline const Vector3f& Camera::get_forward() const { return m_zaxis; }
+
+//! \brief sets the textual description of the camera.
 inline void Camera::set_description(const std::string& description)
 { m_description = description; }
 
-/*! \brief obtains the textual description of the camera. */
+//! \brief obtains the textual description of the camera.
 inline const std::string& Camera::get_description() const
 { return m_description; }
 
-/*! \brief obtains the (non-const) frustum. */
+//! \brief obtains the (non-const) frustum.
 inline Frustum& Camera::get_frustum() { return m_frustum; }
 
-/*! \brief obtains the (const) frustum. */
+//! \brief obtains the (const) frustum.
 inline const Frustum& Camera::get_frustum() const { return m_frustum; }
 
 SGAL_END_NAMESPACE

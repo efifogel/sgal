@@ -171,7 +171,7 @@ float Cull_context::compute_distance(const Cull_context::Render_node& rn)
   float factor = scale.get_max_comp();
   float radius = factor * bounding_sphere.get_radius();
 
-  // calculate the distance between the camera and the center ofthe object
+  // calculate the distance between the camera and the center of the object
   Vector3f p;
   p.sub(w_center, m_camera->get_position());
   return (p.length() - radius);

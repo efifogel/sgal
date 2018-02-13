@@ -48,11 +48,11 @@ const std::string Camera::s_tag = "Viewpoint";
 Container_proto* Camera::s_prototype(nullptr);
 
 // Defaults values:
-const Vector3f Camera::s_def_position(0, 0, 0);
 const Rotation Camera::s_def_orientation(0, 0, 1, 0);
 const float Camera::s_def_field_of_view(0.785398f);    // 45 degrees
 Frustum Camera::s_def_frustum;
 const std::string Camera::s_def_description("");
+const Vector3f Camera::s_def_offset(0, 0, 0);
 const Float Camera::s_def_radius_scale(1.1f);
 const Float Camera::s_def_far_plane_scale(64);
 const Vector3f Camera::s_def_line_of_sight(0, 0, 1);
@@ -65,7 +65,6 @@ Camera::Camera(Boolean proto) :
   Bindable_node(proto),
   m_scene_graph(nullptr),
   m_is_dynamic(true),
-  m_position(s_def_position),
   m_orientation(s_def_orientation),
   m_line_of_sight(s_def_line_of_sight),
   m_up(s_def_up),
@@ -76,6 +75,7 @@ Camera::Camera(Boolean proto) :
   m_frustum(s_def_frustum),
   m_field_of_view(s_def_field_of_view),
   m_nearest_clipping_plane(0.1f),
+  m_offset(s_def_offset),
   m_radius_scale(s_def_radius_scale),
   m_far_plane_scale(s_def_far_plane_scale),
   m_dirty_axes(false),
@@ -86,11 +86,19 @@ Camera::Camera(Boolean proto) :
 //! \brief destruct.
 Camera::~Camera() {}
 
-//! \brief sets the camera relative position.
-void Camera::set_position(const Vector3f& position)
+//! \brief sets the camera offset.
+void Camera::set_offset(const Vector3f& offset)
 {
-  m_position = position;
+  m_offset = offset;
   m_dirty_matrix = true;
+}
+
+//! \brief obtains the camera (eye) position. */
+Vector3f Camera::get_position() const
+{
+  Vector3f pos;
+  pos.add(m_eye, m_offset);
+  return pos;
 }
 
 //! \brief sets the camera relative orientation.
@@ -202,6 +210,8 @@ void Camera::get_clipping_planes(float& near_plane, float& far_plane)
  */
 void Camera::utilize()
 {
+  //! \todo FIX! FIX! FIX! check whether openGl has been initialized!!!
+  return;
   Gfx_conf* gfx_conf = Gfx_conf::get_instance();
   if (!gfx_conf) return;
 
@@ -231,16 +241,9 @@ void Camera::init_prototype()
   s_prototype = new Container_proto(Bindable_node::get_prototype());
 
   // Add the object fields to the prototype
-  // position
-  auto exec_func = static_cast<Execution_function>(&Camera::components_changed);
-  auto position_func =
-    static_cast<Vector3f_handle_function>(&Camera::position_handle);
-  s_prototype->add_field_info(new SF_vector3f(POSITION, "position",
-                                              Field_info::RULE_EXPOSED_FIELD,
-                                              position_func, s_def_position,
-                                              exec_func));
 
   // orientation
+  auto exec_func = static_cast<Execution_function>(&Camera::components_changed);
   auto orientation_func =
     static_cast<Rotation_handle_function>(&Camera::orientation_handle);
   s_prototype->add_field_info(new SF_rotation(ORIENTATION, "orientation",
@@ -262,6 +265,15 @@ void Camera::init_prototype()
   s_prototype->add_field_info(new SF_string(DESCRIPTION, "description",
                                             Field_info::RULE_FIELD,
                                             description_func));
+
+  // offset
+  exec_func = static_cast<Execution_function>(&Camera::components_changed);
+  auto offset_func =
+    static_cast<Vector3f_handle_function>(&Camera::offset_handle);
+  s_prototype->add_field_info(new SF_vector3f(OFFSET, "offset",
+                                              Field_info::RULE_EXPOSED_FIELD,
+                                              offset_func, s_def_offset,
+                                              exec_func));
 
   // radiusScale
   auto radius_scale_func =
@@ -315,7 +327,7 @@ void Camera::clean_matrix()
 
   // Position
   Vector3f new_pos;
-  new_pos.add(m_eye, m_position);
+  new_pos.add(m_eye, m_offset);
   new_pos.scale(-1.0f);
   new_pos.xform_pt(new_pos, m_view_mat);
   m_view_mat.set_row(3, new_pos);
@@ -388,10 +400,10 @@ void Camera::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "position") {
+    if (name == "offset") {
       Vector3f vec(value);
       m_is_dynamic = false;
-      set_position(vec);
+      set_offset(vec);
       elem->mark_delete(ai);
       continue;
     }
