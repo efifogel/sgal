@@ -1001,17 +1001,12 @@ void Scene_graph::write_obj(const std::string& filename, std::ostream& os)
 void Scene_graph::write_json(const std::string& filename, std::ostream& os)
 {
   Json_formatter formatter(filename, os);
-  formatter.pre_process(m_containers, m_instances);
+  formatter.pre_process(get_active_camera(), m_containers, m_instances);
 
   formatter.begin();
   auto root = get_root();
-  for (auto it1 = root->children_begin(); it1 != root->children_end(); ++it1) {
-    auto transform = boost::dynamic_pointer_cast<Transform>(*it1);
-    if (!transform) continue;
-    SGAL_assertion(transform->get_name().compare(g_navigation_root_name) == 0);
-    auto it2 = transform->children_begin();
-    for (; it2 != transform->children_end(); ++it2) formatter.write(*it2);
-  }
+  for (auto it = root->children_begin(); it != root->children_end(); ++it)
+    formatter.write(*it);
   formatter.end();
 }
 
