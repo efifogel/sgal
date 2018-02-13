@@ -45,6 +45,8 @@ class Mesh_set;
 class Matrix4f;
 class Vector3f;
 class Vector2f;
+class Camera;
+class Light;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -63,7 +65,7 @@ public:
   typedef boost::shared_ptr<Appearance>             Shared_apperance;
   typedef boost::shared_ptr<Mesh_set>               Shared_mesh_set;
   typedef boost::shared_ptr<Matrix4f>               Shared_matrix4f;
-  typedef std::pair<Shared_shape, Shared_matrix4f>  World_shape;
+  typedef boost::shared_ptr<Light>                  Shared_light;
 
   /*! Construct from file name.
    * \param[in] filename The file name.
@@ -91,7 +93,8 @@ public:
    * \param[in] containers.
    * \param[in] instances.
    */
-  void pre_process(const std::list<Shared_container>& containers,
+  void pre_process(Camera* camera,
+                   const std::list<Shared_container>& containers,
                    const std::map<std::string, Shared_container>& instances);
 
   /// \name Export functions
@@ -128,7 +131,8 @@ public:
    * \param[in] i2
    * \param[in] i3
    */
-  void facet(const std::array<Index_type, 3>& tri, Uint i, bool compact = false);
+  void facet(Uint type, const std::array<Index_type, 3>& tri, Uint i,
+             bool compact = false);
   //@}
 
 private:
@@ -277,19 +281,33 @@ private:
 
   void export_geometry_data(Shared_geometry geometry);
 
-  void export_object(const World_shape& world_shape);
+  /*! Export the camera.
+   */
+  void export_camera();
+
+  /*! Export a light source.
+   */
+  void export_light(Shared_light light);
+
+  /*! Export a mesh.
+   */
+  void export_mesh(Shared_shape shape);
+
+  /*! Export a matrix.
+   * \param[in] the matrix.
+   */
+  void export_matrix(const Matrix4f& matrix);
 
   /*! Indicated whether the attribute is separated. */
   bool m_separated;
 
+  Camera* m_camera;
+
+  boost::unordered_map<Shared_geometry, String> m_lights;
   boost::unordered_map<Shared_geometry, String> m_geometries;
   boost::unordered_map<Shared_apperance, String> m_apperances;
 
-  //! The stack of viewing matrices.
-  std::stack<Shared_matrix4f> m_matrices;
-
-  /*! The sequence of shapes and their world transformations. */
-  std::vector<World_shape> m_shapes;
+  Matrix4f m_identity_matrix;
 };
 
 #if defined(_MSC_VER)

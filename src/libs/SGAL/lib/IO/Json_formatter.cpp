@@ -41,32 +41,36 @@
 #include "SGAL/Normal_array.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Context.hpp"
+#include "SGAL/Camera.hpp"
+#include "SGAL/Frustum.hpp"
+#include "SGAL/Spot_light.hpp"
+#include "SGAL/Point_light.hpp"
+#include "SGAL/Directional_light.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 //! \brief constructs.
 Json_formatter::Json_formatter(const std::string& filename) :
   Text_formatter(filename),
-  m_separated(true)
-{
-  Shared_matrix4f mat(new Matrix4f);
-  m_matrices.push(mat);
-}
+  m_separated(true),
+  m_camera(nullptr)
+{ m_identity_matrix.make_identity(); }
 
 //! \brief constructs an output formatter.
 Json_formatter::Json_formatter(const std::string& filename, std::ostream& os) :
   Text_formatter(filename, os),
-  m_separated(true)
-{
-  Shared_matrix4f mat(new Matrix4f);
-  m_matrices.push(mat);
-}
+  m_separated(true),
+  m_camera(nullptr)
+{ m_identity_matrix.make_identity(); }
 
 //! \brief constructs an input formatter.
 Json_formatter::Json_formatter(const std::string& filename, std::istream& is) :
   Text_formatter(filename, is),
-  m_separated(true)
-{}
+  m_separated(true),
+  m_camera(nullptr)
+{
+  m_identity_matrix.make_identity();
+}
 
 //! \brief destruct.
 Json_formatter::~Json_formatter()
@@ -77,10 +81,14 @@ Json_formatter::~Json_formatter()
 
 //! \brief pre-processes the formatter.
 void Json_formatter::
-pre_process(const std::list<Shared_container>& containers,
+pre_process(Camera* camera,
+            const std::list<Shared_container>& containers,
             const std::map<std::string, Shared_container>& instances)
 {
+  m_camera = camera;
+
   for (auto container : containers) {
+    // std::cout << container->get_tag() << std::endl;
     auto geom = boost::dynamic_pointer_cast<Geometry>(container);
     if (geom) {
       auto uuid = boost::uuids::random_generator()();
@@ -97,6 +105,7 @@ pre_process(const std::list<Shared_container>& containers,
   }
 
   for (auto instance : instances) {
+    // std::cout << instance.second->get_tag() << std::endl;
     auto geom = boost::dynamic_pointer_cast<Geometry>(instance.second);
     if (geom) {
       auto uuid = boost::uuids::random_generator()();
@@ -135,11 +144,6 @@ void Json_formatter::begin()
   // set_ascii_mode(*m_out);
 
   object_begin();
-}
-
-//! \brief writes the end statement.
-void Json_formatter::end()
-{
   attribute_single("metadata",
                    [&]() {
                      attribute("version", "1.0");
@@ -164,9 +168,28 @@ void Json_formatter::end()
                          single_object(material_op);
                        }
                      });
-  auto object_op = std::bind(&Json_formatter::export_scene, this);
-  attribute_single("object", object_op);
-  new_line();
+
+  object_separator();
+  indent();
+  out_string("object");
+  name_value_separator();
+  object_begin();
+  auto uuid = boost::uuids::random_generator()();
+  attribute("uuid", boost::uuids::to_string(uuid));
+  attribute("type", "Scene");
+  export_matrix(m_identity_matrix);
+  object_separator();
+  indent();
+  out_string("children");
+  name_value_separator();
+  array_begin();
+}
+
+//! \brief writes the end statement.
+void Json_formatter::end()
+{
+  array_end();
+  object_end();
   object_end();
   new_line();
 }
@@ -192,12 +215,12 @@ void Json_formatter::vertex(const Vector2f& p, bool compact)
 }
 
 //! \brief writes a triangular facet.
-void Json_formatter::facet(const std::array<Index_type, 3>& tri, Uint i,
-                           bool compact)
+void Json_formatter::facet(Uint type, const std::array<Index_type, 3>& tri,
+                           Uint i, bool compact)
 {
   object_separator(compact);
   if (!compact) indent();
-  out() << tri[0] << "," << tri[1] << "," << tri[2] << "," << i;
+  out() << type << "," << tri[0] << "," << tri[1] << "," << tri[2] << "," << i;
   if (!compact) new_line();
   m_separated = false;
 }
@@ -205,28 +228,51 @@ void Json_formatter::facet(const std::array<Index_type, 3>& tri, Uint i,
 //! \brief writes a scene-graph container.
 void Json_formatter::write(Shared_container container)
 {
-  auto transform = boost::dynamic_pointer_cast<Transform>(container);
-  if (transform) {
-    // Push the transform matrix
-    const auto& curr_mat = transform->get_matrix();
-    auto last_mat = m_matrices.top();
-    Shared_matrix4f next_mat(new Matrix4f);
-    next_mat->mult(*last_mat, curr_mat);
-    m_matrices.push(next_mat);
+  // std::cout << "Json_formatter::write(): " << container->get_tag() << std::endl;
+  auto group = boost::dynamic_pointer_cast<Group>(container);
+  if (group) {
 
-    // Process the children.
-    transform->write(this);
+    object_separator();
+    object_begin();
 
-    // Pop the transform matrix
-    m_matrices.pop();
+    auto uuid = boost::uuids::random_generator()();
+    attribute("uuid", boost::uuids::to_string(uuid));
+    attribute("type", group->get_tag());
+
+    auto transform = boost::dynamic_pointer_cast<Transform>(group);
+    if (transform) export_matrix(transform->get_matrix());
+    else export_matrix(m_identity_matrix);
+    object_separator();
+    indent();
+    out_string("children");
+    name_value_separator();
+    array_begin();
+    group->write(this);
+    array_end();
+    object_end();
     return;
   }
+
   auto shape = boost::dynamic_pointer_cast<Shape>(container);
   if (shape) {
-    // Observe that we push the shape even if it is not visible.
-    m_shapes.push_back(std::make_pair(shape, m_matrices.top()));
+    object_separator();
+    object_begin();
+    export_mesh(shape);
+    shape->write(this);
+    object_end();
     return;
   }
+
+  auto light = boost::dynamic_pointer_cast<Light>(container);
+  if (light) {
+    object_separator();
+    object_begin();
+    export_light(light);
+    light->write(this);
+    object_end();
+    return;
+  }
+
   container->write(this);
 }
 
@@ -291,20 +337,97 @@ void Json_formatter::array_end(bool compact)
   m_separated = false;
 }
 
-void Json_formatter::export_object(const World_shape& world_shape)
+//! Export a matrix.
+void Json_formatter::export_matrix(const Matrix4f& matrix)
 {
-  auto shape = world_shape.first;
-  auto matrix = world_shape.second;
-  const auto& name = shape->get_name();
-  if (! name.empty()) attribute("name", name);
-  auto uuid = boost::uuids::random_generator()();
-  attribute("uuid", boost::uuids::to_string(uuid));
-
   attribute_multiple("matrix",
                      [&]() {
                        for (auto i = 0; i != 4; ++i)
                          for (auto j = 0; j != 4; ++j)
-                           single_value(matrix->get(i, j), true);
+                           single_value(matrix.get(i, j), true);
+                     }, true);
+}
+
+//! exports the camera.
+void Json_formatter::export_camera()
+{
+  auto uuid = boost::uuids::random_generator()();
+  attribute("uuid", boost::uuids::to_string(uuid));
+  const auto& name = m_camera->get_name();
+  if (! name.empty()) attribute("name", name);
+
+  auto& frustum = m_camera->get_frustum();
+
+  // The viewing matrix of the camera is the OpenGL matrix, which seems to be
+  // different than the one we need, so build it from scratch:
+
+  Matrix4f mat;
+  mat.make_identity();
+  mat.set_col(0, m_camera->get_right());
+  mat.set_col(1, m_camera->get_up());
+  mat.set_col(2, m_camera->get_forward());
+
+  // rotation:
+  auto rotation = m_camera->get_orientation();
+  const auto& newz = rotation.get_axis();
+  const auto angle = rotation.get_angle();
+  mat.post_rot(mat, newz[0], newz[1], newz[2], angle);
+
+  // Position
+  Vector3f translation = m_camera->get_position();
+  translation.xform_pt(translation, mat);
+  mat.set_row(3, translation);
+  export_matrix(mat);
+  auto type = frustum.get_type();
+  attribute("type", ((Frustum::ORTHOGONAL == type) ?
+                     "OrthogonalCamera" : "PerspectiveCamera"));
+  attribute("fov", rad2deg(frustum.get_fov()));
+  attribute("aspect", frustum.get_aspect_ratio());
+  Float near_dist, far_dist;
+  frustum.get_near_far(near_dist, far_dist);
+  attribute("near", near_dist);
+  attribute("far", far_dist);
+}
+
+//! \brief exports a light source.
+void Json_formatter::export_light(Shared_light light)
+{
+  auto uuid = boost::uuids::random_generator()();
+  attribute("uuid", boost::uuids::to_string(uuid));
+  const auto& name = light->get_name();
+  if (! name.empty()) attribute("name", name);
+  attribute("intensity", light->get_intensity());
+  attribute("color", to_hex(light->get_color()));
+  attribute("type", light->get_tag());
+
+  Matrix4f mat;
+  mat.make_identity();
+  auto spot_light = boost::dynamic_pointer_cast<Spot_light>(light);
+  if (spot_light) {
+    const auto& direction = spot_light->get_direction();
+    //! \todo do something with the direction.
+    Vector3f translation(spot_light->get_location());
+    translation.xform_pt(translation, mat);
+    mat.set_row(3, translation);
+   }
+  export_matrix(mat);
+}
+
+//! \brief exports a mesh.
+void Json_formatter::export_mesh(Shared_shape shape)
+{
+  auto uuid = boost::uuids::random_generator()();
+  attribute("uuid", boost::uuids::to_string(uuid));
+  const auto& name = shape->get_name();
+  if (! name.empty()) attribute("name", name);
+
+  Matrix4f mat;
+  mat.make_identity();
+  attribute_multiple("matrix",
+                     [&]() {
+                       for (auto i = 0; i != 4; ++i)
+                         for (auto j = 0; j != 4; ++j)
+                           single_value(mat.get(i, j), true);
                      }, true);
   attribute("visible", shape->is_visible());
   attribute("type", "Mesh");
@@ -323,21 +446,26 @@ void Json_formatter::export_object(const World_shape& world_shape)
 //! \brief exports the main scene object.
 void Json_formatter::export_scene()
 {
-  auto uuid = boost::uuids::random_generator()();
-  attribute("uuid", boost::uuids::to_string(uuid));
-  attribute("type", "Scene");
-  // Matrix4f identity;
-  attribute_multiple("matrix",
-                     [&](){ out() << "1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1"; }, true);
-  attribute_multiple("children",
-                     [&](){
-                       for (auto world_shape : m_shapes) {
-                         auto shape_op =
-                           std::bind(&Json_formatter::export_object, this,
-                                     world_shape);
-                         single_object(shape_op);
-                       }
-                     });
+  // auto uuid = boost::uuids::random_generator()();
+  // attribute("uuid", boost::uuids::to_string(uuid));
+  // attribute("type", "Scene");
+  // // Matrix4f identity;
+  // attribute_multiple("matrix",
+  //                    [&](){ out() << "1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1"; }, true);
+  // attribute_multiple("children",
+  //                    [&](){
+  //                      if (m_camera) {
+  //                        auto camera_op =
+  //                          std::bind(&Json_formatter::export_camera, this);
+  //                        single_object(camera_op);
+  //                      }
+  //                      for (auto world_shape : m_shapes) {
+  //                        auto shape_op =
+  //                          std::bind(&Json_formatter::export_mesh, this,
+  //                                    world_shape);
+  //                        single_object(shape_op);
+  //                      }
+  //                    });
 }
 
 void Json_formatter::export_material(Shared_apperance appearance, String& id)
@@ -434,7 +562,7 @@ void Json_formatter::export_geometry_data(Shared_geometry geometry)
                        [&]() {
                          Uint i(0);
                          const auto& tris = mesh_set->triangle_coord_indices();
-                         for (const auto& t : tris) facet(t, i++, true);
+                         for (const auto& t : tris) facet(0x18, t, i++, true);
                        },
                        true);
   }
