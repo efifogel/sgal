@@ -89,7 +89,7 @@ public:
   void set_type(Frustum_type type);
 
   /*! Obtain the frustum type (orthogonal, perspective, etc) */
-  Frustum_type get_type() const { return m_type; }
+  Frustum_type get_type() const;
 
   /*! Set the distance from the origin to the near plane.
    * \param near_dist the distance from the near plane.
@@ -125,7 +125,7 @@ public:
   void get_corners(Float& left, Float& right, Float& bottom, Float& top,
                    Float& near_clip, Float& far_clip);
 
-  /*! Sets the aspect recalculation mode. The mode can be
+  /*! Set the aspect recalculation mode. The mode can be
    * SGAL_FRUST_CALC_NONE, which means that whatever the application sets
    * for the frustum dimensions is honored, or either FRUST_CALC_VERT
    * or FRUST_CALC_HORIZ, meaning that the vertical or horizontal
@@ -133,9 +133,11 @@ public:
    * horizontal or vertical dimensions using aspect_ratio. Causes the frustum
    * dimensions to be recalculated immediately if necessary.
    */
-  void set_aspect_mode(Frustum::Aspect_mode mode);
+  void set_aspect_mode(Aspect_mode mode);
 
-  Frustum::Aspect_mode get_aspect_mode() const;
+  /*! Obtain the aspect recalculation mode.
+   */
+  Aspect_mode get_aspect_mode() const;
 
   /*! Set the aspect ratio of the frustum dimensions. */
   void set_aspect_ratio(Float ratio);
@@ -199,17 +201,17 @@ private:
 
   Float m_bottom;
 
-  Float m_horiz_fov;
+  Aspect_mode m_aspect_mode;
+
+  Float m_aspect_ratio;
 
   Float m_vert_fov;
+
+  Float m_horiz_fov;
 
   Float m_xcenter;
 
   Float m_ycenter;
-
-  Frustum::Aspect_mode m_aspect_mode;
-
-  Float m_aspect_ratio;
 
   Vector3f m_corners[Frustum::NUM_CORNERS];
 
@@ -224,6 +226,9 @@ private:
   /*! The perturbation scale along the y axis for accumulation AA. */
   Float m_y_perturbation_scale;
 };
+
+//! \brief obtains the frustum type (orthogonal, perspective, etc) */
+inline Frustum::Frustum_type Frustum::get_type() const { return m_type; }
 
 //! \brief set the perturbation scales for accumulation AA.
 inline void Frustum::set_perturbation_scale(Float xpert, Float ypert)
