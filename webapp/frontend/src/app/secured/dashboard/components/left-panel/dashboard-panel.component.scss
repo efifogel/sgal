@@ -8,7 +8,7 @@
 }
 
 .list-item:hover{
-    background-color: #E91E63;
+    background-color: #d9534f;
     cursor: pointer;
 }
 #list-wrapper{
@@ -35,17 +35,3 @@
     text-align: right;
     top: 0;
   }
-
-.upload-btn{
-  background-color: #E91E63;
-  border-radius: 30px !important;
-  color: white;
-  margin-left: 2em;
-  margin-right: 2em;
-  margin-top: 3em;
-  font-size: 13px;
-  border: solid 2px white;
-}
-.upload-btn:hover{
-  background-color: #1976D2;
-}

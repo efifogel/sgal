@@ -6,6 +6,7 @@ import * as AWS from "aws-sdk/global";
 import * as S3 from "aws-sdk/clients/s3";
 import { User } from "../../models/user";
 import { CognitoCallback } from "./cognito.service";
+import { ModalService } from '../Modals/modals.service';
 
 export interface S3Callback {
   ListobjectCallBack(message: string, result: any): void;
@@ -19,7 +20,7 @@ export class AWS3Service {
   bucketRegion = environment.bucketRegion;
   IdentityPoolId = environment.identityPoolId;
   s3: any;
-  constructor(private httpStatus: HTTPStatus) {
+  constructor(private httpStatus: HTTPStatus, private modalService: ModalService) {
     this.setBucketConfig();
     const userId = JSON.parse(window.localStorage.getItem("cognitoClientId"));
     this.setBucketParams(userId);
@@ -43,8 +44,11 @@ export class AWS3Service {
     this.httpStatus.setHttpStatus(true);
     this.s3.listObjects((error, data) => {
       if (error) {
+        this.modalService.showErrorModal(error.message);
         callback.ListobjectCallBack(error, null);
       } else {
+        console.log(data);
+        this.modalService.showErrorModal('Oups, some error occured, this is all we know');
         callback.ListobjectCallBack(null, data);
       }
       this.httpStatus.setHttpStatus(false);
@@ -59,6 +63,7 @@ export class AWS3Service {
       },
       (err, data) => {
         if (err) {
+          this.modalService.showErrorModal(err.message);
           callback.GetObjectCallback(filetype, err.message, null);
         } else {
           callback.GetObjectCallback(filetype, null, data);
@@ -85,6 +90,7 @@ export class AWS3Service {
     };
     this.s3.upload(params, (err, data) => {
       if (err) {
+        this.modalService.showErrorModal(err.message);
         callback.UploadCallback(err.message, null);
       } else {
         callback.UploadCallback(null, data);

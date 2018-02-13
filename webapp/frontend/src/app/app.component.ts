@@ -1,5 +1,7 @@
 import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { HTTPStatus } from './services/RxJS/HTTPListener.service';
+import { Router, NavigationEnd } from '@angular/router';
+import { CognitoService } from './services/AWS/cognito.service';
 
 declare var bodymovin: any;
 declare var $: any;
@@ -11,9 +13,18 @@ declare var $: any;
 })
 export class AppComponent implements AfterViewInit {
   @ViewChild('HTTPLoader') HTTPLoader: ElementRef;
+  isSecuredRoute: boolean;
+  currentUser: string;
   HTTPActivity: boolean;
-  constructor(private httpStatus: HTTPStatus) {
+  constructor(private httpStatus: HTTPStatus, private router: Router, private cognito: CognitoService) {
     this.httpStatus.getHttpStatus().subscribe((status: boolean) => this.HTTPActivity = status );
+    this.router.events.subscribe(event => {
+      const navigationEnded: boolean = event instanceof NavigationEnd;
+      if (navigationEnded) {
+        this.isSecuredRoute = (this.router.url.includes('secured') ? true : false);
+        this.currentUser = localStorage.getItem('username');
+      }
+    })
   }
   ngAfterViewInit() {
     const animData = {
@@ -26,5 +37,11 @@ export class AppComponent implements AfterViewInit {
     };
     const anim = bodymovin.loadAnimation(animData);
   anim.setSpeed(3.4);
+  }
+
+  logout() {
+    this.cognito.logout();
+    localStorage.clear();
+    this.router.navigate(['auth/login']);
   }
 }

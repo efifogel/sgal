@@ -3,7 +3,7 @@
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
+    "emitDecoratorMetadata": true,    
     "experimentalDecorators": true,
     "lib": [
       "es2016",
@@ -17,5 +17,13 @@
   "exclude": [
     "test.ts",
     "**/*.spec.ts"
-  ]
+  ],
+  "paths": {
+      "@app/*": ["app/*"],
+      "@env/*": ["environments/*"],
+      "@components/*": ["app/components/*"],
+      "@guards/*": ["app/guards/*"],
+      "@services/*": ["app/services/*"],
+      "@models/*": ["app/models/*"]
+    }
 }

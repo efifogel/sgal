@@ -22,6 +22,7 @@
       "rxjs/Rx"
     ],
     "import-spacing": true,
+    "experimentalDecorators": true
     "indent": [
       true,
       "spaces"

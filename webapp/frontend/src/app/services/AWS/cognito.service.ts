@@ -22,6 +22,7 @@ export class CognitoService {
   userPool = new AWSCognito.CognitoUserPool(this.poolData);
 
   constructor(private httpStatus: HTTPStatus) {}
+
   getUserPool() {
     return this.userPool;
   }
@@ -120,5 +121,10 @@ export class CognitoService {
         });
       }
     });
+  }
+  logout(){
+    const userPool = new AWSCognito.CognitoUserPool(this.poolData);
+    const cognitoUser = userPool.getCurrentUser();
+    cognitoUser.signOut();
   }
 }

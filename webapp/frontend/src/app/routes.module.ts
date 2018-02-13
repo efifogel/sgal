@@ -9,7 +9,7 @@ import { SecuredComponent } from './secured/secured.component';
 import { ForgotPasswordComponent } from './public/authentification/forgot/forgot.component';
 import { SceneComponent } from './secured/dashboard/components/scene/scene.component';
 import { DashboardPanelComponent } from './secured/dashboard/components/left-panel/dashboard-panel.component';
-
+import { AuthGuard } from './services/guards/routes.guard';
 
 const authRoutes: Routes = [
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
@@ -31,7 +31,8 @@ const secureHomeRoutes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'secured', component: SecuredComponent,
+    path: 'secured', component: SecuredComponent, canActivate: [AuthGuard],
+
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'scene', component: SceneComponent }

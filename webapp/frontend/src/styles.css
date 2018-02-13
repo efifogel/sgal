@@ -52,3 +52,18 @@ form{
 .alert-danger{
   max-width: 350px !important;
 }
+
+.cta-btn{
+  border-radius: 20px;
+  padding: 5px 20px;
+  color: white;
+  border: solid 1px white;
+  text-transform: uppercase;
+  font-size: 0.9em;
+  background-color: transparent;
+}
+.cta-btn:hover{
+  background-color:	#d9534f;
+  border: solid 1px #d9534f;
+  
+}
