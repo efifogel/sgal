@@ -13,7 +13,8 @@ import { AppComponent } from './app.component';
 /* UI Libraries */
 
 import { CovalentLayoutModule } from '@covalent/core/layout';
-import { MatInputModule } from '@angular/material/input';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 /* Routing & components */
 
@@ -61,10 +62,11 @@ const Modals = [ErrorModalComponent];
   declarations: [AppComponent, RoutableComponents, TrimStringPipe, Modals],
   imports: [
     BrowserModule,
+    NoopAnimationsModule,
     FormsModule,
     CovalentLayoutModule,
     RouterModule,
-    MatInputModule,
+    MatSnackBarModule,
     NgbModule.forRoot(),
     AppRoutingModule
   ],

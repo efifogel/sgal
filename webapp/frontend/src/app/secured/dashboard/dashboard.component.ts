@@ -2,6 +2,8 @@ import {Component} from "@angular/core";
 import {AWS3Service} from "../../services/AWS/bucket.service";
 import * as S3 from "aws-sdk/clients/s3";
 import {PlayerNotifier} from "../../services/RxJS/player.notify.service";
+import { ModalService } from "../../services/Modals/modals.service";
+import {MatSnackBar} from '@angular/material';
 
 declare var TextDecoder: any;
 
@@ -18,12 +20,15 @@ export class DashboardComponent {
   files: any[];
   clientId: string;
 
-  constructor(private s3: AWS3Service, private playerNotifier: PlayerNotifier) {
+
+  constructor(private s3: AWS3Service, private playerNotifier: PlayerNotifier,
+     private modalService: ModalService, public snackBar: MatSnackBar) {
     this.clientId = JSON.parse(localStorage.getItem("cognitoClientId"));
     this.s3.listAlbums(this.clientId, this);
   }
 
   getFileObject(key: string) {
+    this.showSnackbar("Parsing document ...");
     if (key.includes('.wrl')) {
       this.s3.getBucketObject('wrl', key, this);
     } else if (key.includes('dxf')) {
@@ -48,15 +53,18 @@ export class DashboardComponent {
         this.files = data.Contents;
       }
     } else {
-      console.log(errorMessage);
+      this.modalService.showErrorModal("Failed to fetch the list of document(s)");
     }
   }
 
   UploadCallback(errorMessage: string, data: any) {
     if (!errorMessage) {
+      const newKey = data.Key;
+      this.snackBar.open("Opening the document ...");
       this.s3.listAlbums(this.clientId, this);
+      this.getFileObject(newKey);
     } else {
-      console.log(errorMessage);
+      this.modalService.showErrorModal("Failed to upload this document");
     }
   }
 
@@ -73,7 +81,7 @@ export class DashboardComponent {
         this.playerNotifier.setSelectedFile(file);
       }
     } else {
-      console.log(errorMessage);
+      this.modalService.showErrorModal("Failed to download this document");
     }
   }
 
@@ -83,5 +91,11 @@ export class DashboardComponent {
       str += String.fromCharCode(parseInt(binArray[i]));
     }
     return JSON.parse(str);
+  }
+  showSnackbar(message: string) {
+    const snackRef = this.snackBar.open(message);
+    setTimeout(() => {
+      snackRef.dismiss();
+    }, 1000);
   }
 }

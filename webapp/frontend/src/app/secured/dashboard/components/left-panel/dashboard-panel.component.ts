@@ -9,6 +9,7 @@ export class DashboardPanelComponent implements OnInit {
   @Input()
   files: any[];
   dataHasLoaded: boolean;
+  selectedElement: string;
   // tslint:disable-next-line:no-output-on-prefix
   @Output()
   onFileUpload: EventEmitter<any> = new EventEmitter<any>();
@@ -23,5 +24,6 @@ export class DashboardPanelComponent implements OnInit {
   }
   selectElement(key: string) {
     this.onFileClick.emit(key);
+    this.selectedElement = key;
   }
 }

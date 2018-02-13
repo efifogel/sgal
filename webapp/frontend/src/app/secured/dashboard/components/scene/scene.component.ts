@@ -10,6 +10,7 @@ import {
 import { PlayerNotifier } from "../../../../services/RxJS/player.notify.service";
 import { Geometry, Mesh } from "three";
 import { DXFJSON, Entity, Vertice } from "../../../../models/DXF";
+import { ModalService } from "../../../../services/Modals/modals.service";
 
 declare const THREE: any;
 declare const DxfParser: any;
@@ -27,9 +28,9 @@ export class SceneComponent implements AfterViewInit {
   @Output() onFileSelection: EventEmitter<string> = new EventEmitter<string>();
   @ViewChild("rendererContainer") rendererContainer: ElementRef;
   FLOOR = -250;
-
-  constructor(private playerNotifier: PlayerNotifier) {}
-
+  
+  constructor(private playerNotifier: PlayerNotifier, private modalService: ModalService) {}
+  
   ngAfterViewInit() {
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     const container = this.rendererContainer.nativeElement;
@@ -54,7 +55,7 @@ export class SceneComponent implements AfterViewInit {
       }
     });
   }
-
+  
   initJSONCanvas = (data: any) => {
     var stats;
     var camera, scene, renderer;
@@ -62,12 +63,14 @@ export class SceneComponent implements AfterViewInit {
     var windowHalfX = window.innerWidth / 2;
     var windowHalfY = window.innerHeight / 2;
     const container = this.rendererContainer.nativeElement;
-    init();
-    animate();
-
+    try {
+      init();
+      animate();
+    } catch(err) {
+      this.modalService.showErrorModal("Oups, failed to parse this file");
+    }
     function init() {
-      camera = new THREE.PerspectiveCamera( 45, container.offsetWidth / container.offsetHeight, 1, 2000 );
-      camera.position.z = 4;
+      camera = new THREE.PerspectiveCamera( 45, container.offsetWidth / container.offsetHeight, 1, 1000 );
       // scene
       scene = new THREE.Scene();
       var ambient = new THREE.AmbientLight( 0x444444 );
@@ -75,17 +78,34 @@ export class SceneComponent implements AfterViewInit {
       var directionalLight = new THREE.DirectionalLight( 0xffeedd );
       directionalLight.position.set( 0, 0, 1 ).normalize();
       scene.add( directionalLight );
-      // BEGIN Clara.io JSON loader code
+
       const loader = new THREE.ObjectLoader();
-    
       const obj = loader.parse(data);
       scene.add(obj);
       
-      // END Clara.io JSON loader code
       renderer = new THREE.WebGLRenderer();
       renderer.setPixelRatio( container.devicePixelRatio );
       renderer.setSize( container.offsetWidth, container.offsetHeight );
       container.appendChild( renderer.domElement );
+      const up = new THREE.Vector3();
+      up.set(0, 0, 1);
+      const eye = new THREE.Vector3();
+      eye.set(0, -100, 40);
+      const target = new THREE.Vector3();
+      target.set(0, 0, 0);
+      camera.up.copy(up);
+      camera.position.copy(eye);
+      camera.lookAt(target);
+      // controller.target.copy(target);
+
+      // Ligths
+      const light = new THREE.DirectionalLight(0xffffff, 1);
+      light.position.set(0, -1, 0);
+      // light.target.position.set(0, 0, 0);
+      camera.add(light);
+
+      scene.add(camera);
+
       document.addEventListener( 'mousemove', onDocumentMouseMove, false );
       //
       window.addEventListener( 'resize', onWindowResize, false );
@@ -107,13 +127,13 @@ export class SceneComponent implements AfterViewInit {
       render();
     }
     function render() {
-      camera.position.x += ( mouseX - camera.position.x ) * .05;
-      camera.position.y += ( - mouseY - camera.position.y ) * .05;
+     // camera.position.x += ( mouseX - camera.position.x ) * .05;
+     // camera.position.y += ( mouseY - camera.position.y ) * .05;
       camera.lookAt( scene.position );
       renderer.render( scene, camera );
     }
   }
-
+  
   parseDXF(DXF: any) {
     const parser = new DxfParser();
     try {
@@ -131,7 +151,7 @@ export class SceneComponent implements AfterViewInit {
       console.error(err.stack);
     }
   }
-
+  
   initWRLCanvas(
     buffer: any,
     renderer: any,
@@ -142,9 +162,10 @@ export class SceneComponent implements AfterViewInit {
     let controls;
     const loader = new THREE.VRMLLoader();
     const scene = loader.parse(buffer);
+    
     init();
     animate();
-
+    
     function init() {
       camera.position.z = 6;
       controls = new THREE.OrbitControls(camera);
@@ -160,9 +181,14 @@ export class SceneComponent implements AfterViewInit {
         canvasContainer.offsetHeight
       );
       canvasContainer.appendChild(renderer.domElement);
+      var size = 10;
+      var divisions = 10;
+      var gridHelper = new THREE.GridHelper( size, divisions );
+      scene.add( gridHelper );
+      scene.background =  new THREE.Color( 0x000000 );
       window.addEventListener("resize", onWindowResize, false);
     }
-
+    
     function onWindowResize() {
       camera.aspect =
       canvasContainer.offsetWidth / canvasContainer.offsetHeight;
@@ -171,16 +197,15 @@ export class SceneComponent implements AfterViewInit {
         canvasContainer.offsetWidth,
         canvasContainer.offsetHeight
       );
-      const g = scene.toJSON;
-      console.log(scene.toJSON)
-    }
 
+    }
+    
     function animate() {
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
     }
   }
-
+  
   createGrid(_grid_unit) {
     const my_grid = new THREE.GridHelper(10 * _grid_unit, _grid_unit);
     my_grid.setColors("@", "@");
