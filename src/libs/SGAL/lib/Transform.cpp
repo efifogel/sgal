@@ -521,7 +521,7 @@ void Transform::clean_bounding_sphere()
   m_bounding_sphere.set_center(new_center);
 
   // multiply the radius by the max scaling factor
-  float scale_factor = m_scale.get_max_comp();
+  float scale_factor = m_scale.max();
   m_bounding_sphere.set_radius(m_bounding_sphere.get_radius() * scale_factor);
 }
 
