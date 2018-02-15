@@ -119,6 +119,14 @@
 #include <string.h>
 #include <boost/shared_ptr.hpp>
 
+#if (defined _MSC_VER)
+#include <windows.h>
+#include <GL/gl.h>
+#include <GL/wglext.h>
+#else
+#include <GL/gl.h>
+#endif
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Bit_mask.hpp"
@@ -126,7 +134,6 @@
 #include "SGAL/Matrix4f.hpp"
 #include "SGAL/Vector4f.hpp"
 #include "SGAL/Gfx.hpp"
-#include "SGAL/Gfx_conf.hpp"
 
 #if 0
 #if defined(__GNUC__) && !defined(_WIN32)
@@ -150,6 +157,7 @@ class Override_geo_prop;
 class Window_handle;
 class Open_gl_os_init;
 class Camera;
+class Gfx_conf;
 
 struct Light_target {
   Boolean m_set;        // Has GL target been updated?
@@ -210,6 +218,10 @@ public:
   void delete_context();
 
   void swap_buffers();
+
+  /*! Obtain the graphics configuration module.
+   */
+  const Gfx_conf* gfx_conf() const;
 
   enum {
     BEGIN_STATE_ELEMENTS = -1,
@@ -535,6 +547,8 @@ private:
 
   Camera* m_active_camera;
 
+  Gfx_conf* m_gfx_conf;
+
 private:
   Uint m_red_bits;
   Uint m_green_bits;
@@ -599,6 +613,9 @@ private:
 
   static Context* s_current_context;
 };
+
+//! \brief obtains the graphics configuration module.
+inline const Gfx_conf* Context::gfx_conf() const { return m_gfx_conf; }
 
 //! \brief obtains the texture attribute.
 inline Context::Shared_texture Context::get_texture() const

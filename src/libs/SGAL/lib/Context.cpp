@@ -25,6 +25,7 @@
 #include "SGAL/Vector4f.hpp"
 #include "SGAL/Matrix4f.hpp"
 #include "SGAL/Context.hpp"
+#include "SGAL/Gfx_conf.hpp"
 #include "SGAL/Tex_gen.hpp"
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Material.hpp"
@@ -34,7 +35,6 @@
 #include "SGAL/Texture_transform.hpp"
 #include "SGAL/Cube_environment.hpp"
 #include "SGAL/Halftone.hpp"
-#include "SGAL/Gfx_conf.hpp"
 #include "SGAL/Gfx.hpp"
 #include "SGAL/Open_gl_os_init.hpp"
 #include "SGAL/Trace.hpp"
@@ -1402,6 +1402,7 @@ void Context::make_current()
   // Ignore same context.
   if (s_current_context == this) return;
   s_current_context = this;
+  m_gfx_conf = Gfx_conf::get_instance();
 
   m_current_state = &m_current_state_stack[m_stack_depth];
 
