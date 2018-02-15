@@ -302,7 +302,7 @@ void Group::set_attributes(Element* elem)
     }
     if (name == "bboxSize") {
       Vector3f vec(value);
-      float radius = vec.length();
+      float radius = vec.min() * 0.5f;
       m_bounding_sphere.set_radius(radius);
       m_dirty_bounding_sphere = false;
       m_locked_bounding_sphere = true;
