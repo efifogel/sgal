@@ -66,7 +66,8 @@ public:
   Float y() const;
   Float z() const;
 
-  Float get_max_comp();
+  Float max();
+  Float min();
   Boolean equal(const Vector3f&  v) const;
   void sub(const Vector3f& v1, const Vector3f& v2);
   void sub(const Vector3sh& v1, const Vector3sh& v2);

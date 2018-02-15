@@ -48,8 +48,16 @@ std::string Vector3f::get_text()
   return str;
 }
 
-//! \brief
-float Vector3f::get_max_comp()
+//! \brief obtains the smallest value.
+float Vector3f::min()
+{
+  float min = (m_vector[0] < m_vector[1] ? m_vector[0] : m_vector[1]);
+  min = (min < m_vector[2] ? min : m_vector[2]);
+  return min;
+}
+
+//! \brief obtains the largest value.
+float Vector3f::max()
 {
   float max = (m_vector[0] > m_vector[1] ? m_vector[0] : m_vector[1]);
   max = (max > m_vector[2] ? max : m_vector[2]);
