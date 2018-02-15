@@ -42,20 +42,22 @@
 SGAL_BEGIN_NAMESPACE
 
 const char* Frustum::s_type_strings[] = {"SIMPLE", "ORTHOGONAL", "PERSPECTIVE"};
+const float Frustum::s_def_aspect_ratio(1.333333f);
+const float Frustum::s_def_horiz_fov(0.785398f);
 
 //! \brief constructor.
 Frustum::Frustum() :
   m_type(Frustum::SIMPLE),
-  m_near_dist(0.1f),
-  m_far_dist(1000.0f),
+  m_near_dist(1.0f),
+  m_far_dist(1024.0f),
   m_left(-30.0f),
   m_right(30.0f),
   m_top(22.5f),
   m_bottom(-22.5f),
-  m_aspect_mode(Frustum::CALC_HORIZ),
-  m_aspect_ratio(1.333333f),
-  m_vert_fov(0.785398f),        //! \todo SGAL_PI * 0.25f),
-  m_horiz_fov(m_vert_fov / m_aspect_ratio),
+  m_aspect_mode(CALC_VERT),
+  m_aspect_ratio(s_def_aspect_ratio),
+  m_horiz_fov(s_def_horiz_fov),
+  m_vert_fov(m_horiz_fov / m_aspect_ratio),
   m_xcenter(0.0f),
   m_ycenter(0.0f),
   m_dirty_corners(true),
@@ -141,10 +143,8 @@ void Frustum::set_aspect_ratio(float ratio)
 //! \brief
 void Frustum::set_fov(float fov)
 {
-  set_vert_fov(fov);
-  set_horiz_fov(fov * m_aspect_ratio);
-//  set_horiz_fov(fov);
-//  set_vert_fov(fov / m_aspect_ratio);
+  set_horiz_fov(fov);
+  set_vert_fov(fov / m_aspect_ratio);
 }
 
 //! \brief
@@ -207,12 +207,12 @@ void Frustum::set_bottom(Float bottom)
 //! \brief makes this frustum orthogonal.
 void Frustum::make_ortho(float left, float right, float bottom, float top)
 {
-  set_aspect_mode(CALC_NONE);
+  set_aspect_mode(Frustum::CALC_NONE);
   m_left = left;
   m_right = right;
   m_top = top;
   m_bottom = bottom;
-  m_type = ORTHOGONAL;
+  m_type = Frustum::ORTHOGONAL;
   m_dirty_corners = true;
   m_dirty_planes = true;
 }
@@ -221,14 +221,14 @@ void Frustum::make_ortho(float left, float right, float bottom, float top)
 void Frustum::make_ortho(Float left, Float right, Float bottom, Float top,
                          Float near_dist, Float far_dist)
 {
-  set_aspect_mode(CALC_NONE);
+  set_aspect_mode(Frustum::CALC_NONE);
   m_left = left;
   m_right = right;
   m_top = top;
   m_bottom = bottom;
   m_near_dist = near_dist;
   m_far_dist = far_dist;
-  m_type = ORTHOGONAL;
+  m_type = Frustum::ORTHOGONAL;
   m_dirty_corners = true;
   m_dirty_planes = true;
 }
@@ -236,12 +236,12 @@ void Frustum::make_ortho(Float left, Float right, Float bottom, Float top,
 //! \brief makes this frustum perspective.
 void Frustum::make_persp(Float left, Float right, Float bottom, Float top)
 {
-  set_aspect_mode(CALC_NONE);
+  set_aspect_mode(Frustum::CALC_NONE);
   m_left = left;
   m_right = right;
   m_top = top;
   m_bottom = bottom;
-  m_type = PERSPECTIVE;
+  m_type = Frustum::PERSPECTIVE;
   m_dirty_corners = true;
   m_dirty_planes = true;
 }
@@ -250,14 +250,14 @@ void Frustum::make_persp(Float left, Float right, Float bottom, Float top)
 void Frustum::make_persp(Float left, Float right, Float bottom, Float top,
                          Float near_dist, Float far_dist)
 {
-  set_aspect_mode(CALC_NONE);
+  set_aspect_mode(Frustum::CALC_NONE);
   m_left = left;
   m_right = right;
   m_top = top;
   m_bottom = bottom;
   m_near_dist = near_dist;
   m_far_dist = far_dist;
-  m_type = PERSPECTIVE;
+  m_type = Frustum::PERSPECTIVE;
   m_dirty_corners = true;
   m_dirty_planes = true;
 }
@@ -382,34 +382,27 @@ void Frustum::clean_corners()
    */
   if (m_near_dist == m_far_dist)
     m_far_dist += 1.0;
-  float left = 0, right = 0, top = 0, bottom = 0;
+  float left(0), right(0), top(0), bottom(0);
+
+  auto dist = (m_type == Frustum::ORTHOGONAL) ?
+    (m_near_dist + m_far_dist) * 0.5 : m_near_dist;
 
   switch(m_aspect_mode) {
-   case Frustum::CALC_HORIZ:
-    top = tanf(0.5f * m_vert_fov) * m_near_dist;
+   case CALC_HORIZ:
+    top = tanf(0.5f * m_vert_fov) * dist;
     right = top * m_aspect_ratio;
     left = -right;
     bottom = -top;
     break;
 
-   case Frustum::CALC_VERT:
-    right = tanf(0.5f * m_horiz_fov) * m_near_dist;
+   case CALC_VERT:
+    right = tanf(0.5f * m_horiz_fov) * dist;
     top = right / m_aspect_ratio;
     left = -right;
     bottom = -top;
     break;
 
-#if 0
-    //! \todo Implement this option
-   case Frustum::CALC_????:
-    top = tanf(0.5f * m_vert_fov) * m_near_dist;
-    right = tanf(0.5f * m_horiz_fov) * m_near_dist;
-    left = -right;
-    bottom = -top;
-    break;
-#endif
-
-   case Frustum::CALC_NONE:
+   case CALC_NONE:
     left = m_left;
     right = m_right;
     top = m_top;
@@ -503,7 +496,8 @@ void Frustum::apply()
             m_corners[Frustum::NEAR_LL][1] + dy,
             m_corners[Frustum::NEAR_UR][1] + dy,
             m_near_dist, m_far_dist);
-  } else {
+  }
+  else {
     glFrustum(m_corners[Frustum::NEAR_LL][0] + dx,
               m_corners[Frustum::NEAR_UR][0] + dx,
               m_corners[Frustum::NEAR_LL][1] + dy,
@@ -603,7 +597,7 @@ void Frustum::set_attributes(Element* elem)
         found = std::find(s_type_strings, &s_type_strings[num], value);
       auto index = found - s_type_strings;
       if (index < num)
-        m_type = static_cast<Frustum_type>(index);
+        set_type(static_cast<Frustum_type>(index));
       elem->mark_delete(ai);
       continue;
     }

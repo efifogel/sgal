@@ -41,6 +41,7 @@
 #include "SGAL/Accumulation.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Gfx_conf.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -51,6 +52,8 @@ Container_proto* Camera::s_prototype(nullptr);
 const Rotation Camera::s_def_orientation(0, 0, 1, 0);
 const float Camera::s_def_field_of_view(0.785398f);    // 45 degrees
 Frustum Camera::s_def_frustum;
+const float Camera::s_def_nearest_clipping_plane(1);
+const float Camera::s_def_furthest_clipping_plane(1024);
 const std::string Camera::s_def_description("");
 const Vector3f Camera::s_def_offset(0, 0, 0);
 const Float Camera::s_def_radius_scale(1.1f);
@@ -64,7 +67,6 @@ REGISTER_TO_FACTORY(Camera, "Camera");
 Camera::Camera(Boolean proto) :
   Bindable_node(proto),
   m_scene_graph(nullptr),
-  m_is_dynamic(true),
   m_orientation(s_def_orientation),
   m_line_of_sight(s_def_line_of_sight),
   m_up(s_def_up),
@@ -74,12 +76,17 @@ Camera::Camera(Boolean proto) :
   m_view_mat(),
   m_frustum(s_def_frustum),
   m_field_of_view(s_def_field_of_view),
-  m_nearest_clipping_plane(0.1f),
+  m_nearest_clipping_plane(s_def_nearest_clipping_plane),
+  m_furthest_clipping_plane(s_def_furthest_clipping_plane),
+  m_distance((m_nearest_clipping_plane + m_furthest_clipping_plane) * 0.5f),
+  m_radius(sinf(m_field_of_view * 0.5f) * m_distance),
   m_offset(s_def_offset),
   m_radius_scale(s_def_radius_scale),
   m_far_plane_scale(s_def_far_plane_scale),
-  m_dirty_axes(false),
+  m_dirty_axes(true),
   m_dirty_matrix(true),
+  m_dirty_frustum(true),
+  m_dirty_distance(true),
   m_description("")
 {}
 
@@ -115,21 +122,31 @@ void Camera::set_orientation(const Rotation& orientation)
 //! \brief sets The near and far clipping planes of the frustum.
 void Camera::set_clipping_planes(float near_plane, float far_plane)
 {
-  m_frustum.set_near(near_plane);
-  m_frustum.set_far(far_plane);
+  m_nearest_clipping_plane = near_plane;
+  m_furthest_clipping_plane = far_plane;
+  m_dirty_frustum = true;
 }
 
-//! \brief sets the camera viewing transformation.
-void Camera::look_at(const Vector3f& eye, const Vector3f& target,
-                     const Vector3f& up)
+//! \brief cleans the camera viewing axes.
+void Camera::clean_axes()
 {
+  if (m_dirty_distance) clean_distance();
+
+  auto nav_root = m_scene_graph->get_navigation_root();
+  const auto& sb = nav_root->get_bounding_sphere();
+  const auto& target = sb.get_center();
+
+  Vector3f eye;
+  eye.add_scaled(target, m_distance, m_line_of_sight);
+
   m_eye.set(eye);
   m_zaxis.sub(eye, target);
   m_zaxis.normalize();
-  m_xaxis.cross(up, m_zaxis);
+  m_xaxis.cross(m_up, m_zaxis);
   m_xaxis.normalize();
   m_yaxis.cross(m_zaxis, m_xaxis);
   m_dirty_matrix = true;
+  m_dirty_axes = false;
 }
 
 //! \brief sets the camera viewing transformation.
@@ -138,54 +155,74 @@ void Camera::view(const Vector3f& eye, Float yaw, Float pitch)
   m_dirty_matrix = true;
 }
 
-/*! \brief sets the clipping planes so that the frustum contains the
- * bounding-sphere.
- */
-void Camera::set_clipping_planes(const Vector3f& target, Float bb_radius)
+//! \brief obtains the (non-const) frustum.
+Frustum& Camera::get_frustum()
 {
-  float radius = bb_radius * m_radius_scale;
-  float my_sin = sinf(m_field_of_view / 2);
-  float dist = radius / my_sin;
-
-  float near_plane = dist - radius;
-  if (near_plane < m_nearest_clipping_plane) {
-    near_plane = m_nearest_clipping_plane;
-    dist = near_plane + radius;
-  }
-  float far_plane = dist + radius;
-
-  near_plane = m_nearest_clipping_plane;
-  far_plane = dist * m_far_plane_scale;
-
-  Vector3f eye;
-  eye.add_scaled(target, dist, m_line_of_sight);
-  look_at(eye, target, m_up);
-
-  m_frustum.set_near(near_plane);
-  m_frustum.set_far(far_plane);
+  if (m_dirty_frustum) clean_frustum();
+  return m_frustum;
 }
 
-/*! \brief sets the camera to view the scene.
- */
-void Camera::set_dynamic_clipping_planes()
+//! \brief cleans the distance.
+void Camera::clean_distance()
 {
-  if (!m_is_dynamic) return;
+  auto nav_root = m_scene_graph->get_navigation_root();
+  const auto& sb = nav_root->get_bounding_sphere();
+  const auto& target = sb.get_center();
+  auto bb_radius = sb.get_radius();
+  m_radius = bb_radius * m_radius_scale;
+  auto my_sin = sinf(m_field_of_view * 0.5f);
+  m_distance = m_radius / my_sin;
+  m_dirty_distance = false;
+}
 
-  Scene_graph::Shared_transform nav_root = m_scene_graph->get_navigation_root();
-  const Bounding_sphere& sb = nav_root->get_bounding_sphere();
-  set_clipping_planes(sb.get_center(), sb.get_radius());
+//! \brief cleans the frustum so that the frustum contains the bounding-sphere.
+void Camera::clean_frustum()
+{
+  if (m_dirty_distance) clean_distance();
+
+  auto near_plane = m_distance - m_radius;
+  auto far_plane = m_distance + m_radius;
+
+  // Extend the near and far clipping planes for a frustum camera:
+  if (Frustum::ORTHOGONAL != m_frustum.get_type()) {
+    far_plane *= m_far_plane_scale;
+    if (m_nearest_clipping_plane < near_plane)
+      near_plane = m_nearest_clipping_plane;
+    if (far_plane < m_furthest_clipping_plane)
+      far_plane = m_furthest_clipping_plane;
+  }
+
+  m_frustum.set_aspect_ratio(m_aspect_ratio);
+  m_frustum.set_near(near_plane);
+  m_frustum.set_far(far_plane);
+  m_frustum.set_fov(m_field_of_view);
+  m_dirty_frustum = false;
 }
 
 //! \brief sets the frustum field of view angle.
 void Camera::set_field_of_view(float fov)
 {
   m_field_of_view = fov;
-  m_frustum.set_fov(m_field_of_view);
-  if (m_is_dynamic) m_dirty_matrix = true;
+  m_dirty_distance = true;
+  m_dirty_frustum = true;
 }
 
 //! \brief obtains the field-of-view
 float Camera::get_field_of_view() { return m_field_of_view; }
+
+//! sets the scale factor the radius of the bounding sphere is extended by.
+void Camera::set_radius_scale(float scale)
+{
+  m_radius_scale = scale;
+  m_dirty_distance = true;
+}
+
+//! \brief sets the scale value the far plane is extended by.
+void Camera::set_far_plane_scale(float scale)
+{
+  m_far_plane_scale = scale;
+  m_dirty_frustum = true;
+}
 
 //! \brief processes change of viewing components.
 void Camera::components_changed(const Field_info* /* info */)
@@ -194,44 +231,36 @@ void Camera::components_changed(const Field_info* /* info */)
 //! \brief processes change of field-of-view.
 void Camera::field_of_view_changed(const Field_info* /* info */)
 {
-  m_frustum.set_fov(m_field_of_view);
-  if (m_is_dynamic) m_dirty_matrix = true;
+  m_dirty_distance = true;
+  m_dirty_frustum = true;
 }
 
-//! \brief obtains the camera near and far clipping planes.
-void Camera::get_clipping_planes(float& near_plane, float& far_plane)
-{ m_frustum.get_near_far(near_plane, far_plane); }
-
-/*! \brief initialize some camera parameters. Cannot be called from the
- * constructor, but does not require a scene graph nor a context. In
- * particular, initialize the nearest clipping plane based on the
+/*! \brief updates some camera parameters based on the graphics context.
+ * In particular, (1) initialize the nearest clipping plane based on the
  * accelerator type. This is a work around a bug in some of the old
- * accelerators
+ * accelerators. (2) update the aspect ratio.
  */
-void Camera::utilize()
+void Camera::update()
 {
-  //! \todo FIX! FIX! FIX! check whether openGl has been initialized!!!
-  return;
-  Gfx_conf* gfx_conf = Gfx_conf::get_instance();
-  if (!gfx_conf) return;
+  const auto* context = m_scene_graph->get_context();
+  if (! context) return;
 
-  Gfx_conf::Vendor vendor = gfx_conf->get_vendor();
-  Gfx_conf::Renderer renderer = gfx_conf->get_renderer();
-  if ((vendor == Gfx_conf::ve3Dfx) ||
-      (renderer == Gfx_conf::reG400) ||
-      (renderer == Gfx_conf::reG200) ||
-      (renderer == Gfx_conf::reRADEON_IGP) ||
-      (renderer == Gfx_conf::reGEFORCE_6200))
-  { m_nearest_clipping_plane = 1; }
-}
-
-//! \brief updates the aspect ratio based on the context.
-void Camera::set_aspect_ratio(const Context* context)
-{
-  if (context) {
-    float ratio = context->get_aspect_ratio();
-    m_frustum.set_aspect_ratio(ratio);
+  const auto* gfx_conf = context->gfx_conf();
+  if (gfx_conf) {
+    Gfx_conf::Vendor vendor = gfx_conf->get_vendor();
+    Gfx_conf::Renderer renderer = gfx_conf->get_renderer();
+    if ((vendor == Gfx_conf::ve3Dfx) ||
+        (renderer == Gfx_conf::reG400) ||
+        (renderer == Gfx_conf::reG200) ||
+        (renderer == Gfx_conf::reRADEON_IGP) ||
+        (renderer == Gfx_conf::reGEFORCE_6200))
+    {
+      m_nearest_clipping_plane = 1;
+    }
   }
+
+  m_aspect_ratio = context->get_aspect_ratio();
+  m_dirty_frustum = true;
 }
 
 //! \brief initializes the container prototype.
@@ -254,7 +283,7 @@ void Camera::init_prototype()
   // fieldOfView
   exec_func = static_cast<Execution_function>(&Camera::field_of_view_changed);
   auto fov_func = static_cast<Float_handle_function>(&Camera::fov_handle);
-  s_prototype->add_field_info(new SF_float(FIELDOFVIEW, "fieldOfView",
+  s_prototype->add_field_info(new SF_float(FIELD_OF_VIEW, "fieldOfView",
                                            Field_info::RULE_EXPOSED_FIELD,
                                            fov_func, s_def_field_of_view,
                                            exec_func));
@@ -306,15 +335,11 @@ const Matrix4f& Camera::get_view_mat()
   return m_view_mat;
 }
 
-//! \brief cleans the camera viewing axes.
-void Camera::clean_axes()
-{
-  m_dirty_axes = false;
-}
-
 //! \brief cleans the camera viewing matrix.
 void Camera::clean_matrix()
 {
+  if (m_dirty_axes) clean_axes();
+
   m_view_mat.make_identity();
   m_view_mat.set_col(0, m_xaxis);
   m_view_mat.set_col(1, m_yaxis);
@@ -361,8 +386,9 @@ void Camera::draw(Isect_action* /* action */) { draw(); }
 //! \brief applies the camera.
 void Camera::draw()
 {
-  m_frustum.apply();
+  if (m_dirty_frustum) clean_frustum();
   if (m_dirty_matrix) clean_matrix();
+  m_frustum.apply();
 
   glMatrixMode(GL_MODELVIEW);
   if (Gfx_conf::get_instance()->get_renderer() != Gfx_conf::reGeneric) {
@@ -388,7 +414,6 @@ void Camera::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "fieldOfView") {
-      // m_is_dynamic = false;
       set_field_of_view(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
@@ -396,13 +421,11 @@ void Camera::set_attributes(Element* elem)
     if (name == "orientation") {
       Rotation rot(value);
       set_orientation(rot);
-      m_is_dynamic = false;
       elem->mark_delete(ai);
       continue;
     }
     if (name == "offset") {
       Vector3f vec(value);
-      m_is_dynamic = false;
       set_offset(vec);
       elem->mark_delete(ai);
       continue;
@@ -435,13 +458,9 @@ Bindable_stack* Camera::get_stack()
 { return m_scene_graph->get_camera_stack(); }
 
 //! \brief enables the camera---called when the camera is bound.
-void Camera::enable()
-{
-  utilize();
-  init();
-}
+void Camera::enable() { init(); }
 
-//! \brief initializes the camera based on the current context.
+//! \brief initializes the camera based on the current configuration & context.
 void Camera::init()
 {
   const auto* conf = m_scene_graph->get_configuration();
@@ -450,9 +469,7 @@ void Camera::init()
     Vector3f line_of_sight(0, -1, 0);
     set_viewpoint(line_of_sight, up);
   }
-  const auto* context = m_scene_graph->get_context();
-  set_aspect_ratio(context);
-  set_dynamic_clipping_planes();
+  update();
 }
 
 //! \brief sets the viewpoint line-of-sight and up default vectors.
@@ -460,6 +477,7 @@ void Camera::set_viewpoint(const Vector3f& line_of_sight, const Vector3f& up)
 {
   m_line_of_sight.set(line_of_sight);
   m_up.set(up);
+  m_dirty_axes = true;
   m_dirty_matrix = true;
 }
 

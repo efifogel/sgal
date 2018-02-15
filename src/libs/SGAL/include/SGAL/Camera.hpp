@@ -62,9 +62,9 @@ public:
     FIRST = Bindable_node::LAST - 1,
     POSITION,
     ORIENTATION,
-    FIELDOFVIEW,
+    FIELD_OF_VIEW,
+    ASPECT_RATIO,
     DESCRIPTION,
-    TYPE,
     OFFSET,
     RADIUS_SCALE,
     FAR_PLANE_SCALE,
@@ -96,6 +96,7 @@ public:
   // Vector3f* position_handle(const Field_info*) { return &m_position; }
   Rotation* orientation_handle(const Field_info*) { return &m_orientation; }
   Float* fov_handle(const Field_info*) { return &m_field_of_view; }
+  Float* aspect_ratio_handle(const Field_info*) { return &m_aspect_ratio; }
   std::string* description_handle(const Field_info*) { return &m_description; }
   Vector3f* offset_handle(const Field_info*) { return &m_offset; }
   Float* radius_scale_handle(const Field_info*) { return &m_radius_scale; }
@@ -167,7 +168,7 @@ public:
   const Rotation& get_orientation() const;
 
   /*! Set the fiewd-of-view of the camera. */
-  void set_field_of_view( float fov );
+  void set_field_of_view(float fov);
 
   /*! Obtain the fiewd-of-view of the camera. */
   float get_field_of_view();
@@ -184,11 +185,9 @@ public:
    */
   void set_viewpoint(const Vector3f& line_of_sight, const Vector3f& up);
 
-  /*! Obtain the (non-const) frustum. */
+  /*! Obtain the frustum.
+   */
   Frustum& get_frustum();
-
-  /*! Obtain the (const) frustum. */
-  const Frustum& get_frustum() const;
 
   /*! Obtain the viewing matrix.
    */
@@ -197,29 +196,11 @@ public:
   /*! Set The near and far clipping planes of the frustum. */
   void set_clipping_planes(float near_plane, float far_plane);
 
-  /*! Obtain The near and far clipping planes of the frustum. */
-  void get_clipping_planes(float& near_plane, float& far_plane);
+  /*! Obtain The near clipping plane. */
+  float get_nearest_clipping_plane() const;
 
-  /*! Set he camera to view the scene. In particular, set the camera (and the
-   * frustum of the camera) so that the (transformed) frustum contains the
-   * bounding-sphere of the current scene.
-   * \param[in] bb_center the center of the bounding sphere.
-   * \param[in] bb_radius the radius of the bounding sphere.
-   */
-  void set_clipping_planes(const Vector3f& bb_center, float bb_radius);
-
-  /*! Set the camera to view the scene. In particular, set the camera (and the
-   * frustum of the camera) so that the (transformed) frustum contains the
-   * bounding-sphere of the current scene, if the dynamic flag is raised.
-   */
-  void set_dynamic_clipping_planes();
-
-  /*! Set the camera viewing transformation.
-   * \param[in] eye the position of the eye point.
-   * \param[in] target the position of the target (or reference) point.
-   * \param[in] up the direction of the up vector.
-   */
-  void look_at(const Vector3f& eye, const Vector3f& target, const Vector3f& up);
+  /*! Obtain The near clipping plane. */
+  float get_furthest_clipping_plane() const;
 
   /*! Set the camera viewing transformation.
    * \param[in] eye the position of the eye point.
@@ -228,13 +209,9 @@ public:
    */
   void view(const Vector3f& eye, Float yaw, Float pitch);
 
-  /*! Initialize some camera parameters. Cannot be called from
-   * the constructor, but does not require a scene graph nor a context.
+  /*! Update some camera parameters based on the graphics context.
    */
-  void utilize();
-
-  /*! Update the aspect ratio based on the context. */
-  void set_aspect_ratio(const Context* context);
+  void update();
 
   /*! Initialize the camera. */
   void init();
@@ -242,24 +219,17 @@ public:
   /*! Set the scene graph. */
   void set_scene_graph(Scene_graph* sg) { m_scene_graph = sg; }
 
-  void set_is_dynamic(bool flag) { m_is_dynamic = flag; }
-
-  bool get_is_dynamic() const { return m_is_dynamic; }
-
-  void set_radius_scale(float scale) { m_radius_scale = scale; }
+  void set_radius_scale(float scale);
 
   float get_radius_scale() const { return m_radius_scale; }
 
-  void set_far_plane_scale(float scale) { m_far_plane_scale = scale; }
+  void set_far_plane_scale(float scale);
 
   float get_far_plane_scale() const { return m_far_plane_scale; }
 
 protected:
   /*! The Scene_graph. */
   Scene_graph* m_scene_graph;
-
-  /*! Indicates whether the cliping planes are set dynamically. */
-  bool m_is_dynamic;
 
   /*! The offset of the camera. */
   // Vector3f m_position;
@@ -294,8 +264,20 @@ protected:
   /*! The camera field of view. */
   float m_field_of_view;
 
+  /*! The camera aspect ratio. */
+  float m_aspect_ratio;
+
   /*! The nearest clipping plane. */
   float m_nearest_clipping_plane;
+
+  /*! The furthest clipping plane. */
+  float m_furthest_clipping_plane;
+
+  /*! The distance betwen the camera eye position and its target. */
+  Float m_distance;
+
+  /*! The effective radius of the bounding sphere. */
+  Float m_radius;
 
   /*! The offset of the camera. */
   Vector3f m_offset;
@@ -306,12 +288,21 @@ protected:
   /*! The scale value the far plane is extended by. */
   float m_far_plane_scale;
 
-  /*! Indicates whether the camera aces are dirty and thus must be cleaned. */
+  /*! Indicates whether the camera axes are dirty and thus must be cleaned. */
   bool m_dirty_axes;
 
   /*! Indicates whether the modelview matrix is durty and thus must be cleaned.
    */
   bool m_dirty_matrix;
+
+  /*! Indicates whether the frustum is dirty and thus must be cleaned.
+   */
+  bool m_dirty_frustum;
+
+  /*! Indicates whether the distance between the camera eye position and its
+   * target is dirty and thus must be cleaned.
+   */
+  bool m_dirty_distance;
 
   /*! The textual description of the camera. (Used by VRML.) */
   std::string m_description;
@@ -332,15 +323,23 @@ private:
   static const Rotation s_def_orientation;
   static const float s_def_field_of_view;
   static Frustum s_def_frustum;
+  static const float s_def_nearest_clipping_plane;
+  static const float s_def_furthest_clipping_plane;
   static const std::string s_def_description;
   static const float s_def_radius_scale;
   static const float s_def_far_plane_scale;
 
-  /*! Clean the camera viewing axes. */
+  /*! Clean the distance. */
+  void clean_distance();
+
+  /*! Clean the axes. */
   void clean_axes();
 
   /*! Clean the camera viewing matrix. */
   void clean_matrix();
+
+  /*! Clean the frustum so that the frustum contains the bounding-sphere. */
+  void clean_frustum();
 
   /*! Apply the camera. */
   void draw();
@@ -357,6 +356,14 @@ inline Camera* Camera::prototype() { return new Camera(true); }
 
 //! \brief clones.
 inline Container* Camera::clone() { return new Camera(); }
+
+//! \brief obtains The near clipping plane. */
+inline float Camera::get_nearest_clipping_plane() const
+{ return m_nearest_clipping_plane; }
+
+//! obtains The near clipping plane. */
+inline float Camera::get_furthest_clipping_plane() const
+{ return m_furthest_clipping_plane; }
 
 //! \brief sets the camera offset.
 inline void Camera::set_offset(Float x, Float y, Float z)
@@ -388,12 +395,6 @@ inline void Camera::set_description(const std::string& description)
 //! \brief obtains the textual description of the camera.
 inline const std::string& Camera::get_description() const
 { return m_description; }
-
-//! \brief obtains the (non-const) frustum.
-inline Frustum& Camera::get_frustum() { return m_frustum; }
-
-//! \brief obtains the (const) frustum.
-inline const Frustum& Camera::get_frustum() const { return m_frustum; }
 
 SGAL_END_NAMESPACE
 

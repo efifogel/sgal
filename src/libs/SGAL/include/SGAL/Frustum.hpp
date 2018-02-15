@@ -205,9 +205,9 @@ private:
 
   Float m_aspect_ratio;
 
-  Float m_vert_fov;
-
   Float m_horiz_fov;
+
+  Float m_vert_fov;
 
   Float m_xcenter;
 
@@ -225,6 +225,10 @@ private:
 
   /*! The perturbation scale along the y axis for accumulation AA. */
   Float m_y_perturbation_scale;
+
+  // Default values
+  static const float s_def_aspect_ratio;
+  static const float s_def_horiz_fov;
 };
 
 //! \brief obtains the frustum type (orthogonal, perspective, etc) */
