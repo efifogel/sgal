@@ -74,6 +74,7 @@
 #include "SGAL/Image.hpp"
 #include "SGAL/Key_sensor.hpp"
 #include "SGAL/Polyhedron_attributes_array.hpp"
+#include "SGAL/Gfx_conf.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

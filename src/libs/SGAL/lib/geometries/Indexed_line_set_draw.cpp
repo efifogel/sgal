@@ -31,7 +31,6 @@
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Normal_array.hpp"
 #include "SGAL/Tex_coord_array.hpp"
-#include "SGAL/Gfx_conf.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 

@@ -34,10 +34,6 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 
-#if defined(_MSC_VER)
-#include "SGAL/Gfx_conf.hpp"
-#endif
-
 SGAL_BEGIN_NAMESPACE
 
 void Boundary_set::draw_invalid()
