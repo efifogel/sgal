@@ -220,6 +220,8 @@ public:
   void swap_buffers();
 
   /*! Obtain the graphics configuration module.
+   * The context is only used as a proxy to ensure that the graphics
+   * configuration module is not retrieved before there is a context.
    */
   const Gfx_conf* gfx_conf() const;
 
@@ -547,8 +549,6 @@ private:
 
   Camera* m_active_camera;
 
-  Gfx_conf* m_gfx_conf;
-
 private:
   Uint m_red_bits;
   Uint m_green_bits;
@@ -613,9 +613,6 @@ private:
 
   static Context* s_current_context;
 };
-
-//! \brief obtains the graphics configuration module.
-inline const Gfx_conf* Context::gfx_conf() const { return m_gfx_conf; }
 
 //! \brief obtains the texture attribute.
 inline Context::Shared_texture Context::get_texture() const

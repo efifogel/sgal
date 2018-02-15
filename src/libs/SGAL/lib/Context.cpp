@@ -251,6 +251,12 @@ Context::~Context()
   //! \todo delete m_gfx_handle;
 }
 
+//! \brief obtains the graphics configuration module.
+//! \todo Allow only the context to retrieve the graphics context and perhaps
+// specific other classes.
+const Gfx_conf* Context::gfx_conf() const
+{ return Gfx_conf::get_instance(); }
+
 //! \brief sets the viewport.
 void Context::set_viewport(Uint x, Uint y, Uint w, Uint h)
 {
@@ -1402,7 +1408,6 @@ void Context::make_current()
   // Ignore same context.
   if (s_current_context == this) return;
   s_current_context = this;
-  m_gfx_conf = Gfx_conf::get_instance();
 
   m_current_state = &m_current_state_stack[m_stack_depth];
 

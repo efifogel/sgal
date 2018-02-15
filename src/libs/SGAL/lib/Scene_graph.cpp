@@ -169,7 +169,8 @@ void Scene_graph::init_context()
   //       context.
   const auto* configuration = get_configuration();
   SGAL_assertion(configuration);
-  if (Gfx_conf::get_instance()->is_seamless_cube_map_supported() &&
+  const auto* gfx_conf = m_context->gfx_conf();
+  if (gfx_conf->is_seamless_cube_map_supported() &&
       configuration->is_seamless_cube_map())
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
