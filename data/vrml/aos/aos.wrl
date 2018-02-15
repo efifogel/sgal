@@ -9,9 +9,8 @@ ColorBackground {
 }
 NavigationInfo { type [ "EXAMINE" "ANY" ] }
 Viewpoint {
-  # type "ORTHOGONAL"
-  # fieldOfView 3.04
-  radiusScale 0.7
+  type "ORTHOGONAL"
+  # radiusScale 1
 }
 
 DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
@@ -56,7 +55,7 @@ DEF SNAP Snapshot {
 
 Transform {
   bboxCenter 0 0 0
-  bboxSize 1.5 1.5 1.5
+  bboxSize 2 2 2
   children [
     Switch {
       whichChoice 0
