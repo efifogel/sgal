@@ -927,6 +927,7 @@ void Boundary_set::clean_tex_coords(Texture::Target target)
   m_dirty_tex_coord_array = false;
   m_tex_coord_array_cleaned = true;
   m_dirty_tex_coord_buffer = true;
+  if (!m_generate_tex_coord) return;
 
   switch (target) {
    case Texture::TEXTURE_1D:
