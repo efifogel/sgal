@@ -69,6 +69,18 @@ public:
   typedef boost::shared_ptr<Matrix4f>               Shared_matrix4f;
   typedef boost::shared_ptr<Light>                  Shared_light;
 
+  enum Flags {
+    F_IS_TRI = 0,
+    F_HAS_MATERIAL,
+    F_UNDEINED1,
+    F_HAS_UVS,
+    F_FACE_NORMAL,
+    F_FACE_VERTEX_NORMAL,
+    F_FACE_COLOR,
+    F_FACE_VERTEX_COLOR,
+    F_SIZE
+  };
+
   /*! Construct from file name.
    * \param[in] filename The file name.
    */

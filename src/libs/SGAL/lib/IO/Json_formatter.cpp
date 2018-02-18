@@ -21,6 +21,7 @@
 
 #include <iterator>
 #include <utility>
+#include <bitset>
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
@@ -215,12 +216,12 @@ void Json_formatter::vertex(const Vector2f& p, bool compact)
 }
 
 //! \brief writes a triangular facet.
-void Json_formatter::facet(Uint type, const std::array<Index_type, 3>& tri,
+void Json_formatter::facet(Uint flags, const std::array<Index_type, 3>& tri,
                            Uint i, bool compact)
 {
   object_separator(compact);
   if (!compact) indent();
-  out() << type << "," << tri[0] << "," << tri[1] << "," << tri[2] << "," << i;
+  out() << flags << "," << tri[0] << "," << tri[1] << "," << tri[2] << "," << i;
   if (!compact) new_line();
   m_separated = false;
 }
@@ -490,7 +491,8 @@ void Json_formatter::export_geometry_data(Shared_geometry geometry)
     auto coord_array =
       boost::dynamic_pointer_cast<Coord_array_3d>(mesh_set->get_coord_array());
     const auto& indices = mesh_set->get_facet_coord_indices();
-    if (!coord_array || coord_array->empty() || mesh_set->empty_facet_indices(indices))
+    if (!coord_array || coord_array->empty() ||
+        mesh_set->empty_facet_indices(indices))
     {
       attribute_single("metadata",
                        [&]() {
@@ -506,6 +508,7 @@ void Json_formatter::export_geometry_data(Shared_geometry geometry)
     auto tex_coord_array = mesh_set->get_tex_coord_array();
     auto tex_coord_array_2d =
       boost::dynamic_pointer_cast<Tex_coord_array_2d>(tex_coord_array);
+    auto has_uvs = tex_coord_array_2d && ! tex_coord_array_2d->empty();
 
     attribute_single("metadata",
                      [&]() {
@@ -513,7 +516,7 @@ void Json_formatter::export_geometry_data(Shared_geometry geometry)
                        attribute("vertices", coord_array->size());
                        if (normal_array && ! normal_array->empty())
                          attribute("normals", normal_array->size());
-                       if (tex_coord_array_2d && ! tex_coord_array_2d->empty())
+                       if (has_uvs)
                          attribute ("uvs", tex_coord_array_2d->size());
                        attribute("faces", mesh_set->get_num_primitives());
                      });
@@ -531,7 +534,7 @@ void Json_formatter::export_geometry_data(Shared_geometry geometry)
                          },
                       true);
     // Export texture coordinates:
-    if (tex_coord_array_2d && ! tex_coord_array_2d->empty())
+    if (has_uvs)
       attribute_multiple("uvs",
                          [&]() {
                            for (const auto& v : *tex_coord_array_2d)
@@ -539,11 +542,54 @@ void Json_formatter::export_geometry_data(Shared_geometry geometry)
                          },
                          true);
 
+    std::bitset<F_SIZE> flags;
+    switch (mesh_set->get_primitive_type()) {
+     case Geo_set::PT_TRIANGLES: break;
+     case Geo_set::PT_QUADS: flags[F_IS_TRI] = 1; break;
+
+     case Geo_set::PT_POLYGONS:
+     default: std::cerr << "ERROR: general polygons are not supported!"
+                        << std::endl;
+    }
+
+    // We do not use the had_material option.
+
+    // todo check indices for indexing
+    flags[F_HAS_UVS] = has_uvs;
+
+    auto fragment_source = mesh_set->resolve_fragment_source();
+    if (fragment_source == Geo_set::FS_NORMAL) {
+      const auto& normal_indices = mesh_set->get_facet_normal_indices();
+      if (! mesh_set->empty_facet_indices(normal_indices)) {
+        //! \todo use normal index
+      }
+      switch (mesh_set->get_normal_attachment()) {
+       case Geo_set::AT_PER_VERTEX: flags[F_FACE_VERTEX_NORMAL] = 1; break;
+       case Geo_set::AT_PER_PRIMITIVE: flags[F_FACE_NORMAL] = 1; break;
+
+       case Geo_set::AT_PER_MESH:
+       default: SGAL_error();
+      }
+    }
+    else {
+      const auto& color_indices = mesh_set->get_facet_color_indices();
+      if (! mesh_set->empty_facet_indices(color_indices)) {
+        //! \todo use color index
+      }
+      switch (mesh_set->get_color_attachment()) {
+       case Geo_set::AT_PER_VERTEX: flags[F_FACE_VERTEX_COLOR] = 1; break;
+       case Geo_set::AT_PER_PRIMITIVE: flags[F_FACE_COLOR] = 1; break;
+       case Geo_set::AT_PER_MESH: flags[F_FACE_COLOR] = 1; break;
+       default: SGAL_error();
+      }
+    }
+    std::cout << "flags: " << flags << std::endl;
+
     attribute_multiple("faces",
                        [&]() {
                          Uint i(0);
                          const auto& tris = mesh_set->triangle_coord_indices();
-                         for (const auto& t : tris) facet(0x18, t, i++, true);
+                         for (const auto& t : tris) facet(flags.to_ulong(), t, i++, true);
                        },
                        true);
   }
