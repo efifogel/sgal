@@ -14,7 +14,7 @@ import { ModalService } from "../../../../../services/Modals/modals.service";
 var trackball = require('../../../../../../../Three-libs/trackball.js');
 
 declare var THREE: any;
-// declare var TrackballControls: any;
+declare var TrackballControls: any;
 
 @Component({
   selector: "app-scene",
@@ -62,7 +62,15 @@ export class SceneComponent implements AfterViewInit {
     function init() {
       camera = new THREE.PerspectiveCamera( 45, container.offsetWidth / container.offsetHeight, 1, 1000 );
       controls = new THREE.TrackballControls( camera, container );
-      initTrackball(controls);
+      controls.rotateSpeed = 1.0;
+      controls.zoomSpeed = 1.2;
+      controls.panSpeed = 0.8;
+      controls.noZoom = false;
+      controls.noPan = false;
+      controls.staticMoving = true;
+      controls.dynamicDampingFactor = 0.3;
+      controls.keys = [ 37, 38, 40 ];
+      controls.addEventListener( 'change', render );
       // scene
       scene = new THREE.Scene();
       addSpotlight();
@@ -95,34 +103,22 @@ export class SceneComponent implements AfterViewInit {
       const light = new THREE.DirectionalLight(0xffffff, 1);
       light.position.set(0, -1, 0);
       // light.target.position.set(0, 0, 0);
-      
+      const gridHelper = new THREE.GridHelper( 10, 10 );
+
       camera.add(light);      
       scene.add(camera);
+      scene.add(gridHelper);
       window.addEventListener( 'resize', onWindowResize, false );
-      container.addEventListener( 'mousemouve', initTrackball(controls), false );
 
     }
     function addSpotlight() {
-      console.log(scene);
-      console.log('adding spotlight');
       const spotLight = new THREE.SpotLight(0xffffff);
       spotLight.position.set(300, 300, 300);
       spotLight.intensity = 1;
       scene.add(spotLight);
     }
     
-    function initTrackball(controls) {
-      console.log('will move trackballs on');
-      controls.rotateSpeed = 1.0;
-      controls.zoomSpeed = 1.2;
-      controls.panSpeed = 0.8;
-      controls.noZoom = false;
-      controls.noPan = false;
-      controls.staticMoving = true;
-      controls.dynamicDampingFactor = 0.3;
-      controls.keys = [ 65, 83, 68 ];
-      controls.addEventListener( 'change', render );
-    }
+   
     function onWindowResize() {
       windowHalfX = container.offsetWidth / 2;
       windowHalfY = container.offsetHeight / 2;
@@ -140,7 +136,6 @@ export class SceneComponent implements AfterViewInit {
       render();
     }
     function render() {
-      // camera.lookAt( scene.position );
       renderer.render( scene, camera );
     }
   }

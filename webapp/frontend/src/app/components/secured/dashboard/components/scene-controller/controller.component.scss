@@ -1,6 +1,7 @@
 #mydiv {
     position: absolute;
     z-index: 9;
+    border-radius: 10px;
     background-color: #f1f1f1;
     border: 1px solid #d3d3d3;
     text-align: center;
@@ -8,6 +9,7 @@
 }
 
 #mydivheader {
+    border-radius: 10px 10px 0px 0px;
     padding: 10px;
     cursor: move;
     z-index: 10;
