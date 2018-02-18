@@ -151,6 +151,10 @@ void Scene_graph::set_context(Context* context)
   if (bits > 32) bits = 32;
   Uint max_id = (0x1UL << bits) - 1;
   m_free_selection_ids.push_back(std::make_pair(1, max_id));
+
+  // Update the camera (after the context has been created):
+  auto* camera = get_active_camera();
+  camera->update();
 }
 
 /*! \brief intializes the context in the scene grpha and in all relevant
