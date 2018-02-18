@@ -261,8 +261,7 @@ void Player_scene::create_scene(char* data, int size)
   create_defaults();
   indulge_user();
 
-  //! \todo FIX! FIX! FIX!
-  m_scene_graph->bind();
+  m_scene_graph->bind();        // bind all bindable nodes.
 
   if (m_option_parser->do_snapshot()) snapshot_scene();
   if (m_option_parser->do_export()) export_scene();
@@ -335,8 +334,7 @@ void Player_scene::create_scene()
   create_defaults();
   indulge_user();
 
-  //! \todo FIX! FIX! FIX!
-  m_scene_graph->bind();
+  m_scene_graph->bind();        // bind all bindable nodes.
 
   if (m_option_parser->do_snapshot()) snapshot_scene();
   if (m_option_parser->do_export()) export_scene();
