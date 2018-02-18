@@ -79,6 +79,7 @@ export class SceneComponent implements AfterViewInit {
       var directionalLight = new THREE.DirectionalLight( 0xffeedd );
       directionalLight.position.set( 0, 0, 1 ).normalize();
       scene.add( directionalLight );
+      scene.background = "#424242";
       
       const loader = new THREE.ObjectLoader();
       const obj = loader.parse(data);
@@ -120,11 +121,13 @@ export class SceneComponent implements AfterViewInit {
     
    
     function onWindowResize() {
-      windowHalfX = container.offsetWidth / 2;
-      windowHalfY = container.offsetHeight / 2;
+
       camera.aspect = container.offsetWidth / container.offsetHeight;
       camera.updateProjectionMatrix();
       renderer.setSize( container.offsetWidth, container.offsetHeight );
+      controls.handleResize();
+      render();
+
     }
     function onDocumentMouseMove( event ) {
       mouseX = ( event.clientX - windowHalfX ) / 2;
@@ -132,6 +135,7 @@ export class SceneComponent implements AfterViewInit {
     }
     //
     function animate() {
+      controls.update();
       requestAnimationFrame( animate );
       render();
     }
