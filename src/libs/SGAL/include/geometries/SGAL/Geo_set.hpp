@@ -467,6 +467,18 @@ public:
    */
   void reverse_coord_indices(const std::vector<Int32>& indices);
 
+  /*! Resolve the conflict between normal and colors.
+   */
+  Fragment_source resolve_fragment_source() const;
+
+  /*! Obtain the normal attachment method.
+   */
+  Attachment get_normal_attachment() const;
+
+  /*! Obtain the color attachment method.
+   */
+  Attachment get_color_attachment() const;
+
 protected:
   /*! The number of primitives in this Geo_set. */
   Size m_num_primitives;
@@ -515,9 +527,6 @@ protected:
 
   /*! Indicates the geometry mode (triangles, quads, or general polygons). */
   Primitive_type m_primitive_type;
-
-  /*! Resolve the conflict between normal and colors. */
-  Fragment_source resolve_fragment_source() const;
 
 private:
   /*! The node prototype. */
@@ -677,6 +686,14 @@ inline Size Geo_set::get_num_primitives() const { return m_num_primitives; }
 
 //! \brief sets the number of primitives.
 inline void Geo_set::set_num_primitives(Size num) { m_num_primitives = num; }
+
+//! \brief obtains the normal attachment method.
+inline Geo_set::Attachment Geo_set::get_normal_attachment() const
+{ return m_normal_attachment; }
+
+//! \brief obtains the color attachment method.
+inline Geo_set::Attachment Geo_set::get_color_attachment() const
+{ return m_color_attachment; }
 
 SGAL_END_NAMESPACE
 
