@@ -76,21 +76,35 @@ Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
   // Obtain the file extension.
   auto file_extension = boost::filesystem::extension(filename);
 
-  // Obtain the first line and examine the magic string
-  std::string magic;
-  std::getline(is, magic);
+  // We do not rely on the file extension neither on the magic string (if
+  // exists at all). We don't know whether the file is binary or text.
+  // We read the first 80 characters into a buffer and treat it as string.
+  // (We rewind the input stream indicater afterwards.)
+  // We terminate the buffer with the end-of-string character replacing the
+  // end-of-line character, if exists, otherwise, at the end of the buffer.
+  // Obtain the first line and and examine the magic string
+  char line[81];
+  is.read(line, 80);
+  if (!is) {
+    throw Read_error(m_filename);
+    return FAILURE;
+  }
+  auto it = line;
+  for (; it != &line[80]; ++it) if (*it == '\n') break;
+  *it = '\0';
+  std::string magic(line);
 
-  // If the magic string is "OFF", assume that the file is in the off format.
-  // If the return code of the loader is positive, the file might be in a
-  // different format. In this case, continue trying matching.
+  // If the first line starts with "OFF", assume that the file is in the off
+  // format. If the return code of the loader is positive, the file might be i
+  // n a different format. In this case, continue trying matching.
   boost::smatch what;
   boost::regex re("(ST)?(C)?(N)?(4)?(n)?OFF\\s*(\\s#.*)?");
   if (boost::regex_match(magic, what, re)) {
-    // If the magic string is "OFF" and the file extension is off,
+    // If the first line starts with "OFF" and the file extension is off,
     // assume that the file format is OFF.
     auto rc = load_off(is, sg, what);
-    is.close();
     if (rc <= 0) {
+      is.close();
       if (rc == SUCCESS)
         std::cerr << "Warning: File extension " << file_extension
                   << " does not match file format (OFF)" << std::endl;
@@ -105,13 +119,15 @@ Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
   else if ((0 == magic.compare(0, 5, "solid")) ||
            (0 == magic.compare(0, 5, "#VRML")))
   {
-    is.seekg(0, is.beg);  // rewind
+    is.seekg(0, is.beg);        // rewind
     auto rc = parse(is, sg);
-    is.close();
-    if (rc <= 0) return rc;
+    if (rc <= 0) {
+      is.close();
+      return rc;
+    }
   }
 
-  is.seekg(0, is.beg);  // rewind
+  is.seekg(0, is.beg);          // rewind
 
   // If the extension is .obj, assume that the file is in the obj format.
   // If the return code of the loader is positive, the file might be in a
@@ -171,6 +187,7 @@ Loader::load_stl(std::istream& is, size_t size, Scene_graph* sg)
   }
 
   std::string title(str);
+  // std::cout << "title: " << title << std::endl;
   Vector3f color;
   auto pos = title.find("COLOR=");
   if ((pos != std::string::npos) && (pos < 70)) {
