@@ -178,7 +178,7 @@ public:
   /*! Set the texture-generation enable flag. */
   void set_tex_gen_enable(Boolean tex_gen_enable);
 
-  /*! Obtain the the texture-generation enable flag. */
+  /*! Obtain the texture-generation enable flag. */
   Boolean get_tex_gen_enable() const;
 
   /*! Set the material attribute.
