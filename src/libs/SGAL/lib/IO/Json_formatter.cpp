@@ -177,7 +177,7 @@ void Json_formatter::begin()
   auto uuid = boost::uuids::random_generator()();
   attribute("uuid", boost::uuids::to_string(uuid));
   attribute("type", "Scene");
-  export_matrix(m_identity_matrix);
+  attribute_multiple("matrix", [&](){ export_matrix(m_identity_matrix); }, true);
   object_separator();
   indent();
   out_string("children");
@@ -231,45 +231,20 @@ void Json_formatter::write(Shared_container container)
   // std::cout << "Json_formatter::write(): " << container->get_tag() << std::endl;
   auto group = boost::dynamic_pointer_cast<Group>(container);
   if (group) {
-
-    object_separator();
-    object_begin();
-
-    auto uuid = boost::uuids::random_generator()();
-    attribute("uuid", boost::uuids::to_string(uuid));
-    attribute("type", group->get_tag());
-
-    auto transform = boost::dynamic_pointer_cast<Transform>(group);
-    if (transform) export_matrix(transform->get_matrix());
-    else export_matrix(m_identity_matrix);
-    object_separator();
-    indent();
-    out_string("children");
-    name_value_separator();
-    array_begin();
-    group->write(this);
-    array_end();
-    object_end();
+    single_object([&](){ export_group(group); });
     return;
   }
 
   auto shape = boost::dynamic_pointer_cast<Shape>(container);
   if (shape) {
-    object_separator();
-    object_begin();
-    export_mesh(shape);
-    shape->write(this);
-    object_end();
+    single_object([&](){ export_mesh(shape); });
+
     return;
   }
 
   auto light = boost::dynamic_pointer_cast<Light>(container);
   if (light) {
-    object_separator();
-    object_begin();
-    export_light(light);
-    light->write(this);
-    object_end();
+    single_object([&](){ export_light(light); });
     return;
   }
 
@@ -340,12 +315,9 @@ void Json_formatter::array_end(bool compact)
 //! Export a matrix.
 void Json_formatter::export_matrix(const Matrix4f& matrix)
 {
-  attribute_multiple("matrix",
-                     [&]() {
-                       for (auto i = 0; i != 4; ++i)
-                         for (auto j = 0; j != 4; ++j)
-                           single_value(matrix.get(i, j), true);
-                     }, true);
+  for (auto i = 0; i != 4; ++i)
+    for (auto j = 0; j != 4; ++j)
+      single_value(matrix.get(i, j), true);
 }
 
 //! exports the camera.
@@ -377,7 +349,7 @@ void Json_formatter::export_camera()
   Vector3f translation = m_camera->get_position();
   translation.xform_pt(translation, mat);
   mat.set_row(3, translation);
-  export_matrix(mat);
+  attribute_multiple("matrix", [&](){ export_matrix(mat); }, true);
   auto type = frustum.get_type();
   attribute("type", ((Frustum::ORTHOGONAL == type) ?
                      "OrthogonalCamera" : "PerspectiveCamera"));
@@ -387,6 +359,18 @@ void Json_formatter::export_camera()
   frustum.get_near_far(near_dist, far_dist);
   attribute("near", near_dist);
   attribute("far", far_dist);
+}
+
+//! exports a group.
+void Json_formatter::export_group(Shared_group group)
+{
+  auto uuid = boost::uuids::random_generator()();
+  attribute("uuid", boost::uuids::to_string(uuid));
+  attribute("type", group->get_tag());
+  auto transform = boost::dynamic_pointer_cast<Transform>(group);
+  const auto& mat = (transform) ? transform->get_matrix() : m_identity_matrix;
+  attribute_multiple("matrix", [&](){ export_matrix(mat); }, true);
+  attribute_multiple("children", [&](){ group->write(this); });
 }
 
 //! \brief exports a light source.
@@ -409,8 +393,9 @@ void Json_formatter::export_light(Shared_light light)
     Vector3f translation(spot_light->get_location());
     translation.xform_pt(translation, mat);
     mat.set_row(3, translation);
-   }
-  export_matrix(mat);
+  }
+  attribute_multiple("matrix", [&](){ export_matrix(mat); }, true);
+  light->write(this);
 }
 
 //! \brief exports a mesh.
@@ -423,12 +408,7 @@ void Json_formatter::export_mesh(Shared_shape shape)
 
   Matrix4f mat;
   mat.make_identity();
-  attribute_multiple("matrix",
-                     [&]() {
-                       for (auto i = 0; i != 4; ++i)
-                         for (auto j = 0; j != 4; ++j)
-                           single_value(mat.get(i, j), true);
-                     }, true);
+  attribute_multiple("matrix", [&](){ export_matrix(mat); }, true);
   attribute("visible", shape->is_visible());
   attribute("type", "Mesh");
   auto geometry = shape->get_geometry();
@@ -441,6 +421,7 @@ void Json_formatter::export_mesh(Shared_shape shape)
   if (ait == m_apperances.end())
     std::cerr << "ERROR: Failed to find material!" << std::endl;
   else attribute("material", ait->second);
+  shape->write(this);
 }
 
 //! \brief exports the main scene object.

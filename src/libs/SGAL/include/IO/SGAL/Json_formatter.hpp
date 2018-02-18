@@ -38,6 +38,7 @@
 SGAL_BEGIN_NAMESPACE
 
 class Container;
+class Group;
 class Shape;
 class Geometry;
 class Appearance;
@@ -60,6 +61,7 @@ class Light;
 class SGAL_SGAL_DECL Json_formatter : public Text_formatter {
 public:
   typedef boost::shared_ptr<Container>              Shared_container;
+  typedef boost::shared_ptr<Group>                  Shared_group;
   typedef boost::shared_ptr<Shape>                  Shared_shape;
   typedef boost::shared_ptr<Geometry>               Shared_geometry;
   typedef boost::shared_ptr<Appearance>             Shared_apperance;
@@ -284,6 +286,10 @@ private:
   /*! Export the camera.
    */
   void export_camera();
+
+  /*! Export a group.
+   */
+  void export_group(Shared_group group);
 
   /*! Export a light source.
    */
