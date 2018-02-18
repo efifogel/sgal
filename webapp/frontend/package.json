@@ -35,6 +35,8 @@
     "core-js": "^2.4.1",
     "dxf-parser": "^0.5.1",
     "fs-web": "^1.0.1",
+    "jquery": "^3.3.1",
+    "jquery-ui": "^1.12.1",
     "rxjs": "^5.5.2",
     "text-encoding": "^0.6.4",
     "three": "^0.89.0",

@@ -73,3 +73,6 @@ form{
   color: white !important;
   text-transform: uppercase;
 }
+.material-icons {
+  cursor: pointer !important;
+}

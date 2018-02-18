@@ -61,22 +61,11 @@ export class SceneComponent implements AfterViewInit {
     }
     function init() {
       camera = new THREE.PerspectiveCamera( 45, container.offsetWidth / container.offsetHeight, 1, 1000 );
-
       controls = new THREE.TrackballControls( camera, container );
-      controls.rotateSpeed = 1.0;
-      controls.zoomSpeed = 1.2;
-      controls.panSpeed = 0.8;
-      controls.noZoom = false;
-      controls.noPan = false;
-      controls.staticMoving = true;
-      controls.dynamicDampingFactor = 0.3;
-      controls.keys = [ 65, 83, 68 ];
-      controls.addEventListener( 'change', render );
-
-
-
+      initTrackball(controls);
       // scene
       scene = new THREE.Scene();
+      addSpotlight();
       var ambient = new THREE.AmbientLight( 0x444444 );
       scene.add( ambient );
       var directionalLight = new THREE.DirectionalLight( 0xffeedd );
@@ -100,7 +89,7 @@ export class SceneComponent implements AfterViewInit {
       camera.up.copy(up);
       camera.position.copy(eye);
       camera.lookAt(target);
-      // controller.target.copy(target);
+      controls.target.copy(target);
       
       // Ligths
       const light = new THREE.DirectionalLight(0xffffff, 1);
@@ -110,12 +99,20 @@ export class SceneComponent implements AfterViewInit {
       camera.add(light);      
       scene.add(camera);
       window.addEventListener( 'resize', onWindowResize, false );
-      window.addEventListener( 'mousemouve', initTrackball, false );
+      container.addEventListener( 'mousemouve', initTrackball(controls), false );
 
     }
-    function initTrackball() {
-      console.log('will mov trackballls oon')
-      controls = new THREE.TrackballControls( camera, container );
+    function addSpotlight() {
+      console.log(scene);
+      console.log('adding spotlight');
+      const spotLight = new THREE.SpotLight(0xffffff);
+      spotLight.position.set(300, 300, 300);
+      spotLight.intensity = 1;
+      scene.add(spotLight);
+    }
+    
+    function initTrackball(controls) {
+      console.log('will move trackballs on');
       controls.rotateSpeed = 1.0;
       controls.zoomSpeed = 1.2;
       controls.panSpeed = 0.8;
@@ -147,4 +144,5 @@ export class SceneComponent implements AfterViewInit {
       renderer.render( scene, camera );
     }
   }
+  
 }

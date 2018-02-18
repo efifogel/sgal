@@ -10,6 +10,7 @@ import { ForgotPasswordComponent } from './components/public/authentification/fo
 import { SceneComponent } from './components/secured/dashboard/components/scene/scene.component';
 import { DashboardPanelComponent } from './components/secured/dashboard/components/left-panel/dashboard-panel.component';
 import { AuthGuard } from './services/guards/routes.guard';
+import { SceneControllerComponent } from './components/secured/dashboard/components/scene-controller/controller.component';
 
 const authRoutes: Routes = [
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
@@ -72,5 +73,6 @@ export const RoutableComponents = [
   SecuredComponent,
   DashboardComponent,
   SceneComponent,
-  DashboardPanelComponent
+  DashboardPanelComponent,
+  SceneControllerComponent
 ];
