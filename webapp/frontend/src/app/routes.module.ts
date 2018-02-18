@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthentificationComponent } from './public/authentification.component';
-import { RegisterComponent } from './public/authentification/register/register.component';
-import { LoginComponent } from './public/authentification/login/login.component';
-import { ConfirmAccountComponent } from './public/authentification/confirm-account/confirm-account.component';
-import { DashboardComponent } from './secured/dashboard/dashboard.component';
-import { SecuredComponent } from './secured/secured.component';
-import { ForgotPasswordComponent } from './public/authentification/forgot/forgot.component';
-import { SceneComponent } from './secured/dashboard/components/scene/scene.component';
-import { DashboardPanelComponent } from './secured/dashboard/components/left-panel/dashboard-panel.component';
+import { AuthentificationComponent } from './components/public/authentification.component';
+import { RegisterComponent } from './components/public/authentification/register/register.component';
+import { LoginComponent } from './components/public/authentification/login/login.component';
+import { ConfirmAccountComponent } from './components/public/authentification/confirm-account/confirm-account.component';
+import { DashboardComponent } from './components/secured/dashboard/dashboard.component';
+import { SecuredComponent } from './components/secured/secured.component';
+import { ForgotPasswordComponent } from './components/public/authentification/forgot/forgot.component';
+import { SceneComponent } from './components/secured/dashboard/components/scene/scene.component';
+import { DashboardPanelComponent } from './components/secured/dashboard/components/left-panel/dashboard-panel.component';
 import { AuthGuard } from './services/guards/routes.guard';
 
 const authRoutes: Routes = [

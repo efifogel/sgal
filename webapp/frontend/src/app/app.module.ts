@@ -54,7 +54,7 @@ const Guards = [AuthGuard];
 
 // modals
 import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ErrorModalComponent } from './shared/modals/error-modal/error-modal.component';
+import { ErrorModalComponent } from './components/shared/modals/error-modal/error-modal.component';
 
 const Modals = [ErrorModalComponent];
 

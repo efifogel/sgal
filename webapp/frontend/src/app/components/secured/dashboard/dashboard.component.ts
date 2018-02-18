@@ -1,8 +1,8 @@
 import {Component} from "@angular/core";
-import {AWS3Service} from "../../services/AWS/bucket.service";
+import {AWS3Service} from "../../../services/AWS/bucket.service";
 import * as S3 from "aws-sdk/clients/s3";
-import {PlayerNotifier} from "../../services/RxJS/player.notify.service";
-import { ModalService } from "../../services/Modals/modals.service";
+import {PlayerNotifier} from "../../../services/RxJS/player.notify.service";
+import { ModalService } from "../../../services/Modals/modals.service";
 import {MatSnackBar} from '@angular/material';
 
 declare var TextDecoder: any;

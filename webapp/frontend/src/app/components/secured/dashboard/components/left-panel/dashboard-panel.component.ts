@@ -26,4 +26,7 @@ export class DashboardPanelComponent implements OnInit {
     this.onFileClick.emit(key);
     this.selectedElement = key;
   }
+  isSelected(key: string) {
+    return this.selectedElement === key;
+  }
 }

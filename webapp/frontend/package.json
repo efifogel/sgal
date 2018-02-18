@@ -38,6 +38,7 @@
     "rxjs": "^5.5.2",
     "text-encoding": "^0.6.4",
     "three": "^0.89.0",
+    "three-trackballcontrols": "0.0.7",
     "vrmlparser": "^0.5.4",
     "zone.js": "^0.8.14"
   },

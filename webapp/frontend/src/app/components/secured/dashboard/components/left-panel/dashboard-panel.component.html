@@ -4,7 +4,7 @@
   </button>
   <div id="list-holder">
     <div layout="row" layout-align="start center" layout-padding *ngFor="let file of files" class="list-item"
-     (click)="selectElement(file.Key)" >
+     (click)="selectElement(file.Key)" [ngClass] = "{'selected-doc': isSelected(file.Key)}">
       <span>{{ file.Key | trimString }}</span>
     </div>
   </div>

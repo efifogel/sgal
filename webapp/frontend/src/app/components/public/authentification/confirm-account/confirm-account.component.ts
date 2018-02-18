@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CognitoService } from '../../../services/AWS/cognito.service';
+import { CognitoService } from '../../../../services/AWS/cognito.service';
 
 @Component({
   selector: 'app-confirm-account',

@@ -26,8 +26,7 @@
         "../Three-libs/OrbitControls.js",
         "../Three-libs/VRMLLoader.js",
         "../Three-libs/Detector.js",
-        "../Three-libs/dxf.parser.js",
-        "../Three-libs/three.dxf.js",
+        "../Three-libs/trackball.js",
         "../node_modules/text-encoding/index.js"
       ],
       "environmentSource": "environments/environment.ts",

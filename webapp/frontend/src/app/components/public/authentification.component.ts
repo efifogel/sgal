@@ -10,7 +10,7 @@ declare let AWSCognito: any;
   <div class="full-height" layout="column" layout-align="center center" id="auth-main">
     <router-outlet></router-outlet>
   </div>`,
-  styleUrls: ['../app.component.css']
+  styleUrls: ['../../app.component.css']
 })
 export class AuthentificationComponent {
 
