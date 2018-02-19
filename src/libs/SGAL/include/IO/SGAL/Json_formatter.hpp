@@ -48,6 +48,7 @@ class Vector3f;
 class Vector2f;
 class Camera;
 class Light;
+class Bounding_sphere;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -101,14 +102,23 @@ public:
   /*! Destructor */
   virtual ~Json_formatter();
 
+  /*! Set the bounding sphere of the scene.
+   * \param[in] bs the bounding sphere.
+   */
+  void set_bounding_sphere(const Bounding_sphere* bs);
+
+  /*! Set the bounding sphere of the scene.
+   * \param[in] camera the camera.
+   */
+  void set_camera(Camera* camera);
+
   /*! Pre-process the formatter. Traverse all input containers (An instance
    * is a container that has a name.) and assign a unique id to each geometry
    * and each material container and store these id in respective maps.
    * \param[in] containers.
    * \param[in] instances.
    */
-  void pre_process(Camera* camera,
-                   const std::list<Shared_container>& containers,
+  void pre_process(const std::list<Shared_container>& containers,
                    const std::map<std::string, Shared_container>& instances);
 
   /// \name Export functions
@@ -140,13 +150,23 @@ public:
    */
   void vertex(const Vector2f& p, bool compact = false);
 
-  /*! Export a triangular facet.
-   * \param[in] i1
-   * \param[in] i2
-   * \param[in] i3
+  /*! Export a facet.
+   * \param[in] flags the flags of the facet.
+   * \param[in] i the index of the facet.
+   * \param[in] compact
    */
-  void facet(Uint type, const std::array<Index_type, 3>& tri, Uint i,
+  void facet(Shared_mesh_set mesh_set, unsigned int flags, size_t i,
              bool compact = false);
+
+  /*! Export a triangular facet.
+   * \param[in] i the index of the facet.
+   */
+  void tri_facet(Shared_mesh_set mesh_set, size_t i);
+
+  /*! Export a quad facet.
+   * \param[in] i the index of the facet.
+   */
+  void quad_facet(Shared_mesh_set mesh_set, size_t i);
   //@}
 
 private:
@@ -210,11 +230,11 @@ private:
 
   /*! Begin an object.
    */
-  void object_begin();
+  void object_begin(bool compact = false);
 
   /*! End an object.
    */
-  void object_end();
+  void object_end(bool compact = false);
 
   /*! Export a separator between consecutive objects.
    */
@@ -238,8 +258,8 @@ private:
    */
   template <typename UnaryOperation,
             typename StartOperation, typename EndOperation>
-  inline void object(UnaryOperation op,
-                     StartOperation start_op, EndOperation end_op);
+  void object(UnaryOperation op,
+              StartOperation start_op, EndOperation end_op);
 
   /*! Export a complex attribute.
    * \param[in] name the name of the attribute.
@@ -249,37 +269,45 @@ private:
    */
   template <typename UnaryOperation,
             typename StartOperation, typename EndOperation>
-  inline void attribute_object(const std::string& name, UnaryOperation op,
-                               StartOperation start_op, EndOperation end_op);
+  void attribute_object(const std::string& name, UnaryOperation op,
+                        StartOperation start_op, EndOperation end_op);
 
+  /*! Export a single object.
+   */
   template <typename UnaryOperation>
-  inline void single_object(UnaryOperation op);
+  void single_object(UnaryOperation op, bool compact = false);
+
+  /*! Export multiple objects.
+   */
+  template <typename UnaryOperation>
+  void multiple_objects(UnaryOperation op, bool compact = false);
 
   /*! Export a simple attribute.
    * \param[in] name the attribute name.
    * \param[in] value the attribute value.
    */
   template <typename Value>
-  void attribute(const std::string& name, Value value);
+  void attribute(const std::string& name, Value value, bool compact = false);
 
   /*! Export a single-object attribute.
    * \param[in] name the attribute name.
    * \param[in] op the operation that exposrts the attributes of the object.
    */
   template <typename UnaryOperation>
-  inline void attribute_single(const std::string& name, UnaryOperation op);
+  void attribute_single(const std::string& name, UnaryOperation op,
+                        bool compact = false);
 
   /*! Export an array-object attribute.
    * \param[in] name the attribute name.
    * \param[in] op the operation that exposrts the objects of the array.
    */
   template <typename UnaryOperation>
-  inline void attribute_multiple(const std::string& name, UnaryOperation op,
-                                 bool compact = false);
+  void attribute_multiple(const std::string& name, UnaryOperation op,
+                          bool compact = false);
 
-  /*! Export the main scene object.
+  /*! Export the bounding sphere of the scene.
    */
-  void export_scene();
+  void export_bounding_sphere();
 
   /*! Export the attributes of a geometry object.
    * \param[in] geometry the geometry container.
@@ -293,7 +321,13 @@ private:
    */
   void export_material(Shared_apperance appearance, String& id);
 
+  /*! Export the data record of a geometry item.
+   */
   void export_geometry_data(Shared_geometry geometry);
+
+  /*! Export the data record of a Mesh_set item.
+   */
+  void export_mesh_set_data(Shared_mesh_set mesh_set);
 
   /*! Export the camera.
    */
@@ -319,6 +353,10 @@ private:
   /*! Indicated whether the attribute is separated. */
   bool m_separated;
 
+  //! The bounding sphere of the scene.
+  const Bounding_sphere* m_bounding_sphere;
+
+  //! The camera of the scene.
   Camera* m_camera;
 
   boost::unordered_map<Shared_geometry, String> m_lights;
@@ -331,6 +369,13 @@ private:
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief sets the bounding sphere of the scene.
+inline void Json_formatter::set_bounding_sphere(const Bounding_sphere* bs)
+{ m_bounding_sphere = bs; }
+
+//! \brief sets the bounding sphere of the scene.
+inline void Json_formatter::set_camera(Camera* camera) { m_camera = camera; }
 
 //! \brief exports a generic value.
 template <typename Value>
@@ -377,9 +422,10 @@ inline void Json_formatter::single_value(Value value, bool compact)
 
 //! \brief exports a simple attribute.
 template <typename Value>
-inline void Json_formatter::attribute(const std::string& name, Value value)
+inline void Json_formatter::attribute(const std::string& name, Value value,
+                                      bool compact)
 {
-  object_separator();
+  object_separator(compact);
   indent();
   out_string(name.c_str());
   name_value_separator();
@@ -414,21 +460,31 @@ inline void Json_formatter::attribute_object(const std::string& name,
 }
 
 template <typename UnaryOperation>
-inline void Json_formatter::single_object(UnaryOperation op)
+inline void Json_formatter::single_object(UnaryOperation op, bool compact)
 {
   object_separator();
-  auto start_op = std::bind(&Json_formatter::object_begin, this);
-  auto end_op = std::bind(&Json_formatter::object_end, this);
+  auto start_op = std::bind(&Json_formatter::object_begin, this, compact);
+  auto end_op = std::bind(&Json_formatter::object_end, this, compact);
+  object(op, start_op, end_op);
+}
+
+//! \brief exports multiple objects.
+template <typename UnaryOperation>
+inline void Json_formatter::multiple_objects(UnaryOperation op, bool compact)
+{
+  object_separator();
+  auto start_op = std::bind(&Json_formatter::array_begin, this, compact);
+  auto end_op = std::bind(&Json_formatter::array_end, this, compact);
   object(op, start_op, end_op);
 }
 
 //! \brief exports a single-object attribute.
 template <typename UnaryOperation>
 inline void Json_formatter::attribute_single(const std::string& name,
-                                             UnaryOperation op)
+                                             UnaryOperation op, bool compact)
 {
-  auto start_op = std::bind(&Json_formatter::object_begin, this);
-  auto end_op = std::bind(&Json_formatter::object_end, this);
+  auto start_op = std::bind(&Json_formatter::object_begin, this, compact);
+  auto end_op = std::bind(&Json_formatter::object_end, this, compact);
   attribute_object(name, op, start_op, end_op);
 }
 
