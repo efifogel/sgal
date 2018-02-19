@@ -1007,8 +1007,9 @@ void Scene_graph::write_obj(const std::string& filename, std::ostream& os)
 void Scene_graph::write_json(const std::string& filename, std::ostream& os)
 {
   Json_formatter formatter(filename, os);
-  formatter.pre_process(get_active_camera(), m_containers, m_instances);
-
+  formatter.set_bounding_sphere(&(m_navigation_root->get_bounding_sphere()));
+  formatter.set_camera(get_active_camera());
+  formatter.pre_process(m_containers, m_instances);
   formatter.begin();
   auto root = get_root();
   for (auto it = root->children_begin(); it != root->children_end(); ++it)
