@@ -58,14 +58,12 @@ export class SceneComponent implements AfterViewInit {
     
     
     let init = () => {
-      console.log('init the canvas');
       
       
       let radiusScale = 1.1;
       
       
       scene = new THREE.Scene();
-      console.log('empty scene ', scene);
       
       // camera
       const start_position = new THREE.Vector3();
@@ -109,7 +107,6 @@ export class SceneComponent implements AfterViewInit {
       
       const loader = new THREE.ObjectLoader();
       const geometry = loader.parse(data);
-      console.log('after parse ',geometry);
 
       
       scene.add( directionalLight );

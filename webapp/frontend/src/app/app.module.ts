@@ -37,8 +37,9 @@ const ModalServices = [ModalService];
 
 import { HTTPListener, HTTPStatus } from './services/RxJS/HTTPListener.service';
 import { PlayerNotifier } from './services/RxJS/player.notify.service';
+import { ListObjectNotifier } from './services/RxJS/listObject.notifier';
 
-const RxJS_Services = [HTTPListener, HTTPStatus, PlayerNotifier];
+const RxJS_Services = [HTTPListener, HTTPStatus, PlayerNotifier, ListObjectNotifier];
 
 /* Utils (Pipes ..) */
 

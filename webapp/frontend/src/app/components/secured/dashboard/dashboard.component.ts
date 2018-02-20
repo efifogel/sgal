@@ -4,6 +4,7 @@ import * as S3 from "aws-sdk/clients/s3";
 import {PlayerNotifier} from "../../../services/RxJS/player.notify.service";
 import { ModalService } from "../../../services/Modals/modals.service";
 import {MatSnackBar} from '@angular/material';
+import { ListObjectNotifier } from "../../../services/RxJS/listObject.notifier";
 
 declare var TextDecoder: any;
 declare var $: any;
@@ -22,7 +23,7 @@ export class DashboardComponent {
   clientId: string;
   
   constructor(private s3: AWS3Service, private playerNotifier: PlayerNotifier,
-    private modalService: ModalService, public snackBar: MatSnackBar) {
+    private modalService: ModalService, public snackBar: MatSnackBar, private listObjectNotifier: ListObjectNotifier) {
       this.clientId = JSON.parse(localStorage.getItem("cognitoClientId"));
       this.s3.listAlbums(this.clientId, this);
     }
@@ -51,6 +52,7 @@ export class DashboardComponent {
           data.Contents.shift();
           this.s3.getBucketObject('', data.Contents[0].Key, this);
           this.files = data.Contents;
+          this.listObjectNotifier.setListLoadingStatus(true);
         }
       } else {
         this.modalService.showErrorModal("Failed to fetch the list of document(s)");
@@ -69,6 +71,7 @@ export class DashboardComponent {
     }
     
     GetObjectCallback(filetype: string, errorMessage: string, data: any) {
+      filetype = filetype || "json";
       if (!errorMessage) {
         if (filetype === 'json') {
           const jsonData =  this.binArrayToJson(data.Body);
