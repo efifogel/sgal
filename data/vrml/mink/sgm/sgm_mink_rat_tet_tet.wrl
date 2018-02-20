@@ -1,0 +1,337 @@
+#VRML V2.0 utf8
+DEF CONFIG Configuration {
+  accumulation Accumulation { enabled TRUE }
+  stencilBits 1
+}
+DEF SIM Simulation {}
+
+ColorBackground {
+  color 1 1 1 1
+  clearStencil TRUE
+}
+
+DEF SWITCH_KEY SingleKeySensor {
+  boolean FALSE
+  key "H"
+  numberOfStates 2
+}
+
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+DEF DRAW_DUAL_MINK_KEY SingleKeySensor { key "c" }
+DEF DRAW_DUAL_MINK_OPAQUE_KEY SingleKeySensor { key "o" }
+DEF DRAW_DUAL_MINK_HALOED_KEY SingleKeySensor { key "l" }
+DEF DRAW_DUAL_MINK_SPHERE_KEY SingleKeySensor { key "b" state TRUE }
+DEF SNAP_MINK_KEY SingleKeySensor { key "S" }
+
+DEF SNAP_MINK Snapshot {
+  image Image { }
+  fileFormat "png"
+  sequence FALSE
+  dirName "./figs"
+  fileName "sgm_mink_rat_tet_tet"
+}
+
+DEF DRAW_DUAL_ROBOT_KEY SingleKeySensor { key "d" }
+DEF DRAW_DUAL_OBSTACLE_KEY SingleKeySensor { key "e" }
+
+DEF SNAP_KEY SingleKeySensor { key "S" }
+
+DEF SNAP Snapshot {
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "mink"
+}
+
+DEF ROBOT_NAVIGATION NavigationInfo {
+  type [ "TRANSFORM" ]
+  translation 3 0 0
+}
+
+DEF OBSTACLE_NAVIGATION NavigationInfo {
+  type [ "TRANSFORM" ]
+  translation -3 0 0
+}
+
+DEF ROBOT_TRANSFORMER TransformerWithEpecCoordinates {
+  translation 3 0 0
+  coord DEF ROBOT_COORD EpecCoordinate {
+    exactPoint [-1/1 -73/100 -73/100,
+               0/1 -73/100   1/1,
+               1/1 -73/100 -73/100,
+               0/1,  1/1,    0/1
+             ]
+  }
+}
+
+DEF OBSTACLE_TRANSFORMER TransformerWithEpecCoordinates {
+  translation -3 0 0
+  coord DEF OBSTACLE_COORD EpecCoordinate {
+    exactPoint [-1/1 -73/100 -73/100,
+               0/1 -73/100   1/1,
+               1/1 -73/100 -73/100,
+               0/1,  1/1,    0/1
+             ]
+  }
+}
+
+Transform {
+  rotate 1 0 0 1.5708
+  children [
+    DEF TRANSFORM_ROBOT Transform {
+      children [
+        DEF SELECT_ROBOT TouchSensor { enabled TRUE }
+        Shape {
+          appearance Appearance {
+            material Material { diffuseColor 0.5 0.2 0.1 }
+          }
+          geometry DEF ROBOT SphericalGaussianMapColored {
+            drawAos FALSE
+            aosVertexColor 0.4 0.3 0.4
+            aosEdgeColor 0.6 0.3 0.2
+            aosVertexStyle "disc"
+            aosEdgeStyle "strip"
+            aosVertexRadius 0.02
+            aosEdgeRadius 0.01
+	    coord USE ROBOT_COORD
+            coordIndex [2 1 0 -1, 0 1 3 -1, 1 2 3 -1 2 0 3 -1]
+          }
+        }
+       ]
+    }
+
+    DEF TRANSFORM_OBSTACLE Transform {
+      children [
+        DEF SELECT_OBSTACLE TouchSensor { enabled TRUE }
+        Shape {
+          appearance Appearance {
+            material Material { diffuseColor 0.1 0.2 0.5 }
+          }
+          geometry DEF OBSTACLE SphericalGaussianMapColored {
+            drawAos FALSE
+            aosEdgeColor 0.2 0.3 0.6
+            aosVertexColor 0.4 0.3 0.4
+            aosVertexStyle "disc"
+            aosEdgeStyle "strip"
+            aosVertexRadius 0.02
+            aosEdgeRadius 0.01
+            coord USE OBSTACLE_COORD
+            coordIndex [2 1 0 -1, 0 1 3 -1, 1 2 3 -1 2 0 3 -1]
+          }
+        }
+       ]
+    }
+
+    DEF MINK_SWITCH Switch {
+      whichChoice 0
+      children [
+        Shape {
+          appearance Appearance {
+            material Material { diffuseColor 0.8 1.0 0.3 }
+          }
+          geometry DEF MINK SphericalGaussianMapColored {
+            drawAos FALSE
+            aosVertexStyle "disc"
+            aosEdgeStyle "strip"
+            aosVertexRadius 0.02
+            aosEdgeRadius 0.01
+            geometries [
+              USE ROBOT
+              USE OBSTACLE
+             ]
+          }
+        }
+       ]
+    }
+    DEF MINK_CH_SWITCH Switch {
+      whichChoice -1
+      children [
+        Shape {
+          appearance Appearance {
+            material Material { diffuseColor 0.4 0.4 0.4 }
+          }
+          geometry DEF MINK_CH IndexedFaceSet {
+            convexHull TRUE
+          }
+        }
+       ]
+    }
+
+    # The singularity points:
+    DEF SINGULARITIES_SWITCH Switch {
+      whichChoice 0
+      children [
+	Group {
+	  children [
+	    Shape {
+	      appearance DEF SING_APP Appearance {
+	        material Material { diffuseColor 0.5 0.5 0.5 }
+	      }
+	      geometry Sphere {
+    	        center 0 0 1
+	        radius 0.05
+	      }
+	    }
+	    Shape {
+              appearance DEF AXES_APP Appearance {
+                material Material { diffuseColor 0.5 0.5 0.5 }
+              }
+	      geometry Sphere {
+    	        center 0 0 -1
+	        radius 0.05
+	      }
+	    }
+	   ]
+	}
+      ]
+    }
+
+    # The discontinuity arc:
+    DEF DISCONTINUITY_SWITCH Switch {
+      whichChoice 0
+      children [
+        Shape {
+	  appearance Appearance {
+	    material Material {
+	      diffuseColor 0.5 0.5 0.5
+#	      transparency 0.25
+	    }
+	  }
+	  geometry Extrusion {
+	    creaseAngle 2.0
+	    beginCap TRUE
+	    endCap TRUE
+	    loop FALSE
+	    crossSectionRadius 0.025
+	    spine [
+		   0 0 1,
+		   -0.0980171 0 0.995185,
+		   -0.19509 0 0.980785,
+		   -0.290285 0 0.95694,
+		   -0.382683 0 0.92388,
+		   -0.471397 0 0.881921,
+		   -0.55557 0 0.83147,
+		   -0.634393 0 0.77301,
+		   -0.707107 0 0.707107,
+		   -0.77301 0 0.634393,
+		   -0.83147 0 0.55557,
+		   -0.881921 0 0.471397,
+		   -0.92388 0 0.382683,
+		   -0.95694 0 0.290285,
+		   -0.980785 0 0.19509,
+		   -0.995185 0 0.0980171,
+		   -1 0 0,
+		   -0.995185 0 -0.0980171,
+		   -0.980785 0 -0.19509,
+		   -0.95694 0 -0.290285,
+		   -0.92388 0 -0.382683,
+		   -0.881921 0 -0.471397,
+		   -0.83147 0 -0.55557,
+		   -0.77301 0 -0.634393,
+		   -0.707107 0 -0.707107,
+		   -0.634393 0 -0.77301,
+		   -0.55557 0 -0.83147,
+		   -0.471397 0 -0.881921,
+		   -0.382683 0 -0.92388,
+		   -0.290285 0 -0.95694,
+		   -0.19509 0 -0.980785,
+		   -0.0980171 0 -0.995185,
+		   0 0 -1,
+		  ]
+	  }
+	}
+       ]
+    }
+
+    # The axes:
+    DEF AXES Transform {
+      scale 0.1 0.1 0.1
+      children [
+	Shape {
+          appearance USE AXES_APP
+	  geometry Sphere { radius 0.1 }
+	}
+	DEF CS_AXIS Transform {
+	  translation 0 1.5 0
+	  children [
+	    Shape {
+	      appearance USE AXES_APP
+	      geometry Cylinder {
+		radius 0.1
+		height 3
+		set_is_bottom_visible FALSE
+		set_is_top_visible FALSE
+	      }
+	    }
+	    Transform {
+	      translation 0 1.7 0
+	      children [
+		Shape {
+		  appearance USE AXES_APP
+		  geometry Cone {
+		    bottomRadius 0.2
+		    height 0.4
+		  }
+		}
+	       ]
+	    }
+	   ]
+	}
+	Transform {
+	  rotation 0 0 -1 1.57
+	  children [ USE CS_AXIS ]
+	}
+	Transform {
+	  rotation 1 0 0 1.57
+	  children [ USE CS_AXIS ]
+	}
+       ]
+    }
+    # Transform {
+    #   translation 2 0 0
+    #   children [
+    #     USE SHAPE
+    #    ]
+    # }
+   ]
+}
+
+# No point using EpecCoordinateMinkowski, because we route the output
+# coordinates of the transformers as input to this node. The output
+# coordinates of the transformers are inexact; an exact transformer is
+# not implemented yet (requires exact rotation).
+DEF COORD_ADDER CoordinateMinkowski {
+  coord1 USE ROBOT_COORD
+  coord2 USE OBSTACLE_COORD
+}
+
+ROUTE DRAW_DUAL_ROBOT_KEY.state TO ROBOT.drawAos
+ROUTE ROBOT_NAVIGATION.rotation TO ROBOT_TRANSFORMER.rotation
+ROUTE ROBOT_NAVIGATION.translation TO ROBOT_TRANSFORMER.translation
+ROUTE ROBOT_TRANSFORMER.coord_changed TO ROBOT.coord
+ROUTE SELECT_ROBOT.isOver TO ROBOT_NAVIGATION.set_bind
+
+ROUTE DRAW_DUAL_OBSTACLE_KEY.state TO OBSTACLE.drawAos
+ROUTE OBSTACLE_NAVIGATION.rotation TO OBSTACLE_TRANSFORMER.rotation
+ROUTE OBSTACLE_NAVIGATION.translation TO OBSTACLE_TRANSFORMER.translation
+ROUTE OBSTACLE_TRANSFORMER.coord_changed TO OBSTACLE.coord
+ROUTE SELECT_OBSTACLE.isOver TO OBSTACLE_NAVIGATION.set_bind
+
+ROUTE SIM.start TO ROBOT_TRANSFORMER.execute
+ROUTE SIM.start TO OBSTACLE_TRANSFORMER.execute
+
+ROUTE DRAW_DUAL_MINK_KEY.state TO MINK.drawAos
+ROUTE DRAW_DUAL_MINK_OPAQUE_KEY.state TO MINK.drawAosOpaque
+ROUTE DRAW_DUAL_MINK_SPHERE_KEY.state TO MINK.drawAosSphere
+ROUTE DRAW_DUAL_MINK_HALOED_KEY.state TO MINK.drawAosHaloed
+
+ROUTE ROBOT_TRANSFORMER.coord_changed TO COORD_ADDER.coord1
+ROUTE OBSTACLE_TRANSFORMER.coord_changed TO COORD_ADDER.coord2
+ROUTE COORD_ADDER.coord_changed TO MINK_CH.coord
+
+ROUTE SIM.start TO COORD_ADDER.execute
+
+ROUTE SWITCH_KEY.intState TO MINK_SWITCH.whichChoice
+
+ROUTE SNAP_KEY.state TO SNAP.trigger

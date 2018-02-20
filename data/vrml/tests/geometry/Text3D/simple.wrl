@@ -1,0 +1,129 @@
+#VRML V2.0 utf8
+Configuration {
+  accumulation Accumulation { enabled TRUE }
+}
+ColorBackground {
+  color 1 1 1 0
+}
+DEF SNAP_KEY SingleKeySensor { key "S" }
+DEF SNAP Snapshot {
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "text3d"
+}
+NavigationInfo { type "EXAMINE" }
+DEF TRANSFORM Transform {
+  children [
+    Shape {
+      geometry Text3D {
+	string ["Read" "some text" "today!"]
+	fontStyle FontStyle {
+	  # horizontal FALSE
+	  # leftToRight FALSE
+	  # topToBottom FALSE
+
+	  # justify ["BEGIN" "BEGIN"]
+	  # justify ["FIRST" "BEGIN"]
+	  # justify ["MIDDLE" "BEGIN"]
+	  # justify ["END" "BEGIN"]
+
+	  # justify ["BEGIN" "FIRST"]
+	  # justify ["FIRST" "FIRST"]
+	  # justify ["MIDDLE" "FIRST"]
+	  # justify ["END" "FIRST"]
+
+	  # justify ["BEGIN" "MIDDLE"]
+	  # justify ["FIRST" "MIDDLE"]
+	  justify ["MIDDLE" "MIDDLE"]
+	  # justify ["END" "MIDDLE"]
+
+	  # justify ["BEGIN" "END"]
+	  # justify ["FIRST" "END"]
+	  # justify ["MIDDLE" "END"]
+	  # justify ["END" "END"]
+
+	  family "Arial"
+	  # family "Verdana"
+	  # style "BOLD"
+	  size 4
+	}
+	depth 0.5
+	creaseAngle 1.5
+      }
+      appearance Appearance {
+	material Material {
+	  diffuseColor .28 .42 .6
+	  specularColor .32 .4 .4
+	  ambientIntensity .05
+	  shininess .54
+	  emissiveColor .14 .22 .31
+	}
+      }
+    }
+
+    # The axes:
+    DEF AXES Transform {
+      scale 0.5 0.5 0.5
+      children [
+	Shape {
+	  appearance DEF AXES_APP Appearance {
+	    material Material {
+	      # ambientIntensity 1
+	      diffuseColor 0.4 0.4 0.4
+	      # specularColor 0.3 0.3 0.3
+	      # transparency 0.0001
+	    }
+	  }
+	  geometry Sphere { radius 0.1 }
+	}
+	DEF CS_AXIS Transform {
+	  translation 0 1.5 0
+	  children [
+	    Shape {
+	      appearance USE AXES_APP
+	      geometry Cylinder {
+		radius 0.1
+		height 3
+		set_is_bottom_visible FALSE
+		set_is_top_visible FALSE
+	      }
+	    }
+	    Transform {
+	      translation 0 1.7 0
+	      children [
+		Shape {
+		  appearance USE AXES_APP
+		  geometry Cone {
+		    bottomRadius 0.2
+		    height 0.4
+		  }
+		}
+	       ]
+	    }
+	   ]
+	}
+	Transform {
+	  rotation 0 0 -1 1.57
+	  children [ USE CS_AXIS ]
+	}
+	Transform {
+	  rotation 1 0 0 1.57
+	  children [ USE CS_AXIS ]
+	}
+       ]
+    }
+   ]
+}
+DEF INTERPOLATOR OrientationInterpolator {
+ key [ 0 0.5 1 ]
+ keyValue [0 1 0 0 0 1 0 3.14 0 1 0 6.28]
+}
+DEF TIMER TimeSensor {
+ loop TRUE
+ cycleInterval 5
+}
+# ROUTE TIMER.fraction_changed TO INTERPOLATOR.set_fraction
+# ROUTE INTERPOLATOR.value_changed TO TRANSFORM.rotation
+ROUTE SNAP_KEY.state TO SNAP.trigger

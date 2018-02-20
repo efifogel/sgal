@@ -1,0 +1,12 @@
+Sub-part Gaussian map construction: 0.000105 seconds.
+Sub-part Gaussian map reflection: 0.000493 seconds.
+Pairwise sub-part Minkowski sum construction: 3.78239 seconds.
+Pairwise sub-part Minkowski sum projection: 0.453229 seconds.
+Pairwise Minkowski sum projection: 4.29766 seconds.
+Motion space construction: 251.139 seconds.
+# vertices: 5804, # edges: 10154, # faces: 4352
+Motion space processing: 0.111498 seconds.
+Num components in vertex -0 84 -0: 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1
+Num components in vertex -0 -252 -0: 2
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0

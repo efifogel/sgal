@@ -1,0 +1,277 @@
+#VRML V2.0 utf8
+ColorBackground { color 1 1 1 1 }
+DEF CONFIG Configuration {
+#  polyMode "line"
+}
+DEF SIM Simulation {}
+
+Viewpoint {
+  type "SIMPLE"
+  radiusScale 0.74
+  fieldOfView 0.5
+  positionTranslation 0.4 0 0
+}
+
+DEF SWITCH_KEY SingleKeySensor {
+  boolean FALSE
+  key "H"
+  numberOfStates 2
+}
+
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+DEF DRAW_DUAL_MINK_KEY SingleKeySensor { key "c" }
+DEF DRAW_DUAL_MINK_OPAQUE_KEY SingleKeySensor { key "o" }
+DEF DRAW_DUAL_MINK_HALOED_KEY SingleKeySensor { key "l" state TRUE }
+DEF INCREASE_MINK_EDGE_INDEX_KEY SingleKeySensor { key "i" }
+DEF SNAP_MINK_DUAL_KEY SingleKeySensor { key "D" }
+DEF SNAP_MINK_PRIMAL_KEY SingleKeySensor { key "P" }
+
+DEF HIDE1_KEY SingleKeySensor {
+  boolean FALSE
+  key "Z"
+  numberOfStates 2
+}
+
+DEF HIDE2_KEY SingleKeySensor {
+  boolean FALSE
+  key "X"
+  numberOfStates 2
+}
+
+DEF SNAP_DUAL Snapshot {
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "ngm_mink_11_11_dual"
+}
+
+DEF SNAP_PRIMAL Snapshot {
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "ngm_mink_11_11_primal"
+}
+
+DEF ROBOT_NAVIGATION NavigationInfo {
+  type [ "TRANSFORM" ]
+  translation 3 0 0
+#  rotation 0 -1 0 0.7
+}
+
+DEF DRAW_DUAL_ROBOT_KEY SingleKeySensor { key "d" }
+DEF FLATTEN_ROBOT_KEY SingleKeySensor { key "f" }
+
+DEF ROBOT_TRANSFORMER CoordinateTransformer {
+  translation 3 0 0
+#  rotation 0 -1 0 0.7
+  coord DEF ROBOT_COORD Coordinate {
+    point [0.707142135641705 -0.707071424963623 0,
+	   0.831490445601648 -0.555539052518518 0,
+	   0.92388909930838 -0.382660335257196 0,
+	   0.980787718955631 -0.195078062184888 0,
+	   1 -6.46217829773035e-15 0,
+	   -1 3.23108914886517e-15 0,
+	   -0.980787718955632 -0.195078062184879 0,
+	   -0.923889099308384 -0.382660335257187 0,
+	   -0.831490445601654 -0.55553905251851 0,
+	   -0.707142135641711 -0.707071424963617 0,
+	   -0.555622198785242 -0.831434887539038 -0.00248726925150829,
+	   -0.382752722253671 -0.923850828655473 -0.004335588073837,
+	   -0.195176139981228 -0.980768206245506 -0.00547393562563766,
+	   -9.9999999838613e-05 -0.999999995 -0.00585857140072753,
+	   9.99999998284757e-05 -0.999999995 -0.00585857140072753,
+	   0.195176139981219 -0.980768206245508 -0.0054739356256377,
+	   0.382752722253661 -0.923850828655477 -0.00433558807383707,
+	   0.555622198785235 -0.831434887539043 -0.00248726925150839,
+	  ]
+  }
+}
+
+DEF OBSTACLE_NAVIGATION NavigationInfo {
+  type [ "TRANSFORM" ]
+  translation -3 0 0
+  rotation 0 1 0 -1.57079
+}
+
+DEF DRAW_DUAL_OBSTACLE_KEY SingleKeySensor { key "e" }
+DEF FLATTEN_OBSTACLE_KEY SingleKeySensor { key "g" }
+
+DEF OBSTACLE_TRANSFORMER CoordinateTransformer {
+  translation -3 0 0
+  rotation 0 1 0 -1.57079
+  coord DEF OBSTACLE_COORD Coordinate {
+    point [0.707142135641705 -0.707071424963623 0,
+	   0.831490445601648 -0.555539052518518 0,
+	   0.92388909930838 -0.382660335257196 0,
+	   0.980787718955631 -0.195078062184888 0,
+	   1 -6.46217829773035e-15 0,
+	   -1 3.23108914886517e-15 0,
+	   -0.980787718955632 -0.195078062184879 0,
+	   -0.923889099308384 -0.382660335257187 0,
+	   -0.831490445601654 -0.55553905251851 0,
+	   -0.707142135641711 -0.707071424963617 0,
+	   -0.555622198785242 -0.831434887539038 -0.00248726925150829,
+	   -0.382752722253671 -0.923850828655473 -0.004335588073837,
+	   -0.195176139981228 -0.980768206245506 -0.00547393562563766,
+	   -9.9999999838613e-05 -0.999999995 -0.00585857140072753,
+	   9.99999998284757e-05 -0.999999995 -0.00585857140072753,
+	   0.195176139981219 -0.980768206245508 -0.0054739356256377,
+	   0.382752722253661 -0.923850828655477 -0.00433558807383707,
+	   0.555622198785235 -0.831434887539043 -0.00248726925150839,
+	  ]
+  }
+}
+
+DEF COORD_ADDER CoordinateMinkowski {
+  coord1 USE ROBOT_COORD
+  coord2 USE OBSTACLE_COORD
+}
+
+Transform {
+#  rotation -1 0 0 0.76
+  children [
+Transform {
+#  rotation 0 -1 0 0.76
+  children [
+    DEF HIDE1_SWITCH Switch {
+      whichChoice 0
+      children [
+	Group {
+	  children [
+	    DEF TRANSFORM_ROBOT Transform {
+	      children [
+		DEF SELECT_ROBOT TouchSensor { enabled TRUE }
+		Shape {
+		  appearance Appearance {
+		    material Material { diffuseColor 0.6 0.3 0.2 }
+		  }
+		  geometry DEF ROBOT NefGaussianMap {
+#		  geometry DEF ROBOT CubicalGaussianMap {
+		    solid FALSE
+		    drawDualOpaque TRUE
+	            drawDualSphere TRUE
+		    drawDualHaloed FALSE
+#		    drawMarkedEdge TRUE
+		    dualLineWidth 3
+		    dualLineColor 1 0 0
+		    markedEdgeColor 0.4 0.6 0.5
+		    drawDual FALSE
+		    coord USE ROBOT_COORD
+		    coordIndex [0 1 2 3 4 5 6 7 8 9 -1
+				9 10 11 12 13 14 15 16 17 0 -1
+				1 0 17 -1
+				2 1 17 16 -1
+				3 2 16 15 -1
+				4 3 15 14 -1
+				5 4 14 13 -1
+				6 5 13 12 -1
+				7 6 12 11 -1
+				8 7 11 10 -1
+				9 8 10 -1
+			       ]
+		  }
+		}
+	       ]
+	    }
+
+	    DEF TRANSFORM_OBSTACLE Transform {
+	      rotation 0 1 0 -1.57079
+	      children [
+		DEF SELECT_OBSTACLE TouchSensor { enabled TRUE }
+		Shape {
+		  appearance Appearance {
+		    material Material { diffuseColor 0.2 0.3 0.6 }
+		  }
+		  geometry DEF OBSTACLE NefGaussianMap {
+#		  geometry DEF OBSTACLE CubicalGaussianMap {
+		    solid FALSE
+		    drawDualOpaque TRUE
+                    drawDualSphere TRUE
+		    drawDualHaloed FALSE
+#		    drawMarkedEdge TRUE
+		    dualLineWidth 3
+		    dualLineColor 0 0 1
+		    markedEdgeColor 0.4 0.6 0.5
+		    drawDual FALSE
+		    coord USE OBSTACLE_COORD
+		    coordIndex [0 1 2 3 4 5 6 7 8 9 -1
+				9 10 11 12 13 14 15 16 17 0 -1
+				1 0 17 -1
+				2 1 17 16 -1
+				3 2 16 15 -1
+				4 3 15 14 -1
+				5 4 14 13 -1
+				6 5 13 12 -1
+				7 6 12 11 -1
+				8 7 11 10 -1
+				9 8 10 -1
+			       ]
+		  }
+		}
+	       ]
+	    }
+	   ]
+	}
+       ]
+    }
+
+    DEF HIDE2_SWITCH Switch {
+      whichChoice 0
+      children [
+	Shape {
+	  appearance Appearance {
+	    material Material { diffuseColor 0.6 0.6 0.6 }
+	  }
+	  geometry DEF MINK NefGaussianMap {
+#           geometry DEF MINK CubicalGaussianMap {
+#	    solid FALSE
+#	    drawDualSphere FALSE
+	    drawDualHaloed TRUE
+#	    drawMarkedEdge TRUE
+	    dualLineWidth 3
+	    dualLineColor 0 0 0
+	    markedEdgeColor 0.4 0.6 0.5
+	    drawDual FALSE
+	    geometries [
+			USE ROBOT
+			USE OBSTACLE
+		       ]
+	  }
+	}
+       ]
+    }
+   ]
+}
+]
+}
+
+ROUTE DRAW_DUAL_ROBOT_KEY.state TO ROBOT.drawDual
+ROUTE ROBOT_NAVIGATION.rotation TO ROBOT_TRANSFORMER.rotation
+ROUTE ROBOT_NAVIGATION.translation TO ROBOT_TRANSFORMER.translation
+ROUTE ROBOT_TRANSFORMER.coord_changed TO ROBOT.coord
+ROUTE ROBOT_TRANSFORMER.changed TO TRANSFORM_ROBOT.reset
+ROUTE SELECT_ROBOT.isOver TO ROBOT_NAVIGATION.set_bind
+ROUTE FLATTEN_ROBOT_KEY.press TO ROBOT_NAVIGATION.set_bind
+
+ROUTE DRAW_DUAL_OBSTACLE_KEY.state TO OBSTACLE.drawDual
+ROUTE OBSTACLE_NAVIGATION.rotation TO OBSTACLE_TRANSFORMER.rotation
+ROUTE OBSTACLE_NAVIGATION.translation TO OBSTACLE_TRANSFORMER.translation
+ROUTE OBSTACLE_TRANSFORMER.coord_changed TO OBSTACLE.coord
+ROUTE OBSTACLE_TRANSFORMER.changed TO TRANSFORM_OBSTACLE.reset
+ROUTE SELECT_OBSTACLE.isOver TO OBSTACLE_NAVIGATION.set_bind
+ROUTE FLATTEN_OBSTACLE_KEY.press TO OBSTACLE_NAVIGATION.set_bind
+
+ROUTE SIM.start TO ROBOT_TRANSFORMER.execute
+ROUTE SIM.start TO OBSTACLE_TRANSFORMER.execute
+
+ROUTE DRAW_DUAL_MINK_KEY.state TO MINK.drawDual
+
+ROUTE HIDE1_KEY.intState TO HIDE1_SWITCH.whichChoice
+ROUTE HIDE2_KEY.intState TO HIDE2_SWITCH.whichChoice
+ROUTE SNAP_MINK_DUAL_KEY.state TO SNAP_DUAL.trigger
+ROUTE SNAP_MINK_PRIMAL_KEY.state TO SNAP_PRIMAL.trigger
+ROUTE DRAW_DUAL_MINK_OPAQUE_KEY.state TO MINK.drawDualOpaque
+ROUTE DRAW_DUAL_MINK_HALOED_KEY.state TO MINK.drawDualHaloed
+ROUTE INCREASE_MINK_EDGE_INDEX_KEY.state TO MINK.increaseEdgeIndex

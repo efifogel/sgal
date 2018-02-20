@@ -1,0 +1,91 @@
+# Use C++11 for this directory and its sub-directories.
+list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_generalized_initializers has_cpp11)
+if (has_cpp11 LESS 0)
+  message(STATUS "NOTICE: These examples requires a C++11 compiler and will not be compiled.")
+  return()
+endif()
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
+# Find required libraries
+set(Boost_USE_STATIC_LIBS OFF)
+find_package(Boost REQUIRED COMPONENTS system filesystem program_options regex)
+find_package(ImageMagick REQUIRED COMPONENTS Magick++)
+find_package(Freetype REQUIRED)
+find_package(OpenGL REQUIRED)
+if (SGAL_USE_V8)
+  find_package(V8 REQUIRED)
+  link_directories(${V8_LIBRARY_DIR})
+endif()
+
+if (NOT WIN32)
+  find_package(X11 REQUIRED)
+endif(NOT WIN32)
+
+find_package(CGAL REQUIRED COMPONENTS Core)
+if (NOT CGAL_FOUND)
+  message(STATUS "This library cannot be compiled, as it requires CGAL.")
+  return()
+endif()
+include(${CGAL_USE_FILE})
+
+find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+if (NOT EIGEN3_FOUND)
+  message(STATUS "This library cannot be compiled, as it requires Eigen3.")
+  return()
+endif()
+include(${EIGEN3_USE_FILE})
+
+find_package(Fontconfig)
+if (NOT FONTCONFIG_FOUND)
+  message(STATUS "This library cannot be compiled, as it requires Fontconfig.")
+  return()
+endif()
+
+# Add includes and libs
+include_directories(${Boost_INCLUDE_DIR})
+include_directories(${ImageMagick_Magick++_INCLUDE_DIRS})
+include_directories(${FREETYPE_INCLUDE_DIRS})
+include_directories(${V8_INCLUDE_DIR})
+if (NOT WIN32)
+  include_directories(${X11_INCLUDE_DIR})
+endif(NOT WIN32)
+
+include_directories(libs/boost/include)
+include_directories(libs/gl2ps/include)
+if (WIN32)
+  include_directories(libs/GL/include)
+  include_directories(libs/flex/include)
+endif(WIN32)
+
+# Add some compiler options
+if (WIN32)
+  add_definitions(-GR)
+  add_definitions(-vmg)
+endif()
+
+# Use dynamic link for all SGAL libraries
+add_definitions(-DSGAL_ALL_DYN_LINK)
+
+if (SGAL_TRACE)
+  add_definitions(-DSGAL_TRACE)
+endif()
+
+# Installation
+if (SGAL_WIN32_CMAKE_ON_CYGWIN)
+  exec_program(cygpath ARGS -w "${CMAKE_INSTALL_PREFIX}"
+               OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX2)
+  file(TO_CMAKE_PATH ${CMAKE_INSTALL_PREFIX2} CMAKE_INSTALL_PREFIX)
+endif()
+
+set (SGAL_INSTALL_INC_DIR "include" CACHE STRING "The folder where SGAL header files will be installed, relative to CMAKE_INSTALL_PREFIX")
+set (SGAL_INSTALL_LIB_DIR "lib"     CACHE STRING "The folder where SGAL libraries will be installed, relative to CMAKE_INSTALL_PREFIX")
+set (SGAL_INSTALL_BIN_DIR "bin"
+  CACHE STRING "The folder where SGAL executables, e.g., binaried and scripts, will be installed, relative to CMAKE_INSTALL_PREFIX")
+set (SGAL_INSTALL_CMAKE_DIR "${SGAL_INSTALL_LIB_DIR}/SGAL"
+  CACHE STRING "The folder where SGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX")
+
+# Add subdirectories
+add_subdirectory(libs)
+add_subdirectory(cmds)

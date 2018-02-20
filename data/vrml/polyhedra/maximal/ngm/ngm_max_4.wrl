@@ -1,0 +1,92 @@
+#VRML V2.0 utf8
+DEF BACKGROUND  ColorBackground { color 1 1 1 }
+# DEF CONFIG Configuration { polyMode "line" }
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
+DEF DRAW_DUAL_KEY SingleKeySensor { key "d" }
+DEF DRAW_DUAL_OPAQUE_KEY SingleKeySensor { key "o" }
+DEF FLATTEN_KEY SingleKeySensor { key "f" }
+DEF DRAW_DUAL_HALOED_KEY SingleKeySensor { key "l" state TRUE }
+DEF DRAW_DUAL_BACKGROUND_KEY SingleKeySensor { key "b" state TRUE }
+DEF INCREASE_EDGE_INDEX_KEY SingleKeySensor { key "i" }
+DEF SNAP_NGM_KEY SingleKeySensor { key "N" }
+DEF SNAP_PRIMAL_KEY SingleKeySensor { key "X" }
+
+DEF SNAP_NGM Snapshot {
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "max_4_ngm"
+}
+
+DEF SNAP_PRIMAL Snapshot {
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "max_4"
+}
+
+DEF PRIMAL_VIEW Viewpoint {
+  radiusScale 1
+  positionTranslation 0 0 0
+  fieldOfView 0.5
+}
+DEF DUAL_VIEW Viewpoint {
+  type "SIMPLE"
+  radiusScale 1.03
+  fieldOfView 0.5
+}
+
+DEF TRANSFORMER CoordinateTransformer {
+  coord DEF COORD Coordinate {
+    point [1 0 0,
+	   -1 0 -0.01,
+	   -0.0998334166468333 -0.995004165278025 0,
+	   0.0998334166468333 -0.995004165278025 -0.03
+	  ]
+  }
+}
+
+Transform {
+  rotation  1 4 0 0.4
+  children [
+    DEF SELECT TouchSensor { enabled TRUE }
+    Shape {
+      appearance Appearance {
+	material Material { }
+      }
+      geometry DEF GEOM NefGaussianMap {
+	solid FALSE
+#	drawDualSphere FALSE
+	drawDualHaloed TRUE
+#	drawMarkedEdge TRUE
+	dualLineWidth 3
+	dualLineColor 0 0 0
+	markedEdgeColor 0.4 0.6 0.5
+	coord USE COORD
+	coordIndex [0,2,3,-1,
+		    0,1,2,-1,
+		    1,3,2,-1,
+		    1,0,3,-1,
+		   ]
+      }
+    }
+   ]
+}
+
+ROUTE GEOM.trueDrawPrimal TO PRIMAL_VIEW.set_bind
+ROUTE GEOM.trueDrawDual TO DUAL_VIEW.set_bind
+ROUTE DRAW_DUAL_KEY.state TO GEOM.drawDual
+ROUTE DRAW_DUAL_OPAQUE_KEY.state TO GEOM.drawDualOpaque
+ROUTE DRAW_DUAL_HALOED_KEY.state TO GEOM.drawDualHaloed
+ROUTE INCREASE_EDGE_INDEX_KEY.state TO GEOM.increaseEdgeIndex
+ROUTE DRAW_DUAL_BACKGROUND_KEY.state TO GEOM.drawDualSphere
+ROUTE TRANSFORMER_NAV.rotation TO TRANSFORMER.rotation
+ROUTE TRANSFORMER_NAV.translation TO TRANSFORMER.translation
+ROUTE TRANSFORMER.coord_changed TO GEOM.coord
+ROUTE SELECT.isOver TO TRANSFORMER_NAV.set_bind
+ROUTE FLATTEN_KEY.press TO TRANSFORMER_NAV.set_bind
+ROUTE SNAP_NGM_KEY.state TO SNAP_NGM.trigger
+ROUTE SNAP_PRIMAL_KEY.state TO SNAP_PRIMAL.trigger

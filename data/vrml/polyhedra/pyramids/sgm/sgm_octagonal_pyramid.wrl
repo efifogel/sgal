@@ -1,0 +1,63 @@
+#VRML V2.0 utf8
+NavigationInfo { type [ "EXAMINE" "ANY" ] }
+DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
+
+DEF DRAW_DUAL_KEY SingleKeySensor { key "d" }
+DEF DRAW_DUAL_OPAQUE_KEY SingleKeySensor { key "o" }
+DEF FLATTEN_KEY SingleKeySensor { key "f" }
+DEF DRAW_DUAL_HALOED_KEY SingleKeySensor { key "l" state TRUE }
+DEF DRAW_DUAL_SPHERE_KEY SingleKeySensor { key "b" state TRUE }
+
+DEF PRIMAL_VIEW Viewpoint {}
+DEF DUAL_VIEW Viewpoint { }
+
+DEF TRANSFORMER CoordinateTransformer {
+  coord DEF COORD Coordinate {
+    point [1 0 0,
+	   0.707 0 0.707,
+	   0 0 1,
+	   -0.707 0 0.707,
+	   -1 0 0,
+	   -0.707 0 -0.707,
+	   0 0 -1,
+	   0.707 0 -0.707,
+	   0 -1 0
+	  ]
+  }
+}
+
+DEF TRANS Transform {
+  children [
+    DEF SELECT TouchSensor { enabled TRUE }
+    Shape {
+      appearance Appearance {
+	material Material { }
+      }
+      geometry DEF GEOM SphericalGaussianMap {
+	coord USE COORD
+	coordIndex [0,1,8,-1,
+		    1,2,8,-1,
+		    2,3,8,-1,
+		    3,4,8,-1,
+		    4,5,8,-1,
+		    5,6,8,-1,
+		    6,7,8,-1,
+		    7,0,8,-1,
+		    7,6,5,4,3,2,1,0,-1
+		   ]
+      }
+    }
+   ]
+}
+
+ROUTE GEOM.trueDrawPrimal TO PRIMAL_VIEW.set_bind
+ROUTE GEOM.trueDrawAos TO DUAL_VIEW.set_bind
+ROUTE DRAW_DUAL_KEY.state TO GEOM.drawAos
+ROUTE DRAW_DUAL_OPAQUE_KEY.state TO GEOM.drawAosOpaque
+ROUTE DRAW_DUAL_HALOED_KEY.state TO GEOM.drawAosHaloed
+ROUTE DRAW_DUAL_SPHERE_KEY.state TO GEOM.drawAosSphere
+ROUTE TRANSFORMER_NAV.rotation TO TRANSFORMER.rotation
+ROUTE TRANSFORMER_NAV.translation TO TRANSFORMER.translation
+ROUTE TRANSFORMER.coord_changed TO GEOM.coord
+ROUTE SELECT.isOver TO TRANSFORMER_NAV.set_bind
+ROUTE FLATTEN_KEY.press TO TRANSFORMER_NAV.set_bind

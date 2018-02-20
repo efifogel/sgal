@@ -1,0 +1,54 @@
+// PlayerControl.idl : type library source for ActiveX Control project.
+
+// This file will be processed by the MIDL compiler tool to
+// produce the type library (PlayerControl.tlb) that will become a resource in
+// PlayerControl.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(5418AF6D-20CE-4FAE-BA36-67B703CF6C54), version(1.1),
+  helpfile("PlayerControl.hlp"),
+  helpstring("PlayerControl ActiveX Control module"),
+  control ]
+library PlayerControlLib
+{
+	importlib(STDOLE_TLB);
+
+	//  Primary dispatch interface for CPlayerControlCtrl
+
+	[ uuid(EF0DF460-C17C-4314-A264-79E6D8779565),
+	  helpstring("Dispatch interface for PlayerControl Control")]
+	dispinterface _DPlayerControl
+	{
+		properties:
+			[id(2)] BSTR FileName;
+
+		methods:
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+			[id(3)] void Play();
+	};
+
+	//  Event dispatch interface for CPlayerControlCtrl
+
+	[ uuid(70CA8E21-EBA9-4DD6-A94C-62533116D776),
+	  helpstring("Event interface for PlayerControl Control") ]
+	dispinterface _DPlayerControlEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+	};
+
+	//  Class information for CPlayerControlCtrl
+
+	[ uuid(47879B80-6CBB-432E-92EC-26174446ACC5),
+	  helpstring("PlayerControl Control"), control ]
+	coclass PlayerControl
+	{
+		[default] dispinterface _DPlayerControl;
+		[default, source] dispinterface _DPlayerControlEvents;
+	};
+
+};

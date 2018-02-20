@@ -1,0 +1,551 @@
+#VRML V2.0 utf8
+ColorBackground { color 1 1 1 }
+DEF CONFIG Configuration {}
+DEF SIM Simulation {}
+
+DEF HIDE1_KEY SingleKeySensor {
+  boolean FALSE
+  key "Y"
+  numberOfStates 2
+}
+
+DEF HIDE2_KEY SingleKeySensor {
+  boolean FALSE
+  key "Z"
+  numberOfStates 2
+}
+
+DEF SNAP_MINK_DUAL_KEY SingleKeySensor { key "C" }
+DEF SNAP_CGM_UNFOLDED_KEY SingleKeySensor { key "U" }
+DEF SNAP_MINK_PRIMAL_KEY SingleKeySensor { key "X" }
+
+DEF SNAP_DUAL Snapshot {
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "pent_hexecontahedron_truncated_icosidodecahedron_cgm"
+}
+
+DEF SNAP_CGM_UNFOLDED Snapshot {
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "pent_hexecontahedron_truncated_icosidodecahedron_cgm_unfolded"
+}
+
+DEF SNAP_PRIMAL Snapshot {
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "pent_hexecontahedron_truncated_icosidodecahedron"
+}
+
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+DEF DRAW_DUAL_UNFOLDED_KEY SingleKeySensor { key "u" }
+DEF DRAW_DUAL_MINK_KEY SingleKeySensor { key "c" }
+DEF PRIMAL_VIEW Viewpoint {
+  radiusScale 1
+  positionTranslation 0 0 0
+  fieldOfView 0.5
+}
+DEF DUAL_VIEW Viewpoint {
+  type "SIMPLE"
+  radiusScale 0.80
+  positionTranslation 0.15 -0.11 0
+  fieldOfView 0.5
+}
+DEF DUAL_UNFOLDED_VIEW Viewpoint {
+  type "ORTHOGONAL"
+  position 0 0 0
+  left -0.5 right 8.5 bottom -0.5 top 6.5 near -1 far 1
+}
+
+DEF ROBOT_NAVIGATION NavigationInfo {
+  type [ "TRANSFORM" ]
+  translation 3 0 0
+}
+
+DEF DRAW_DUAL_ROBOT_KEY SingleKeySensor { key "d" }
+DEF FLATTEN_ROBOT_KEY SingleKeySensor { key "f" }
+
+DEF ROBOT_TRANSFORMER CoordinateTransformer {
+  translation 3 0 0
+  coord DEF ROBOT_COORD Coordinate {
+     point [-0.000000 -0.000000 1.000000,
+	    0.451209 -0.000000 0.892418,
+	    0.212779 0.397888 0.892418,
+	    -0.250526 0.375268 0.892418,
+	    -0.449063 -0.043953 0.892418,
+	    -0.173008 -0.416722 0.892418,
+	    0.557063 -0.416722 0.718348,
+	    0.803419 -0.043953 0.593789,
+	    0.626241 0.375268 0.683371,
+	    0.340114 0.729203 0.593789,
+	    -0.409529 0.692604 0.593789,
+	    -0.659818 0.312480 0.683371,
+	    -0.586707 -0.434486 0.683371,
+	    -0.267464 -0.758866 0.593789,
+	    0.171275 -0.674271 0.718348,
+	    0.506613 -0.758866 0.409227,
+	    0.831931 -0.434486 0.345125,
+	    0.985320 -0.034518 0.167191,
+	    0.698640 0.643796 0.312137,
+	    0.353461 0.919677 0.171055,
+	    -0.044494 0.911347 0.409227,
+	    -0.441367 0.880872 0.171055,
+	    -0.758030 0.572678 0.312137,
+	    -0.927716 0.142235 0.345125,
+	    -0.882531 -0.319416 0.345125,
+	    -0.632604 -0.708789 0.312137,
+	    0.082288 -0.934942 0.345125,
+	    0.384147 -0.923246 -0.006880,
+	    0.910524 -0.398390 -0.110598,
+	    0.956136 0.026189 -0.291749,
+	    0.920563 0.390534 -0.006880,
+	    0.652176 0.745388 -0.138066,
+	    -0.048711 0.997730 -0.046496,
+	    -0.417724 0.860458 -0.291749,
+	    -0.930096 0.361791 -0.063473,
+	    -0.994168 -0.097306 -0.046496,
+	    -0.842295 -0.535267 -0.063473,
+	    -0.508521 -0.853917 -0.110598,
+	    -0.066694 -0.993687 -0.090210,
+	    0.217118 -0.873016 -0.436695,
+	    0.633778 -0.700460 -0.328149,
+	    0.775223 -0.316523 -0.546665,
+	    0.784691 0.427551 -0.448843,
+	    0.434620 0.715725 -0.546665,
+	    0.001448 0.871681 -0.490072,
+	    -0.343900 0.635939 -0.690879,
+	    -0.719775 0.539649 -0.436695,
+	    -0.887155 0.107214 -0.448843,
+	    -0.641420 -0.601421 -0.476312,
+	    -0.242274 -0.837337 -0.490072,
+	    0.418377 -0.560779 -0.714484,
+	    0.491967 -0.126969 -0.861305,
+	    0.497819 0.332894 -0.800848,
+	    0.094740 0.561456 -0.822066,
+	    -0.585483 0.248299 -0.771724,
+	    -0.669145 -0.204346 -0.714484,
+	    -0.324935 -0.503050 -0.800848,
+	    0.083369 -0.332128 -0.939543,
+	    0.124252 0.127782 -0.983988,
+	    -0.296148 -0.065760 -0.952876
+	   ]
+  }
+}
+
+DEF OBSTACLE_NAVIGATION NavigationInfo {
+  type [ "TRANSFORM" ]
+  translation -3 0 0
+  rotation 1 0 0 1.57079632679489661922
+}
+
+DEF DRAW_DUAL_OBSTACLE_KEY SingleKeySensor { key "e" }
+DEF FLATTEN_OBSTACLE_KEY SingleKeySensor { key "g" }
+
+DEF OBSTACLE_TRANSFORMER CoordinateTransformer {
+  translation -3 0 0
+  rotation 1 0 0 1.57079632679489661922
+  coord DEF OBSTACLE_COORD Coordinate {
+    point [0 0 1.008759,
+	   0.2629922 0 0.973874,
+	   -0.00462747 0.2629515 0.973874,
+	   -0.2211363 -0.1423503 0.973874,
+	   0.2583647 0.2629515 0.9389886,
+	   0.4673861 -0.1423503 0.8825429,
+	   -0.2303913 0.3835526 0.9041033,
+	   -0.3159502 -0.372678 0.8825429,
+	   -0.4469001 -0.02174919 0.9041033,
+	   0.4581312 0.3835526 0.8127722,
+	   0.5351104 -0.372678 0.7696515,
+	   0.6671526 -0.02174919 0.7563265,
+	   -0.3326926 0.5786893 0.7563265,
+	   -0.4515276 0.2412023 0.8692179,
+	   -0.541714 -0.2520769 0.8127722,
+	   -0.248226 -0.6030057 0.7696515,
+	   0.518368 0.5786893 0.6434351,
+	   0.6625252 0.2412023 0.7214412,
+	   0.7348768 -0.2520769 0.6434351,
+	   0.4402965 -0.6030057 0.6783205,
+	   -0.5538289 0.436339 0.7214412,
+	   -0.2724557 0.7738261 0.5869894,
+	   -0.6997536 -0.3618034 0.6301101,
+	   -0.04383203 -0.745356 0.6783205,
+	   -0.4062656 -0.7127322 0.5869894,
+	   0.722762 0.436339 0.552104,
+	   0.4160667 0.7738261 0.4956583,
+	   0.8398294 -0.3618034 0.4258876,
+	   0.2191601 -0.745356 0.6434351,
+	   0.5452491 -0.7127322 0.460773,
+	   -0.7147284 0.4891254 0.5172187,
+	   -0.07268925 0.8944272 0.460773,
+	   -0.4333553 0.8266125 0.3827669,
+	   -0.8606531 -0.309017 0.4258876,
+	   -0.6320294 -0.5921311 0.5172187,
+	   -0.2018716 -0.8550825 0.4956583,
+	   0.8248546 0.4891254 0.3129962,
+	   0.1903029 0.8944272 0.4258876,
+	   0.5181594 0.8266125 0.2565505,
+	   0.9419221 -0.309017 0.1867798,
+	   0.7450156 -0.5921311 0.3345566,
+	   0.3241127 -0.8550825 0.4258876,
+	   -0.8727679 0.3793989 0.3345566,
+	   -0.6544916 0.6842621 0.3478816,
+	   -0.2335888 0.9472136 0.2565505,
+	   -0.7929289 -0.5393447 0.3129962,
+	   -0.9629544 -0.1138803 0.2781109,
+	   -0.096919 -0.9648091 0.2781109,
+	   0.9298072 0.3793989 0.09544872,
+	   0.7225533 0.6842621 0.1652194,
+	   0.2923956 0.9472136 0.1867798,
+	   0.8471082 -0.5393447 0.09544872,
+	   1.002159 -0.1138803 0.01744268,
+	   0.1660732 -0.9648091 0.2432255,
+	   -0.8125311 0.5745356 0.1652194,
+	   -0.9675818 0.1490712 0.2432255,
+	   -0.1314961 1. 0.01744268,
+	   -0.8275059 -0.5745356 0.05232804,
+	   -0.9975315 -0.1490712 0.01744268,
+	   -0.1314961 -1. 0.01744268,
+	   0.8275059 0.5745356 -0.05232804,
+	   0.9975315 0.1490712 -0.01744268,
+	   0.1314961 1. -0.01744268,
+	   0.8125311 -0.5745356 -0.1652194,
+	   0.9675818 -0.1490712 -0.2432255,
+	   0.1314961 -1. -0.01744268,
+	   -0.8471082 0.5393447 -0.09544872,
+	   -1.002159 0.1138803 -0.01744268,
+	   -0.1660732 0.9648091 -0.2432255,
+	   -0.7225533 -0.6842621 -0.1652194,
+	   -0.9298072 -0.3793989 -0.09544872,
+	   -0.2923956 -0.9472136 -0.1867798,
+	   0.7929289 0.5393447 -0.3129962,
+	   0.9629544 0.1138803 -0.2781109,
+	   0.096919 0.9648091 -0.2781109,
+	   0.6544916 -0.6842621 -0.3478816,
+	   0.8727679 -0.3793989 -0.3345566,
+	   0.2335888 -0.9472136 -0.2565505,
+	   -0.7450156 0.5921311 -0.3345566,
+	   -0.9419221 0.309017 -0.1867798,
+	   -0.3241127 0.8550825 -0.4258876,
+	   -0.8248546 -0.4891254 -0.3129962,
+	   -0.5181594 -0.8266125 -0.2565505,
+	   -0.1903029 -0.8944272 -0.4258876,
+	   0.6320294 0.5921311 -0.5172187,
+	   0.8606531 0.309017 -0.4258876,
+	   0.2018716 0.8550825 -0.4956583,
+	   0.7147284 -0.4891254 -0.5172187,
+	   0.4333553 -0.8266125 -0.3827669,
+	   0.07268925 -0.8944272 -0.460773,
+	   -0.8398294 0.3618034 -0.4258876,
+	   -0.5452491 0.7127322 -0.460773,
+	   -0.2191601 0.745356 -0.6434351,
+	   -0.722762 -0.436339 -0.552104,
+	   -0.4160667 -0.7738261 -0.4956583,
+	   0.6997536 0.3618034 -0.6301101,
+	   0.4062656 0.7127322 -0.5869894,
+	   0.04383203 0.745356 -0.6783205,
+	   0.5538289 -0.436339 -0.7214412,
+	   0.2724557 -0.7738261 -0.5869894,
+	   -0.7348768 0.2520769 -0.6434351,
+	   -0.4402965 0.6030057 -0.6783205,
+	   -0.6625252 -0.2412023 -0.7214412,
+	   -0.518368 -0.5786893 -0.6434351,
+	   0.541714 0.2520769 -0.8127722,
+	   0.248226 0.6030057 -0.7696515,
+	   0.4515276 -0.2412023 -0.8692179,
+	   0.3326926 -0.5786893 -0.7563265,
+	   -0.6671526 0.02174919 -0.7563265,
+	   -0.5351104 0.372678 -0.7696515,
+	   -0.4581312 -0.3835526 -0.8127722,
+	   0.4469001 0.02174919 -0.9041033,
+	   0.3159502 0.372678 -0.8825429,
+	   0.2303913 -0.3835526 -0.9041033,
+	   -0.4673861 0.1423503 -0.8825429,
+	   -0.2583647 -0.2629515 -0.9389886,
+	   0.2211363 0.1423503 -0.973874,
+	   0.00462747 -0.2629515 -0.973874,
+	   -0.2629922 0 -0.973874,
+	   0 0 -1.008759
+	  ]
+  }
+}
+
+DEF COORD_ADDER CoordinateMinkowski {
+  coord1 USE ROBOT_COORD
+  coord2 USE OBSTACLE_COORD
+}
+
+DEF TRANS Transform {
+  rotation  1 4 0 0.4
+  children [
+    DEF HIDE1_SWITCH Switch {
+      whichChoice 0
+      children [
+	Group {
+	  children [
+	    DEF TRANSFORM_ROBOT Transform {
+	      children [
+		DEF SELECT_ROBOT TouchSensor { enabled TRUE }
+		Shape {
+		  appearance Appearance {
+		    material Material { diffuseColor 0.5 0.2 0.1 }
+		  }
+		  geometry DEF ROBOT CubicalGaussianMap {
+		    drawDual FALSE
+		    coord USE ROBOT_COORD
+		    coordIndex [0,1,2,-1,
+				0,2,3,-1,
+				0,3,4,-1,
+				0,4,5,-1,
+				5,14,6,1,0,-1,
+				1,6,7,-1,
+				1,7,8,-1,
+				8,2,1,-1,
+				2,8,9,-1,
+				9,20,10,3,2,-1,
+				3,10,11,-1,
+				11,4,3,-1,
+				4,11,23,24,12,-1,
+				12,5,4,-1,
+				5,12,13,-1,
+				5,13,14,-1,
+				6,14,15,-1,
+				6,15,16,-1,
+				16,7,6,-1,
+				7,16,17,-1,
+				17,30,18,8,7,-1,
+				18,9,8,-1,
+				9,18,19,-1,
+				9,19,20,-1,
+				10,20,21,-1,
+				10,21,22,-1,
+				22,11,10,-1,
+				11,22,23,-1,
+				12,24,25,-1,
+				25,13,12,-1,
+				13,25,37,38,26,-1,
+				26,14,13,-1,
+				26,15,14,-1,
+				15,26,27,-1,
+				27,40,28,16,15,-1,
+				28,17,16,-1,
+				17,28,29,-1,
+				17,29,30,-1,
+				18,30,31,-1,
+				31,19,18,-1,
+				19,31,43,44,32,-1,
+				32,20,19,-1,
+				32,21,20,-1,
+				21,32,33,-1,
+				33,46,34,22,21,-1,
+				34,23,22,-1,
+				23,34,35,-1,
+				35,24,23,-1,
+				24,35,36,-1,
+				36,25,24,-1,
+				25,36,37,-1,
+				38,27,26,-1,
+				27,38,39,-1,
+				27,39,40,-1,
+				28,40,41,-1,
+				41,29,28,-1,
+				29,41,51,52,42,-1,
+				42,30,29,-1,
+				42,31,30,-1,
+				31,42,43,-1,
+				44,33,32,-1,
+				33,44,45,-1,
+				33,45,46,-1,
+				34,46,47,-1,
+				47,35,34,-1,
+				47,55,48,36,35,-1,
+				48,37,36,-1,
+				37,48,49,-1,
+				49,38,37,-1,
+				49,39,38,-1,
+				39,49,56,57,50,-1,
+				50,40,39,-1,
+				50,41,40,-1,
+				41,50,51,-1,
+				52,43,42,-1,
+				43,52,53,-1,
+				53,44,43,-1,
+				53,45,44,-1,
+				45,53,58,59,54,-1,
+				54,46,45,-1,
+				54,47,46,-1,
+				47,54,55,-1,
+				48,55,56,-1,
+				56,49,48,-1,
+				57,51,50,-1,
+				51,57,58,-1,
+				58,52,51,-1,
+				58,53,52,-1,
+				59,55,54,-1,
+				59,56,55,-1,
+				59,57,56,-1,
+				59,58,57,-1,
+			       ]
+		  }
+		}
+	       ]
+	    }
+
+	    DEF TRANSFORM_OBSTACLE Transform {
+	      children [
+		DEF SELECT_OBSTACLE TouchSensor { enabled TRUE }
+		Shape {
+		  appearance Appearance {
+		    material Material { diffuseColor 0.1 0.2 0.5 }
+		  }
+		  geometry DEF OBSTACLE CubicalGaussianMap {
+		    drawDual FALSE
+		    coord USE OBSTACLE_COORD
+		    coordIndex [0,1,4,2,-1,
+				3,8,14,7,-1,
+				5,10,18,11,-1,
+				6,12,20,13,-1,
+				9,17,25,16,-1,
+				15,24,35,23,-1,
+				19,28,41,29,-1,
+				21,31,44,32,-1,
+				22,33,45,34,-1,
+				26,38,50,37,-1,
+				27,40,51,39,-1,
+				30,43,54,42,-1,
+				36,48,60,49,-1,
+				46,55,67,58,-1,
+				47,59,65,53,-1,
+				52,64,73,61,-1,
+				56,62,74,68,-1,
+				57,70,81,69,-1,
+				63,75,87,76,-1,
+				66,78,90,79,-1,
+				71,82,94,83,-1,
+				72,85,95,84,-1,
+				77,89,99,88,-1,
+				80,92,101,91,-1,
+				86,96,105,97,-1,
+				93,102,110,103,-1,
+				98,107,113,106,-1,
+				100,109,114,108,-1,
+				104,111,116,112,-1,
+				115,118,119,117,-1,
+				0,2,6,13,8,3,-1,
+				1,5,11,17,9,4,-1,
+				7,14,22,34,24,15,-1,
+				10,19,29,40,27,18,-1,
+				12,21,32,43,30,20,-1,
+				16,25,36,49,38,26,-1,
+				23,35,47,53,41,28,-1,
+				31,37,50,62,56,44,-1,
+				33,46,58,70,57,45,-1,
+				39,51,63,76,64,52,-1,
+				42,54,66,79,67,55,-1,
+				48,61,73,85,72,60,-1,
+				59,71,83,89,77,65,-1,
+				68,74,86,97,92,80,-1,
+				69,81,93,103,94,82,-1,
+				75,88,99,107,98,87,-1,
+				78,91,101,109,100,90,-1,
+				84,95,104,112,105,96,-1,
+				102,108,114,118,115,110,-1,
+				106,113,117,119,116,111,-1,
+				0,3,7,15,23,28,19,10,5,1,-1,
+				2,4,9,16,26,37,31,21,12,6,-1,
+				8,13,20,30,42,55,46,33,22,14,-1,
+				11,18,27,39,52,61,48,36,25,17,-1,
+				24,34,45,57,69,82,71,59,47,35,-1,
+				29,41,53,65,77,88,75,63,51,40,-1,
+				32,44,56,68,80,91,78,66,54,43,-1,
+				38,49,60,72,84,96,86,74,62,50,-1,
+				58,67,79,90,100,108,102,93,81,70,-1,
+				64,76,87,98,106,111,104,95,85,73,-1,
+				83,94,103,110,115,117,113,107,99,89,-1,
+				92,97,105,112,116,119,118,114,109,101,-1
+			       ]
+		  }
+		}
+	       ]
+	    }
+	   ]
+	}
+       ]
+    }
+    DEF HIDE2_SWITCH Switch {
+      whichChoice 0
+      children [
+	Shape {
+	  appearance Appearance {
+	    material Material { diffuseColor 0.4 0.4 0.4 }
+	  }
+	  geometry DEF MINK CubicalGaussianMap {
+	    drawDual FALSE
+	    dualLineColor1 1 0 0
+	    dualLineColor2 0 0 1
+	    drawDualCube FALSE
+	    geometries [
+	      USE ROBOT
+	      USE OBSTACLE
+	     ]
+	  }
+	}
+       ]
+    }
+    DEF MINK_CH_SWITCH Switch {
+      whichChoice -1
+      children [
+	Shape {
+	  appearance Appearance {
+	    material Material { diffuseColor 0.4 0.4 0.4 }
+	  }
+	  geometry DEF MINK_CH IndexedFaceSet {
+	    convexHull TRUE
+	  }
+	}
+       ]
+    }
+   ]
+}
+
+ROUTE DRAW_DUAL_ROBOT_KEY.state TO ROBOT.drawDual
+ROUTE ROBOT_NAVIGATION.rotation TO ROBOT_TRANSFORMER.rotation
+ROUTE ROBOT_NAVIGATION.translation TO ROBOT_TRANSFORMER.translation
+ROUTE ROBOT_TRANSFORMER.coord_changed TO ROBOT.coord
+ROUTE SELECT_ROBOT.isOver TO ROBOT_NAVIGATION.set_bind
+ROUTE FLATTEN_ROBOT_KEY.press TO ROBOT_NAVIGATION.set_bind
+
+ROUTE DRAW_DUAL_OBSTACLE_KEY.state TO OBSTACLE.drawDual
+ROUTE OBSTACLE_NAVIGATION.rotation TO OBSTACLE_TRANSFORMER.rotation
+ROUTE OBSTACLE_NAVIGATION.translation TO OBSTACLE_TRANSFORMER.translation
+ROUTE OBSTACLE_TRANSFORMER.coord_changed TO OBSTACLE.coord
+ROUTE SELECT_OBSTACLE.isOver TO OBSTACLE_NAVIGATION.set_bind
+ROUTE FLATTEN_OBSTACLE_KEY.press TO OBSTACLE_NAVIGATION.set_bind
+
+ROUTE MINK.trueDrawPrimal TO PRIMAL_VIEW.set_bind
+ROUTE MINK.trueDrawDual TO DUAL_VIEW.set_bind
+ROUTE MINK.trueDrawDualUnfolded TO DUAL_UNFOLDED_VIEW.set_bind
+ROUTE MINK.trueDrawDualUnfolded TO TRANS.reset
+ROUTE MINK.trueDrawDualUnfolded TO NAVIGATION_ROOT.reset
+ROUTE DRAW_DUAL_UNFOLDED_KEY.state TO MINK.drawDualUnfolded
+ROUTE DRAW_DUAL_MINK_KEY.state TO MINK.drawDual
+
+ROUTE SIM.start TO ROBOT_TRANSFORMER.execute
+ROUTE SIM.start TO OBSTACLE_TRANSFORMER.execute
+
+ROUTE ROBOT_TRANSFORMER.coord_changed TO COORD_ADDER.coord1
+ROUTE OBSTACLE_TRANSFORMER.coord_changed TO COORD_ADDER.coord2
+ROUTE COORD_ADDER.coord_changed TO MINK_CH.coord
+
+ROUTE SIM.start TO COORD_ADDER.execute
+
+ROUTE HIDE1_KEY.intState TO HIDE1_SWITCH.whichChoice
+ROUTE HIDE2_KEY.intState TO HIDE2_SWITCH.whichChoice
+ROUTE SNAP_MINK_DUAL_KEY.state TO SNAP_DUAL.trigger
+ROUTE SNAP_MINK_PRIMAL_KEY.state TO SNAP_PRIMAL.trigger
+ROUTE SNAP_CGM_UNFOLDED_KEY.state TO SNAP_CGM_UNFOLDED.trigger

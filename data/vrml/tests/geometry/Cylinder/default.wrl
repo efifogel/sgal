@@ -1,0 +1,13 @@
+#VRML V2.0 utf8
+#
+# default.wrl - A cylinder center at the origin in the local coordinate 
+# system, and measures from -1 to +1 in all three dimensions.
+#
+
+NavigationInfo { type ["EXAMINE","WALK","FLY","ANY"]}
+Shape {
+  appearance Appearance {
+    material Material {}
+  } 
+  geometry Cylinder{}
+}

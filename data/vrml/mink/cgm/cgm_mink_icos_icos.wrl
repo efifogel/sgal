@@ -1,0 +1,209 @@
+#VRML V2.0 utf8
+DEF CONFIG Configuration {}
+DEF SIM Simulation {}
+
+ColorBackground { color 0.5 0.5 0.5 1 }
+
+DEF SWITCH_KEY SingleKeySensor {
+  boolean FALSE
+  key "H"
+  numberOfStates 2
+}
+
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+DEF DRAW_DUAL_MINK_KEY SingleKeySensor { key "c" }
+
+DEF ROBOT_NAVIGATION NavigationInfo {
+  type [ "TRANSFORM" ]
+  translation 3 0 0
+}
+
+DEF DRAW_DUAL_ROBOT_KEY SingleKeySensor { key "d" }
+DEF FLATTEN_ROBOT_KEY SingleKeySensor { key "f" }
+
+DEF ROBOT_TRANSFORMER CoordinateTransformer {
+  translation 3 0 0
+  coord DEF ROBOT_COORD Coordinate {
+     point [0 0 1.175571,
+	    1.051462 0 0.5257311,
+	    0.3249197 1. 0.5257311,
+	    -0.8506508 0.618034 0.5257311,
+	    -0.8506508 -0.618034 0.5257311,
+	    0.3249197 -1. 0.5257311,
+	    0.8506508 0.618034 -0.5257311,
+	    0.8506508 -0.618034 -0.5257311,
+	    -0.3249197 1. -0.5257311,
+	    -1.051462 0 -0.5257311,
+	    -0.3249197 -1. -0.5257311,
+	    0 0 -1.175571
+	   ]
+  }
+}
+
+DEF OBSTACLE_NAVIGATION NavigationInfo {
+  type [ "TRANSFORM" ]
+  translation -3 0 0
+}
+
+DEF DRAW_DUAL_OBSTACLE_KEY SingleKeySensor { key "e" }
+DEF FLATTEN_OBSTACLE_KEY SingleKeySensor { key "g" }
+
+DEF OBSTACLE_TRANSFORMER CoordinateTransformer {
+  translation -3 0 0
+  coord DEF OBSTACLE_COORD Coordinate {
+    point [0 0 1.175571,
+	    1.051462 0 0.5257311,
+	    0.3249197 1. 0.5257311,
+	    -0.8506508 0.618034 0.5257311,
+	    -0.8506508 -0.618034 0.5257311,
+	    0.3249197 -1. 0.5257311,
+	    0.8506508 0.618034 -0.5257311,
+	    0.8506508 -0.618034 -0.5257311,
+	    -0.3249197 1. -0.5257311,
+	    -1.051462 0 -0.5257311,
+	    -0.3249197 -1. -0.5257311,
+	    0 0 -1.175571
+	  ]
+  }
+}
+
+DEF COORD_ADDER CoordinateMinkowski {
+  coord1 USE ROBOT_COORD
+  coord2 USE OBSTACLE_COORD
+}
+
+Transform {
+  children [
+    DEF TRANSFORM_ROBOT Transform {
+      children [
+	DEF SELECT_ROBOT TouchSensor { enabled TRUE }
+	Shape {
+	  appearance Appearance {
+	    material Material { diffuseColor 0.5 0.2 0.1 }
+	  }
+	  geometry DEF ROBOT CubicalGaussianMap {
+	    drawDual FALSE
+	    coord USE ROBOT_COORD
+	    coordIndex [0,1,2,-1,
+			0,2,3,-1,
+			0,3,4,-1,
+			0,4,5,-1,
+			0,5,1,-1,
+			1,5,7,-1,
+			1,7,6,-1,
+			1,6,2,-1,
+			2,6,8,-1,
+			2,8,3,-1,
+			3,8,9,-1,
+			3,9,4,-1,
+			4,9,10,-1,
+			4,10,5,-1,
+			5,10,7,-1,
+			6,7,11,-1,
+			6,11,8,-1,
+			7,10,11,-1,
+			8,11,9,-1,
+			9,11,10,-1
+		       ]
+	  }
+	}
+       ]
+    }
+
+    DEF TRANSFORM_OBSTACLE Transform {
+      children [
+	DEF SELECT_OBSTACLE TouchSensor { enabled TRUE }
+	Shape {
+	  appearance Appearance {
+	    material Material { diffuseColor 0.1 0.2 0.5 }
+	  }
+	  geometry DEF OBSTACLE CubicalGaussianMap {
+	    drawDual FALSE
+	    coord USE OBSTACLE_COORD
+	    coordIndex [0,1,2,-1,
+			0,2,3,-1,
+			0,3,4,-1,
+			0,4,5,-1,
+			0,5,1,-1,
+			1,5,7,-1,
+			1,7,6,-1,
+			1,6,2,-1,
+			2,6,8,-1,
+			2,8,3,-1,
+			3,8,9,-1,
+			3,9,4,-1,
+			4,9,10,-1,
+			4,10,5,-1,
+			5,10,7,-1,
+			6,7,11,-1,
+			6,11,8,-1,
+			7,10,11,-1,
+			8,11,9,-1,
+			9,11,10,-1
+		       ]
+	  }
+	}
+       ]
+    }
+
+    DEF MINK_SWITCH Switch {
+      whichChoice 0
+      children [
+	Shape {
+	  appearance Appearance {
+	    material Material { diffuseColor 0.4 0.4 0.4 }
+	  }
+	  geometry DEF MINK CubicalGaussianMap {
+	    drawDual FALSE
+    	    dualLineColor1 0.5 0.2 0.1
+    	    dualLineColor2 0.1 0.2 0.5
+	    geometries [
+              USE ROBOT
+              USE OBSTACLE
+	     ]
+	  }
+	}
+       ]
+    }
+    DEF MINK_CH_SWITCH Switch {
+      whichChoice -1
+      children [
+	Shape {
+	  appearance Appearance {
+	    material Material { diffuseColor 0.4 0.4 0.4 }
+	  }
+	  geometry DEF MINK_CH IndexedFaceSet {
+	    convexHull TRUE
+	  }
+	}
+       ]
+    }
+   ]
+}
+
+ROUTE DRAW_DUAL_ROBOT_KEY.state TO ROBOT.drawDual
+ROUTE ROBOT_NAVIGATION.rotation TO ROBOT_TRANSFORMER.rotation
+ROUTE ROBOT_NAVIGATION.translation TO ROBOT_TRANSFORMER.translation
+ROUTE ROBOT_TRANSFORMER.coord_changed TO ROBOT.coord
+ROUTE SELECT_ROBOT.isOver TO ROBOT_NAVIGATION.set_bind
+ROUTE FLATTEN_ROBOT_KEY.press TO ROBOT_NAVIGATION.set_bind
+
+ROUTE DRAW_DUAL_OBSTACLE_KEY.state TO OBSTACLE.drawDual
+ROUTE OBSTACLE_NAVIGATION.rotation TO OBSTACLE_TRANSFORMER.rotation
+ROUTE OBSTACLE_NAVIGATION.translation TO OBSTACLE_TRANSFORMER.translation
+ROUTE OBSTACLE_TRANSFORMER.coord_changed TO OBSTACLE.coord
+ROUTE SELECT_OBSTACLE.isOver TO OBSTACLE_NAVIGATION.set_bind
+ROUTE FLATTEN_OBSTACLE_KEY.press TO OBSTACLE_NAVIGATION.set_bind
+
+ROUTE DRAW_DUAL_MINK_KEY.state TO MINK.drawDual
+
+ROUTE SIM.start TO ROBOT_TRANSFORMER.execute
+ROUTE SIM.start TO OBSTACLE_TRANSFORMER.execute
+
+ROUTE ROBOT_TRANSFORMER.coord_changed TO COORD_ADDER.coord1
+ROUTE OBSTACLE_TRANSFORMER.coord_changed TO COORD_ADDER.coord2
+ROUTE COORD_ADDER.coord_changed TO MINK_CH.coord
+
+ROUTE SIM.start TO COORD_ADDER.execute
+
+ROUTE SWITCH_KEY.intState TO MINK_SWITCH.whichChoice

@@ -1,0 +1,149 @@
+#VRML V2.0 utf8
+Configuration {
+  accumulation Accumulation { enabled TRUE }
+}
+ColorBackground {
+  color 0.5 0.5 0.5 0
+  clearStencil TRUE
+}
+NavigationInfo { type [ "EXAMINE" "ANY" ] }
+Viewpoint {
+  type "ORTHOGONAL"
+  fieldOfView 3.11
+  #radiusScale 0.7
+}
+
+DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
+DEF EXPORT_KEY SingleKeySensor { key "O" }
+DEF SNAP_KEY SingleKeySensor { key "S" }
+
+DEF SNAP Snapshot {
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "lts"
+}
+
+DEF TRANSFORM Transform {
+  #bboxCenter 0 0 0
+  #bboxSize 1.5 1.5 1.5
+  #translation 10 10 10
+  children [
+    DEF SHAPE_SEGMENTS Shape {
+      appearance Appearance {
+    	material Material {}
+      }
+      geometry DEF SEGMENTS IndexedLineSet {
+	colorPerVertex FALSE
+    	elliminateHiden TRUE
+    	lineWidth 4
+    	# coord EpecCoordinate { ratPoint
+    	coord DEF co Coordinate {
+    	  point [
+    	   1 1 0, 9 3 0,
+    	   9 3 0, 4 9 0,
+    	   4 9 0, 1 1 0,
+    	   4 4 -5, 4 4 7
+    	  ]
+    	}
+    	coordIndex [0 1 -1 2 3 -1 4 5 -1 6 7 -1]
+    	color Color {
+    	  color[1 0 0, 0 1 0, 0 0 1, 1 1 0]
+    	}
+      }
+    }
+    DEF SHAPE_LTS Shape {
+      appearance Appearance {
+    	material Material {}
+      }
+      geometry DEF LTS LinesThroughSegments {
+    	segments USE SEGMENTS
+      }
+    }
+
+    # The axes:
+    DEF AXES Transform {
+      # scale 0.1 0.1 0.1
+      children [
+	Shape {
+	  appearance DEF AXES_APP Appearance {
+	    material Material {
+	      # ambientIntensity 1
+	      diffuseColor 0.4 0.4 0.4
+	      # specularColor 0.3 0.3 0.3
+	      # transparency 0.0001
+	    }
+	  }
+	  geometry Sphere { radius 0.1 }
+	}
+	DEF CS_AXIS Transform {
+	  translation 0 1.5 0
+	  children [
+	    Shape {
+	      appearance USE AXES_APP
+	      geometry Cylinder {
+		radius 0.1
+		height 3
+		set_is_bottom_visible FALSE
+		set_is_top_visible FALSE
+	      }
+	    }
+	    Transform {
+	      translation 0 1.7 0
+	      children [
+		Shape {
+		  appearance USE AXES_APP
+		  geometry Cone {
+		    bottomRadius 0.2
+		    height 0.4
+		  }
+		}
+	       ]
+	    }
+	   ]
+	}
+	Transform {
+	  rotation 0 0 -1 1.57
+	  children [ USE CS_AXIS ]
+	}
+	Transform {
+	  rotation 1 0 0 1.57
+	  children [ USE CS_AXIS ]
+	}
+       ]
+    }
+   ]
+}
+
+DEF ci CoordinateInterpolator {
+  key [0.0 0.5 1.0 ]
+  keyValue [1 1 0, 9 3 0,
+	    9 3 0, 4 9 0,
+	    4 9 0, 1 1 0,
+	    4 4 -5, 4 4 7
+	    #
+	    1 1 0, 9 4 0,
+	    9 4 0, 4 9 0,
+	    4 9 0, 1 1 0,
+	    4 4 -5, 4 4 7
+	    #
+	    1 1 0, 9 5 0,
+	    9 5 0, 4 9 0,
+	    4 9 0, 1 1 0,
+	    4 4 -5, 4 4 7
+	   ]
+}
+
+DEF ts TimeSensor {
+  cycleInterval 50
+  frequency 25
+  # startTime 0
+  loop TRUE
+}
+
+ROUTE ts.fraction_changed TO ci.set_fraction
+ROUTE ci.value_changed TO co.set_point
+
+ROUTE SNAP_KEY.state TO SNAP.trigger
+# ROUTE EXPORT_KEY.press TO LTS.export

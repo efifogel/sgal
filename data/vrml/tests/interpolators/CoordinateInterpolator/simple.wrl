@@ -1,0 +1,28 @@
+#VRML V2.0 utf8
+
+Group { 
+  children [
+    Shape{ appearance Appearance { material Material { }}
+      geometry IndexedFaceSet {
+        coord DEF co Coordinate {
+          point [-1 -1 0, 1 -1 0, 1 1 0, -1 1 0 ]
+        }
+        coordIndex [0 1 2 3 -1]
+      }
+    }
+    DEF ci CoordinateInterpolator {
+      key [0 0.5 1]
+      keyValue [-1 -1 0, 1 -1 0, 1 1 0, -1 1 0,
+                -1 -1 0, 1 -0.5 0, 1 0.5 0, -1 1 0,
+                -1 -1 0, 1 -1 0, 1 1 0, -1 1 0]
+    }
+
+    DEF ts TimeSensor {
+      cycleInterval 2 
+      loop TRUE 
+    }
+   ]
+}
+
+ROUTE ts.fraction_changed TO ci.set_fraction 
+ROUTE ci.value_changed TO co.set_point 

@@ -1,0 +1,20 @@
+[OPTIONS]
+CONTENTS=main_index
+TITLE=PlayerControl Control Help
+COMPRESS=true
+WARNING=2
+HLP=PlayerControl.hlp
+ERRORLOG=PlayerControl.log
+
+[FILES]
+hlp\PlayerControl.rtf
+
+[BITMAPS]
+; miscellaneous
+hlp\Bullet.bmp
+
+[ALIAS]
+HIDD_ABOUTBOX_PLAYERCONTROL = HID_APP_ABOUT_PLAYERCONTROL
+
+[MAP]
+#include <hlp\PlayerControl.hm>

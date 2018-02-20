@@ -1,0 +1,5 @@
+player -v1 sgm_cube.wrl
+player -v1 sgm_dodecahedron.wrl
+player -v1 sgm_icosahedron.wrl
+player -v1 sgm_octahedron.wrl
+player -v1 sgm_tetrahedron.wrl

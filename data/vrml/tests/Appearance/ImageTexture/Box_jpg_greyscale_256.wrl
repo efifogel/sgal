@@ -1,0 +1,9 @@
+#VRML V2.0 utf8 CosmoWorlds V1.0
+NavigationInfo { type [ "EXAMINE" ] }
+Shape {
+  appearance Appearance {
+    material Material {}
+    texture ImageTexture {url ["sgal_greyscale.jpg"]}
+  }
+  geometry Box {}
+}

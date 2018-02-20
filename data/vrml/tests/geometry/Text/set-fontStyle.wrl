@@ -1,0 +1,47 @@
+#VRML V2.0 utf8
+#
+# This test sets the string field to "The VRML Test Suite". The value
+# of the fontStyle is changed to reset the values of the leftToRight field
+# to TRUE, style to BOLD, language to "en_US" and family to "TYPEWRITER".
+# This values should cause the string to be printed in bold TYPEWRITER 
+# style.
+
+NavigationInfo { type ["EXAMINE","WALK","FLY","ANY"]}
+Transform {
+  translation -3 2 20 
+  children [
+    Shape {
+      appearance Appearance {
+	material Material{}
+      }
+      geometry Text{ string ["THE VRML TEST SUITE"]
+	length 0
+      }
+    }
+   ]
+}
+
+Transform {
+  translation -3 -2 20 
+  children [
+    Shape {
+      appearance Appearance {
+	material Material{}
+      }
+      geometry Text{ string ["THE VRML TEST SUITE"]
+	fontStyle FontStyle {
+	  family "TYPEWRITER"
+	  horizontal TRUE
+	  justify "BEGIN"
+	  language "en_US"
+	  leftToRight TRUE 
+	  size 1.0
+	  spacing 1.0
+	  style "BOLD"
+	  topToBottom TRUE
+	}
+	length 0 
+      }
+    }
+   ]
+}

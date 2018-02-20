@@ -1,0 +1,51 @@
+#VRML V2.0 utf8
+DEF CONFIG Configuration {}
+DEF SIM Simulation {}
+ColorBackground {
+  color 1 1 1 1
+}
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+DEF SNAP_KEY SingleKeySensor { key "S" }
+DEF SNAP Snapshot {
+  fileFormat "png"
+  sequence FALSE
+  dirName "."
+  fileName "simple"
+}
+Transform {
+  # rotation 1 -1 0 0.3
+  children [
+    DEF SHAPE Shape {
+      appearance Appearance {
+	material Material {
+	  diffuseColor 0.8 0.8 0.8
+	  specularColor 0.1 0.1 0.1
+	}
+      }
+      geometry DEF ELEVATION_GRID ElevationGrid {
+	closed TRUE
+	baseHeight 1
+      }
+    }
+   ]
+}
+
+DEF IMAGE_TO_HEIGHT_MAP ImageToHeightMap {
+  image ImageUrl { url ["logo.png"] }
+}
+
+ROUTE SIM.start TO IMAGE_TO_HEIGHT_MAP.trigger
+ROUTE IMAGE_TO_HEIGHT_MAP.heightMap TO ELEVATION_GRID.heightMap
+ROUTE IMAGE_TO_HEIGHT_MAP.xDimension TO ELEVATION_GRID.xDimension
+ROUTE IMAGE_TO_HEIGHT_MAP.zDimension TO ELEVATION_GRID.zDimension
+
+ROUTE SNAP_KEY.state TO SNAP.trigger
+
+DEF EXPORTER_KEY SingleKeySensor { key "E" }
+DEF EXPORTER Exporter {
+  fileName "simple.out"
+  dirName "."
+  fileFormat "stl"
+  separate FALSE
+}
+ROUTE EXPORTER_KEY.state TO EXPORTER.trigger

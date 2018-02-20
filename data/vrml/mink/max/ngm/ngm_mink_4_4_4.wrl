@@ -1,0 +1,356 @@
+#VRML V2.0 utf8
+ColorBackground { color 1 1 1 1 }
+DEF SIM Simulation {}
+# DEF CONFIG Configuration { polyMode "line" }
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+
+DEF SNAP_DUAL_KEY SingleKeySensor { key "D" }
+DEF SNAP_PRIMAL_KEY SingleKeySensor { key "P" }
+DEF HIDE1_KEY SingleKeySensor {
+  boolean FALSE
+  key "X"
+  numberOfStates 2
+}
+DEF HIDE_MINK1_KEY SingleKeySensor {
+  boolean FALSE
+  key "Y"
+  numberOfStates 2
+}
+DEF HIDE_MINK2_KEY SingleKeySensor {
+  boolean FALSE
+  key "Z"
+  numberOfStates 2
+}
+
+DEF SNAP_DUAL Snapshot {
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "ngm_mink_4_4_4_dual"
+}
+
+DEF SNAP_PRIMAL Snapshot {
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "ngm_mink_4_4_4_primal"
+}
+
+DEF NAVIGATION1 NavigationInfo {
+  type [ "TRANSFORM" ]
+  translation -2 0 0
+}
+DEF DRAW_DUAL_KEY1 SingleKeySensor { key "d" }
+DEF DRAW_DUAL_OPAQUE_KEY1 SingleKeySensor { key "o" }
+DEF FLATTEN_KEY1 SingleKeySensor { key "f" }
+DEF DRAW_DUAL_HALOED_KEY1 SingleKeySensor { key "l" state TRUE }
+DEF DRAW_DUAL_BACKGROUND_KEY1 SingleKeySensor { key "b" state TRUE }
+DEF INCREASE_EDGE_INDEX_KEY1 SingleKeySensor { key "i" }
+
+DEF TRANSFORMER1 CoordinateTransformer {
+  translation -2 0 0
+  coord DEF COORD1 Coordinate {
+    point [ 1 0 0,
+	   -1 0 0,
+	   -0.1 -1  0,
+	    0.1 -1 -0.01
+	  ]
+  }
+}
+
+DEF TRANSFORMER_NAV2NAVIGATION2 NavigationInfo {
+  type [ "TRANSFORM" ]
+  translation 8 0 0
+  rotation 0 1 0 1.047197
+}
+DEF DRAW_DUAL_KEY2 SingleKeySensor { key "d" }
+DEF DRAW_DUAL_OPAQUE_KEY2 SingleKeySensor { key "o" }
+DEF FLATTEN_KEY2 SingleKeySensor { key "f" }
+DEF DRAW_DUAL_HALOED_KEY2 SingleKeySensor { key "l" state TRUE }
+DEF DRAW_DUAL_BACKGROUND_KEY2 SingleKeySensor { key "b" state TRUE }
+DEF INCREASE_EDGE_INDEX_KEY2 SingleKeySensor { key "i" }
+
+DEF TRANSFORMER2 CoordinateTransformer {
+  translation 8 0 0
+  rotation 0 1 0 1.047197
+  coord DEF COORD2 Coordinate {
+    point [ 1 0 0,
+	   -1 0 0,
+	   -0.1 -1  0,
+	    0.1 -1 -0.01
+	  ]
+  }
+}
+
+DEF NAVIGATION3 NavigationInfo {
+  type [ "TRANSFORM" ]
+  translation -4 0 0
+  rotation 0 1 0 2.09439
+}
+DEF DRAW_DUAL_KEY3 SingleKeySensor { key "d" }
+DEF DRAW_DUAL_OPAQUE_KEY3 SingleKeySensor { key "o" }
+DEF FLATTEN_KEY3 SingleKeySensor { key "f" }
+DEF DRAW_DUAL_HALOED_KEY3 SingleKeySensor { key "l" state TRUE }
+DEF DRAW_DUAL_BACKGROUND_KEY3 SingleKeySensor { key "b" state TRUE }
+DEF INCREASE_EDGE_INDEX_KEY3 SingleKeySensor { key "i" }
+
+DEF TRANSFORMER3 CoordinateTransformer {
+  translation -4 0 0
+  rotation 0 1 0 2.09439
+  coord DEF COORD3 Coordinate {
+    point [ 1 0 0,
+	   -1 0 0,
+	   -0.1 -1  0,
+	    0.1 -1 -0.01
+	  ]
+  }
+}
+
+DEF DRAW_DUAL_MINK1_KEY SingleKeySensor { key "b" }
+DEF DRAW_DUAL_MINK2_KEY SingleKeySensor { key "c" }
+
+Transform {
+  rotation 0 -1 0 0.5
+  children [
+    DEF AXES Transform {
+      scale 0.1 0.1 0.1
+      children [
+	Shape {
+	  appearance DEF CS_APP Appearance {
+	    material Material { diffuseColor 0.3 0.3 0.3 }
+	  }
+	  geometry Sphere { radius 0.1 }
+	}
+	DEF CS_AXIS Transform {
+	  translation 0 1.5 0
+	  children [
+	    DEF CS_AXIS Shape {
+	      appearance USE CS_APP
+	      geometry DEF CS_CYLINDER Cylinder {
+		radius 0.1
+		height 3
+		set_is_bottom_visible FALSE
+		set_is_top_visible FALSE
+	      }
+	    }
+	    Transform {
+	      translation 0 1.7 0
+	      children [
+		Shape {
+		  appearance USE CS_APP
+		  geometry DEF CS_CONE Cone {
+		    bottomRadius 0.2
+		    height 0.4
+		  }
+		}
+	       ]
+	    }
+	   ]
+	}
+	Transform {
+	  rotation 0 0 -1 1.57
+	  children [ USE CS_AXIS ]
+	}
+	Transform {
+	  rotation 1 0 0 1.57
+	  children [ USE CS_AXIS ]
+	}
+       ]
+    }
+    DEF HIDE1_SWITCH Switch {
+      whichChoice 0
+      children [
+	Group {
+	  children [
+	    Transform {
+	      children [
+		DEF SELECT1 TouchSensor { enabled TRUE }
+		Shape {
+		  appearance Appearance {
+		    material Material {
+		      # transparency 0.5
+		    }
+		  }
+		  geometry DEF GEOM1 NefGaussianMap {
+		    solid FALSE
+		    drawDualSphere TRUE
+		    drawDualHaloed TRUE
+		    # drawMarkedEdge TRUE
+		    dualLineWidth 3
+		    dualLineColor 1 0 0
+		    markedEdgeColor 0.4 0.6 0.5
+		    coord USE COORD1
+		    coordIndex [0,2,3,-1,
+				0,1,2,-1,
+				1,3,2,-1,
+				1,0,3,-1,
+			       ]
+		  }
+		}
+	       ]
+	    }
+	    Transform {
+	      children [
+		DEF SELECT2 TouchSensor { enabled TRUE }
+		Shape {
+		  appearance Appearance {
+		    material Material {}
+		  }
+		  geometry DEF GEOM2 NefGaussianMap {
+		    solid FALSE
+		    drawDualSphere FALSE
+		    drawDualHaloed TRUE
+		    # drawMarkedEdge TRUE
+		    dualLineWidth 3
+		    dualLineColor 0 1 0
+		    markedEdgeColor 0.4 0.6 0.5
+		    coord USE COORD2
+		    coordIndex [0,2,3,-1,
+				0,1,2,-1,
+				1,3,2,-1,
+				1,0,3,-1,
+			       ]
+		  }
+		}
+	       ]
+	    }
+	    Transform {
+	      children [
+		DEF SELECT3 TouchSensor { enabled TRUE }
+		Shape {
+		  appearance Appearance {
+		    material Material {}
+		  }
+		  geometry DEF GEOM3 NefGaussianMap {
+		    solid FALSE
+		    drawDualSphere FALSE
+		    drawDualHaloed TRUE
+		    # drawMarkedEdge TRUE
+		    dualLineWidth 3
+		    dualLineColor 0 0 1
+		    markedEdgeColor 0.4 0.6 0.5
+		    coord USE COORD3
+		    coordIndex [0,2,3,-1,
+				0,1,2,-1,
+				1,3,2,-1,
+				1,0,3,-1,
+			       ]
+		  }
+		}
+	       ]
+	    }
+	   ]
+	}
+       ]
+    }
+    DEF HIDE_MINK1_SWITCH Switch {
+      whichChoice 0
+      children [
+	Group {
+	  children [
+	    Shape {
+	      appearance Appearance {
+		material Material { diffuseColor 0.4 0.4 0.4 }
+	      }
+	      geometry DEF MINK1 NefGaussianMap {
+		solid FALSE
+		drawDualSphere TRUE
+		# drawDualHaloed TRUE
+		# drawMarkedEdge TRUE
+		# dualLineWidth 3
+		dualLineColor 0 0 0
+		markedEdgeColor 0.4 0.6 0.5
+		dualLineColor1 1 0 0
+		dualLineColor2 0 0 1
+		# drawDual TRUE
+		geometries [
+			    USE GEOM1
+			    USE GEOM2
+			   ]
+	      }
+	    }
+	   ]
+	}
+       ]
+    }
+    DEF HIDE_MINK2_SWITCH Switch {
+      whichChoice 0
+      children [
+	Group {
+	  children [
+	    Shape {
+	      appearance Appearance {
+		material Material { diffuseColor 0.5 0.5 0.5 }
+	      }
+	      geometry DEF MINK2 NefGaussianMap {
+		solid FALSE
+		drawDualSphere TRUE
+		# drawDualHaloed TRUE
+		# drawMarkedEdge TRUE
+		# dualLineWidth 3
+		dualLineColor 0 0 0
+		markedEdgeColor 0.4 0.6 0.5
+		dualLineColor1 1 0 1
+		dualLineColor2 0 1 0
+		# drawDual TRUE
+		geometries [
+			    USE MINK1
+			    USE GEOM3
+			   ]
+	      }
+	    }
+	   ]
+	}
+       ]
+    }
+   ]
+}
+
+ROUTE DRAW_DUAL_KEY1.state TO GEOM1.drawDual
+ROUTE DRAW_DUAL_OPAQUE_KEY1.state TO GEOM1.drawDualOpaque
+ROUTE DRAW_DUAL_HALOED_KEY1.state TO GEOM1.drawDualHaloed
+ROUTE INCREASE_EDGE_INDEX_KEY1.state TO GEOM1.increaseEdgeIndex
+# ROUTE DRAW_DUAL_BACKGROUND_KEY1.state TO GEOM1.drawDualBackground
+ROUTE NAVIGATION1.rotation TO TRANSFORMER1.rotation
+ROUTE NAVIGATION1.translation TO TRANSFORMER1.translation
+ROUTE TRANSFORMER1.coord_changed TO GEOM1.coord
+ROUTE SELECT1.isOver TO NAVIGATION1.set_bind
+ROUTE FLATTEN_KEY1.press TO NAVIGATION1.set_bind
+
+ROUTE DRAW_DUAL_KEY2.state TO GEOM2.drawDual
+ROUTE DRAW_DUAL_OPAQUE_KEY2.state TO GEOM2.drawDualOpaque
+ROUTE DRAW_DUAL_HALOED_KEY2.state TO GEOM2.drawDualHaloed
+ROUTE INCREASE_EDGE_INDEX_KEY2.state TO GEOM2.increaseEdgeIndex
+# ROUTE DRAW_DUAL_BACKGROUND_KEY2.state TO GEOM2.drawDualBackground
+ROUTE TRANSFORMER_NAV2NAVIGATION2.rotation TO TRANSFORMER2.rotation
+ROUTE TRANSFORMER_NAV2NAVIGATION2.translation TO TRANSFORMER2.translation
+ROUTE TRANSFORMER2.coord_changed TO GEOM2.coord
+ROUTE SELECT2.isOver TO TRANSFORMER_NAV2NAVIGATION2.set_bind
+ROUTE FLATTEN_KEY2.press TO TRANSFORMER_NAV2NAVIGATION2.set_bind
+
+ROUTE DRAW_DUAL_KEY3.state TO GEOM3.drawDual
+ROUTE DRAW_DUAL_OPAQUE_KEY3.state TO GEOM3.drawDualOpaque
+ROUTE DRAW_DUAL_HALOED_KEY3.state TO GEOM3.drawDualHaloed
+ROUTE INCREASE_EDGE_INDEX_KEY3.state TO GEOM3.increaseEdgeIndex
+# ROUTE DRAW_DUAL_BACKGROUND_KEY3.state TO GEOM3.drawDualBackground
+ROUTE NAVIGATION3.rotation TO TRANSFORMER3.rotation
+ROUTE NAVIGATION3.translation TO TRANSFORMER3.translation
+ROUTE TRANSFORMER3.coord_changed TO GEOM3.coord
+ROUTE SELECT3.isOver TO NAVIGATION3.set_bind
+ROUTE FLATTEN_KEY3.press TO NAVIGATION3.set_bind
+
+ROUTE SIM.start TO TRANSFORMER1.execute
+ROUTE SIM.start TO TRANSFORMER2.execute
+ROUTE SIM.start TO TRANSFORMER3.execute
+
+ROUTE SNAP_DUAL_KEY.state TO SNAP_DUAL.trigger
+ROUTE SNAP_PRIMAL_KEY.state TO SNAP_PRIMAL.trigger
+
+ROUTE DRAW_DUAL_MINK1_KEY.state TO MINK1.drawDual
+ROUTE DRAW_DUAL_MINK2_KEY.state TO MINK2.drawDual
+
+ROUTE HIDE1_KEY.intState TO HIDE1_SWITCH.whichChoice
+ROUTE HIDE_MINK1_KEY.intState TO HIDE_MINK1_SWITCH.whichChoice
+ROUTE HIDE_MINK2_KEY.intState TO HIDE_MINK2_SWITCH.whichChoice

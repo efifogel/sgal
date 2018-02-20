@@ -1,0 +1,285 @@
+#VRML V2.0 utf8
+DEF CONFIG Configuration {
+  stencilBits 1
+}
+DEF SIM Simulation {}
+
+ColorBackground {
+  color 0.5 0.5 0.5 1
+  clearStencil TRUE
+}
+
+DEF VIEWPOINT Viewpoint {
+#   type "SIMPLE"
+#   radiusScale 5.74
+#   fieldOfView 0.5
+#   positionTranslation 0.4 0 0
+}
+
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+
+DEF GEOM1_NAVIGATION NavigationInfo {
+  type [ "TRANSFORM" ]
+  translation -3 0 0
+  rotation 0 1 0 0.1
+}
+
+DEF GEOM1_TRANSFORMER CoordinateTransformer {
+  translation -3 0 0
+  rotation 0 1 0 0.1
+  coord DEF GEOM1_COORD Coordinate {
+    point [
+	   -1 -0.73 -0.73,
+	   0 -0.73 1,
+	   1 -0.73 -0.73,
+	   0, 1, 0
+	  ]
+  }
+}
+
+DEF GEOM2_NAVIGATION NavigationInfo {
+  type [ "TRANSFORM" ]
+  rotation 1 -1 0 0.5
+  translation 3 0 0
+}
+
+DEF GEOM2_TRANSFORMER CoordinateTransformer {
+  rotation 1 -1 0 0.5
+  translation 3 0 0
+  coord DEF GEOM2_COORD Coordinate {
+    point [
+	   0 0 0,
+	   1 0 0,
+	   0 1 0,
+	   0 0 1
+	  ]
+  }
+}
+
+DEF GEOM3_NAVIGATION NavigationInfo {
+  type [ "TRANSFORM" ]
+  rotation 2 -2 3 0.5
+  translation -2 -4 0
+}
+
+DEF GEOM3_TRANSFORMER CoordinateTransformer {
+  rotation 2 -2 3 0.5
+  translation -2 -4 0
+  coord DEF GEOM3_COORD Coordinate {
+    point [
+	   0 0 0,
+	   3 0 0,
+	   0 3 0,
+	   0 0 3
+	  ]
+  }
+}
+
+DEF GEOM4_NAVIGATION NavigationInfo {
+  type [ "TRANSFORM" ]
+  rotation 2 -2 3 0.5
+  translation -1 4 3
+}
+
+DEF GEOM4_TRANSFORMER CoordinateTransformer {
+  rotation 2 -2 3 0.5
+  translation -1 4 3
+  coord DEF GEOM4_COORD Coordinate {
+    point [
+	   0 0 0,
+	   0 0 3,
+	   0 3 0,
+	   0 3 3,
+	   3 0 0,
+	   3 0 3,
+	   3 3 0,
+	   3 3 3
+	  ]
+  }
+}
+
+DEF GEOM5_NAVIGATION NavigationInfo {
+  type [ "TRANSFORM" ]
+  rotation 1 -1 4 1.5
+  translation 3 1 1
+}
+
+DEF GEOM5_TRANSFORMER CoordinateTransformer {
+  rotation 1 -1 4 1.5
+  translation 3 1 1
+  coord DEF GEOM5_COORD Coordinate {
+    point [
+	   0 0 0,
+	   0 0 2,
+	   0 2 0,
+	   0 2 2,
+	   2 0 0
+	  ]
+  }
+}
+
+DEF DRAW_DUAL_GEOM1_KEY SingleKeySensor { key "e" }
+DEF FLATTEN_GEOM1_KEY SingleKeySensor { key "g" }
+
+DEF STABBING_CUBE SmallestStabbingCube {
+  enabled TRUE
+  geometries [
+	      USE GEOM1_TRANSFORMER
+	      USE GEOM2_TRANSFORMER
+	      USE GEOM3_TRANSFORMER
+	      USE GEOM4_TRANSFORMER
+	      USE GEOM5_TRANSFORMER
+	     ]
+}
+
+DEF MAIN_TRANSFORM Transform {
+  rotation 1 -1 0 0.3
+  children [
+    DEF GEOM1_SWITCH Switch {
+      whichChoice 0
+      children [
+	DEF TRANSFORM_GEOM1 Transform {
+	  children [
+	    DEF SELECT_GEOM1 TouchSensor { enabled TRUE }
+	    DEF GEOM1_SHAPE Shape {
+	      appearance Appearance {
+		material Material { diffuseColor 0.2 0.3 0.6 }
+	      }
+	      geometry DEF GEOM1 IndexedFaceSet {
+		convexHull TRUE
+	      }
+	    }
+	   ]
+	}
+       ]
+    }
+
+    DEF GEOM2_SWITCH Switch {
+      whichChoice 0
+      children [
+    	DEF TRANSFORM_GEOM2 Transform {
+    	  children [
+    	    DEF SELECT_GEOM2 TouchSensor { enabled TRUE }
+    	    Shape {
+    	      appearance Appearance {
+    		material Material { diffuseColor 0.6 0.3 0.2 }
+    	      }
+    	      geometry DEF GEOM2 SphericalGaussianMapColored {
+    		drawAos FALSE
+    		aosEdgeColor 0.6 0.3 0.2
+    		coord USE GEOM2_COORD
+    		coordIndex [2 1 0 -1, 0 1 3 -1, 1 2 3 -1 2 0 3 -1]
+    	      }
+    	    }
+    	   ]
+    	}
+       ]
+    }
+
+    DEF GEOM3_SWITCH Switch {
+      whichChoice 0
+      children [
+    	DEF TRANSFORM_GEOM3 Transform {
+    	  children [
+    	    DEF SELECT_GEOM3 TouchSensor { enabled TRUE }
+    	    Shape {
+    	      appearance Appearance {
+    		material Material { diffuseColor 0.1 0.4 0.2 }
+    	      }
+    	      geometry DEF GEOM3 IndexedFaceSet {
+    		convexHull TRUE
+    	      }
+    	    }
+    	   ]
+    	}
+       ]
+    }
+
+    DEF GEOM4_SWITCH Switch {
+      whichChoice 0
+      children [
+    	DEF TRANSFORM_GEOM4 Transform {
+    	  children [
+    	    DEF SELECT_GEOM4 TouchSensor { enabled TRUE }
+    	    Shape {
+    	      appearance Appearance {
+    		material Material { diffuseColor 0.2 0.2 0.2 }
+    	      }
+    	      geometry DEF GEOM4 IndexedFaceSet {
+    		convexHull TRUE
+    	      }
+    	    }
+    	   ]
+    	}
+       ]
+    }
+
+    DEF GEOM5_SWITCH Switch {
+      whichChoice 0
+      children [
+    	DEF TRANSFORM_GEOM5 Transform {
+    	  children [
+    	    DEF SELECT_GEOM5 TouchSensor { enabled TRUE }
+    	    DEF GEOM5_SHAPE Shape {
+    	      appearance Appearance {
+    		material Material { diffuseColor 0.8 0.4 0.8 }
+    	      }
+    	      geometry DEF GEOM5 IndexedFaceSet {
+    		convexHull TRUE
+    	      }
+    	    }
+    	   ]
+    	}
+       ]
+    }
+
+    Shape {
+      appearance Appearance {
+    	material Material { diffuseColor 0.7 0.1 0.8 }
+      }
+      geometry DEF STAB_CH IndexedFaceSet {
+    	convexHull TRUE
+      }
+    }
+   ]
+}
+
+ROUTE GEOM1_NAVIGATION.rotation TO GEOM1_TRANSFORMER.rotation
+ROUTE GEOM1_NAVIGATION.translation TO GEOM1_TRANSFORMER.translation
+ROUTE GEOM1_TRANSFORMER.coord_changed TO GEOM1.coord
+
+ROUTE GEOM2_NAVIGATION.rotation TO GEOM2_TRANSFORMER.rotation
+ROUTE GEOM2_NAVIGATION.translation TO GEOM2_TRANSFORMER.translation
+ROUTE GEOM2_TRANSFORMER.coord_changed TO GEOM2.coord
+
+ROUTE GEOM3_NAVIGATION.rotation TO GEOM3_TRANSFORMER.rotation
+ROUTE GEOM3_NAVIGATION.translation TO GEOM3_TRANSFORMER.translation
+ROUTE GEOM3_TRANSFORMER.coord_changed TO GEOM3.coord
+
+ROUTE GEOM4_NAVIGATION.rotation TO GEOM4_TRANSFORMER.rotation
+ROUTE GEOM4_NAVIGATION.translation TO GEOM4_TRANSFORMER.translation
+ROUTE GEOM4_TRANSFORMER.coord_changed TO GEOM4.coord
+
+ROUTE GEOM5_NAVIGATION.rotation TO GEOM5_TRANSFORMER.rotation
+ROUTE GEOM5_NAVIGATION.translation TO GEOM5_TRANSFORMER.translation
+ROUTE GEOM5_TRANSFORMER.coord_changed TO GEOM5.coord
+
+ROUTE SIM.start TO GEOM1_TRANSFORMER.execute
+ROUTE SIM.start TO GEOM2_TRANSFORMER.execute
+ROUTE SIM.start TO GEOM3_TRANSFORMER.execute
+ROUTE SIM.start TO GEOM4_TRANSFORMER.execute
+ROUTE SIM.start TO GEOM5_TRANSFORMER.execute
+
+ROUTE GEOM1_TRANSFORMER.changed TO STABBING_CUBE.execute
+ROUTE GEOM2_TRANSFORMER.changed TO STABBING_CUBE.execute
+ROUTE GEOM3_TRANSFORMER.changed TO STABBING_CUBE.execute
+ROUTE GEOM4_TRANSFORMER.changed TO STABBING_CUBE.execute
+ROUTE GEOM5_TRANSFORMER.changed TO STABBING_CUBE.execute
+
+ROUTE STABBING_CUBE.coord_changed TO STAB_CH.coord
+
+ROUTE SELECT_GEOM1.isOver TO GEOM1_NAVIGATION.set_bind
+ROUTE SELECT_GEOM2.isOver TO GEOM2_NAVIGATION.set_bind
+ROUTE SELECT_GEOM3.isOver TO GEOM3_NAVIGATION.set_bind
+ROUTE SELECT_GEOM4.isOver TO GEOM4_NAVIGATION.set_bind
+ROUTE SELECT_GEOM5.isOver TO GEOM5_NAVIGATION.set_bind

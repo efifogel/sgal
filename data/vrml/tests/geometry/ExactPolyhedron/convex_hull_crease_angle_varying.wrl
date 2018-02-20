@@ -1,0 +1,31 @@
+#VRML V2.0 utf8
+# Configuration {
+#   accumulation Accumulation { enabled TRUE }
+# }
+# Configuration { geometryDrawingMode "vertexArray" }
+# ColorBackground { color 1 1 1 }
+NavigationInfo { type [ "EXAMINE" "ANY" ] }
+Shape {
+  appearance Appearance {
+    material Material { }
+  }
+  geometry IndexedFaceSet {
+    convexHull TRUE
+    creaseAngle 1.5
+    coord DEF COORDS Coordinate {
+      point [  1    0     0
+	       0.5  0.866 0
+	      -0.5  0.866 0
+	       -1   0     0
+	      -0.5 -0.866 0
+	       0.5 -0.866 0
+	       1    0     1
+	       0.5  0.866 1
+	      -0.5  0.866 1
+	       -1   0     1
+	      -0.5 -0.866 1
+	       0.5 -0.866 1
+	     ]
+    }
+  }
+}

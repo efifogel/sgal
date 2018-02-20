@@ -1,0 +1,13 @@
+// Generated Help Map file.  Used by PlayerControl.HPJ. 
+ 
+// Commands (ID_* and IDM_*) 
+ 
+// Prompts (IDP_*) 
+ 
+// Resources (IDR_*) 
+ 
+// Dialogs (IDD_*) 
+HIDD_ABOUTBOX_PLAYERCONTROL             0x20001
+HIDD_PROPPAGE_PLAYERCONTROL             0x200C8
+ 
+// Frame Controls (IDW_*) 

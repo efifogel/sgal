@@ -1,0 +1,19 @@
+#VRML V2.0 utf8
+#
+# This test attempts to write the four character strings: "The", "VRML",
+# "Test", "Suite" using mostly default values. Only the string field is 
+# modified.  The rest of the fields are assigned their default values 
+# (maxExtent = 0, length = 0,and fontStyle = NULL)
+
+NavigationInfo { type ["EXAMINE","WALK","FLY","ANY"] }
+Shape {
+  appearance Appearance {
+    material Material {}
+  }
+  geometry Text {
+    string ["The","VRML","Test","Suite"]
+    fontStyle NULL
+    length []
+    maxExtent 0.0
+  }
+}

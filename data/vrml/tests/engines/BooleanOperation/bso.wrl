@@ -1,0 +1,128 @@
+#VRML V2.0 utf8
+DEF CONFIG Configuration {}
+DEF SIM Simulation {}
+ColorBackground {
+  color 0.5 0.5 0.5 1
+}
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+DEF CUBE_NAVIGATION NavigationInfo { type [ "TRANSFORM" ] }
+DEF TETRAHEDRON_NAVIGATION NavigationInfo { type [ "TRANSFORM" ] }
+
+DEF CUBE_TRANSFORMER CoordinateTransformer {
+  coord DEF CUBE_COORD Coordinate {
+    point [-0.5 -0.5 -0.5,
+	   0.5 -0.5 -0.5,
+	   0.5  0.5 -0.5,
+	   -0.5  0.5 -0.5,
+	   -0.5 -0.5  0.5,
+	   0.5 -0.5  0.5,
+	   0.5  0.5  0.5,
+	   -0.5  0.5  0.5
+	  ]
+  }
+}
+
+DEF TETRAHEDRON_TRANSFORMER CoordinateTransformer {
+  coord DEF TETRAHEDRON_COORD Coordinate {
+    point [-1 -0.73 -0.73,
+	   0 -0.73 1,
+	   1 -0.73 -0.73,
+	   0, 1, 0]
+  }
+}
+
+Transform {
+  rotation 1 -1 0 0.3
+  children [
+    Switch {
+      whichChoice 0
+      children [
+	Transform {
+	  translation -2 0 0
+	  children [
+	    DEF SELECT_CUBE TouchSensor { enabled TRUE }
+	    DEF CUBE_SHAPE Shape {
+	      appearance Appearance {
+		material Material { diffuseColor 0.6 0.3 0.2 }
+	      }
+	      geometry DEF CUBE IndexedFaceSet {
+		coord USE CUBE_COORD
+		coordIndex [3 2 1 -1 3 1 0 -1 4 5 6 -1 4 6 7 -1
+			    2 6 5 -1 2 5 1 -1 0 4 7 -1 0 7 3 -1
+			    7 6 2 -1 7 2 3 -1 0 1 5 -1 0 5 4 -1
+			   ]
+	      }
+	    }
+	   ]
+	}
+       ]
+    }
+    DEF TETRAHEDRON_SWITCH Switch {
+      whichChoice 0
+      children [
+	DEF TRANSFORM_TETRAHEDRON Transform {
+	  translation 2 0 0
+	  children [
+	    DEF SELECT_TETRAHEDRON TouchSensor { enabled TRUE }
+	    DEF TETRAHEDRON_SHAPE Shape {
+	      appearance Appearance {
+		material Material { diffuseColor 0.2 0.3 0.6 }
+	      }
+	      geometry DEF TETRAHEDRON IndexedFaceSet {
+		coord USE TETRAHEDRON_COORD
+		coordIndex [2 1 0 -1, 0 1 3 -1, 1 2 3 -1 2 0 3 -1]
+	      }
+	    }
+	   ]
+	}
+       ]
+    }
+    DEF INTERSECTION Shape {
+      appearance Appearance {
+    	material Material { diffuseColor 0.4 0.4 0.4 }
+      }
+    }
+  ]
+}
+
+DEF BO BooleanOperation {
+  operation "intersection"
+  operand1 USE CUBE
+  operand2 USE TETRAHEDRON
+}
+
+ROUTE CUBE_NAVIGATION.rotation TO CUBE_TRANSFORMER.rotation
+ROUTE CUBE_NAVIGATION.translation TO CUBE_TRANSFORMER.translation
+ROUTE CUBE_TRANSFORMER.coord_changed TO CUBE.coord
+ROUTE SELECT_CUBE.isOver TO CUBE_NAVIGATION.set_bind
+
+ROUTE TETRAHEDRON_NAVIGATION.rotation TO TETRAHEDRON_TRANSFORMER.rotation
+ROUTE TETRAHEDRON_NAVIGATION.translation TO TETRAHEDRON_TRANSFORMER.translation
+ROUTE TETRAHEDRON_TRANSFORMER.coord_changed TO TETRAHEDRON.coord
+ROUTE SELECT_TETRAHEDRON.isOver TO TETRAHEDRON_NAVIGATION.set_bind
+
+ROUTE SIM.start TO CUBE_TRANSFORMER.execute
+ROUTE SIM.start TO TETRAHEDRON_TRANSFORMER.execute
+# ROUTE SIM.start TO BO.trigger
+
+DEF EXTRACT_GEOM Script {
+  eventIn MFNode modes
+  eventOut SFNode out
+  url "javascript:
+    function modes(value, timestamp) { out = value[0]; }"
+}
+
+ROUTE BO.result TO EXTRACT_GEOM.modes
+ROUTE EXTRACT_GEOM.out TO INTERSECTION.geometry
+
+DEF SCRIPT Script {
+  eventIn SFNode coord
+  eventOut SFBool out
+  url "javascript:
+    function coord(value, timestamp) { out = 1; }"
+}
+
+ROUTE TETRAHEDRON.coord TO SCRIPT.coord
+ROUTE CUBE.coord TO SCRIPT.coord
+ROUTE SCRIPT.out TO BO.trigger
+

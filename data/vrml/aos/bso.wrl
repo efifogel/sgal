@@ -1,0 +1,527 @@
+#VRML V2.0 utf8
+DEF CONFIG Configuration {
+  accumulation Accumulation { enabled TRUE }
+  stencilBits 1
+}
+
+DEF BACKGROUND ColorBackground {
+  color 1 1 1 0
+  clearStencil TRUE
+}
+
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
+DEF DRAW_OPAQUE_KEY SingleKeySensor { key "o" }
+DEF DRAW_HALOED_KEY SingleKeySensor { key "l" }
+DEF DRAW_SURFACE_KEY SingleKeySensor { key "b" state TRUE }
+DEF EXPORT_KEY SingleKeySensor { key "O" }
+DEF SNAP_KEY SingleKeySensor { key "S" }
+DEF VERTEX_SHAPE_KEY SingleKeySensor {
+  key "v"
+  boolean FALSE
+  numberOfStates 5
+  intState 2 # disc
+}
+DEF EDGE_SHAPE_KEY SingleKeySensor {
+  key "e"
+  boolean FALSE
+  numberOfStates 4
+  intState 2 # strip
+}
+DEF HIDE_SINGULARITIES_KEY SingleKeySensor {
+  boolean FALSE
+  key "s"
+}
+DEF HIDE_DISCONTINUITY_KEY SingleKeySensor {
+  boolean FALSE
+  key "d"
+}
+DEF SNAP Snapshot {
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "bso2"
+}
+# Viewpoint {
+#   type "ORTHOGONAL"
+#   fieldOfView 2.95
+#   position 0 0 3
+# }
+
+DEF CHANGE_POLYSET_KEY SingleKeySensor {
+  key "z"
+  boolean FALSE
+  numberOfStates 3
+  intState 0
+}
+
+Transform {
+  rotation 0 0 1 -0.826
+  children [
+    DEF POLYSET_SWITCH Switch {
+      whichChoice 0
+      children [
+        DEF SHAPE1 Shape {
+          appearance Appearance {
+            material Material { }
+          }
+          geometry DEF GEOM1 PolygonSetOnSphere {
+            lineColor 0 0 0
+            # drawSurface FALSE
+            drawOpaque FALSE
+            # drawHaloed TRUE
+            aosEdgeStyle "tube"
+            aosEdgeRadius 0.003
+            aosEdgeLineWidth 3
+            aosVertexStyle "none"
+            aosVertexRadius 0.01
+            aosVertexPointSize 6
+	    aosVertexColor 0.1 0.3 0.2
+            aosIsolatedVertexStyle "ball"
+            aosIsolatedVertexRadius 0.015
+            aosIsolatedVertexPointSize 3
+	    aosIsolatedVertexColor 1 0 0
+            # insertionStrategy "increment"
+	    aosMarkedVertexStyle "none"
+	    aosMarkedEdgeEnabled TRUE
+            aosMarkedEdgeStyle "tube"
+            aosMarkedEdgeRadius 0.003
+	    aosMarkedFaceColor 1 0 0
+	    aosMarkedFaceTransparency 0.5
+	    # aosMarkedFaceIndex [28 46 47]
+            coord DEF COORD EpecCoordinate {
+              exactPoint [
+			459420/2679769 81225/2679769 -1612/1637
+			459420/2679769 81225/2679769 1612/1637
+			149568/885617 37449/885617 -1612/1637
+			149568/885617 37449/885617 1612/1637
+			173565/1049317 57000/1049317 -1612/1637
+			173565/1049317 57000/1049317 1612/1637
+			203889/1265401 83448/1265401 -1612/1637
+			203889/1265401 83448/1265401 1612/1637
+			1103235/7073477 547200/7073477 -1612/1637
+			1103235/7073477 547200/7073477 1612/1637
+			3192/21281 1881/21281 -1612/1637
+			3192/21281 1881/21281 1612/1637
+			521265/3635777 359100/3635777 -1612/1637
+			521265/3635777 359100/3635777 1612/1637
+			171000/1258853 137085/1258853 -1612/1637
+			171000/1258853 137085/1258853 1612/1637
+			37791/296297 35112/296297 -1612/1637
+			37791/296297 35112/296297 1612/1637
+			122265/1029673 131100/1029673 -1612/1637
+			122265/1029673 131100/1029673 1612/1637
+			465120/4244741 574275/4244741 -1612/1637
+			465120/4244741 574275/4244741 1612/1637
+			109725/1101701 157320/1101701 -1612/1637
+			109725/1101701 157320/1101701 1612/1637
+			250800/2817277 421515/2817277 -1612/1637
+			250800/2817277 421515/2817277 1612/1637
+			38988/499285 77691/499285 -1612/1637
+			38988/499285 77691/499285 1612/1637
+			1425/21281 3420/21281 -1612/1637
+			1425/21281 3420/21281 1612/1637
+			25308/459997 75981/459997 -1612/1637
+			25308/459997 75981/459997 1612/1637
+			54549/1258853 212268/1258853 -1612/1637
+			54549/1258853 212268/1258853 1612/1637
+			159600/5174557 886635/5174557 -1612/1637
+			159600/5174557 886635/5174557 1612/1637
+			42180/2247601 389025/2247601 -1612/1637
+			42180/2247601 389025/2247601 1612/1637
+			15675/2476781 430920/2476781 -1612/1637
+			15675/2476781 430920/2476781 1612/1637
+			-15675/2476781 430920/2476781 -1612/1637
+			-15675/2476781 430920/2476781 1612/1637
+			-42180/2247601 389025/2247601 -1612/1637
+			-42180/2247601 389025/2247601 1612/1637
+			-159600/5174557 886635/5174557 -1612/1637
+			-159600/5174557 886635/5174557 1612/1637
+			-54549/1258853 212268/1258853 -1612/1637
+			-54549/1258853 212268/1258853 1612/1637
+			-25308/459997 75981/459997 -1612/1637
+			-25308/459997 75981/459997 1612/1637
+			-1425/21281 3420/21281 -1612/1637
+			-1425/21281 3420/21281 1612/1637
+			-38988/499285 77691/499285 -1612/1637
+			-38988/499285 77691/499285 1612/1637
+			-250800/2817277 421515/2817277 -1612/1637
+			-250800/2817277 421515/2817277 1612/1637
+			-109725/1101701 157320/1101701 -1612/1637
+			-109725/1101701 157320/1101701 1612/1637
+			-465120/4244741 574275/4244741 -1612/1637
+			-465120/4244741 574275/4244741 1612/1637
+			-122265/1029673 131100/1029673 -1612/1637
+			-122265/1029673 131100/1029673 1612/1637
+			-37791/296297 35112/296297 -1612/1637
+			-37791/296297 35112/296297 1612/1637
+			-171000/1258853 137085/1258853 -1612/1637
+			-171000/1258853 137085/1258853 1612/1637
+			-521265/3635777 359100/3635777 -1612/1637
+			-521265/3635777 359100/3635777 1612/1637
+			-3192/21281 1881/21281 -1612/1637
+			-3192/21281 1881/21281 1612/1637
+			-1103235/7073477 547200/7073477 -1612/1637
+			-1103235/7073477 547200/7073477 1612/1637
+			-203889/1265401 83448/1265401 -1612/1637
+			-203889/1265401 83448/1265401 1612/1637
+			-173565/1049317 57000/1049317 -1612/1637
+			-173565/1049317 57000/1049317 1612/1637
+			-149568/885617 37449/885617 -1612/1637
+			-149568/885617 37449/885617 1612/1637
+			-459420/2679769 81225/2679769 -1612/1637
+			-459420/2679769 81225/2679769 1612/1637
+			-1612/1637 81225/2679769 459420/2679769
+			1612/1637 81225/2679769 459420/2679769
+			-1612/1637 37449/885617 149568/885617
+			1612/1637 37449/885617 149568/885617
+			-1612/1637 57000/1049317 173565/1049317
+			1612/1637 57000/1049317 173565/1049317
+			-1612/1637 83448/1265401 203889/1265401
+			1612/1637 83448/1265401 203889/1265401
+			-1612/1637 547200/7073477 1103235/7073477
+			1612/1637 547200/7073477 1103235/7073477
+			-1612/1637 1881/21281 3192/21281
+			1612/1637 1881/21281 3192/21281
+			-1612/1637 359100/3635777 521265/3635777
+			1612/1637 359100/3635777 521265/3635777
+			-1612/1637 137085/1258853 171000/1258853
+			1612/1637 137085/1258853 171000/1258853
+			-1612/1637 35112/296297 37791/296297
+			1612/1637 35112/296297 37791/296297
+			-1612/1637 131100/1029673 122265/1029673
+			1612/1637 131100/1029673 122265/1029673
+			-1612/1637 574275/4244741 465120/4244741
+			1612/1637 574275/4244741 465120/4244741
+			-1612/1637 157320/1101701 109725/1101701
+			1612/1637 157320/1101701 109725/1101701
+			-1612/1637 421515/2817277 250800/2817277
+			1612/1637 421515/2817277 250800/2817277
+			-1612/1637 77691/499285 38988/499285
+			1612/1637 77691/499285 38988/499285
+			-1612/1637 3420/21281 1425/21281
+			1612/1637 3420/21281 1425/21281
+			-1612/1637 75981/459997 25308/459997
+			1612/1637 75981/459997 25308/459997
+			-1612/1637 212268/1258853 54549/1258853
+			1612/1637 212268/1258853 54549/1258853
+			-1612/1637 886635/5174557 159600/5174557
+			1612/1637 886635/5174557 159600/5174557
+			-1612/1637 389025/2247601 42180/2247601
+			1612/1637 389025/2247601 42180/2247601
+			-1612/1637 430920/2476781 15675/2476781
+			1612/1637 430920/2476781 15675/2476781
+			-1612/1637 430920/2476781 -15675/2476781
+			1612/1637 430920/2476781 -15675/2476781
+			-1612/1637 389025/2247601 -42180/2247601
+			1612/1637 389025/2247601 -42180/2247601
+			-1612/1637 886635/5174557 -159600/5174557
+			1612/1637 886635/5174557 -159600/5174557
+			-1612/1637 212268/1258853 -54549/1258853
+			1612/1637 212268/1258853 -54549/1258853
+			-1612/1637 75981/459997 -25308/459997
+			1612/1637 75981/459997 -25308/459997
+			-1612/1637 3420/21281 -1425/21281
+			1612/1637 3420/21281 -1425/21281
+			-1612/1637 77691/499285 -38988/499285
+			1612/1637 77691/499285 -38988/499285
+			-1612/1637 421515/2817277 -250800/2817277
+			1612/1637 421515/2817277 -250800/2817277
+			-1612/1637 157320/1101701 -109725/1101701
+			1612/1637 157320/1101701 -109725/1101701
+			-1612/1637 574275/4244741 -465120/4244741
+			1612/1637 574275/4244741 -465120/4244741
+			-1612/1637 131100/1029673 -122265/1029673
+			1612/1637 131100/1029673 -122265/1029673
+			-1612/1637 35112/296297 -37791/296297
+			1612/1637 35112/296297 -37791/296297
+			-1612/1637 137085/1258853 -171000/1258853
+			1612/1637 137085/1258853 -171000/1258853
+			-1612/1637 359100/3635777 -521265/3635777
+			1612/1637 359100/3635777 -521265/3635777
+			-1612/1637 1881/21281 -3192/21281
+			1612/1637 1881/21281 -3192/21281
+			-1612/1637 547200/7073477 -1103235/7073477
+			1612/1637 547200/7073477 -1103235/7073477
+			-1612/1637 83448/1265401 -203889/1265401
+			1612/1637 83448/1265401 -203889/1265401
+			-1612/1637 57000/1049317 -173565/1049317
+			1612/1637 57000/1049317 -173565/1049317
+			-1612/1637 37449/885617 -149568/885617
+			1612/1637 37449/885617 -149568/885617
+			-1612/1637 81225/2679769 -459420/2679769
+			1612/1637 81225/2679769 -459420/2679769
+		       ]
+            }
+            polyIndex [
+		       0 2 3 1 -1
+		       4 6 7 5 -1
+		       8 10 11 9 -1
+		       12 14 15 13 -1
+		       16 18 19 17 -1
+		       20 22 23 21 -1
+		       24 26 27 25 -1
+		       28 30 31 29 -1
+		       32 34 35 33 -1
+		       36 38 39 37 -1
+		       40 42 43 41 -1
+		       44 46 47 45 -1
+		       48 50 51 49 -1
+		       52 54 55 53 -1
+		       56 58 59 57 -1
+		       60 62 63 61 -1
+		       64 66 67 65 -1
+		       68 70 71 69 -1
+		       72 74 75 73 -1
+		       76 78 79 77 -1
+		      ]
+          }
+        }
+
+	DEF SHAPE2 Shape {
+          appearance Appearance {
+            material Material { }
+          }
+          geometry DEF GEOM2 PolygonSetOnSphere {
+            lineColor 0 0 0
+            # drawSurface FALSE
+            drawOpaque FALSE
+            # drawHaloed TRUE
+            aosEdgeStyle "tube"
+            aosEdgeRadius 0.003
+            aosEdgeLineWidth 3
+            aosVertexStyle "none"
+            aosVertexRadius 0.01
+            aosVertexPointSize 6
+	    aosVertexColor 0.1 0.3 0.2
+            aosIsolatedVertexStyle "ball"
+            aosIsolatedVertexRadius 0.015
+            aosIsolatedVertexPointSize 3
+	    aosIsolatedVertexColor 1 0 0
+            # insertionStrategy "increment"
+	    aosMarkedVertexStyle "none"
+	    aosMarkedEdgeEnabled TRUE
+            aosMarkedEdgeStyle "tube"
+            aosMarkedEdgeRadius 0.003
+	    aosMarkedFaceColor 0 1 0
+	    aosMarkedFaceTransparency 0.5
+            coord USE COORD
+
+            polyIndex [
+		       80 81 83 82 -1
+		       84 85 87 86 -1
+		       88 89 91 90 -1
+		       92 93 95 94 -1
+		       96 97 99 98 -1
+		       100 101 103 102 -1
+		       104 105 107 106 -1
+		       108 109 111 110 -1
+		       112 113 115 114 -1
+		       116 117 119 118 -1
+		       120 121 123 122 -1
+		       124 125 127 126 -1
+		       128 129 131 130 -1
+		       132 133 135 134 -1
+		       136 137 139 138 -1
+		       140 141 143 142 -1
+		       144 145 147 146 -1
+		       148 149 151 150 -1
+		       152 153 155 154 -1
+		       156 157 159 158 -1
+		      ]
+	  }
+        }
+
+	DEF SHAPE3 Shape {
+          appearance Appearance {
+            material Material { }
+          }
+          geometry DEF GEOM3 PolygonSetOnSphere {
+            lineColor 0 0 0
+            # drawSurface FALSE
+            drawOpaque FALSE
+            # drawHaloed TRUE
+            aosEdgeStyle "tube"
+            aosEdgeRadius 0.003
+            aosEdgeLineWidth 3
+            aosVertexStyle "none"
+            aosVertexRadius 0.01
+            aosVertexPointSize 6
+	    aosVertexColor 0.1 0.3 0.2
+            aosIsolatedVertexStyle "ball"
+            aosIsolatedVertexRadius 0.015
+            aosIsolatedVertexPointSize 3
+	    aosIsolatedVertexColor 1 0 0
+            # insertionStrategy "increment"
+	    aosMarkedVertexStyle "none"
+	    aosMarkedEdgeEnabled TRUE
+            aosMarkedEdgeStyle "tube"
+            aosMarkedEdgeRadius 0.003
+	    aosMarkedFaceColor 0.5 0.5 0
+	    aosMarkedFaceTransparency 0.5
+
+	    difference [USE GEOM1
+			  USE GEOM2]
+          }
+        }
+
+       ]
+    }
+    # The singularity points:
+    DEF SINGULARITIES_SWITCH Switch {
+      whichChoice -1
+      children [
+        Group {
+          children [
+            Shape {
+              appearance DEF SING_APP Appearance {
+                material Material { diffuseColor 0.5 0.5 0.5 }
+              }
+              geometry Sphere {
+                center 0 0 1
+                radius 0.05
+              }
+            }
+            Shape {
+              appearance DEF AXES_APP Appearance {
+                material Material { diffuseColor 0.5 0.5 0.5 }
+              }
+              geometry Sphere {
+                center 0 0 -1
+                radius 0.05
+              }
+            }
+	   ]
+        }
+       ]    }
+    # The discontinuity arc:
+    DEF DISCONTINUITY_SWITCH Switch {
+      whichChoice -1
+      children [
+        Shape {
+          appearance Appearance {
+            material Material {
+              diffuseColor 0.5 0.5 0.5
+              # transparency 0.25
+            }
+          }
+          geometry Extrusion {
+            creaseAngle 2.0
+            beginCap TRUE
+            endCap TRUE
+            loop FALSE
+            crossSectionRadius 0.025
+            spine [
+		   0 0 1,
+		   -0.0980171 0 0.995185,
+		   -0.19509 0 0.980785,
+		   -0.290285 0 0.95694,
+		   -0.382683 0 0.92388,
+		   -0.471397 0 0.881921,
+		   -0.55557 0 0.83147,
+		   -0.634393 0 0.77301,
+		   -0.707107 0 0.707107,
+		   -0.77301 0 0.634393,
+		   -0.83147 0 0.55557,
+		   -0.881921 0 0.471397,
+		   -0.92388 0 0.382683,
+		   -0.95694 0 0.290285,
+		   -0.980785 0 0.19509,
+		   -0.995185 0 0.0980171,
+		   -1 0 0,
+		   -0.995185 0 -0.0980171,
+		   -0.980785 0 -0.19509,
+		   -0.95694 0 -0.290285,
+		   -0.92388 0 -0.382683,
+		   -0.881921 0 -0.471397,
+		   -0.83147 0 -0.55557,
+		   -0.77301 0 -0.634393,
+		   -0.707107 0 -0.707107,
+		   -0.634393 0 -0.77301,
+		   -0.55557 0 -0.83147,
+		   -0.471397 0 -0.881921,
+		   -0.382683 0 -0.92388,
+		   -0.290285 0 -0.95694,
+		   -0.19509 0 -0.980785,
+		   -0.0980171 0 -0.995185,
+		   0 0 -1,
+		  ]
+          }
+        }
+       ]
+    }
+    # The axes:
+    DEF AXES Transform {
+      scale 0.1 0.1 0.1
+      children [
+        Shape {
+          appearance USE AXES_APP
+          geometry Sphere { radius 0.1 }
+        }
+        DEF CS_AXIS Transform {
+          translation 0 1.5 0
+          children [
+            Shape {
+              appearance USE AXES_APP
+              geometry Cylinder {
+                radius 0.1
+                height 3
+                set_is_bottom_visible FALSE
+                set_is_top_visible FALSE
+              }
+            }
+            Transform {
+              translation 0 1.7 0
+              children [
+                Shape {
+                  appearance USE AXES_APP
+                  geometry Cone {
+                    bottomRadius 0.2
+                    height 0.4
+                  }
+                }
+	       ]
+            }
+	   ]
+        }
+        Transform {
+          rotation 0 0 -1 1.57
+          children [ USE CS_AXIS ]
+        }
+        Transform {
+          rotation 1 0 0 1.57
+          children [ USE CS_AXIS ]
+        }
+       ]
+    }
+   ]
+}
+
+ROUTE DRAW_OPAQUE_KEY.state TO GEOM1.drawOpaque
+ROUTE DRAW_SURFACE_KEY.state TO GEOM1.drawSurface
+ROUTE DRAW_HALOED_KEY.state TO GEOM1.drawHaloed
+
+ROUTE DRAW_OPAQUE_KEY.state TO GEOM2.drawOpaque
+ROUTE DRAW_SURFACE_KEY.state TO GEOM2.drawSurface
+ROUTE DRAW_HALOED_KEY.state TO GEOM2.drawHaloed
+
+ROUTE DRAW_OPAQUE_KEY.state TO GEOM3.drawOpaque
+ROUTE DRAW_SURFACE_KEY.state TO GEOM3.drawSurface
+ROUTE DRAW_HALOED_KEY.state TO GEOM3.drawHaloed
+
+ROUTE VERTEX_SHAPE_KEY.intState TO GEOM1.aosVertexStyleId
+ROUTE EDGE_SHAPE_KEY.intState TO GEOM1.aosEdgeStyleId
+
+ROUTE VERTEX_SHAPE_KEY.intState TO GEOM2.aosVertexStyleId
+ROUTE EDGE_SHAPE_KEY.intState TO GEOM2.aosEdgeStyleId
+
+ROUTE VERTEX_SHAPE_KEY.intState TO GEOM3.aosVertexStyleId
+ROUTE EDGE_SHAPE_KEY.intState TO GEOM3.aosEdgeStyleId
+
+
+ROUTE SNAP_KEY.state TO SNAP.trigger
+# ROUTE EXPORT_KEY.press TO GEOM1.export
+ROUTE HIDE_DISCONTINUITY_KEY.intState TO DISCONTINUITY_SWITCH.whichChoice
+ROUTE HIDE_SINGULARITIES_KEY.intState TO SINGULARITIES_SWITCH.whichChoice
+ROUTE CHANGE_POLYSET_KEY.intState TO POLYSET_SWITCH.whichChoice

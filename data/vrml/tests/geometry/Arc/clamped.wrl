@@ -1,0 +1,17 @@
+#VRML V2.0 utf8
+#
+# default.wrl - By default, the arc is centered ...
+NavigationInfo { type ["EXAMINE", "WALK", "FLY", "ANY"] }
+Shape {
+  appearance Appearance {
+    material Material {}
+  }
+  geometry Arc {
+    stacks 32
+    slices 32
+    alpha 0
+    beta 0.5
+    gamma 6.2832
+    delta 2.1416
+  }
+}

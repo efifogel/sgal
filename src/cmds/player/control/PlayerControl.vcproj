@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="windows-1255"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="7.10"
+	Name="PlayerControl"
+	ProjectGUID="{8DF2C7DD-3621-4608-9954-F211EC43E104}"
+	RootNamespace="PlayerControl"
+	Keyword="MFCActiveXProj">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="Debug"
+			IntermediateDirectory="Debug"
+			ConfigurationType="2"
+			UseOfMFC="2"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(DEBUG_ROOT)\include&quot;;&quot;$(MAGICK_INC_DIR)&quot;"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;PLAYER_CONTROL"
+				MinimalRebuild="TRUE"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				TreatWChar_tAsBuiltInType="TRUE"
+				RuntimeTypeInfo="TRUE"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="TRUE"
+				DebugInformationFormat="4"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="SGAL.lib SCGAL.lib opengl32.lib glu32.lib gl2ps.lib CORE_RL_Magick++_.lib"
+				OutputFile="$(OutDir)/PlayerControl.ocx"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(MAGICK_LIB_DIR)&quot;;&quot;$(ROOT)\lib&quot;"
+				IgnoreDefaultLibraryNames=""
+				ModuleDefinitionFile=".\PlayerControl.def"
+				DelayLoadDLLs=""
+				GenerateDebugInformation="TRUE"
+				SubSystem="2"
+				ImportLibrary="$(OutDir)/PlayerControl.lib"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG"
+				MkTypLibCompatible="FALSE"
+				TypeLibraryName="$(IntDir)/$(ProjectName).tlb"
+				HeaderFileName="$(ProjectName)idl.h"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				Description="Performing registration"
+				CommandLine="regsvr32 /s /c &quot;$(TargetPath)&quot;"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1037"
+				AdditionalIncludeDirectories="$(IntDir)"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
+			ConfigurationType="2"
+			UseOfMFC="2"
+			UseOfATL="0"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ROOT)\include&quot;;&quot;$(MAGICK_INC_DIR)&quot;"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;PLAYER_CONTROL;SGAL_LIB;SCGAL_NT=3;CGAL_CGM_TRAITS=0;SCGAL_KERNEL=0"
+				RuntimeLibrary="2"
+				TreatWChar_tAsBuiltInType="TRUE"
+				RuntimeTypeInfo="TRUE"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="TRUE"
+				DebugInformationFormat="3"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="SGAL.lib SCGAL.lib opengl32.lib glu32.lib gl2ps.lib CORE_RL_Magick++_.lib"
+				OutputFile="$(OutDir)/PlayerControl.ocx"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(MAGICK_LIB_DIR)&quot;;&quot;$(ROOT)\lib&quot;"
+				IgnoreAllDefaultLibraries="FALSE"
+				IgnoreDefaultLibraryNames="libc.lib"
+				ModuleDefinitionFile=".\PlayerControl.def"
+				DelayLoadDLLs=""
+				GenerateDebugInformation="TRUE"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				ImportLibrary="$(OutDir)/PlayerControl.lib"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="FALSE"
+				TypeLibraryName="$(IntDir)/$(ProjectName).tlb"
+				HeaderFileName="$(ProjectName)idl.h"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				Description="Performing registration &quot;$(TargetPath)&quot;"
+				CommandLine="regsvr32 /s /c $(TargetPath)"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1037"
+				AdditionalIncludeDirectories="$(IntDir)"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
+			<File
+				RelativePath="..\Player_option_parser.cpp">
+			</File>
+			<File
+				RelativePath="..\Player_scene.cpp">
+			</File>
+			<File
+				RelativePath=".\PlayerControl.cpp">
+			</File>
+			<File
+				RelativePath=".\PlayerControl.def">
+			</File>
+			<File
+				RelativePath=".\PlayerControl.hpj">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Making help file..."
+						CommandLine="start /wait hcw /C /E /M &quot;$(ProjectName).hpj&quot;
+"
+						AdditionalDependencies=".\hlp\$(ProjectName).hm"
+						Outputs=".\$(ProjectName).hlp"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Making help file..."
+						CommandLine="start /wait hcw /C /E /M &quot;$(ProjectName).hpj&quot;
+"
+						AdditionalDependencies=".\hlp\$(ProjectName).hm"
+						Outputs=".\$(ProjectName).hlp"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\PlayerControl.idl">
+			</File>
+			<File
+				RelativePath=".\PlayerControlCtrl.cpp">
+			</File>
+			<File
+				RelativePath=".\PlayerControlPropPage.cpp">
+			</File>
+			<File
+				RelativePath=".\stdafx.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="..\Player_option_parser.hpp">
+			</File>
+			<File
+				RelativePath="..\Player_scene.hpp">
+			</File>
+			<File
+				RelativePath=".\PlayerControl.h">
+			</File>
+			<File
+				RelativePath=".\PlayerControlCtrl.h">
+			</File>
+			<File
+				RelativePath=".\PlayerControlPropPage.h">
+			</File>
+			<File
+				RelativePath=".\Resource.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Generating map file for help compiler..."
+						CommandLine="echo // Generated Help Map file.  Used by $(ProjectName).HPJ. &gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Commands (ID_* and IDM_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm ID_,HID_,0x10000 IDM_,HIDM_,0x10000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Prompts (IDP_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm IDP_,HIDP_,0x30000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Resources (IDR_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm IDR_,HIDR_,0x20000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Dialogs (IDD_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm IDD_,HIDD_,0x20000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Frame Controls (IDW_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm IDW_,HIDW_,0x50000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+"
+						Outputs=".\hlp\$(ProjectName).hm"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Generating map file for help compiler..."
+						CommandLine="echo // Generated Help Map file.  Used by $(ProjectName).HPJ. &gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Commands (ID_* and IDM_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm ID_,HID_,0x10000 IDM_,HIDM_,0x10000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Prompts (IDP_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm IDP_,HIDP_,0x30000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Resources (IDR_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm IDR_,HIDR_,0x20000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Dialogs (IDD_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm IDD_,HIDD_,0x20000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Frame Controls (IDW_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm IDW_,HIDW_,0x50000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+"
+						Outputs=".\hlp\$(ProjectName).hm"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\stdafx.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
+			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
+			<File
+				RelativePath=".\hlp\Bullet.bmp">
+			</File>
+			<File
+				RelativePath=".\PlayerControl.ico">
+			</File>
+			<File
+				RelativePath=".\PlayerControl.rc">
+			</File>
+			<File
+				RelativePath=".\PlayerControlCtrl.bmp">
+			</File>
+		</Filter>
+		<File
+			RelativePath=".\hlp\PlayerControl.rtf">
+		</File>
+		<File
+			RelativePath=".\ReadMe.txt">
+		</File>
+	</Files>
+	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="PlayerControl.rc"/>
+	</Globals>
+</VisualStudioProject>
