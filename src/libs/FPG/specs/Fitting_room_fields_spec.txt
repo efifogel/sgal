@@ -1,8 +1,0 @@
-# Name                 Type                        Rule           Default  Execution Function             Geometry Description
-# -------------------- --------------------------- -------------- -------- ------------------------------ -------- --------------------
-location               Vector2f                    EXPOSED_FIELD  "0,0"    Node::bounding_sphere_changed  false    "location of the fitting room relative to the fitting area coordinate system"
-outer_ccb              Shared_coord_array_2d       EXPOSED_FIELD  ""       Node::bounding_sphere_changed  false    "outer connected component of the  boundary; a ccw sequence of 2D points on the horizontal plane"
-width                  Float                       EXPOSED_FIELD  140      Node::bounding_sphere_changed  false    "height of the fitting room"
-height                 Float                       EXPOSED_FIELD  110      Node::bounding_sphere_changed  false    "height of the fitting room"
-# walls                  Shared_wall_array           EXPOSED_FIELD  ""       Node::bounding_sphere_changed  true     "walls of the storage room"
-# shapes                 Shared_container_array      EXPOSED_FIELD  ""       Node::bounding_sphere_changed  true     "other shapes"
