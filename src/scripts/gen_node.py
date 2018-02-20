@@ -1356,7 +1356,11 @@ if __name__ == '__main__':
   parser.add_argument('--output-lib-path', type=readable_dir,
                       dest='output_lib_path', default='./lib')
   parser.add_argument('--name', help='The node name')
+  parser.add_argument('--library', default='SGAL', help='The library name')
   args = parser.parse_args()
+
+  # Extract library name:
+  library = args.library
 
   # Extract node name:
   name = args.name
