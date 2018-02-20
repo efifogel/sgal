@@ -79,6 +79,7 @@ public:
     OVERRIDE_LIGHT_MODEL,
     OVERRIDE_TEX_GEN,
     OVERRIDE_LIGHT_ENABLE,
+    EXPORT_SCENE,
     LAST
   };
 
@@ -140,6 +141,7 @@ public:
   Uint* verbosity_level_handle(const Field_info*) { return &m_verbosity_level; }
   Boolean* seamless_cube_map_handle(const Field_info*)
   { return &m_seamless_cube_map; }
+  Boolean* export_scene_handle(const Field_info*) { return &m_export_scene; }
   //@}
 
   /*! Set the attributes of this node */
@@ -298,6 +300,14 @@ public:
    */
   Boolean is_override_light_enable() const;
 
+  /*! Set the flag that indicates whether to export the entire scene.
+   */
+  void set_export_scene(Boolean flag);
+
+  /*! Indicate whether to export the entire scene.
+   */
+  Boolean get_export_scene() const;
+
    /*! Set defualt values. */
   void reset(Viewpoint_mode = s_def_viewpoint_mode,
              Geometry_drawing_mode def_geometry_drawing_mode =
@@ -450,6 +460,9 @@ private:
    */
   Boolean m_override_light_enable;
 
+  /*! Indicates whether to export the entire scene */
+  Boolean m_export_scene;
+
   // default values
   static const Viewpoint_mode s_def_viewpoint_mode;
   static const Geometry_drawing_mode s_def_geometry_drawing_mode;
@@ -473,6 +486,7 @@ private:
   static const Boolean s_def_override_light_model;
   static const Boolean s_def_override_tex_gen;
   static const Boolean s_def_override_light_enable;
+  static const Boolean s_def_export_scene;
 
   /*! Drawing mode names. */
   static const Char* s_geometry_drawing_mode_names[];
@@ -653,6 +667,13 @@ inline Boolean Configuration::is_seamless_cube_map() const
 inline Boolean
 Configuration::compare_viewpoint_mode_name(size_t i, const Char* opt)
 { return strcmp(s_viewpoint_mode_names[i], opt) == 0; }
+
+//! \brief sets the flag that indicates whether to export the entire scene.
+inline void Configuration::set_export_scene(Boolean flag)
+{ m_export_scene = flag; }
+
+//! \brief indicates whether to export the entire scene.
+inline Boolean Configuration::get_export_scene() const { return m_export_scene; }
 
 SGAL_END_NAMESPACE
 

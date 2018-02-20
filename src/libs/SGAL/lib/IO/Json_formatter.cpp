@@ -177,8 +177,8 @@ void Json_formatter::begin()
   attribute("uuid", boost::uuids::to_string(uuid));
   attribute("type", "Scene");
   attribute_multiple("matrix", [&](){ export_matrix(m_identity_matrix); }, true);
-
-  attribute_single("boundingSphere", [&]() { export_bounding_sphere(); });
+  attribute_single("boundingSphere",
+                   [&]() { export_bounding_sphere(m_bounding_sphere); });
   object_separator();
   indent();
   out_string("children");
@@ -520,6 +520,8 @@ void Json_formatter::export_group(Shared_group group)
   auto uuid = boost::uuids::random_generator()();
   attribute("uuid", boost::uuids::to_string(uuid));
   attribute("type", group->get_tag());
+  const auto* bs = &(group->get_bounding_sphere());
+  attribute_single("boundingSphere", [&]() { export_bounding_sphere(bs); });
   auto transform = boost::dynamic_pointer_cast<Transform>(group);
   const auto& mat = (transform) ? transform->get_matrix() : m_identity_matrix;
   attribute_multiple("matrix", [&](){ export_matrix(mat); }, true);
@@ -578,13 +580,14 @@ void Json_formatter::export_mesh(Shared_shape shape)
 }
 
 //! \brief exports the bounding sphere of the scene.
-void Json_formatter::export_bounding_sphere()
+void
+Json_formatter::export_bounding_sphere(const Bounding_sphere* bounding_sphere)
 {
-  if (! m_bounding_sphere) return;
-  attribute("radius", m_bounding_sphere->get_radius());
+  if (! bounding_sphere) return;
+  attribute("radius", bounding_sphere->get_radius());
   attribute_single("center",
                    [&](){
-                     const auto& center = m_bounding_sphere->get_center();
+                     const auto& center = bounding_sphere->get_center();
                      attribute("x", center[0], true);
                      attribute("y", center[1], true);
                      attribute("z", center[2], true);

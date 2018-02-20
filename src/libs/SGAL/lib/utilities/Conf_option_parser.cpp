@@ -36,7 +36,8 @@ Conf_option_parser::Conf_option_parser() :
   m_use_vertex_array(true),
   m_use_vertex_buffer_object(true),
   m_map_texture(true),
-  m_display_fps(false)
+  m_display_fps(false),
+  m_export_scene(false)
 {
   typedef std::vector<std::string> vs;
 
@@ -67,6 +68,8 @@ Conf_option_parser::Conf_option_parser() :
     ("tm", po::value<Boolean>(&m_map_texture),"map texture")
     ("fps-display", po::value<Boolean>(&m_display_fps), "display FPS")
     ("dfps", po::value<Boolean>(&m_display_fps), "display FPS")
+    ("export-scene", po::value<Boolean>(&m_export_scene)->default_value(false),
+     "export the entire scene")
     ;
 }
 
@@ -110,6 +113,9 @@ void Conf_option_parser::configure(Configuration* conf)
   if (var_map.count("viewpoint"))
     conf->set_viewpoint_mode(var_map["viewpoint"].
                              as<Configuration::Viewpoint_mode>());
+
+  if (var_map.count("export-scene"))
+    conf->set_export_scene(var_map["export-scene"].as<Boolean>());
 }
 
 SGAL_END_NAMESPACE

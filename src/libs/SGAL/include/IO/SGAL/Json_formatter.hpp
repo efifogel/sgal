@@ -305,9 +305,10 @@ private:
   void attribute_multiple(const std::string& name, UnaryOperation op,
                           bool compact = false);
 
-  /*! Export the bounding sphere of the scene.
+  /*! Export the bounding sphere of the group.
+   * \param[in] group the group.
    */
-  void export_bounding_sphere();
+  void export_bounding_sphere(const Bounding_sphere* bounding_sphere);
 
   /*! Export the attributes of a geometry object.
    * \param[in] geometry the geometry container.
