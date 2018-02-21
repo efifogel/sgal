@@ -8,16 +8,8 @@ ColorBackground {
   color 1 1 1 0
   clearStencil TRUE
 }
-# Viewpoint {
-#   type "ORTHOGONAL"
-#   fieldOfView 2.95
-#   position 0 0 10
-# }
 Viewpoint {
   type "ORTHOGONAL"
-  fieldOfView 3.07
-#  fieldOfView 3.096
-  position 0 0 10
 }
 
 DEF DRAW_AOS_KEY SingleKeySensor { key "c" }
@@ -139,18 +131,14 @@ DEF SNAP_RG Snapshot {
 
 Transform {
   bboxCenter 0 0 0
-  bboxSize 1.5 1.5 1.5
+  bboxSize 7 7 7
   rotation 1 0 0 .2618
 #  rotation 1 1 0 -.9599 # for david-star view
   children [
     Transform {
-      bboxCenter 0 0 0
-      bboxSize 1.5 1.5 1.5
       rotation 0 -1 0 1.0472
       children [
 	Transform {
-	  bboxCenter 0 0 0
-	  bboxSize 1.5 1.5 1.5
 	  rotation -1 0 0 1.5707
 	  children [
 	    # The axes
