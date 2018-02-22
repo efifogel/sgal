@@ -1,5 +1,3 @@
-# Name                 Type                        Rule           Default    Execution Function               Geometry Description
-# -------------------- --------------------------- -------------- --------   -------------------------------- -------- --------------------
-url                    String_array                EXPOSED_FIELD  ""         ""                               false    "a valid VRML file that contains a list of children nodes at the top level"
-bboxCenter             Vector3f                    EXPOSED_FIELD  "0,0,0"    ""                               false    "center of the bounding box"
-bboxSize               Vector3f                    EXPOSED_FIELD  "-1,-1,-1" ""                               false    "size of bounding box"
+# Name                 Type                        Rule           Default    Execution Function               Contaminated Description
+# -------------------- --------------------------- -------------- --------   -------------------------------- ------------ --------------------
+url                    String_array                EXPOSED_FIELD  ""         ""                               "childs"     "set of valid VRML files; each VRML file contains a list of children nodes at the top level"

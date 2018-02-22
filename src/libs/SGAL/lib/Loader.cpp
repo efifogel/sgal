@@ -31,6 +31,7 @@
 #include "SGAL/Types.hpp"
 #include "SGAL/Loader.hpp"
 #include "SGAL/Scene_graph.hpp"
+#include "SGAL/Scene_graph_int.hpp"
 #include "SGAL/Group.hpp"
 #include "SGAL/Transform.hpp"
 #include "SGAL/Shape.hpp"
@@ -233,7 +234,10 @@ Loader::Return_code Loader::parse(std::istream& its, Scene_graph* sg)
 
   // Parse & export:
   bool maybe_binary_stl(false);
-  Vrml_parser parser(scanner, sg, maybe_binary_stl);
+  auto transform = Shared_transform(new Transform);
+  sg->add_container(transform, g_navigation_root_name);
+  sg->set_navigation_root(transform);
+  Vrml_parser parser(scanner, sg, transform, maybe_binary_stl);
   auto rc = parser.parse();
   if (0 != rc) {
     if (maybe_binary_stl) return RETRY;

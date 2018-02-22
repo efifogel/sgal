@@ -1,4 +1,4 @@
-#Check for bison
+# Check for bison
 find_package(BISON 2.7 REQUIRED)
 find_package(FLEX 2.5.31 REQUIRED)
 find_package(OpenGL REQUIRED)
@@ -16,24 +16,40 @@ set (GENERATED_INC_DIR "${GENERATED_BASE_DIR}/include/generated")
 file(MAKE_DIRECTORY ${GENERATED_DIR})
 
 # Create custom command for flex
+set (SGAL_FLEX_ARGS -d -+ --nounistd
+  -o ${GENERATED_DIR}/scan.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/scan.l)
+
+set (SGAL_FLEX_DEPENDS
+  ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/scan.l)
+
 add_custom_command(
   OUTPUT ${GENERATED_DIR}/scan.cpp
   COMMAND ${FLEX_EXECUTABLE}
-  ARGS -d -+ --nounistd -o ${GENERATED_DIR}/scan.cpp ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/scan.l
-  DEPENDS ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/scan.l)
+  ARGS ${SGAL_FLEX_ARGS}
+  DEPENDS ${SGAL_FLEX_DEPENDS})
 
 # Create custom command for bison (note the DEPENDS)
-set(SGAL_BISON_OUTPUT ${GENERATED_DIR}/parse.cpp
-		      ${GENERATED_DIR}/parse.hpp
-		      ${GENERATED_DIR}/location.hh
-		      ${GENERATED_DIR}/position.hh
-		      ${GENERATED_DIR}/stack.hh)
+set (SGAL_BISON_OUTPUT
+  ${GENERATED_DIR}/parse.cpp
+  ${GENERATED_DIR}/parse.hpp
+  ${GENERATED_DIR}/location.hh
+  ${GENERATED_DIR}/position.hh
+  ${GENERATED_DIR}/stack.hh)
+
+set (SGAL_BISON_ARGS
+  -y ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/parse.y
+  -o ${GENERATED_DIR}/parse.cpp)
+
+set (SGAL_BISON_DEPENDS
+  ${GENERATED_DIR}/scan.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/parse.y)
 
 add_custom_command(
   OUTPUT ${SGAL_BISON_OUTPUT}
   COMMAND ${BISON_EXECUTABLE}
-  ARGS -y ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/parse.y -o ${GENERATED_DIR}/parse.cpp
-  DEPENDS ${GENERATED_DIR}/scan.cpp ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/parse.y)
+  ARGS ${SGAL_BISON_ARGS}
+  DEPENDS ${SGAL_BISON_DEPENDS})
 
 # Add the generated parser and scanner to the list of sources
 set (SGAL_AUTO_GENERATED_FILES ${SGAL_AUTO_GENERATED_FILES} ${GENERATED_DIR}/parse.cpp)
@@ -58,10 +74,12 @@ function(add_node name)
   set(GEN_NODE_OUTPUT
       ${GENERATED_INC_DIR}/SGAL/${name}.hpp
       ${GENERATED_LIB_DIR}/${name}.cpp)
-  set(GEN_NODE_ARGS --name ${name}
-    --input-path ${SPECS_DIR}
-    --output-inc-path ${GENERATED_INC_DIR}/SGAL
-    --output-lib-path ${GENERATED_LIB_DIR})
+  set(GEN_NODE_ARGS
+	--library SGAL
+	--name ${name}
+	--input-path ${SPECS_DIR}
+	--output-inc-path ${GENERATED_INC_DIR}/SGAL
+	--output-lib-path ${GENERATED_LIB_DIR})
   set (GEN_NODE_DEPENDS
       ${SPECS_DIR}/${name}.cfg
       ${SPECS_DIR}/${name}_fields_spec.txt
@@ -71,14 +89,19 @@ function(add_node name)
                      COMMAND ${GEN_NODE}
 	             ARGS ${GEN_NODE_ARGS}
 	             DEPENDS ${GEN_NODE_DEPENDS})
-  set(SGAL_AUTO_GENERATED_HDR_FILES ${SGAL_AUTO_GENERATED_HDR_FILES} ${GENERATED_INC_DIR}/SGAL/${name}.hpp CACHE INTERNAL "")
-  set(SGAL_AUTO_GENERATED_SRC_FILES ${SGAL_AUTO_GENERATED_SRC_FILES} ${GENERATED_LIB_DIR}/${name}.cpp CACHE INTERNAL "")
+  set (SGAL_AUTO_GENERATED_HDR_FILES ${SGAL_AUTO_GENERATED_HDR_FILES} ${GENERATED_INC_DIR}/SGAL/${name}.hpp CACHE INTERNAL "")
+  set (SGAL_AUTO_GENERATED_SRC_FILES ${SGAL_AUTO_GENERATED_SRC_FILES} ${GENERATED_LIB_DIR}/${name}.cpp CACHE INTERNAL "")
+
+  # Mark as generated
+  set_source_files_properties(${GENERATED_INC_DIR}/SGAL/${name}.cpp GENERATED)
+  set_source_files_properties(${GENERATED_LIB_DIR}/${name}.cpp GENERATED)
 
 endfunction()
 ########
 
 set (SGAL_AUTO_GENERATED_SRC_FILES "" CACHE INTERNAL "")
-# add_node(Inline)
+set (SGAL_AUTO_GENERATED_HDR_FILES "" CACHE INTERNAL "")
+add_node(Inline)
 
 # Add include directories
 include_directories(${GENERATED_INC_DIR})
@@ -165,7 +188,7 @@ set(SGAL_EVENTS_HEADER_FILES ${SGAL_EVENTS_HEADER_FILES} include/events/SGAL/Tic
 set(SGAL_SRC_FILES ${SGAL_SRC_FILES} ${SGAL_EVENTS_SRC_FILES} ${SGAL_EVENTS_HEADER_FILES})
 source_group(src\\events FILES ${SGAL_EVENTS_SRC_FILES} ${SGAL_EVENTS_HEADER_FILES})
 
-#Geometries
+# Geometries
 set(SGAL_GEOMETRIES_SRC_FILES ${SGAL_GEOMETRIES_SRC_FILES} lib/geometries/Boundary_set.cpp)
 set(SGAL_GEOMETRIES_SRC_FILES ${SGAL_GEOMETRIES_SRC_FILES} lib/geometries/Color_array.cpp)
 set(SGAL_GEOMETRIES_SRC_FILES ${SGAL_GEOMETRIES_SRC_FILES} lib/geometries/Coord_array.cpp)
@@ -298,7 +321,7 @@ set(SGAL_PRIMITIVE_SHAPES_HEADER_FILES ${SGAL_PRIMITIVE_SHAPES_HEADER_FILES} inc
 set(SGAL_SRC_FILES ${SGAL_SRC_FILES} ${SGAL_PRIMITIVE_SHAPES_SRC_FILES} ${SGAL_PRIMITIVE_SHAPES_HEADER_FILES})
 source_group(src\\geometries\\primitive_shapes FILES ${SGAL_PRIMITIVE_SHAPES_SRC_FILES} ${SGAL_PRIMITIVE_SHAPES_HEADER_FILES})
 
-#Sensors
+# Sensors
 set(SGAL_SENSORS_SRC_FILES ${SGAL_SENSORS_SRC_FILES} lib/sensors/Drag_sensor.cpp)
 set(SGAL_SENSORS_SRC_FILES ${SGAL_SENSORS_SRC_FILES} lib/sensors/Key_sensor.cpp)
 set(SGAL_SENSORS_SRC_FILES ${SGAL_SENSORS_SRC_FILES} lib/sensors/Navigation_sensor.cpp)
@@ -318,7 +341,7 @@ set(SGAL_SENSORS_HEADER_FILES ${SGAL_SENSORS_HEADER_FILES} include/sensors/SGAL/
 set(SGAL_SRC_FILES ${SGAL_SRC_FILES} ${SGAL_SENSORS_SRC_FILES} ${SGAL_SENSORS_HEADER_FILES})
 source_group(src\\sensors FILES ${SGAL_SENSORS_SRC_FILES} ${SGAL_SENSORS_HEADER_FILES})
 
-#Light
+# Lights
 set(SGAL_LIGHTS_SRC_FILES ${SGAL_LIGHTS_SRC_FILES} lib/lights/Light.cpp)
 set(SGAL_LIGHTS_SRC_FILES ${SGAL_LIGHTS_SRC_FILES} lib/lights/Point_light.cpp)
 set(SGAL_LIGHTS_SRC_FILES ${SGAL_LIGHTS_SRC_FILES} lib/lights/Spot_light.cpp)
@@ -330,7 +353,7 @@ set(SGAL_LIGHTS_HEADER_FILES ${SGAL_LIGHTS_HEADER_FILES} include/lights/SGAL/Spo
 set(SGAL_SRC_FILES ${SGAL_SRC_FILES} ${SGAL_LIGHTS_SRC_FILES} ${SGAL_LIGHTS_HEADER_FILES})
 source_group(src\\lights FILES ${SGAL_LIGHTS_SRC_FILES} ${SGAL_LIGHTS_HEADER_FILES})
 
-#Geo
+# Geo
 set(SGAL_GEO_SRC_FILES ${SGAL_GEO_SRC_FILES} lib/geo/Bounding_box.cpp)
 set(SGAL_GEO_SRC_FILES ${SGAL_GEO_SRC_FILES} lib/geo/Line.cpp)
 set(SGAL_GEO_SRC_FILES ${SGAL_GEO_SRC_FILES} lib/geo/Matrix3f.cpp)
@@ -367,7 +390,7 @@ set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/SGAL/
 set(SGAL_SRC_FILES ${SGAL_SRC_FILES} ${SGAL_LOADERS_SRC_FILES} ${SGAL_LOADERS_HEADER_FILES})
 source_group(src\\loaders FILES ${SGAL_LOADERS_SRC_FILES} ${SGAL_LOADERS_HEADER_FILES})
 
-#Utilities
+# Utilities
 set(SGAL_UTILITIES_SRC_FILES ${SGAL_UTILITIES_SRC_FILES} lib/utilities/Generic_option_parser.cpp)
 set(SGAL_UTILITIES_SRC_FILES ${SGAL_UTILITIES_SRC_FILES} lib/utilities/Bench_option_parser.cpp)
 set(SGAL_UTILITIES_SRC_FILES ${SGAL_UTILITIES_SRC_FILES} lib/utilities/Conf_option_parser.cpp)
@@ -411,7 +434,7 @@ endif()
 set(SGAL_SRC_FILES ${SGAL_SRC_FILES} ${SGAL_UTILITIES_SRC_FILES} ${SGAL_UTILITIES_HEADER_FILES})
 source_group(src\\utilities FILES ${SGAL_UTILITIES_SRC_FILES} ${SGAL_UTILITIES_HEADER_FILES})
 
-#Interpolators
+# Interpolators
 set(SGAL_INTERPOLATORS_SRC_FILES ${SGAL_INTERPOLATORS_SRC_FILES} lib/interpolators/Interpolator.cpp)
 set(SGAL_INTERPOLATORS_SRC_FILES ${SGAL_INTERPOLATORS_SRC_FILES} lib/interpolators/Rotation_interpolator.cpp)
 set(SGAL_INTERPOLATORS_SRC_FILES ${SGAL_INTERPOLATORS_SRC_FILES} lib/interpolators/Position_interpolator.cpp)
@@ -436,7 +459,7 @@ set(SGAL_INTERPOLATORS_HEADER_FILES ${SGAL_INTERPOLATORS_HEADER_FILES} include/i
 set(SGAL_SRC_FILES ${SGAL_SRC_FILES} ${SGAL_INTERPOLATORS_SRC_FILES} ${SGAL_INTERPOLATORS_HEADER_FILES})
 source_group(src\\interpolators FILES ${SGAL_INTERPOLATORS_SRC_FILES} ${SGAL_INTERPOLATORS_HEADER_FILES})
 
-#IO
+# IO
 set(SGAL_IO_SRC_FILES ${SGAL_IO_SRC_FILES} lib/IO/Json_formatter.cpp)
 set(SGAL_IO_SRC_FILES ${SGAL_IO_SRC_FILES} lib/IO/Obj_formatter.cpp)
 set(SGAL_IO_SRC_FILES ${SGAL_IO_SRC_FILES} lib/IO/Stl_binary_formatter.cpp)
@@ -453,7 +476,7 @@ set(SGAL_IO_HEADER_FILES ${SGAL_IO_HEADER_FILES} include/IO/SGAL/Vrml_formatter.
 set(SGAL_SRC_FILES ${SGAL_SRC_FILES} ${SGAL_IO_SRC_FILES} ${SGAL_IO_HEADER_FILES})
 source_group(src\\io FILES ${SGAL_IO_SRC_FILES} ${SGAL_IO_HEADER_FILES})
 
-#The rest of the files:
+# The rest of the files:
 set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/assertions.cpp)
 set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Accumulation.cpp)
 set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Appearance.cpp)
@@ -500,6 +523,7 @@ set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Image_texture.cpp)
 set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Image_url.cpp)
 set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Imagemagick_font.cpp)
 set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/initialize.cpp)
+set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Inline_impl.cpp)
 set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Loader.cpp)
 set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Isect_action.cpp)
 set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Material.cpp)

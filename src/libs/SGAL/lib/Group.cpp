@@ -57,20 +57,16 @@ Group::Group(Boolean proto) :
   m_start_selection_id(0),
   m_num_selection_ids(0),
   m_scene_graph(nullptr),
+  m_dirty_childs(false),
   m_bbox_center(s_def_bbox_center),
   m_bbox_size(s_def_bbox_size)
 {}
 
-//! \brief copy constructor.
-Group::Group(const Group& other) :
-  Node(other),
-  m_is_visible(other.m_is_visible),
-  m_touch_sensor(other.m_touch_sensor),
-  m_num_lights(other.m_num_lights),
-  m_start_selection_id(0),
-  m_num_selection_ids(0),
-  m_scene_graph(other.m_scene_graph)
-{ m_childs = other.m_childs; }
+//! \brief cleans the children in case they are dirty.
+void Group::clean_childs()
+{
+  m_dirty_childs = false;
+}
 
 //! \brief destructor.
 Group::~Group()
@@ -95,6 +91,7 @@ Group::~Group()
 //! \brief obtains a child according to its position in the children array.
 Group::Shared_container Group::get_child(Uint index)
 {
+  if (m_dirty_childs) clean_childs();
   if (index >= m_childs.size()) return Group::Shared_container();
   return m_childs[index];
 }
@@ -151,6 +148,7 @@ void Group::remove_child(Shared_container node)
 //! \brief traverses the children of the group.
 Action::Trav_directive Group::traverse(Action* action)
 {
+  if (m_dirty_childs) clean_childs();
   if (!is_visible() || (action == nullptr)) return Action::TRAV_CONT;
   for (auto it = m_childs.begin(); it != m_childs.end(); ++it) {
     auto node = boost::dynamic_pointer_cast<Node>(*it);
@@ -164,6 +162,7 @@ Action::Trav_directive Group::traverse(Action* action)
 //! \brief draws the children of the group.
 Action::Trav_directive Group::draw(Draw_action* draw_action)
 {
+  if (m_dirty_childs) clean_childs();
   if (!is_visible() || (draw_action == nullptr) ||
       (draw_action->get_context() == nullptr))
     return Action::TRAV_CONT;
@@ -185,6 +184,7 @@ Action::Trav_directive Group::draw(Draw_action* draw_action)
  */
 void Group::cull(Cull_context& cull_context)
 {
+  if (m_dirty_childs) clean_childs();
   if (!is_visible()) return;
   for (auto it = m_childs.begin(); it != m_childs.end(); ++it) {
     auto node = boost::dynamic_pointer_cast<Node>(*it);
@@ -212,6 +212,7 @@ void Group::allocate_selection_ids()
 //! \brief draws the node for selection.
 void Group::isect(Isect_action* isect_action)
 {
+  if (m_dirty_childs) clean_childs();
   if (!is_visible()) return;
 
   // If the group has a touch sensor, reserve selections ids as many as
@@ -254,6 +255,8 @@ void Group::isect(Isect_action* isect_action)
  */
 void Group::clean_bounding_sphere()
 {
+  m_dirty_bounding_sphere = false;
+  if (m_dirty_childs) clean_childs();
   if (m_locked_bounding_sphere) {
     m_dirty_bounding_sphere = false;
     return;
@@ -277,7 +280,6 @@ void Group::clean_bounding_sphere()
   }
 
   m_bounding_sphere.set_around(spheres.begin(), spheres.end());
-  m_dirty_bounding_sphere = false;
 }
 
 //! \brief sets the attributes of the group.
@@ -385,6 +387,7 @@ Container_proto* Group::get_prototype()
 //! \brief .
 Boolean Group::attach_context(Context* context)
 {
+  if (m_dirty_childs) clean_childs();
   Boolean result = Node::attach_context(context);
   for (auto it = m_childs.begin(); it != m_childs.end(); ++it)
     result &= (*it)->attach_context(context);
@@ -394,6 +397,7 @@ Boolean Group::attach_context(Context* context)
 //! \brief .
 Boolean Group::detach_context(Context* context)
 {
+  if (m_dirty_childs) clean_childs();
   Boolean result = Node::detach_context(context);
   for (auto it = m_childs.begin(); it != m_childs.end(); ++it)
     result &= (*it)->detach_context(context);
@@ -403,6 +407,7 @@ Boolean Group::detach_context(Context* context)
 //! \brief writes this container.
 void Group::write(Formatter* formatter)
 {
+  if (m_dirty_childs) clean_childs();
   SGAL_TRACE_CODE(Trace::EXPORT,
                   std::cout << "Group: " << "Tag: " << get_tag()
                   << ", name: " << get_name()
