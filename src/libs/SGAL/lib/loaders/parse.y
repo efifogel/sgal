@@ -54,7 +54,6 @@
 #include "SGAL/Transform.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Container_factory.hpp"
-#include "SGAL/Scene_graph_int.hpp"
 #include "SGAL/Route.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Shape.hpp"
@@ -110,6 +109,7 @@ SGAL_END_NAMESPACE
 %lex-param { Vrml_scanner& scanner }
 %parse-param { Vrml_scanner& scanner }
 %parse-param { Scene_graph* scene_graph }
+%parse-param { Shared_group root }
 %parse-param { bool& maybe_binary_stl }
 
 %code // *.cc
@@ -118,7 +118,7 @@ SGAL_END_NAMESPACE
 }
 
 %type <Shared_group> vrmlScene
-%type <Shared_transform> statements
+%type <Shared_group> statements
 %type <Shared_container> statement
 %type <Shared_container> nodeStatement protoStatement routeStatement
 %type <Shared_container> node nodeContainer sfnodeValue
@@ -378,13 +378,7 @@ vrmlScene       : statements
                   $$->add_child($1);
                 } ;
 
-statements      : /* empty */
-                {
-                  Transform* transform = new Transform;
-                  $$ = Shared_transform(transform);
-                  scene_graph->add_container($$, g_navigation_root_name);
-                  scene_graph->set_navigation_root($$);
-                }
+statements      : /* empty */ { $$ = root; }
                 | statements statement
                 { std::swap($$, $1); if ($2) $$->add_child($2); }
                 ;
