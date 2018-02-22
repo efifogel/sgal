@@ -33,7 +33,7 @@ template<>
 inline std::string lexical_cast<std::string>(const SGAL::Vector3f& v)
 {
   return std::string(std::to_string(v[0])).append(",").
-    append(std::to_string(v[1].append(std::to_string(v[2]))));
+    append(std::to_string(v[1])).append(std::to_string(v[2]));
 }
 
 template<>
