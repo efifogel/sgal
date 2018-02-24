@@ -49,7 +49,7 @@ void Inline::clean_childs()
   // scanner.set_debug(1);
   Boolean maybe_stl;
   std::cout << "before" << std::endl;
-  Vrml_parser parser(scanner, m_scene_graph, Shared_group(this), maybe_stl);
+  Vrml_parser parser(scanner, m_scene_graph, this, maybe_stl);
   std::cout << "after" << std::endl;
   auto rc = parser.parse();
   if (0 != rc) {

@@ -30,7 +30,7 @@
 SGAL_BEGIN_NAMESPACE
 
 class Scene_graph;
-class Transform;
+class Group;
 class Shape;
 class Indexed_face_set;
 class Coord_array_3d;
@@ -51,13 +51,13 @@ public:
    * \param[in] filename the name of the file to load.
    * \param[in] sg the scene graph
    */
-  Return_code load(const char* filename, Scene_graph* sg);
+  Return_code load(const char* filename, Scene_graph* scene_graph);
 
   /*! Parse a scene graph from a text stream.
    * \param[in] its the text stream to parse.
    * \param[in] sg the scene graph
    */
-  Return_code parse(std::istream& is, Scene_graph* sg);
+  Return_code parse(std::istream& is, Scene_graph* scene_graph);
 
   /*! Load a scene graph from a buffer.
    * \param[in] data the buffer that contains the model description.
@@ -66,26 +66,26 @@ public:
    * \param[in] sg the scene graph
    */
   Return_code load(char* data, size_t size, const char* filename,
-                   Scene_graph* sg);
+                   Scene_graph* scene_graph);
 
   /*! Load a scene graph from a buffer.
    * \param[in] data the buffer that contains the model description.
    * \param[in] size the size of the buffer.
    * \param[in] sg the scene graph
    */
-  Return_code load(char* data, size_t size, Scene_graph* sg);
+  Return_code load(char* data, size_t size, Scene_graph* scene_graph);
 
   /*! Load a scene graph from an stl file.
    * \param[in] is the stream to load.
    * \param[in] sg the scene graph
    */
-  Return_code load_stl(std::istream& is, Scene_graph* sg);
+  Return_code load_stl(std::istream& is, Scene_graph* scene_graph);
 
   /*! Load a scene graph from an stl stream.
    * \param[in] is the stream to load.
    * \param[in] sg the scene graph
    */
-  Return_code load_stl(std::istream& is, size_t size, Scene_graph* sg);
+  Return_code load_stl(std::istream& is, size_t size, Scene_graph* scene_graph);
 
   /*! Load a scene graph from an stl buffer.
    * \param[in] data the buffer that contains a model in the STL format.
@@ -96,7 +96,7 @@ public:
 
   /*! Read a scene graph from a stream in the STL binary format.
    */
-  Return_code read_stl(std::istream& is, size_t size, Scene_graph* sg,
+  Return_code read_stl(std::istream& is, size_t size, Scene_graph* scene_graph,
                        const Vector3f& color);
 
   /*! Load a scene graph represented in the off file format from a stream.
@@ -104,7 +104,7 @@ public:
    * \param[in] is the stream to load.
    * \param[in] sg the scene graph
    */
-  Return_code load_off(std::istream& is, Scene_graph* sg,
+  Return_code load_off(std::istream& is, Scene_graph* scene_graph,
                        const boost::smatch& what);
 
   /*! Load a scene graph represented in the obj file format from a stream.
@@ -147,7 +147,6 @@ protected:
   Return_code read_triangle(std::istream& is, Triangle& triangle);
 
 private:
-  typedef boost::shared_ptr<Transform>              Shared_transform;
   typedef boost::shared_ptr<Shape>                  Shared_shape;
   typedef boost::shared_ptr<Indexed_face_set>       Shared_indexed_face_set;
   typedef boost::shared_ptr<Coord_array_3d>         Shared_coord_array_3d;
@@ -171,55 +170,54 @@ private:
   /*! The filename if exists. */
   std::string m_filename;
 
-  /*! Compute a new Indexed Face Set container. */
-  Shared_indexed_face_set compute_ifs(Scene_graph* scene_graph, size_t count,
+  /*! Create a new Indexed Face Set container. */
+  Shared_indexed_face_set create_ifs(Scene_graph* scene_graph, size_t count,
                                       std::list<Triangle>::const_iterator begin,
                                       std::list<Triangle>::const_iterator end);
 
-  /*! Add a shape node to the scene. */
-  Shared_shape compute_shape(Scene_graph* scene_graph,
-                             Shared_transform transform,
-                             const Vector3f& color);
-
-  /*! Add a single shape for all triangles.
+  /*! Create a new Shape node.
    */
-  void add_shape(Scene_graph* scene_graph, Shared_transform transform,
-                  std::list<Triangle>& triangles);
+  Shared_shape create_shape(Scene_graph* scene_graph) const;
+
+  /*! Create a shape node.
+   */
+  Shared_shape create_shape(Scene_graph* scene_graph, const Vector3f& color);
 
   /*! Add a shape for every sub sequence of triangles with a distinguish color.
    */
-  void add_shapes(Scene_graph* scene_graph, Shared_transform transform,
+  void add_shapes(Scene_graph* scene_graph, Group* group,
                   std::list<Triangle>& triangles, const Vector3f& color);
+
+  /*! Add a single shape for all triangles.
+   */
+  void add_shape(Scene_graph* scene_graph, Group* group,
+                 std::list<Triangle>& triangles);
 
   /*! Add a colored shape.
    */
-  void add_colored_shape(Scene_graph* scene_graph, Shared_transform transform,
+  void add_colored_shape(Scene_graph* scene_graph, Group* group,
                          std::list<Triangle>& triangles, const Vector3f& color);
 
-  /*! Create a new Shape node.
+  /*! Create a new Appearance container.
    */
-  Shared_shape create_shape(Scene_graph* sg) const;
+  Shared_appearance create_appearance(Scene_graph* scene_graph) const;
 
   /*! Create a new Appearance container.
    */
-  Shared_appearance create_appearance(Scene_graph* sg) const;
-
-  /*! Create a new Appearance container.
-   */
-  Shared_appearance create_appearance(Scene_graph* sg,
+  Shared_appearance create_appearance(Scene_graph* scene_graph,
                                       const std::string& name) const;
 
   /*! Create a new Material container.
    */
-  Shared_material create_material(Scene_graph* sg) const;
+  Shared_material create_material(Scene_graph* scene_graph) const;
 
   /*! Create a new IndexedFaceSet container.
    */
-  Shared_indexed_face_set create_ifs(Scene_graph* sg) const;
+  Shared_indexed_face_set create_ifs(Scene_graph* scene_graph) const;
 
   /*! Update an IndexedFaceSet container.
    */
-  Return_code update_ifs(Scene_graph* sg,
+  Return_code update_ifs(Scene_graph* scene_graph,
                          Shared_indexed_face_set ifs,
                          Shared_coord_array_3d shared_coords,
                          Shared_normal_array shared_normals,
