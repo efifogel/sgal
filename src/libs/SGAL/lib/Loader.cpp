@@ -32,7 +32,6 @@
 #include "SGAL/Loader.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Group.hpp"
-#include "SGAL/Transform.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/File_format_3d.hpp"
@@ -233,7 +232,8 @@ Loader::Return_code Loader::parse(std::istream& its, Scene_graph* sg)
 
   // Parse & export:
   bool maybe_binary_stl(false);
-  Vrml_parser parser(scanner, sg, maybe_binary_stl);
+  auto* root = sg->initialize();
+  Vrml_parser parser(scanner, sg, root, maybe_binary_stl);
   auto rc = parser.parse();
   if (0 != rc) {
     if (maybe_binary_stl) return RETRY;
@@ -319,9 +319,9 @@ Loader::Return_code Loader::read_triangle(std::istream& is, Triangle& triangle)
 
 //! \brief computes a new Indexed Face Set container.
 Loader::Shared_indexed_face_set
-Loader::compute_ifs(Scene_graph* scene_graph, size_t count,
-                    std::list<Triangle>::const_iterator begin,
-                    std::list<Triangle>::const_iterator end)
+Loader::create_ifs(Scene_graph* scene_graph, size_t count,
+                   std::list<Triangle>::const_iterator begin,
+                   std::list<Triangle>::const_iterator end)
 {
   Shared_indexed_face_set ifs(new Indexed_face_set);
   SGAL_assertion(ifs);
@@ -354,16 +354,59 @@ Loader::compute_ifs(Scene_graph* scene_graph, size_t count,
   return ifs;
 }
 
-//! \brief adds a shape node to the scene.
-Loader::Shared_shape
-Loader::compute_shape(Scene_graph* scene_graph, Shared_transform transform,
-                      const Vector3f& color)
+//! \brief creates a new appearance container.
+Loader::Shared_appearance Loader::create_appearance(Scene_graph* sg) const
+{
+  Shared_appearance app(new Appearance);
+  SGAL_assertion(app);
+  sg->add_container(app);
+  return app;
+}
+
+//! \brief creates a new appearance container.
+Loader::Shared_appearance
+Loader::create_appearance(Scene_graph* sg, const std::string& name) const
+{
+  Shared_appearance app(new Appearance);
+  SGAL_assertion(app);
+  sg->add_container(app, name);
+  return app;
+}
+
+//! \brief creates a new Material container.
+Loader::Shared_material Loader::create_material(Scene_graph* sg) const
+{
+  Shared_material mat(new Material);
+  SGAL_assertion(mat);
+  sg->add_container(mat);
+  return mat;
+}
+
+//! \brief creates a new IndexedFaceSet container.
+Loader::Shared_indexed_face_set Loader::create_ifs(Scene_graph* sg) const
+{
+  Shared_indexed_face_set ifs(new Indexed_face_set);
+  SGAL_assertion(ifs);
+  ifs->add_to_scene(sg);
+  sg->add_container(ifs);
+  return ifs;
+}
+
+//! \brief creates a new shape node.
+Loader::Shared_shape Loader::create_shape(Scene_graph* sg) const
 {
   Shared_shape shape(new Shape);
   SGAL_assertion(shape);
-  scene_graph->add_container(shape);
-  shape->add_to_scene(scene_graph);
-  transform->add_child(shape);
+  shape->add_to_scene(sg);
+  sg->add_container(shape);
+  return shape;
+}
+
+//! \brief adds a shape node to the scene.
+Loader::Shared_shape
+Loader::create_shape(Scene_graph* scene_graph, const Vector3f& color)
+{
+  auto shape = create_shape(scene_graph);
   Shared_appearance appearance(new Appearance);
   SGAL_assertion(appearance);
   shape->set_appearance(appearance);
@@ -376,19 +419,20 @@ Loader::compute_shape(Scene_graph* scene_graph, Shared_transform transform,
 }
 
 //! \brief adds a single shape for all triangles.
-void Loader::add_shape(Scene_graph* scene_graph, Shared_transform transform,
+void Loader::add_shape(Scene_graph* scene_graph, Group* group,
                        std::list<Triangle>& tris)
 {
   Vector3f color;       // Place holder
-  auto shape = compute_shape(scene_graph, transform, color);
-  auto ifs = compute_ifs(scene_graph, tris.size(), tris.begin(), tris.end());
+  auto shape = create_shape(scene_graph, color);
+  group->add_child(shape);
+  auto ifs = create_ifs(scene_graph, tris.size(), tris.begin(), tris.end());
   shape->set_geometry(ifs);
 }
 
 /*! \brief adds a shape for every sub sequence of triangles with a distinguish
  * color.
  */
-void Loader::add_shapes(Scene_graph* scene_graph, Shared_transform transform,
+void Loader::add_shapes(Scene_graph* scene_graph, Group* group,
                         std::list<Triangle>& triangles, const Vector3f& color)
 {
   auto it = triangles.begin();
@@ -406,8 +450,9 @@ void Loader::add_shapes(Scene_graph* scene_graph, Shared_transform transform,
     if (triangle.is_colored()) triangle.set_color(tmp_color);
 
     if (tmp_color != last_color) {
-      auto shape = compute_shape(scene_graph, transform, last_color);
-      auto ifs = compute_ifs(scene_graph, count, first, it);
+      auto shape = create_shape(scene_graph, last_color);
+      group->add_child(shape);
+      auto ifs = create_ifs(scene_graph, count, first, it);
       shape->set_geometry(ifs);
 
       first = it;
@@ -417,14 +462,14 @@ void Loader::add_shapes(Scene_graph* scene_graph, Shared_transform transform,
     ++it;
     ++count;
   }
-  auto shape = compute_shape(scene_graph, transform, last_color);
-  auto ifs = compute_ifs(scene_graph, count, first, triangles.end());
+  auto shape = create_shape(scene_graph, last_color);
+  group->add_child(shape);
+  auto ifs = create_ifs(scene_graph, count, first, triangles.end());
   shape->set_geometry(ifs);
 }
 
 //! \brief adds a colored shape.
-void Loader::add_colored_shape(Scene_graph* scene_graph,
-                               Shared_transform transform,
+void Loader::add_colored_shape(Scene_graph* scene_graph, Group* group,
                                std::list<Triangle>& triangles,
                                const Vector3f& color)
 {
@@ -472,7 +517,8 @@ void Loader::add_colored_shape(Scene_graph* scene_graph,
 
     ++i;
   }
-  auto shape = compute_shape(scene_graph, transform, color);
+  auto shape = create_shape(scene_graph, color);
+  group->add_child(shape);
   ifs->facet_coord_indices_changed();
   ifs->facet_color_indices_changed();
   ifs->collapse_identical_coordinates();
@@ -486,7 +532,7 @@ Loader::Return_code Loader::read_stl(std::istream& is, size_t size,
                                      const Vector3f& color)
 {
   scene_graph->set_input_format_id(File_format_3d::ID_STL);
-  auto transform = scene_graph->initialize();       // initialize
+  auto* root = scene_graph->initialize();
 
   Int32 total_num_tris;
   is.read((char*)&total_num_tris, sizeof(Int32));
@@ -521,11 +567,11 @@ Loader::Return_code Loader::read_stl(std::istream& is, size_t size,
   }
 
   // Construct shape nodes
-  if (m_multiple_shapes) add_shapes(scene_graph, transform, triangles, color);
+  if (m_multiple_shapes) add_shapes(scene_graph, root, triangles, color);
   else {
     bool use_colors((color[0] != .0f) || (color[1] != .0f) ||(color[2] != .0f));
-    if (use_colors) add_colored_shape(scene_graph, transform, triangles, color);
-    else add_shape(scene_graph, transform, triangles);
+    if (use_colors) add_colored_shape(scene_graph, root, triangles, color);
+    else add_shape(scene_graph, root, triangles);
   }
 
   return SUCCESS;
@@ -548,14 +594,14 @@ Loader::Return_code Loader::load_off(std::istream& is, Scene_graph* sg,
   bool has_colors = what.length(2);
 
   // Obtain root.
-  auto transform = sg->initialize();
+  auto* root = sg->initialize();
 
   // Add Shape
   Shared_shape shape(new Shape);
   SGAL_assertion(shape);
   shape->add_to_scene(sg);
   sg->add_container(shape);
-  transform->add_child(shape);
+  root->add_child(shape);
 
   // Add Appearance
   Shared_appearance app(new Appearance);
@@ -1007,59 +1053,6 @@ Loader::Return_code Loader::parse_mtl(const std::string& filename,
   return Loader::SUCCESS;
 }
 
-/*! Create a new shape node.
- */
-Loader::Shared_shape Loader::create_shape(Scene_graph* sg) const
-{
-  Shared_shape shape(new Shape);
-  SGAL_assertion(shape);
-  shape->add_to_scene(sg);
-  sg->add_container(shape);
-  return shape;
-}
-
-/*! Create a new appearance container.
- */
-Loader::Shared_appearance Loader::create_appearance(Scene_graph* sg) const
-{
-  Shared_appearance app(new Appearance);
-  SGAL_assertion(app);
-  sg->add_container(app);
-  return app;
-}
-
-/*! Create a new appearance container.
- */
-Loader::Shared_appearance
-Loader::create_appearance(Scene_graph* sg, const std::string& name) const
-{
-  Shared_appearance app(new Appearance);
-  SGAL_assertion(app);
-  sg->add_container(app, name);
-  return app;
-}
-
-/*! Create a new Material container.
- */
-Loader::Shared_material Loader::create_material(Scene_graph* sg) const
-{
-  Shared_material mat(new Material);
-  SGAL_assertion(mat);
-  sg->add_container(mat);
-  return mat;
-}
-
-/*! Create a new IndexedFaceSet container.
- */
-Loader::Shared_indexed_face_set Loader::create_ifs(Scene_graph* sg) const
-{
-  Shared_indexed_face_set ifs(new Indexed_face_set);
-  SGAL_assertion(ifs);
-  ifs->add_to_scene(sg);
-  sg->add_container(ifs);
-  return ifs;
-}
-
 /*! Convert polygons to triangles and clear the polygons.
  */
 void to_tri_indices(Polygon_indices& indices, Triangle_indices& tri_indices)
@@ -1194,7 +1187,7 @@ Loader::update_ifs(Scene_graph* sg,
 Loader::Return_code Loader::parse_obj(std::istream& is, Scene_graph* sg)
 {
   sg->set_input_format_id(File_format_3d::ID_OBJ);
-  auto transform = sg->initialize();            // obtain root
+  auto* root = sg->initialize();            // obtain root
 
   // Construct arrays
   Shared_coord_array_3d shared_coords(new Coord_array_3d);
@@ -1216,7 +1209,7 @@ Loader::Return_code Loader::parse_obj(std::istream& is, Scene_graph* sg)
 
     // Create new containers
     Shared_shape shape(create_shape(sg));       // create a new Shape node
-    transform->add_child(shape);                // add the new Shape node
+    root->add_child(shape);                     // add the new Shape node
     Shared_indexed_face_set ifs(create_ifs(sg));// create a new Ifs container
     Polygon_indices coord_indices;
     Polygon_indices normal_indices;

@@ -752,7 +752,7 @@ void Scene_graph::create_defaults()
     SGAL_assertion(m_head_light);
     set_head_light(get_configuration());
     m_head_light->set_ambient_intensity(1);
-    get_root()->add_child(m_head_light);
+    m_root->add_child(m_head_light);
     set_have_lights(true);
   }
 
@@ -955,14 +955,7 @@ void Scene_graph::write_vrml(const std::string& filename, std::ostream& os)
 {
   Vrml_formatter formatter(filename, os);
   formatter.begin();
-  auto root = get_root();
-  for (auto it1 = root->children_begin(); it1 != root->children_end(); ++it1) {
-    auto transform = boost::dynamic_pointer_cast<Transform>(*it1);
-    if (!transform) continue;
-    SGAL_assertion(transform->get_name().compare(g_navigation_root_name) == 0);
-    auto it2 = transform->children_begin();
-    for (; it2 != transform->children_end(); ++it2) formatter.write(*it2);
-  }
+  formatter.write(m_navigation_root);
   formatter.end();
 }
 
@@ -975,14 +968,7 @@ void Scene_graph::write_stl(const std::string& filename, std::ostream& os,
     static_cast<Formatter*>(new Stl_formatter(filename, os));
 
   formatter->begin();
-  auto root = get_root();
-  for (auto it1 = root->children_begin(); it1 != root->children_end(); ++it1) {
-    auto transform = boost::dynamic_pointer_cast<Transform>(*it1);
-    if (!transform) continue;
-    SGAL_assertion(transform->get_name().compare(g_navigation_root_name) == 0);
-    auto it2 = transform->children_begin();
-    for (; it2 != transform->children_end(); ++it2) formatter->write(*it2);
-  }
+  formatter->write(m_navigation_root);
   formatter->end();
   delete formatter;
 }
@@ -992,14 +978,7 @@ void Scene_graph::write_obj(const std::string& filename, std::ostream& os)
 {
   Obj_formatter formatter(filename, os);
   formatter.begin();
-  auto root = get_root();
-  for (auto it1 = root->children_begin(); it1 != root->children_end(); ++it1) {
-    auto transform = boost::dynamic_pointer_cast<Transform>(*it1);
-    if (!transform) continue;
-    SGAL_assertion(transform->get_name().compare(g_navigation_root_name) == 0);
-    auto it2 = transform->children_begin();
-    for (; it2 != transform->children_end(); ++it2) formatter.write(*it2);
-  }
+  formatter.write(m_navigation_root);
   formatter.end();
 }
 
@@ -1007,33 +986,38 @@ void Scene_graph::write_obj(const std::string& filename, std::ostream& os)
 void Scene_graph::write_json(const std::string& filename, std::ostream& os)
 {
   Json_formatter formatter(filename, os);
-  formatter.pre_process(get_active_camera(), m_containers, m_instances);
-
+  formatter.set_bounding_sphere(&(m_navigation_root->get_bounding_sphere()));
+  formatter.set_camera(get_active_camera());
+  formatter.pre_process(m_containers, m_instances);
   formatter.begin();
   auto root = get_root();
-  for (auto it = root->children_begin(); it != root->children_end(); ++it)
-    formatter.write(*it);
+  auto* configuration = get_configuration();
+  auto export_scene = configuration && configuration->get_export_scene();
+  if (export_scene) formatter.write(m_root);
+  else formatter.write(m_navigation_root);
   formatter.end();
 }
 
-//! \brief initializes the scene graph with a root and, a navigation root nodes.
-Scene_graph::Shared_transform Scene_graph::initialize()
+//! \brief initializes the scene graph with an empty directed acyclic graph.
+Group* Scene_graph::initialize()
 {
-  Shared_group group(new Group);
-  SGAL_assertion(group);
-  set_root(group);
-  Shared_transform transform(new Transform);
-  SGAL_assertion(transform);
-  add_container(transform, g_navigation_root_name);
-  set_navigation_root(transform);
-  group->add_child(transform);
+  Shared_group root(new Group);
+  SGAL_assertion(root);
+  add_container(root);
+  set_root(root);
+  auto* transform = new Transform;
+  Shared_transform navigation_root(transform);
+  SGAL_assertion(navigation_root);
+  add_container(navigation_root);
+  set_navigation_root(navigation_root);
+  root->add_child(navigation_root);
   return transform;
 }
 
 //! \brief computes the total volume of all polyhedrons.
 float Scene_graph::volume()
 {
-  auto root = get_root();
+  auto root = get_navigation_root();
   Volume_action action;
   root->traverse(&action);
   return action.volume();
@@ -1042,7 +1026,7 @@ float Scene_graph::volume()
 //! \brief computes the total surface area of all polyhedrons.
 float Scene_graph::surface_area()
 {
-  auto root = get_root();
+  auto root = get_navigation_root();
   Surface_area_action action;
   root->traverse(&action);
   return action.surface_area();
@@ -1052,7 +1036,7 @@ float Scene_graph::surface_area()
 void Scene_graph::
 process_polyhedron_attributes_array(Polyhedron_attributes_array& array) const
 {
-  auto root = get_root();
+  auto root = get_navigation_root();
   Polyhedron_attributes_action action(array);
   root->traverse(&action);
 }
@@ -1060,7 +1044,7 @@ process_polyhedron_attributes_array(Polyhedron_attributes_array& array) const
 //! \brief removes shapes the geometry of which is degenerate.
 void Scene_graph::remove_degeneracies()
 {
-  auto root = get_root();
+  auto root = get_navigation_root();
   Remove_degeneracies_action action;
   root->traverse(&action);
 }
@@ -1068,7 +1052,7 @@ void Scene_graph::remove_degeneracies()
 //! \brief splits connected components.
 void Scene_graph::split_connected_components()
 {
-  auto root = get_root();
+  auto root = get_navigation_root();
   Split_connected_components_action action(this);
   root->traverse(&action);
 }

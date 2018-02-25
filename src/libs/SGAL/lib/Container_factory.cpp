@@ -40,6 +40,7 @@
 #include "SGAL/Image_url.hpp"
 // #include "SGAL/Image_texture_WT.hpp"
 #include "SGAL/Incrementor.hpp"
+#include "SGAL/Inline.hpp"
 #include "SGAL/Navigation_info.hpp"
 // #include "SGAL/Text_texture.hpp"
 #include "SGAL/Material.hpp"
@@ -225,6 +226,7 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Image_writer);
   REGISTER_OBJECT(Image_url);
   REGISTER_OBJECT(Incrementor);
+  REGISTER_OBJECT(Inline);
   REGISTER_OBJECT(Indexed_face_set);
   REGISTER_OBJECT(Indexed_geodesic_set);
   REGISTER_OBJECT(Indexed_line_set);

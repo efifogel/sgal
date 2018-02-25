@@ -1,0 +1,3 @@
+# Name                 Type                        Rule           Default    Execution Function               Contaminated Description
+# -------------------- --------------------------- -------------- --------   -------------------------------- ------------ --------------------
+url                    String_array                EXPOSED_FIELD  ""         ""                               "childs"     "set of valid VRML files; each VRML file contains a list of children nodes at the top level"

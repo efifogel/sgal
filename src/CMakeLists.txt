@@ -87,5 +87,6 @@ set (SGAL_INSTALL_CMAKE_DIR "${SGAL_INSTALL_LIB_DIR}/SGAL"
   CACHE STRING "The folder where SGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX")
 
 # Add subdirectories
+add_subdirectory(scripts)
 add_subdirectory(libs)
 add_subdirectory(cmds)

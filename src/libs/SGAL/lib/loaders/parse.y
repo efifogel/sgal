@@ -51,10 +51,9 @@
 #include "SGAL/Node.hpp"
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Group.hpp"
-#include "SGAL/Transform.hpp"
+#include "SGAL/Group.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Container_factory.hpp"
-#include "SGAL/Scene_graph_int.hpp"
 #include "SGAL/Route.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Shape.hpp"
@@ -98,7 +97,6 @@ typedef boost::shared_ptr<std::string>        Shared_string;
 typedef boost::shared_ptr<Container>          Shared_container;
 typedef boost::shared_ptr<Node>               Shared_node;
 typedef boost::shared_ptr<Group>              Shared_group;
-typedef boost::shared_ptr<Transform>          Shared_transform;
 typedef boost::shared_ptr<Route>              Shared_route;
 typedef boost::shared_ptr<Shape>              Shared_shape;
 typedef boost::shared_ptr<Coord_array_3d>     Shared_coord_array_3d;
@@ -110,6 +108,7 @@ SGAL_END_NAMESPACE
 %lex-param { Vrml_scanner& scanner }
 %parse-param { Vrml_scanner& scanner }
 %parse-param { Scene_graph* scene_graph }
+%parse-param { Group* root }
 %parse-param { bool& maybe_binary_stl }
 
 %code // *.cc
@@ -117,8 +116,7 @@ SGAL_END_NAMESPACE
   static SGAL::Vrml_parser::symbol_type yylex(SGAL::Vrml_scanner& scanner);
 }
 
-%type <Shared_group> vrmlScene
-%type <Shared_transform> statements
+%type <Group*> statements
 %type <Shared_container> statement
 %type <Shared_container> nodeStatement protoStatement routeStatement
 %type <Shared_container> node nodeContainer sfnodeValue
@@ -258,20 +256,18 @@ SGAL_END_NAMESPACE
 Start           : VRML vrmlScene
                 {
                   scene_graph->set_input_format_id(File_format_3d::ID_WRL);
-                  scene_graph->set_root($2);
                 }
                 | K_SOLID facets K_SOLID_END
                 {
                   /* STL */
                   scene_graph->set_input_format_id(File_format_3d::ID_STL);
-                  auto transform = scene_graph->initialize();
 
                   /*! Add Shape */
                   Shared_shape shape(new Shape);
                   SGAL_assertion(shape);
                   shape->add_to_scene(scene_graph);
                   scene_graph->add_container(shape);
-                  transform->add_child(shape);
+                  root->add_child(shape);
 
                   /*! Add IndexedFaceSet */
                   Shared_indexed_face_set ifs = $2.first;
@@ -372,19 +368,9 @@ vertex          : K_VERTEX NUMBER NUMBER NUMBER
                 ;
 
 vrmlScene       : statements
-                {
-                  Group* group = new Group;
-                  $$ = Shared_group(group);
-                  $$->add_child($1);
-                } ;
+                ;
 
-statements      : /* empty */
-                {
-                  Transform* transform = new Transform;
-                  $$ = Shared_transform(transform);
-                  scene_graph->add_container($$, g_navigation_root_name);
-                  scene_graph->set_navigation_root($$);
-                }
+statements      : /* empty */ { $$ = root; }
                 | statements statement
                 { std::swap($$, $1); if ($2) $$->add_child($2); }
                 ;

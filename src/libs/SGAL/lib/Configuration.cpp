@@ -63,6 +63,7 @@ const Boolean Configuration::s_def_override_blend_func(true);
 const Boolean Configuration::s_def_override_light_model(true);
 const Boolean Configuration::s_def_override_tex_gen(true);
 const Boolean Configuration::s_def_override_light_enable(true);
+const Boolean Configuration::s_def_export_scene(false);
 
 const Char* Configuration::s_geometry_drawing_mode_names[] =
   { "direct", "displayList", "vertexArray" };
@@ -97,7 +98,8 @@ Configuration::Configuration(Boolean proto) :
   m_override_blend_func(Configuration::s_def_override_blend_func),
   m_override_light_model(Configuration::s_def_override_light_model),
   m_override_tex_gen(Configuration::s_def_override_tex_gen),
-  m_override_light_enable(Configuration::s_def_override_light_enable)
+  m_override_light_enable(Configuration::s_def_override_light_enable),
+  m_export_scene(s_def_export_scene)
 {}
 
 //! \brief sets defualt values.
@@ -255,6 +257,14 @@ void Configuration::init_prototype()
                                                       Field_info::RULE_EXPOSED_FIELD,
                                                       modeling_func,
                                                       exec_func));
+
+  // exportScene
+  Boolean_handle_function export_scene_func =
+    static_cast<Boolean_handle_function>(&Configuration::export_scene_handle);
+  s_prototype->add_field_info(new SF_bool(EXPORT_SCENE, "exportScene",
+                                          Field_info::RULE_EXPOSED_FIELD,
+                                          export_scene_func,
+                                          s_def_export_scene, exec_func));
 }
 
 //! \brief deletes the node prototype.
@@ -397,6 +407,11 @@ void Configuration::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "exportScene") {
+      set_export_scene(boost::lexical_cast<Boolean>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
   }
 
   for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
@@ -508,6 +523,8 @@ void Configuration::merge(const Configuration* other)
     m_override_tex_gen = other->m_override_tex_gen;
   if (other->m_override_light_enable != s_def_override_light_enable)
     m_override_light_enable = other->m_override_light_enable;
+  if (other->m_export_scene != s_def_export_scene)
+    m_export_scene = other->m_export_scene;
 }
 
 SGAL_END_NAMESPACE

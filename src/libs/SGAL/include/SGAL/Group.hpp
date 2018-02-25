@@ -85,11 +85,6 @@ public:
    */
   Group(Boolean proto = false);
 
-  /*! Copy constructor.
-   * \param other The other object.
-   */
-  Group(const Group& other);
-
   /*! Destructor. */
   virtual ~Group();
 
@@ -175,6 +170,10 @@ public:
   virtual Boolean attach_context(Context* context );
 
   virtual Boolean detach_context(Context* context = 0);
+
+  /*! Clean the children in case they are dirty.
+   */
+  virtual void clean_childs();
 
   /*! Obtain the number of children.
    * \return number of children in the group.
@@ -287,48 +286,53 @@ public:
 
   bool is_dynamic_loaded() { return false; }
 
-  /*! Obtain the tag (type) of the container. */
+  /*! Obtain the tag (type) of the container.
+   */
   virtual const std::string& get_tag() const;
 
 protected:
-  /*! Indicates whether the group is visible and thus should be rendered. */
+  //! Indicates whether the group is visible and thus should be rendered.
   Boolean m_is_visible;
 
-  /*! The list of child objects. */
+  //! The list of child objects.
   Container_array m_childs;
 
-  /*! Indicates whether the group has a touch sensor. */
+  //! Indicates whether the group has a touch sensor.
   Shared_touch_sensor m_touch_sensor;
 
-  /*! The number of light sources in the group. */
+  //! The number of light sources in the group.
   Uint m_num_lights;
 
-  /*! The start id of a unique range of color ids used for selection. */
+  //! The start id of a unique range of color ids used for selection.
   Uint m_start_selection_id;
 
-  /*! The number of ids of a unique range of color ids used for selection. */
+  //! The number of ids of a unique range of color ids used for selection.
   Uint m_num_selection_ids;
 
-  /*! The scene graph. */
+  //! The scene graph.
   Scene_graph* m_scene_graph;
 
-  /*! Allocate the selection ids for this group. */
+  //! Indicates whether the children are dirty and must be cleaned.
+  Boolean m_dirty_childs;
+
+  /*! Allocate the selection ids for this group.
+   */
   void allocate_selection_ids();
 
 private:
-  /*! The tag that represents the container. */
+  //! The tag that represents the container.
   static const std::string s_tag;
 
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
-  /*! The center of a bounding box that encloses the children of the group. */
+  //! The center of a bounding box that encloses the children of the group.
   Vector3f m_bbox_center;
 
-  /*! The size of a bounding box that encloses the children of the group. */
+  //! The size of a bounding box that encloses the children of the group.
   Vector3f m_bbox_size;
 
-  /*! Default values */
+  //! Default values.
   static const Vector3f s_def_bbox_center;
   static const Vector3f s_def_bbox_size;
 };

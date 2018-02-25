@@ -163,10 +163,11 @@ public:
   /*! Obtain the context */
   Context* get_context() const { return m_context; }
 
-  /*! Initialize the scene graph with a root and a navigation root nodes.
-   * Use this function when parsing simple formats, such as stl.
+  /*! Initialize the scene graph with an empty directed acyclic graph the root
+   * of which is a group node that has a single child that is a transform node
+   * referred to as the nvaigation root.
    */
-  Shared_transform initialize();
+  Group* initialize();
 
   /*! Create default nodes and route them appropriately.
    * The set of such nodes consists of a navigation sensor node, a
@@ -334,7 +335,7 @@ public:
   /*! Obtain the navigation root. It's a node of type Transform.
    * \return the navigation root.
    */
-  Shared_transform get_navigation_root();
+  Shared_transform get_navigation_root() const;
 
   /*! Set the navigation root. The navigation root node is a child
    * of the root of the scene graph. It is a node of type Transform.
@@ -722,7 +723,7 @@ inline Scene_graph::Container_map_iter Scene_graph::instances_end()
 { return m_instances.end(); }
 
 //! \brief obtains the navigation root. It's a node of type Transform.
-inline Scene_graph::Shared_transform Scene_graph::get_navigation_root()
+inline Scene_graph::Shared_transform Scene_graph::get_navigation_root() const
 { return m_navigation_root; }
 
 //! \brief obtains an isolated instance of the V8 engine.
