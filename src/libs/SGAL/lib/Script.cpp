@@ -35,6 +35,7 @@
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/lexical_cast_vector2f.hpp"
+#include "SGAL/lexical_cast_boolean.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -661,10 +662,10 @@ void Script::indexed_getter(uint32_t index,
 
    case Field_info::MF_INT32:
     {
-     v8::HandleScope scope(isolate);
-     auto* tmp = script_node->field_handle<Int32_array>(field_info);
-     SGAL_assertion(index < tmp->size());
-     info.GetReturnValue().Set((*tmp)[index]);
+      v8::HandleScope scope(isolate);
+      auto* tmp = script_node->field_handle<Int32_array>(field_info);
+      SGAL_assertion(index < tmp->size());
+      info.GetReturnValue().Set((*tmp)[index]);
     }
     break;
 
@@ -917,6 +918,11 @@ void Script::add_field_info(Field_info::Field_rule rule,
                             Field_info::Field_type type,
                             const std::string& name, const std::string& value)
 {
+#if !defined(NDEBUG) || defined(SGAL_TRACE)
+  if (SGAL::TRACE(Trace::SCRIPT)) {
+    std::cout << "add_field_info() " << name << ", " << value << std::endl;
+  }
+#endif
   auto* prototype = get_prototype();
 
   Execution_function exec_func =  (rule == Field_info::RULE_IN) ?
@@ -1020,36 +1026,57 @@ void Script::add_field_info(Field_info::Field_rule rule,
 
    case Field_info::MF_BOOL:
     {
-     Boolean_array initial_value;
-     variant_field = initial_value;
-     add_fi<Field_info::MF_BOOL>(id, name, rule, initial_value, exec_func,
-                                 prototype);
+      Boolean_array initial_value;
+      std::stringstream ss(value);
+      std::transform(std::istream_iterator<std::string>(ss),
+                     std::istream_iterator<std::string>(),
+                     std::back_inserter(initial_value),
+                     [](const std::string& str){
+                       if (boost::iequals(str, "true")) return true;
+                       if (boost::iequals(str, "false")) return false;
+                       boost::bad_lexical_cast();
+                    });
+      variant_field = initial_value;
+      add_fi<Field_info::MF_BOOL>(id, name, rule, initial_value, exec_func,
+                                  prototype);
     }
     break;
 
    case Field_info::MF_FLOAT:
     {
-     Float_array initial_value;
-     variant_field = initial_value;
-     add_fi<Field_info::MF_FLOAT>(id, name, rule, initial_value, exec_func,
-                                  prototype);
+      Float_array initial_value;
+      std::stringstream ss(value);
+      std::copy(std::istream_iterator<Float>(ss),
+                std::istream_iterator<Float>(),
+                std::back_inserter(initial_value));
+      variant_field = initial_value;
+      add_fi<Field_info::MF_FLOAT>(id, name, rule, initial_value, exec_func,
+                                   prototype);
     }
     break;
 
    case Field_info::MF_TIME:
     {
-     Scene_time_array initial_value;
-     variant_field = initial_value;
-     add_fi<Field_info::MF_TIME>(id, name, rule, initial_value, exec_func,
-                                 prototype);
+      Scene_time_array initial_value;
+      std::stringstream ss(value);
+      std::copy(std::istream_iterator<Scene_time>(ss),
+                std::istream_iterator<Scene_time>(),
+                std::back_inserter(initial_value));
+      variant_field = initial_value;
+      add_fi<Field_info::MF_TIME>(id, name, rule, initial_value, exec_func,
+                                  prototype);
     }
     break;
 
    case Field_info::MF_INT32:
     {
-     Int32_array initial_value;
-     variant_field = initial_value;
-     add_fi<Field_info::MF_INT32>(id, name, rule, initial_value, exec_func,
+      Int32_array initial_value;
+      std::stringstream ss(value);
+      std::copy(std::istream_iterator<Int32>(ss),
+                std::istream_iterator<Int32>(),
+                std::back_inserter(initial_value));
+      variant_field = initial_value;
+      add_fi<Field_info::MF_INT32>(id, name, rule, initial_value, exec_func,
                                   prototype);
     }
      break;
@@ -1085,6 +1112,10 @@ void Script::add_field_info(Field_info::Field_rule rule,
    case Field_info::MF_STR:
     {
      String_array initial_value;
+      std::stringstream ss(value);
+      std::copy(std::istream_iterator<std::string>(ss),
+                std::istream_iterator<std::string>(),
+                std::back_inserter(initial_value));
      variant_field = initial_value;
      add_fi<Field_info::MF_STR>(id, name, rule, initial_value, exec_func,
                                 prototype);
