@@ -33,10 +33,8 @@ void Inline::add_to_scene(Scene_graph* sg) { m_scene_graph = sg; }
 //! \brief cleans (generate) the children.
 void Inline::clean_childs()
 {
-  std::cout << "Inline::clean_childs()" << std::endl;
   Group::clean_childs();
   const auto& filename = m_url[0];
-  std::cout << "filename: " << filename << std::endl;
 
   // Open source file.
   std::ifstream is(filename);
@@ -48,9 +46,7 @@ void Inline::clean_childs()
   Vrml_scanner scanner(&is);
   // scanner.set_debug(1);
   Boolean maybe_stl;
-  std::cout << "before" << std::endl;
   Vrml_parser parser(scanner, m_scene_graph, this, maybe_stl);
-  std::cout << "after" << std::endl;
   auto rc = parser.parse();
   if (0 != rc) {
     throw Parse_error(filename);
