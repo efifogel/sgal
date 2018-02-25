@@ -27,9 +27,6 @@
 
 SGAL_BEGIN_NAMESPACE
 
-//! \brief adds the container to the given scene.
-void Inline::add_to_scene(Scene_graph* sg) { m_scene_graph = sg; }
-
 //! \brief cleans (generate) the children.
 void Inline::clean_childs()
 {
