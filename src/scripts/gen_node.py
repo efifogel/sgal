@@ -1118,7 +1118,7 @@ def print_set_field_from_string(out, field):
   statement = '''std::transform(multi_istream_iterator<{}>(ss),
                      multi_istream_iterator<{}>(),
                      std::back_inserter(m_{}),
-                     &boost::lexical_cast<{}, String>);'''.format(size, size, name, single_type)
+                     &boost::lexical_cast<{}, const String&>);'''.format(size, size, name, single_type)
   print_call(out, statement)
 
 #! Print the code that handles a multi-string attribute.

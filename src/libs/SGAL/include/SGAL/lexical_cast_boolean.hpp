@@ -27,31 +27,25 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 
-SGAL_BEGIN_NAMESPACE
+namespace boost {
 
-template <typename Source>
-inline Boolean lexical_cast_boolean(Source str)
-{
-  SGAL_error_msg("Not implemented!");
-  return false;
-}
-
+// Do not the explicit second template type (const SGAL::String&).
+// If you do, the (gcc) compiler will fail to find this correct spcialization
+// even when the type of the single argument is exactly the same as the
+// type of explicit template type.
+// It seems like a bug in the compiler, but I'm not certain.
+// I suspect that if you call the function (passing in a 'const String&'),
+// the compiler first tries to mmatch using 'String', and such a specialization
+// is provided by boost to start with.
 template <>
-inline Boolean lexical_cast_boolean(const String& str)
+inline SGAL::Boolean
+lexical_cast<SGAL::Boolean, const SGAL::String&>(const SGAL::String& str)
 {
   if (boost::iequals(str, "true")) return true;
   if (boost::iequals(str, "false")) return false;
   boost::bad_lexical_cast();
   return false;
 }
-
-SGAL_END_NAMESPACE
-
-namespace boost {
-
-template <>
-inline SGAL::Boolean lexical_cast<SGAL::Boolean>(const SGAL::String& str)
-{ return SGAL::lexical_cast_boolean<const SGAL::String&>(str); }
 
 }
 

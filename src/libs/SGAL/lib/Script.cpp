@@ -16,7 +16,11 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include <algorithm>
+#include <iterator>
+#include <string>
 #include <regex>
+
 #include <boost/lexical_cast.hpp>
 
 #include <v8.h>
@@ -36,6 +40,7 @@
 #include "SGAL/Utilities.hpp"
 #include "SGAL/lexical_cast_vector2f.hpp"
 #include "SGAL/lexical_cast_boolean.hpp"
+#include "SGAL/multi_istream_iterator.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -916,7 +921,7 @@ void Script::add_to_scene(Scene_graph* scene_graph)
 //! \brief adds a field info record to the script node.
 void Script::add_field_info(Field_info::Field_rule rule,
                             Field_info::Field_type type,
-                            const std::string& name, const std::string& value)
+                            const String& name, const String& value)
 {
 #if !defined(NDEBUG) || defined(SGAL_TRACE)
   if (SGAL::TRACE(Trace::SCRIPT)) {
@@ -933,81 +938,86 @@ void Script::add_field_info(Field_info::Field_rule rule,
   switch (type) {
    case Field_info::SF_BOOL:
     {
-     auto initial_value = value.empty() ? false : compare_to_true(value);
-     variant_field = initial_value;
-     add_fi<Field_info::SF_BOOL>(id, name, rule, initial_value, exec_func,
-                                 prototype);
+      // Do not drop the explicit template parameter specialization type.
+      // If you do, the compiler will fail to find the correct spcialization
+      // (even though the type of 'value', that is 'const String&', is exactly
+      // he same as the indicated specialization type.
+      auto initial_value =
+        value.empty() ? false : boost::lexical_cast<Boolean, const String&>(value);
+      variant_field = initial_value;
+      add_fi<Field_info::SF_BOOL>(id, name, rule, initial_value, exec_func,
+                                  prototype);
     }
     break;
 
    case Field_info::SF_FLOAT:
     {
-     auto initial_value = value.empty() ? 0 : boost::lexical_cast<Float>(value);
-     variant_field = initial_value;
-     add_fi<Field_info::SF_FLOAT>(id, name, rule, initial_value, exec_func,
-                                  prototype);
+      auto initial_value = value.empty() ? 0 : boost::lexical_cast<Float>(value);
+      variant_field = initial_value;
+      add_fi<Field_info::SF_FLOAT>(id, name, rule, initial_value, exec_func,
+                                   prototype);
     }
     break;
 
    case Field_info::SF_TIME:
     {
-     auto initial_value =
-       value.empty() ? 0 : boost::lexical_cast<Scene_time>(value);
-     variant_field = initial_value;
-     add_fi<Field_info::SF_TIME>(id, name, rule, initial_value, exec_func,
-                                 prototype);
+      auto initial_value =
+        value.empty() ? 0 : boost::lexical_cast<Scene_time>(value);
+      variant_field = initial_value;
+      add_fi<Field_info::SF_TIME>(id, name, rule, initial_value, exec_func,
+                                  prototype);
     }
     break;
 
    case Field_info::SF_INT32:
     {
-     auto initial_value = value.empty() ? 0 : boost::lexical_cast<Int32>(value);
-     variant_field = initial_value;
-     add_fi<Field_info::SF_INT32>(id, name, rule, initial_value, exec_func,
-                                  prototype);
+      auto initial_value = value.empty() ? 0 : boost::lexical_cast<Int32>(value);
+      variant_field = initial_value;
+      add_fi<Field_info::SF_INT32>(id, name, rule, initial_value, exec_func,
+                                   prototype);
     }
     break;
 
    case Field_info::SF_VEC2F:
     {
       Vector2f initial_value(boost::lexical_cast<Vector2f>(value));
-     variant_field = initial_value;
-     add_fi<Field_info::SF_VEC2F>(id, name, rule, initial_value, exec_func,
-                                  prototype);
+      variant_field = initial_value;
+      add_fi<Field_info::SF_VEC2F>(id, name, rule, initial_value, exec_func,
+                                   prototype);
     }
     break;
 
    case Field_info::SF_VEC3F:
     {
-     Vector3f initial_value(value);
-     variant_field = initial_value;
-     add_fi<Field_info::SF_VEC3F>(id, name, rule, initial_value, exec_func,
-                                  prototype);
+      Vector3f initial_value(value);
+      variant_field = initial_value;
+      add_fi<Field_info::SF_VEC3F>(id, name, rule, initial_value, exec_func,
+                                   prototype);
     }
     break;
 
    case Field_info::SF_COLOR:
     {
-     Vector3f initial_value(value);
-     variant_field = initial_value;
-     add_fi<Field_info::SF_COLOR>(id, name, rule, initial_value, exec_func,
-                                  prototype);
+      Vector3f initial_value(value);
+      variant_field = initial_value;
+      add_fi<Field_info::SF_COLOR>(id, name, rule, initial_value, exec_func,
+                                   prototype);
     }
     break;
 
    case Field_info::SF_ROTATION:
     {
-     Rotation initial_value(value);
-     variant_field = initial_value;
-     add_fi<Field_info::SF_ROTATION>(id, name, rule, initial_value, exec_func,
-                                     prototype);
+      Rotation initial_value(value);
+      variant_field = initial_value;
+      add_fi<Field_info::SF_ROTATION>(id, name, rule, initial_value, exec_func,
+                                      prototype);
     }
     break;
 
    case Field_info::SF_STR:
     {
-     variant_field = value;
-     add_fi<Field_info::SF_STR>(id, name, rule, value, exec_func, prototype);
+      variant_field = value;
+      add_fi<Field_info::SF_STR>(id, name, rule, value, exec_func, prototype);
     }
     break;
 
@@ -1017,10 +1027,10 @@ void Script::add_field_info(Field_info::Field_rule rule,
 
    case Field_info::SF_SHARED_CONTAINER:
     {
-     Shared_container initial_value;
-     variant_field = initial_value;
-     add_fi<Field_info::SF_SHARED_CONTAINER>(id, name, rule, initial_value,
-                                             exec_func, prototype);
+      Shared_container initial_value;
+      variant_field = initial_value;
+      add_fi<Field_info::SF_SHARED_CONTAINER>(id, name, rule, initial_value,
+                                              exec_func, prototype);
     }
     break;
 
@@ -1031,11 +1041,7 @@ void Script::add_field_info(Field_info::Field_rule rule,
       std::transform(std::istream_iterator<std::string>(ss),
                      std::istream_iterator<std::string>(),
                      std::back_inserter(initial_value),
-                     [](const std::string& str){
-                       if (boost::iequals(str, "true")) return true;
-                       if (boost::iequals(str, "false")) return false;
-                       boost::bad_lexical_cast();
-                    });
+                     boost::lexical_cast<Boolean, const String&>);
       variant_field = initial_value;
       add_fi<Field_info::MF_BOOL>(id, name, rule, initial_value, exec_func,
                                   prototype);
@@ -1084,6 +1090,11 @@ void Script::add_field_info(Field_info::Field_rule rule,
    case Field_info::MF_VEC2F:
     {
      Vector2f_array initial_value;
+     std::stringstream ss(value);
+     std::transform(multi_istream_iterator<2>(ss),
+                    multi_istream_iterator<2>(),
+                    std::back_inserter(initial_value),
+                    &boost::lexical_cast<Vector2f, String>);
      variant_field = initial_value;
      add_fi<Field_info::MF_VEC2F>(id, name, rule, initial_value, exec_func,
                                   prototype);
@@ -1094,6 +1105,11 @@ void Script::add_field_info(Field_info::Field_rule rule,
    case Field_info::MF_COLOR:
     {
      Vector3f_array initial_value;
+     std::stringstream ss(value);
+     std::transform(multi_istream_iterator<3>(ss),
+                    multi_istream_iterator<3>(),
+                    std::back_inserter(initial_value),
+                    &boost::lexical_cast<Vector3f, String>);
      variant_field = initial_value;
      add_fi<Field_info::MF_VEC3F>(id, name, rule, initial_value, exec_func,
                                   prototype);
@@ -1103,6 +1119,11 @@ void Script::add_field_info(Field_info::Field_rule rule,
    case Field_info::MF_ROTATION:
     {
      Rotation_array initial_value;
+     std::stringstream ss(value);
+     std::transform(multi_istream_iterator<4>(ss),
+                    multi_istream_iterator<4>(),
+                    std::back_inserter(initial_value),
+                    &boost::lexical_cast<Rotation, String>);
      variant_field = initial_value;
      add_fi<Field_info::MF_ROTATION>(id, name, rule, initial_value, exec_func,
                                      prototype);
@@ -1125,6 +1146,7 @@ void Script::add_field_info(Field_info::Field_rule rule,
    case Field_info::MF_SHARED_CONTAINER:
     {
      Shared_container_array initial_value;
+     SGAL_error_msg("Not supported yet!");
      variant_field = initial_value;
      add_fi<Field_info::MF_SHARED_CONTAINER>(id, name, rule, initial_value,
                                              exec_func, prototype);
