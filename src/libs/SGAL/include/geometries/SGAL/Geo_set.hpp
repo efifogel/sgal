@@ -475,6 +475,10 @@ public:
    */
   Attachment get_normal_attachment() const;
 
+  /*! Set the color attachment method.
+   */
+  void set_color_attachment(Attachment attachment);
+
   /*! Obtain the color attachment method.
    */
   Attachment get_color_attachment() const;
@@ -690,6 +694,10 @@ inline void Geo_set::set_num_primitives(Size num) { m_num_primitives = num; }
 //! \brief obtains the normal attachment method.
 inline Geo_set::Attachment Geo_set::get_normal_attachment() const
 { return m_normal_attachment; }
+
+//! \brief sets the color attachment method.
+inline void Geo_set::set_color_attachment(Attachment attachment)
+{ m_color_attachment = attachment; }
 
 //! \brief obtains the color attachment method.
 inline Geo_set::Attachment Geo_set::get_color_attachment() const
