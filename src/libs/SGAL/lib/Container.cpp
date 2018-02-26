@@ -16,10 +16,6 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-/*!
- * \brief - implementation
- */
-
 #include <algorithm>
 
 #include "SGAL/basic.hpp"
@@ -32,13 +28,13 @@
 
 SGAL_BEGIN_NAMESPACE
 
-//! \brief constructor.
+//! \brief constructs.
 Container::Container(Boolean /* proto */) :
   m_base(0),
   m_execution_coordinator(0)
 {}
 
-//! \brief destructor.
+//! \brief destructs.
 Container::~Container()
 {
   for (auto fi = m_fields.begin(); fi != m_fields.end(); ++fi)
@@ -220,8 +216,21 @@ void Container::process_content_changed()
   }
 }
 
-//! \brief Processes change of field.
+//! \brief processes change of field.
 void Container::field_changed(const Field_info* /* field_info */)
 { process_content_changed(); }
+
+//! \brief clones & copies the container.
+Container* Container::copy()
+{
+  auto cont = clone();
+  for (auto source : m_fields) {
+    auto* field_info = source.first;
+    auto* source_field = source.second;
+    auto* target_field = cont->add_field(field_info);
+    target_field->delegate(source_field);
+  }
+  return cont;
+}
 
 SGAL_END_NAMESPACE

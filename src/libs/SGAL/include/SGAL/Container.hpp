@@ -90,7 +90,8 @@ public:
     LAST
   };
 
-  /*! Constructor. */
+  /*! Construct.
+   */
   Container(Boolean proto = false);
 
   /*! Destructor. */
@@ -99,6 +100,14 @@ public:
   /*! Clone the container.
    */
   virtual Container* clone() = 0;
+
+  /*! Clone the container; then, copy all fields from this container to the
+   * copy container.
+   * Notice that fields that are containers themselves not deeply-copied and so
+   * are members of array of containers.
+   * \return a copy of this container.
+   */
+  virtual Container* copy();
 
   /*! Initialize the node prototype.
    */
