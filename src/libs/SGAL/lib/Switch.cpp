@@ -137,10 +137,13 @@ void Switch::clean_bounding_sphere()
   }
 
   auto node = boost::dynamic_pointer_cast<Node>(get_choice());
-  if (node && node->is_dirty_bounding_sphere()) {
+  if (node) {
+    if (node->is_dirty_bounding_sphere()) node->clean_bounding_sphere();
     const auto& sb = node->get_bounding_sphere();
-    m_bounding_sphere.set_center(sb.get_center());
-    m_bounding_sphere.set_radius(sb.get_radius());
+    if (sb.get_radius() != 0) {
+      m_bounding_sphere.set_center(sb.get_center());
+      m_bounding_sphere.set_radius(sb.get_radius());
+    }
   }
 
   m_dirty_bounding_sphere = false;
