@@ -734,7 +734,7 @@ def print_get_tag_definition(out, class_name):
   print_line(out, "inline const String& %s::get_tag() const { return s_tag; }" % class_name)
 
 #! Print the include directives in the hpp
-def print_hpp_include_directives(out, library, derived_class_name):
+def print_hpp_include_directives(config, out, library, derived_class_name):
   hat = has_array_type(fields)
   print_line(out, '#include <string>')
   if (hat):
@@ -750,7 +750,7 @@ def print_hpp_include_directives(out, library, derived_class_name):
   print_line(out, '#include \"SGAL/{}.hpp\"'.format(derived_class_name))
   if 'SGAL' != library:
     print_empty_line(out)
-    print_line(out, '#include \"FPG/basic.hpp\"')
+    print_line(out, '#include \"{}/basic.hpp\"'.format(library))
 
 # Print additional public functions:
 def print_public_functions(config, out):
@@ -787,7 +787,7 @@ def generate_hpp(library, config, fields, out):
   print_line(out, '#ifndef {}_{}_HPP'.format(library, class_name.upper()))
   print_line(out, '#define {}_{}_HPP'.format(library, class_name.upper()))
   print_empty_line(out)
-  print_hpp_include_directives(out, library, derived_class_name)
+  print_hpp_include_directives(config, out, library, derived_class_name)
   print_empty_line(out)
   print_line(out, "SGAL_BEGIN_NAMESPACE")
   print_empty_line(out)
@@ -990,8 +990,9 @@ def print_constructor_definition(config, out, class_name, derived_class_name, fi
     if config.has_option('class', 'protected_data'):
       protected_data = ast.literal_eval(config.get('class', 'protected_data'))
       for datum in protected_data:
-        init = config.get(datum, 'initialization')
-        print_line(out, '{},'.format(init))
+        if config.has_option(datum, 'initialization'):
+          init = config.get(datum, 'initialization')
+          print_line(out, '{},'.format(init))
 
     for field in initializable_fields[:-1]:
       name = field['name']
