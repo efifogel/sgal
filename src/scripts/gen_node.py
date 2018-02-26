@@ -390,8 +390,14 @@ def print_forward_declarations(out, fields):
   print_empty_line(out)
 
 # Print typedef definitions of shared containers.
-def print_shared_typedefs(out, fields):
+def print_shared_typedefs(config, out, fields):
   shared_container_types = set()
+
+  if config.has_option('class', 'shared_types'):
+    types = ast.literal_eval(config.get('class', 'shared_types'))
+    for type in types:
+      shared_container_types.add(type.lower());
+
   for field in fields[:]:
     type = field['type']
     if type.startswith('Shared_'):
@@ -752,12 +758,25 @@ def print_hpp_include_directives(config, out, library, derived_class_name):
     print_empty_line(out)
     print_line(out, '#include \"{}/basic.hpp\"'.format(library))
 
-# Print additional public functions:
-def print_public_functions(config, out):
-  public_functions = {}
-  if config.has_option('class', 'public_functions'):
-    public_functions = ast.literal_eval(config.get('class', 'public_functions'))
-  for fnc in public_functions:
+# Print additional protected function declarations:
+def print_protected_function_declarations(config, out):
+  functions = {}
+  if not config.has_option('class', 'protected_functions'):
+    return;
+  functions = ast.literal_eval(config.get('class', 'protected_functions'))
+  print_function_declarations(config, out, functions)
+
+# Print additional public function declarations:
+def print_public_function_declarations(config, out):
+  functions = {}
+  if not config.has_option('class', 'public_functions'):
+    return;
+  functions = ast.literal_eval(config.get('class', 'public_functions'))
+  print_function_declarations(config, out, functions)
+
+# Print function decalarions:
+def print_function_declarations(config, out, functions):
+  for fnc in functions:
     desc = config.get(fnc, 'desc')
     signature = config.get(fnc, 'signature')
     print_line(out, '/* {}'.format(desc))
@@ -798,7 +817,7 @@ def generate_hpp(library, config, fields, out):
   increase_indent()
 
   print_field_enumeration(out, derived_class_name, fields)	# enumerations
-  print_shared_typedefs(out, fields)				# typedefs
+  print_shared_typedefs(config, out, fields)			# typedefs
   print_array_typedefs(out, fields)				# typedefs
 
   # Print misc. member function declarations:
@@ -828,7 +847,7 @@ def generate_hpp(library, config, fields, out):
     print_field_changed_declaration(out)
 
   # Print additional public functions:
-  print_public_functions(config, out)
+  print_public_function_declarations(config, out)
 
   decrease_indent()
   print_line(out, "protected:")
@@ -837,6 +856,9 @@ def generate_hpp(library, config, fields, out):
   print_protected_data_members(config, out)
   print_field_data_members(out, fields)
   print_get_tag_declaration(out)
+
+  # Print additional protected functions:
+  print_protected_function_declarations(config, out)
 
   decrease_indent()
   print_line(out, "private:")
