@@ -105,19 +105,23 @@ public:
 
   /*! Obtain the value member. */
   virtual Value_holder_base* get_value_holder() { return m_value_holder; }
+
+  /*! Delegate the value.
+   */
+  void delegate(Field* source);
 };
 
 #if (defined _MSC_VER)
 #pragma warning( pop )
 #endif
 
-/*! \brief obtains the field info. */
+//! \brief obtains the field info.
 inline const Field_info* Field::get_field_info() const { return m_field_info; }
 
-/*! \brief sets the blocked flag to ignore cascading. */
+//! \brief sets the blocked flag to ignore cascading.
 inline void Field::set_blocked(Boolean blocked) { m_blocked = blocked; }
 
-/*! \brief determines whether cascading is blocked. */
+//! \brief determines whether cascading is blocked.
 inline Boolean Field::is_blocked() const { return m_blocked; }
 
 SGAL_END_NAMESPACE

@@ -24,7 +24,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-//! \brief constructor.
+//! \brief constructs.
 Field::Field(Container* container, const Field_info* field_info) :
   m_container(container),
   m_field_info(field_info)
@@ -39,7 +39,7 @@ Field::Field(Container* container, const Field_info* field_info) :
   }
 };
 
-//! \brief destructor.
+//! \brief destructs.
 Field::~Field() { delete m_value_holder; };
 
 //! \brief connects this field to a given one.
@@ -60,8 +60,12 @@ void Field::disconnect(Field* field)
   m_connected_fields.remove(field);
 }
 
-/*! \brief propages the data from this field to the fields connected to this
- * field, generating a cascade of events effect.
+//! \brief delegates the value.
+void Field::delegate(Field* target)
+{ (target->get_value_holder())->delegate(*m_value_holder); }
+
+/*! \brief propagates the data from this field to the fields connected to this
+ * field, generating a cascading of events effect.
  */
 void Field::cascade()
 {
@@ -76,22 +80,19 @@ void Field::cascade()
 
   //! \todo Auto_lock auto_lock(&m_fields_cs);
 
-  Field_list::iterator fi;
   // Loop over the connected fields:
-  for (fi = m_connected_fields.begin(); fi != m_connected_fields.end(); ++fi) {
-    Field* connected_field = (*fi);
-
+  for (auto* connected_field : m_connected_fields) {
     // Continue the cascade into a connected field only if it is not blocked:
-    if (!connected_field->is_blocked()) {
-      // Detach the old field value from the container
-      if (m_field_info) m_field_info->detach(m_container);
+    if (connected_field->is_blocked()) continue;
 
-      // Set the connected field's value to this field's value:
-      (connected_field->get_value_holder())->delegate(*m_value_holder);
+    // Detach the old field value from the container
+    if (m_field_info) m_field_info->detach(m_container);
 
-      // Apply cascade on the connected field:
-      connected_field->cascade();
-    }
+    // Set the connected field's value to this field's value:
+    delegate(connected_field);
+
+    // Apply cascade on the connected field:
+    connected_field->cascade();
   }
 }
 
