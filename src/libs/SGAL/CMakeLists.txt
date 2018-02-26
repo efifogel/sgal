@@ -82,7 +82,7 @@ function(add_node name)
 	--output-lib-path ${GENERATED_LIB_DIR})
   set (GEN_NODE_DEPENDS
       ${SPECS_DIR}/${name}.cfg
-      ${SPECS_DIR}/${name}_fields_spec.txt
+      ${SPECS_DIR}/${name}_fields.txt
       ${GEN_NODE})
 
   add_custom_command(OUTPUT ${GEN_NODE_OUTPUT}
