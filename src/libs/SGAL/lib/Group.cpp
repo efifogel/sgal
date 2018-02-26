@@ -58,15 +58,13 @@ Group::Group(Boolean proto) :
   m_num_selection_ids(0),
   m_scene_graph(nullptr),
   m_dirty_childs(false),
+  m_dirty_other(false),
   m_bbox_center(s_def_bbox_center),
   m_bbox_size(s_def_bbox_size)
 {}
 
 //! \brief cleans the children in case they are dirty.
-void Group::clean_childs()
-{
-  m_dirty_childs = false;
-}
+void Group::clean_childs() { m_dirty_childs = false; }
 
 //! \brief destructor.
 Group::~Group()
@@ -96,6 +94,26 @@ Group::Shared_container Group::get_child(Uint index)
   return m_childs[index];
 }
 
+//! Set the children array.
+void Group::set_childs(Container_array& childs)
+{
+  //! \todo need to:
+  // 1. For each light add_light()
+  // 2. For each touch sensors add_touch_sensor()
+  // 3. If there are other nodes then,
+  // 3.1  for each register_observer()
+  // 3.2  field_changed(get_field_info(BOUNDING_SPHERE));
+  SGAL_error_msg("Not implemented yet!");
+  m_dirty_other = true;
+  m_childs = childs;
+}
+
+//! \brief obtains the (const) children array.
+const Group::Container_array& Group::get_childs() const { return m_childs; }
+
+//! \brief obtain the (non-const) children array.
+Group::Container_array& Group::get_childs() { return m_childs; }
+
 //! \brief adds a child to the sequence of children of the group.
 void Group::add_child(Shared_container node)
 {
@@ -104,11 +122,13 @@ void Group::add_child(Shared_container node)
   auto light = boost::dynamic_pointer_cast<Light>(node);
   if (light) {
     add_light(light);
+    m_dirty_other = true;
     return;
   }
   auto touch_sensor = boost::dynamic_pointer_cast<Touch_sensor>(node);
   if (touch_sensor) {
     add_touch_sensor(touch_sensor);
+    m_dirty_other = true;
     return;
   }
 
@@ -116,8 +136,8 @@ void Group::add_child(Shared_container node)
   const auto* field_info = get_field_info(BOUNDING_SPHERE);
   Observer observer(this, field_info);
   node->register_observer(observer);
-
   field_changed(field_info);
+  m_dirty_other = true;
 }
 
 //! \brief removes a given child from the sequence of children of the group.
@@ -255,8 +275,8 @@ void Group::isect(Isect_action* isect_action)
  */
 void Group::clean_bounding_sphere()
 {
-  m_dirty_bounding_sphere = false;
   if (m_dirty_childs) clean_childs();
+
   if (m_locked_bounding_sphere) {
     m_dirty_bounding_sphere = false;
     return;
@@ -280,6 +300,7 @@ void Group::clean_bounding_sphere()
   }
 
   m_bounding_sphere.set_around(spheres.begin(), spheres.end());
+  m_dirty_bounding_sphere = false;
 }
 
 //! \brief sets the attributes of the group.

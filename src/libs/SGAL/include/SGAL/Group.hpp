@@ -212,6 +212,19 @@ public:
    */
   Boolean is_visible() const;
 
+  /*! Set the children array.
+   * \param[in] childs the new children.
+   */
+  void set_childs(Container_array& childs);
+
+  /*! Obtain the (const) children array.
+   */
+  const Container_array& get_childs() const;
+
+  /*! Obtain the (non-const) children array.
+   */
+  Container_array& get_childs();
+
   /* Add a child to the array of children of the group.
    * Lights appear in front of the sequence followed by all the rest.
    * \param[in] node the child node to add.
@@ -314,6 +327,9 @@ protected:
 
   //! Indicates whether the children are dirty and must be cleaned.
   Boolean m_dirty_childs;
+
+  //! Indicates whether external fields are dirty and must be cleaned.
+  Boolean m_dirty_other;
 
   /*! Allocate the selection ids for this group.
    */
