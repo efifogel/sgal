@@ -114,6 +114,97 @@ public:
   /*! Clean the sphere bound of the lines. */
   virtual void clean_bounding_sphere();
 
+  /*! Obtain the coordinate array.
+   * \return the coordinate array.
+   */
+  virtual Shared_coord_array get_coord_array();
+
+  /*! Clean the coordinate array.
+   */
+  virtual void clean_coords();
+
+  /// \name Index-Array getters.
+  // The setters (in the base Geo_set) call respective virtual functions, so
+  // they doesn't need to be virtual as well.
+  //@{
+  /*! Obtain the coordinate indices.
+   * \return the coordinate indices.
+   */
+  virtual std::vector<Int32>& get_coord_indices();
+
+  /*! Obtain the normal indices.
+   * \return the normal indices.
+   */
+  virtual std::vector<Int32>& get_normal_indices();
+
+  /*! Obtain the color indices.
+   * \return the color indices.
+   */
+  virtual std::vector<Int32>& get_color_indices();
+
+  /*! Obtain the texture coordinate indices.
+   * \return the texture coordinate indices.
+   */
+  virtual std::vector<Int32>& get_tex_coord_indices();
+  //@}
+
+  /// \name Index-array cleaners
+  //@{
+  /*! Clean the coordinate indices array.
+   */
+  virtual void clean_coord_indices();
+
+  /*! Clean the normal indices array.
+   */
+  virtual void clean_normal_indices();
+
+  /*! Clean the color indices array.
+   */
+  virtual void clean_color_indices();
+
+  /*! Clean the texture coordinate indices array.
+   */
+  virtual void clean_tex_coord_indices();
+  //@}
+
+  /// \name Change Recators
+  //@{
+  /*! Respond to a change in the coordinate array.
+   * \param[in] field_info the information record of the field that caused
+   *            the change.
+   */
+  virtual void coord_content_changed(const Field_info* field_info = nullptr);
+
+  //! \todo add missing reactors.
+  //@}
+
+  /// \name Indices Change Reactors
+  //@{
+  /*! Respond to a change in the coordinate indices.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
+   */
+  virtual void coord_indices_changed(const Field_info* field_info = nullptr);
+
+  /*! Respond to a change in the normal indices.
+   * \param[in] field_info the information record of the field that caused
+   *            the change.
+   */
+  virtual void normal_indices_changed(const Field_info* field_info = nullptr);
+
+  /*! Respond to a change in the color indices.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
+   */
+  virtual void color_indices_changed(const Field_info* field_info = nullptr);
+
+  /*! Respond to a change in the texture-coordinate indices.
+   * \param[in] field_info the information record of the field that caused
+   *                       the change.
+   */
+  virtual void tex_coord_indices_changed(const Field_info* field_info = nullptr);
+  //@}
+
   /* Set the flag that indicates whether normals are bound per vertex
    * or per line.
    */
@@ -341,6 +432,23 @@ protected:
 
   static void (Indexed_line_set::*m_draws[SGAL_NUM_LI_DRAWS])();
   static Boolean m_draws_initialized;
+
+  //! Indicates whether the coordinate array has beeen invalidated.
+  Boolean m_dirty_coord_array;
+
+  //! Indicates whether the array of coordinate indices has beeen invalidated.
+  Boolean m_dirty_coord_indices;
+
+  //! Indicates whether the array of normal indices has beeen invalidated.
+  Boolean m_dirty_normal_indices;
+
+  //! Indicates whether the array of color indices has beeen invalidated.
+  Boolean m_dirty_color_indices;
+
+  /*! Indicates whether the array of texture coordinate indices has beeen
+   * invalidated.
+   */
+  Boolean m_dirty_tex_coord_indices;
 
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;

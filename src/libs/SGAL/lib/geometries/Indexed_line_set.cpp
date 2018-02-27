@@ -64,7 +64,12 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_has_texture(false),
   m_bb_is_pre_set(false),
   m_use_display_list(false),
-  m_display_list_id(-1)
+  m_display_list_id(-1),
+  m_dirty_coord_array(false),
+  m_dirty_coord_indices(false),
+  m_dirty_normal_indices(false),
+  m_dirty_color_indices(false),
+  m_dirty_tex_coord_indices(false)
 {
   m_primitive_type = PT_LINE_STRIPS;
 
@@ -529,7 +534,10 @@ void Indexed_line_set::set_color_per_vertex(Boolean color_per_vertex)
  */
 void Indexed_line_set::draw(Draw_action* action)
 {
-  Context* context = action->get_context();
+  if (m_dirty_coord_array) clean_coords();
+  if (m_dirty_coord_indices) clean_coord_indices();
+
+  auto* context = action->get_context();
   if (!m_elliminate_hiden) {
     context->draw_depth_mask(false);
     context->draw_depth_enable(false);
@@ -585,6 +593,9 @@ void Indexed_line_set::isect(Isect_action* /* action */) { }
 //! \brief cleans the sphere bound of the lines.
 void Indexed_line_set::clean_bounding_sphere()
 {
+  if (m_dirty_coord_array) clean_coords();
+  if (m_dirty_coord_indices) clean_coord_indices();
+
   if (!m_bb_is_pre_set && m_coord_array) {
     boost::shared_ptr<Coord_array_3d> coord_array =
       boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
@@ -654,6 +665,158 @@ Container_proto* Indexed_line_set::get_prototype()
 {
   if (!s_prototype) Indexed_line_set::init_prototype();
   return s_prototype;
+}
+
+//! \brief obtains the coordinate array.
+Indexed_line_set::Shared_coord_array Indexed_line_set::get_coord_array()
+{
+  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+                  std::cout << "Indexed_line_set::get_coord_array(): "
+                  << "name: " << get_name() << std::endl;);
+
+  if (m_dirty_coord_array) clean_coords();
+
+  return m_coord_array;
+}
+
+//! \brief responds to a change in the coordinate array.
+void Indexed_line_set::coord_content_changed(const Field_info* field_info)
+{
+  m_dirty_coord_array = false;
+  Geo_set::coord_content_changed(field_info);
+}
+
+//! \brief responds to a change in the coordinate indices.
+void Indexed_line_set::coord_indices_changed(const Field_info* field_info)
+{
+  m_dirty_coord_indices = false;
+  Geo_set::coord_indices_changed(field_info);
+}
+
+//! \brief responds to a change in the normal indices.
+void Indexed_line_set::normal_indices_changed(const Field_info* field_info)
+{
+  m_dirty_normal_indices = false;
+  Geo_set::normal_indices_changed(field_info);
+}
+
+//! \brief responds to a change in the color indices.
+void Indexed_line_set::color_indices_changed(const Field_info* field_info)
+{
+  m_dirty_color_indices = false;
+  Geo_set::color_indices_changed(field_info);
+}
+
+//! \brief responds to a change in the texture-coordinate index array.
+void Indexed_line_set::tex_coord_indices_changed(const Field_info* field_info)
+{
+  m_dirty_tex_coord_indices = false;
+  Geo_set::tex_coord_indices_changed(field_info);
+}
+
+//! \brief cleans the coordinate array.
+void Indexed_line_set::clean_coords()
+{
+  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+                  std::cout
+                  << "Indexed_line_set::clean_coords(): "
+                  << "name: " << get_name() << std::endl;);
+
+  coord_content_changed();
+}
+
+//////// Index-array getters ////////
+//! \brief obtains the coordinate indices.
+std::vector<Int32>& Indexed_line_set::get_coord_indices()
+{
+  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+                  std::cout
+                  << "Indexed_line_set::get_coord_indices(): "
+                  << "name: " << get_name() << std::endl;);
+
+  if (m_dirty_coord_indices) clean_coord_indices();
+  return Geo_set::get_coord_indices();
+}
+
+//! \brief obtains the normal indices.
+std::vector<Int32>& Indexed_line_set::get_normal_indices()
+{
+  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+                  std::cout
+                  << "Indexed_line_set::get_normal_indices(): "
+                  << "name: " << get_name() << std::endl;);
+
+  if (m_dirty_normal_indices) clean_normal_indices();
+  return Geo_set::get_normal_indices();
+}
+
+//! \brief obtains the color indices.
+std::vector<Int32>& Indexed_line_set::get_color_indices()
+{
+  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+                  std::cout
+                  << "Indexed_line_set::get_color_indices(): "
+                  << "name: " << get_name() << std::endl;);
+
+  if (m_dirty_color_indices) clean_color_indices();
+  return Geo_set::get_color_indices();
+}
+
+//! \brief obtains the texture coordinate indices.
+std::vector<Int32>& Indexed_line_set::get_tex_coord_indices()
+{
+  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+                  std::cout
+                  << "Indexed_line_set::get_tex_coord_indices(): "
+                  << "name: " << get_name() << std::endl;);
+
+  if (m_dirty_tex_coord_indices) clean_tex_coord_indices();
+  return Geo_set::get_tex_coord_indices();
+}
+
+//////// Index-array cleaners ////////
+//! \brief cleans the array of coordinate indices.
+void Indexed_line_set::clean_coord_indices()
+{
+  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+                  std::cout
+                  << "Indexed_line_set::clean_coord_indices(): "
+                  << "name: " << get_name() << std::endl;);
+
+  coord_indices_changed();
+}
+
+//! \brief cleans the array of normal indices.
+void Indexed_line_set::clean_normal_indices()
+{
+  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+                  std::cout
+                  << "Indexed_line_set::clean_normal_indices(): "
+                  << "name: " << get_name() << std::endl;);
+
+  normal_indices_changed();
+}
+
+//! \brief cleans the array of color indices.
+void Indexed_line_set::clean_color_indices()
+{
+  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+                  std::cout
+                  << "Indexed_line_set::clean_color_indices(): "
+                  << "name: " << get_name() << std::endl;);
+
+  color_indices_changed();
+}
+
+//! \brief cleans the array of texture indices.
+void Indexed_line_set::clean_tex_coord_indices()
+{
+  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+                  std::cout
+                  << "Indexed_line_set::clean_tex_coord_indices(): "
+                  << "name: " << get_name() << std::endl;);
+
+  tex_coord_indices_changed();
 }
 
 SGAL_END_NAMESPACE
