@@ -584,8 +584,9 @@ def print_field_setter_definition(out, inlining, class_name, field):
   else:
     raise Exception('Pass method {} is invalid!'.format(pass_method))
   print_line(out, "{", inc=True)
-  for item in contaminated.split():
-    print_line(out, 'm_dirty_{} = true;'.format(item))
+  if contaminated:
+    for item in contaminated.split(','):
+      print_line(out, 'm_dirty_{} = true;'.format(item))
   print_line(out, 'm_{} = {};'.format(name, name))
   print_line(out, "}", dec=True)
 
@@ -1044,7 +1045,7 @@ def print_destructor_definition(out, class_name, fields):
     print_line(out, "}", dec=True)
   print_empty_line(out)
 
-def print_init_prototype_definition(out, class_name, derived_class_name, fields):
+def print_init_prototype_definition(config, out, class_name, derived_class_name, fields):
   print_line(out, "//! \\brief initilalizes the container prototype.")
   print_line(out, "void %s::init_prototype()" % class_name)
   print_line(out, "{", inc=True)
@@ -1055,28 +1056,35 @@ def print_init_prototype_definition(out, class_name, derived_class_name, fields)
   print_empty_line(out)
   print_line(out, "// Add the field-info records to the prototype:")
   # print_line(out, "auto exec_func = static_cast<Execution_function>(&%s::structure_changed);" % class_name)
-  print_line(out, 'Execution_function exec_func;')
+  default_exec_function = ''
+  if config.has_option('class', 'execution_function'):
+    default_exec_function = config.get('class', 'execution_function')
+  if default_exec_function:
+    print_line(out, 'auto exec_func = static_cast<Execution_function>(&{});'.format(default_exec_function))
+
   for field in fields[:]:
     name = field['name']
     type = field['type']
     rule = field['rule']
     default_value = field['default-value']
-    execution_function = field['execution-function']
+    exec_function = field['execution-function']
     tmp = name.replace('_', ' ').title().replace(' ', '')
     field_name = tmp[:1].lower() + tmp[1:]
     general_type = get_general_type(type)
     field_handle_type = s_field_handle_type[general_type]
     print_empty_line(out)
     print_line(out, "// %s" % field_name)
-    if (execution_function):
-      print_line(out, 'exec_func = static_cast<Execution_function>(&{});'.format(execution_function))
+    if (exec_function):
+      print_line(out, 'auto {}_exec_func = static_cast<Execution_function>(&{});'.format(name, exec_function))
     print_line(out, 'auto {}_func = reinterpret_cast<{}>(&{}::{}_handle);'.format(name, field_handle_type, class_name, name))
     field_enum = name.upper()
     field_type = s_field_type[general_type]
     statement = 's_prototype->add_field_info(new {}({}, \"{}\",  Field_info::RULE_{}, {}_func'.format(field_type, field_enum, field_name, rule, name)
     if (default_value):
       statement = statement + ', s_def_{}'.format(name)
-    if (execution_function):
+    if (exec_function):
+      statement = statement + ', {}_exec_func'.format(name)
+    elif (default_exec_function):
       statement = statement + ', exec_func'
     statement = statement + '));'
     print_line(out, statement)
@@ -1102,8 +1110,8 @@ def print_get_prototype_definition(out):
   print_empty_line(out)
 
 #! Print the definitions of the prototype handling functions.
-def print_prototype_handling_definitions(out, class_name, derived_class_name, fields):
-  print_init_prototype_definition(out, class_name, derived_class_name, fields)
+def print_prototype_handling_definitions(config, out, class_name, derived_class_name, fields):
+  print_init_prototype_definition(config, out, class_name, derived_class_name, fields)
   print_empty_line(out)
   print_delete_prototype_definition(out)
   print_empty_line(out)
@@ -1331,7 +1339,7 @@ def generate_cpp(config, fields, out):
   print_static_member_definitions(out, class_name)
   print_constructor_definition(config, out, class_name, derived_class_name, fields)
   print_destructor_definition(out, class_name, fields)
-  print_prototype_handling_definitions(out, class_name, derived_class_name, fields)
+  print_prototype_handling_definitions(config, out, class_name, derived_class_name, fields)
   print_set_attributes_definition(out, class_name, derived_class_name, fields)
 
   # Print getters, setters, adders, and removers:
@@ -1439,7 +1447,7 @@ if __name__ == '__main__':
         type = vals[1]
         rule = vals[2]
         default_value = vals[3]
-        execution_function = vals[4]
+        exec_function = vals[4]
         contaminated = vals[5]
         desc = vals[6].strip('\"')
         # Assume that a type that starts with 'Shared' is either a shared
@@ -1452,7 +1460,7 @@ if __name__ == '__main__':
           'type': type,
           'rule': rule,
           'default-value': default_value,
-          'execution-function': execution_function,
+          'execution-function': exec_function,
           'contaminated': contaminated,
           'desc': desc,
           'geometry': False
