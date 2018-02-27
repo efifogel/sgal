@@ -1140,7 +1140,12 @@ def print_set_field_from_string(out, field):
   if not lexical_cast[0]:
     raise Exception('I do not know how to set field {} of type {} from a string!'.format(name, type))
   if not type.endswith('_array'):
-    print_line(out, 'set_{}(boost::lexical_cast<{}>(value));'.format(name, type))
+    # The source type, i.e., 'const String&' must be explicitly specified for
+    # certain types, e.g., Boolean; otherwise, in cases where the cast for the
+    # specific type is provided by the SGAL namespace, the lexical-cast for the
+    # type defined in the 'boost' namespace is used (instead of the one defined
+    # in the SGAL namespace.
+    print_line(out, 'set_{}(boost::lexical_cast<{}, const String&>(value));'.format(name, type))
     return
 
   print_line(out, 'std::stringstream ss(value);')
