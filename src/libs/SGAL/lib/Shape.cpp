@@ -72,6 +72,10 @@ const Char* Shape::s_cull_face_names[] = { "no", "front", "back", "both" };
 REGISTER_TO_FACTORY(Shape, "Shape");
 
 //! brief constructor.
+// The geometry is not a mandatory field, but the appearance is. In other words
+// every shape must have an appearance. If an appearance does not exists,
+// a default appearance is constructed (when the appearance field is retrieved).
+//
 Shape::Shape(Boolean proto) :
   Node(proto),
   m_draw_depth(true),
@@ -83,7 +87,7 @@ Shape::Shape(Boolean proto) :
   m_is_visible(s_def_is_visible),
   m_priority(0),
   m_draw_backface(false),
-  m_dirty_geometry(true),
+  m_dirty_geometry(false),
   m_dirty_appearance(true),
   m_dirty_appearance_fields(true),
   m_texture_map(Configuration::s_def_texture_map),
@@ -111,6 +115,14 @@ void Shape::set_appearance(Shared_appearance app)
   m_appearance = app;
   const auto* field_info = get_field_info(APPEARANCE);
   field_changed(field_info);
+}
+
+//! \brief obtains the appearance.
+Shape::Shared_appearance Shape::get_appearance()
+{
+  if (m_dirty_appearance) clean_appearance();
+  if (m_appearance && m_dirty_appearance_fields) clean_appearance_fields();
+  return m_appearance;
 }
 
 //! \brief adds a geometry to the shape at the end of the list.

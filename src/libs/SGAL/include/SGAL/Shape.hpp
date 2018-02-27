@@ -147,11 +147,6 @@ public:
    */
   virtual void write(Formatter* formatter);
 
-  /*! Obtain the (const) appearance.
-   * \return the appearance.
-   */
-  const Shared_appearance get_appearance() const;
-
   /*! Obtain the (non-const) appearance.
    * \return the appearance.
    */
@@ -429,70 +424,63 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Shape* Shape::prototype() { return new Shape(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Shape::clone() { return new Shape(); }
-
-/*! \brief obtains the (const) appearance. */
-inline const Shape::Shared_appearance Shape::get_appearance() const
-{ return m_appearance; }
-
-/*! \brief obtains the (non-const) appearance. */
-inline Shape::Shared_appearance Shape::get_appearance() { return m_appearance; }
 
 /*! \brief obtains the flag that indicates whether to draw into the depth
  * buffer.
  */
 inline Boolean Shape::get_draw_depth() const { return m_draw_depth; }
 
-/*! \brief sets the flag that indicates whether to draw into the depth buffer. */
+//! \brief sets the flag that indicates whether to draw into the depth buffer.
 inline void Shape::set_draw_depth(Boolean draw_depth)
 { m_draw_depth = draw_depth; }
 
-/*! \brief obtains the flag that indicates whether to test the depth buffer. */
+//! \brief obtains the flag that indicates whether to test the depth buffer.
 inline Boolean Shape::get_test_depth() const { return m_test_depth; }
 
-/*! \brief sets the flag that indicates whether to test the depth buffer. */
+//! \brief sets the flag that indicates whether to test the depth buffer.
 inline void Shape::set_test_depth(Boolean test_depth)
 { m_test_depth = test_depth; }
 
-/*! \brief obtains the depth function. */
+//! \brief obtains the depth function.
 inline Gfx::Depth_func Shape::get_depth_function() const
 { return m_depth_function; }
 
-/*! \brief sets the depth function. */
+//! \brief sets the depth function.
 inline void Shape::set_depth_function(Gfx::Depth_func depth_function)
 { m_depth_function = depth_function; }
 
-/*! \brief obtains the color mask. */
+// \brief obtains the color mask.
 inline Vector4ub Shape::get_color_mask() const { return m_color_mask; }
 
-/*! \brief sets the color mask. */
+//! \brief sets the color mask.
 inline void Shape::set_color_mask(Vector4ub color_mask)
 { m_color_mask = color_mask; }
 
-/*! \brief obtains the cull-face mode. */
+//! \brief obtains the cull-face mode.
 inline Gfx::Cull_face Shape::get_cull_face() const { return m_cull_face; }
 
-/*! \brief sets the cull-face mode. */
+//! \brief sets the cull-face mode.
 inline void Shape::set_cull_face(Gfx::Cull_face cull_face)
 { m_cull_face = cull_face; }
 
-/*! \brief determines whether the shape should be rendered. */
+//! \brief determines whether the shape should be rendered.
 inline Boolean Shape::is_visible() const { return m_is_visible; }
 
-/*! \brief obtains the rendering priority. */
+//! \brief obtains the rendering priority.
 inline Float Shape::get_priority() const { return m_priority; }
 
-/*! \brief sets the rendering priority. */
+//! \brief sets the rendering priority.
 inline void Shape::set_priority(Float priority) { m_priority = priority; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Shape::get_tag() const { return s_tag; }
 
-/*! \brief obtains the gepmetry. */
+//! \brief obtains the gepmetry.
 inline Shape::Shared_geometry Shape::get_geometry() const
 { return m_geometry; }
 
