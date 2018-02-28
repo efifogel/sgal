@@ -16,11 +16,11 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_IO_VECTOR2F_HPP
-#define SGAL_IO_VECTOR2F_HPP
+#ifndef SGAL_IO_ROTATION_HPP
+#define SGAL_IO_ROTATION_HPP
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Vector2f.hpp"
+#include "SGAL/Rotation.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -28,18 +28,18 @@ SGAL_BEGIN_NAMESPACE
  */
 
 template <typename OutputStream>
-inline OutputStream& operator<<(OutputStream& os, const Vector2f& vec)
+inline OutputStream& operator<<(OutputStream& os, const Rotation& rot)
 {
-  os << vec[0] << ", " << vec[1];
+  os << rot[0] << ", " << rot[1] << "," << rot[2] << rot[3];
   return os;
 }
 
 /*! Import
  */
 template <typename InputStream>
-inline InputStream& operator>>(InputStream& is, Vector2f& vec)
+inline InputStream& operator>>(InputStream& is, Rotation& rot)
 {
-  Float x, y;
+  Float x, y, z, a;
   is >> x;
   // This is used boost::lexical_cast among other.
   // boost::lexical_cast does not ignore whitespaces in the input (it unsets
@@ -49,7 +49,17 @@ inline InputStream& operator>>(InputStream& is, Vector2f& vec)
     is >> whitespace;
   }
   is >> y;
-  vec.set(x, y);
+  if ((is.flags() & std::ios_base::skipws) == 0) {
+    char whitespace;
+    is >> whitespace;
+  }
+  is >> z;
+  if ((is.flags() & std::ios_base::skipws) == 0) {
+    char whitespace;
+    is >> whitespace;
+  }
+  is >> a;
+  rot.set(x, y, z, a);
   return is;
 }
 

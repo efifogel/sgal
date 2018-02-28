@@ -29,7 +29,7 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
-#include "SGAL/lexical_cast_vector2f.hpp"
+#include "SGAL/io_vector2f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

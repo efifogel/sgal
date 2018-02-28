@@ -16,11 +16,11 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_IO_VECTOR2F_HPP
-#define SGAL_IO_VECTOR2F_HPP
+#ifndef SGAL_IO_VECTOR3F_HPP
+#define SGAL_IO_VECTOR3F_HPP
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Vector2f.hpp"
+#include "SGAL/Vector3f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -28,18 +28,18 @@ SGAL_BEGIN_NAMESPACE
  */
 
 template <typename OutputStream>
-inline OutputStream& operator<<(OutputStream& os, const Vector2f& vec)
+inline OutputStream& operator<<(OutputStream& os, const Vector3f& vec)
 {
-  os << vec[0] << ", " << vec[1];
+  os << vec[0] << ", " << vec[1] << "," << vec[2];
   return os;
 }
 
 /*! Import
  */
 template <typename InputStream>
-inline InputStream& operator>>(InputStream& is, Vector2f& vec)
+inline InputStream& operator>>(InputStream& is, Vector3f& vec)
 {
-  Float x, y;
+  Float x, y, z;
   is >> x;
   // This is used boost::lexical_cast among other.
   // boost::lexical_cast does not ignore whitespaces in the input (it unsets
@@ -49,7 +49,12 @@ inline InputStream& operator>>(InputStream& is, Vector2f& vec)
     is >> whitespace;
   }
   is >> y;
-  vec.set(x, y);
+  if ((is.flags() & std::ios_base::skipws) == 0) {
+    char whitespace;
+    is >> whitespace;
+  }
+  is >> z;
+  vec.set(x, y, z);
   return is;
 }
 

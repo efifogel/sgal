@@ -23,6 +23,8 @@
 #include <iostream>
 #include <sstream>
 
+#include <boost/lexical_cast.hpp>
+
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Coord_array_2d.hpp"
 #include "SGAL/Element.hpp"
@@ -31,7 +33,7 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/multi_istream_iterator.hpp"
-#include "SGAL/lexical_cast_vector2f.hpp"
+#include "SGAL/io_vector2f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

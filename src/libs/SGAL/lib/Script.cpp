@@ -38,8 +38,10 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Utilities.hpp"
-#include "SGAL/lexical_cast_vector2f.hpp"
-#include "SGAL/lexical_cast_boolean.hpp"
+#include "SGAL/io_vector2f.hpp"
+#include "SGAL/io_vector3f.hpp"
+#include "SGAL/io_rotation.hpp"
+#include "SGAL/to_boolean.hpp"
 #include "SGAL/multi_istream_iterator.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -938,12 +940,7 @@ void Script::add_field_info(Field_info::Field_rule rule,
   switch (type) {
    case Field_info::SF_BOOL:
     {
-      // Do not drop the explicit template parameter specialization type.
-      // If you do, the compiler will fail to find the correct spcialization
-      // (even though the type of 'value', that is 'const String&', is exactly
-      // he same as the indicated specialization type.
-      auto initial_value =
-        value.empty() ? false : boost::lexical_cast<Boolean, const String&>(value);
+      auto initial_value = value.empty() ? false : to_boolean(value);
       variant_field = initial_value;
       add_fi<Field_info::SF_BOOL>(id, name, rule, initial_value, exec_func,
                                   prototype);
@@ -989,7 +986,7 @@ void Script::add_field_info(Field_info::Field_rule rule,
 
    case Field_info::SF_VEC3F:
     {
-      Vector3f initial_value(value);
+      Vector3f initial_value(boost::lexical_cast<Vector3f>(value));
       variant_field = initial_value;
       add_fi<Field_info::SF_VEC3F>(id, name, rule, initial_value, exec_func,
                                    prototype);
@@ -998,7 +995,7 @@ void Script::add_field_info(Field_info::Field_rule rule,
 
    case Field_info::SF_COLOR:
     {
-      Vector3f initial_value(value);
+      Vector3f initial_value(boost::lexical_cast<Vector3f>(value));
       variant_field = initial_value;
       add_fi<Field_info::SF_COLOR>(id, name, rule, initial_value, exec_func,
                                    prototype);
@@ -1007,7 +1004,7 @@ void Script::add_field_info(Field_info::Field_rule rule,
 
    case Field_info::SF_ROTATION:
     {
-      Rotation initial_value(value);
+      Rotation initial_value(boost::lexical_cast<Rotation>(value));
       variant_field = initial_value;
       add_fi<Field_info::SF_ROTATION>(id, name, rule, initial_value, exec_func,
                                       prototype);
@@ -1040,8 +1037,7 @@ void Script::add_field_info(Field_info::Field_rule rule,
       std::stringstream ss(value);
       std::transform(std::istream_iterator<std::string>(ss),
                      std::istream_iterator<std::string>(),
-                     std::back_inserter(initial_value),
-                     boost::lexical_cast<Boolean, const String&>);
+                     std::back_inserter(initial_value), to_boolean);
       variant_field = initial_value;
       add_fi<Field_info::MF_BOOL>(id, name, rule, initial_value, exec_func,
                                   prototype);

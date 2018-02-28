@@ -49,7 +49,7 @@
 #include "SGAL/Stl_binary_formatter.hpp"
 #include "SGAL/Obj_formatter.hpp"
 #include "SGAL/Utilities.hpp"
-#include "SGAL/lexical_cast_vector2f.hpp"
+#include "SGAL/io_vector2f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

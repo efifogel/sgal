@@ -906,10 +906,11 @@ def print_cpp_include_directives(out, fields):
   include_algorithm = False
   include_std = False
   include_boost_algorithm_string = False
-  include_boost_lexical_case = False
+  include_boost_lexical_cast = False
   include_boost = False
 
   include_multi_istream_iterator = False;
+  include_to_boolean = False;
 
   field_names_shared_container = set()
   field_names_lexical_cast = set()
@@ -917,14 +918,15 @@ def print_cpp_include_directives(out, fields):
     type = field['type']
     if type == 'String':
       include_boost_algorithm_string = True
+    elif type == 'Boolean':
+      include_to_boolean = True;
     else:
       single_type = get_single_type(type)
       general_type = get_general_type(type)
       lexical_cast = s_field_lexical_cast[general_type]
       if lexical_cast[0]:
-        if not lexical_cast[1]:
-          include_boost_lexical_case = True
-        else:
+        include_boost_lexical_cast = True
+        if lexical_cast[1]:
           single_type = get_single_type(type)
           field_names_lexical_cast.add(single_type.lower())
           if type.endswith('_array'):
@@ -953,7 +955,7 @@ def print_cpp_include_directives(out, fields):
   if (include_boost_algorithm_string):
     print_line(out, '#include <boost/algorithm/string.hpp>')
     include_boost = True
-  if (include_boost_lexical_case):
+  if (include_boost_lexical_cast):
     print_line(out, '#include <boost/lexical_cast.hpp>')
     include_boost = True
   if (include_boost):
@@ -964,10 +966,12 @@ def print_cpp_include_directives(out, fields):
   print_line(out, "#include \"SGAL/Container_proto.hpp\"")
   print_line(out, "#include \"SGAL/Field_infos.hpp\"")
   print_line(out, "#include \"SGAL/Field.hpp\"")
+  if include_to_boolean:
+    print_line(out, "#include \"SGAL/to_boolean.hpp\"")
   if include_multi_istream_iterator:
     print_line(out, "#include \"SGAL/multi_istream_iterator.hpp\"")
   for item in set(field_names_lexical_cast):
-    print_line(out, '#include \"SGAL/lexical_cast_{}.hpp\"'.format(item))
+    print_line(out, '#include \"SGAL/io_{}.hpp\"'.format(item))
   for item in set(field_names_shared_container):
     if item in s_sgal_types:
       print_line(out, '#include \"SGAL/{}.hpp\"'.format(item))
@@ -1135,6 +1139,10 @@ def print_set_field_from_string(out, field):
     print_line(out, 'set_{}(boost::algorithm::trim_copy(value));'.format(name))
     return
 
+  if type == 'Boolean':
+    print_line(out, 'set_{}(to_boolean(value));'.format(name))
+    return
+
   general_type = get_general_type(type)
   lexical_cast = s_field_lexical_cast[general_type]
   if not lexical_cast[0]:
@@ -1145,7 +1153,7 @@ def print_set_field_from_string(out, field):
     # specific type is provided by the SGAL namespace, the lexical-cast for the
     # type defined in the 'boost' namespace is used (instead of the one defined
     # in the SGAL namespace.
-    print_line(out, 'set_{}(boost::lexical_cast<{}, const String&>(value));'.format(name, type))
+    print_line(out, 'set_{}(boost::lexical_cast<{}>(value));'.format(name, type))
     return
 
   print_line(out, 'std::stringstream ss(value);')
@@ -1154,7 +1162,7 @@ def print_set_field_from_string(out, field):
   statement = '''std::transform(multi_istream_iterator<{}>(ss),
                      multi_istream_iterator<{}>(),
                      std::back_inserter(m_{}),
-                     &boost::lexical_cast<{}, const String&>);'''.format(size, size, name, single_type)
+                     &boost::lexical_cast<{}>);'''.format(size, size, name, single_type)
   print_call(out, statement)
 
 #! Print the code that handles a multi-string attribute.
