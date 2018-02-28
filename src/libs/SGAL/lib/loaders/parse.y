@@ -119,7 +119,7 @@ SGAL_END_NAMESPACE
 %type <Group*> statements
 %type <Shared_container> statement
 %type <Shared_container> nodeStatement protoStatement routeStatement
-%type <Shared_container> node nodeContainer sfnodeValue
+%type <Shared_container> node sfnodeValue
 %type <Shared_container> proto externproto
 
 %type <Shared_string> NUMBER STRING_LITERAL
@@ -397,7 +397,16 @@ protoStatement  : proto { std::swap($$, $1); }
                 | externproto { std::swap($$, $1); }
                 ;
 
-proto           : K_PROTO nodeContainer "[" interfaceDeclarations "]" "{" statements "}" { std::swap($$, $2); /*! \todo */ }
+proto           : K_PROTO nodeTypeId "[" interfaceDeclarations "]" "{" statements "}"
+                {
+                  $$ = Container_factory::get_instance()->create(*$2);
+                  if (!$$) {
+                    error(yyla.location,
+                          std::string("Unknown node type \"") + *$2 + "\"");
+                    YYERROR;
+                  }
+                  /*! \todo */
+                }
                 ;
 
 interfaceDeclarations   : /* empty */ { /*! \todo */ }
@@ -442,7 +451,16 @@ interfaceDeclaration : restrictedInterfaceDeclaration { /*! \todo */ }
                 | K_EXPOSEDFIELD fieldType fieldId sfnodeValue { /*! \todo */ }
                 ;
 
-externproto     : K_EXTERNPROTO nodeContainer "[" externInterfaceDeclarations "]" URLList { std::swap($$, $2); /*! \todo */ }
+externproto     : K_EXTERNPROTO nodeTypeId "[" externInterfaceDeclarations "]" URLList
+                {
+                  $$ = Container_factory::get_instance()->create(*$2);
+                  if (!$$) {
+                    error(yyla.location,
+                          std::string("Unknown node type \"") + *$2 + "\"");
+                    YYERROR;
+                  }
+                  /*! \todo */
+                }
                 ;
 
 externInterfaceDeclarations     : /* empty */ { /*! \todo */ }
@@ -475,7 +493,7 @@ mfstringValue   : "[" sfstringValues "]" { std::swap($$, $2); }
 
 /* nodes: */
 
-nodeContainer   : nodeTypeId
+node            : nodeTypeId "{" nodeBody "}"
                 {
                   $$ = Container_factory::get_instance()->create(*$1);
                   if (!$$) {
@@ -483,12 +501,6 @@ nodeContainer   : nodeTypeId
                           std::string("Unknown node type \"") + *$1 + "\"");
                     YYERROR;
                   }
-                }
-                ;
-
-node            : nodeContainer "{" nodeBody "}"
-                {
-                  std::swap($$, $1);
                   try {
                     $$->set_attributes($3);
                   }
