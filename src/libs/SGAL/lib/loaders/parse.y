@@ -699,19 +699,20 @@ sfValues        : sfboolValues { std::swap($$, $1); }
 
 %%
 
+#include "Vrml_scanner.hpp"
+
 SGAL_BEGIN_NAMESPACE
 
 /*! */
 void Vrml_parser::error(const Vrml_parser::location_type& l,
                         const std::string& err_message)
 {
-  if (!maybe_binary_stl)
-    std::cerr << "Error at " << l << ": " << err_message << std::endl;
+  if (maybe_binary_stl) return;
+  std::cerr << scanner.get_filename() << ": " << "Error at " << l
+            << ": " << err_message << std::endl;
 }
 
 SGAL_END_NAMESPACE
-
-#include "Vrml_scanner.hpp"
 
 /*! */
 static SGAL::Vrml_parser::symbol_type yylex(SGAL::Vrml_scanner& scanner)

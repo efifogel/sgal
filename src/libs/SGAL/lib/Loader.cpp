@@ -228,6 +228,7 @@ Loader::Return_code Loader::load_stl(std::istream& is, Scene_graph* sg)
 Loader::Return_code Loader::parse(std::istream& its, Scene_graph* sg)
 {
   Vrml_scanner scanner(&its);
+  scanner.set_filename(m_filename);
   // scanner.set_debug(1);
 
   // Parse & export:
