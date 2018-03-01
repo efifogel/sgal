@@ -27,6 +27,13 @@
 
 SGAL_BEGIN_NAMESPACE
 
+//! \brief adds the container to a given scene.
+void Inline::add_to_scene(Scene_graph* sg)
+{
+  Group::add_to_scene(sg);
+  if (m_dirty_childs) clean_childs();
+}
+
 //! \brief cleans (generate) the children.
 void Inline::clean_childs()
 {
@@ -41,6 +48,7 @@ void Inline::clean_childs()
   }
 
   Vrml_scanner scanner(&is);
+  scanner.set_filename(filename);
   // scanner.set_debug(1);
   Boolean maybe_stl;
   Vrml_parser parser(scanner, m_scene_graph, this, maybe_stl);
