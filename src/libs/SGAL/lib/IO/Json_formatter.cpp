@@ -37,6 +37,7 @@
 #include "SGAL/Shape.hpp"
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Material.hpp"
+#include "SGAL/Geo_set.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Normal_array.hpp"
@@ -47,6 +48,8 @@
 #include "SGAL/Spot_light.hpp"
 #include "SGAL/Point_light.hpp"
 #include "SGAL/Directional_light.hpp"
+#include "SGAL/Indexed_face_set.hpp"
+#include "SGAL/Indexed_line_set.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -386,8 +389,8 @@ void Json_formatter::write(Shared_container container)
 
   auto shape = boost::dynamic_pointer_cast<Shape>(container);
   if (shape) {
-    single_object([&](){ export_mesh(shape); });
-
+    auto geometry = shape->get_geometry();
+    single_object([&](){ export_shape(shape); });
     return;
   }
 
@@ -554,8 +557,12 @@ void Json_formatter::export_light(Shared_light light)
 }
 
 //! \brief exports a mesh.
-void Json_formatter::export_mesh(Shared_shape shape)
+void Json_formatter::export_shape(Shared_shape shape)
 {
+  auto geometry = shape->get_geometry();
+  auto geo_set = boost::dynamic_pointer_cast<Geo_set>(geometry);
+  auto type = geo_set->get_primitive_type();
+
   auto uuid = boost::uuids::random_generator()();
   attribute("uuid", boost::uuids::to_string(uuid));
   const auto& name = shape->get_name();
@@ -565,8 +572,8 @@ void Json_formatter::export_mesh(Shared_shape shape)
   mat.make_identity();
   attribute_multiple("matrix", [&](){ export_matrix(mat); }, true);
   attribute("visible", shape->is_visible());
-  attribute("type", "Mesh");
-  auto geometry = shape->get_geometry();
+  if (is_mesh(type)) attribute("type", "Mesh");
+  else if (is_segments(type)) attribute("type", "LineSegments");
   auto git = m_geometries.find(geometry);
   if (git == m_geometries.end())
     std::cerr << "ERROR: Failed to find geometry!" << std::endl;
@@ -629,18 +636,19 @@ void Json_formatter::export_geometry_data(Shared_geometry geometry)
 {
   const auto& name = geometry->get_name();
   if (! name.empty()) attribute("name", name);
-  auto mesh_set = boost::dynamic_pointer_cast<Mesh_set>(geometry);
-  if (mesh_set) export_mesh_set_data(mesh_set);
+  auto geo_set = boost::dynamic_pointer_cast<Geo_set>(geometry);
+  if (geo_set) export_geo_set_data(geo_set);
 }
 
-//! \brief exports the data record of a Mesh item.
-void Json_formatter::export_mesh_set_data(Shared_mesh_set mesh_set)
+//! \brief exports the data record of a geometry-set item.
+void Json_formatter::export_geo_set_data(Shared_geo_set geo_set)
 {
   std::bitset<F_SIZE> flags;
 
-  auto type = mesh_set->get_primitive_type();
-  if ((type != Geo_set::PT_TRIANGLES) && (type != Geo_set::PT_QUADS)) {
-    std::cerr << "ERROR: general polygons are not supported!"
+  auto type = geo_set->get_primitive_type();
+  if (! is_mesh(type) && ! is_segments(type)) {
+    //! \todo throw
+    std::cerr << "ERROR: primitive type (" << type << ") not supported!"
               << std::endl;
     attribute_single("metadata",
                      [&]() {
@@ -652,11 +660,9 @@ void Json_formatter::export_mesh_set_data(Shared_mesh_set mesh_set)
   flags[F_IS_TRI] = (type == Geo_set::PT_QUADS);
 
   auto coord_array =
-    boost::dynamic_pointer_cast<Coord_array_3d>(mesh_set->get_coord_array());
-  const auto& indices = mesh_set->get_facet_coord_indices();
-  if (!coord_array || coord_array->empty() ||
-      mesh_set->empty_facet_indices(indices))
-  {
+    boost::dynamic_pointer_cast<Coord_array_3d>(geo_set->get_coord_array());
+
+  if (!coord_array || coord_array->empty()) {
     attribute_single("metadata",
                      [&]() {
                        attribute("version", "1.0");
@@ -665,13 +671,27 @@ void Json_formatter::export_mesh_set_data(Shared_mesh_set mesh_set)
     return;
   }
 
-  auto normal_array = mesh_set->get_normal_array();
+  if (is_mesh(type)) {
+    Shared_mesh_set mesh_set = boost::dynamic_pointer_cast<Mesh_set>(geo_set);
+    SGAL_assertion(mesh_set);
+    const auto& indices = mesh_set->get_facet_coord_indices();
+    if (mesh_set->empty_facet_indices(indices)) {
+      attribute_single("metadata",
+                       [&]() {
+                         attribute("version", "1.0");
+                         attribute("vertices", 0);
+                       });
+      return;
+    }
+  }
+
+  auto normal_array = geo_set->get_normal_array();
   auto has_normals = normal_array && ! normal_array->empty();
 
-  auto color_array = mesh_set->get_color_array();
+  auto color_array = geo_set->get_color_array();
   auto has_colors = color_array && ! color_array->empty();
 
-  auto tex_coord_array = mesh_set->get_tex_coord_array();
+  auto tex_coord_array = geo_set->get_tex_coord_array();
   auto tex_coord_array_2d =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(tex_coord_array);
   auto has_uvs = tex_coord_array_2d && ! tex_coord_array_2d->empty();
@@ -686,7 +706,10 @@ void Json_formatter::export_mesh_set_data(Shared_mesh_set mesh_set)
                        attribute("colors", color_array->size());
                      if (has_uvs)
                        attribute ("uvs", tex_coord_array_2d->size());
-                     attribute("faces", mesh_set->get_num_primitives());
+                     if (is_mesh(type))
+                       attribute("faces", geo_set->get_num_primitives());
+                     else if (is_segments(type))
+                       attribute("lineStripts", geo_set->get_num_primitives());
                    });
 
   // Export vertices:
@@ -722,12 +745,16 @@ void Json_formatter::export_mesh_set_data(Shared_mesh_set mesh_set)
                            }, true);
                        }, true);
 
-  // We do not use the has_material option.
+  // If the geometry represents lines there are no faces to export.
+  if (is_segments(type)) return;
+  Shared_mesh_set mesh_set = boost::dynamic_pointer_cast<Mesh_set>(geo_set);
+  SGAL_assertion(mesh_set);
 
+  // We do not use the has_material option.
   flags[F_HAS_UVS] = has_uvs;
 
   if (has_normals) {
-    switch (mesh_set->get_normal_attachment()) {
+    switch (geo_set->get_normal_attachment()) {
      case Geo_set::AT_PER_VERTEX: flags[F_FACE_VERTEX_NORMAL] = 1; break;
      case Geo_set::AT_PER_PRIMITIVE: flags[F_FACE_NORMAL] = 1; break;
      case Geo_set::AT_PER_MESH:
@@ -736,7 +763,7 @@ void Json_formatter::export_mesh_set_data(Shared_mesh_set mesh_set)
   }
 
   if (has_colors) {
-    switch (mesh_set->get_color_attachment()) {
+    switch (geo_set->get_color_attachment()) {
      case Geo_set::AT_PER_VERTEX: flags[F_FACE_VERTEX_COLOR] = 1; break;
      case Geo_set::AT_PER_PRIMITIVE: flags[F_FACE_COLOR] = 1; break;
      case Geo_set::AT_PER_MESH: flags[F_FACE_COLOR] = 1; break;

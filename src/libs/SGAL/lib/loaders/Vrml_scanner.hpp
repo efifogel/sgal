@@ -37,6 +37,16 @@ public:
   /*! */
   Vrml_parser::symbol_type mylex();
 
+  /*! Set the filename.
+   * Used when generating error messages.
+   */
+  void set_filename(const std::string& name) { filename = name; }
+
+  /*! Obtain the filename.
+   * Used when generating error messages.
+   */
+  const std::string& get_filename() const { return filename; }
+
   /*! Push the current start condition onto the top of the start condition
    * stack and switches to new_state.
    */
@@ -48,6 +58,7 @@ public:
 
 private:
   Vrml_parser::location_type loc;
+  std::string filename;
 
   /*! */
   void comment_to_eol(void);

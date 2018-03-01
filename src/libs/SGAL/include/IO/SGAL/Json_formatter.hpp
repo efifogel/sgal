@@ -34,6 +34,7 @@
 #include "SGAL/Text_formatter.hpp"
 #include "SGAL/Matrix4f.hpp"
 #include "SGAL/Indices_types.hpp"
+#include "SGAL/Geo_set.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -41,8 +42,9 @@ class Container;
 class Group;
 class Shape;
 class Geometry;
-class Appearance;
+class Geo_set;
 class Mesh_set;
+class Appearance;
 class Matrix4f;
 class Vector3f;
 class Vector2f;
@@ -66,6 +68,7 @@ public:
   typedef boost::shared_ptr<Shape>                  Shared_shape;
   typedef boost::shared_ptr<Geometry>               Shared_geometry;
   typedef boost::shared_ptr<Appearance>             Shared_apperance;
+  typedef boost::shared_ptr<Geo_set>                Shared_geo_set;
   typedef boost::shared_ptr<Mesh_set>               Shared_mesh_set;
   typedef boost::shared_ptr<Matrix4f>               Shared_matrix4f;
   typedef boost::shared_ptr<Light>                  Shared_light;
@@ -168,6 +171,14 @@ public:
    */
   void quad_facet(Shared_mesh_set mesh_set, size_t i);
   //@}
+
+  /*! Indicate whether the geometry represents a supported mesh type.
+   */
+  bool is_mesh(Geo_set::Primitive_type type);
+
+  /*! Indicate whether the geometry represents a supported type of segment.
+   */
+  bool is_segments(Geo_set::Primitive_type type);
 
 private:
   /*! A utility strcture used when dispatching the function that exports
@@ -326,9 +337,9 @@ private:
    */
   void export_geometry_data(Shared_geometry geometry);
 
-  /*! Export the data record of a Mesh_set item.
+  /*! Export the data record of a geometry-set item.
    */
-  void export_mesh_set_data(Shared_mesh_set mesh_set);
+  void export_geo_set_data(Shared_geo_set geo_set);
 
   /*! Export the camera.
    */
@@ -342,9 +353,9 @@ private:
    */
   void export_light(Shared_light light);
 
-  /*! Export a mesh.
+  /*! Export a shape.
    */
-  void export_mesh(Shared_shape shape);
+  void export_shape(Shared_shape shape);
 
   /*! Export a matrix.
    * \param[in] the matrix.
@@ -370,6 +381,14 @@ private:
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief indicatess whether the geometry represents a supported mesh type.
+inline bool Json_formatter::is_mesh(Geo_set::Primitive_type type)
+{ return ((Geo_set::PT_TRIANGLES == type) || (Geo_set::PT_QUADS == type)); }
+
+//! \brief indicates whether the geometry represents a supported type of segment.
+inline bool Json_formatter::is_segments(Geo_set::Primitive_type type)
+{ return (type == Geo_set::PT_LINE_STRIPS); }
 
 //! \brief sets the bounding sphere of the scene.
 inline void Json_formatter::set_bounding_sphere(const Bounding_sphere* bs)
