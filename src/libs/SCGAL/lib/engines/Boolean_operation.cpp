@@ -44,7 +44,6 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Field.hpp"
-#include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Epec_polyhedron.hpp"
 
@@ -295,13 +294,6 @@ Container_proto* Boolean_operation::get_prototype()
 {
   if (!s_prototype) Boolean_operation::init_prototype();
   return s_prototype;
-}
-
-//! \brief writes this container.
-void Boolean_operation::write(Formatter* formatter)
-{
-  Vrml_formatter* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
-  if (vrml_formatter) Node::write(formatter);
 }
 
 SGAL_END_NAMESPACE

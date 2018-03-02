@@ -114,11 +114,6 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Export this container.
-   * \param[in] formatter the formatter to use for exporting; e.g., VRML.
-   */
-  virtual void write(Formatter* formatter);
-
   /*! triggers the execution of the engine as a response to change in one
    * of the input fields.
    */
