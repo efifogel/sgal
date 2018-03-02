@@ -38,11 +38,11 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Utilities.hpp"
+#include "SGAL/multi_istream_iterator.hpp"
 #include "SGAL/io_vector2f.hpp"
 #include "SGAL/io_vector3f.hpp"
 #include "SGAL/io_rotation.hpp"
 #include "SGAL/to_boolean.hpp"
-#include "SGAL/multi_istream_iterator.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -977,7 +977,8 @@ void Script::add_field_info(Field_info::Field_rule rule,
 
    case Field_info::SF_VEC2F:
     {
-      Vector2f initial_value(boost::lexical_cast<Vector2f>(value));
+      Vector2f initial_value;
+      if (! value.empty()) initial_value = boost::lexical_cast<Vector2f>(value);
       variant_field = initial_value;
       add_fi<Field_info::SF_VEC2F>(id, name, rule, initial_value, exec_func,
                                    prototype);
@@ -986,7 +987,8 @@ void Script::add_field_info(Field_info::Field_rule rule,
 
    case Field_info::SF_VEC3F:
     {
-      Vector3f initial_value(boost::lexical_cast<Vector3f>(value));
+      Vector3f initial_value;
+      if (! value.empty()) initial_value = boost::lexical_cast<Vector3f>(value);
       variant_field = initial_value;
       add_fi<Field_info::SF_VEC3F>(id, name, rule, initial_value, exec_func,
                                    prototype);
@@ -995,7 +997,8 @@ void Script::add_field_info(Field_info::Field_rule rule,
 
    case Field_info::SF_COLOR:
     {
-      Vector3f initial_value(boost::lexical_cast<Vector3f>(value));
+      Vector3f initial_value;
+      if (! value.empty()) initial_value = boost::lexical_cast<Vector3f>(value);
       variant_field = initial_value;
       add_fi<Field_info::SF_COLOR>(id, name, rule, initial_value, exec_func,
                                    prototype);
@@ -1004,7 +1007,8 @@ void Script::add_field_info(Field_info::Field_rule rule,
 
    case Field_info::SF_ROTATION:
     {
-      Rotation initial_value(boost::lexical_cast<Rotation>(value));
+      Rotation initial_value;
+      if (! value.empty()) initial_value = boost::lexical_cast<Rotation>(value);
       variant_field = initial_value;
       add_fi<Field_info::SF_ROTATION>(id, name, rule, initial_value, exec_func,
                                       prototype);
