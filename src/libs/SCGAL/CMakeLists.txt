@@ -155,8 +155,6 @@ include_directories(../SGAL/include/utilities)
 
 #Add defines
 add_definitions(-DSGAL_SCGAL_SOURCE)
-add_definitions(-DGL2PSDLL)
-add_definitions(-DSGAL_LIB)
 
 if (WIN32)
   add_definitions(/wd4251)
