@@ -92,60 +92,60 @@ SGAL_BEGIN_NAMESPACE
 // void scgal_init()
 SGAL_SCGAL_DECL void scgal_init()
 {
-  Container_factory::get_instance()->doregister(Boolean_operation::prototype());
-  Container_factory::get_instance()->doregister(Exact_coord_minkowski::prototype());
-  Container_factory::get_instance()->doregister(Transformer_with_epec_coords::prototype());
-  Container_factory::get_instance()->doregister(Triangulation_geo::prototype());
+  REGISTER_OBJECT(Boolean_operation);
+  REGISTER_OBJECT(Exact_coord_minkowski);
+  REGISTER_OBJECT(Transformer_with_epec_coords);
+  REGISTER_OBJECT(Triangulation_geo);
 #if defined(SGAL_USE_ENV)
-  Container_factory::get_instance()->doregister(Lower_envelope_tri_geo::prototype());
-  Container_factory::get_instance()->doregister(Lower_envelope_sphere_geo::prototype());
-  Container_factory::get_instance()->doregister(Lower_envelope_plane_geo::prototype());
+  REGISTER_OBJECT(Lower_envelope_tri_geo);
+  REGISTER_OBJECT(Lower_envelope_sphere_geo);
+  REGISTER_OBJECT(Lower_envelope_plane_geo);
 #endif
 #if defined(SGAL_USE_CGM)
-  Container_factory::get_instance()->doregister(Cubical_gaussian_map_geo::prototype());
+  REGISTER_OBJECT(Cubical_gaussian_map_geo);
 #endif
 #if defined(SGAL_USE_LTS)
-  Container_factory::get_instance()->doregister(Lines_through_segments_geo::prototype());
+  REGISTER_OBJECT(Lines_through_segments_geo);
 #endif
 #if defined(SGAL_USE_SGM)
-  Container_factory::get_instance()->doregister(Spherical_gaussian_map_geo::prototype());
-  Container_factory::get_instance()->doregister(Spherical_gaussian_map_colored_geo::prototype());
-  Container_factory::get_instance()->doregister(Spherical_gaussian_map_marked_geo::prototype());
-  Container_factory::get_instance()->doregister(Assembly::prototype());
-  Container_factory::get_instance()->doregister(Assembly_part::prototype());
+  REGISTER_OBJECT(Spherical_gaussian_map_geo);
+  REGISTER_OBJECT(Spherical_gaussian_map_colored_geo);
+  REGISTER_OBJECT(Spherical_gaussian_map_marked_geo);
+  REGISTER_OBJECT(Assembly);
+  REGISTER_OBJECT(Assembly_part);
 #endif
 #if defined(SGAL_USE_AOT)
-  Container_factory::get_instance()->doregister(Arrangement_on_torus_geo::prototype());
+  REGISTER_OBJECT(Arrangement_on_torus_geo);
 #endif
 #if defined(SGAL_USE_AOS)
-  Container_factory::get_instance()->doregister(Arrangement_on_sphere_geo::prototype());
-  Container_factory::get_instance()->doregister(Arrangement_on_sphere_marked_geo::prototype());
-  Container_factory::get_instance()->doregister(Arrangement_on_sphere_overlay_geo::prototype());
-  Container_factory::get_instance()->doregister(Arrangement_on_sphere_sim_geo::prototype());
+  REGISTER_OBJECT(Arrangement_on_sphere_geo);
+  REGISTER_OBJECT(Arrangement_on_sphere_marked_geo);
+  REGISTER_OBJECT(Arrangement_on_sphere_overlay_geo);
+  REGISTER_OBJECT(Arrangement_on_sphere_sim_geo);
 // Ignore in Debug mode, cause is_valid() on the sphere does not compile
 #if defined(NDEBUG)
-  Container_factory::get_instance()->doregister(Polygon_set_on_sphere_geo::prototype());
+  REGISTER_OBJECT(Polygon_set_on_sphere_geo);
 #endif
 #endif
 #if defined(SGAL_USE_POS)
-  Container_factory::get_instance()->doregister(Arrangement_of_polygeodesics_on_sphere_geo::prototype());
+  REGISTER_OBJECT(Arrangement_of_polygeodesics_on_sphere_geo);
 #endif
 #if defined(SGAL_USE_VOS)
-  Container_factory::get_instance()->doregister(Voronoi_diagram_on_sphere_geo::prototype());
-  Container_factory::get_instance()->doregister(Power_diagram_on_sphere_geo::prototype());
+  REGISTER_OBJECT(Voronoi_diagram_on_sphere_geo);
+  REGISTER_OBJECT(Power_diagram_on_sphere_geo);
 #endif
 #if defined(SGAL_USE_NEF)
-  Container_factory::get_instance()->doregister(Exact_nef_polyhedron::prototype());
+  REGISTER_OBJECT(Exact_nef_polyhedron);
 #if defined(SGAL_USE_NGM)
-  Container_factory::get_instance()->doregister(Nef_gaussian_map_geo::prototype());
+  REGISTER_OBJECT(Nef_gaussian_map_geo);
 #endif
 #endif
 #if defined(SGAL_USE_QUADRIC)
-  Container_factory::get_instance()->doregister(Quadric_geo::prototype());
-  Container_factory::get_instance()->doregister(Arrangement_on_quadric_geo::prototype());
+  REGISTER_OBJECT(Quadric_geo);
+  REGISTER_OBJECT(Arrangement_on_quadric_geo);
 #endif
 #if defined(SGAL_USE_SSC)
-  Container_factory::get_instance()->doregister(Smallest_stabbing_cube::prototype());
+  REGISTER_OBJECT(Smallest_stabbing_cube);
 #endif
 }
 
