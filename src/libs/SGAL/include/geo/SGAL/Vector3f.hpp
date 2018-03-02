@@ -22,8 +22,6 @@
 /*! \file
  */
 
-#include <iostream>
-#include <sstream>
 #include <string>
 
 #include "SGAL/basic.hpp"
@@ -457,22 +455,6 @@ inline Vector3f operator*(const Float f, const Vector3f v)
 }
 
 #endif
-
-//! \brief exporter.
-inline std::ostream& operator<<(std::ostream& os, const Vector3f& vec)
-{
-  os << vec[0] << ", " << vec[1] << ", " << vec[2];
-  return os;
-}
-
-//! \brief importer.
-inline std::istream& operator>>(std::istream& in, Vector3f& vec)
-{
-  Float x, y, z;
-  in >> x >> y >> z;
-  vec.set(x, y, z);
-  return in;
-}
 
 SGAL_END_NAMESPACE
 

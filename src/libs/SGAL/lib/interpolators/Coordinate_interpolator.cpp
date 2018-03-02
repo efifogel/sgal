@@ -28,6 +28,7 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Utilities.hpp"
+#include "SGAL/io_vector3f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

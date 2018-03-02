@@ -31,7 +31,6 @@
 #define SGAL_BOUNDING_SPHERE_HPP
 
 #include <vector>
-#include <iostream>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector3f.hpp"
@@ -225,13 +224,6 @@ inline Bounding_sphere& Bounding_sphere::operator=(const Bounding_sphere& s)
   m_center = s.get_center();
   m_radius = s.get_radius();
   return *this;
-}
-
-//! \brief exports the bounding sphere to an output stream.
-inline std::ostream& operator<<(std::ostream& os, const Bounding_sphere& sb)
-{
-  os << sb.get_center() << ", " << sb.get_radius();
-  return os;
 }
 
 SGAL_END_NAMESPACE

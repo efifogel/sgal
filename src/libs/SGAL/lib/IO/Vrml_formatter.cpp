@@ -26,6 +26,7 @@
 #include "SGAL/Route.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Field_info.hpp"
+#include "SGAL/io_bounding_sphere.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
