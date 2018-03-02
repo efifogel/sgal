@@ -141,7 +141,7 @@ SGAL_BEGIN_NAMESPACE
 
 Container_factory* Container_factory::m_instance = 0;
 
-/*! Returns a pointer to the factory and makes sure only one instance exits */
+//! \brief obtains a pointer to the factory and ensures only one instance exits.
 Container_factory* Container_factory::get_instance()
 {
   if (!m_instance) {
@@ -151,14 +151,14 @@ Container_factory* Container_factory::get_instance()
   return m_instance;
 }
 
-/*! \brief registers a container to the factory. */
-void Container_factory::doregister(Container* container)
+//! \brief registers a container to the factory.
+void Container_factory::do_register(Container* container)
 {
   container->init_prototype();
   m_map[container->get_tag()] = container;
 }
 
-/*! \brief creates a container according to the type. */
+//! \brief creates a container according to the type.
 Shared_container Container_factory::create(const std::string& type)
 {
   Cont_iter iter = m_map.find(type);

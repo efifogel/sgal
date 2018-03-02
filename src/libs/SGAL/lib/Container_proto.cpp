@@ -23,6 +23,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_info.hpp"
+#include "SGAL/Element.hpp"
 #include "SGAL/Trace.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -136,6 +137,11 @@ Container_proto::ids_end(const Container_proto* prototype) const
 {
   while (prototype->m_ancestor != nullptr) prototype = prototype->m_ancestor;
   return Id_const_iterator(prototype, prototype->field_info_ids_end());
+}
+
+//! \brief sets all field info records of a prototype container.
+void Container_proto::set_attributes(Element* element)
+{
 }
 
 #if 0

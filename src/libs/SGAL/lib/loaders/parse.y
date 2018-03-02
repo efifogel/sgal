@@ -59,6 +59,8 @@
 #include "SGAL/Shape.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Attribute_error.hpp"
+#include "SGAL/Proto.hpp"
+#include "SGAL/Container_proto.hpp"
 #ifdef SGAL_USE_V8
   #include "SGAL/Script.hpp"
 #endif
@@ -138,6 +140,7 @@ SGAL_END_NAMESPACE
 %type <Element*> scriptBody
 %type <Element*> scriptBodyElement
 %type <Element*> restrictedInterfaceDeclaration
+%type <Element*> interfaceDeclaration interfaceDeclarations
 
 %type <Vector3f> normal
 %type <Vector3f> vertex
@@ -399,18 +402,26 @@ protoStatement  : proto { std::swap($$, $1); }
 
 proto           : K_PROTO nodeTypeId "[" interfaceDeclarations "]" "{" statements "}"
                 {
-                  $$ = Container_factory::get_instance()->create(*$2);
-                  if (!$$) {
-                    error(yyla.location,
-                          std::string("Unknown node type \"") + *$2 + "\"");
-                    YYERROR;
-                  }
+                  auto proto_container = Proto::prototype();
+                  SGAL_assertion(proto_container);
+                  proto_container->set_tag(*$2);
+                  auto* factory = Container_factory::get_instance();
+                  auto* prototype = new Container_proto();
+                  SGAL_assertion(prototype);
+                  prototype->set_attributes($4);
+                  proto_container->set_prototype(prototype);
+                  factory->do_register(proto_container);
+
                   /*! \todo */
                 }
                 ;
 
-interfaceDeclarations   : /* empty */ { /*! \todo */ }
-                | interfaceDeclarations interfaceDeclaration { /*! \todo */ }
+interfaceDeclarations : /* empty */ { $$ = new Element; }
+                | interfaceDeclarations interfaceDeclaration
+                {
+                  std::swap($$, $1);
+                  $$->splice(*$2);
+                }
                 ;
 
 restrictedInterfaceDeclaration : K_EVENTIN fieldType eventInId
@@ -445,10 +456,28 @@ restrictedInterfaceDeclaration : K_EVENTIN fieldType eventInId
                 }
                 ;
 
-interfaceDeclaration : restrictedInterfaceDeclaration { /*! \todo */ }
-                | K_EXPOSEDFIELD fieldType fieldId fieldValue { /*! \todo */ }
-                | K_EXPOSEDFIELD fieldType fieldId mfstringValue { /*! \todo */ }
-                | K_EXPOSEDFIELD fieldType fieldId sfnodeValue { /*! \todo */ }
+interfaceDeclaration : restrictedInterfaceDeclaration { std::swap($$, $1); }
+                | K_EXPOSEDFIELD fieldType fieldId fieldValue
+                {
+                  $$ = new Element;
+                  Field_attr
+                    attr($3, std::make_tuple(Field_info::RULE_EXPOSED_FIELD,
+                                             $2, $4));
+                  $$->add_attribute(attr);
+                }
+                | K_EXPOSEDFIELD fieldType fieldId mfstringValue
+                {
+                  $$ = new Element;
+                  Field_multi_str_attr
+                    attr($3, std::make_tuple(Field_info::RULE_EXPOSED_FIELD,
+                                             $2, $4));
+                  $$->add_attribute(attr);
+                }
+                | K_EXPOSEDFIELD fieldType fieldId sfnodeValue
+                {
+                  $$ = new Element;
+                  SGAL_error_msg("Not implemented!");
+                }
                 ;
 
 externproto     : K_EXTERNPROTO nodeTypeId "[" externInterfaceDeclarations "]" URLList

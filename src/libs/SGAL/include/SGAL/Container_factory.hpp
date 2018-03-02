@@ -28,24 +28,26 @@
 SGAL_BEGIN_NAMESPACE
 
 class Container;
+class Container_proto;
 
 #if !defined (SGAL_LIB)
 #define REGISTER_TO_FACTORY(class_name, name)                         \
 struct Reg_##class_name {                                             \
   Reg_##class_name() {                                                \
     Container_factory* factory = Container_factory::get_instance();   \
-    factory->doregister(class_name::prototype());                     \
+    factory->do_register(class_name::prototype());                     \
   }                                                                   \
   virtual ~Reg_##class_name() {}                                      \
 } instance_##class_name;
 
-#define REGISTER_OBJECT(className)
+#define REGISTER_OBJECT(className) \
+  Container_factory::get_instance()->do_register(className::prototype())
 #else
 
 #define REGISTER_TO_FACTORY(class_name, name)
 
 #define REGISTER_OBJECT(class_name) \
-  doregister(class_name::prototype());
+  do_register(class_name::prototype());
 
 #endif
 
@@ -59,11 +61,13 @@ class SGAL_SGAL_DECL Container_factory {
 public:
   typedef boost::shared_ptr<Container>            Shared_container;
 
-  /*! Obtain the factory singletone. */
+  /*! Obtain the factory singletone.
+   */
   static Container_factory* get_instance();
 
-  /*! Register the given container type. */
-  void doregister(Container* container);
+  /*! Register the given container type.
+   */
+  void do_register(Container* container);
 
   /*! Create a clone of a container,
    * \param type the type of the container to be created.

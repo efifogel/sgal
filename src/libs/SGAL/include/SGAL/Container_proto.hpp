@@ -44,6 +44,7 @@
 SGAL_BEGIN_NAMESPACE
 
 class Field_info;
+class Element;
 
 #if (defined _MSC_VER)
 #pragma warning( push )
@@ -173,6 +174,10 @@ public:
    * \return The ancestor
    */
   const Container_proto* get_ancestor() const;
+
+  /*! Set all field info records of a prototype container.
+   */
+  void set_attributes(Element* element);
 
 private:
   /*! A search structure for field-infos by field-info ids */
