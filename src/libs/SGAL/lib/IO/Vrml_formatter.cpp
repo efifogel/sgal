@@ -251,4 +251,141 @@ Vrml_formatter::multi_string(const std::string& name,
   new_line();
 }
 
+// Single-field declarations of non-simple fields-type fields
+//! \brief exports a single Vector2f field.
+void Vrml_formatter::single_vector2f(const std::string& rule,
+                                     const std::string& type,
+                                     const std::string& name,
+                                     const Vector2f& value)
+{ single_declaration(rule, type, name, value); }
+
+//! \brief exports a single Vector3f field.
+void Vrml_formatter::single_vector3f(const std::string& rule,
+                                     const std::string& type,
+                                     const std::string& name,
+                                     const Vector3f& value)
+{ single_declaration(rule, type, name, value); }
+
+//! \brief exports a single Vector4f field.
+void Vrml_formatter::single_vector4f(const std::string& rule,
+                                     const std::string& type,
+                                     const std::string& name,
+                                     const Vector4f& value)
+{ single_declaration(rule, type, name, value); }
+
+//! \brief exports a single Rotation field.
+void Vrml_formatter::single_rotation(const std::string& rule,
+                                     const std::string& type,
+                                     const std::string& name,
+                                     const Rotation& value)
+{ single_declaration(rule, type, name, value); }
+
+//! \brief exports a single Bounding_sphere field.
+void Vrml_formatter::single_bounding_sphere(const std::string& rule,
+                                            const std::string& type,
+                                            const std::string& name,
+                                            const Bounding_sphere& value)
+{ single_declaration(rule, type, name, value); }
+
+// Multi-field declarations of non-simple fields-type fields
+//! \brief exports a multi-Vector2f field.
+void Vrml_formatter::multi_vector2f(const std::string& rule,
+                                    const std::string& type,
+                                    const std::string& name,
+                                    const std::vector<Vector2f>& value)
+{ multi_declaration(rule, type, name, value); }
+
+//! \brief exports a multi-Vector3f field.
+void Vrml_formatter::multi_vector3f(const std::string& rule,
+                                    const std::string& type,
+                                    const std::string& name,
+                                    const std::vector<Vector3f>& value)
+{ multi_declaration(rule, type, name, value); }
+
+//! \brief exports a multi-Vector4f field.
+inline void Vrml_formatter::multi_vector4f(const std::string& rule,
+                                           const std::string& type,
+                                           const std::string& name,
+                                           const std::vector<Vector4f>& value)
+{ multi_declaration(rule, type, name, value); }
+
+//! \brief exports a multi-Rotation field.
+void Vrml_formatter::multi_rotation(const std::string& rule,
+                                    const std::string& type,
+                                    const std::string& name,
+                                    const std::vector<Rotation>& value)
+{ multi_declaration(rule, type, name, value); }
+
+//! \brief exports a multi-Bounding_sphere field.
+void
+Vrml_formatter::multi_bounding_sphere(const std::string& rule,
+                                      const std::string& type,
+                                      const std::string& name,
+                                      const std::vector<Bounding_sphere>& value)
+{ multi_declaration(rule, type, name, value); }
+
+// Single-field definitions of non-simple fields-type fields
+//! \brief exports a single Vector2f field.
+void Vrml_formatter::single_vector2f(const std::string& name,
+                                     const Vector2f& value,
+                                     const Vector2f& default_value)
+{ single_definition(name, value, default_value); }
+
+//! \brief exports a single Vector3f field.
+void Vrml_formatter::single_vector3f(const std::string& name,
+                                     const Vector3f& value,
+                                     const Vector3f& default_value)
+{ single_definition(name, value, default_value); }
+
+//! \brief exports a single Vector4f field.
+void Vrml_formatter::single_vector4f(const std::string& name,
+                                     const Vector4f& value,
+                                     const Vector4f& default_value)
+{ single_definition(name, value, default_value); }
+
+//! \brief exports a single Rotation field.
+void Vrml_formatter::single_rotation(const std::string& name,
+                                     const Rotation& value,
+                                     const Rotation& default_value)
+{ single_definition(name, value, default_value); }
+
+//! \brief exports a single Bounding_sphere field.
+void
+Vrml_formatter::single_bounding_sphere(const std::string& name,
+                                       const Bounding_sphere& value,
+                                       const Bounding_sphere& default_value)
+{ single_definition(name, value, default_value); }
+
+// Multi-field definitions of non-simple fields-type fields
+//! \brief exports a single Vector2f field.
+void Vrml_formatter::multi_vector2f(const std::string& name,
+                                    const std::vector<Vector2f>& value,
+                                    const std::vector<Vector2f>& default_value)
+{ multi_definition(name, value, default_value); }
+
+//! \brief exports a single Vector3f field.
+void Vrml_formatter::multi_vector3f(const std::string& name,
+                                    const std::vector<Vector3f>& value,
+                                    const std::vector<Vector3f>& default_value)
+{ multi_definition(name, value, default_value); }
+
+//! \brief exports a single Vector4f field.
+void Vrml_formatter::multi_vector4f(const std::string& name,
+                                    const std::vector<Vector4f>& value,
+                                    const std::vector<Vector4f>& default_value)
+{ multi_definition(name, value, default_value); }
+
+//! \brief exports a single Rotation field.
+void Vrml_formatter::multi_rotation(const std::string& name,
+                                    const std::vector<Rotation>& value,
+                                    const std::vector<Rotation>& default_value)
+{ multi_definition(name, value, default_value); }
+
+//! \brief exports a single Bounding_sphere field.
+void Vrml_formatter::
+multi_bounding_sphere(const std::string& name,
+                      const std::vector<Bounding_sphere>& value,
+                      const std::vector<Bounding_sphere>& default_value)
+{ multi_definition(name, value, default_value); }
+
 SGAL_END_NAMESPACE
