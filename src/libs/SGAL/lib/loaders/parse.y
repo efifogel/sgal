@@ -404,16 +404,13 @@ protoStatement  : proto { std::swap($$, $1); }
 
 proto           : K_PROTO nodeTypeId "[" interfaceDeclarations "]" "{" statements "}"
                 {
-                  auto* factory = Container_factory::get_instance();
-
                   auto proto_container = Proto::prototype();
                   SGAL_assertion(proto_container);
                   proto_container->set_tag(*$2);
-                  auto* prototype = proto_container->get_prototype();
-                  prototype->set_attributes($4);
+                  proto_container->set_field_infos($4);
+                  auto* factory = Container_factory::get_instance();
                   factory->do_register(proto_container);
-
-                  /*! \todo */
+                  //! \todo Handle the statements...
                 }
                 ;
 

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 /*!
  * Container_proto - implementation
@@ -23,7 +23,6 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_info.hpp"
-#include "SGAL/Element.hpp"
 #include "SGAL/Trace.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -70,12 +69,6 @@ void Container_proto::add_field_info(Field_info* field_info)
                  m_field_info_names.end());
   m_field_info_names.insert
     (Field_info_name_map::value_type(field_info->get_name(), field_info));
-}
-
-//! \brief adds a field information record to the prototype.
-void Container_proto::add_field_info(Field_rule rule, Field_type type,
-                                     const String& name, const String& value)
-{
 }
 
 /*! \brief obtains a field info given by its id from the current prototype or
@@ -144,44 +137,5 @@ Container_proto::ids_end(const Container_proto* prototype) const
   while (prototype->m_ancestor != nullptr) prototype = prototype->m_ancestor;
   return Id_const_iterator(prototype, prototype->field_info_ids_end());
 }
-
-//! \brief sets all field info records of a prototype container.
-void Container_proto::set_attributes(Element* elem)
-{
-  for (auto fi = elem->field_attrs_begin(); fi != elem->field_attrs_end(); ++fi)
-  {
-    auto rule = elem->get_rule(fi);
-    auto type = elem->get_type(fi);
-    const auto& name = elem->get_name(fi);
-    const auto& value = elem->get_value(fi);
-    add_field_info(rule, type, name, value);
-  }
-
-  // Remove all the marked attributes:
-  elem->delete_marked();
-}
-
-#if 0
-/*! \brief returns a list of name and ID pairs - one for each field info
- * Builds the list into the given IDsList using m_field_info_ids
- * @param IDsList (out) the list is built into it
- */
-void Container_proto::get_iDsList(FieldIDsList & IDsList) const
-{
-  Field_info* field_info;
-
-  auto iter = m_field_info_ids.begin();
-  while (iter != m_field_info_ids.end()) {
-    field_info = (*iter).second;
-    if (field_info == nullptr) {
-      assert(false);
-      return;
-    }
-    IDsList.push_back(FieldIdPair(field_info->get_id(),
-                                  field_info->get_name()));
-    ++iter;
-  }
-}
-#endif
 
 SGAL_END_NAMESPACE

@@ -39,14 +39,10 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/Field_rule.hpp"
-#include "SGAL/Field_type.hpp"
-#include "SGAL/Execution_function.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Field_info;
-class Element;
 
 #if (defined _MSC_VER)
 #pragma warning( push )
@@ -55,7 +51,7 @@ class Element;
 
 class SGAL_SGAL_DECL Container_proto {
 public:
-  typedef std::map<Uint,Field_info*>            Field_info_id_map;
+  typedef std::map<Uint, Field_info*>           Field_info_id_map;
   typedef Field_info_id_map::const_iterator     Field_info_id_const_iter;
   typedef Field_info_id_map::iterator           Field_info_id_iter;
 
@@ -177,19 +173,7 @@ public:
    */
   const Container_proto* get_ancestor() const;
 
-  /*! Set all field info records of a prototype container.
-   */
-  void set_attributes(Element* element);
-
 private:
-  /*! Add a field information record to the prototype.
-   * \param[in] type the type of the field.
-   * \param[in] name the name of the field.
-   * \param[in] value the initial value of the field.
-   */
-  void add_field_info(Field_rule rule, Field_type type,
-                      const String& name, const String& value);
-
   /*! A search structure for field-infos by field-info ids */
   Field_info_id_map m_field_info_ids;
 
