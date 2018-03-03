@@ -294,7 +294,7 @@ Start           : VRML vrmlScene
                 | K_SOLID { maybe_binary_stl = true; } error { YYERROR; }
                 ;
 
-facets          : /* empty */
+facets          : %empty
                 {
                   Indexed_face_set* indexed_face_set = new Indexed_face_set;
                   Shared_indexed_face_set shared_ifs(indexed_face_set);
@@ -357,7 +357,7 @@ normal          : K_NORMAL NUMBER NUMBER NUMBER
 vertexLoop      : K_LOOP vertices K_LOOP_END { std::swap($$, $2); }
                 ;
 
-vertices        : /* empty */
+vertices        : %empty
                 { $$ = new std::vector<Vector3f>; }
                 | vertices vertex
                 {
@@ -375,7 +375,7 @@ vertex          : K_VERTEX NUMBER NUMBER NUMBER
 vrmlScene       : statements
                 ;
 
-statements      : /* empty */ { $$ = root; }
+statements      : %empty { $$ = root; }
                 | statements statement
                 { std::swap($$, $1); if ($2) $$->add_child($2); }
                 ;
@@ -418,7 +418,7 @@ proto           : K_PROTO protoRooting nodeTypeId "[" interfaceDeclarations "]" 
                 }
                 ;
 
-interfaceDeclarations : /* empty */ { $$ = new Element; }
+interfaceDeclarations : %empty { $$ = new Element; }
                 | interfaceDeclarations interfaceDeclaration
                 {
                   std::swap($$, $1);
@@ -494,7 +494,7 @@ externproto     : K_EXTERNPROTO nodeTypeId "[" externInterfaceDeclarations "]" U
                 }
                 ;
 
-externInterfaceDeclarations     : /* empty */ { /*! \todo */ }
+externInterfaceDeclarations : %empty { /*! \todo */ }
                 | externInterfaceDeclarations externInterfaceDeclaration { /*! \todo */ }
                 ;
 
@@ -567,7 +567,7 @@ node            : nodeTypeId "{" nodeBody "}"
                 }
                 ;
 
-nodeBody        : /* empty */ { $$ = new Element; }
+nodeBody        : %empty { $$ = new Element; }
                 | nodeBody fieldId sfValue
                 {
                   std::swap($$, $1);
@@ -614,7 +614,7 @@ nodeBody        : /* empty */ { $$ = new Element; }
                 ;
 
 
-scriptBody      : /* empty */ { $$ = new Element; }
+scriptBody      : %empty { $$ = new Element; }
                 | scriptBody scriptBodyElement
                 {
                   std::swap($$, $1);
