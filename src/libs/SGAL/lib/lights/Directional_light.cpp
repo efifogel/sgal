@@ -25,6 +25,7 @@
 #include "SGAL/Vector4f.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Draw_action.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
@@ -79,7 +80,7 @@ void Directional_light::init_prototype()
     (&Directional_light::direction_handle);
   s_prototype->add_field_info(new SF_vector3f(DIRECTION,
                                               "direction",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               direction_func,
                                               exec_func));
 }

@@ -29,6 +29,7 @@
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Draw_action.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Scene_graph_int.hpp"
 #include "SGAL/Container_factory.hpp"
@@ -562,7 +563,7 @@ void Appearance::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Appearance::material_handle);
   s_prototype->add_field_info(new SF_shared_container(MATERIAL, "material",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       material_func,
                                                       exec_func));
 
@@ -571,7 +572,7 @@ void Appearance::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Appearance::texture_handle);
   s_prototype->add_field_info(new SF_shared_container(TEXTURE, "texture",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       texture_func, exec_func));
 
   exec_func = static_cast<Execution_function>(&Appearance::tex_gen_changed);
@@ -580,7 +581,7 @@ void Appearance::init_prototype()
     (&Appearance::tex_gen_handle);
   s_prototype->add_field_info(new SF_shared_container(TEX_GEN,
                                                       "textureGeneration",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       tex_gen_func, exec_func));
 
   exec_func = static_cast<Execution_function>(&Appearance::halftone_changed);
@@ -589,7 +590,7 @@ void Appearance::init_prototype()
     (&Appearance::halftone_handle);
   s_prototype->add_field_info(new SF_shared_container(HALFTONE_PATTERN,
                                                       "halftone",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       halftone_func,
                                                       exec_func));
 
@@ -600,7 +601,7 @@ void Appearance::init_prototype()
     (&Appearance::back_material_handle);
   s_prototype->add_field_info(new SF_shared_container(BACK_MATERIAL,
                                                       "backMaterial",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       back_material_func,
                                                       exec_func));
 }

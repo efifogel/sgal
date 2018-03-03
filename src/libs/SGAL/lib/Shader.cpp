@@ -26,6 +26,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Shader.hpp"
 #include "SGAL/Element.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Trace.hpp"
@@ -95,7 +96,7 @@ void Shader::delete_prototype()
   String_handle_function url_func =
     static_cast<String_handle_function>(&Shader::url_handle);
   s_prototype->add_field_info(new SF_string(URL, "url",
-                                            Field_info::RULE_EXPOSED_FIELD,
+                                            Field_rule::RULE_EXPOSED_FIELD,
                                             url_func));
 }
 

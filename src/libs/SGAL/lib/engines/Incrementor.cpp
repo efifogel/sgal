@@ -25,11 +25,12 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Incrementor.hpp"
-#include "SGAL/Field.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_info.hpp"
+#include "SGAL/Field_infos.hpp"
+#include "SGAL/Field.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -65,28 +66,28 @@ void Incrementor::init_prototype()
   auto min_value_func =
     static_cast<Int32_handle_function>(&Incrementor::min_value_handle);
   s_prototype->add_field_info(new SF_int32(MIN_VALUE, "minValue",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            min_value_func,
                                            s_def_min_value, exec_func));
 
   auto max_value_func =
     static_cast<Int32_handle_function>(&Incrementor::max_value_handle);
   s_prototype->add_field_info(new SF_int32(MAX_VALUE, "maxValue",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            max_value_func,
                                            s_def_max_value, exec_func));
 
   auto trigger_func =
     static_cast<Boolean_handle_function>(&Incrementor::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          Field_info::RULE_IN,
+                                          Field_rule::RULE_IN,
                                           trigger_func,
                                           exec_func));
 
   auto value_func =
     static_cast<Int32_handle_function>(&Incrementor::value_handle);
   s_prototype->add_field_info(new SF_int32(VALUE, "value",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            value_func));
 }
 

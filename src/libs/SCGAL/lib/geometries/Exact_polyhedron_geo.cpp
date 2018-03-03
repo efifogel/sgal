@@ -46,6 +46,7 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Gl_wrapper.hpp"
@@ -128,13 +129,13 @@ void Exact_polyhedron_geo::init_prototype()
   auto volume_func = static_cast<Float_handle_function>
     (&Exact_polyhedron_geo::volume_handle);
   s_prototype->add_field_info(new SF_float(VOLUME, "volume",
-                                           Field_info::RULE_OUT, volume_func));
+                                           Field_rule::RULE_OUT, volume_func));
 
   // surfaceArea
   auto surface_area_func = static_cast<Float_handle_function>
     (&Exact_polyhedron_geo::surface_area_handle);
   s_prototype->add_field_info(new SF_float(SURFACE_AREA, "surfaceArea",
-                                           Field_info::RULE_OUT,
+                                           Field_rule::RULE_OUT,
                                            surface_area_func));
 }
 

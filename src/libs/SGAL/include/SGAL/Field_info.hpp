@@ -43,6 +43,8 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Field_rule.hpp"
+#include "SGAL/Field_type.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Array_types.hpp"
 
@@ -58,47 +60,6 @@ class Field;
 #endif
 
 class SGAL_SGAL_DECL Field_info {
-public:
-  enum Field_type {
-    SF_BOOL = 0,
-    SF_FLOAT,
-    SF_UINT32,
-    SF_INT32,
-    SF_TIME,
-    SF_VEC2F,
-    SF_VEC3F,
-    SF_COLOR,
-    SF_VEC4F,
-    SF_ROTATION,
-    SF_SB,
-    SF_IMAGE,
-    SF_STR,
-    SF_SHARED_CONTAINER,
-    MF_BOOL,
-    MF_FLOAT,
-    MF_UINT32,
-    MF_INT32,
-    MF_TIME,
-    MF_VEC2F,
-    MF_VEC3F,
-    MF_COLOR,
-    MF_VEC4F,
-    MF_ROTATION,
-    MF_SB,
-    MF_IMAGE,
-    MF_STR,
-    MF_SHARED_CONTAINER,
-    NUM_FIELD_TYPES
-  };
-
-  enum Field_rule {
-    RULE_IN = 0,
-    RULE_OUT,
-    RULE_FIELD,
-    RULE_EXPOSED_FIELD,
-    NUM_FIELD_RULES
-  };
-
 protected:
   /*! The field id (e.g, Group::ISVISIBLE). */
   Uint m_id;
@@ -144,11 +105,6 @@ public:
    */
   Field_rule get_rule() const;
 
-  /*! Obtain the name of the field rule.
-   * \return the name of field rule.
-   */
-  const char* get_rule_name() const;
-
   /*! Obtain the execution function */
   Execution_function execution_function() const;
 
@@ -167,6 +123,10 @@ public:
   /*! Obtain the name of the field info type.
    */
   const char* get_type_name() const;
+
+  /*! Obtain the name of a rule.
+   */
+  const char* get_rule_name() const;
 
   /*! Create an object that holds a pointer to the value of an actual field
    * with this info.
@@ -449,21 +409,6 @@ public:
   void write(Formatter* formatter, const Shared_container_array& value,
              const Shared_container_array& default_value,
               Boolean declaration = false) const;
-
-  /*! Obtain the name of a rule.
-   */
-  static const char* get_rule_name(Field_rule id);
-
-  /*! Obtain the name of a type.
-   */
-  static const char* get_type_name(Field_type id);
-
-private:
-  /*! The names of the field rules. */
-  const static char* s_rule_names[];
-
-  /*! The names of the field types. */
-  const static char* s_type_names[];
 };
 
 #if defined(_MSC_VER)
@@ -485,15 +430,15 @@ inline Boolean Field_info::operator==(const Field_info& other) const
 { return (m_id == other.m_id); }
 
 //! \brief obtains the field rule.
-inline Field_info::Field_rule Field_info::get_rule() const { return m_rule; }
+inline Field_rule Field_info::get_rule() const { return m_rule; }
 
 //! \brief obtains the name of the field rule.
 inline const char* Field_info::get_rule_name() const
-{ return get_rule_name(get_rule()); }
+{ return get_field_rule_name(get_rule()); }
 
 //! \brief obtains the name of the field info type.
 inline const char* Field_info::get_type_name() const
-{ return get_type_name(get_type_id()); }
+{ return get_field_type_name(get_type_id()); }
 
 //! \brief determines whether
 inline Boolean Field_info::is_initially_blocked() const
@@ -505,14 +450,6 @@ inline std::ostream& operator<<(std::ostream& os, const Field_info& fi)
   os << fi.get_name().c_str() << ", " << fi.get_id();
   return os;
 }
-
-//! \brief obtains the name of a rule.
-inline const char* Field_info::get_rule_name(Field_rule id)
-{ return s_rule_names[id]; }
-
-//! \brief obtains the name of a type.
-inline const char* Field_info::get_type_name(Field_type id)
-{ return s_type_names[id]; }
 
 SGAL_END_NAMESPACE
 

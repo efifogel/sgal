@@ -21,6 +21,7 @@
  */
 
 #include "SGAL/Scalar_interpolator.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -60,7 +61,7 @@ void Scalar_interpolator::init_prototype()
     static_cast<Float_handle_function>(&Scalar_interpolator::value_handle);
   s_prototype->add_field_info(new SF_float(VALUE,
                                            "value_changed",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            value_func));
 }
 

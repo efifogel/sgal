@@ -50,6 +50,8 @@
 #include "SGAL/Container.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Field_info.hpp"
+#include "SGAL/Field_rule.hpp"
+#include "SGAL/Field_type.hpp"
 #include "SGAL/Group.hpp"
 #include "SGAL/Group.hpp"
 #include "SGAL/Scene_graph.hpp"
@@ -133,7 +135,7 @@ SGAL_END_NAMESPACE
 %type <Shared_string> sfint32Values
 %type <Shared_string> sfboolValue
 %type <Shared_string> fieldValue
-%type <Field_info::Field_type> fieldType
+%type <Field_type> fieldType
 %type <Str_list*> sfstringValues mfstringValue URLList
 %type <Cont_list*> nodeStatements
 %type <Element*> nodeBody
@@ -402,14 +404,13 @@ protoStatement  : proto { std::swap($$, $1); }
 
 proto           : K_PROTO nodeTypeId "[" interfaceDeclarations "]" "{" statements "}"
                 {
+                  auto* factory = Container_factory::get_instance();
+
                   auto proto_container = Proto::prototype();
                   SGAL_assertion(proto_container);
                   proto_container->set_tag(*$2);
-                  auto* factory = Container_factory::get_instance();
-                  auto* prototype = new Container_proto();
-                  SGAL_assertion(prototype);
+                  auto* prototype = proto_container->get_prototype();
                   prototype->set_attributes($4);
-                  proto_container->set_prototype(prototype);
                   factory->do_register(proto_container);
 
                   /*! \todo */
@@ -429,7 +430,7 @@ restrictedInterfaceDeclaration : K_EVENTIN fieldType eventInId
                   $$ = new Element;
                   Shared_string empty_str(new std::string(""));
                   Field_attr
-                    attr($3, std::make_tuple(Field_info::RULE_IN, $2, empty_str));
+                    attr($3, std::make_tuple(Field_rule::RULE_IN, $2, empty_str));
                   $$->add_attribute(attr);
                 }
                 | K_EVENTOUT fieldType eventOutId
@@ -437,21 +438,21 @@ restrictedInterfaceDeclaration : K_EVENTIN fieldType eventInId
                   $$ = new Element;
                   Shared_string empty_str(new std::string(""));
                   Field_attr
-                    attr($3, std::make_tuple(Field_info::RULE_OUT, $2, empty_str));
+                    attr($3, std::make_tuple(Field_rule::RULE_OUT, $2, empty_str));
                   $$->add_attribute(attr);
                 }
                 | K_FIELD fieldType fieldId fieldValue
                 {
                   $$ = new Element;
                   Field_attr
-                    attr($3, std::make_tuple(Field_info::RULE_FIELD, $2, $4));
+                    attr($3, std::make_tuple(Field_rule::RULE_FIELD, $2, $4));
                   $$->add_attribute(attr);
                 }
                 | K_FIELD fieldType fieldId mfstringValue
                 {
                   $$ = new Element;
                   Field_multi_str_attr
-                    attr($3, std::make_tuple(Field_info::RULE_FIELD, $2, $4));
+                    attr($3, std::make_tuple(Field_rule::RULE_FIELD, $2, $4));
                   $$->add_attribute(attr);
                 }
                 ;
@@ -461,7 +462,7 @@ interfaceDeclaration : restrictedInterfaceDeclaration { std::swap($$, $1); }
                 {
                   $$ = new Element;
                   Field_attr
-                    attr($3, std::make_tuple(Field_info::RULE_EXPOSED_FIELD,
+                    attr($3, std::make_tuple(Field_rule::RULE_EXPOSED_FIELD,
                                              $2, $4));
                   $$->add_attribute(attr);
                 }
@@ -469,7 +470,7 @@ interfaceDeclaration : restrictedInterfaceDeclaration { std::swap($$, $1); }
                 {
                   $$ = new Element;
                   Field_multi_str_attr
-                    attr($3, std::make_tuple(Field_info::RULE_EXPOSED_FIELD,
+                    attr($3, std::make_tuple(Field_rule::RULE_EXPOSED_FIELD,
                                              $2, $4));
                   $$->add_attribute(attr);
                 }
@@ -668,27 +669,27 @@ IdRestChars     : Any number of ISO-10646 characters except: 0x0-0x20, 0x22, 0x2
 
 /* Fields: */
 
-fieldType       : MFBool { $$ = Field_info::MF_BOOL; }
-                | MFColor { $$ = Field_info::MF_COLOR; }
-                | MFFloat { $$ = Field_info::MF_FLOAT; }
-                | MFInt32 { $$ = Field_info::MF_INT32; }
-                | MFNode { $$ = Field_info::MF_SHARED_CONTAINER; }
-                | MFRotation { $$ = Field_info::MF_ROTATION; }
-                | MFString { $$ = Field_info::MF_STR; }
-                | MFTime { $$ = Field_info::MF_TIME; }
-                | MFVec2f { $$ = Field_info::MF_VEC2F; }
-                | MFVec3f { $$ = Field_info::MF_VEC3F; }
-                | SFBool { $$ = Field_info::SF_BOOL; }
-                | SFColor { $$ = Field_info::SF_COLOR; }
-                | SFFloat { $$ = Field_info::SF_FLOAT; }
-                | SFImage { $$ = Field_info::SF_IMAGE; }
-                | SFInt32 { $$ = Field_info::SF_INT32; }
-                | SFNode { $$ = Field_info::SF_SHARED_CONTAINER; }
-                | SFRotation { $$ = Field_info::SF_ROTATION; }
-                | SFString { $$ = Field_info::SF_STR; }
-                | SFTime { $$ = Field_info::SF_TIME; }
-                | SFVec2f { $$ = Field_info::SF_VEC2F; }
-                | SFVec3f { $$ = Field_info::SF_VEC3F; }
+fieldType       : MFBool { $$ = Field_type::MF_BOOL; }
+                | MFColor { $$ = Field_type::MF_COLOR; }
+                | MFFloat { $$ = Field_type::MF_FLOAT; }
+                | MFInt32 { $$ = Field_type::MF_INT32; }
+                | MFNode { $$ = Field_type::MF_SHARED_CONTAINER; }
+                | MFRotation { $$ = Field_type::MF_ROTATION; }
+                | MFString { $$ = Field_type::MF_STR; }
+                | MFTime { $$ = Field_type::MF_TIME; }
+                | MFVec2f { $$ = Field_type::MF_VEC2F; }
+                | MFVec3f { $$ = Field_type::MF_VEC3F; }
+                | SFBool { $$ = Field_type::SF_BOOL; }
+                | SFColor { $$ = Field_type::SF_COLOR; }
+                | SFFloat { $$ = Field_type::SF_FLOAT; }
+                | SFImage { $$ = Field_type::SF_IMAGE; }
+                | SFInt32 { $$ = Field_type::SF_INT32; }
+                | SFNode { $$ = Field_type::SF_SHARED_CONTAINER; }
+                | SFRotation { $$ = Field_type::SF_ROTATION; }
+                | SFString { $$ = Field_type::SF_STR; }
+                | SFTime { $$ = Field_type::SF_TIME; }
+                | SFVec2f { $$ = Field_type::SF_VEC2F; }
+                | SFVec3f { $$ = Field_type::SF_VEC3F; }
                 ;
 
 fieldValue      : sfValue { std::swap($$, $1); }

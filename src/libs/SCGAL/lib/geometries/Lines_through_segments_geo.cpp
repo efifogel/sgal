@@ -47,6 +47,7 @@
 #include "SGAL/Context.hpp"
 #include "SGAL/Matrix4f.hpp"
 #include "SGAL/Sphere.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 
@@ -102,7 +103,7 @@ void Lines_through_segments_geo::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Lines_through_segments_geo::segments_handle);
   s_prototype->add_field_info(new SF_shared_container(SEGMENTS, "segments",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       segments_func));
 }
 

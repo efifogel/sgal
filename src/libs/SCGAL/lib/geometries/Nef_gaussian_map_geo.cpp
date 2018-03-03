@@ -43,6 +43,7 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 // #include "SGAL/Trace.hpp"
@@ -789,7 +790,7 @@ void Nef_gaussian_map_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Nef_gaussian_map_geo::draw_dual_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL, "drawDual",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           draw_dual_func, exec_func));
 
   // drawDualSphere
@@ -797,7 +798,7 @@ void Nef_gaussian_map_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Nef_gaussian_map_geo::draw_dual_sphere_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL_SPHERE, "drawDualSphere",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           draw_dual_sphere_func));
 
   // trueDrawPrimal
@@ -805,12 +806,12 @@ void Nef_gaussian_map_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Nef_gaussian_map_geo::draw_primal_handle);
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_PRIMAL, "trueDrawPrimal",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           draw_primal_func));
 
   // trueDrawDual
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_DUAL, "trueDrawDual",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           draw_dual_func));
 
   // drawDualOpaque
@@ -818,7 +819,7 @@ void Nef_gaussian_map_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Nef_gaussian_map_geo::draw_dual_opaque_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL_OPAQUE, "drawDualOpaque",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           draw_dual_opaque_func));
 
   // drawDualHaloed
@@ -826,7 +827,7 @@ void Nef_gaussian_map_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Nef_gaussian_map_geo::draw_dual_haloed_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL_HALOED, "drawDualHaloed",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           draw_dual_haloed_func));
 
   // increaseVertexIndex
@@ -837,7 +838,7 @@ void Nef_gaussian_map_geo::init_prototype()
     (&Nef_gaussian_map_geo::increase_vertex_index_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_VERTEX_INDEX,
                                           "increaseVertexIndex",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           increase_vertex_index_func,
                                           exec_func));
 
@@ -849,7 +850,7 @@ void Nef_gaussian_map_geo::init_prototype()
     (&Nef_gaussian_map_geo::increase_edge_index_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_EDGE_INDEX,
                                           "increaseEdgeIndex",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           increase_edge_index_func,
                                           exec_func));
 
@@ -861,7 +862,7 @@ void Nef_gaussian_map_geo::init_prototype()
     (&Nef_gaussian_map_geo::increase_facet_index_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_FACET_INDEX,
                                           "increaseFacetIndex",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           increase_facet_index_func,
                                           exec_func));
 
@@ -870,7 +871,7 @@ void Nef_gaussian_map_geo::init_prototype()
     reinterpret_cast<Shared_container_array_handle_function>
     (&Nef_gaussian_map_geo::ngm_nodes_handle);
   s_prototype->add_field_info(new MF_shared_container(GEOMETRIES, "geometries",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       ngm_nodes_func));
 
 }

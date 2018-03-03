@@ -24,6 +24,7 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Image_url.hpp"
 #include "SGAL/Field.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Execution_function.hpp"
@@ -67,14 +68,14 @@ void Image_texture::init_prototype()
   auto url_func =
     static_cast<String_array_handle_function>(&Image_url::url_handle);
   s_prototype->add_field_info(new MF_string(URL, "url",
-                                            Field_info::RULE_EXPOSED_FIELD,
+                                            Field_rule::RULE_EXPOSED_FIELD,
                                             url_func, exec_func));
 
   // flip
   auto flip_func =
     static_cast<Boolean_handle_function>(&Image_url::flip_handle);
   s_prototype->add_field_info(new SF_bool(FLIP, "flip",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           flip_func, Image_url::s_def_flip,
                                           exec_func));
 }

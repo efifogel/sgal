@@ -44,6 +44,7 @@
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Isect_action.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Gl_wrapper.hpp"
@@ -102,7 +103,7 @@ void Arrangement_of_polygeodesics_on_sphere_base_geo::init_prototype()
     (&Arrangement_of_polygeodesics_on_sphere_base_geo::pg_vertex_style_handle);
   s_prototype->add_field_info(new SF_uint(PG_VERTEX_STYLE_ID,
                                           "pgVertexStyleId",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           pg_vertex_style_func,
                                           exec_func));
 }

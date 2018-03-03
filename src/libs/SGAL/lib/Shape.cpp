@@ -31,10 +31,11 @@
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Tex_gen.hpp"
 #include "SGAL/GL_error.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
+#include "SGAL/Field.hpp"
 #include "SGAL/Cull_context.hpp"
 #include "SGAL/Material.hpp"
-#include "SGAL/Field.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -390,7 +391,7 @@ void Shape::init_prototype()
     static_cast<Boolean_handle_function>(&Shape::is_visible_handle);
   s_prototype->add_field_info(new SF_bool(ISVISIBLE,
                                           "visible",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           is_visible_func,
                                           s_def_is_visible,
                                           exec_func));
@@ -401,7 +402,7 @@ void Shape::init_prototype()
     reinterpret_cast<Shared_container_handle_function>(&Shape::geometry_handle);
   s_prototype->add_field_info(new SF_shared_container(GEOMETRY,
                                                       "geometry",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       geometry_func,
                                                       exec_func));
 
@@ -412,7 +413,7 @@ void Shape::init_prototype()
     (&Shape::appearance_handle);
   s_prototype->add_field_info(new SF_shared_container(APPEARANCE,
                                                       "appearance",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       appearance_func,
                                                       exec_func));
 }

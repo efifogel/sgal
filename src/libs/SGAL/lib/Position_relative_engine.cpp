@@ -23,6 +23,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Scene_graph_int.h"
 #include "SGAL/Position_relative_engine.h"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.h"
 #include "SGAL/Field.h"
 #include "SGAL/String_utils.h"
@@ -64,32 +65,32 @@ void Position_relative_engine::init_prototype()
   Float_handle_function fraction_func =
     static_cast<Float_handle_function>(&Texture::fraction_handle);
   s_prototype->add_field_info(new SF_float(FRACTION, "fraction",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            fraction_func,
                                            exec_func));
 
   Vector3f_handle_function value_func =
     static_cast<Vector3f_handle_function>(&Texture::value_handle);
   s_prototype->add_field_info(new SF_vector3f(VALUE, "value",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               value_func));
 
   Vector3f_handle_function position_func =
     static_cast<Vector3f_handle_function>(&Texture::position_handle);
   s_prototype->add_field_info(new SF_vector3f(POSITION, "position",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               position_func));
 
   Vector3f_handle_function delta_func =
     static_cast<Vector3f_handle_function>(&Texture::delta_handle);
   s_prototype->add_field_info(new SF_vector3f(DELTA, "delta",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               delta_func));
 
   Rotation_handle_function rotation_func =
     static_cast<Rotation_handle_function>(&Texture::rotation_handle);
   s_prototype->add_field_info(new Rotation(ROTATION, "rotation",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            rotation_func));
 }
 

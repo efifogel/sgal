@@ -23,6 +23,7 @@
 #include "SGAL/Bindable_node.hpp"
 #include "SGAL/Bindable_stack.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 
@@ -54,7 +55,7 @@ void Bindable_node::init_prototype()
   Boolean_handle_function bind_func =
     static_cast<Boolean_handle_function>(&Bindable_node::bind_handle);
   s_prototype->add_field_info(new SF_bool(SET_BIND, "set_bind",
-                                          Field_info::RULE_IN,
+                                          Field_rule::RULE_IN,
                                           bind_func,
                                           exec_func));
 
@@ -62,7 +63,7 @@ void Bindable_node::init_prototype()
   Boolean_handle_function is_bound_func =
     static_cast<Boolean_handle_function>(&Bindable_node::is_bound_handle);
   s_prototype->add_field_info(new SF_bool(IS_BOUND, "isBound",
-                                          Field_info::RULE_OUT,
+                                          Field_rule::RULE_OUT,
                                           is_bound_func));
 }
 

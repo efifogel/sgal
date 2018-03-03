@@ -39,11 +39,11 @@
 #endif
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Field_rule.hpp"
+#include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
-#include "SGAL/Field_info.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Image_writer.hpp"
 #include "SGAL/Vrml_formatter.hpp"
@@ -91,7 +91,7 @@ void Image_writer::init_prototype()
   auto trigger_func =
     static_cast<Boolean_handle_function>(&Image_writer::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          Field_info::RULE_IN,
+                                          Field_rule::RULE_IN,
                                           trigger_func, exec_func));
 
   // dirName
@@ -99,7 +99,7 @@ void Image_writer::init_prototype()
     static_cast<String_handle_function>(&Image_writer::dir_name_handle);
   s_prototype->add_field_info(new SF_string(DIR_NAME,
                                             "dirName",
-                                            Field_info::RULE_EXPOSED_FIELD,
+                                            Field_rule::RULE_EXPOSED_FIELD,
                                             dir_name_func,
                                             s_def_dir_name));
 
@@ -108,7 +108,7 @@ void Image_writer::init_prototype()
     static_cast<String_handle_function>(&Image_writer::file_name_handle);
   s_prototype->add_field_info(new SF_string(FILE_NAME,
                                             "fileName",
-                                            Field_info::RULE_EXPOSED_FIELD,
+                                            Field_rule::RULE_EXPOSED_FIELD,
                                             file_name_func,
                                             s_def_file_name));
 
@@ -117,7 +117,7 @@ void Image_writer::init_prototype()
     reinterpret_cast<Uint_handle_function>(&Image_writer::file_format_handle);
   s_prototype->add_field_info(new SF_uint(FILE_FORMAT,
                                           "fileFormat",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           file_format_func,
                                           s_def_file_format));
 
@@ -125,7 +125,7 @@ void Image_writer::init_prototype()
   auto flip_func =
     static_cast<Boolean_handle_function>(&Image_writer::flip_handle);
   s_prototype->add_field_info(new SF_bool(FLIP, "flip",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           flip_func,
                                           s_def_flip));
 
@@ -134,7 +134,7 @@ void Image_writer::init_prototype()
     (&Image_writer::image_handle);
   s_prototype->add_field_info(new SF_shared_container(IMAGE,
                                                       "image",
-                                                      Field_info::RULE_OUT,
+                                                      Field_rule::RULE_OUT,
                                                       image_func));
 }
 

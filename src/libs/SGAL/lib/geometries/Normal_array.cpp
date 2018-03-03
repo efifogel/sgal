@@ -22,6 +22,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -42,7 +43,7 @@ void Normal_array::init_prototype()
   Vector3f_array_handle_function array_func =
     static_cast<Vector3f_array_handle_function>(&Normal_array::array_handle);
   s_prototype->add_field_info(new MF_vector3f(VECTOR, "vector",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               array_func));
 }
 

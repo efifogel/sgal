@@ -46,6 +46,7 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Epec_coord_array_3d.hpp"
@@ -151,7 +152,7 @@ void Arrangement_on_sphere_marked_geo::init_prototype()
     (&Arrangement_on_sphere_marked_geo::aos_marked_vertex_radius_handle);
   s_prototype->add_field_info(new SF_float(AOS_MARKED_VERTEX_RADIUS,
                                            "aosMarkedVertexRadius",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            aos_marked_vertex_radius_func));
 
   // aosMarkedEdgeRadius
@@ -160,7 +161,7 @@ void Arrangement_on_sphere_marked_geo::init_prototype()
     (&Arrangement_on_sphere_marked_geo::aos_marked_edge_radius_handle);
   s_prototype->add_field_info(new SF_float(AOS_MARKED_EDGE_RADIUS,
                                            "aosMarkedEdgeRadius",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            aos_marked_edge_radius_func));
 }
 

@@ -39,6 +39,7 @@
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Bounding_sphere.hpp"
 #include "SGAL/Field_info_template.hpp"
+#include "SGAL/Field_type.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Array_types.hpp"
 
@@ -50,39 +51,39 @@ typedef boost::shared_ptr<Container>                   Shared_container;
 
 // Field information records
 // Single field
-typedef Field_info_template<Boolean, Field_info::SF_BOOL>          SF_bool;
-typedef Field_info_template<Float, Field_info::SF_FLOAT>           SF_float;
-typedef Field_info_template<Uint, Field_info::SF_INT32>            SF_uint;
-typedef Field_info_template<Int32, Field_info::SF_INT32>           SF_int32;
-typedef Field_info_template<Scene_time, Field_info::SF_TIME>       SF_time;
-typedef Field_info_template<Vector2f, Field_info::SF_VEC2F>        SF_vector2f;
-typedef Field_info_template<Vector3f, Field_info::SF_VEC3F>        SF_vector3f;
-typedef Field_info_template<Vector3f, Field_info::SF_COLOR>        SF_color;
-typedef Field_info_template<Vector4f, Field_info::SF_VEC4F>        SF_vector4f;
-typedef Field_info_template<Rotation, Field_info::SF_ROTATION>     SF_rotation;
-typedef Field_info_template<Bounding_sphere, Field_info::SF_SB>
+typedef Field_info_template<Boolean, Field_type::SF_BOOL>          SF_bool;
+typedef Field_info_template<Float, Field_type::SF_FLOAT>           SF_float;
+typedef Field_info_template<Uint, Field_type::SF_INT32>            SF_uint;
+typedef Field_info_template<Int32, Field_type::SF_INT32>           SF_int32;
+typedef Field_info_template<Scene_time, Field_type::SF_TIME>       SF_time;
+typedef Field_info_template<Vector2f, Field_type::SF_VEC2F>        SF_vector2f;
+typedef Field_info_template<Vector3f, Field_type::SF_VEC3F>        SF_vector3f;
+typedef Field_info_template<Vector3f, Field_type::SF_COLOR>        SF_color;
+typedef Field_info_template<Vector4f, Field_type::SF_VEC4F>        SF_vector4f;
+typedef Field_info_template<Rotation, Field_type::SF_ROTATION>     SF_rotation;
+typedef Field_info_template<Bounding_sphere, Field_type::SF_SB>
   SF_bounding_sphere;
-typedef Field_info_template<std::string, Field_info::SF_STR>       SF_string;
-typedef Field_info_template<Shared_container, Field_info::SF_SHARED_CONTAINER>
+typedef Field_info_template<std::string, Field_type::SF_STR>       SF_string;
+typedef Field_info_template<Shared_container, Field_type::SF_SHARED_CONTAINER>
                                                        SF_shared_container;
 
 // Multi field
-typedef Field_info_template<Boolean_array, Field_info::MF_BOOL>    MF_bool;
-typedef Field_info_template<Float_array, Field_info::MF_FLOAT>     MF_float;
-typedef Field_info_template<Uint_array, Field_info::MF_INT32>      MF_uint;
-typedef Field_info_template<Int32_array, Field_info::MF_INT32>     MF_int32;
-typedef Field_info_template<Scene_time_array, Field_info::MF_TIME> MF_time;
-typedef Field_info_template<Vector2f_array, Field_info::MF_VEC2F>  MF_vector2f;
-typedef Field_info_template<Vector3f_array, Field_info::MF_VEC3F>  MF_vector3f;
-typedef Field_info_template<Vector3f_array, Field_info::MF_COLOR>  MF_color;
-typedef Field_info_template<Vector4f_array, Field_info::MF_VEC4F>  MF_vector4f;
-typedef Field_info_template<Rotation_array, Field_info::MF_ROTATION>
+typedef Field_info_template<Boolean_array, Field_type::MF_BOOL>    MF_bool;
+typedef Field_info_template<Float_array, Field_type::MF_FLOAT>     MF_float;
+typedef Field_info_template<Uint_array, Field_type::MF_INT32>      MF_uint;
+typedef Field_info_template<Int32_array, Field_type::MF_INT32>     MF_int32;
+typedef Field_info_template<Scene_time_array, Field_type::MF_TIME> MF_time;
+typedef Field_info_template<Vector2f_array, Field_type::MF_VEC2F>  MF_vector2f;
+typedef Field_info_template<Vector3f_array, Field_type::MF_VEC3F>  MF_vector3f;
+typedef Field_info_template<Vector3f_array, Field_type::MF_COLOR>  MF_color;
+typedef Field_info_template<Vector4f_array, Field_type::MF_VEC4F>  MF_vector4f;
+typedef Field_info_template<Rotation_array, Field_type::MF_ROTATION>
                                                                    MF_rotation;
-typedef Field_info_template<Bounding_sphere_array, Field_info::MF_SB>
+typedef Field_info_template<Bounding_sphere_array, Field_type::MF_SB>
   MF_bounding_sphere;
-typedef Field_info_template<String_array, Field_info::MF_STR>      MF_string;
+typedef Field_info_template<String_array, Field_type::MF_STR>      MF_string;
 typedef Field_info_template<Shared_container_array,
-                            Field_info::MF_SHARED_CONTAINER>
+                            Field_type::MF_SHARED_CONTAINER>
   MF_shared_container;
 
 // Field handle functions

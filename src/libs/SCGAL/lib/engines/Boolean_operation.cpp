@@ -39,6 +39,7 @@
 // #include <CGAL/IO/Polyhedron_VRML_2_ostream.h>
 
 #include "SGAL/Math_defs.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Container_factory.hpp"
@@ -248,21 +249,21 @@ void Boolean_operation::init_prototype()
   auto trigger_func =
     static_cast<Boolean_handle_function>(&Boolean_operation::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           trigger_func, exec_func));
 
   // operation
   auto operation_func = reinterpret_cast<Uint_handle_function>
     (&Boolean_operation::operation_handle);
   s_prototype->add_field_info(new SF_uint(OPERATION, "operation",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           operation_func, exec_func));
 
   // operand1
   auto operand1_func = reinterpret_cast<Shared_container_handle_function>
     (&Boolean_operation::operand1_handle);
   s_prototype->add_field_info(new SF_shared_container(OPERAND1, "operand1",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       operand1_func,
                                                       exec_func));
 
@@ -270,7 +271,7 @@ void Boolean_operation::init_prototype()
   auto operand2_func = reinterpret_cast<Shared_container_handle_function>
     (&Boolean_operation::operand2_handle);
   s_prototype->add_field_info(new SF_shared_container(OPERAND2, "operand2",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       operand2_func,
                                                       exec_func));
 
@@ -278,7 +279,7 @@ void Boolean_operation::init_prototype()
   auto result_func = reinterpret_cast<Shared_container_array_handle_function>
     (&Boolean_operation::result_handle);
   s_prototype->add_field_info(new MF_shared_container(RESULT, "result",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       result_func));
 }
 

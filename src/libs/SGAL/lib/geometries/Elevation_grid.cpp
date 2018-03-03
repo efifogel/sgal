@@ -25,6 +25,7 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Coord_array_1d.hpp"
 #include "SGAL/Vrml_formatter.hpp"
+#include "SGAL/Field_rule.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -139,7 +140,7 @@ void Elevation_grid::init_prototype()
     reinterpret_cast<Float_array_handle_function>
     (&Elevation_grid::height_handle);
   s_prototype->add_field_info(new MF_float(HEIGHT, "height",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            height_func, exec_func));
 
   // heightMap
@@ -150,7 +151,7 @@ void Elevation_grid::init_prototype()
     (&Elevation_grid::height_map_handle);
   s_prototype->add_field_info(new SF_shared_container(HEIGHT_MAP,
                                                       "heightMap",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       height_map_func,
                                                       exec_func));
 
@@ -160,7 +161,7 @@ void Elevation_grid::init_prototype()
   auto x_dimension_func =
     static_cast<Uint_handle_function>(&Elevation_grid::x_dimension_handle);
   s_prototype->add_field_info(new SF_uint(X_DIMENSION, "xDimension",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           x_dimension_func, s_def_x_dimension,
                                           exec_func));
 
@@ -169,7 +170,7 @@ void Elevation_grid::init_prototype()
   auto x_spacing_func =
     static_cast<Float_handle_function>(&Elevation_grid::x_spacing_handle);
   s_prototype->add_field_info(new SF_float(X_SPACING, "xSpacing",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            x_spacing_func, s_def_x_spacing,
                                            exec_func));
 
@@ -177,7 +178,7 @@ void Elevation_grid::init_prototype()
   auto z_dimension_func =
     static_cast<Uint_handle_function>(&Elevation_grid::z_dimension_handle);
   s_prototype->add_field_info(new SF_uint(Z_DIMENSION, "zDimension",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           z_dimension_func, s_def_z_dimension,
                                           exec_func));
 
@@ -185,7 +186,7 @@ void Elevation_grid::init_prototype()
   auto z_spacing_func =
     static_cast<Float_handle_function>(&Elevation_grid::z_spacing_handle);
   s_prototype->add_field_info(new SF_float(Z_SPACING, "zSpacing",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            z_spacing_func, s_def_z_spacing,
                                            exec_func));
 
@@ -193,7 +194,7 @@ void Elevation_grid::init_prototype()
   auto is_closed_func =
     static_cast<Boolean_handle_function>(&Elevation_grid::is_closed_handle);
   s_prototype->add_field_info(new SF_bool(IS_CLOSED, "closed",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           is_closed_func,
                                           s_def_is_closed,
                                           exec_func));
@@ -202,7 +203,7 @@ void Elevation_grid::init_prototype()
   auto base_height_func =
     static_cast<Float_handle_function>(&Elevation_grid::base_height_handle);
   s_prototype->add_field_info(new SF_float(BASE_HEIGHT, "baseHeight",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            base_height_func, s_def_base_height,
                                            exec_func));
 }

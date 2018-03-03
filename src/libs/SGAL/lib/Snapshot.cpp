@@ -30,6 +30,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Snapshot.hpp"
 #include "SGAL/File_format_2d.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -106,7 +107,7 @@ void Snapshot::init_prototype()
     static_cast<String_handle_function>(&Snapshot::dir_name_handle);
   s_prototype->add_field_info(new SF_string(DIR_NAME,
                                             "dirName",
-                                            Field_info::RULE_EXPOSED_FIELD,
+                                            Field_rule::RULE_EXPOSED_FIELD,
                                             dir_name_func,
                                             Image_writer::s_def_dir_name,
                                             exec_func));
@@ -116,7 +117,7 @@ void Snapshot::init_prototype()
     static_cast<String_handle_function>(&Snapshot::file_name_handle);
   s_prototype->add_field_info(new SF_string(FILE_NAME,
                                             "fileName",
-                                            Field_info::RULE_EXPOSED_FIELD,
+                                            Field_rule::RULE_EXPOSED_FIELD,
                                             file_name_func,
                                             Image_writer::s_def_file_name,
                                             exec_func));
@@ -126,7 +127,7 @@ void Snapshot::init_prototype()
     reinterpret_cast<Uint_handle_function>(&Snapshot::file_format_handle);
   s_prototype->add_field_info(new SF_uint(FILE_FORMAT,
                                           "fileFormat",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           file_format_func,
                                           Image_writer::s_def_file_format,
                                           exec_func));
@@ -137,7 +138,7 @@ void Snapshot::init_prototype()
     (&Snapshot::image_handle);
   s_prototype->add_field_info(new SF_shared_container(IMAGE_WRITER,
                                                       "imageWriter",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       image_func));
 }
 

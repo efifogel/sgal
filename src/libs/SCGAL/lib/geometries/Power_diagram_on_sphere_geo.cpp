@@ -48,6 +48,7 @@
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Isect_action.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Gl_wrapper.hpp"
@@ -129,7 +130,7 @@ void Power_diagram_on_sphere_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Power_diagram_on_sphere_geo::site_enabled_handle);
   s_prototype->add_field_info(new SF_bool(SITE_ENABLED, "siteEnabled",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           site_enabled_func, exec_func));
 
   // siteStyleId
@@ -137,7 +138,7 @@ void Power_diagram_on_sphere_geo::init_prototype()
     reinterpret_cast<Uint_handle_function>
     (&Power_diagram_on_sphere_geo::site_style_handle);
   s_prototype->add_field_info(new SF_uint(SITE_STYLE_ID, "siteStyleId",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           site_style_func, exec_func));
 
   // siteCountId
@@ -145,7 +146,7 @@ void Power_diagram_on_sphere_geo::init_prototype()
     static_cast<Uint_handle_function>
     (&Power_diagram_on_sphere_geo::site_count_handle);
   s_prototype->add_field_info(new SF_uint(SITE_COUNT_ID, "siteCountId",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           site_count_func, exec_func));
 
   // siteDirected
@@ -153,7 +154,7 @@ void Power_diagram_on_sphere_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Power_diagram_on_sphere_geo::site_directed_handle);
   s_prototype->add_field_info(new SF_bool(SITE_DIRECTED, "siteDirected",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           site_directed_func, exec_func));
 }
 

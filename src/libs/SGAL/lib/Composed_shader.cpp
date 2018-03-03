@@ -26,6 +26,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Composed_shader.hpp"
 #include "SGAL/Element.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Trace.hpp"
@@ -90,7 +91,7 @@ void Composed_shader::init_prototype()
   String_handle_function language_func =
     static_cast<String_handle_function>(&Composed_shader::language_handle);
   s_prototype->add_field_info(new SF_string(LANGUAGE, "language",
-                                            Field_info::RULE_EXPOSED_FIELD,
+                                            Field_rule::RULE_EXPOSED_FIELD,
                                             language_func));
 }
 

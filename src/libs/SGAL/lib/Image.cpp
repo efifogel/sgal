@@ -29,6 +29,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Gl_wrapper.hpp"
@@ -591,21 +592,21 @@ void Image::init_prototype()
   Uint_handle_function width_func =
     static_cast<Uint_handle_function>(&Image::width_handle);
   s_prototype->add_field_info(new SF_uint(WIDTH, "width",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           width_func,
                                           s_def_width));
 
   Uint_handle_function height_func =
     static_cast<Uint_handle_function>(&Image::height_handle);
   s_prototype->add_field_info(new SF_uint(HEIGHT, "height",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           height_func,
                                           s_def_height));
 
   Uint_handle_function format_func =
     reinterpret_cast<Uint_handle_function>(&Image::format_handle);
   s_prototype->add_field_info(new SF_uint(FORMAT, "format",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           format_func,
                                           s_def_format));
 }

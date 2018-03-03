@@ -1083,7 +1083,7 @@ def print_init_prototype_definition(config, out, class_name, derived_class_name,
     print_line(out, 'auto {}_func = reinterpret_cast<{}>(&{}::{}_handle);'.format(name, field_handle_type, class_name, name))
     field_enum = name.upper()
     field_type = s_field_type[general_type]
-    statement = 's_prototype->add_field_info(new {}({}, \"{}\",  Field_info::RULE_{}, {}_func'.format(field_type, field_enum, field_name, rule, name)
+    statement = 's_prototype->add_field_info(new {}({}, \"{}\",  Field_rule::RULE_{}, {}_func'.format(field_type, field_enum, field_name, rule, name)
     if (default_value):
       statement = statement + ', s_def_{}'.format(name)
     if (exec_function):

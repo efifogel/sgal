@@ -93,8 +93,8 @@ void Element::mark_delete(Field_attr_iter ai)
 {
   ai->first.reset();
   auto value = std::get<2>(ai->second);
-  ai->second = std::make_tuple(static_cast<Field_info::Field_rule>(0),
-                               static_cast<Field_info::Field_type>(0),
+  ai->second = std::make_tuple(static_cast<Field_rule>(0),
+                               static_cast<Field_type>(0),
                                Shared_string());
 }
 
@@ -104,8 +104,8 @@ void Element::mark_delete(Field_multi_str_attr_iter ai)
   ai->first.reset();
   auto* value = std::get<2>(ai->second);
   if (value) value->clear();
-  ai->second = std::make_tuple(static_cast<Field_info::Field_rule>(0),
-                               static_cast<Field_info::Field_type>(0),
+  ai->second = std::make_tuple(static_cast<Field_rule>(0),
+                               static_cast<Field_type>(0),
                                nullptr);
 }
 

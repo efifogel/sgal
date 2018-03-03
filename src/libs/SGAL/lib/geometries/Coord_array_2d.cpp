@@ -32,6 +32,7 @@
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_infos.hpp"
+#include "SGAL/Field_infos.hpp"
 #include "SGAL/multi_istream_iterator.hpp"
 #include "SGAL/io_vector2f.hpp"
 
@@ -66,7 +67,7 @@ void Coord_array_2d::init_prototype()
   Vector2f_array_handle_function array_func =
     static_cast<Vector2f_array_handle_function>(&Coord_array_2d::array_handle);
   s_prototype->add_field_info(new MF_vector2f(POINT, "point",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               array_func, exec_func));
 }
 

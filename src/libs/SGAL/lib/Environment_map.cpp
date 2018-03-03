@@ -25,6 +25,7 @@
 #include "SGAL/Shape.hpp"
 #include "SGAL/Texture.hpp"
 #include "SGAL/Scene_graph_int.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_factory.hpp"
@@ -99,7 +100,7 @@ void Environment_map::init_prototype()
   _handle_function texture_func =
     static_cast<_handle_function>(&Environment_map::texture_handle);
   s_prototype->add_field_info(new SF_shared_container(TEXTURE, "texture",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       texture_func,
                                                       exec_func));
 
@@ -108,7 +109,7 @@ void Environment_map::init_prototype()
   Float_handle_function alpha_func =
     static_cast<Float_handle_function>(&Environment_map::alpha_handle);
   s_prototype->add_field_info(new SF_float(ALPHA, "alpha",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            alpha_func,
                                            exec_func));
 }

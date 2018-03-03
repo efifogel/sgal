@@ -24,11 +24,12 @@
 #include <boost/lexical_cast.hpp>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Field.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_info.hpp"
+#include "SGAL/Field_infos.hpp"
+#include "SGAL/Field.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Image_to_height_map.hpp"
 #include "SGAL/Coord_array_1d.hpp"
@@ -67,7 +68,7 @@ void Image_to_height_map::init_prototype()
   auto trigger_func =
     static_cast<Boolean_handle_function>(&Image_to_height_map::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          Field_info::RULE_IN,
+                                          Field_rule::RULE_IN,
                                           trigger_func, exec_func));
 
   // image
@@ -75,7 +76,7 @@ void Image_to_height_map::init_prototype()
     (&Image_to_height_map::image_handle);
   s_prototype->add_field_info(new SF_shared_container(IMAGE,
                                                       "image",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       image_func));
 
   // heightMap
@@ -83,21 +84,21 @@ void Image_to_height_map::init_prototype()
     (&Image_to_height_map::height_map_handle);
   s_prototype->add_field_info(new SF_shared_container(HEIGHT_MAP,
                                                       "heightMap",
-                                                      Field_info::RULE_OUT,
+                                                      Field_rule::RULE_OUT,
                                                       height_map_func));
 
   // xDimension
   auto x_dimension_func =
     static_cast<Uint_handle_function>(&Image_to_height_map::x_dimension_handle);
   s_prototype->add_field_info(new SF_uint(X_DIMENSION, "xDimension",
-                                          Field_info::RULE_OUT,
+                                          Field_rule::RULE_OUT,
                                           x_dimension_func));
 
   // zDimension
   auto z_dimension_func =
     static_cast<Uint_handle_function>(&Image_to_height_map::z_dimension_handle);
   s_prototype->add_field_info(new SF_uint(Z_DIMENSION, "zDimension",
-                                          Field_info::RULE_OUT,
+                                          Field_rule::RULE_OUT,
                                           z_dimension_func));
 }
 

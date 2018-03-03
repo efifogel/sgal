@@ -27,6 +27,7 @@
 #include "SGAL/Tex_coord_array.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Element.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Utilities.hpp"
 
@@ -83,7 +84,7 @@ void Geo_set::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Geo_set::coord_array_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD_ARRAY, "coord",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       coord_array_func,
                                                       exec_func));
 
@@ -93,7 +94,7 @@ void Geo_set::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Geo_set::normal_array_handle);
   s_prototype->add_field_info(new SF_shared_container(NORMAL_ARRAY, "normal",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       normal_array_func,
                                                       exec_func));
 
@@ -103,7 +104,7 @@ void Geo_set::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Geo_set::color_array_handle);
   s_prototype->add_field_info(new SF_shared_container(COLOR_ARRAY, "color",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       color_array_func,
                                                       exec_func));
 
@@ -114,7 +115,7 @@ void Geo_set::init_prototype()
     (&Geo_set::tex_coord_array_handle);
   s_prototype->add_field_info(new SF_shared_container(TEX_COORD_ARRAY,
                                                       "texCoord",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       tex_coord_array_func,
                                                       exec_func));
 
@@ -124,7 +125,7 @@ void Geo_set::init_prototype()
     reinterpret_cast<Uint_array_handle_function>
     (&Geo_set::coord_indices_handle);
   s_prototype->add_field_info(new MF_uint(COORD_INDEX_ARRAY, "coordIndex",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           coord_index_func, exec_func));
 
   // normalIndex
@@ -133,7 +134,7 @@ void Geo_set::init_prototype()
     reinterpret_cast<Uint_array_handle_function>
     (&Geo_set::normal_indices_handle);
   s_prototype->add_field_info(new MF_uint(NORMAL_INDEX_ARRAY, "normalIndex",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           normal_index_func, exec_func));
 
   // colorIndex
@@ -142,7 +143,7 @@ void Geo_set::init_prototype()
     reinterpret_cast<Uint_array_handle_function>
     (&Geo_set::color_indices_handle);
   s_prototype->add_field_info(new MF_uint(COLOR_INDEX_ARRAY, "colorIndex",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           color_index_func, exec_func));
 
   // texCoordIndex
@@ -153,7 +154,7 @@ void Geo_set::init_prototype()
     (&Geo_set::tex_coord_indices_handle);
   s_prototype->add_field_info(new MF_uint(TEX_COORD_INDEX_ARRAY,
                                           "texCoordIndex",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           tex_coord_index_func, exec_func));
 }
 

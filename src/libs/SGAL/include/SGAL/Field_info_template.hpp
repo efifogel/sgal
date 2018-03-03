@@ -30,6 +30,8 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Field_info.hpp"
+#include "SGAL/Field_rule.hpp"
+#include "SGAL/Field_type.hpp"
 #include "SGAL/Value_holder.hpp"
 #include "SGAL/Execution_function.hpp"
 
@@ -97,7 +99,7 @@ struct Handle_function {
  * stores a value of a specific type. The type of the field value can be any
  * basic type, a complex type, or an array of the above.
  */
-template <typename T, Field_info::Field_type type_id>
+template <typename T, Field_type type_id>
 class Field_info_template : public Field_info {
 public:
   typedef typename Handle_function<T>::type     Handle;
@@ -114,9 +116,8 @@ private:
 
 public:
   /*! Constructor. */
-  Field_info_template(Uint id, const std::string& name,
-                      Field_info::Field_rule rule, Handle handle,
-                      T initial_value,
+  Field_info_template(Uint id, const std::string& name, Field_rule rule,
+                      Handle handle, T initial_value,
                       Execution_function execution = nullptr,
                       bool initially_blocked = false,
                       bool use_initial_value = false) :
@@ -129,10 +130,8 @@ public:
   /*! Temporary constructor.
    * \todo remove this constructor when no longer needed.
    */
-  Field_info_template(Uint id, const std::string& name,
-                      Field_info::Field_rule rule,
-                      Handle handle,
-                      Execution_function execution = nullptr,
+  Field_info_template(Uint id, const std::string& name, Field_rule rule,
+                      Handle handle, Execution_function execution = nullptr,
                       bool initially_blocked = false,
                       bool use_initial_value = false,
                       T initial_value = T()) :

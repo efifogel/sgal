@@ -44,6 +44,7 @@
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Context.hpp"
@@ -1437,7 +1438,7 @@ void Boundary_set::init_prototype()
     (&Boundary_set::normal_per_vertex_handle);
   s_prototype->add_field_info(new SF_bool(NORMAL_PER_VERTEX,
                                           "normalPerVertex",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           normal_per_vertex_func,
                                           s_def_normal_per_vertex, exec_func));
 
@@ -1447,7 +1448,7 @@ void Boundary_set::init_prototype()
     (&Boundary_set::color_per_vertex_handle);
   s_prototype->add_field_info(new SF_bool(COLOR_PER_VERTEX,
                                           "colorPerVertex",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           color_per_vertex_func,
                                           s_def_color_per_vertex, exec_func));
 }

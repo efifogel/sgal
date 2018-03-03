@@ -20,6 +20,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Ellipsoid.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Trace.hpp"
@@ -251,7 +252,7 @@ void Ellipsoid::init_prototype()
     static_cast<Execution_function>(&Ellipsoid::structure_changed);
   auto width_func = static_cast<Float_handle_function>(&Ellipsoid::width_handle);
   s_prototype->add_field_info(new SF_float(WIDTH, "width",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            width_func,
                                            s_def_width, exec_func));
 
@@ -259,14 +260,14 @@ void Ellipsoid::init_prototype()
   auto height_func =
     static_cast<Float_handle_function>(&Ellipsoid::height_handle);
   s_prototype->add_field_info(new SF_float(HEIGHT, "height",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            height_func,
                                            s_def_height, exec_func));
 
   // depth
   auto depth_func = static_cast<Float_handle_function>(&Ellipsoid::depth_handle);
   s_prototype->add_field_info(new SF_float(DEPTH, "depth",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            depth_func,
                                            s_def_depth, exec_func));
 
@@ -274,7 +275,7 @@ void Ellipsoid::init_prototype()
   auto slices_func =
     static_cast<Uint_handle_function>(&Ellipsoid::slices_handle);
   s_prototype->add_field_info(new SF_uint(SLICES, "slices",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           slices_func,
                                           s_def_slices, exec_func));
 
@@ -282,7 +283,7 @@ void Ellipsoid::init_prototype()
   auto stacks_func =
     static_cast<Uint_handle_function>(&Ellipsoid::stacks_handle);
   s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           stacks_func,
                                           s_def_stacks, exec_func));
 }

@@ -19,6 +19,7 @@
 #include "SGAL/Flow_sensor.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -149,7 +150,7 @@ void Flow_sensor::init_prototype()
     (&Flow_sensor::is_animation_loading_done_handle);
   s_prototype->add_field_info(new SF_bool(ANIMATION_LOAD_DONE,
                                           "isAnimationLoadingDone",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           is_animation_loading_done_func));
 
   Boolean_handle_function is_level_0_loading_done_func =
@@ -157,14 +158,14 @@ void Flow_sensor::init_prototype()
     (&Flow_sensor::is_level_0_loading_done_handle_handle);
   s_prototype->add_field_info(new SF_bool(LEVEL0_LOAD_DONE,
                                           "isLevel0LoadingDone",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           is_level_0_loading_done_func));
 
   //
   Boolean_handle_function is_loading_done_func =
     static_cast<Boolean_handle_function>(&Flow_sensor::_handle);
   s_prototype->add_field_info(new SF_bool(LOAD_DONE, "isLoadingDone",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           is_loading_done_func));
 
   //
@@ -173,21 +174,21 @@ void Flow_sensor::init_prototype()
     (&Flow_sensor::is_snapshot_done_handle);
   s_prototype->add_field_info(new SF_bool(SNAPSHOT_DONE,
                                           "isSnapshotDone",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           is_snapshot_done_func));
 
   //
   Boolean_handle_function collaborated_func =
     static_cast<Boolean_handle_function>(&Flow_sensor::collaborated_handle);
   s_prototype->add_field_info(new SF_bool(COLLABORATED, "collaborated",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           collaborated_func));
 
   //
   Uint_handle_function num_polygons_func =
     static_cast<Uint_handle_function>(&Flow_sensor::num_polygons_handle);
   s_prototype->add_field_info(new SF_uint(NUM_POLYGONS, "numPolygons",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           num_polygons_func));
 
   //
@@ -195,21 +196,21 @@ void Flow_sensor::init_prototype()
     static_cast<Uint_handle_function>(&Flow_sensor::_handle);
   s_prototype->add_field_info(new SF_uint(ACCUM_NUM_POLYGONS,
                                           "accumNumPolygons",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           accum_num_polygons_func));
 
   //
   Float_handle_function rate_func =
     static_cast<Float_handle_function>(&Flow_sensor::rate_handle);
   s_prototype->add_field_info(new SF_float(RATE, "rate",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            rate_func));
 
   //
   Uint_handle_function geom_memory_func =
     static_cast<Uint_handle_function>(&Flow_sensor::geom_memory_handle);
   s_prototype->add_field_info(new SF_uint(GEOM_MEMORY, "geomMemory",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           geom_memory_func));
 }
 

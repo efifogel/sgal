@@ -26,6 +26,7 @@
 #include "SGAL/Camera.hpp"
 #include "SGAL/Frustum.hpp"
 #include "SGAL/Context.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Utilities.hpp"
@@ -276,7 +277,7 @@ void Camera::init_prototype()
   auto orientation_func =
     static_cast<Rotation_handle_function>(&Camera::orientation_handle);
   s_prototype->add_field_info(new SF_rotation(ORIENTATION, "orientation",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               orientation_func,
                                               s_def_orientation, exec_func));
 
@@ -284,7 +285,7 @@ void Camera::init_prototype()
   exec_func = static_cast<Execution_function>(&Camera::field_of_view_changed);
   auto fov_func = static_cast<Float_handle_function>(&Camera::fov_handle);
   s_prototype->add_field_info(new SF_float(FIELD_OF_VIEW, "fieldOfView",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            fov_func, s_def_field_of_view,
                                            exec_func));
 
@@ -292,7 +293,7 @@ void Camera::init_prototype()
   auto description_func =
     static_cast<String_handle_function>(&Camera::description_handle);
   s_prototype->add_field_info(new SF_string(DESCRIPTION, "description",
-                                            Field_info::RULE_FIELD,
+                                            Field_rule::RULE_FIELD,
                                             description_func));
 
   // offset
@@ -300,7 +301,7 @@ void Camera::init_prototype()
   auto offset_func =
     static_cast<Vector3f_handle_function>(&Camera::offset_handle);
   s_prototype->add_field_info(new SF_vector3f(OFFSET, "offset",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               offset_func, s_def_offset,
                                               exec_func));
 
@@ -308,7 +309,7 @@ void Camera::init_prototype()
   auto radius_scale_func =
     static_cast<Float_handle_function>(&Camera::radius_scale_handle);
   s_prototype->add_field_info(new SF_float(RADIUS_SCALE, "radiusScale",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            radius_scale_func,
                                            s_def_radius_scale));
 }

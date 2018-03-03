@@ -20,6 +20,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -187,8 +188,8 @@ void Container::write_fields(Formatter* formatter)
   auto* proto = get_prototype();
   for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const Field_info* field_info = (*it).second;
-    if ((Field_info::RULE_IN == field_info->get_rule()) ||
-        (Field_info::RULE_OUT == field_info->get_rule()))
+    if ((Field_rule::RULE_IN == field_info->get_rule()) ||
+        (Field_rule::RULE_OUT == field_info->get_rule()))
       continue;
     write_field(field_info, formatter);
   }

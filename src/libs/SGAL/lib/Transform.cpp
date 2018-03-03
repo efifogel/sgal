@@ -27,6 +27,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Transform.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Isect_action.hpp"
@@ -538,7 +539,7 @@ void Transform::init_prototype()
   auto center_func =
     static_cast<Vector3f_handle_function>(&Transform::center_handle);
   s_prototype->add_field_info(new SF_vector3f(CENTER, "center",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               center_func,
                                               s_def_center, exec_func));
 
@@ -546,7 +547,7 @@ void Transform::init_prototype()
   auto translation_func =
     static_cast<Vector3f_handle_function>(&Transform::translation_handle);
   s_prototype->add_field_info(new SF_vector3f(TRANSLATION, "translation",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               translation_func,
                                               s_def_translation, exec_func));
 
@@ -554,7 +555,7 @@ void Transform::init_prototype()
   auto rotation_func =
     static_cast<Rotation_handle_function>(&Transform::rotation_handle);
   s_prototype->add_field_info(new SF_rotation(ROTATION, "rotation",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               rotation_func, s_def_rotation,
                                               exec_func));
 
@@ -562,7 +563,7 @@ void Transform::init_prototype()
   auto scale_func =
     static_cast<Vector3f_handle_function>(&Transform::scale_handle);
   s_prototype->add_field_info(new SF_vector3f(SCALE, "scale",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               scale_func,
                                               s_def_scale, exec_func));
 
@@ -571,7 +572,7 @@ void Transform::init_prototype()
   auto reset_func =
     static_cast<Boolean_handle_function>(&Transform::reset_handle);
   s_prototype->add_field_info(new SF_bool(RESET, "reset",
-                                          Field_info::RULE_OUT,
+                                          Field_rule::RULE_OUT,
                                           reset_func,
                                           exec_func));
 }

@@ -23,6 +23,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Navigation_sensor.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Field.hpp"
@@ -77,7 +78,7 @@ void Navigation_sensor::init_prototype()
     (&Navigation_sensor::translation_handle);
   s_prototype->add_field_info(new SF_vector3f(TRANSLATION,
                                               "translation",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               translation_func));
 
   // rotation
@@ -85,7 +86,7 @@ void Navigation_sensor::init_prototype()
     static_cast<Rotation_handle_function>(&Navigation_sensor::rotation_handle);
   s_prototype->add_field_info(new SF_rotation(ROTATION,
                                               "rotation",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               rotation_func));
 
   // minZoomDistance
@@ -94,7 +95,7 @@ void Navigation_sensor::init_prototype()
     (&Navigation_sensor::min_zoom_distance_handle);
   s_prototype->add_field_info(new SF_float(MIN_ZOOM_DISTANCE,
                                            "minZoomDistance",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            min_zoom_distance_func));
 
   // translationDone
@@ -103,7 +104,7 @@ void Navigation_sensor::init_prototype()
     (&Navigation_sensor::translation_done_handle);
   s_prototype->add_field_info(new SF_bool(TRANSLATION_DONE,
                                           "translationDone",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           translation_done_func));
 
   // rotationDone
@@ -112,7 +113,7 @@ void Navigation_sensor::init_prototype()
     (&Navigation_sensor::rotation_done_handle);
   s_prototype->add_field_info(new SF_bool(ROTATION_DONE,
                                           "rotationDone",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           rotation_done_func));
 }
 

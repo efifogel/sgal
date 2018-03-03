@@ -21,6 +21,7 @@
  */
 
 #include "SGAL/Coordinate_interpolator.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -63,7 +64,7 @@ void Coordinate_interpolator::init_prototype()
     (&Coordinate_interpolator::value_handle);
   s_prototype->add_field_info(new MF_vector3f(VALUE,
                                               "value_changed",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               value_func));
 }
 

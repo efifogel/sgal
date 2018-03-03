@@ -21,6 +21,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Scene_graph.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Element.hpp"
@@ -150,7 +151,7 @@ void Configuration::init_prototype()
   Uint_handle_function poly_mode_func =
     reinterpret_cast<Uint_handle_function>(&Configuration::poly_mode_handle);
   s_prototype->add_field_info(new SF_uint(POLY_MODE, "polyMode",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           poly_mode_func,
                                           s_def_poly_mode, exec_func));
 
@@ -158,7 +159,7 @@ void Configuration::init_prototype()
   Boolean_handle_function display_fps_func =
     static_cast<Boolean_handle_function>(&Configuration::display_fps_handle);
   s_prototype->add_field_info(new SF_bool(DISPLAY_FPS, "displayFPS",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           display_fps_func,
                                           s_def_display_fps, exec_func));
 
@@ -167,7 +168,7 @@ void Configuration::init_prototype()
     static_cast<Boolean_handle_function>
     (&Configuration::is_fixed_head_light_handle);
   s_prototype->add_field_info(new SF_bool(FIXED_HEADLIGHT, "fixedHeadLight",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           is_fixed_head_light_func,
                                           s_def_is_fixed_head_light,
                                           exec_func));
@@ -176,7 +177,7 @@ void Configuration::init_prototype()
   Uint_handle_function stencil_bits_func =
     static_cast<Uint_handle_function>(&Configuration::stencil_bits_handle);
   s_prototype->add_field_info(new SF_uint(STENCIL_BITS, "stencilBits",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           stencil_bits_func,
                                           s_def_stencil_bits));
 
@@ -184,14 +185,14 @@ void Configuration::init_prototype()
   Uint_handle_function depth_bits_func =
     static_cast<Uint_handle_function>(&Configuration::depth_bits_handle);
   s_prototype->add_field_info(new SF_uint(DEPTH_BITS, "depthBits",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           depth_bits_func, s_def_depth_bits));
 
   // minFrameRate
   Float_handle_function min_frame_rate_func =
     static_cast<Float_handle_function>(&Configuration::min_frame_rate_handle);
   s_prototype->add_field_info(new SF_float(MIN_FRAME_RATE, "minFrameRate",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            min_frame_rate_func,
                                            s_def_min_frame_rate));
 
@@ -201,7 +202,7 @@ void Configuration::init_prototype()
     (&Configuration::min_zoom_distance_handle);
   s_prototype->add_field_info(new SF_float(MIN_ZOOM_DISTANCE,
                                            "minZoomDistance",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            min_zoom_distance_func,
                                            s_def_min_zoom_distance));
 
@@ -209,7 +210,7 @@ void Configuration::init_prototype()
   Float_handle_function speed_factor_func =
     static_cast<Float_handle_function>(&Configuration::speed_factor_handle);
   s_prototype->add_field_info(new SF_float(SPEED_FACTOR, "speedFacotor",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            speed_factor_func,
                                            s_def_speed_factor));
 
@@ -217,7 +218,7 @@ void Configuration::init_prototype()
   Boolean_handle_function texture_map_func =
     static_cast<Boolean_handle_function>(&Configuration::texture_map_handle);
   s_prototype->add_field_info(new SF_bool(TEXTURE_MAP, "textureMap",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           texture_map_func,
                                           s_def_texture_map));
 
@@ -225,7 +226,7 @@ void Configuration::init_prototype()
   Uint_handle_function verbosity_level_func =
     static_cast<Uint_handle_function>(&Configuration::verbosity_level_handle);
   s_prototype->add_field_info(new SF_uint(VERBOSITY_LEVEL, "verbosityLevel",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           verbosity_level_func,
                                           s_def_verbose_level));
 
@@ -234,7 +235,7 @@ void Configuration::init_prototype()
     static_cast<Boolean_handle_function>
     (&Configuration::seamless_cube_map_handle);
   s_prototype->add_field_info(new SF_bool(SEAMLESS_CUBE_MAP, "seamlessCubeMap",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           seamless_cube_map_func,
                                           s_def_seamless_cube_map));
 
@@ -244,7 +245,7 @@ void Configuration::init_prototype()
     (&Configuration::accumulation_handle);
   s_prototype->add_field_info(new SF_shared_container(ACCUMULATION,
                                                       "accumulation",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       accumulation_func,
                                                       exec_func));
 
@@ -254,7 +255,7 @@ void Configuration::init_prototype()
     (&Configuration::modeling_handle);
   s_prototype->add_field_info(new SF_shared_container(MODELING,
                                                       "modeling",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       modeling_func,
                                                       exec_func));
 
@@ -262,7 +263,7 @@ void Configuration::init_prototype()
   Boolean_handle_function export_scene_func =
     static_cast<Boolean_handle_function>(&Configuration::export_scene_handle);
   s_prototype->add_field_info(new SF_bool(EXPORT_SCENE, "exportScene",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           export_scene_func,
                                           s_def_export_scene, exec_func));
 }

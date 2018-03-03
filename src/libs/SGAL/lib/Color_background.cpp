@@ -26,6 +26,7 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 // #include "SGAL/Execution_function.hpp"
 
@@ -112,7 +113,7 @@ void Color_background::init_prototype()
   Vector4f_handle_function color_func =
     static_cast<Vector4f_handle_function>(&Color_background::color_handle);
   s_prototype->add_field_info(new SF_vector4f(COLOR, "color",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               color_func));
 }
 

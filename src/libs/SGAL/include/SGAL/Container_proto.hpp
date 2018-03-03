@@ -39,6 +39,8 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Field_rule.hpp"
+#include "SGAL/Field_type.hpp"
 #include "SGAL/Execution_function.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -180,6 +182,14 @@ public:
   void set_attributes(Element* element);
 
 private:
+  /*! Add a field information record to the prototype.
+   * \param[in] type the type of the field.
+   * \param[in] name the name of the field.
+   * \param[in] value the initial value of the field.
+   */
+  void add_field_info(Field_rule rule, Field_type type,
+                      const String& name, const String& value);
+
   /*! A search structure for field-infos by field-info ids */
   Field_info_id_map m_field_info_ids;
 

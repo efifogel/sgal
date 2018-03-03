@@ -27,6 +27,7 @@
 #include "SGAL/Texture_transform.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/io_vector2f.hpp"
@@ -72,7 +73,7 @@ void Texture_transform::init_prototype()
   Vector2f_handle_function center_func =
     static_cast<Vector2f_handle_function>(&Texture_transform::center_handle);
   s_prototype->add_field_info(new SF_vector2f(CENTER, "center",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               center_func,
                                               s_def_center, exec_func));
 
@@ -80,7 +81,7 @@ void Texture_transform::init_prototype()
   Float_handle_function rotation_func =
     static_cast<Float_handle_function>(&Texture_transform::rotation_handle);
   s_prototype->add_field_info(new SF_float(ROTATION, "rotation",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            rotation_func,
                                            s_def_rotation, exec_func));
 
@@ -88,7 +89,7 @@ void Texture_transform::init_prototype()
   Vector2f_handle_function scale_func =
     static_cast<Vector2f_handle_function>(&Texture_transform::scale_handle);
   s_prototype->add_field_info(new SF_vector2f(SCALE, "scale",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               scale_func,
                                               s_def_scale, exec_func));
 
@@ -97,7 +98,7 @@ void Texture_transform::init_prototype()
     static_cast<Vector2f_handle_function>
     (&Texture_transform::translation_handle);
   s_prototype->add_field_info(new SF_vector2f(TRANSLATION, "translation",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               translation_func,
                                               s_def_translation, exec_func));
 }

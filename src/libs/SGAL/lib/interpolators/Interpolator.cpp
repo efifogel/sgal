@@ -21,6 +21,7 @@
  */
 
 #include "SGAL/Interpolator.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -57,7 +58,7 @@ void Interpolator::init_prototype()
     static_cast<Float_handle_function>(&Interpolator::fraction_handle);
   s_prototype->add_field_info(new SF_float(FRACTION,
                                            "set_fraction",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            fraction_func, exec_func));
 }
 

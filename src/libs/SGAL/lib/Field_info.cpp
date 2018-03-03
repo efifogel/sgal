@@ -16,8 +16,6 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#include <boost/lexical_cast.hpp>
-
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Field_info.hpp"
@@ -27,22 +25,6 @@
 
 SGAL_BEGIN_NAMESPACE
 
-//! \brief the names of the field rules.
-const char* Field_info::s_rule_names[] = {
-  "eventIn", "eventOut", "field", "exposedField"
-};
-
-//! \brief the names of the field types.
-const char* Field_info::s_type_names[] = {
-  "SFBool", "SFFloat", "SFUint32", "SFInt32",
-  "SFTime", "SFVec2f", "SFVec3f", "SFColor",
-  "SFVec4f", "SFRotation", "SFSphereBound", "SFImage",
-  "SFString", "SFSharedContainer", "MFBool", "MFFloat",
-  "MFUint32", "MFInt32", "MFTime", "MFVec2f",
-  "MFVec3f", "MFColor", "MFVec4f", "MFRotation",
-  "MFSphereBound", "MFImage", "MFString", "MFSharedContainer",
-};
-
 //! \brief exports the (single) Boolean field.
 void Field_info::write(Formatter* formatter, Boolean value,
                        Boolean default_value, Boolean declaration) const
@@ -51,7 +33,8 @@ void Field_info::write(Formatter* formatter, Boolean value,
   if (declaration) {
     const auto& rule_name = get_rule_name();
     const auto& type_name = get_type_name();
-    if ((RULE_FIELD == get_rule()) || (RULE_EXPOSED_FIELD == get_rule()))
+    if ((Field_rule::RULE_FIELD == get_rule()) ||
+        (Field_rule::RULE_EXPOSED_FIELD == get_rule()))
       formatter->single_boolean(rule_name, type_name, name, default_value);
     else formatter->declaration(rule_name, type_name, name);
   }

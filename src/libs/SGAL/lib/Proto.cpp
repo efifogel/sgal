@@ -31,9 +31,36 @@ Proto::~Proto() {}
 //! \brief deletes the container prototype.
 void Proto::delete_prototype()
 {
-  if (!m_prototype) return;
-  delete m_prototype;
-  m_prototype = nullptr;
+  //! \todo only the prototype container should delete the container prototype.
+  // if (!m_prototype) return;
+  // delete m_prototype;
+  // m_prototype = nullptr;
+}
+
+//! \brief clone the container from the prototype container.
+Container* Proto::clone()
+{
+  auto proto = new Proto();
+  SGAL_assertion(proto);
+  proto->set_prototype(get_prototype());
+  return proto;
+}
+
+//! \brief initializes the container prototype.
+void Proto::init_prototype()
+{
+  if (m_prototype) return;
+  m_prototype = new Container_proto(Container::get_prototype());
+
+  // The container-prototype does not have static fields.
+  // If there had been, they would have been defined here.
+}
+
+//! \brief obtains the container prototype.
+Container_proto* Proto::get_prototype()
+{
+  if (!m_prototype) Proto::init_prototype();
+  return m_prototype;
 }
 
 //! \brief sets the attributes of the object extracted from the input file.

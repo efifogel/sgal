@@ -25,6 +25,7 @@
 #include "SGAL/Touch_sensor.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Isect_action.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
@@ -379,7 +380,7 @@ void Group::init_prototype()
   auto is_visible_func =
     static_cast<Boolean_handle_function>(&Group::is_visible_handle);
   s_prototype->add_field_info(new SF_bool(IS_VISIBLE, "visible",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           is_visible_func, true, exec_func));
 
   // children
@@ -387,7 +388,7 @@ void Group::init_prototype()
     reinterpret_cast<Shared_container_array_handle_function>
     (&Group::childs_handle);
   s_prototype->add_field_info(new MF_shared_container(CHILDREN, "children",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       childs_func, exec_func));
 }
 

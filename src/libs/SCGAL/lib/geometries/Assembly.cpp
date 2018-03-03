@@ -49,6 +49,7 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Field.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Switch.hpp"
@@ -187,7 +188,7 @@ void Assembly::init_prototype()
   Boolean_handle_function trigger_func =
     static_cast<Boolean_handle_function>(&Assembly::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           trigger_func,
                                           exec_func));
 
@@ -195,28 +196,28 @@ void Assembly::init_prototype()
   Boolean_handle_function interlocked_func =
     static_cast<Boolean_handle_function>(&Assembly::interlocked_handle);
   s_prototype->add_field_info(new SF_bool(INTERLOCKED, "interlocked",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           interlocked_func));
 
   // translation
   Vector3f_handle_function translation_func =
     static_cast<Vector3f_handle_function>(&Assembly::translation_handle);
   s_prototype->add_field_info(new SF_vector3f(TRANSLATION, "translation",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               translation_func));
 
   // components
   Boolean_array_handle_function components_func =
     static_cast<Boolean_array_handle_function>(&Assembly::components_handle);
   s_prototype->add_field_info(new MF_bool(COMPONENTS, "components",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           components_func));
 
   // solutionId
   Uint_handle_function solution_id_func =
     static_cast<Uint_handle_function>(&Assembly::solution_id_handle);
   s_prototype->add_field_info(new SF_uint(SOLUTION_ID, "solutionId",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           solution_id_func));
 
   // drawAlternate
@@ -224,7 +225,7 @@ void Assembly::init_prototype()
   Boolean_handle_function draw_alternate_func =
     static_cast<Boolean_handle_function>(&Assembly::draw_alternate_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_ALT, "drawAlternate",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           draw_alternate_func, exec_func));
 
   // incAlternate
@@ -232,7 +233,7 @@ void Assembly::init_prototype()
   Boolean_handle_function inc_alternate_func =
     static_cast<Boolean_handle_function>(&Assembly::inc_alternate_handle);
   s_prototype->add_field_info(new SF_bool(INC_ALT, "incAlternate",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           inc_alternate_func, exec_func));
 
   // drawAosMinkowskiSums
@@ -243,7 +244,7 @@ void Assembly::init_prototype()
     (&Assembly::draw_aos_minkowski_sums_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_AOS_MINKOWSKI_SUMS,
                                           "drawAosMinkowskiSums",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           draw_aos_minkowski_sums_func,
                                           exec_func));
 
@@ -254,7 +255,7 @@ void Assembly::init_prototype()
     static_cast<Boolean_handle_function>(&Assembly::inc_minkowski_sums_handle);
   s_prototype->add_field_info(new SF_bool(INC_MINKOWSKI_SUMS,
                                           "incMinkowskiSums",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           inc_minkowski_sums_func,
                                           exec_func));
 }

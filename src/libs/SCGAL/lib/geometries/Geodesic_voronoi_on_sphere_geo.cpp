@@ -47,6 +47,7 @@
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Isect_action.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Field.hpp"
@@ -88,7 +89,7 @@ void Geodesic_voronoi_on_sphere_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Geodesic_voronoi_on_sphere_geo::draw_sites_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_SITES, "drawSites",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           draw_sites_func));
 }
 

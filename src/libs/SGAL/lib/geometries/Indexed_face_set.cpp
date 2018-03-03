@@ -47,14 +47,15 @@
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
-#include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/GL_error.hpp"
 #include "SGAL/calculate_multiple_normals_per_vertex.hpp"
 #include "SGAL/Vrml_formatter.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_info.hpp"
+#include "SGAL/Field_infos.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Modeling.hpp"
 #include "SGAL/Scene_graph.hpp"
@@ -207,13 +208,13 @@ void Indexed_face_set::init_prototype()
   auto volume_func = static_cast<Float_handle_function>
     (&Indexed_face_set::volume_handle);
   s_prototype->add_field_info(new SF_float(VOLUME, "volume",
-                                           Field_info::RULE_OUT, volume_func));
+                                           Field_rule::RULE_OUT, volume_func));
 
   // surfaceArea
   auto surface_area_func = static_cast<Float_handle_function>
     (&Indexed_face_set::surface_area_handle);
   s_prototype->add_field_info(new SF_float(SURFACE_AREA, "surfaceArea",
-                                           Field_info::RULE_OUT,
+                                           Field_rule::RULE_OUT,
                                            surface_area_func));
 }
 

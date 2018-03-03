@@ -27,6 +27,7 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Element.hpp"
@@ -66,14 +67,14 @@ void Exact_coord_minkowski::init_prototype()
     static_cast<Boolean_handle_function>
     (&Exact_coord_minkowski::execute_handle);
   s_prototype->add_field_info(new SF_bool(EXECUTE, "execute",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           execute_func, exec_func));
 
   Shared_container_handle_function coord1_func =
     reinterpret_cast<Shared_container_handle_function>
     (&Exact_coord_minkowski::coord_array1_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD1, "coord1",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       coord1_func, exec_func));
 
   // coord2
@@ -81,7 +82,7 @@ void Exact_coord_minkowski::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Exact_coord_minkowski::coord_array2_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD2, "coord2",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       coord2_func, exec_func));
 
   // coord
@@ -90,7 +91,7 @@ void Exact_coord_minkowski::init_prototype()
     (&Exact_coord_minkowski::coord_array_changed_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD_CHANGED,
                                                       "coord_changed",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       coord_changed_func));
 }
 

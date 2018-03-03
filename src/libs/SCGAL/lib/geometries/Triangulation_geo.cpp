@@ -40,6 +40,7 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Utilities.hpp"
@@ -307,7 +308,7 @@ void Triangulation_geo::init_prototype()
     (&Triangulation_geo::coord_array_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD,
                                                       "coord",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       coord_array_func,
                                                       exec_func));
 
@@ -316,7 +317,7 @@ void Triangulation_geo::init_prototype()
     static_cast<Float_handle_function>(&Triangulation_geo::line_width_handle);
   s_prototype->add_field_info(new SF_float(LINE_WIDTH,
                                            "lineWidth",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            line_width_func));
 
   // drawHaloed
@@ -325,7 +326,7 @@ void Triangulation_geo::init_prototype()
     (&Triangulation_geo::draw_haloed_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_HALOED,
                                           "drawHaloed",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           draw_haloed_func));
 
 }

@@ -52,6 +52,7 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Gfx.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Field.hpp"
@@ -445,7 +446,7 @@ void Spherical_gaussian_map_marked_geo::init_prototype()
     reinterpret_cast<Shared_container_array_handle_function>
     (&Spherical_gaussian_map_marked_geo::sgm_nodes_handle);
   s_prototype->add_field_info(new MF_shared_container(GEOMETRIES, "geometries",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       sgm_nodes_func));
 
   Execution_function exec_func =
@@ -456,7 +457,7 @@ void Spherical_gaussian_map_marked_geo::init_prototype()
     (&Spherical_gaussian_map_marked_geo::increase_vertex_index_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_VERTEX_INDEX,
                                           "increaseVertexIndex",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           increase_vertex_index_func,
                                           exec_func));
 
@@ -467,7 +468,7 @@ void Spherical_gaussian_map_marked_geo::init_prototype()
     (&Spherical_gaussian_map_marked_geo::increase_edge_index_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_EDGE_INDEX,
                                           "increaseEdgeIndex",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           increase_edge_index_func,
                                           exec_func));
 
@@ -478,7 +479,7 @@ void Spherical_gaussian_map_marked_geo::init_prototype()
     (&Spherical_gaussian_map_marked_geo::increase_facet_index_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_FACET_INDEX,
                                           "increaseFacetIndex",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           increase_facet_index_func,
                                           exec_func));
 }

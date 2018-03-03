@@ -26,6 +26,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Single_key_sensor.hpp"
 #include "SGAL/Scene_graph.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Keyboard_event.hpp"
@@ -75,35 +76,35 @@ void Single_key_sensor::init_prototype()
   // key
   Uint_handle_function key_func =
     static_cast<Uint_handle_function>(&Single_key_sensor::key_handle);
-  s_prototype->add_field_info(new SF_uint(KEY, "key", Field_info::RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_uint(KEY, "key", Field_rule::RULE_EXPOSED_FIELD,
                                           key_func));
 
   // press
   Boolean_handle_function press_func =
     static_cast<Boolean_handle_function>(&Single_key_sensor::press_handle);
   s_prototype->add_field_info(new SF_bool(PRESS, "press",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           press_func));
 
   // pressTime
   Scene_time_handle_function time_func =
     static_cast<Scene_time_handle_function>(&Single_key_sensor::time_handle);
   s_prototype->add_field_info(new SF_time(TIME, "pressTime",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           time_func));
 
   // state
   Boolean_handle_function state_func =
     static_cast<Boolean_handle_function>(&Single_key_sensor::state_handle);
   s_prototype->add_field_info(new SF_bool(STATE, "state",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           state_func, s_def_state));
 
   // intState
   Int32_handle_function int_state_func =
     static_cast<Int32_handle_function>(&Single_key_sensor::int_state_handle);
   s_prototype->add_field_info(new SF_int32(INT_STATE, "intState",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            int_state_func));
 
   // numberOfStates
@@ -111,7 +112,7 @@ void Single_key_sensor::init_prototype()
     static_cast<Uint_handle_function>(&Single_key_sensor::num_states_handle);
   s_prototype->add_field_info(new SF_uint(NUMBER_OF_STATES,
                                           "numberOfStates",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           num_states_func, s_def_num_states));
 }
 

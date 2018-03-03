@@ -26,6 +26,7 @@
 #include "SGAL/Image.hpp"
 #include "SGAL/Texture.hpp"
 #include "SGAL/Scene_graph_int.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_factory.hpp"
@@ -65,7 +66,7 @@ void Sphere_environment::init_prototype()
     static_cast<Float_handle_function>(&Sphere_environment::alpha_handle);
   s_prototype->add_field_info(new SF_float(ALPHA,
                                            "alpha",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            alpha_func,
                                            exec_func));
 }

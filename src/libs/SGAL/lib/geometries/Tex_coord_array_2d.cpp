@@ -25,6 +25,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -65,7 +66,7 @@ void Tex_coord_array_2d::delete_prototype()
     static_cast<Vector2f_array_handle_function>
     (&Tex_coord_array_2d::array_handle);
   s_prototype->add_field_info(new MF_vector2f(POINT, "point",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               array_func));
 }
 

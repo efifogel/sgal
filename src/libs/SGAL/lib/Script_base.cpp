@@ -26,9 +26,10 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Script_base.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
-#include "SGAL/Scene_graph.hpp"
 #include "SGAL/Field.hpp"
+#include "SGAL/Scene_graph.hpp"
 #include "SGAL/Tick_event.hpp"
 #include "SGAL/Utilities.hpp"
 
@@ -60,20 +61,20 @@ void Script_base::init_prototype()
   auto url_func =
     static_cast<String_array_handle_function>(&Script_base::url_handle);
   s_prototype->add_field_info(new MF_string(URL, "url",
-                                            Field_info::RULE_EXPOSED_FIELD,
+                                            Field_rule::RULE_EXPOSED_FIELD,
                                             url_func));
 
   auto direct_output_func =
     static_cast<Boolean_handle_function>(&Script_base::direct_output_handle);
   s_prototype->add_field_info(new SF_bool(DIRECT_OUTPUT, "directOutput",
-                                          Field_info::RULE_FIELD,
+                                          Field_rule::RULE_FIELD,
                                           direct_output_func,
                                           s_def_direct_output));
 
   auto must_evaluate_func =
     static_cast<Boolean_handle_function>(&Script_base::must_evaluate_handle);
   s_prototype->add_field_info(new SF_bool(MUST_EVALUATE, "mustEvaluate",
-                                          Field_info::RULE_FIELD,
+                                          Field_rule::RULE_FIELD,
                                           must_evaluate_func,
                                           s_def_must_evaluate));
 }

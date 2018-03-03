@@ -25,6 +25,7 @@
 #include <GL/gl.h>
 
 #include "SGAL/Cone.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Trace.hpp"
@@ -205,14 +206,14 @@ void Cone::init_prototype()
   auto bottom_radius_func =
     static_cast<Float_handle_function>(&Cone::bottom_radius_handle);
   s_prototype->add_field_info(new SF_float(BOTTOM_RADIUS, "bottomRadius",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            bottom_radius_func,
                                            exec_func));
 
   // height
   auto height_func = static_cast<Float_handle_function>(&Cone::height_handle);
   s_prototype->add_field_info(new SF_float(HEIGHT, "height",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            height_func,
                                            exec_func));
 
@@ -220,7 +221,7 @@ void Cone::init_prototype()
   auto side_visible_func =
     static_cast<Boolean_handle_function>(&Cone::side_visible_handle);
   s_prototype->add_field_info(new SF_bool(SIDE, "side",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           side_visible_func,
                                           exec_func));
 
@@ -228,7 +229,7 @@ void Cone::init_prototype()
   auto bottom_visible_func =
     static_cast<Boolean_handle_function>(&Cone::bottom_visible_handle);
   s_prototype->add_field_info(new SF_bool(BOTTOM, "bottom",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           bottom_visible_func,
                                           exec_func));
 
@@ -237,14 +238,14 @@ void Cone::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   auto slices_func = static_cast<Uint_handle_function>(&Cone::slices_handle);
   s_prototype->add_field_info(new SF_uint(SLICES, "slices",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           slices_func,
                                           exec_func));
 
   // stacks
   auto stacks_func = static_cast<Uint_handle_function>(&Cone::stacks_handle);
   s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           stacks_func,
                                           exec_func));
 }

@@ -33,6 +33,7 @@
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Font_style.hpp"
 #include "SGAL/Trace.hpp"
@@ -78,7 +79,7 @@ void Text_3d::init_prototype()
   auto strings_func =
     static_cast<String_array_handle_function>(&Text_3d::strings_handle);
   s_prototype->add_field_info(new MF_string(STRINGS, "string",
-                                            Field_info::RULE_EXPOSED_FIELD,
+                                            Field_rule::RULE_EXPOSED_FIELD,
                                             strings_func, exec_func));
 
   // fontStyle
@@ -86,7 +87,7 @@ void Text_3d::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Text_3d::font_style_handle);
   s_prototype->add_field_info(new SF_shared_container(FONT_STYLE, "fontStyle",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       font_style_func,
                                                       exec_func));
 
@@ -94,19 +95,19 @@ void Text_3d::init_prototype()
   auto lengths_func =
     static_cast<Float_array_handle_function>(&Text_3d::lengths_handle);
   s_prototype->add_field_info(new MF_float(LENGTHS, "length",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            lengths_func, exec_func));
 
   // maxExtent
   auto max_extent_func =
     static_cast<Float_handle_function>(&Text_3d::max_extent_handle);
   s_prototype->add_field_info(new SF_float(MAX_EXTENT, "maxExtent",
-                                           Field_info::RULE_EXPOSED_FIELD, max_extent_func,
+                                           Field_rule::RULE_EXPOSED_FIELD, max_extent_func,
                                            s_def_max_extent, exec_func));
 
   // depth
   auto depth_func = static_cast<Float_handle_function>(&Text_3d::depth_handle);
-  s_prototype->add_field_info(new SF_float(DEPTH, "depth", Field_info::RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_float(DEPTH, "depth", Field_rule::RULE_EXPOSED_FIELD,
                                            depth_func, s_def_depth, exec_func));
 }
 

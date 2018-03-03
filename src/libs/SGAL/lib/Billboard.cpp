@@ -25,6 +25,7 @@
 #include "SGAL/Billboard.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Cull_context.hpp"
 #include "SGAL/Isect_action.hpp"
@@ -65,7 +66,7 @@ void Billboard::init_prototype()
     static_cast<Vector3f_handle_function>(&Billboard::axis_of_rotation_handle);
   s_prototype->add_field_info(new SF_vector3f(AXIS_OF_ROTATION,
                                               "axis_of_rotation",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               axis_of_rotation_func,
                                               s_def_axis_of_rotation,
                                               exec_func));

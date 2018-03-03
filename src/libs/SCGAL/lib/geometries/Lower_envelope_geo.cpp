@@ -32,6 +32,7 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Utilities.hpp"
@@ -174,7 +175,7 @@ void Lower_envelope_geo::init_prototype()
     static_cast<Float_handle_function>
     (&Lower_envelope_geo::vertex_radius_handle);
   s_prototype->add_field_info(new SF_float(VERTEX_RADIUS, "vertexRadius",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            vertex_radius_func));
 
   // edgeRadius
@@ -182,7 +183,7 @@ void Lower_envelope_geo::init_prototype()
     static_cast<Float_handle_function>
     (&Lower_envelope_geo::edge_radius_handle);
   s_prototype->add_field_info(new SF_float(EDGE_RADIUS, "edgeRadius",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            edge_radius_func));
 
   // faceTransparency
@@ -191,7 +192,7 @@ void Lower_envelope_geo::init_prototype()
     (&Lower_envelope_geo::face_transparency_handle);
   s_prototype->add_field_info(new SF_float(FACE_TRANSPARENCY,
                                            "faceTransparency",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            face_transparency_func));
 }
 

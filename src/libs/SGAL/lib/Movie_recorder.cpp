@@ -25,6 +25,7 @@
 #include "Scene_graph.h"
 #include "Local_stream.h"
 #include "Os.h"
+#include "SGAL/Field_rule.hpp"
 #include "Field_infos.h"
 #include "Message_box.h"
 #include "Scene_graph.h"
@@ -423,14 +424,14 @@ void Movie_recorder::init_prototype()
   Float_handle_function alpha_func =
     static_cast<Float_handle_function>(&Camera::alpha_handle);
   s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           is_enabled_func,
                       (Execution_func_type)&Movie_recorder::set_enabled));
 
   String_handle_function status_func =
     static_cast<String_handle_function>(&Camera::status_handle);
   s_prototype->add_field_info(new SF_string(STATUS, "status",
-                                            Field_info::RULE_EXPOSED_FIELD,
+                                            Field_rule::RULE_EXPOSED_FIELD,
                                             status_func));
 }
 

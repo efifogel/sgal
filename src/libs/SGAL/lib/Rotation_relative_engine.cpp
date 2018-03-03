@@ -25,6 +25,7 @@
 #include "SGAL/basic.hpp"
 #include "Scene_graphInt.h"
 #include "Rotation_relative_engine.h"
+#include "SGAL/Field_rule.hpp"
 #include "Field_infos.h"
 #include "Field.h"
 #include "String_utils.h"
@@ -71,7 +72,7 @@ void Rotation_relative_engine::init_prototype()
     static_cast<Float_handle_function>
     (&Rotation_relative_engine::fraction_handle);
   s_prototype->add_field_info(new SF_float(FRACTION, "fraction",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            fraction_func,
                                            exec_func));
 
@@ -79,14 +80,14 @@ void Rotation_relative_engine::init_prototype()
     static_cast<Rotation_handle_function>
     (&Rotation_relative_engine::rotation_handle);
   s_prototype->add_field_info(new SF_rotation(VALUE, "value",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               rotation_func));
 
   Float_handle_function angle_func =
     static_cast<Float_handle_function>
     (&Rotation_relative_engine::angle_handle);
   s_prototype->add_field_info(new SF_float(ANGLE, "angle",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            angle_func));
 }
 

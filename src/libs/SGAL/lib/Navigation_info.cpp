@@ -27,6 +27,7 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Scene_graph.hpp"
@@ -141,7 +142,7 @@ void Navigation_info::init_prototype()
   auto types_func =
     static_cast<String_array_handle_function>(&Navigation_info::types_handle);
   s_prototype->add_field_info(new MF_string(TYPES, "type",
-                                            Field_info::RULE_EXPOSED_FIELD,
+                                            Field_rule::RULE_EXPOSED_FIELD,
                                             types_func,
                                             s_def_types));
 }

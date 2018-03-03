@@ -37,33 +37,31 @@ public:
    */
   Proto(Boolean proto = false);
 
-  /*! Construct the prototype.
-   * \return the prototype.
+  /*! Construct the prototype container.
+   * \return the prototype container.
    */
   static Proto* prototype();
 
   /*! Destruct. */
   virtual ~Proto();
 
-  /*! Clone the container.
+  /*! Clone the container from the prototype container.
    * \return the clone.
    */
   virtual Container* clone();
 
-  /// \name Protoype handling
+  /// \name Container protoype handling
   //@{
+  /*! Initialize the container prototype. */
+  virtual void init_prototype();
+
   /*! Delete the container prototype. */
   virtual void delete_prototype();
 
   /*! Obtain the container prototype.
-   * \return the node prototype.
+   * \return the container prototype.
    */
   virtual Container_proto* get_prototype();
-
-  /*! Set the container prototype.
-   * \param[in] the node prototype.
-   */
-  void set_prototype(Container_proto* prototype);
   //@}
 
   /*! Set the attributes of the object extracted from the input file.
@@ -79,28 +77,28 @@ public:
    */
   void set_tag(const String& tag);
 
+protected:
+  /*! Set the container prototype.
+   * \param[in] the container prototype.
+   */
+  void set_prototype(Container_proto* prototype);
+
 private:
   /*! The tag that identifies this container type. */
   std::string m_tag;
 
-  //! The node prototype.
+  //! The container prototype.
   Container_proto* m_prototype;
 };
 
-//! \brief constructs the prototype.
+//! \brief constructs the prototype container.
 inline Proto* Proto::prototype() { return new Proto(true); }
-
-//! \brief clone.
-inline Container* Proto::clone() { return new Proto(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Proto::get_tag() const { return m_tag; }
 
 //! \brief sets the tag (type) of the container.
 inline void Proto::set_tag(const String& tag) { m_tag = tag; }
-
-//! \brief obtains the container prototype.
-inline Container_proto* Proto::get_prototype() { return m_prototype; }
 
 //! \brief sets the container prototype.
 inline void Proto::set_prototype(Container_proto* prototype)

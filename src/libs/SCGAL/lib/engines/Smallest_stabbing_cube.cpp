@@ -26,6 +26,7 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Epec_kernel.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Trace.hpp"
@@ -116,7 +117,7 @@ void Smallest_stabbing_cube::init_prototype()
     static_cast<Boolean_handle_function>
     (&Smallest_stabbing_cube::enabled_handle);
   s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           enabled_func,
                                           s_def_enabled, exec_func));
 
@@ -125,14 +126,14 @@ void Smallest_stabbing_cube::init_prototype()
     static_cast<Boolean_handle_function>
     (&Smallest_stabbing_cube::changed_handle);
   s_prototype->add_field_info(new SF_bool(CHANGED, "changed",
-                                          Field_info::RULE_EXPOSED_FIELD, changed_func));
+                                          Field_rule::RULE_EXPOSED_FIELD, changed_func));
 
   // execute
   Boolean_handle_function execute_func =
     static_cast<Boolean_handle_function>
     (&Smallest_stabbing_cube::execute_handle);
   s_prototype->add_field_info(new SF_bool(EXECUTE, "execute",
-                                          Field_info::RULE_EXPOSED_FIELD, execute_func,
+                                          Field_rule::RULE_EXPOSED_FIELD, execute_func,
                                           exec_func));
 
   // geometries
@@ -140,7 +141,7 @@ void Smallest_stabbing_cube::init_prototype()
     reinterpret_cast<Shared_container_array_handle_function>
     (&Smallest_stabbing_cube::coord_nodes_handle);
   s_prototype->add_field_info(new MF_shared_container(GEOMETRIES, "geometries",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       geometries_func,
                                                       exec_func));
 
@@ -150,7 +151,7 @@ void Smallest_stabbing_cube::init_prototype()
     (&Smallest_stabbing_cube::result_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD_CHANGED,
                                                       "coord_changed",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       coord_changed_func));
 }
 

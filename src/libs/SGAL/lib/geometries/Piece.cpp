@@ -28,6 +28,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Coord_array_3d.hpp"
@@ -72,26 +73,26 @@ void Piece::init_prototype()
   Uint_handle_function unit_size_func =
     static_cast<Uint_handle_function>(&Piece::unit_size_handle);
   s_prototype->add_field_info(new SF_uint(UNIT_SIZE, "size",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           unit_size_func,
                                           exec_func));
 
   // width
   Uint_handle_function width_func =
     static_cast<Uint_handle_function>(&Piece::width_handle);
-  s_prototype->add_field_info(new SF_uint(WIDTH, "width", Field_info::RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_uint(WIDTH, "width", Field_rule::RULE_EXPOSED_FIELD,
                                           width_func, exec_func));
 
   // height
   Uint_handle_function height_func =
     static_cast<Uint_handle_function>(&Piece::height_handle);
-  s_prototype->add_field_info(new SF_uint(HEIGHT, "height", Field_info::RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_uint(HEIGHT, "height", Field_rule::RULE_EXPOSED_FIELD,
                                           height_func, exec_func));
 
   // depth
   Uint_handle_function depth_func =
     static_cast<Uint_handle_function>(&Piece::depth_handle);
-  s_prototype->add_field_info(new SF_uint(DEPTH, "depth", Field_info::RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_uint(DEPTH, "depth", Field_rule::RULE_EXPOSED_FIELD,
                                           depth_func, exec_func));
 }
 

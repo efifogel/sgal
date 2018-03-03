@@ -31,6 +31,7 @@
 #include "SGAL/Geodesic.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_factory.hpp"
@@ -359,7 +360,7 @@ void Geodesic::init_prototype()
   auto radius_func =
     static_cast<Float_handle_function>(&Geodesic::radius_handle);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            radius_func,
                                            exec_func));
 
@@ -367,7 +368,7 @@ void Geodesic::init_prototype()
   auto start_func =
     static_cast<Vector2f_handle_function>(&Geodesic::start_handle);
   s_prototype->add_field_info(new SF_vector2f(START, "start",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               start_func,
                                               exec_func));
 
@@ -375,7 +376,7 @@ void Geodesic::init_prototype()
   auto end_func =
     static_cast<Vector2f_handle_function>(&Geodesic::end_handle);
   s_prototype->add_field_info(new SF_vector2f(END, "end",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               end_func,
                                               exec_func));
 
@@ -385,7 +386,7 @@ void Geodesic::init_prototype()
   auto stacks_func =
     static_cast<Uint_handle_function>(&Geodesic::stacks_handle);
   s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           stacks_func,
                                           exec_func));
 
@@ -395,7 +396,7 @@ void Geodesic::init_prototype()
   auto breaks_func =
     static_cast<Uint_handle_function>(&Geodesic::breaks_handle);
   s_prototype->add_field_info(new SF_uint(BREAKS, "breaks",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           breaks_func,
                                           exec_func));
 
@@ -405,7 +406,7 @@ void Geodesic::init_prototype()
   auto is_complement_func =
     static_cast<Boolean_handle_function>(&Geodesic::is_complement_handle);
   s_prototype->add_field_info(new SF_bool(COMPLEMENT, "complement",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           is_complement_func, exec_func));
 }
 

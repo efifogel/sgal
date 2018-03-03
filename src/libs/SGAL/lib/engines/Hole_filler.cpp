@@ -8,9 +8,10 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Field.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Field_infos.hpp"
+#include "SGAL/Field.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Vrml_formatter.hpp"
@@ -59,7 +60,7 @@ void Hole_filler::init_prototype()
   auto trigger_func =
     static_cast<Boolean_handle_function>(&Hole_filler::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          Field_info::RULE_IN,
+                                          Field_rule::RULE_IN,
                                           trigger_func,
                                           exec_func));
 
@@ -67,14 +68,14 @@ void Hole_filler::init_prototype()
   auto surface_func = reinterpret_cast<Shared_container_handle_function>
     (&Hole_filler::surface_handle);
   s_prototype->add_field_info(new SF_shared_container(SURFACE, "surface",
-                                                      Field_info::RULE_IN,
+                                                      Field_rule::RULE_IN,
                                                       surface_func,
                                                       exec_func));
   // refine
   auto refine_func =
     static_cast<Boolean_handle_function>(&Hole_filler::refine_handle);
   s_prototype->add_field_info(new SF_bool(REFINE, "refine",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           refine_func, Modeling::s_def_refine,
                                           exec_func));
 
@@ -82,7 +83,7 @@ void Hole_filler::init_prototype()
   auto fair_func =
     static_cast<Boolean_handle_function>(&Hole_filler::fair_handle);
   s_prototype->add_field_info(new SF_bool(FAIR, "fair",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           fair_func, Modeling::s_def_fair,
                                           exec_func));
 
@@ -90,7 +91,7 @@ void Hole_filler::init_prototype()
   auto result_func = reinterpret_cast<Shared_container_handle_function>
     (&Hole_filler::result_handle);
   s_prototype->add_field_info(new SF_shared_container(RESULT, "result",
-                                                      Field_info::RULE_OUT,
+                                                      Field_rule::RULE_OUT,
                                                       result_func));
 }
 

@@ -24,6 +24,7 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Field_info.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Indexed_face_set.hpp"
@@ -76,7 +77,7 @@ void Connected_components_splitter::init_prototype()
     static_cast<Boolean_handle_function>
     (&Connected_components_splitter::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          Field_info::RULE_IN,
+                                          Field_rule::RULE_IN,
                                           trigger_func,
                                           exec_func));
 
@@ -84,7 +85,7 @@ void Connected_components_splitter::init_prototype()
   auto operand_func = reinterpret_cast<Shared_container_handle_function>
     (&Connected_components_splitter::operand_handle);
   s_prototype->add_field_info(new SF_shared_container(OPERAND, "operand",
-                                                      Field_info::RULE_IN,
+                                                      Field_rule::RULE_IN,
                                                       operand_func,
                                                       exec_func));
 
@@ -93,7 +94,7 @@ void Connected_components_splitter::init_prototype()
     reinterpret_cast<Shared_container_array_handle_function>
     (&Connected_components_splitter::components_handle);
   s_prototype->add_field_info(new MF_shared_container(COMPONENTS, "components",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       components_func));
 }
 

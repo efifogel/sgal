@@ -27,6 +27,7 @@
 #include "SGAL/Geometry.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Utilities.hpp"
 
@@ -57,7 +58,7 @@ void Geometry::init_prototype()
     static_cast<Bounding_sphere_handle_function>(&Geometry::bounding_sphere_handle);
   s_prototype->add_field_info(new SF_bounding_sphere(BOUNDING_SPHERE,
                                                      "boundingSphere",
-                                                     Field_info::RULE_OUT,
+                                                     Field_rule::RULE_OUT,
                                                      bounding_sphere_func));
 
   // generatedTexCoord
@@ -66,7 +67,7 @@ void Geometry::init_prototype()
     (&Geometry::generate_tex_coord_handle);
   s_prototype->add_field_info(new SF_bool(GENERATE_TEX_COORD,
                                           "generateTexCoord",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           generate_tex_coord_func,
                                           s_def_generate_tex_coord));
 }

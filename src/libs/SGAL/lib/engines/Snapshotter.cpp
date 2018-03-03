@@ -24,7 +24,9 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Snapshotter.hpp"
 #include "SGAL/File_format_2d.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
+#include "SGAL/Field.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Container_factory.hpp"
@@ -33,7 +35,6 @@
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Vrml_formatter.hpp"
-#include "SGAL/Field.hpp"
 #include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -150,7 +151,7 @@ void Snapshotter::init_prototype()
     static_cast<Boolean_handle_function>(&Snapshotter::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER,
                                           "trigger",
-                                          Field_info::RULE_IN,
+                                          Field_rule::RULE_IN,
                                           trigger_func,
                                           false));
 
@@ -158,7 +159,7 @@ void Snapshotter::init_prototype()
   auto mode_func =
     reinterpret_cast<Uint_handle_function>(&Snapshotter::mode_handle);
   s_prototype->add_field_info(new SF_uint(MODE, "mode",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           mode_func,
                                           s_def_mode));
 
@@ -166,7 +167,7 @@ void Snapshotter::init_prototype()
   auto flip_func =
     static_cast<Boolean_handle_function>(&Snapshotter::flip_handle);
   s_prototype->add_field_info(new SF_bool(FLIP, "flip",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           flip_func,
                                           s_def_flip));
 
@@ -176,7 +177,7 @@ void Snapshotter::init_prototype()
     (&Snapshotter::image_handle);
   s_prototype->add_field_info(new SF_shared_container(IMAGE,
                                                       "image",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       image_func));
 }
 

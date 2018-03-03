@@ -23,6 +23,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Indexed_line_set.hpp"
 #include "SGAL/Indexed_line_set_mask.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Trace.hpp"
@@ -649,7 +650,7 @@ void Indexed_line_set::init_prototype()
   auto line_width_func =
     static_cast<Float_handle_function>(&Indexed_line_set::line_width_handle);
   s_prototype->add_field_info(new SF_float(LINE_WIDTH, "lineWidth",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            line_width_func));
 }
 

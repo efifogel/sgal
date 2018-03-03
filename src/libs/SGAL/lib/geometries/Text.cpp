@@ -23,6 +23,7 @@
 #include <GL/glu.h>
 
 #include "SGAL/Text.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Isect_action.hpp"
@@ -81,7 +82,7 @@ void Text::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   auto string_func = static_cast<String_handle_function>(&Text::string_handle);
   s_prototype->add_field_info(new SF_string(STRING, "string",
-                                            Field_info::RULE_EXPOSED_FIELD,
+                                            Field_rule::RULE_EXPOSED_FIELD,
                                             string_func,
                                             exec_func));
 }

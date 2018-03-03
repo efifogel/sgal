@@ -20,6 +20,7 @@
 #include "SGAL/Simulation.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Scene_graph.hpp"
@@ -48,7 +49,7 @@ void Simulation::init_prototype()
     static_cast<Boolean_handle_function>(&Simulation::start_handle);
   s_prototype->add_field_info(new SF_bool(START,
                                           "start",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           start_func));
 }
 

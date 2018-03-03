@@ -34,6 +34,7 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Execution_function.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Utilities.hpp"
 
@@ -70,7 +71,7 @@ void Multisample::init_prototype()
   Boolean_handle_function enabled_handle =
     static_cast<Boolean_handle_function>(&Multisample::enabled_handle);
   s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           enabled_handle,
                                           exec_func));
 
@@ -79,7 +80,7 @@ void Multisample::init_prototype()
     static_cast<Uint_handle_function>(&Multisample::number_of_samples_handle);
   s_prototype->add_field_info(new SF_uint(NUMBER_OF_SAMPLES,
                                           "numberOfSamples",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           number_of_samples_handle));
 
 }

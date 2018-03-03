@@ -26,6 +26,7 @@
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Vector3f.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
@@ -230,7 +231,7 @@ void Box::init_prototype()
     static_cast<Execution_function>(&Geometry::bounding_sphere_changed);
   auto size_func = static_cast<Vector3f_handle_function>(&Box::size_handle);
   s_prototype->add_field_info(new SF_vector3f(SIZE, "size",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               size_func,
                                               exec_func));
 }

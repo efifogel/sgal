@@ -49,6 +49,7 @@
 #include "SGAL/Image_url.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Scene_graph.hpp"
@@ -89,33 +90,33 @@ void Image_url::init_prototype()
   auto url_func =
     static_cast<String_array_handle_function>(&Image_url::url_handle);
   s_prototype->add_field_info(new MF_string(URL, "url",
-                                            Field_info::RULE_EXPOSED_FIELD,
+                                            Field_rule::RULE_EXPOSED_FIELD,
                                             url_func));
 
   auto flip_func =
     static_cast<Boolean_handle_function>(&Image_url::flip_handle);
   s_prototype->add_field_info(new SF_bool(FLIP, "flip",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           flip_func,
                                           s_def_flip));
 
   auto rotation_func =
     static_cast<Float_handle_function>(&Image_url::rotation_handle);
   s_prototype->add_field_info(new SF_float(ROTATION, "rotation",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            rotation_func, s_def_rotation));
 
   auto alpha_func =
     static_cast<Boolean_handle_function>(&Image_url::alpha_handle);
   s_prototype->add_field_info(new SF_bool(ALPHA, "alpha",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           alpha_func,
                                           s_def_alpha));
 
   auto transparency_func =
     static_cast<Float_handle_function>(&Image_url::transparency_handle);
   s_prototype->add_field_info(new SF_float(TRANSPARENCY, "transparency",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            transparency_func,
                                            s_def_transparency));
 }

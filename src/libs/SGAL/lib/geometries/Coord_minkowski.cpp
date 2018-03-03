@@ -24,12 +24,13 @@
 #include "SGAL/Coord_minkowski.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Field_infos.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Matrix4f.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Coord_array_3d.hpp"
+#include "SGAL/Field_rule.hpp"
+#include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Utilities.hpp"
 
@@ -102,7 +103,7 @@ void Coord_minkowski::init_prototype()
   Boolean_handle_function enabled_func =
     static_cast<Boolean_handle_function>(&Coord_minkowski::enabled_handle);
   s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           enabled_func));
 
   // execute
@@ -110,7 +111,7 @@ void Coord_minkowski::init_prototype()
   Boolean_handle_function execute_func =
     static_cast<Boolean_handle_function>(&Coord_minkowski::execute_handle);
   s_prototype->add_field_info(new SF_bool(EXECUTE, "execute",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           execute_func,
                                           exec_func));
 
@@ -119,7 +120,7 @@ void Coord_minkowski::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Coord_minkowski::coord_array1_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD1, "coord1",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       coord1_func, exec_func));
 
   // coord2
@@ -127,7 +128,7 @@ void Coord_minkowski::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Coord_minkowski::coord_array2_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD2, "coord2",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       coord2_func, exec_func));
 
   // coord
@@ -136,7 +137,7 @@ void Coord_minkowski::init_prototype()
     (&Coord_minkowski::coord_array_changed_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD_CHANGED,
                                                       "coord_changed",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       coord_changed_func));
 }
 

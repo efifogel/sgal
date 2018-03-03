@@ -34,13 +34,14 @@
 #include "SGAL/Coord_transformer.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Field_infos.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Matrix4f.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Coord_array_3d.hpp"
+#include "SGAL/Field_rule.hpp"
+#include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Transform.hpp"
@@ -140,7 +141,7 @@ void Coord_transformer::init_prototype()
   Boolean_handle_function enabled_func =
     static_cast<Boolean_handle_function>(&Coord_transformer::enabled_handle);
   s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           enabled_func));
 
   // translation
@@ -149,7 +150,7 @@ void Coord_transformer::init_prototype()
     static_cast<Vector3f_handle_function>
     (&Coord_transformer::translation_handle);
   s_prototype->add_field_info(new SF_vector3f(TRANSLATION, "translation",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               translation_func, exec_func));
 
   // rotation
@@ -157,7 +158,7 @@ void Coord_transformer::init_prototype()
   Rotation_handle_function rotation_func =
     static_cast<Rotation_handle_function>(&Coord_transformer::rotation_handle);
   s_prototype->add_field_info(new SF_rotation(ROTATION, "rotation",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               rotation_func, exec_func));
 
   // scale
@@ -166,7 +167,7 @@ void Coord_transformer::init_prototype()
     static_cast<Vector3f_handle_function>
     (&Coord_transformer::scale_handle);
   s_prototype->add_field_info(new SF_vector3f(SCALE, "scale",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               scale_func, exec_func));
 
   // execute
@@ -174,7 +175,7 @@ void Coord_transformer::init_prototype()
   Boolean_handle_function execute_func =
     static_cast<Boolean_handle_function>(&Coord_transformer::execute_handle);
   s_prototype->add_field_info(new SF_bool(EXECUTE, "execute",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           execute_func,
                                           exec_func));
 
@@ -183,7 +184,7 @@ void Coord_transformer::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Coord_transformer::coord_array_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD, "coord",
-                                                      Field_info::RULE_EXPOSED_FIELD,
+                                                      Field_rule::RULE_EXPOSED_FIELD,
                                                       coord_func, exec_func));
 
   // coord_changed
@@ -192,13 +193,13 @@ void Coord_transformer::init_prototype()
     (&Coord_transformer::coord_array_changed_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD_CHANGED,
                                                       "coord_changed",
-                                                      Field_info::RULE_OUT,
+                                                      Field_rule::RULE_OUT,
                                                       coord_changed_func));
 
   Boolean_handle_function changed_func =
     static_cast<Boolean_handle_function>(&Coord_transformer::changed_handle);
   s_prototype->add_field_info(new SF_bool(CHANGED, "changed",
-                                          Field_info::RULE_OUT,
+                                          Field_rule::RULE_OUT,
                                           changed_func));
 }
 

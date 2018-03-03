@@ -22,6 +22,7 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Execution_function.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -66,7 +67,7 @@ void Modeling::init_prototype()
   auto make_consistent_func =
     static_cast<Boolean_handle_function>(&Modeling::make_consistent_handle);
   s_prototype->add_field_info(new SF_bool(MAKE_CONSISTENT, "makeConsistent",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           make_consistent_func,
                                           s_def_make_consistent,
                                           exec_func));
@@ -75,7 +76,7 @@ void Modeling::init_prototype()
   auto triangulate_holes_func =
     static_cast<Boolean_handle_function>(&Modeling::triangulate_holes_handle);
   s_prototype->add_field_info(new SF_bool(TRIANGULATE_HOLES, "triangulateHoles",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           triangulate_holes_func,
                                           s_def_triangulate_holes,
                                           exec_func));
@@ -84,7 +85,7 @@ void Modeling::init_prototype()
   auto refine_func =
     static_cast<Boolean_handle_function>(&Modeling::refine_handle);
   s_prototype->add_field_info(new SF_bool(REFINE, "refine",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           refine_func, s_def_refine,
                                           exec_func));
 
@@ -92,7 +93,7 @@ void Modeling::init_prototype()
   auto fair_func =
     static_cast<Boolean_handle_function>(&Modeling::fair_handle);
   s_prototype->add_field_info(new SF_bool(FAIR, "fair",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           fair_func, s_def_fair,
                                           exec_func));
 
@@ -100,7 +101,7 @@ void Modeling::init_prototype()
   auto split_ccs_func =
     static_cast<Boolean_handle_function>(&Modeling::split_ccs_handle);
   s_prototype->add_field_info(new SF_bool(SPLIT_CCS, "splitCcs",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           split_ccs_func, s_def_split_ccs,
                                           exec_func));
 
@@ -109,7 +110,7 @@ void Modeling::init_prototype()
     static_cast<Boolean_handle_function>(&Modeling::remove_degeneracies_handle);
   s_prototype->add_field_info(new SF_bool(REMOVE_DEGENERACIES,
                                           "removeDegeneracies",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           remove_degeneracies_func,
                                           s_def_remove_degeneracies,
                                           exec_func));
@@ -119,7 +120,7 @@ void Modeling::init_prototype()
     static_cast<Boolean_handle_function>(&Modeling::repair_orientation_handle);
   s_prototype->add_field_info(new SF_bool(REPAIR_ORIENTATION,
                                           "repairOrientation",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           repair_orientation_func,
                                           s_def_repair_orientation,
                                           exec_func));
@@ -129,7 +130,7 @@ void Modeling::init_prototype()
     static_cast<Boolean_handle_function>(&Modeling::repair_normals_handle);
   s_prototype->add_field_info(new SF_bool(REPAIR_NORMALS,
                                           "repairNormals",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           repair_normals_func,
                                           s_def_repair_normals,
                                           exec_func));

@@ -31,6 +31,7 @@
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Draw_action.hpp"
@@ -98,7 +99,7 @@ void Mesh_set::init_prototype()
   auto is_ccw_func =
     static_cast<Boolean_handle_function>(&Mesh_set::is_ccw_handle);
   s_prototype->add_field_info(new SF_bool(CCW, "ccw",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           is_ccw_func,
                                           s_def_is_ccw, exec_func));
 
@@ -108,7 +109,7 @@ void Mesh_set::init_prototype()
   auto is_solid_func =
     static_cast<Boolean_handle_function>(&Mesh_set::is_solid_handle);
   s_prototype->add_field_info(new SF_bool(SOLID, "solid",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           is_solid_func,
                                           s_def_is_solid, exec_func));
 
@@ -118,7 +119,7 @@ void Mesh_set::init_prototype()
   auto is_convex_func =
     static_cast<Boolean_handle_function>(&Mesh_set::is_convex_handle);
   s_prototype->add_field_info(new SF_bool(CONVEX, "convex",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           is_convex_func,
                                           s_def_is_convex, exec_func));
 
@@ -128,7 +129,7 @@ void Mesh_set::init_prototype()
   auto crease_angle_func =
     static_cast<Float_handle_function>(&Mesh_set::crease_angle_handle);
   s_prototype->add_field_info(new SF_float(CREASE_ANGLE, "creaseAngle",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            crease_angle_func,
                                            s_def_crease_angle, exec_func));
 }

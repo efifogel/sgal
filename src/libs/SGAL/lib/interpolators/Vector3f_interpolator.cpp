@@ -17,6 +17,7 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/Vector3f_interpolator.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -53,14 +54,14 @@ void Vector3f_interpolator::init_prototype()
   Vector3f_handle_function value_func =
     static_cast<Vector3f_handle_function>(&Vector3f_interpolator::value_handle);
   s_prototype->add_field_info(new SF_vector3f(VALUE, "value",
-                                              Field_info::RULE_OUT, value_func));
+                                              Field_rule::RULE_OUT, value_func));
 
   // key values
   Vector3f_array_handle_function values_func =
     static_cast<Vector3f_array_handle_function>
     (&Vector3f_interpolator::values_handle);
   s_prototype->add_field_info(new MF_vector3f(KEY_VALUE, "keyValue",
-                                              Field_info::RULE_FIELD, values_func));
+                                              Field_rule::RULE_FIELD, values_func));
 }
 
 //! \brief delete the prototype.

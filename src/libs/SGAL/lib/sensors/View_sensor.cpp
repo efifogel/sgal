@@ -21,6 +21,7 @@
  */
 
 #include "SGAL/View_sensor.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Transform.hpp"
@@ -147,28 +148,28 @@ void View_sensor::init_prototype()
   Vector3f_handle_function translation_func =
     static_cast<Vector3f_handle_function>(&View_sensor::translation_handle);
   s_prototype->AddFieldInfo(new SF_vector3f(TRANSLATION, "translation",
-                                            Field_info::RULE_EXPOSED_FIELD,
+                                            Field_rule::RULE_EXPOSED_FIELD,
                                             translation_func));
 
   // rotation
   _handle_function rotation_func =
     static_cast<_handle_function>(&View_sensor::rotation_handle);
   s_prototype->AddFieldInfo(new SF_rotation(ROTATION, "rotation",
-                                            Field_info::RULE_EXPOSED_FIELD,
+                                            Field_rule::RULE_EXPOSED_FIELD,
                                             rotation_func));
 
   // fieldOfView
   _handle_function fov_func =
     static_cast<_handle_function>(&View_sensor::fov_handle);
   s_prototype->AddFieldInfo(new SF_float(FOV, "fieldOfView",
-                                         Field_info::RULE_EXPOSED_FIELD,
+                                         Field_rule::RULE_EXPOSED_FIELD,
                                          fov_func));
 
   // localViewName
   _handle_function local_view_name_func =
     static_cast<_handle_function>(&View_sensor::local_view_name_handle);
   s_prototype->AddFieldInfo(new SF_string(LOCALVIEWNAME, "localViewName",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           local_view_name_func));
 
   // currentViewName
@@ -176,7 +177,7 @@ void View_sensor::init_prototype()
     static_cast<_handle_function>(&View_sensor::current_view_name_handle);
   s_prototype-> AddFieldInfo(new SF_string(CURRENTVIEWNAME,
                                            "currentViewName",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            current_view_name_func));
 }
 

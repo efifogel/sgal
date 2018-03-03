@@ -72,6 +72,12 @@ void Container_proto::add_field_info(Field_info* field_info)
     (Field_info_name_map::value_type(field_info->get_name(), field_info));
 }
 
+//! \brief adds a field information record to the prototype.
+void Container_proto::add_field_info(Field_rule rule, Field_type type,
+                                     const String& name, const String& value)
+{
+}
+
 /*! \brief obtains a field info given by its id from the current prototype or
  * from one of its ancestors. If the given id is in the current prototype
  * field-infos range, find it there. Otherwise, search for the record in the
@@ -140,8 +146,19 @@ Container_proto::ids_end(const Container_proto* prototype) const
 }
 
 //! \brief sets all field info records of a prototype container.
-void Container_proto::set_attributes(Element* element)
+void Container_proto::set_attributes(Element* elem)
 {
+  for (auto fi = elem->field_attrs_begin(); fi != elem->field_attrs_end(); ++fi)
+  {
+    auto rule = elem->get_rule(fi);
+    auto type = elem->get_type(fi);
+    const auto& name = elem->get_name(fi);
+    const auto& value = elem->get_value(fi);
+    add_field_info(rule, type, name, value);
+  }
+
+  // Remove all the marked attributes:
+  elem->delete_marked();
 }
 
 #if 0

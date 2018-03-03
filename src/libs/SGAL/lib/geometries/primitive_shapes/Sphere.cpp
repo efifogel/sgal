@@ -25,6 +25,7 @@
 #include <GL/gl.h>
 
 #include "SGAL/Sphere.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
@@ -155,7 +156,7 @@ void Sphere::init_prototype()
     static_cast<Execution_function>(&Geometry::bounding_sphere_changed);
   auto radius_func = static_cast<Float_handle_function>(&Sphere::radius_handle);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
-                                           Field_info::RULE_EXPOSED_FIELD,
+                                           Field_rule::RULE_EXPOSED_FIELD,
                                            radius_func,
                                            exec_func));
 
@@ -164,12 +165,12 @@ void Sphere::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   auto stacks_func = static_cast<Uint_handle_function>(&Sphere::stacks_handle);
   s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           stacks_func));
 
   auto slices_func = static_cast<Uint_handle_function>(&Sphere::slices_handle);
   s_prototype->add_field_info(new SF_uint(SLICES, "slices",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           slices_func));
 }
 

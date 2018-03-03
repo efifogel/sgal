@@ -113,8 +113,8 @@ public:
    * \param[in] name the name of the field.
    * \param[in] value the initial value of the field.
    */
-  void add_field_info(Field_info::Field_rule rule, Field_info::Field_type type,
-                      const std::string& name, const std::string& value);
+  void add_field_info(Field_rule rule, Field_type type, const String& name,
+                      const std::string& value);
 
   /*! Execute the script function according to the event. */
   virtual void execute(const Field_info* field_info);

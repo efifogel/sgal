@@ -28,6 +28,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Utilities.hpp"
+#include "SGAL/Field_rule.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -234,7 +235,7 @@ void Text_texture::init_prototype()
   String_handle_function text_func =
     static_cast<String_handle_function>(&Color_background::text_handle);
   s_prototype->add_field_info(new SF_string(TEXT, "text",
-                                            Field_info::RULE_EXPOSED_FIELD,
+                                            Field_rule::RULE_EXPOSED_FIELD,
                                             text_func,
                                             exec_func));
 
@@ -243,7 +244,7 @@ void Text_texture::init_prototype()
   Vector3f_handle_function color_func =
     static_cast<Vector3f_handle_function>(&Color_background::color_handle);
   s_prototype->add_field_info(new SF_vector3f(COLOR, "color",
-                                              Field_info::RULE_EXPOSED_FIELD,
+                                              Field_rule::RULE_EXPOSED_FIELD,
                                               color_func,
                                               exec_func));
 
@@ -251,7 +252,7 @@ void Text_texture::init_prototype()
   String_handle_function font_func =
     static_cast<String_handle_function>(&Color_background::font_handle);
   s_prototype->add_field_info(new SF_string(FONT, "font",
-                                            Field_info::RULE_EXPOSED_FIELD,
+                                            Field_rule::RULE_EXPOSED_FIELD,
                                             font_func,
                                             exec_func));
 
@@ -259,7 +260,7 @@ void Text_texture::init_prototype()
   Uint_handle_function font_size_func =
     static_cast<Uint_handle_function>(&Color_background::font_size_handle);
   s_prototype->add_field_info(new SF_uint(FONTSIZE, "fontSize",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           font_size_func,
                                           exec_func));
 
@@ -267,7 +268,7 @@ void Text_texture::init_prototype()
   Boolean_handle_function bold_func =
     static_cast<Boolean_handle_function>(&Color_background::bold_handle);
   s_prototype->add_field_info(new SF_bool(BOLD, "bold",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           bold_func, exec_func));
 
   exec_func = static_cast<Execution_function>(&Text_texture::OnFieldChanged);
@@ -280,7 +281,7 @@ void Text_texture::init_prototype()
   Boolean_handle_function antialias_func =
     static_cast<Boolean_handle_function>(&Color_background::antialias_handle);
   s_prototype->add_field_info(new SF_bool(ANTIALIAS, "antialias",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           antialias_func, exec_func));
 }
 

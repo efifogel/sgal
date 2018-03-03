@@ -28,9 +28,10 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Field.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Field_infos.hpp"
+#include "SGAL/Field.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Vrml_formatter.hpp"
@@ -75,7 +76,7 @@ void Surface_border::init_prototype()
   auto trigger_func =
     static_cast<Boolean_handle_function>(&Surface_border::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          Field_info::RULE_IN,
+                                          Field_rule::RULE_IN,
                                           trigger_func,
                                           exec_func));
 
@@ -83,14 +84,14 @@ void Surface_border::init_prototype()
   auto surface_func = reinterpret_cast<Shared_container_handle_function>
     (&Surface_border::surface_handle);
   s_prototype->add_field_info(new SF_shared_container(SURFACE, "surface",
-                                                      Field_info::RULE_IN,
+                                                      Field_rule::RULE_IN,
                                                       surface_func,
                                                       exec_func));
   // border
   auto border_func = reinterpret_cast<Shared_container_handle_function>
     (&Surface_border::border_handle);
   s_prototype->add_field_info(new SF_shared_container(BORDER, "border",
-                                                      Field_info::RULE_OUT,
+                                                      Field_rule::RULE_OUT,
                                                       border_func));
 }
 

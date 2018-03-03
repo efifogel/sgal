@@ -31,6 +31,8 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Field_info.hpp"
+#include "SGAL/Field_rule.hpp"
+#include "SGAL/Field_type.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -66,17 +68,15 @@ public:
 
   // <name, <rule, type, value> >
   typedef std::pair<Shared_string,
-                    std::tuple<Field_info::Field_rule,
-                               Field_info::Field_type,
-                               Shared_string> >           Field_attr;
+                    std::tuple<Field_rule, Field_type, Shared_string> >
+                                                          Field_attr;
 
   typedef std::list<Field_attr>                           Field_attr_list;
   typedef Field_attr_list::iterator                       Field_attr_iter;
 
   typedef std::pair<Shared_string,
-                    std::tuple<Field_info::Field_rule,
-                               Field_info::Field_type,
-                               Str_list*> >               Field_multi_str_attr;
+                    std::tuple<Field_rule, Field_type, Str_list*> >
+                                                          Field_multi_str_attr;
 
   typedef std::list<Field_multi_str_attr>                 Field_multi_str_attr_list;
   typedef Field_multi_str_attr_list::iterator             Field_multi_str_attr_iter;
@@ -234,12 +234,12 @@ public:
   /*! Obtain the rule of a field-attribute pointed by a given iterator.
    * \param ai the field-attribute iterator.
    */
-  Field_info::Field_rule get_rule(Field_attr_iter ai) const;
+  Field_rule get_rule(Field_attr_iter ai) const;
 
   /*! Obtain the type of a field-attribute pointed by a given iterator.
    * \param ai the field-attribute iterator.
    */
-  Field_info::Field_type get_type(Field_attr_iter ai) const;
+  Field_type get_type(Field_attr_iter ai) const;
 
   /*! Delete the attribute pointed by a given iterator.
    * \param ai the string-attribute iterator.
@@ -260,12 +260,12 @@ public:
   /*! Obtain the rule of a field-attribute pointed by a given iterator.
    * \param ai the field-attribute iterator.
    */
-  Field_info::Field_rule get_rule(Field_multi_str_attr_iter ai) const;
+  Field_rule get_rule(Field_multi_str_attr_iter ai) const;
 
   /*! Obtain the type of a field-attribute pointed by a given iterator.
    * \param ai the field-attribute iterator.
    */
-  Field_info::Field_type get_type(Field_multi_str_attr_iter ai) const;
+  Field_type get_type(Field_multi_str_attr_iter ai) const;
 
   /*! Delete all attributes. */
   void delete_marked();
@@ -399,11 +399,11 @@ inline const std::string& Element::get_value(Field_attr_iter ai) const
 { return *(std::get<2>(ai->second)); }
 
 //! \brief obtains the rule of a field-attribute pointed by a given iterator.
-inline Field_info::Field_rule Element::get_rule(Field_attr_iter ai) const
+inline Field_rule Element::get_rule(Field_attr_iter ai) const
 { return std::get<0>(ai->second); }
 
 //! \brief obtains the type of a field-attribute pointed by a given iterator.
-inline Field_info::Field_type Element::get_type(Field_attr_iter ai) const
+inline Field_type Element::get_type(Field_attr_iter ai) const
 { return std::get<1>(ai->second); }
 
 //! \brief obtain the begin iterator of the field-attribute container.
@@ -420,13 +420,11 @@ inline const Element::Str_list& Element::get_value(Field_multi_str_attr_iter ai)
 { return *(std::get<2>(ai->second)); }
 
 //! \brief obtains the rule of a field-attribute pointed by a given iterator.
-inline Field_info::Field_rule Element::get_rule(Field_multi_str_attr_iter ai)
-  const
+inline Field_rule Element::get_rule(Field_multi_str_attr_iter ai) const
 { return std::get<0>(ai->second); }
 
 //! \brief obtains the type of a field-attribute pointed by a given iterator.
-inline Field_info::Field_type Element::get_type(Field_multi_str_attr_iter ai)
-  const
+inline Field_type Element::get_type(Field_multi_str_attr_iter ai) const
 { return std::get<1>(ai->second); }
 
 SGAL_END_NAMESPACE

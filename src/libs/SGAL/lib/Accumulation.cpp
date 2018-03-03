@@ -35,6 +35,7 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Execution_function.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Window_item.hpp"
 #include "SGAL/Utilities.hpp"
@@ -265,7 +266,7 @@ void Accumulation::init_prototype()
   auto enabled_func =
     static_cast<Boolean_handle_function>(&Accumulation::enabled_handle);
   s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           enabled_func, s_def_enabled,
                                           exec_func));
 
@@ -273,7 +274,7 @@ void Accumulation::init_prototype()
   auto quality_func =
     reinterpret_cast<Uint_handle_function>(&Accumulation::quality_handle);
   s_prototype->add_field_info(new SF_uint(QUALITY, "quality",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           quality_func, s_def_quality,
                                           exec_func));
 
@@ -281,7 +282,7 @@ void Accumulation::init_prototype()
   auto delay_func =
     static_cast<Uint_handle_function>(&Accumulation::delay_handle);
   s_prototype->add_field_info(new SF_uint(DELAY, "delay",
-                                          Field_info::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_EXPOSED_FIELD,
                                           delay_func, s_def_delay));
 }
 

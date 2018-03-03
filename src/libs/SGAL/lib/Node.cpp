@@ -20,6 +20,7 @@
 #include "SGAL/Node.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -46,7 +47,7 @@ void Node::init_prototype()
     static_cast<Bounding_sphere_handle_function>(&Node::bounding_sphere_handle);
   s_prototype->add_field_info(new SF_bounding_sphere(BOUNDING_SPHERE,
                                                      "boundingSphere",
-                                                     Field_info::RULE_OUT,
+                                                     Field_rule::RULE_OUT,
                                                      bounding_sphere_func));
 }
 
