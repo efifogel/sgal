@@ -52,7 +52,8 @@ const Char* Option_parser::s_trace_opts[] = {
   "destructor",
   "snapshot",
   "export",
-  "font"
+  "font",
+  "proto"
 };
 
 //! \brief obtains number of trace options.
@@ -118,6 +119,7 @@ Option_parser::Option_parser() :
      "  snapshot\n"
      "  export\n"
      "  font\n"
+     "  proto\n"
      )
     ("load,L", po::value<vs>()->composing(), "load a library")
     ;

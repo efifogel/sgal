@@ -51,6 +51,7 @@ public:
     SNAPSHOT,
     EXPORT,
     FONT,
+    PROTO,
     NUM_CODES
   };
 
