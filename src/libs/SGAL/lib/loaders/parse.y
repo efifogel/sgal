@@ -402,15 +402,19 @@ protoStatement  : proto { std::swap($$, $1); }
                 | externproto { std::swap($$, $1); }
                 ;
 
-proto           : K_PROTO nodeTypeId "[" interfaceDeclarations "]" "{" statements "}"
+protoRooting    : %empty { root = new Group; }
+                ;
+
+proto           : K_PROTO protoRooting nodeTypeId "[" interfaceDeclarations "]" "{" statements "}"
                 {
                   auto proto_container = Proto::prototype();
                   SGAL_assertion(proto_container);
-                  proto_container->set_tag(*$2);
-                  proto_container->set_field_infos($4);
+                  proto_container->set_tag(*$3);
+                  proto_container->set_field_infos($5);
                   auto* factory = Container_factory::get_instance();
                   factory->do_register(proto_container);
-                  //! \todo Handle the statements...
+
+                  //! \todo Handle the statements... $* is a Group node.
                 }
                 ;
 
