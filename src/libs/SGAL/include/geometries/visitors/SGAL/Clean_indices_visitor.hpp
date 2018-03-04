@@ -33,7 +33,7 @@ public:
   Size m_num_primitives;
 
   Clean_indices_visitor(const std::vector<Int32>& indices,
-                                Size num_primitives) :
+                        Size num_primitives) :
     m_indices(indices),
     m_num_primitives(num_primitives)
   {}
