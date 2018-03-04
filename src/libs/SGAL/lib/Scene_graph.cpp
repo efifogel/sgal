@@ -992,7 +992,11 @@ void Scene_graph::write_json(const std::string& filename, std::ostream& os)
   formatter.begin();
   auto root = get_root();
   auto* configuration = get_configuration();
-  auto export_scene = configuration && configuration->get_export_scene();
+  auto export_scene(false);
+  if (configuration) {
+    formatter.set_export_non_visible(configuration->get_export_non_visible());
+    export_scene = configuration->get_export_scene();
+  }
   if (export_scene) formatter.write(m_root);
   else formatter.write(m_navigation_root);
   formatter.end();

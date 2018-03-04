@@ -80,6 +80,7 @@ public:
     OVERRIDE_TEX_GEN,
     OVERRIDE_LIGHT_ENABLE,
     EXPORT_SCENE,
+    EXPORT_NON_VISIBLE,
     LAST
   };
 
@@ -142,6 +143,8 @@ public:
   Boolean* seamless_cube_map_handle(const Field_info*)
   { return &m_seamless_cube_map; }
   Boolean* export_scene_handle(const Field_info*) { return &m_export_scene; }
+  Boolean* export_non_visible_handle(const Field_info*)
+  { return &m_export_non_visible; }
   //@}
 
   /*! Set the attributes of this node */
@@ -308,7 +311,15 @@ public:
    */
   Boolean get_export_scene() const;
 
-   /*! Set defualt values. */
+  /*! Set the flag that indicates whether to export non-visible geometries.
+   */
+  void set_export_non_visible(Boolean flag);
+
+  /*! Indicate whether to export non-visible geometries.
+   */
+  Boolean get_export_non_visible() const;
+
+  /*! Set defualt values. */
   void reset(Viewpoint_mode = s_def_viewpoint_mode,
              Geometry_drawing_mode def_geometry_drawing_mode =
                s_def_geometry_drawing_mode,
@@ -460,8 +471,11 @@ private:
    */
   Boolean m_override_light_enable;
 
-  /*! Indicates whether to export the entire scene */
+  //! Indicates whether to export the entire scene.
   Boolean m_export_scene;
+
+  //! Indicates whether to export non-visible geometries.
+  Boolean m_export_non_visible;
 
   // default values
   static const Viewpoint_mode s_def_viewpoint_mode;
@@ -487,6 +501,7 @@ private:
   static const Boolean s_def_override_tex_gen;
   static const Boolean s_def_override_light_enable;
   static const Boolean s_def_export_scene;
+  static const Boolean s_def_export_non_visible;
 
   /*! Drawing mode names. */
   static const Char* s_geometry_drawing_mode_names[];
@@ -674,6 +689,14 @@ inline void Configuration::set_export_scene(Boolean flag)
 
 //! \brief indicates whether to export the entire scene.
 inline Boolean Configuration::get_export_scene() const { return m_export_scene; }
+
+//! \brief sets the flag that indicates whether to export non-visible geometries.
+inline void Configuration::set_export_non_visible(Boolean flag)
+{ m_export_non_visible = flag; }
+
+//! \brief indicates whether to export non-visible geometries.
+inline Boolean Configuration::get_export_non_visible() const
+{ return m_export_non_visible; }
 
 SGAL_END_NAMESPACE
 

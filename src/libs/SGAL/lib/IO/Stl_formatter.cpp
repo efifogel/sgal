@@ -33,17 +33,23 @@ SGAL_BEGIN_NAMESPACE
 //! \brief constructor.
 Stl_formatter::Stl_formatter(const std::string& filename) :
   Text_formatter(filename)
-{ m_matrices.emplace(Matrix4f()); }
+{
+  m_matrices.emplace(Matrix4f());
+  m_export_non_visible = false;
+}
 
 //! \brief constructs an output formatter.
 Stl_formatter::Stl_formatter(const std::string& filename, std::ostream& os) :
   Text_formatter(filename, os)
-{ m_matrices.emplace(Matrix4f()); }
+{
+  m_matrices.emplace(Matrix4f());
+  m_export_non_visible = false;
+}
 
 //! \brief constructs an input formatter.
 Stl_formatter::Stl_formatter(const std::string& filename, std::istream& is) :
   Text_formatter(filename, is)
-{}
+{ m_export_non_visible = false; }
 
 //! \brief destructor
 Stl_formatter::~Stl_formatter() { m_matrices.pop(); }

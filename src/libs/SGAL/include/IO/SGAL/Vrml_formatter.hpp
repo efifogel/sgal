@@ -562,7 +562,7 @@ private:
    */
   template <typename T>
   void multi_definition(const std::string& name, const std::vector<T>& value,
-                   const std::vector<T>& default_value)
+                        const std::vector<T>& default_value)
   {
     if (value.size() == 0) return;
     if ((value.size() == default_value.size()) &&

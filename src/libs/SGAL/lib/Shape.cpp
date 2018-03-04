@@ -543,12 +543,10 @@ void Shape::write(Formatter* formatter)
   if (m_dirty_appearance) clean_appearance();
   if (m_dirty_appearance_fields) clean_appearance_fields();
 
-  auto* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
+  if (! is_visible() && ! formatter->get_export_non_visible()) return;
+
   auto* obj_formatter = dynamic_cast<Obj_formatter*>(formatter);
-  if (stl_formatter || obj_formatter) {
-    if (!is_visible()) return;
-    if (obj_formatter) obj_formatter->set_visible(true);
-  }
+  if (obj_formatter) obj_formatter->set_visible(true);
 
   Container::write(formatter);
 }

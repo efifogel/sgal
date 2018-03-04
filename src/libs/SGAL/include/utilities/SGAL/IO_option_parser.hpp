@@ -40,6 +40,8 @@ namespace po = boost::program_options;
 
 SGAL_BEGIN_NAMESPACE
 
+class Configuration;
+
 #if defined(_MSC_VER)
 #pragma warning( push )
 #pragma warning( disable: 4251 )
@@ -75,6 +77,10 @@ public:
    * \return the IO-option description.
    */
   const po::options_description& get_io_opts() const;
+
+  /*! Configure.
+   */
+  void configure(Configuration* conf);
 
   /*! Obtain the begin iterator of the selected 2d format container.
    * \return the begin iterator of the selected 2d format container.
@@ -160,6 +166,18 @@ public:
   template <typename UnaryFunction>
   UnaryFunction for_each_dir(UnaryFunction func);
 
+  /*! Determine whether to export the entire scene (including the camera and
+   * light sources).
+   * \return true if the entire scene should be exported.
+   */
+  Boolean get_export_scene() const;
+
+
+  /*! Determine whether to export non visible geometries.
+   * \return true if non-visible geometries should be exported.
+   */
+  Boolean get_export_non_visible() const;
+
 protected:
   /*! The options. */
   po::options_description m_io_opts;
@@ -187,6 +205,15 @@ protected:
 
   /*! Output path name. */
   std::string m_output_path;
+
+  /*! Indicates whether to export the entire scene, including the camera and
+   * light sources, or skip the first level of the DAG.
+   */
+  Boolean m_export_scene;
+
+  /*! Indicates whether to export non-visible geometries.
+   */
+  Boolean m_export_non_visible;
 
 private:
   // The assignment operator cannot be generated (because some of the data
@@ -317,6 +344,10 @@ InputStream& operator>>(InputStream& in, File_format_2d::Id& format)
 template <typename InputStream>
 InputStream& operator>>(InputStream& in, File_format_3d::Id& format)
 { return import(in, format); }
+
+//! \brief determines whether to export the entire scene.
+inline Boolean IO_option_parser::get_export_scene() const
+{ return m_export_scene; }
 
 SGAL_END_NAMESPACE
 

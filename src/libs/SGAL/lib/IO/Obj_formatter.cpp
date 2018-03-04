@@ -42,7 +42,10 @@ Obj_formatter::Obj_formatter(const std::string& filename) :
   m_index(1),
   m_num_appearances(0),
   m_is_visible(false)
-{ m_matrices.emplace(Matrix4f()); }
+{
+  m_matrices.emplace(Matrix4f());
+  m_export_non_visible = false;
+}
 
 //! \brief constructs an output formatter from an output stream.
 Obj_formatter::Obj_formatter(const std::string& filename, std::ostream& os) :
@@ -50,7 +53,10 @@ Obj_formatter::Obj_formatter(const std::string& filename, std::ostream& os) :
   m_index(1),
   m_num_appearances(0),
   m_is_visible(false)
-{ m_matrices.emplace(Matrix4f()); }
+{
+  m_matrices.emplace(Matrix4f());
+  m_export_non_visible = false;
+}
 
 //! \brief constructs an input formatter.
 Obj_formatter::Obj_formatter(const std::string& filename, std::istream& is) :
@@ -58,7 +64,7 @@ Obj_formatter::Obj_formatter(const std::string& filename, std::istream& is) :
   m_index(1),
   m_num_appearances(0),
   m_is_visible(false)
-{}
+{  m_export_non_visible = false; }
 
 //! \brief destructor
 Obj_formatter::~Obj_formatter()

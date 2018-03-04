@@ -59,7 +59,10 @@ Json_formatter::Json_formatter(const std::string& filename) :
   m_separated(true),
   m_bounding_sphere(nullptr),
   m_camera(nullptr)
-{ m_identity_matrix.make_identity(); }
+{
+  m_identity_matrix.make_identity();
+  m_export_non_visible = true;
+}
 
 //! \brief constructs an output formatter.
 Json_formatter::Json_formatter(const std::string& filename, std::ostream& os) :
@@ -67,7 +70,10 @@ Json_formatter::Json_formatter(const std::string& filename, std::ostream& os) :
   m_separated(true),
   m_bounding_sphere(nullptr),
   m_camera(nullptr)
-{ m_identity_matrix.make_identity(); }
+{
+  m_identity_matrix.make_identity();
+  m_export_non_visible = true;
+}
 
 //! \brief constructs an input formatter.
 Json_formatter::Json_formatter(const std::string& filename, std::istream& is) :
@@ -75,7 +81,10 @@ Json_formatter::Json_formatter(const std::string& filename, std::istream& is) :
   m_separated(true),
   m_bounding_sphere(nullptr),
   m_camera(nullptr)
-{ m_identity_matrix.make_identity(); }
+{
+  m_identity_matrix.make_identity();
+  m_export_non_visible = true;
+}
 
 //! \brief destruct.
 Json_formatter::~Json_formatter()
@@ -523,6 +532,7 @@ void Json_formatter::export_group(Shared_group group)
   auto uuid = boost::uuids::random_generator()();
   attribute("uuid", boost::uuids::to_string(uuid));
   attribute("type", group->get_tag());
+  attribute("visible", group->is_visible());
   const auto* bs = &(group->get_bounding_sphere());
   attribute_single("boundingSphere", [&]() { export_bounding_sphere(bs); });
   auto transform = boost::dynamic_pointer_cast<Transform>(group);
@@ -746,7 +756,12 @@ void Json_formatter::export_geo_set_data(Shared_geo_set geo_set)
                        }, true);
 
   // If the geometry represents lines there are no faces to export.
-  if (is_segments(type)) return;
+  if (is_segments(type)) {
+    // three.js requires the presence of an empty faces array.
+    attribute_multiple("faces", [&](){}, true);
+    return;
+  }
+
   Shared_mesh_set mesh_set = boost::dynamic_pointer_cast<Mesh_set>(geo_set);
   SGAL_assertion(mesh_set);
 

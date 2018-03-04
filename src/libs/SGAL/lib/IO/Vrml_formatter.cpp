@@ -33,17 +33,17 @@ SGAL_BEGIN_NAMESPACE
 //! \brief constructs.
 Vrml_formatter::Vrml_formatter(const std::string& filename) :
   Text_formatter(filename)
-{}
+{ m_export_non_visible = true; }
 
 //! \brief constructs an output formatter.
 Vrml_formatter::Vrml_formatter(const std::string& filename, std::ostream& os) :
   Text_formatter(filename, os)
-{}
+{ m_export_non_visible = true; }
 
 //! \brief constructs an input formatter.
 Vrml_formatter::Vrml_formatter(const std::string& filename, std::istream& is) :
   Text_formatter(filename, is)
-{}
+{ m_export_non_visible = true; }
 
 //! \brief destructor
 Vrml_formatter::~Vrml_formatter() { m_names.clear(); }

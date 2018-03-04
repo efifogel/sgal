@@ -23,6 +23,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/IO_option_parser.hpp"
 #include "SGAL/File_format_3d.hpp"
+#include "SGAL/Configuration.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -32,7 +33,9 @@ IO_option_parser::IO_option_parser() :
   m_snapshot(false),
   m_export(false),
   m_interactive(true),
-  m_binary(true)
+  m_binary(true),
+  m_export_scene(false),
+  m_export_non_visible(false)
 {
   typedef std::vector<std::string> vs;
 
@@ -58,6 +61,10 @@ IO_option_parser::IO_option_parser() :
     ("output-file", po::value<std::string>(&m_output_file), "output file")
     ("output-path", po::value<std::string>(&m_output_path)->default_value("."), "output path")
     ("binary", po::value<Boolean>(&m_binary)->default_value(true), "binary")
+    ("export-scene", po::value<Boolean>(&m_export_scene)->default_value(false),
+     "export the entire scene")
+    ("export-non-visible", po::value<Boolean>(&m_export_non_visible)->default_value(false),
+     "export non-visible geometries")
     ;
 }
 
@@ -66,5 +73,19 @@ IO_option_parser::~IO_option_parser() {}
 
 //! \brief applies the options.
 void IO_option_parser::apply() {}
+
+//! \brief sets the Configuration node.
+void IO_option_parser::configure(Configuration* conf)
+{
+  if (!conf) return;
+
+  const auto& var_map = get_variable_map();
+
+  if (var_map.count("export-scene"))
+    conf->set_export_scene(var_map["export-scene"].as<Boolean>());
+
+  if (var_map.count("export-non-visible"))
+    conf->set_export_non_visible(var_map["export-non-visible"].as<Boolean>());
+}
 
 SGAL_END_NAMESPACE

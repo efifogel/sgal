@@ -41,6 +41,7 @@ Stl_binary_formatter::Stl_binary_formatter(const std::string& filename) :
 {
   Shared_matrix4f mat(new Matrix4f);
   m_matrices.push(mat);
+  m_export_non_visible = false;
 }
 
 //! \brief constructs an output formatter.
@@ -50,13 +51,14 @@ Stl_binary_formatter::Stl_binary_formatter(const std::string& filename,
 {
   Shared_matrix4f mat(new Matrix4f);
   m_matrices.push(mat);
+  m_export_non_visible = false;
 }
 
 //! \brief Construct an input formatter.
 Stl_binary_formatter::Stl_binary_formatter(const std::string& filename,
                                            std::istream& is) :
   Formatter(filename, is)
-{ }
+{ m_export_non_visible = false; }
 
 //! \brief writes the begin statement.
 void Stl_binary_formatter::begin()
@@ -252,7 +254,7 @@ operator()(const Flat_indices& indices)
   size_t num_vertices(0);
   std::for_each(indices.begin(), indices.end(),
                 [&](Uint index){
-                  if (index == static_cast<Uint>(-1)) {
+                  if (index == -1) {
                     num_triangles += num_vertices - 3;
                     num_vertices = 0;
                   }

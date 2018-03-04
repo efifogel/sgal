@@ -82,12 +82,6 @@ public:
    */
   Boolean get_display_fps(Boolean& flag);
 
-  /*! Determine whether to export the entire scene (including the camera and
-   * light sources).
-   * \return true if the entire scene should be exported.
-   */
-  Boolean get_export_scene() const;
-
 protected:
   /*! The conf options. */
   po::options_description m_conf_opts;
@@ -107,11 +101,6 @@ private:
 
   /*! Indicate whether to display Frames-Per-Seconds (FPS). */
   Boolean m_display_fps;
-
-  /*! Indicates whether to export the entire scene, including the camera and
-   * light sources, or skip the first level of the DAG.
-   */
-  Boolean m_export_scene;
 
   // The assignment operator cannot be generated (because some of the data
   // members are const pointers), so we suppress it explicitly.
@@ -158,10 +147,6 @@ InputStream& operator>>(InputStream& in, Configuration::Viewpoint_mode& mode)
   throw po::validation_error(po::validation_error::invalid_option_value);
   return in;
 }
-
-//! \brief determines whether to export the entire scene.
-inline Boolean Conf_option_parser::get_export_scene() const
-{ return m_export_scene; }
 
 SGAL_END_NAMESPACE
 

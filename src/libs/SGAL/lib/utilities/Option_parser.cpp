@@ -203,6 +203,7 @@ void Option_parser::configure(Scene_graph* scene_graph)
   if (conf) {
     Conf_option_parser::configure(conf);
     Modeling_option_parser::configure(conf);
+    IO_option_parser::configure(conf);
   }
 }
 

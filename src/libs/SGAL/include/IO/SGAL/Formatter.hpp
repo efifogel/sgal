@@ -560,6 +560,14 @@ public:
                             const std::vector<std::string>& /* value */) {}
   //@}
 
+  /*! Set the flag that indicates whether to export non-visible geometries.
+   */
+  void set_export_non_visible(Boolean flag);
+
+  /*! Indicate whether to export non-visible geometries.
+   */
+  Boolean get_export_non_visible() const;
+
 protected:
   /*! The file name. */
   const std::string& m_filename;
@@ -569,27 +577,33 @@ protected:
 
   /*! The input stream */
   std::istream* m_in;
+
+  //! Indicates whether to export non-visible geometries.
+  Boolean m_export_non_visible;
 };
 
 //! \brief constructs from file name.
 inline Formatter::Formatter(const std::string& filename) :
   m_filename(filename),
   m_out(nullptr),
-  m_in(nullptr)
+  m_in(nullptr),
+  m_export_non_visible(false)
 {}
 
 //! \brief Construct an output formatter.
 inline Formatter::Formatter(const std::string& filename, std::ostream& os) :
   m_filename(filename),
   m_out(&os),
-  m_in(nullptr)
+  m_in(nullptr),
+  m_export_non_visible(false)
 {}
 
 //! \brief Construct an input formatter.
 inline Formatter::Formatter(const std::string& filename, std::istream& is) :
   m_filename(filename),
   m_out(nullptr),
-  m_in(&is)
+  m_in(&is),
+  m_export_non_visible(false)
 {}
 
 //! \brief Destructor
@@ -618,6 +632,14 @@ inline std::istream& Formatter::in()
 //! \brief exports a scene-graph node.
 inline void Formatter::write(Shared_container container)
 { container->write(this); }
+
+//! \brief sets the flag that indicates whether to export non-visible geometries.
+inline void Formatter::set_export_non_visible(Boolean flag)
+{ m_export_non_visible = flag; }
+
+//! \brief indicates whether to export non-visible geometries.
+inline Boolean Formatter::get_export_non_visible() const
+{ return m_export_non_visible; }
 
 SGAL_END_NAMESPACE
 
