@@ -408,7 +408,7 @@ public:
    */
   void write(Formatter* formatter, const Shared_container_array& value,
              const Shared_container_array& default_value,
-              Boolean declaration = false) const;
+             Boolean declaration = false) const;
 };
 
 #if defined(_MSC_VER)
