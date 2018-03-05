@@ -954,32 +954,28 @@ void Scene_graph::write(const std::string& filename, std::ostream& os,
 void Scene_graph::write_vrml(const std::string& filename, std::ostream& os)
 {
   Vrml_formatter formatter(filename, os);
-  formatter.begin();
-  formatter.write(m_navigation_root);
-  formatter.end();
+  write(formatter);
 }
 
 //! \brief exports the scene to an output stream in the STL format.
 void Scene_graph::write_stl(const std::string& filename, std::ostream& os,
                             Boolean is_binary)
 {
-  Formatter* formatter = (is_binary) ?
-    static_cast<Formatter*>(new Stl_binary_formatter(filename, os)) :
-    static_cast<Formatter*>(new Stl_formatter(filename, os));
-
-  formatter->begin();
-  formatter->write(m_navigation_root);
-  formatter->end();
-  delete formatter;
+  if (is_binary) {
+    Stl_binary_formatter formatter(filename, os);
+    write(formatter);
+  }
+  else {
+    Stl_formatter formatter(filename, os);
+    write(formatter);
+  }
 }
 
 //! \brief exports the scene to an output stream in the OBJ format.
 void Scene_graph::write_obj(const std::string& filename, std::ostream& os)
 {
   Obj_formatter formatter(filename, os);
-  formatter.begin();
-  formatter.write(m_navigation_root);
-  formatter.end();
+  write(formatter);
 }
 
 //! \brief exports the scene to an output stream in the Json format.
@@ -989,16 +985,23 @@ void Scene_graph::write_json(const std::string& filename, std::ostream& os)
   formatter.set_bounding_sphere(&(m_navigation_root->get_bounding_sphere()));
   formatter.set_camera(get_active_camera());
   formatter.pre_process(m_containers, m_instances);
+  write(formatter);
+}
+
+//! \brief writes a scene via a given formater.
+void Scene_graph::write(Formatter& formatter) const
+{
   formatter.begin();
-  auto root = get_root();
-  auto* configuration = get_configuration();
-  auto export_scene(false);
-  if (configuration) {
-    formatter.set_export_non_visible(configuration->get_export_non_visible());
-    export_scene = configuration->get_export_scene();
-  }
-  if (export_scene) formatter.write(m_root);
-  else formatter.write(m_navigation_root);
+  auto* conf = get_configuration();
+  SGAL_assertion(conf);
+  if (conf->is_override_export_non_visible())
+    formatter.set_export_non_visible(conf->get_export_non_visible());
+  auto level = conf->get_export_scene_root();
+  if (level == 0) formatter.write(m_root);
+  else if (level == 1) formatter.write(m_navigation_root);
+  else for (auto it = m_navigation_root->children_begin();
+            it != m_navigation_root->children_end(); ++ it)
+         formatter.write(*it);
   formatter.end();
 }
 

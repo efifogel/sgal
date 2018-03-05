@@ -65,8 +65,9 @@ const Boolean Configuration::s_def_override_blend_func(true);
 const Boolean Configuration::s_def_override_light_model(true);
 const Boolean Configuration::s_def_override_tex_gen(true);
 const Boolean Configuration::s_def_override_light_enable(true);
-const Boolean Configuration::s_def_export_scene(false);
+const Uint Configuration::s_def_export_scene_root(2);
 const Boolean Configuration::s_def_export_non_visible(false);
+const Boolean Configuration::s_def_override_export_non_visible(false);
 
 const Char* Configuration::s_geometry_drawing_mode_names[] =
   { "direct", "displayList", "vertexArray" };
@@ -102,7 +103,7 @@ Configuration::Configuration(Boolean proto) :
   m_override_light_model(Configuration::s_def_override_light_model),
   m_override_tex_gen(Configuration::s_def_override_tex_gen),
   m_override_light_enable(Configuration::s_def_override_light_enable),
-  m_export_scene(s_def_export_scene),
+  m_export_scene_root(s_def_export_scene_root),
   m_export_non_visible(s_def_export_non_visible)
 {}
 
@@ -263,12 +264,13 @@ void Configuration::init_prototype()
                                                       exec_func));
 
   // exportScene
-  auto export_scene_func =
-    static_cast<Boolean_handle_function>(&Configuration::export_scene_handle);
-  s_prototype->add_field_info(new SF_bool(EXPORT_SCENE, "exportScene",
+  auto export_scene_root_func =
+    static_cast<Uint_handle_function>(&Configuration::export_scene_root_handle);
+  s_prototype->add_field_info(new SF_uint(EXPORT_SCENE_ROOT,
+                                          "exportSceneRoot",
                                           Field_rule::RULE_EXPOSED_FIELD,
-                                          export_scene_func,
-                                          s_def_export_scene, exec_func));
+                                          export_scene_root_func,
+                                          s_def_export_scene_root, exec_func));
 
   // exportNonVisible
   auto export_non_visible_func =
@@ -421,8 +423,8 @@ void Configuration::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "exportScene") {
-      set_export_scene(to_boolean(value));
+    if (name == "exportSceneRoot") {
+      set_export_scene_root(to_boolean(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -542,7 +544,7 @@ void Configuration::merge(const Configuration* other)
     m_override_tex_gen = other->m_override_tex_gen;
   if (other->m_override_light_enable != s_def_override_light_enable)
     m_override_light_enable = other->m_override_light_enable;
-  m_export_scene = other->m_export_scene;
+  m_export_scene_root = other->m_export_scene_root;
   m_export_non_visible = other->m_export_non_visible;
 }
 

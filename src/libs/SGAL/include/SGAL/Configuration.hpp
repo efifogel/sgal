@@ -79,8 +79,9 @@ public:
     OVERRIDE_LIGHT_MODEL,
     OVERRIDE_TEX_GEN,
     OVERRIDE_LIGHT_ENABLE,
-    EXPORT_SCENE,
+    EXPORT_SCENE_ROOT,
     EXPORT_NON_VISIBLE,
+    OVERRIDE_EXPORT_NON_VISIBLE,
     LAST
   };
 
@@ -142,7 +143,8 @@ public:
   Uint* verbosity_level_handle(const Field_info*) { return &m_verbosity_level; }
   Boolean* seamless_cube_map_handle(const Field_info*)
   { return &m_seamless_cube_map; }
-  Boolean* export_scene_handle(const Field_info*) { return &m_export_scene; }
+  Uint* export_scene_root_handle(const Field_info*)
+  { return &m_export_scene_root; }
   Boolean* export_non_visible_handle(const Field_info*)
   { return &m_export_non_visible; }
   //@}
@@ -303,13 +305,13 @@ public:
    */
   Boolean is_override_light_enable() const;
 
-  /*! Set the flag that indicates whether to export the entire scene.
+  /*! Set the root of the scene to export.
    */
-  void set_export_scene(Boolean flag);
+  void set_export_scene_root(Uint level);
 
-  /*! Indicate whether to export the entire scene.
+  /*! Obtain the root of the scene to export.
    */
-  Boolean get_export_scene() const;
+  Uint get_export_scene_root() const;
 
   /*! Set the flag that indicates whether to export non-visible geometries.
    */
@@ -318,6 +320,16 @@ public:
   /*! Indicate whether to export non-visible geometries.
    */
   Boolean get_export_non_visible() const;
+
+  /*! Set the flag that indicates whether to override the export
+   * non-visible flag.
+   */
+  void set_override_export_non_visible(Boolean flag);
+
+  /*! Detemine whether to to override the export
+   * non-visible flag.
+   */
+  Boolean is_override_export_non_visible() const;
 
   /*! Set defualt values. */
   void reset(Viewpoint_mode = s_def_viewpoint_mode,
@@ -471,11 +483,15 @@ private:
    */
   Boolean m_override_light_enable;
 
-  //! Indicates whether to export the entire scene.
-  Boolean m_export_scene;
+  //! The root of the scene to export.
+  Uint m_export_scene_root;
 
   //! Indicates whether to export non-visible geometries.
   Boolean m_export_non_visible;
+
+  /*! Indicates whether to override the export non-visible flag.
+   */
+  Boolean m_override_export_non_visible;
 
   // default values
   static const Viewpoint_mode s_def_viewpoint_mode;
@@ -500,8 +516,9 @@ private:
   static const Boolean s_def_override_light_model;
   static const Boolean s_def_override_tex_gen;
   static const Boolean s_def_override_light_enable;
-  static const Boolean s_def_export_scene;
+  static const Uint s_def_export_scene_root;
   static const Boolean s_def_export_non_visible;
+  static const Boolean s_def_override_export_non_visible;
 
   /*! Drawing mode names. */
   static const Char* s_geometry_drawing_mode_names[];
@@ -683,12 +700,13 @@ inline Boolean
 Configuration::compare_viewpoint_mode_name(size_t i, const Char* opt)
 { return strcmp(s_viewpoint_mode_names[i], opt) == 0; }
 
-//! \brief sets the flag that indicates whether to export the entire scene.
-inline void Configuration::set_export_scene(Boolean flag)
-{ m_export_scene = flag; }
+//! \brief sets the root of the scene to export.
+inline void Configuration::set_export_scene_root(Uint level)
+{ m_export_scene_root = level; }
 
-//! \brief indicates whether to export the entire scene.
-inline Boolean Configuration::get_export_scene() const { return m_export_scene; }
+//! \brief obtains the root of the scene to export.
+inline Uint Configuration::get_export_scene_root() const
+{ return m_export_scene_root; }
 
 //! \brief sets the flag that indicates whether to export non-visible geometries.
 inline void Configuration::set_export_non_visible(Boolean flag)
@@ -697,6 +715,14 @@ inline void Configuration::set_export_non_visible(Boolean flag)
 //! \brief indicates whether to export non-visible geometries.
 inline Boolean Configuration::get_export_non_visible() const
 { return m_export_non_visible; }
+
+//! \brief sets the flag that indicates whether to override the export
+inline void Configuration::set_override_export_non_visible(Boolean flag)
+{ m_override_export_non_visible = flag; }
+
+//! \brief detemines whether to to override the export
+inline Boolean Configuration::is_override_export_non_visible() const
+{ return m_override_export_non_visible; }
 
 SGAL_END_NAMESPACE
 

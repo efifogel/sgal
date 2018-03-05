@@ -96,6 +96,7 @@ class Simulation;
 class Snapshotter;
 class Key_sensor;
 class Polyhedron_attributes_array;
+class Formatter;
 // class View_sensor;
 
 #if (defined _MSC_VER)
@@ -474,6 +475,11 @@ public:
    * \param[in] os The output stream.
    */
   void write_json(const std::string& filename, std::ostream& os);
+
+  /*! Write a scene via a given formater.
+   * \param[in] formatter the formatter.
+   */
+  void write(Formatter& formatter) const;
   //@}
 
   /*! Obtain an isolated instance of the V8 engine.

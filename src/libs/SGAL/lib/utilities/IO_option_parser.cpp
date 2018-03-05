@@ -34,7 +34,7 @@ IO_option_parser::IO_option_parser() :
   m_export(false),
   m_interactive(true),
   m_binary(true),
-  m_export_scene(false),
+  m_export_scene_root(2),
   m_export_non_visible(false)
 {
   typedef std::vector<std::string> vs;
@@ -61,8 +61,8 @@ IO_option_parser::IO_option_parser() :
     ("output-file", po::value<std::string>(&m_output_file), "output file")
     ("output-path", po::value<std::string>(&m_output_path)->default_value("."), "output path")
     ("binary", po::value<Boolean>(&m_binary)->default_value(true), "binary")
-    ("export-scene", po::value<Boolean>(&m_export_scene)->default_value(false),
-     "export the entire scene")
+    ("export-scene-root", po::value<Uint>(&m_export_scene_root)->default_value(2),
+     "The root of the scene to export; (0, 1, ...")
     ("export-non-visible", po::value<Boolean>(&m_export_non_visible)->default_value(false),
      "export non-visible geometries")
     ;
@@ -81,11 +81,13 @@ void IO_option_parser::configure(Configuration* conf)
 
   const auto& var_map = get_variable_map();
 
-  if (var_map.count("export-scene"))
-    conf->set_export_scene(var_map["export-scene"].as<Boolean>());
+  if (var_map.count("export-scene-root"))
+    conf->set_export_scene_root(var_map["export-scene-root"].as<Uint>());
 
-  if (var_map.count("export-non-visible"))
+  if (var_map.count("export-non-visible")) {
     conf->set_export_non_visible(var_map["export-non-visible"].as<Boolean>());
+    conf->set_override_export_non_visible(true);
+  }
 }
 
 SGAL_END_NAMESPACE

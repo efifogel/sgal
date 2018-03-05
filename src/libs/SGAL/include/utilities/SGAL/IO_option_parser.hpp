@@ -166,11 +166,15 @@ public:
   template <typename UnaryFunction>
   UnaryFunction for_each_dir(UnaryFunction func);
 
-  /*! Determine whether to export the entire scene (including the camera and
-   * light sources).
-   * \return true if the entire scene should be exported.
+  /*! Obtain the root of the scene to export.
+   * \return the root of the scene to export:
+   *         0---The root of the scene, which implies that the exported scene
+   *             will include the entire scene including the camera and the
+   *             light sources.
+   *         1---The  navigation root.
+   *         2---The children of the navigation root.
    */
-  Boolean get_export_scene() const;
+  Uint get_export_scene_root() const;
 
 
   /*! Determine whether to export non visible geometries.
@@ -206,10 +210,13 @@ protected:
   /*! Output path name. */
   std::string m_output_path;
 
-  /*! Indicates whether to export the entire scene, including the camera and
-   * light sources, or skip the first level of the DAG.
+  /*! The root of the scene to export:
+   * 0---The root of the scene, which implies that the exported scene will
+   *     include the entire scene including the camera and the light sources.
+   * 1---The  navigation root.
+   * 2---The children of the navigation root.
    */
-  Boolean m_export_scene;
+  Uint m_export_scene_root;
 
   /*! Indicates whether to export non-visible geometries.
    */
@@ -345,9 +352,9 @@ template <typename InputStream>
 InputStream& operator>>(InputStream& in, File_format_3d::Id& format)
 { return import(in, format); }
 
-//! \brief determines whether to export the entire scene.
-inline Boolean IO_option_parser::get_export_scene() const
-{ return m_export_scene; }
+//! \brief obtains the root of the scene to export.
+inline Uint IO_option_parser::get_export_scene_root() const
+{ return m_export_scene_root; }
 
 SGAL_END_NAMESPACE
 
