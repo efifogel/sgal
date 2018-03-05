@@ -122,27 +122,27 @@ void Geo_set::init_prototype()
   // coordIndex
   exec_func = static_cast<Execution_function>(&Geo_set::coord_indices_changed);
   auto coord_index_func =
-    reinterpret_cast<Uint_array_handle_function>
+    reinterpret_cast<Int32_array_handle_function>
     (&Geo_set::coord_indices_handle);
-  s_prototype->add_field_info(new MF_uint(COORD_INDEX_ARRAY, "coordIndex",
+  s_prototype->add_field_info(new MF_int32(COORD_INDEX_ARRAY, "coordIndex",
                                           Field_rule::RULE_EXPOSED_FIELD,
                                           coord_index_func, exec_func));
 
   // normalIndex
   exec_func = static_cast<Execution_function>(&Geo_set::normal_indices_changed);
   auto normal_index_func =
-    reinterpret_cast<Uint_array_handle_function>
+    reinterpret_cast<Int32_array_handle_function>
     (&Geo_set::normal_indices_handle);
-  s_prototype->add_field_info(new MF_uint(NORMAL_INDEX_ARRAY, "normalIndex",
+  s_prototype->add_field_info(new MF_int32(NORMAL_INDEX_ARRAY, "normalIndex",
                                           Field_rule::RULE_EXPOSED_FIELD,
                                           normal_index_func, exec_func));
 
   // colorIndex
   exec_func = static_cast<Execution_function>(&Geo_set::color_indices_changed);
   auto color_index_func =
-    reinterpret_cast<Uint_array_handle_function>
+    reinterpret_cast<Int32_array_handle_function>
     (&Geo_set::color_indices_handle);
-  s_prototype->add_field_info(new MF_uint(COLOR_INDEX_ARRAY, "colorIndex",
+  s_prototype->add_field_info(new MF_int32(COLOR_INDEX_ARRAY, "colorIndex",
                                           Field_rule::RULE_EXPOSED_FIELD,
                                           color_index_func, exec_func));
 
@@ -150,9 +150,9 @@ void Geo_set::init_prototype()
   exec_func =
     static_cast<Execution_function>(&Geo_set::tex_coord_indices_changed);
   auto tex_coord_index_func =
-    reinterpret_cast<Uint_array_handle_function>
+    reinterpret_cast<Int32_array_handle_function>
     (&Geo_set::tex_coord_indices_handle);
-  s_prototype->add_field_info(new MF_uint(TEX_COORD_INDEX_ARRAY,
+  s_prototype->add_field_info(new MF_int32(TEX_COORD_INDEX_ARRAY,
                                           "texCoordIndex",
                                           Field_rule::RULE_EXPOSED_FIELD,
                                           tex_coord_index_func, exec_func));

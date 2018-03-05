@@ -36,6 +36,7 @@
 #include <GL/gl.h>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Array_types.hpp"
 #include "SGAL/Geometry.hpp"
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Tex_coord_array.hpp"
@@ -133,13 +134,13 @@ public:
   { return &m_color_array; }
   Shared_tex_coord_array* tex_coord_array_handle(const Field_info*)
   { return &m_tex_coord_array; }
-  std::vector<Int32>* coord_indices_handle(const Field_info*)
+  Int32_array* coord_indices_handle(const Field_info*)
   { return &m_coord_indices; }
-  std::vector<Int32>* normal_indices_handle(const Field_info*)
+  Int32_array* normal_indices_handle(const Field_info*)
   { return &m_normal_indices; }
-  std::vector<Int32>* color_indices_handle(const Field_info*)
+  Int32_array* color_indices_handle(const Field_info*)
   { return &m_color_indices; }
-  std::vector<Int32>* tex_coord_indices_handle(const Field_info*)
+  Int32_array* tex_coord_indices_handle(const Field_info*)
   { return &m_tex_coord_indices; }
   //@}
 
@@ -198,42 +199,42 @@ public:
   /*! Set the coordinate-index array.
    * \param[in] indices
    */
-  void set_coord_indices(const std::vector<Int32>& indices);
+  void set_coord_indices(const Int32_array& indices);
 
   /*! Set the normal-index array.
    * \param[in] indices
    */
-  void set_normal_indices(const std::vector<Int32>& indices);
+  void set_normal_indices(const Int32_array& indices);
 
   /*! Set the color-index array.
    * \param[in] indices
    */
-  void set_color_indices(const std::vector<Int32>& indices);
+  void set_color_indices(const Int32_array& indices);
 
   /*! Set the texture_coordinate-index array.
    * \param[in] indices
    */
-  void set_tex_coord_indices(const std::vector<Int32>& indices);
+  void set_tex_coord_indices(const Int32_array& indices);
 
   /*! Obtain the coordinate-index array.
    * \return the coordinate-index array.
    */
-  virtual std::vector<Int32>& get_coord_indices();
+  virtual Int32_array& get_coord_indices();
 
   /*! Obtain the normal-index array.
    * \return the normal-index array.
    */
-  virtual std::vector<Int32>& get_normal_indices();
+  virtual Int32_array& get_normal_indices();
 
   /*! Obtain the color-index array.
    * \return the color-index array.
    */
-  virtual std::vector<Int32>& get_color_indices();
+  virtual Int32_array& get_color_indices();
 
   /*! Obtain the texture-coordinate-index array.
    * \return the texture-coordinate-index array.
    */
-  virtual std::vector<Int32>& get_tex_coord_indices();
+  virtual Int32_array& get_tex_coord_indices();
   //@}
 
   /// \name Index-Array Vector Getters
@@ -465,7 +466,7 @@ public:
   /*! Assign the coord indices with the reverse of given indices.
    * \param[in] indices the indices to reverse.
    */
-  void reverse_coord_indices(const std::vector<Int32>& indices);
+  void reverse_coord_indices(const Int32_array& indices);
 
   /*! Resolve the conflict between normal and colors.
    */
@@ -518,16 +519,16 @@ protected:
   Shared_tex_coord_array m_tex_coord_array;
 
   /*! An array of indices into the vertex-coordinate array. */
-  std::vector<Int32> m_coord_indices;
+  Int32_array m_coord_indices;
 
   /*! An array of indices into the vertex-texture-coordinate array. */
-  std::vector<Int32> m_normal_indices;
+  Int32_array m_normal_indices;
 
   /*! An array of indices into the vertex-color array. */
-  std::vector<Int32> m_color_indices;
+  Int32_array m_color_indices;
 
   /*! An array of indices into the vertex-normal array. */
-  std::vector<Int32> m_tex_coord_indices;
+  Int32_array m_tex_coord_indices;
 
   /*! Indicates the geometry mode (triangles, quads, or general polygons). */
   Primitive_type m_primitive_type;
@@ -562,7 +563,7 @@ inline Boolean Geo_set::has_tex_coord()
 { return (m_tex_coord_array && (m_tex_coord_array->size() != 0)); }
 
 //! \brief obtains the coordinate-index array.
-inline std::vector<Int32>& Geo_set::get_coord_indices()
+inline Int32_array& Geo_set::get_coord_indices()
 { return m_coord_indices; }
 
 //! \brief determines whether the coordinate indices container is empty.
@@ -570,15 +571,15 @@ inline Boolean Geo_set::is_coord_indices_empty() const
 { return m_coord_indices.empty(); }
 
 //! \brief obtains the normal-index array.
-inline std::vector<Int32>& Geo_set::get_normal_indices()
+inline Int32_array& Geo_set::get_normal_indices()
 { return m_normal_indices; }
 
 //! \brief obtains the color-index array.
-inline std::vector<Int32>& Geo_set::get_color_indices()
+inline Int32_array& Geo_set::get_color_indices()
 { return m_color_indices; }
 
 //! \brief obtains the texture-coordinate-index array.
-inline std::vector<Int32>& Geo_set::get_tex_coord_indices()
+inline Int32_array& Geo_set::get_tex_coord_indices()
 { return m_tex_coord_indices; }
 
 //! \brief obtains the (const) coordinate-index vector.

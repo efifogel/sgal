@@ -23,6 +23,7 @@
 #include <boost/variant.hpp>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Array_types.hpp"
 #include "SGAL/Indices_types.hpp"
 #include "SGAL/Geo_set.hpp"
 
@@ -96,12 +97,6 @@ public:
    */
   virtual void write(Formatter* formatter);
 
-  /*! Export a field of this container.
-   * \param[in] field_info The field information record.
-   * \param[in] formatter The formatter to use for exporting, e.g., VRML.
-   */
-  virtual void write_field(const Field_info* field_info, Formatter* formatter);
-
   /*! Obtain the bounding box.
    */
   virtual Bounding_box bounding_box();
@@ -146,22 +141,22 @@ public:
   /*! Obtain the coordinate indices.
    * \return the coordinate indices.
    */
-  virtual std::vector<Int32>& get_coord_indices();
+  virtual Int32_array& get_coord_indices();
 
   /*! Obtain the normal indices.
    * \return the normal indices.
    */
-  virtual std::vector<Int32>& get_normal_indices();
+  virtual Int32_array& get_normal_indices();
 
   /*! Obtain the color indices.
    * \return the color indices.
    */
-  virtual std::vector<Int32>& get_color_indices();
+  virtual Int32_array& get_color_indices();
 
   /*! Obtain the texture-coordinate indices.
    * \return the texture-coordinate indices.
    */
-  virtual std::vector<Int32>& get_tex_coord_indices();
+  virtual Int32_array& get_tex_coord_indices();
   //@}
 
   /// \name Indices Change Reactors
@@ -687,7 +682,7 @@ public:
   Facet_indices_const_iterator end_facet_indices(const Facet_indices& indices);
 
   /*! Clean an indices from a facet indices structure. */
-  void clean_indices(std::vector<Int32>& indices,
+  void clean_indices(Int32_array& indices,
                      const Facet_indices& source);
 
   /*! Assign the facet coordinate indices with the reverse of given indices.
@@ -703,7 +698,7 @@ public:
   /*! Assign the coordinate indices with the reverse of given indices.
    * \param[i] indices the indices to reverse.
    */
-  void reverse_coord_indices(const std::vector<Int32>& indices);
+  void reverse_coord_indices(const Int32_array& indices);
 
   /*! Set the coordinate indices from a range of elements that counts
    * the number of vertices per primitive.
@@ -885,7 +880,7 @@ protected:
 
   /*! Colapse identical coordinates.
    */
-  void collapse_identical_coordinates(std::vector<Int32>& indices);
+  void collapse_identical_coordinates(Int32_array& indices);
 
   /*! Colapse identical coordinates.
    */

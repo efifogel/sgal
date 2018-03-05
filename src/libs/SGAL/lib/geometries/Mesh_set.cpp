@@ -930,38 +930,6 @@ void Mesh_set::write(Formatter* formatter)
   Geo_set::write(formatter);
 }
 
-//! \brief writes a field of this container.
-void Mesh_set::write_field(const Field_info* field_info, Formatter* formatter)
-{
-  /*! \todo the following can be replaced with the call to
-   * Geo_set::write(Formatter* formatter)
-   * after m_coord_indices is made Array<Int> (and not Array<Uint>).
-   */
-
-  auto* vrml_formatter = static_cast<Vrml_formatter*>(formatter);
-  if (vrml_formatter) {
-    if (COORD_INDEX_ARRAY == field_info->get_id()) {
-      const auto& indices = get_coord_indices();
-      Uint size = indices.size();
-      std::vector<int> value(size), default_value;
-      auto rit = value.begin();
-      for (auto it = indices.begin(); it != indices.end(); ++it) *rit++ = *it;
-      formatter->multi_int32(field_info->get_name(), value, default_value);
-      return;
-    }
-    if (NORMAL_INDEX_ARRAY == field_info->get_id()) {
-      const auto& indices = get_normal_indices();
-      Uint size = indices.size();
-      std::vector<int> value(size), default_value;
-      auto rit = value.begin();
-      for (auto it = indices.begin(); it != indices.end(); ++it) *rit++ = *it;
-      formatter->multi_int32(field_info->get_name(), value, default_value);
-      return;
-    }
-  }
-  field_info->write(this, formatter);
-}
-
 //! \brief colapses identical coordinates.
 void Mesh_set::collapse_identical_coordinates()
 {
