@@ -104,7 +104,8 @@ Configuration::Configuration(Boolean proto) :
   m_override_tex_gen(Configuration::s_def_override_tex_gen),
   m_override_light_enable(Configuration::s_def_override_light_enable),
   m_export_scene_root(s_def_export_scene_root),
-  m_export_non_visible(s_def_export_non_visible)
+  m_export_non_visible(s_def_export_non_visible),
+  m_override_export_non_visible(false)
 {}
 
 //! \brief sets defualt values.
@@ -546,6 +547,7 @@ void Configuration::merge(const Configuration* other)
     m_override_light_enable = other->m_override_light_enable;
   m_export_scene_root = other->m_export_scene_root;
   m_export_non_visible = other->m_export_non_visible;
+  m_override_export_non_visible = other->m_override_export_non_visible;
 }
 
 SGAL_END_NAMESPACE
