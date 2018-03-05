@@ -148,6 +148,12 @@ public:
    */
   virtual Shared_coord_array get_coord_array();
 
+  /*! Obtain the representation mode. */
+  virtual Primitive_type get_primitive_type();
+
+  /*! Obtain the number of primitives. */
+  virtual Size get_num_primitives();
+
   /*! Clean the coordinate array. */
   virtual void clean_coords();
 

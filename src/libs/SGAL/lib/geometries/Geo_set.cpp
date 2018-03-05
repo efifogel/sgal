@@ -518,4 +518,11 @@ Bounding_box Geo_set::bounding_box()
   return bbox;
 }
 
+//! \brief obtains the representation mode.
+Geo_set::Primitive_type Geo_set::get_primitive_type()
+{ return m_primitive_type; }
+
+//! \brief obtains the number of primitives.
+Size Geo_set::get_num_primitives() { return m_num_primitives; }
+
 SGAL_END_NAMESPACE

@@ -756,6 +756,47 @@ void Indexed_face_set::set_polyhedron(Polyhedron& polyhedron)
   polyhedron_changed();
 }
 
+//! \brief obtains the representation mode.
+Geo_set::Primitive_type Indexed_face_set::get_primitive_type()
+{
+  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+                  std::cout << "Indexed_face_set::get_primitive_type(): "
+                  << "name: " << get_name() << std::endl;);
+
+  if (is_dirty_coord_array()) clean_coords();
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) {
+    repair();
+    if (is_dirty_coord_array()) clean_coords();
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
+  else if (is_convex_hull() && is_dirty_polyhedron()) {
+    clean_polyhedron();
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
+  return Boundary_set::get_primitive_type();
+}
+
+//! \brief obtains the number of primitives.
+Size Indexed_face_set::get_num_primitives()
+{
+  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+                  std::cout << "Indexed_face_set::get_num_primitives(): "
+                  << "name: " << get_name() << std::endl;);
+  if (is_dirty_coord_array()) clean_coords();
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) {
+    repair();
+    if (is_dirty_coord_array()) clean_coords();
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
+  else if (is_convex_hull() && is_dirty_polyhedron()) {
+    clean_polyhedron();
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
+  return Boundary_set::get_num_primitives();
+}
+
 //! \brief obtains the polyhedron data-structure.
 const Indexed_face_set::Polyhedron&
 Indexed_face_set::get_polyhedron(Boolean clean_facet_normals)

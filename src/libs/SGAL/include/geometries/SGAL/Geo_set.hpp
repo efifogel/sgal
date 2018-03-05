@@ -412,13 +412,13 @@ public:
   void set_primitive_type(Primitive_type type);
 
   /*! Obtain the representation mode. */
-  Primitive_type get_primitive_type() const;
-
-  /*! Obtain the number of primitives. */
-  Size get_num_primitives() const;
+  virtual Primitive_type get_primitive_type();
 
   /*! Set the number of primitives. */
   void set_num_primitives(Size num);
+
+  /*! Obtain the number of primitives. */
+  virtual Size get_num_primitives();
 
   /*! Draw the geometry. */
   virtual void draw(Draw_action* action) = 0;
@@ -681,13 +681,6 @@ inline const GLfloat* Geo_set::get_by_tex_coord_index(Array_T array, Uint i)
 //! \brief sets the representation mode. */
 inline void Geo_set::set_primitive_type(Primitive_type type)
 { m_primitive_type = type; }
-
-//! \brief obtains the representation mode.
-inline Geo_set::Primitive_type Geo_set::get_primitive_type() const
-{ return m_primitive_type; }
-
-//! \brief obtains the number of primitives.
-inline Size Geo_set::get_num_primitives() const { return m_num_primitives; }
 
 //! \brief sets the number of primitives.
 inline void Geo_set::set_num_primitives(Size num) { m_num_primitives = num; }
