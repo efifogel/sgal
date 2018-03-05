@@ -706,10 +706,16 @@ void Json_formatter::export_geo_set_data(Shared_geo_set geo_set)
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(tex_coord_array);
   auto has_uvs = tex_coord_array_2d && ! tex_coord_array_2d->empty();
 
+  const auto& indices = geo_set->get_coord_indices();
+  auto num_primitives = geo_set->get_num_primitives();
+  auto num_vertices = coord_array->size();
+  if (is_segments(type))
+    num_vertices = indices.empty() ? 0 : indices.size() - num_primitives;
+
   attribute_single("metadata",
                    [&]() {
                      attribute("version", "1.0");
-                     attribute("vertices", coord_array->size());
+                     attribute("vertices", num_vertices);
                      if (has_normals)
                        attribute("normals", normal_array->size());
                      if (has_colors)
@@ -723,11 +729,30 @@ void Json_formatter::export_geo_set_data(Shared_geo_set geo_set)
                    });
 
   // Export vertices:
-  attribute_multiple("vertices",
-                     [&]() {
-                       for (const auto& v : *coord_array) vertex(v, true);
-                     },
-                     true);
+  if (is_segments(type)) {
+    if (! indices.empty())
+      attribute_multiple("vertices",
+                         [&]() {
+                           auto it = indices.begin();
+                           while (it != indices.end()) {
+                             auto i = *it++;
+                             while (-1 != i) {
+                               const auto v1 = (*coord_array)[i];
+                               i = *it++;
+                               const auto v2 = (*coord_array)[i];
+                               vertex(v1, true);
+                               vertex(v2, true);
+                               i = *it++;
+                             }
+                           }
+                         },
+                         true);
+  }
+  else attribute_multiple("vertices",
+                          [&]() {
+                            for (const auto& v : *coord_array) vertex(v, true);
+                          },
+                          true);
 
   // Export normals:
   if (has_normals)
