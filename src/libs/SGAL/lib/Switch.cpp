@@ -220,6 +220,32 @@ Attribute_list Switch::get_attributes()
 }
 #endif
 
+//! \brief writes a field of this container.
+void Switch::write_field(const Field_info* field_info, Formatter* formatter)
+{
+  if (CHILDREN == field_info->get_id()) {
+    auto parent_visible = formatter->is_visible();
+    if (! parent_visible) {
+      formatter->set_visible(false);
+      field_info->write(this, formatter);
+      formatter->set_visible(parent_visible);
+      return;
+    }
+
+    formatter->multi_container_begin(field_info->get_name());
+    size_t i(0);
+    for (auto it = m_childs.begin(); it != m_childs.end(); ++it, ++i) {
+      formatter->set_visible(m_which_choice == i);
+      formatter->write(*it);
+    }
+    formatter->multi_container_end();
+    formatter->set_visible(parent_visible);
+    return;
+  }
+
+  field_info->write(this, formatter);
+}
+
 //! \brief exports this container.
 void Switch::write(Formatter* formatter)
 {

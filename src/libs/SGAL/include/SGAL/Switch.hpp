@@ -130,14 +130,21 @@ protected:
    */
   virtual const std::string& get_tag() const;
 
+  /*! Write a field of this container.
+   * Intercept the writing of the children field to affect the writing of it.
+   * Override the visible field based on whether the current child is the
+   * selected child os the switch.
+   */
+  virtual void write_field(const Field_info* field_info, Formatter* formatter);
+
 private:
-  /*! The tag that represents the container. */
+  //! The tag that represents the container.
   static const std::string s_tag;
 
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
-  /*! Specifies the index of the child to traverse. */
+  //! Specifies the index of the child to traverse.
   Uint m_which_choice;
 
   // Default values

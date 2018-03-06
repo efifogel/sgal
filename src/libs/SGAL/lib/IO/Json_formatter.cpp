@@ -532,7 +532,7 @@ void Json_formatter::export_group(Shared_group group)
   auto uuid = boost::uuids::random_generator()();
   attribute("uuid", boost::uuids::to_string(uuid));
   attribute("type", group->get_tag());
-  attribute("visible", group->is_visible());
+  attribute("visible", group->is_visible() && is_visible());
   const auto* bs = &(group->get_bounding_sphere());
   attribute_single("boundingSphere", [&]() { export_bounding_sphere(bs); });
   auto transform = boost::dynamic_pointer_cast<Transform>(group);
@@ -581,7 +581,7 @@ void Json_formatter::export_shape(Shared_shape shape)
   Matrix4f mat;
   mat.make_identity();
   attribute_multiple("matrix", [&](){ export_matrix(mat); }, true);
-  attribute("visible", shape->is_visible());
+  attribute("visible", shape->is_visible() && is_visible());
   if (is_mesh(type)) attribute("type", "Mesh");
   else if (is_segments(type)) attribute("type", "LineSegments");
   auto git = m_geometries.find(geometry);
