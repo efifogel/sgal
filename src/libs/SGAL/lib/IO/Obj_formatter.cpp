@@ -40,8 +40,7 @@ SGAL_BEGIN_NAMESPACE
 Obj_formatter::Obj_formatter(const std::string& filename) :
   Text_formatter(filename),
   m_index(1),
-  m_num_appearances(0),
-  m_is_visible(false)
+  m_num_appearances(0)
 {
   m_matrices.emplace(Matrix4f());
   m_export_non_visible = false;
@@ -51,8 +50,7 @@ Obj_formatter::Obj_formatter(const std::string& filename) :
 Obj_formatter::Obj_formatter(const std::string& filename, std::ostream& os) :
   Text_formatter(filename, os),
   m_index(1),
-  m_num_appearances(0),
-  m_is_visible(false)
+  m_num_appearances(0)
 {
   m_matrices.emplace(Matrix4f());
   m_export_non_visible = false;
@@ -62,8 +60,7 @@ Obj_formatter::Obj_formatter(const std::string& filename, std::ostream& os) :
 Obj_formatter::Obj_formatter(const std::string& filename, std::istream& is) :
   Text_formatter(filename, is),
   m_index(1),
-  m_num_appearances(0),
-  m_is_visible(false)
+  m_num_appearances(0)
 {  m_export_non_visible = false; }
 
 //! \brief destructor

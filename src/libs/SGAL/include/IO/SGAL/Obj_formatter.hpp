@@ -112,16 +112,6 @@ public:
    */
   void add_index(Uint size);
 
-  /*! Set the flag that indicates whether the shape is visible.
-   * \param[in] flag The input flag.
-   */
-  void set_visible(Boolean flag);
-
-  /*! Determine whether the shape is visible.
-   * \return a Boolean flag that indicates whether the shape is visible.
-   */
-  Boolean is_visible() const;
-
   /*! Obtain the output material stream.
    * \return the output material stream.
    */
@@ -139,9 +129,6 @@ private:
 
   //! The number of appearances.
   size_t m_num_appearances;
-
-  /*! Indicates whether the shape is visible. */
-  Boolean m_is_visible;
 };
 
 #if defined(_MSC_VER)
@@ -158,13 +145,6 @@ inline void Obj_formatter::add_index(Uint size) { m_index += size; }
 //! \brief Obtain the output stream. */
 inline std::ostream& Obj_formatter::material_out()
 { return m_material_out; }
-
-//! \brief determines whether the shape is visible.
-inline Boolean Obj_formatter::is_visible() const { return m_is_visible; }
-
-//! \brief set the flag that indicates whether the shape is visible.
-inline void Obj_formatter::set_visible(Boolean flag)
-{ m_is_visible = flag; }
 
 SGAL_END_NAMESPACE
 

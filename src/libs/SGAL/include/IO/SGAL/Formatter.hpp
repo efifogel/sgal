@@ -81,6 +81,16 @@ public:
   /*! Obtain the input stream. */
   inline std::istream& in();
 
+  /*! Set the flag that indicates whether the shape is visible.
+   * \param[in] flag The input flag.
+   */
+  void set_visible(Boolean flag);
+
+  /*! Determine whether the shape is visible.
+   * \return a Boolean flag that indicates whether the shape is visible.
+   */
+  Boolean is_visible() const;
+
   /// \name Export functions
   //@{
 
@@ -569,14 +579,20 @@ public:
   Boolean get_export_non_visible() const;
 
 protected:
-  /*! The file name. */
+  //! The file name.
   const std::string& m_filename;
 
-  /*! The output stream */
+  //! The output stream.
   std::ostream* m_out;
 
-  /*! The input stream */
+  //! The input stream.
   std::istream* m_in;
+
+  //! Indicates whether the node is not-visible, because it resides under
+  // a branch of the graph that describes the scene that is not chosen by
+  // a switch statement. It is used only if the flag m_export_non_visible
+  // is set to true.
+  Boolean m_is_visible;
 
   //! Indicates whether to export non-visible geometries.
   Boolean m_export_non_visible;
@@ -587,6 +603,7 @@ inline Formatter::Formatter(const std::string& filename) :
   m_filename(filename),
   m_out(nullptr),
   m_in(nullptr),
+  m_is_visible(true),
   m_export_non_visible(false)
 {}
 
@@ -595,6 +612,7 @@ inline Formatter::Formatter(const std::string& filename, std::ostream& os) :
   m_filename(filename),
   m_out(&os),
   m_in(nullptr),
+  m_is_visible(true),
   m_export_non_visible(false)
 {}
 
@@ -603,6 +621,7 @@ inline Formatter::Formatter(const std::string& filename, std::istream& is) :
   m_filename(filename),
   m_out(nullptr),
   m_in(&is),
+  m_is_visible(true),
   m_export_non_visible(false)
 {}
 
@@ -640,6 +659,13 @@ inline void Formatter::set_export_non_visible(Boolean flag)
 //! \brief indicates whether to export non-visible geometries.
 inline Boolean Formatter::get_export_non_visible() const
 { return m_export_non_visible; }
+
+//! \brief determines whether the shape is visible.
+inline Boolean Formatter::is_visible() const { return m_is_visible; }
+
+//! \brief set the flag that indicates whether the shape is visible.
+inline void Formatter::set_visible(Boolean flag)
+{ m_is_visible = flag; }
 
 SGAL_END_NAMESPACE
 
