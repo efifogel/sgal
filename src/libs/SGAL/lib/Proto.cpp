@@ -35,7 +35,7 @@
 SGAL_BEGIN_NAMESPACE
 
 //! \brief constructs.
-Proto::Proto(Boolean proto) : m_prototype(nullptr) {}
+Proto::Proto(Boolean proto) : Group(proto), m_prototype(nullptr) {}
 
 //! \brief destructs.
 Proto::~Proto() {}
@@ -47,6 +47,14 @@ void Proto::delete_prototype()
   // if (!m_prototype) return;
   // delete m_prototype;
   // m_prototype = nullptr;
+}
+
+//! \brief Creates a new container of this type (virtual copy constructor)..
+Container* Proto::create()
+{
+  auto proto = new Proto();
+  SGAL_assertion(proto);
+  return proto;
 }
 
 //! \brief clones the container from the prototype container.
@@ -62,7 +70,7 @@ Container* Proto::clone()
 void Proto::init_prototype()
 {
   if (m_prototype) return;
-  m_prototype = new Container_proto(Container::get_prototype());
+  m_prototype = new Container_proto(Group::get_prototype());
 
   // The container-prototype does not have static fields.
   // If there had been, they would have been defined here.
@@ -351,6 +359,7 @@ void Proto::set_field_infos(Element* elem)
 void Proto::set_attributes(Element* elem)
 {
   std::cout << "Proto::set_attributes" << std::endl;
+  // Group::set_attributes(elem);
   // SGAL_error_msg("Not implemented yet!");
 }
 

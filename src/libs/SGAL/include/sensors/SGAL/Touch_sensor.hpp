@@ -95,8 +95,10 @@ public:
   /*! Construct the prototype. */
   static Touch_sensor* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the object prototype. */
   virtual void init_prototype();
@@ -326,8 +328,9 @@ private:
 inline Touch_sensor* Touch_sensor::prototype()
 { return new Touch_sensor(false, true); }
 
-//! \brief clones.
-inline Container* Touch_sensor::clone() { return new Touch_sensor(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Touch_sensor::create()
+{ return new Touch_sensor(); }
 
 //! \brief draws the node while traversing the scene graph.
 inline Action::Trav_directive Touch_sensor::draw(Draw_action* /* draw_action */)

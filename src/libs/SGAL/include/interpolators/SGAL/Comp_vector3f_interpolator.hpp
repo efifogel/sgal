@@ -21,7 +21,7 @@
 
 /*!
  * Implements Vector3f interpolator with asynchronic loading of compressed
- * data  
+ * data
  */
 
 #ifndef SGAL_COMP_VECTOR3F_INTERPOLATOR_HPP
@@ -29,12 +29,12 @@
 
 #include "SGAL/basic.hpp"
 #include "Vector3f_interpolator.h"
-#include "Interpolator_int.h"  
+#include "Interpolator_int.h"
 #include "Load_int.h"
-         
+
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_SGAL_DECL Comp_vector3f_interpolator : 
+class SGAL_SGAL_DECL Comp_vector3f_interpolator :
   public Vector3f_interpolator,
   public Interpolator_int,      // Encoding interface methods
   public Load_int               // Async. loading capability
@@ -51,8 +51,10 @@ public:
   static Comp_vector3f_interpolator* prototype()
   { return new Comp_vector3f_interpolator(false, true); }
 
-  /*! Clone */
-  virtual Container* clone() { return new Comp_vector3f_interpolator (); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   virtual void delete_prototype() {}
 
@@ -60,8 +62,8 @@ public:
 
   // Overiding base interpolator functions
   virtual Attribute_list get_attributes();
-    
-  // Load_int methods 
+
+  // Load_int methods
   // ---------------
     virtual void AllocateMemory() {}  // Not used
   virtual Item_primitive* get_data();
@@ -89,4 +91,10 @@ private:
   static const float m_value_bin_factor;
 };
 
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Comp_vector3f_interpolator::create()
+{ return new Comp_vector3f_interpolator(); }
+
 SGAL_END_NAMESPACE
+
+#endif

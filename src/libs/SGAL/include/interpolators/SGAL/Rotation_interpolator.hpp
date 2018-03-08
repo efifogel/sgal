@@ -71,8 +71,10 @@ public:
   static Rotation_interpolator* prototype()
   { return new Rotation_interpolator(false, true); }
 
-  /*! Clone */
-  virtual Container* clone(){ return new Rotation_interpolator (); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initializes the node prototype */
   virtual void init_prototype();
@@ -126,6 +128,10 @@ private:
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Rotation_interpolator::get_tag() const
 { return s_tag; }
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Rotation_interpolator::create()
+{ return new Rotation_interpolator(); }
 
 SGAL_END_NAMESPACE
 

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_SPHERICAL_GAUSSIAN_MAP_MARKED_GEO_HPP
 #define SCGAL_SPHERICAL_GAUSSIAN_MAP_MARKED_GEO_HPP
@@ -359,133 +359,133 @@ private:
    */
   Boolean m_owned_sgm;
 
-  /*! The cubical Gaussian map representation. */
+  //! The cubical Gaussian map representation.
   Sgm* m_sgm;
 
-  /*! Indicates whether to compute the minkowski sum. */
+  //! Indicates whether to compute the minkowski sum.
   Boolean m_minkowski_sum;
 
-  /*! For benchmarking. */
+  //! For benchmarking.
   float m_time;
 
   // Marked vertex attributes:
 
-  /*! The vertex shape style. */
+  //! The vertex shape style.
   Vertex_style m_aos_marked_vertex_style;
 
-  /*! The radius of the geometry that represents a vertex. */
+  //! The radius of the geometry that represents a vertex.
   Float m_aos_marked_vertex_radius;
 
-  /*! The size of the point that represents a vertex. */
+  //! The size of the point that represents a vertex.
   Float m_aos_marked_vertex_point_size;
 
   // Marked edge attributes:
 
-  /*! Indicates whether the rendering of marked edges is enabled or not. */
+  //! Indicates whether the rendering of marked edges is enabled or not.
   Boolean m_aos_marked_edge_enabled;
 
-  /*! The marked edge style */
+  //! The marked edge style
   Edge_style m_aos_marked_edge_style;
 
-  /*! The marked edge rendering type */
+  //! The marked edge rendering type
   Uint m_aos_marked_edge_count;
 
-  /*! Determines whether marked edges are rendered directed or not */
+  //! Determines whether marked edges are rendered directed or not
   Boolean m_aos_marked_edge_directed;
 
-  /*! The radius of the geometry that represents an aos marked edge. */
+  //! The radius of the geometry that represents an aos marked edge.
   Float m_aos_marked_edge_radius;
 
-  /*! The width of the lines that represent aos marked edges. */
+  //! The width of the lines that represent aos marked edges.
   Float m_aos_marked_edge_line_width;
 
-  /*! The transparency of the aos marked face. */
+  //! The transparency of the aos marked face.
   Float m_aos_marked_face_transparency;
 
   // Feature attributes:
 
   // Marked vertex:
 
-  /*! Indicates whether to draw the marked vertex */
+  //! Indicates whether to draw the marked vertex
   Boolean m_draw_marked_vertex;
 
-  /*! The index of the marked vertex. */
+  //! The index of the marked vertex.
   Uint m_marked_vertex_index;
 
-  /*! The radius of the marked primal vertex. */
+  //! The radius of the marked primal vertex.
   Float m_marked_vertex_radius;
 
-  /*! The color of the marked vertex. */
+  //! The color of the marked vertex.
   Vector3f m_marked_vertex_color;
 
-  /*! When trigerred the vertex index is increased. */
+  //! When trigerred the vertex index is increased.
   Boolean m_increase_vertex_index;
 
   // Marked edge:
 
-  /*! Indicates whether to draw the marked halfedge. */
+  //! Indicates whether to draw the marked halfedge.
   Boolean m_draw_marked_edge;
 
-  /*! The index of the marked edge. */
+  //! The index of the marked edge.
   Uint m_marked_edge_index;
 
-  /*! The radius of the geometry that represents a marked edge. */
+  //! The radius of the geometry that represents a marked edge.
   Float m_marked_edge_radius;
 
-  /*! The color of the marked edge. */
+  //! The color of the marked edge.
   Vector3f m_marked_edge_color;
 
-  /*! When trigerred the edge index is increased. */
+  //! When trigerred the edge index is increased.
   Boolean m_increase_edge_index;
 
   // Makrked facet:
 
-  /*! Indicates whether to draw the marked face. */
+  //! Indicates whether to draw the marked face.
   Boolean m_draw_marked_facet;
 
-  /*! The color of the marked facet. */
+  //! The color of the marked facet.
   Vector3f m_marked_facet_color;
 
-  /*! The index of the marked face. */
+  //! The index of the marked face.
   Uint m_marked_facet_index;
 
-  /*! When trigerred the face index is increased. */
+  //! When trigerred the face index is increased.
   Boolean m_increase_facet_index;
 
-  /*! The vertices renderer. */
+  //! The vertices renderer.
   Arrangement_renderer::Renderer* m_vertices_renderer;
 
-  /*! The vertices renderer. */
+  //! The vertices renderer.
   Arrangement_renderer::Renderer* m_colored_vertices_renderer;
 
-  /*! The edges renderer. */
+  //! The edges renderer.
   Arrangement_renderer::Renderer* m_edges_renderer;
 
-  /*! The colored edges renderer. */
+  //! The colored edges renderer.
   Arrangement_renderer::Renderer* m_colored_edges_renderer;
 
-  /*! The inflated line edges renderer. */
+  //! The inflated line edges renderer.
   Arrangement_renderer::Renderer* m_inflated_line_edges_renderer;
 
-  /*! The inflated strip edges renderer. */
+  //! The inflated strip edges renderer.
   Arrangement_renderer::Renderer* m_inflated_strip_edges_renderer;
 
-  /*! The inflated tube edges renderer. */
+  //! The inflated tube edges renderer.
   Arrangement_renderer::Renderer* m_inflated_tube_edges_renderer;
 
-  /*! The marked primal vertex renderer. */
+  //! The marked primal vertex renderer.
   Arrangement_renderer::Renderer* m_marked_face_renderer;
 
-  /*! The marked vertices renderer. */
+  //! The marked vertices renderer.
   Arrangement_renderer::Renderer* m_marked_vertices_renderer;
 
-  /*! The colored marked vertices renderer. */
+  //! The colored marked vertices renderer.
   Arrangement_renderer::Renderer* m_colored_marked_vertices_renderer;
 
-  /*! The marked edges renderer. */
+  //! The marked edges renderer.
   Arrangement_renderer::Renderer* m_marked_edges_renderer;
 
-  /*! The colored marked edges renderer. */
+  //! The colored marked edges renderer.
   Arrangement_renderer::Renderer* m_colored_marked_edges_renderer;
 
   /*! Transform the coordinates of the SGM into spheres.
@@ -544,8 +544,10 @@ public:
   /*! Construct the prototype. */
   static Spherical_gaussian_map_marked_geo* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -744,8 +746,8 @@ inline Spherical_gaussian_map_marked_geo*
 Spherical_gaussian_map_marked_geo::prototype()
 { return new Spherical_gaussian_map_marked_geo(true); }
 
-//! \brief clones.
-inline Container* Spherical_gaussian_map_marked_geo::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Spherical_gaussian_map_marked_geo::create()
 { return new Spherical_gaussian_map_marked_geo(); }
 
 //! \brief obtains the color of the marked vertex.

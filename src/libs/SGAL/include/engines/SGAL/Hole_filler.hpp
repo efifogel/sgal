@@ -64,8 +64,10 @@ public:
   /* Construct the prototype */
   static Hole_filler* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -158,31 +160,30 @@ public:
    */
   Boolean m_fair;
 
-  /*! The resulting polygonal closed mesh. */
+  //! The resulting polygonal closed mesh.
   Shared_mesh_set m_result;
 
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
 private:
-  /*! Trigger of the engine that makes the engine excute. */
+  //! Trigger of the engine that makes the engine excute.
   Boolean m_trigger;
 
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The prototype of this node. */
+  //! The prototype of this node.
   static Container_proto* s_prototype;
 
-  /*! Default values. */
+  //! Default values.
 };
 
 //! \brief constructs the prototype.
-inline Hole_filler* Hole_filler::prototype()
-{ return new Hole_filler(true); }
+inline Hole_filler* Hole_filler::prototype() { return new Hole_filler(true); }
 
-//! \brief clones.
-inline Container* Hole_filler::clone() { return new Hole_filler(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Hole_filler::create() { return new Hole_filler(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Hole_filler::get_tag() const { return s_tag; }

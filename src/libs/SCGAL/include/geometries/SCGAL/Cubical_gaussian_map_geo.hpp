@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_CUBICAL_GAUSSIAN_MAP_GEO_HPP
 #define SCGAL_CUBICAL_GAUSSIAN_MAP_GEO_HPP
@@ -655,235 +655,235 @@ private:
   static const float s_def_marked_vertex_radius;
   static const float s_def_marked_edge_radius;
 
-  /*! The cubical Gaussian map representation. */
+  //! The cubical Gaussian map representation.
   Polyhedral_cgm m_cgm;
 
-  /*! Indicates wether to draw the polyhedron or its dual. */
+  //! Indicates wether to draw the polyhedron or its dual.
   Boolean m_draw_aos;
 
-  /*! The opposite of the m_draw_dual flag. */
+  //! The opposite of the m_draw_dual flag.
   Boolean m_draw_primal;
 
-  /*! Indicates whether to draw the cube opaque. */
+  //! Indicates whether to draw the cube opaque.
   Boolean m_draw_aos_opaque;
 
-  /*! Indicates whether to draw haloed lines. */
+  //! Indicates whether to draw haloed lines.
   Boolean m_draw_aos_haloed;
 
-  /*! Indicates whether to draw cube unfolded. */
+  //! Indicates whether to draw cube unfolded.
   Boolean m_draw_aos_unfolded;
 
-  /*! Indicates whether to draw the background. */
+  //! Indicates whether to draw the background.
   Boolean m_draw_aos_surface;
 
-  /*! The color of the faces in the dual representation. */
+  //! The color of the faces in the dual representation.
   Vector3f m_aos_surface_color;
 
-  // Dual vertex attributes:
+  // Dual vertex attribut.
 
-  /*! The vertex shape style. */
+  //! The vertex shape style.
   Vertex_style m_aos_vertex_style;
 
-  /*! The radius of the dual vertices. */
+  //! The radius of the dual vertices.
   Float m_aos_vertex_radius;
 
-  /*! The size of the point that represents a dual vertex. */
+  //! The size of the point that represents a dual vertex.
   Float m_aos_vertex_point_size;
 
-  /*! The color of the vertices. */
+  //! The color of the vertices.
   Vector3f m_aos_vertex_color;
 
-  // Dual nonreal-vertex attributes:
+  // Dual nonreal-vertex attribut
 
-  /*! The nonreal vertex shape style. */
+  //! The nonreal vertex shape style.
   Vertex_style m_aos_nonreal_vertex_style;
 
-  /*! The radius of the dual nonreal vertices. */
+  //! The radius of the dual nonreal vertices.
   Float m_aos_nonreal_vertex_radius;
 
-  /*! The size of the point that represents a dual nonreal vertex. */
+  //! The size of the point that represents a dual nonreal vertex.
   Float m_aos_nonreal_vertex_point_size;
 
-  /*! The color of the vertices. */
+  //! The color of the vertices.
   Vector3f m_aos_nonreal_vertex_color;
 
   // Dual edge attributes:
 
-  /*! Indicates whether the rendering of edges is enabled or not. */
+  //! Indicates whether the rendering of edges is enabled or not.
   Boolean m_aos_edge_enabled;
 
-  /*! The edge rendering style. */
+  //! The edge rendering style.
   Edge_style m_aos_edge_style;
 
-  /*! The edge rendering type. */
+  //! The edge rendering type.
   Uint m_aos_edge_count;
 
-  /*! Indicates whether edges are rendered directed or not. */
+  //! Indicates whether edges are rendered directed or not.
   Boolean m_aos_edge_directed;
 
-  /*! The radius of the dual edges. */
+  //! The radius of the dual edges.
   Float m_aos_edge_radius;
 
-  /*! The width of a line that represents a dual edge. */
+  //! The width of a line that represents a dual edge.
   Float m_aos_edge_line_width;
 
-  /*! The color of the real dual edges. */
+  //! The color of the real dual edges.
   Vector3f m_aos_edge_color[2];
 
   // Non-real dual edge attributes:
 
-  /*! Indicates whether the rendering of nonreal edges is enabled or not. */
+  //! Indicates whether the rendering of nonreal edges is enabled or not.
   Boolean m_aos_nonreal_edge_enabled;
 
-  /*! The nonreal edge rendering style. */
+  //! The nonreal edge rendering style.
   Edge_style m_aos_nonreal_edge_style;
 
-  /*! The nonreal edge rendering type. */
+  //! The nonreal edge rendering type.
   Uint m_aos_nonreal_edge_count;
 
-  /*! Indicates whether nonreal edges are rendered directed or not. */
+  //! Indicates whether nonreal edges are rendered directed or not.
   Boolean m_aos_nonreal_edge_directed;
 
-  /*! The radius of the nonreal dual edges. */
+  //! The radius of the nonreal dual edges.
   Float m_aos_nonreal_edge_radius;
 
-  /*! The width of the line that represents a non-real dual edge. */
+  //! The width of the line that represents a non-real dual edge.
   Float m_aos_nonreal_edge_line_width;
 
-  /*! The color of the non-real dual edges. */
+  //! The color of the non-real dual edges.
   Vector3f m_aos_nonreal_edge_color;
 
-  /*! The angle of a single line strip of a spherical arc. */
+  //! The angle of a single line strip of a spherical arc.
   Float m_aos_delta_angle;
 
   // Dual marked vertex attributes:
 
-  /*! The dual marked vertex shape style. */
+  //! The dual marked vertex shape style.
   Vertex_style m_aos_marked_vertex_style;
 
-  /*! The radius of the dual marked vertex. */
+  //! The radius of the dual marked vertex.
   Float m_aos_marked_vertex_radius;
 
-  /*! The size of the point that represents a dual marked vertex. */
+  //! The size of the point that represents a dual marked vertex.
   Float m_aos_marked_vertex_point_size;
 
   // Marked feature attributes:
 
-  /*! Indicates whether to draw the marked vertex. */
+  //! Indicates whether to draw the marked vertex.
   Boolean m_draw_marked_vertex;
 
-  /*! Indicates whether to draw the marked halfedge. */
+  //! Indicates whether to draw the marked halfedge.
   Boolean m_draw_marked_edge;
 
-  /*! Indicates whether to draw the marked face. */
+  //! Indicates whether to draw the marked face.
   Boolean m_draw_marked_facet;
 
-  /*! The color of the marked vertex. */
+  //! The color of the marked vertex.
   Vector3f m_marked_vertex_color;
 
-  /*! The color of the marked edge. */
+  //! The color of the marked edge.
   Vector3f m_marked_edge_color;
 
-  /*! The color of the marked face */
+  //! The color of the marked face
   Vector3f m_marked_facet_color;
 
-  /*! Indicates that the coordinates were tranlated. */
+  //! Indicates that the coordinates were tranlated.
   Boolean m_translated;
 
-  /*! Indicates that the coordinates were rotated. */
+  //! Indicates that the coordinates were rotated.
   Boolean m_rotated;
 
-  /*! Indicates whether to compute the minkowski sum. */
+  //! Indicates whether to compute the minkowski sum.
   Boolean m_minkowski_sum;
 
-  /*! The minkowski sum operands. */
+  //! The minkowski sum operands.
   Cgm_node_array m_cgm_nodes;
 
-  /*! For benchmarking. */
+  //! For benchmarking.
   float m_time;
 
-  /*! When trigerred the CGM is exported. */
+  //! When trigerred the CGM is exported.
   Boolean m_export;
 
-  /*! The shape of a marked vertex. */
+  //! The shape of a marked vertex.
   Sphere* m_vertex_geom;
 
-  /*! The shape of a marked edge. */
+  //! The shape of a marked edge.
   Cylinder* m_edge_geom;
 
-  /*! The radius of the geometry that represents a marked vertex. */
+  //! The radius of the geometry that represents a marked vertex.
   Float m_marked_vertex_radius;
 
-  /*! The radius of the geometry that represents a marked edge. */
+  //! The radius of the geometry that represents a marked edge.
   Float m_marked_edge_radius;
 
-  /*! The index of the marked vertex. */
+  //! The index of the marked vertex.
   Uint m_marked_vertex_index;
 
-  /*! The index of the marked edge. */
+  //! The index of the marked edge.
   Uint m_marked_edge_index;
 
-  /*! The index of the marked face. */
+  //! The index of the marked face.
   Uint m_marked_facet_index;
 
-  /*! When trigerred the vertex index is increased. */
+  //! When trigerred the vertex index is increased.
   Boolean m_increase_vertex_index;
 
-  /*! When trigerred the edge index is increased. */
+  //! When trigerred the edge index is increased.
   Boolean m_increase_edge_index;
 
-  /*! When trigerred the face index is increased. */
+  //! When trigerred the face index is increased.
   Boolean m_increase_facet_index;
 
-  /*! Indicates whether the renderer must be cleaned. */
+  //! Indicates whether the renderer must be cleaned.
   Boolean m_renderer_dirty;
 
-  /*! The renderer of the arrangement data structure. */
+  //! The renderer of the arrangement data structure.
   Arrangement_renderer m_renderer;
 
-  /*! The dual marked face (primal vertex) renderer. */
+  //! The dual marked face (primal vertex) renderer.
   Arrangement_renderer::Renderer* m_aos_marked_face_renderer;
 
-  /*! The surface renderer. */
+  //! The surface renderer.
   Arrangement_renderer::Renderer* m_surface_renderer;
 
-  /*! The surface renderer. */
+  //! The surface renderer.
   Colored_surface_renderer* m_colored_surface_renderer;
 
-  /*! The surface renderer. */
+  //! The surface renderer.
   Arrangement_renderer::Renderer* m_stencil_surface_renderer;
 
-  /*! The vertices renderer. */
+  //! The vertices renderer.
   Arrangement_renderer::Renderer* m_vertices_renderer;
 
-  /*! The vertices with color renderer. */
+  //! The vertices with color renderer.
   Arrangement_renderer::Renderer* m_colored_vertices_renderer;
 
-  /*! The nonreal vertices renderer. */
+  //! The nonreal vertices renderer.
   Arrangement_renderer::Renderer* m_nonreal_vertices_renderer;
 
-  /*! The nonreal vertices with color renderer. */
+  //! The nonreal vertices with color renderer.
   Arrangement_renderer::Renderer* m_colored_nonreal_vertices_renderer;
 
-  /*! The marked_vertices renderer. */
+  //! The marked_vertices renderer.
   Arrangement_renderer::Renderer* m_marked_vertices_renderer;
 
-  /*! The marked_vertices renderer. */
+  //! The marked_vertices renderer.
   Arrangement_renderer::Renderer* m_colored_marked_vertices_renderer;
 
-  /*! The edges renderer. */
+  //! The edges renderer.
   Arrangement_renderer::Renderer* m_edges_renderer;
 
-  /*! The edges renderer. */
+  //! The edges renderer.
   Arrangement_renderer::Renderer* m_colored_edges_renderer;
 
-  /*! The inflated line edges renderer. */
+  //! The inflated line edges renderer.
   Arrangement_renderer::Renderer* m_inflated_line_edges_renderer;
 
-  /*! The inflated strip edges renderer. */
+  //! The inflated strip edges renderer.
   Arrangement_renderer::Renderer* m_inflated_strip_edges_renderer;
 
-  /*! The inflated tube edges renderer. */
+  //! The inflated tube edges renderer.
   Arrangement_renderer::Renderer* m_inflated_tube_edges_renderer;
 
   /*! brief computes the normals of the facets and store them in the dual
@@ -991,8 +991,10 @@ public:
   /*! Construct the prototype. */
   static Cubical_gaussian_map_geo* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -1311,8 +1313,8 @@ public:
 inline Cubical_gaussian_map_geo* Cubical_gaussian_map_geo::prototype()
 { return new Cubical_gaussian_map_geo(true); }
 
-//! \brief clones.
-inline Container* Cubical_gaussian_map_geo::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Cubical_gaussian_map_geo::create()
 { return new Cubical_gaussian_map_geo(); }
 
 //! \brief set the curve color.

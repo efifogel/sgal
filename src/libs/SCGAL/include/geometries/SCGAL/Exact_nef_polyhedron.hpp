@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_EXACT_NEF_POLYHEDRON_HPP
 #define SCGAL_EXACT_NEF_POLYHEDRON_HPP
@@ -184,8 +184,10 @@ public:
   /*! Construct the prototype */
   static Exact_nef_polyhedron* prototype();
 
-  /*! Clone */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -421,7 +423,7 @@ protected:
   /*! Draw the intermediate polyhedron (for debugging purpose) */
   void draw_polyhedron(Draw_action* action);
 
-  /*! obtains the tag (type) of the container */
+  //! obtains the tag (type) of the container
   virtual const std::string& get_tag() const { return s_tag; }
 };
 
@@ -433,8 +435,8 @@ protected:
 inline Exact_nef_polyhedron* Exact_nef_polyhedron::prototype()
 { return new Exact_nef_polyhedron(true); }
 
-//! \brief clones.
-inline Container* Exact_nef_polyhedron::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Exact_nef_polyhedron::create()
 { return new Exact_nef_polyhedron(); }
 
 //! \brief determines whether the representation is empty.

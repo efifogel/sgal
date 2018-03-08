@@ -71,10 +71,10 @@ public:
    */
   static Color_array* prototype();
 
-  /*! Clone.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -185,8 +185,9 @@ inline Color_array::~Color_array() {}
 //! \brief constructs the prototype.
 inline Color_array* Color_array::prototype() { return new Color_array(true); }
 
-//! \brief clones.
-inline Container* Color_array::clone() { return new Color_array(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Color_array::create()
+{ return new Color_array(); }
 
 //! \brief obtains the array size.
 inline Size Color_array::size() const { return m_array.size(); }

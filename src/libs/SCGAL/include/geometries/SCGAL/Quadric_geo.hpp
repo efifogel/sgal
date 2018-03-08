@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
  * A geometry container that represents a quadric surface
@@ -73,8 +73,10 @@ typedef QdX::P_quadric_3<AT> Quadric_3;
   /* Construct the prototype. */
   static Quadric_geo* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! \brief initializes the container prototype. */
   virtual void init_prototype();
@@ -146,16 +148,16 @@ protected:
   virtual const std::string& get_tag() const { return s_tag; }
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static std::string s_tag;
 
-  /*! The container prototype. */
+  //! The container prototype.
   static Container_proto* s_prototype;
 
-  /*! Indicates whether the mesh must be cleaned. */
+  //! Indicates whether the mesh must be cleaned.
   Boolean m_dirty;
 
-  /*! The quadric object. */
+  //! The quadric object.
   Quadric_3 m_quadric;
 
   /*! Draws the representation.
@@ -167,8 +169,9 @@ private:
 /* \brief constructs the prototype. */
 inline Quadric_geo* Quadric_geo::prototype() { return new Quadric_geo(true); }
 
-/*! \brief clones. */
-inline Container* Quadric_geo::clone() { return new Quadric_geo(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Quadric_geo::create()
+{ return new Quadric_geo(); }
 
 SGAL_END_NAMESPACE
 

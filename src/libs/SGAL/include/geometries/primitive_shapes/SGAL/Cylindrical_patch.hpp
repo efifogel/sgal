@@ -68,8 +68,10 @@ public:
   /* Construct the prototype. */
   static Cylindrical_patch* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initializes the container prototype. */
   virtual void init_prototype();
@@ -243,8 +245,9 @@ private:
 inline Cylindrical_patch* Cylindrical_patch::prototype()
 { return new Cylindrical_patch(true); }
 
-//! \brief clones.
-inline Container* Cylindrical_patch::clone() { return new Cylindrical_patch(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Cylindrical_patch::create()
+{ return new Cylindrical_patch(); }
 
 //! \brief determines whether the geometry has texture coordinate.
 inline Boolean Cylindrical_patch::has_tex_coord()

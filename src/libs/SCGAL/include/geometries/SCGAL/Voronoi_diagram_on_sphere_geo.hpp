@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
  * A geometry container that represents an arrangement induced by arcs of
@@ -126,8 +126,10 @@ public:
   /* Construct the prototype. */
   static Voronoi_diagram_on_sphere_geo* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
@@ -251,34 +253,34 @@ private:
     //   operator=(const Site_other_renderer&) = delete;
   };
 
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static std::string s_tag;
 
-  /*! The container prototype. */
+  //! The container prototype.
   static Container_proto* s_prototype;
 
-  /*! The arrangement of great-circle arcs on a sphere. */
+  //! The arrangement of great-circle arcs on a sphere.
   Voronoi_on_sphere* m_vos;
 
-  /*! The site shape style. */
+  //! The site shape style.
   Vertex_style m_site_style;
 
-  /*! The site radius. */
+  //! The site radius.
   Float m_site_radius;
 
-  /*! The site point size (when drawn as a point). */
+  //! The site point size (when drawn as a point).
   Float m_site_point_size;
 
-  /*! The angle of a single triangle in the fan drawing of a site. */
+  //! The angle of a single triangle in the fan drawing of a site.
   Float m_site_delta_angle;
 
-  /*! The site renderer. */
+  //! The site renderer.
   Site_renderer* m_site_renderer;
 
-  /*! The non-flat site renderer. */
+  //! The non-flat site renderer.
   Site_other_renderer* m_site_other_renderer;
 
-  /*! Default values */
+  //! Default values
   static const Vertex_style s_def_site_style;
   static const Float s_def_site_radius;
   static const Float s_def_site_point_size;
@@ -326,8 +328,8 @@ inline Voronoi_diagram_on_sphere_geo*
 Voronoi_diagram_on_sphere_geo::prototype()
 { return new Voronoi_diagram_on_sphere_geo(true); }
 
-//! \brief clones.
-inline Container* Voronoi_diagram_on_sphere_geo::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Voronoi_diagram_on_sphere_geo::create()
 { return new Voronoi_diagram_on_sphere_geo(); }
 
 //! \brief draws the arrangement vertices.

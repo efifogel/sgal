@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_EXACT_POLYHEDRON_GEO_HPP
 #define SCGAL_EXACT_POLYHEDRON_GEO_HPP
@@ -93,10 +93,10 @@ public:
    */
   static Exact_polyhedron_geo* prototype();
 
-  /*! Clone.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -482,19 +482,19 @@ private:
   /*! Computes the convex hull of the coordinate set. */
   void convex_hull();
 
-  /*! The time is took to compute the minkowski sum in seconds. */
+  //! The time is took to compute the minkowski sum in seconds.
   float m_time;
 
-  /*! Indicates whether all edges are creased. */
+  //! Indicates whether all edges are creased.
   Boolean m_creased;
 
-  /*! Indicates whether all edges are smooth. */
+  //! Indicates whether all edges are smooth.
   Boolean m_smooth;
 
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 };
 
@@ -506,8 +506,8 @@ private:
 inline Exact_polyhedron_geo* Exact_polyhedron_geo::prototype()
 { return new Exact_polyhedron_geo(true); }
 
-//! \brief clones.
-inline Container* Exact_polyhedron_geo::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Exact_polyhedron_geo::create()
 { return new Exact_polyhedron_geo(); }
 
 /*! \brief obtainss the flag that indicates whether to compute the convex hull

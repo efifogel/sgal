@@ -80,8 +80,10 @@ public:
   /*! Construct the prototype. */
   static Camera* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Protoype handling. */
   virtual void init_prototype();
@@ -354,8 +356,9 @@ private:
 //! \brief constructs the prototype.
 inline Camera* Camera::prototype() { return new Camera(true); }
 
-//! \brief clones.
-inline Container* Camera::clone() { return new Camera(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Camera::create()
+{ return new Camera(); }
 
 //! \brief obtains The near clipping plane. */
 inline float Camera::get_nearest_clipping_plane() const

@@ -17,7 +17,7 @@
 // $Id: $
 // $Revision: 6147 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_ENVIRONMENT_MAP_HPP
 #define SGAL_ENVIRONMENT_MAP_HPP
@@ -59,8 +59,10 @@ public:
   /*! Construct the prototype */
   static Environment_map* prototype();
 
-  /*! Clone */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -133,8 +135,8 @@ private:
 inline Environment_map* Environment_map::prototype()
 { return new Environment_map(true); }
 
-/*! \brief clones. */
-inline Container* Environment_map::clone() { return new Environment_map(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Environment_map::create() { return new Environment_map(); }
 
 SGAL_END_NAMESPACE
 

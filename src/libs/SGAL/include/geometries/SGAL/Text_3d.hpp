@@ -77,10 +77,10 @@ public:
    */
   static Text_3d* prototype();
 
-  /*! Clone.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -268,8 +268,9 @@ private:
 //! \brief constructs the prototype.
 inline Text_3d* Text_3d::prototype() { return new Text_3d(true); }
 
-//! \brief clones.
-inline Container* Text_3d::clone() { return new Text_3d(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Text_3d::create()
+{ return new Text_3d(); }
 
 //! \brief obtains the text strings.
 inline const String_array& Text_3d::get_strings() const { return m_strings; }

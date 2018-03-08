@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 /*!
  * Position interpolator engine
@@ -58,10 +58,10 @@ public:
    */
   static Position_interpolator* prototype();
 
-  /*! Clone.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
 protected:
   /*! Obtain the tag (type) of the container.
@@ -69,7 +69,7 @@ protected:
   virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
+  //! The tag that identifies this container type.
   static std::string s_tag;
 };
 
@@ -81,9 +81,9 @@ private:
 inline Position_interpolator* Position_interpolator::prototype()
 { return new Position_interpolator(false, true); }
 
-//! \brief clones.
-inline Container* Position_interpolator::clone()
-{ return new Position_interpolator (); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Position_interpolator::create()
+{ return new Position_interpolator(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Position_interpolator::get_tag() const

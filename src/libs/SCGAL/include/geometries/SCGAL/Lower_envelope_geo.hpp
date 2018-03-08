@@ -67,9 +67,6 @@ public:
   /*! Destructor. */
   virtual ~Lower_envelope_geo();
 
-  /*! Clone. */
-  virtual Container* clone() = 0;
-
   /*! Initialize the node prototype */
   virtual void init_prototype();
 

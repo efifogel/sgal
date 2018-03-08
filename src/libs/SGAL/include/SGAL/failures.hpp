@@ -18,7 +18,7 @@
 // $Source$
 // $Revision: 4973 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 //
 // Large content of this file was copied from CGAL/exceptions.h, version 3.3
 
@@ -30,7 +30,7 @@
  */
 
 #include <string>
-#include <boost/lexical_cast.hpp> 
+#include <boost/lexical_cast.hpp>
 
 #include "SGAL/errors.hpp"
 
@@ -51,7 +51,7 @@ SGAL_BEGIN_NAMESPACE
  * behaviours can be changed with the respective \c error_behavior or
  * \c warning_behavior, or with the corresponding \c error_handler or
  * \c warning_handler functions.
- * 
+ *
  * These checks can be disabled with the corresponding preprocessor symbols
  * or with the \c NDEBUG. When disabled, none of these error handling
  * take place, and the program execution continues. Naturally, a
@@ -121,7 +121,7 @@ public:
 
   /*! Obtain the source code filename where the failure was detected */
   std::string filename() const { return m_file; }
-    
+
   /*! Obtain the line number in source code file where the failure was
    * detected
    */

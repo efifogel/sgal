@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
  * A geometry container that represents an arrangement induced by arcs of
@@ -155,8 +155,10 @@ public:
   /* Construct the prototype. */
   static Arrangement_on_quadric_geo* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
@@ -203,21 +205,6 @@ protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
-  /*! Vertex shapes. */
-  static const char* s_vertex_styles[];
-
-  /*! Edge shapes. */
-  static const char* s_edge_shapes[];
-
-  /*! The arrangement on quadric representation. */
-  Arrangement_on_quadric m_aoq;
-
-  /*! The base quadric. */
-  Shared_quadric_geo m_base_quadric;
-
-  /*! The intersecting quadrics. */
-  Quadric_node_list m_quadric_nodes;
-
   /*! Draw a vertex.
    * \param center the vertex center.
    * \param shape
@@ -227,11 +214,26 @@ protected:
   void draw_vertex(Draw_action* action, Vector3f& center,
                    Vertex_shapes shape, Float radius, Float delta_angle);
 
+  //! Vertex shapes.
+  static const char* s_vertex_styles[];
+
+  //! Edge shapes.
+  static const char* s_edge_shapes[];
+
+  //! The arrangement on quadric representation.
+  Arrangement_on_quadric m_aoq;
+
+  //! The base quadric.
+  Shared_quadric_geo m_base_quadric;
+
+  //! The intersecting quadrics.
+  Quadric_node_list m_quadric_nodes;
+
 private:
-  /*! The tag that identifies this container type */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The container prototype. */
+  //! The container prototype.
   static Container_proto* s_prototype;
 
   /*! Draw the embedding quadric surface.
@@ -251,15 +253,14 @@ private:
 
   /*! Set the intersecting quadrics of the arrangement. */
   void insert_quadric(Quadric_geo* quadric);
-
 };
 
 //! \brief constructs the prototype.
 inline Arrangement_on_quadric_geo* Arrangement_on_quadric_geo::prototype()
 { return new Arrangement_on_quadric_geo(true); }
 
-//! \brief clones.
-inline Container* Arrangement_on_quadric_geo::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Arrangement_on_quadric_geo::create()
 { return new Arrangement_on_quadric_geo(); }
 
 //! \brief sets the intersecting quadrics of the arrangement.

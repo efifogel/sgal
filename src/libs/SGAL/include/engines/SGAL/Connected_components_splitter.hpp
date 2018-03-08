@@ -71,8 +71,10 @@ public:
   /* Construct the prototype */
   static Connected_components_splitter* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -144,28 +146,29 @@ public:
   virtual const std::string& get_tag() const;
 
 protected:
-  /*! The scene graph. */
+  //! The scene graph.
   Scene_graph* m_scene_graph;
 
 private:
-  /*! Trigger of the engine that makes the engine excute. */
+  //! Trigger of the engine that makes the engine excute.
   Boolean m_trigger;
 
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The prototype of this node. */
+  //! The prototype of this node.
   static Container_proto* s_prototype;
 
-  /*! Default values. */
+  //! Default values.
 };
 
 //! \brief constructs the prototype.
 inline Connected_components_splitter* Connected_components_splitter::prototype()
 { return new Connected_components_splitter(true); }
 
-//! \brief clones.
-inline Container* Connected_components_splitter::clone() { return new Connected_components_splitter(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Connected_components_splitter::create()
+{ return new Connected_components_splitter(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Connected_components_splitter::get_tag() const

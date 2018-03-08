@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
  * A geometry container that simulates the construction of an arrangement
@@ -132,9 +132,10 @@ public:
   static Arrangement_on_sphere_sim_geo* prototype()
   { return new Arrangement_on_sphere_sim_geo(true); }
 
-  /*! Clone */
-  virtual Container* clone()
-  { return new Arrangement_on_sphere_sim_geo(); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the container prototype */
   virtual void init_prototype();
@@ -307,71 +308,71 @@ protected:
    */
   Boolean m_owned_aos;
 
-  /*! The arrangement of great-circle arcs on a sphere */
+  //! The arrangement of great-circle arcs on a sphere
   Aos_labeled* m_aos;
 
 private:
-  /*! The tag that identifies this container type */
+  //! The tag that identifies this container type
   static std::string s_tag;
 
-  /*! The container prototype */
+  //! The container prototype
   static Container_proto* s_prototype;
 
-  /*! An observer that label the arrangement vertices and edges */
+  //! An observer that label the arrangement vertices and edges
   Label_observer m_observer;
 
-  /*! The simulation time */
+  //! The simulation time
   Float m_time;
 
-  /*! Triggers the resume of simulation */
+  //! Triggers the resume of simulation
   Boolean m_resume;
 
-  /*! Triggers the suspension of simulation */
+  //! Triggers the suspension of simulation
   Boolean m_suspend;
 
-  /*! Indicates whether to draw the labeled vertex */
+  //! Indicates whether to draw the labeled vertex
   Boolean m_draw_labeled_vertex;
 
-  /*! Indicates whether to draw the labeled halfedge */
+  //! Indicates whether to draw the labeled halfedge
   Boolean m_draw_labeled_edge;
 
-  /*! Indicates whether to draw the labeled face */
+  //! Indicates whether to draw the labeled face
   Boolean m_draw_labeled_face;
 
-  /*! The global label */
+  //! The global label
   Uint m_label;
 
-  /*! The vertex label */
+  //! The vertex label
   Uint m_vertex_label;
 
-  /*! The edge label */
+  //! The edge label
   Uint m_edge_label;
 
-  /*! The face label */
+  //! The face label
   Uint m_face_label;
 
-  /*! The number of labels */
+  //! The number of labels
   Uint m_num_labels;
 
-  /*! The color of the labeled vertex */
+  //! The color of the labeled vertex
   Vector3f m_labeled_vertex_color;
 
-  /*! The color of the labeled edge */
+  //! The color of the labeled edge
   Vector3f m_labeled_edge_color;
 
-  /*! The color of the labeled face */
+  //! The color of the labeled face
   Vector3f m_labeled_face_color;
 
-  /*! When trigerred the vertex label is increased */
+  //! When trigerred the vertex label is increased
   Boolean m_increase_vertex_label;
 
-  /*! When trigerred the edge label is increased */
+  //! When trigerred the edge label is increased
   Boolean m_increase_edge_label;
 
-  /*! When trigerred the face label is increased */
+  //! When trigerred the face label is increased
   Boolean m_increase_face_label;
 
-  /*! Default values */
+  //! Default values
   static const Boolean s_def_draw_labeled_vertex;
   static const Boolean s_def_draw_labeled_edge;
   static const Boolean s_def_draw_labeled_face;
@@ -445,6 +446,10 @@ private:
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Arrangement_on_sphere_sim_geo::create()
+{ return new Arrangement_on_sphere_sim_geo(); }
 
 //! \brief draws the arrangement vertices
 inline void Arrangement_on_sphere_sim_geo::

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_HALFTONE_HPP
 #define SGAL_HALFTONE_HPP
@@ -69,8 +69,10 @@ public:
   /*! Construct the prototype */
   static Halftone* prototype() { return new Halftone(true); }
 
-  /*! Clone */
-  virtual Container* clone() { return new Halftone(); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -111,35 +113,38 @@ public:
   virtual Boolean detach_context(Context* context = 0);
 
 protected:
-  /*! true after a call to clean. */
+  //! true after a call to clean.
   Boolean m_dirty;
 
-  /*! The halftone pixels */
+  //! The halftone pixels.
   Image* m_image;
 
   /*! Obtain the tag (type) of the container */
   virtual const std::string & get_tag() const { return s_tag; }
 
 private:
-  /*! Halftone stipple pattern for backfacing elements */
+  //! Halftone stipple pattern for backfacing elements.
   Ubyte* m_pattern;
 
-  /*! true after a call to clean. */
+  //! true after a call to clean.
   Boolean m_dirty_pattern;
 
-  /*! Halftone default stipple pattern for backfacing elements */
+  //! Halftone default stipple pattern for backfacing elements.
   static Ubyte s_def_pattern[];
 
-  /*! The tag that identifies this container type */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The node prototype */
+  //! The node prototype.
   static Container_proto* s_prototype;
 };
 
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Halftone::create() { return new Halftone(); }
 
 SGAL_END_NAMESPACE
 

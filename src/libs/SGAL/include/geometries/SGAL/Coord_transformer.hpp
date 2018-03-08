@@ -68,8 +68,10 @@ public:
   /* Construct the prototype. */
   static Coord_transformer* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Set the attributes of this node.
    * \param elem (in) lists of attribute names and values.
@@ -228,8 +230,8 @@ private:
 inline Coord_transformer* Coord_transformer::prototype()
   { return new Coord_transformer(true); }
 
-//! \brief clones.
-inline Container* Coord_transformer::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Coord_transformer::create()
 { return new Coord_transformer(); }
 
 //! \brief sets the reflection indication-flag.

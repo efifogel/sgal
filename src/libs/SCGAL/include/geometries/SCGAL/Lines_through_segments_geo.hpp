@@ -17,7 +17,7 @@
 // $Id: Lines_through_segments_geo.hpp 14223 2012-11-29 22:33:55Z efif $
 // $Revision: 14223 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
  * A geometry container that represents all lines that intersect tupples
@@ -103,8 +103,10 @@ public:
   /* Construct the prototype. */
   static Lines_through_segments_geo* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
@@ -189,19 +191,19 @@ protected:
                  const Matrix4f& view_mat, const Matrix4f& view_mat_inv);
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The container prototype. */
+  //! The container prototype.
   static Container_proto* s_prototype;
 
-  /*! The exact segments. */
+  //! The exact segments.
   std::vector<Rat_segment_3> m_in_segments;
 
-  /*! Indicates whether the rational segments must be cleaned. */
+  //! Indicates whether the rational segments must be cleaned.
   bool m_in_segments_dirty;
 
-  /*! The output list of lines. */
+  //! The output list of lines.
   std::list<Transversal_with_segments> m_out_lines;
 
   Alg_kernel m_alg_kernel;
@@ -218,8 +220,8 @@ private:
 inline Lines_through_segments_geo* Lines_through_segments_geo::prototype()
 { return new Lines_through_segments_geo(true); }
 
-//! \brief clones.
-inline Container* Lines_through_segments_geo::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Lines_through_segments_geo::create()
 { return new Lines_through_segments_geo(); }
 
 SGAL_END_NAMESPACE

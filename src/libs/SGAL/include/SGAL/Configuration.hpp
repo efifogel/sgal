@@ -111,8 +111,10 @@ public:
   /*! Construct the prototype. */
   static Configuration* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -535,8 +537,9 @@ private:
 inline Configuration* Configuration::prototype()
 { return new Configuration(true); }
 
-//! \brief clones.
-inline Container* Configuration::clone() { return new Configuration(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Configuration::create()
+{ return new Configuration(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Configuration::get_tag() const { return s_tag; }

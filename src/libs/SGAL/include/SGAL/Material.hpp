@@ -81,8 +81,10 @@ public:
   /*! Construct the prototype */
   static Material* prototype();
 
-  /*! Clone */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Set the ambient intensity */
   void set_ambient_intensity(float intensity);
@@ -238,8 +240,8 @@ private:
 //! \brief construct the prototype.
 inline Material* Material::prototype() { return new Material(true); }
 
-//! \brief clones.
-inline Container* Material::clone() { return new Material(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Material::create() { return new Material(); }
 
 //! \brief sets the ambient color.
 inline void Material::set_ambient_color(const Vector3f& color)

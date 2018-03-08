@@ -71,8 +71,10 @@ public:
    */
   static Key_sensor* prototype();
 
-  /*! Clone */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Enactivate or disactivates this key sensor. */
   void set_active(Boolean active);
@@ -155,8 +157,9 @@ private:
 //! \brief constructs the prototype.
 inline Key_sensor* Key_sensor::prototype() { return new Key_sensor(true); }
 
-//! \brief clones.
-inline Container* Key_sensor::clone() { return new Key_sensor(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Key_sensor::create()
+{ return new Key_sensor(); }
 
 //! \brief draws the node (does nothing).
 inline Action::Trav_directive Key_sensor::draw(Draw_action* /* draw_action */)

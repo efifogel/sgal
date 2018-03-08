@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
  * A geometry container that represents an arrangement induced by arcs of
@@ -103,8 +103,10 @@ public:
   /* Construct the prototype. */
   static Arrangement_on_sphere_marked_geo* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
@@ -433,50 +435,51 @@ protected:
    */
   Aos_geo_vector m_aoses;
 
-  /*! An overlay-traits class for computing the overlay. */
+  //! An overlay-traits class for computing the overlay.
   Arrangement_marked_overlay_traits<Aos_marked> m_overlay_traits;
 
-  /*! The marked vertex shape style. */
+  //! The marked vertex shape style.
   Vertex_style m_aos_marked_vertex_style;
 
-  /*! The radius of the disc or ball that represents a marked vertex. */
+  //! The radius of the disc or ball that represents a marked vertex.
   Float m_aos_marked_vertex_radius;
 
-  /*! The size of the point that represents a marked vertex. */
+  //! The size of the point that represents a marked vertex.
   Float m_aos_marked_vertex_point_size;
 
-  /*! The color of the marked vertices. */
+  //! The color of the marked vertices.
   Vector3f m_aos_marked_vertex_color;
 
   // Marked edges:
-  /*! Indicates whether the rendering of marked edges is enabled or not. */
+
+  //! Indicates whether the rendering of marked edges is enabled or not.
   Boolean m_aos_marked_edge_enabled;
 
-  /*! The marked edge style. */
+  //! The marked edge style.
   Edge_style m_aos_marked_edge_style;
 
-  /*! The marked edge rendering type. */
+  //! The marked edge rendering type.
   Uint m_aos_marked_edge_count;
 
-  /*! Determines whether marked edges are rendered directed or not. */
+  //! Determines whether marked edges are rendered directed or not.
   Boolean m_aos_marked_edge_directed;
 
-  /*! The radius of the tube that represents a marked edge. */
+  //! The radius of the tube that represents a marked edge.
   Float m_aos_marked_edge_radius;
 
-  /*! The width of the line that represents a marked edge. */
+  //! The width of the line that represents a marked edge.
   Float m_aos_marked_edge_line_width;
 
-  /*! The color of the marked edges. */
+  //! The color of the marked edges.
   Vector3f m_aos_marked_edge_color;
 
-  /*! The color of the marked face. */
+  //! The color of the marked face.
   Vector3f m_aos_marked_face_color;
 
-  /*! The transparency of the aos marked face. */
+  //! The transparency of the aos marked face.
   Float m_aos_marked_face_transparency;
 
-  /*! The marked primal vertex renderer. */
+  //! The marked primal vertex renderer.
   Arrangement_renderer::Renderer* m_marked_face_renderer;
 
 private:
@@ -564,8 +567,8 @@ inline Arrangement_on_sphere_marked_geo*
 Arrangement_on_sphere_marked_geo::prototype()
 { return new Arrangement_on_sphere_marked_geo(true); }
 
-//! \brief clones.
-inline Container* Arrangement_on_sphere_marked_geo::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Arrangement_on_sphere_marked_geo::create()
 { return new Arrangement_on_sphere_marked_geo(); }
 
 //! \brief draws the arrangement vertices.

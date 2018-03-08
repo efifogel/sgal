@@ -69,8 +69,10 @@ public:
   /*! Construct the prototype. */
   static Accumulation* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -262,8 +264,9 @@ private:
 inline Accumulation* Accumulation::prototype()
 { return new Accumulation(true); }
 
-//! \brief clones.
-inline Container* Accumulation::clone() { return new Accumulation(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Accumulation::create()
+{ return new Accumulation(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Accumulation::get_tag() const { return s_tag; }

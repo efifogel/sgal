@@ -67,8 +67,10 @@ public:
   /* Construct the prototype */
   static Arc* prototype();
 
-  /*! Clone */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -237,8 +239,9 @@ private:
 //! \brief constructs the prototype.
 inline Arc* Arc::prototype() { return new Arc(true); }
 
-//! \brief clones.
-inline Container* Arc::clone() { return new Arc(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Arc::create()
+{ return new Arc(); }
 
 //! \brief obtains the arc radius.
 inline Float Arc::get_radius() const { return m_radius; }

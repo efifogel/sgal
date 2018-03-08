@@ -63,10 +63,10 @@ public:
    */
   static Exporter* prototype();
 
-  /*! Clone.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -182,8 +182,9 @@ private:
 //! \brief constructs the prototype.
 inline Exporter* Exporter::prototype() { return new Exporter(true); }
 
-//! \brief clones.
-inline Container* Exporter::clone() { return new Exporter(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Exporter::create()
+{ return new Exporter(); }
 
 //! \brief sets the name of the dir where the snapshot is written to.
 inline void Exporter::set_dir_name(std::string dir_name)

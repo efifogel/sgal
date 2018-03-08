@@ -74,10 +74,10 @@ public:
    */
   static Coord_array_1d* prototype();
 
-  /*! Clone.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -185,8 +185,8 @@ private:
 inline Coord_array_1d* Coord_array_1d::prototype()
 { return new Coord_array_1d(true); }
 
-//! \brief clones.
-inline Container* Coord_array_1d::clone() { return new Coord_array_1d(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Coord_array_1d::create() { return new Coord_array_1d(); }
 
 //! \brief sets the array.
 inline void Coord_array_1d::set_array(const Float_array& array)
@@ -208,11 +208,9 @@ inline void Coord_array_1d::resize(Size n) { m_array.resize(n); }
 inline void Coord_array_1d::clear() { m_array.clear(); }
 
 //! \brief obtains the iterator to the Array first element.
-inline Float_array::iterator Coord_array_1d::begin()
-{ return m_array.begin(); }
+inline Float_array::iterator Coord_array_1d::begin() { return m_array.begin(); }
 
-inline const Float_array::const_iterator
-Coord_array_1d::begin() const
+inline const Float_array::const_iterator Coord_array_1d::begin() const
 { return m_array.begin(); }
 
 //! \brief obtains the iterator to the Array past-the-end element.

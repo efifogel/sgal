@@ -68,8 +68,10 @@ public:
   /* Construct the prototype. */
   static Epec_coord_array_2d* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -182,8 +184,8 @@ private:
 inline Epec_coord_array_2d* Epec_coord_array_2d::prototype()
 { return new Epec_coord_array_2d(true); }
 
-//! \brief clones.
-inline Container* Epec_coord_array_2d::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Epec_coord_array_2d::create()
 { return new Epec_coord_array_2d(); }
 
 //! \brief obtains the size.

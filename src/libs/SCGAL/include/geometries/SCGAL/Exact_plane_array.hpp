@@ -17,7 +17,7 @@
 // $Id: $
 // $Revision: 9188 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_EXACT_PLANE_ARRAY_HPP
 #define SCGAL_EXACT_PLANE_ARRAY_HPP
@@ -70,8 +70,10 @@ public:
   /* Construct the prototype. */
   static Exact_plane_array* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -120,13 +122,13 @@ protected:
   virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The node prototype */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
-  /*! The exact coordinate array */
+  //! The exact coordinate array.
   Exact_plane_vector m_array;
 };
 
@@ -134,52 +136,53 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Exact_plane_array* Exact_plane_array::prototype()
 { return new Exact_plane_array(true); }
 
-/*! \brief clones. */
-inline Container* Exact_plane_array::clone() { return new Exact_plane_array(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Exact_plane_array::create()
+{ return new Exact_plane_array(); }
 
-/*! \brief Size. */
+//! \brief Size.
 inline Uint Exact_plane_array::size() const { return m_array.size(); }
 
-/*! \brief Resize. */
+//! \brief Resize.
 inline void Exact_plane_array::resize(Uint n) { m_array.resize(n); }
 
-/*! \brief clears the array. */
+//! \brief clears the array.
 inline void Exact_plane_array::clear() { m_array.clear(); }
 
-/*! \brief obtains the (non-const) begin iterator. */
+//! \brief obtains the (non-const) begin iterator.
 inline Exact_plane_array::Exact_plane_iter Exact_plane_array::begin()
 { return m_array.begin(); }
 
-/*! \brief obtains the (const) begin iterator. */
+//! \brief obtains the (const) begin iterator.
 inline Exact_plane_array::Exact_plane_const_iter Exact_plane_array::begin()
   const
 { return m_array.begin(); }
 
-/*! \brief obtains the (non-const) pass-the-end iterator. */
+//! \brief obtains the (non-const) pass-the-end iterator.
 inline Exact_plane_array::Exact_plane_iter
 Exact_plane_array::end() { return m_array.end(); }
 
-/*! \brief obtains the (const) pass-the-end iterator. */
+//! \brief obtains the (const) pass-the-end iterator.
 inline Exact_plane_array::Exact_plane_const_iter Exact_plane_array::end() const
 { return m_array.end(); }
 
-/*! \brief array indexing (non-const) operator. */
+//! \brief array indexing (non-const) operator.
 inline Exact_plane_3& Exact_plane_array::operator[](Uint n)
 { return m_array[n]; }
 
-/*! \brief array indexing (const) operator. */
+//! \brief array indexing (const) operator.
 inline const Exact_plane_3& Exact_plane_array::operator[](Uint n) const
 { return m_array[n]; }
 
-/*! \brief inserts a new element at the end. */
+//! \brief inserts a new element at the end.
 inline void Exact_plane_array::push_back(const Exact_plane_3& p)
 { m_array.push_back(p); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Exact_plane_array::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

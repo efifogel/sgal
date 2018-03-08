@@ -70,8 +70,10 @@ public:
   /*! Construct the prototype. */
   static Tex_gen* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Applies the texture generation attribute. */
   virtual void draw(Context * ctx);
@@ -186,8 +188,8 @@ private:
 //! \brief constructs the prototype.
 inline Tex_gen* Tex_gen::prototype() { return new Tex_gen(true); }
 
-//! \brief clones.
-inline Container* Tex_gen::clone() { return new Tex_gen(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Tex_gen::create() { return new Tex_gen(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Tex_gen::get_tag() const { return s_tag; }

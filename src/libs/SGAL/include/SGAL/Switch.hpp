@@ -66,8 +66,10 @@ public:
   /*! Construct the prototype */
   static Switch* prototype();
 
-  /*! Clone */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype.
    */
@@ -158,8 +160,9 @@ private:
 //! \brief construct the prototype.
 inline Switch* Switch::prototype() { return new Switch(true); }
 
-//! \brief clones.
-inline Switch::Container* Switch::clone() { return new Switch(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Switch::create()
+{ return new Switch(); }
 
 //! \brief sets the index of the child to traverse.
 inline void Switch::set_which_choice(Uint index)

@@ -68,10 +68,10 @@ public:
    */
   static Elevation_grid* prototype();
 
-  /*! Clone.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -293,8 +293,9 @@ private:
 inline Elevation_grid* Elevation_grid::prototype()
 { return new Elevation_grid(true); }
 
-//! \brief clones.
-inline Container* Elevation_grid::clone() { return new Elevation_grid(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Elevation_grid::create()
+{ return new Elevation_grid(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Elevation_grid::get_tag() const { return s_tag; }

@@ -17,7 +17,7 @@
 // $Id: $
 // $Revision: 1308 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_ORTHO_CAMERA_HPP
 #define SGAL_ORTHO_CAMERA_HPP

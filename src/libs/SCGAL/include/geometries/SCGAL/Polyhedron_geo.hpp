@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 /*!
  * A node in the scene graph that maintains a planar map.
@@ -132,8 +132,10 @@ public:
   /*! Constructs the prototype. */
   static Polyhedron_geo* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -205,14 +207,15 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Polyhedron_geo* Polyhedron_geo::prototype()
 { return new Polyhedron_geo(true); }
 
-/*! \brief clones. */
-inline Container* Polyhedron_geo::clone() { return new Polyhedron_geo(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Polyhedron_geo::create()
+{ return new Polyhedron_geo(); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Polyhedron_geo::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

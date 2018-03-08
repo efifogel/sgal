@@ -17,7 +17,7 @@
 // $Source$
 // $Revision: 6147 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 /**
  * @class: ERemoteKeys
@@ -56,8 +56,10 @@ public:
   /*! Construct the prototype */
   static Remote_keys* prototype() {  return new Remote_keys(true); }
 
-  /*! Clone */
-  virtual Container* clone() { return new Remote_keys(); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -88,6 +90,10 @@ private:
   Key_action* CreateKeyAction(std::string str);
 
 };
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Remote_keys::create()
+{ return new Remote_keys(); }
 
 SGAL_END_NAMESPACE
 

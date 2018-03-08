@@ -66,10 +66,10 @@ public:
    */
   static Tex_coord_array_2d* prototype();
 
-  /*! Clone.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -148,13 +148,13 @@ protected:
   virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
-  /*! The normal array. */
+  //! The normal array.
   std::vector<Vector2f> m_array;
 };
 
@@ -166,8 +166,8 @@ private:
 inline Tex_coord_array_2d* Tex_coord_array_2d::prototype()
 { return new Tex_coord_array_2d(true); }
 
-//! \brief clones.
-inline Container* Tex_coord_array_2d::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Tex_coord_array_2d::create()
 { return new Tex_coord_array_2d(); }
 
 //! \brief obtains the array size.

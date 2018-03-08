@@ -62,8 +62,10 @@ public:
   /*! Construct the prototype. */
   static Image_to_height_map* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
@@ -164,8 +166,8 @@ private:
 inline Image_to_height_map* Image_to_height_map::prototype()
 { return new Image_to_height_map(true); }
 
-//! \brief clones.
-inline Container* Image_to_height_map::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Image_to_height_map::create()
 { return new Image_to_height_map(); }
 
 //! \brief obtains the texture image.

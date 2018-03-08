@@ -64,8 +64,10 @@ public:
   /* Construct the prototype */
   static Ellipsoid* prototype();
 
-  /*! Clone */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the container prototype */
   virtual void init_prototype();
@@ -171,8 +173,8 @@ private:
 /*! \brief constructs the prototype. */
 inline Ellipsoid* Ellipsoid::prototype() { return new Ellipsoid(true); }
 
-/*! \brief clones. */
-inline Container* Ellipsoid::clone() { return new Ellipsoid(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Ellipsoid::create() { return new Ellipsoid(); }
 
 /*! \brief obtains the width of the ellipsoid. */
 inline Float Ellipsoid::get_width() const { return m_width; }

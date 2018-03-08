@@ -60,8 +60,10 @@ public:
   /* Construct the prototype. */
   static Box* prototype();
 
-  /*! clones a new instance. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the box prototype. */
   virtual void init_prototype();
@@ -136,8 +138,8 @@ private:
 //! \brief constructs the prototype.
 inline Box* Box::prototype() { return new Box(true); }
 
-//! \brief clones a new instance.
-inline Container* Box::clone() { return new Box(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Box::create() { return new Box(); }
 
 //! \brief sets the size of the box.
 inline void Box::set_size(const Vector3f& size)

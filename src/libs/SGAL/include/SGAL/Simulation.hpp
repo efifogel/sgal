@@ -52,8 +52,10 @@ public:
   /*! Construct the prototype. */
   static Simulation* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -100,8 +102,8 @@ private:
 /*! \brief constructs the prototype. */
 inline Simulation* Simulation::prototype() { return new Simulation(true); }
 
-/*! \brief clones. */
-inline Container* Simulation::clone() { return new Simulation(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Simulation::create() { return new Simulation(); }
 
 /*! \brief obtains the tag (type) of the container */
 inline const std::string& Simulation::get_tag() const { return s_tag; }

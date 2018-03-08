@@ -65,8 +65,10 @@ public:
   /* Construct the prototype. */
   static Epec_normal_array* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -129,24 +131,24 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Epec_normal_array* Epec_normal_array::prototype()
 { return new Epec_normal_array(true); }
 
-/*! \brief clones. */
-inline Container* Epec_normal_array::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Epec_normal_array::create()
 { return new Epec_normal_array(); }
 
-/*! \brief obains the size. */
+//! \brief obains the size.
 inline Size Epec_normal_array::size() const { return m_array.size(); }
 
-/*! \brief resizes. */
+//! \brief resizes.
 inline void Epec_normal_array::resize(Size n) { m_array.resize(n); }
 
-/*! \brief clears the array */
+//! \brief clears the array.
 inline void Epec_normal_array::clear() { m_array.clear(); }
 
-/*! \brief obtains the begin iterator. */
+//! \brief obtains the begin iterator.
 inline Epec_normal_array::Exact_vector_iter Epec_normal_array::begin()
 { return m_array.begin(); }
 
@@ -154,7 +156,7 @@ inline Epec_normal_array::Exact_vector_const_iter Epec_normal_array::begin()
   const
 { return m_array.begin(); }
 
-/*! \brief obtains the pass-the-end iterator. */
+//! \brief obtains the pass-the-end iterator.
 inline Epec_normal_array::Exact_vector_iter Epec_normal_array::end()
 { return m_array.end(); }
 
@@ -162,19 +164,19 @@ inline Epec_normal_array::Exact_vector_const_iter Epec_normal_array::end()
   const
 { return m_array.end(); }
 
-/*! \brief array indexing (non-const) operator. */
+//! \brief array indexing (non-const) operator.
 inline Epec_vector_3& Epec_normal_array::operator[](Uint n)
 { return m_array[n]; }
 
-/*! \brief array indexing (const) operator */
+//! \brief array indexing (const) operator.
 inline const Epec_vector_3& Epec_normal_array::operator[](Uint n) const
 { return m_array[n]; }
 
-/*! \brief inserts a new element at the end. */
+//! \brief inserts a new element at the end.
 inline void Epec_normal_array::push_back(const Epec_vector_3& p)
 { m_array.push_back(p); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Epec_normal_array::get_tag() const
 { return s_tag; }
 

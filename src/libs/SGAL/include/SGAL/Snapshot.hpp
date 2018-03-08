@@ -76,8 +76,10 @@ public:
    */
   static Snapshot* prototype();
 
-  /*! Clone */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype.
    */
@@ -234,8 +236,8 @@ private:
 //! \brief constructs the prototype.
 inline Snapshot* Snapshot::prototype() { return new Snapshot(true); }
 
-//! \brief clones.
-inline Container* Snapshot::clone() { return new Snapshot(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Snapshot::create() { return new Snapshot(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Snapshot::get_tag() const { return s_tag; }

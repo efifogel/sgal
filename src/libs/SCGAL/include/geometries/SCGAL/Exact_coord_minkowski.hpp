@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_EXACT_COORD_MINKOWSKI_HPP
 #define SCGAL_EXACT_COORD_MINKOWSKI_HPP
@@ -65,8 +65,10 @@ public:
   /* Construct the prototype. */
   static Exact_coord_minkowski* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -118,32 +120,32 @@ public:
   Shared_exact_coord_array_3d get_coord_array_changed() const;
 
 protected:
-  /*! Determines whether the node is enabled. */
+  //! Determines whether the node is enabled.
   Boolean m_enabled;
 
-  /*! Indicates that the operation should be executed. */
+  //! Indicates that the operation should be executed.
   Boolean m_execute;
 
-  /*! The input vertices. */
+  //! The input vertices.
   Shared_exact_coord_array_3d m_coord_array1;
 
-  /*! The input vertices. */
+  //! The input vertices.
   Shared_exact_coord_array_3d m_coord_array2;
 
-  /*! The output vertices. */
+  //! The output vertices.
   Shared_exact_coord_array_3d m_coord_array_changed;
 
-  // default values.
+  //! default values.
   static const Boolean s_def_enabled;
 
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 };
 
@@ -158,8 +160,8 @@ inline Exact_coord_minkowski::~Exact_coord_minkowski() {}
 inline Exact_coord_minkowski* Exact_coord_minkowski::prototype()
 { return new Exact_coord_minkowski(true); }
 
-//! \brief clones.
-inline Container* Exact_coord_minkowski::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Exact_coord_minkowski::create()
 { return new Exact_coord_minkowski(); }
 
 //! \brief sets the coordinate-set node.

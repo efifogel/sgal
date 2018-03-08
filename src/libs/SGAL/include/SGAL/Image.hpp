@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_IMAGE_HPP
 #define SGAL_IMAGE_HPP
@@ -181,8 +181,10 @@ public:
   /*! Construct the prototype. */
   static Image* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -353,8 +355,9 @@ private:
 //! \brief constructs the prototype.
 inline Image* Image::prototype() { return new Image(true); }
 
-//! \brief clones.
-inline Container* Image::clone() { return new Image(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Image::create()
+{ return new Image(); }
 
 //! \brief sets the number of pixels in a row.
 inline void Image::set_pack_row_length(Uint length)

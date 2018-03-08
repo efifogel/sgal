@@ -67,8 +67,10 @@ public:
   /* Construct the prototype. */
   static Directional_light* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -120,8 +122,8 @@ private:
 inline Directional_light* Directional_light::prototype()
 { return new Directional_light(true); }
 
-/*! \brief clones. */
-inline Container* Directional_light::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Directional_light::create()
 { return new Directional_light(); }
 
 /*! \brief sets the direction of the light. */

@@ -81,10 +81,10 @@ public:
    */
   static Normal_array* prototype();
 
-  /*! Clone.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -193,8 +193,9 @@ inline Normal_array::~Normal_array() {}
 inline Normal_array* Normal_array::prototype()
 { return new Normal_array(true); }
 
-//! \brief clones.
-inline Container* Normal_array::clone() { return new Normal_array(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Normal_array::create()
+{ return new Normal_array(); }
 
 //! \brief obtains the array size.
 inline Size Normal_array::size() const { return m_array.size(); }

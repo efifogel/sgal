@@ -81,8 +81,10 @@ public:
   /*! Construct the prototype. */
   static Cube_environment* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Set the attributes of the cubical environment map. */
   virtual void set_attributes(Element* elem);
@@ -198,8 +200,8 @@ private:
 inline Cube_environment* Cube_environment::prototype()
 { return new Cube_environment(true); }
 
-//! \brief clones.
-inline Container* Cube_environment::clone() { return new Cube_environment(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Cube_environment::create() { return new Cube_environment(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Cube_environment::get_tag() const { return s_tag; }

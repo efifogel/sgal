@@ -67,8 +67,10 @@ public:
   /* Construct the prototype */
   static Geodesic* prototype();
 
-  /*! Clone */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -227,8 +229,8 @@ private:
 //! \brief constructs the prototype.
 inline Geodesic* Geodesic::prototype() {  return new Geodesic(true); }
 
-//! \brief  clones.
-inline Container* Geodesic::clone() { return new Geodesic(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Geodesic::create() { return new Geodesic(); }
 
 //! \brief sets the arc radius.
 inline void Geodesic::set_radius(Float radius)

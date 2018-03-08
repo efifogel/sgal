@@ -20,7 +20,7 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \todo nore needed?
- * Inctance is a reference object in the scene graph. 
+ * Inctance is a reference object in the scene graph.
  * In the X3D it has the tag "USE" and it is used to reference
  * a node in the scene graph instead of duplicating it.
  */
@@ -34,14 +34,16 @@ public:
 
   EInstance();
   virtual ~EInstance();
-  
+
   void SetInstanceName(const String &name);
   String get_instanceName() const;
 
   static EInstance * prototype() { return new EInstance(); }
 
-  /*! Clone */
-  virtual Container * clone() { return new EInstance(); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Sets the attributes of this node */
   virtual void set_attributes(Element * elem);
@@ -54,4 +56,3 @@ private:
 };
 
 SGAL_END_NAMESPACE
-

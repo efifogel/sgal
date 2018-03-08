@@ -17,7 +17,7 @@
 // $Id: Arrangement_on_sphere_graph_geo.hpp 7789 2009-07-19 12:40:30Z efif $
 // $Revision: 7789 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
  * A geometry container that represents an arrangement induced by arcs of
@@ -88,8 +88,10 @@ public:
   /* Construct the prototype. */
   static Arrangement_on_sphere_graph_geo* prototype();
 
-  /*! Clone */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the container prototype */
   virtual void init_prototype();
@@ -223,10 +225,10 @@ protected:
   void destroy_renderers();
 
  private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The container prototype. */
+  //! The container prototype.
   static Container_proto* s_prototype;
 };
 
@@ -239,8 +241,8 @@ inline Arrangement_on_sphere_graph_geo*
 Arrangement_on_sphere_graph_geo::prototype()
 { return new Arrangement_on_sphere_graph_geo(true); }
 
-//! \brief clones.
-inline Container* Arrangement_on_sphere_graph_geo::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Arrangement_on_sphere_graph_geo::create()
 { return new Arrangement_on_sphere_graph_geo(); }
 
 //! \brief draws the arrangement vertices.

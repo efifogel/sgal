@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_TIME_SENSOR_HPP
 #define SGAL_TIME_SENSOR_HPP
@@ -80,8 +80,10 @@ public:
   /*! Construct the prototype. */
   static Time_sensor* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -201,19 +203,19 @@ protected :
   virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static std::string s_tag;
 
-  /*! The node prototype */
+  //! The node prototype
   static Container_proto* s_prototype;
 
-  /*! The interval time of a cycle in seconds. */
+  //! The interval time of a cycle in seconds.
   Scene_time m_cycle_interval;
 
-  /*! If not 0, the frequency of time & fraction events. */
+  //! If not 0, the frequency of time & fraction events.
   Uint m_frequency;
 
-  /*! Indicates whether the sensor is enabled. */
+  //! Indicates whether the sensor is enabled.
   Boolean m_enabled;
 
   /*! Indicates whether the sensor is active through cycles generated in a
@@ -230,7 +232,7 @@ private:
    */
   Float m_fraction;
 
-  /*! Indicates that the fraction has changed */
+  //! Indicates that the fraction has changed
   Boolean m_true_fraction;
 
   Float m_fraction_bias;
@@ -246,7 +248,7 @@ private:
 
   Scene_time m_quit_time;
 
-  // Default values
+  //! Default values
   static Scene_time s_def_cycle_interval;
   static Boolean s_def_enabled;
   static Boolean s_def_loop;
@@ -267,8 +269,9 @@ private:
 //! \brief constructs the prototype.
 inline Time_sensor* Time_sensor::prototype() { return new Time_sensor(true); }
 
-//! \brief clones.
-inline Container* Time_sensor::clone() { return new Time_sensor(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Time_sensor::create()
+{ return new Time_sensor(); }
 
 //! \brief draws the node while traversing the scene graph.
 inline Action::Trav_directive Time_sensor::draw(Draw_action* /* draw_action */)

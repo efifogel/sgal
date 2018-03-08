@@ -17,7 +17,7 @@
 // $Source$
 // $Revision: 12384 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_OVERRIDE_GEO_PROP_HPP
 #define SGAL_OVERRIDE_GEO_PROP_HPP
@@ -67,7 +67,7 @@ public: // Set/Get
   void set_light_model_color_control(Gfx::Light_model_color_control model);
   Gfx::Light_model_color_control get_light_model_color_control()
   { return Gfx::SINGLE_COLOR; }
-  
+
   void set_line_width(Float line_width);
   Float get_line_width() { return 0; }
 

@@ -56,8 +56,10 @@ public:
   /*! Construct the prototype. */
   static Lod* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
@@ -94,8 +96,8 @@ private:
 /*! \brief constructs the prototype. */
 inline Lod* Lod::prototype() { return new Lod(true); }
 
-/*! \brief clones. */
-inline Container* Lod::clone() { return new Lod(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Lod::create() { return new Lod(); }
 
 SGAL_END_NAMESPACE
 

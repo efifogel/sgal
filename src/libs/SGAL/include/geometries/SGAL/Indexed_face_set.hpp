@@ -85,8 +85,10 @@ public:
   /* Construct the prototype. */
   static Indexed_face_set* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -747,8 +749,8 @@ private:
 inline Indexed_face_set* Indexed_face_set::prototype()
 { return new Indexed_face_set(true); }
 
-//! \brief clones.
-inline Container* Indexed_face_set::clone() { return new Indexed_face_set(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Indexed_face_set::create() { return new Indexed_face_set(); }
 
 /*! \brief determines whether the coordinate array has been invalidated,
  * and thus must be cleaned.

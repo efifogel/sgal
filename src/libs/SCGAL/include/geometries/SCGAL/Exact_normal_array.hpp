@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_EXACT_NORMAL_ARRAY_HPP
 #define SCGAL_EXACT_NORMAL_ARRAY_HPP
@@ -67,8 +67,10 @@ public:
   /* Construct the prototype. */
   static Exact_normal_array* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -131,24 +133,24 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Exact_normal_array* Exact_normal_array::prototype()
 { return new Exact_normal_array(true); }
 
-/*! \brief clones. */
-inline Container* Exact_normal_array::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Exact_normal_array::create()
 { return new Exact_normal_array(); }
 
-/*! \brief obains the size. */
+//! \brief obains the size.
 inline Size Exact_normal_array::size() const { return m_array.size(); }
 
-/*! \brief resizes. */
+//! \brief resizes.
 inline void Exact_normal_array::resize(Size n) { m_array.resize(n); }
 
-/*! \brief clears the array */
+//! \brief clears the array.
 inline void Exact_normal_array::clear() { m_array.clear(); }
 
-/*! \brief obtains the begin iterator. */
+//! \brief obtains the begin iterator.
 inline Exact_normal_array::Exact_vector_iter Exact_normal_array::begin()
 { return m_array.begin(); }
 
@@ -156,7 +158,7 @@ inline Exact_normal_array::Exact_vector_const_iter Exact_normal_array::begin()
   const
 { return m_array.begin(); }
 
-/*! \brief obtains the pass-the-end iterator. */
+//! \brief obtains the pass-the-end iterator.
 inline Exact_normal_array::Exact_vector_iter Exact_normal_array::end()
 { return m_array.end(); }
 
@@ -164,19 +166,19 @@ inline Exact_normal_array::Exact_vector_const_iter Exact_normal_array::end()
   const
 { return m_array.end(); }
 
-/*! \brief array indexing (non-const) operator. */
+//! \brief array indexing (non-const) operator.
 inline Exact_vector_3& Exact_normal_array::operator[](Uint n)
 { return m_array[n]; }
 
-/*! \brief array indexing (const) operator */
+//! \brief array indexing (const) operator.
 inline const Exact_vector_3& Exact_normal_array::operator[](Uint n) const
 { return m_array[n]; }
 
-/*! \brief inserts a new element at the end. */
+//! \brief inserts a new element at the end.
 inline void Exact_normal_array::push_back(const Exact_vector_3& p)
 { m_array.push_back(p); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Exact_normal_array::get_tag() const
 { return s_tag; }
 

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_TRANSFORMER_WITH_EXACT_COORDS_HPP
 #define SCGAL_TRANSFORMER_WITH_EXACT_COORDS_HPP
@@ -47,8 +47,10 @@ public:
   /* Construct the prototype. */
   static Transformer_with_epec_coords* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -79,10 +81,10 @@ protected:
   virtual void apply();
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 };
 
@@ -97,8 +99,8 @@ inline Transformer_with_epec_coords::~Transformer_with_epec_coords() {}
 inline Transformer_with_epec_coords* Transformer_with_epec_coords::prototype()
 { return new Transformer_with_epec_coords(true); }
 
-//! \brief clones.
-inline Container* Transformer_with_epec_coords::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Transformer_with_epec_coords::create()
 { return new Transformer_with_epec_coords(); }
 
 //! \brief obtains the tag (type) of the container.

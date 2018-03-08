@@ -72,8 +72,10 @@ public:
   /* Construct the prototype. */
   static Cylinder* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -223,8 +225,9 @@ private:
 //! \brief constructs the prototype.
 inline Cylinder* Cylinder::prototype() { return new Cylinder(true); }
 
-//! \brief clones.
-inline Container* Cylinder::clone() { return new Cylinder(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Cylinder::create()
+{ return new Cylinder(); }
 
 //! \brief sets the radius of the cylinder.
 inline void Cylinder::set_radius(Float radius)

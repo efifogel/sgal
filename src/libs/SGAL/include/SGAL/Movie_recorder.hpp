@@ -17,7 +17,7 @@
 // $Id: $
 // $Revision: 6147 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 /**
  * @class: EMovieRecorder
@@ -74,8 +74,10 @@ public:
   /* Construct the prototype. */
   static Movie_recorder* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
  /*! Initialize the container prototype. */
   virtual void init_prototype();
@@ -207,8 +209,9 @@ private:
 inline Movie_recorder* Movie_recorder::prototype()
 { return new Movie_recorder(true); }
 
-/*! \brief clones. */
-inline Container* Movie_recorder::clone() { return new Movie_recorder(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Movie_recorder::create()
+{ return new Movie_recorder(); }
 
 void RunJavaThread();
 

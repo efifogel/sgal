@@ -75,8 +75,10 @@ public:
    */
   static Indexed_line_set* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
@@ -474,8 +476,8 @@ private:
 inline Indexed_line_set* Indexed_line_set::prototype()
 { return new Indexed_line_set(true); }
 
-//! \brief clones.
-inline Container* Indexed_line_set::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Indexed_line_set::create()
 { return new Indexed_line_set(); }
 
 /*! \brief obtains the flag that indicates the normals are bound per vertex

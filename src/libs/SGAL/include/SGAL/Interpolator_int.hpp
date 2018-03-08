@@ -17,14 +17,14 @@
 // $Source$
 // $Revision: 1308 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
 /*  class : Interpolator_int
 /*
 /*  Purpose :
 /*    This interface is used by the convertor
-/*    To encode enb format data for VRML interpolator 
+/*    To encode enb format data for VRML interpolator
 /*    classes
 /**/
 
@@ -37,11 +37,11 @@ SGAL_BEGIN_NAMESPACE
 class Interpolator_int {
 public:
   Interpolator_int() {}
-  virtual ~Interpolator_int() {}  
+  virtual ~Interpolator_int() {}
 
   virtual Interpolator_data *get_interpolator_data() = 0;
   virtual void set_executeCoordinator(Execution_coordinator *pEc) = 0;
-  
+
 protected:
   virtual float get_valueRange(float *values, int number)
   {
@@ -69,4 +69,3 @@ protected:
 };
 
 SGAL_END_NAMESPACE
-

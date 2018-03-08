@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_LOWER_ENVELOPE_SPHERE_GEO_HPP
 #define SCGAL_LOWER_ENVELOPE_SPHERE_GEO_HPP
@@ -102,8 +102,10 @@ public:
   /*! Construct the prototype. */
   static Lower_envelope_sphere_geo* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
@@ -171,10 +173,10 @@ protected:
   virtual Boolean is_empty() const;
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
   /*! Indicates whether the envelope data structure is owned, i.e., explicitly
@@ -183,13 +185,13 @@ private:
    */
   Boolean m_owned_envelope;
 
-  /*! The lower envelope data structure. */
+  //! The lower envelope data structure.
   Envelope_diagram_2* m_envelope;
 
-  /*! */
+  //!
   Uint m_resolution;
 
-  // Default values:
+  //! Default values:
   static Uint s_def_resolution;
 
   /*! Obtain all spheres.
@@ -204,8 +206,8 @@ private:
 inline Lower_envelope_sphere_geo* Lower_envelope_sphere_geo::prototype()
 { return new Lower_envelope_sphere_geo(true); }
 
-//! \brief clones.
-inline Container* Lower_envelope_sphere_geo::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Lower_envelope_sphere_geo::create()
 { return new Lower_envelope_sphere_geo(); }
 
 //! \brief determines whether the envelope is empty.

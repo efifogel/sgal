@@ -56,8 +56,10 @@ public:
   /*! Construct the prototype. */
   static Composed_shader* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -128,8 +130,9 @@ private:
 inline Composed_shader* Composed_shader::prototype()
 { return new Composed_shader(true); }
 
-/*! \brief clones. */
-inline Container* Composed_shader::clone() { return new Composed_shader(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Composed_shader::create()
+{ return new Composed_shader(); }
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Composed_shader::get_tag() const { return s_tag; }

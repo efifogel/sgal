@@ -66,8 +66,10 @@ public:
   /* Construct the prototype. */
   static Single_key_sensor* prototype();
 
-  /*! Clone */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initializes the node prototype */
   virtual void init_prototype();
@@ -171,9 +173,9 @@ private:
 inline Single_key_sensor* Single_key_sensor::prototype()
 { return new Single_key_sensor(true); }
 
-//! \brief constructs a new instance.
-inline Container* Single_key_sensor::clone()
-{ return  new Single_key_sensor(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Single_key_sensor::create()
+{ return new Single_key_sensor(); }
 
 //! \brief draws the node (does nothing).
 inline

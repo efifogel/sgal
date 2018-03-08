@@ -17,7 +17,7 @@
 // $Id: $
 // $Revision: 11857 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_NAVIGATION_SENSOR_HPP
 #define SGAL_NAVIGATION_SENSOR_HPP
@@ -92,8 +92,10 @@ public:
   /* Construct the prototype. */
   static Navigation_sensor* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -240,22 +242,22 @@ protected:
   virtual void disable();
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
-  /*! The Scene_graph */
+  //! The Scene_graph
   Scene_graph* m_scene_graph;
 
-  /*! The output translation */
+  //! The output translation
   Vector3f m_translation;
 
-  /*! The output rotation */
+  //! The output rotation
   Rotation m_rotation;
 
-  /*! Indicates that dragging is locked for this sensor */
+  //! Indicates that dragging is locked for this sensor
   bool m_drag_locked;
 
   bool m_is_left_button_double_click;
@@ -264,10 +266,10 @@ private:
 
   Float m_min_zoom_distance;
 
-  /*! The dragging speed */
+  //! The dragging speed
   Float m_dragging_speed;
 
-  /*! The dragging speed divided by 2 precalculated for efficiency */
+  //! The dragging speed divided by 2 precalculated for efficiency
   Float m_half_dragging_speed;
 
   Rotation m_base_rotation;
@@ -276,16 +278,16 @@ private:
 
   Vector2sh m_from;
 
-  /*! Tranlation stopped */
+  //! Tranlation stopped
   bool m_translation_done;
 
-  /*! Rotation stopped */
+  //! Rotation stopped
   bool m_rotation_done;
 
-  /*! Indicates that translation is being performed. */
+  //! Indicates that translation is being performed.
   bool m_translating;
 
-  /*! Indicates that rotation is being performed. */
+  //! Indicates that rotation is being performed.
   bool m_rotating;
 
   /*! Issue events at the end of a transformation session. */
@@ -304,8 +306,8 @@ private:
 inline Navigation_sensor* Navigation_sensor::prototype()
 { return new Navigation_sensor(Vector3f(), Rotation(), true); }
 
-//! \brief clones.
-inline Container* Navigation_sensor::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Navigation_sensor::create()
 { return new Navigation_sensor(); }
 
 //! \brief sets the scene graph.

@@ -51,8 +51,10 @@ public:
   /* Construct the prototype. */
   static Point_light* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Draw the node. */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
@@ -78,8 +80,8 @@ private:
 //! \brief constructs the prototype.
 inline Point_light* Point_light::prototype() { return new Point_light(true); }
 
-//! \brief clones.
-inline Container* Point_light::clone() { return new Point_light(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Point_light::create() { return new Point_light(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Point_light::get_tag() const { return s_tag; }

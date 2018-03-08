@@ -61,8 +61,10 @@ public:
   /*! Construct the prototype. */
   static Text* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -126,8 +128,9 @@ private:
 //! \brief construct the prototype.
 inline Text* Text::prototype() { return new Text(true); }
 
-//! \brief clones.
-inline Container* Text::clone() { return new Text(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Text::create()
+{ return new Text(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Text::get_tag() const { return s_tag; }

@@ -46,20 +46,26 @@ public:
   static Comp_position_interpolator* prototype()
   { return new Comp_position_interpolator(false, true); }
 
-  /*! Clone */
-  virtual Container* clone() { return new Comp_position_interpolator(); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   virtual void delete_prototype() {}
 
 protected:
   virtual float get_key_bin() { return m_default_key_bin; }
-  virtual float get_value_bin_factor() { return m_value_bin_factor;} 
+  virtual float get_value_bin_factor() { return m_value_bin_factor;}
   //virtual float get_value_bin(float *vals);
-  
+
 private:
   static const float m_default_key_bin;
   static const float m_value_bin_factor;
 };
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Comp_position_interpolator::create()
+{ return new Comp_position_interpolator(); }
 
 SGAL_END_NAMESPACE
 

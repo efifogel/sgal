@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_PROTO_HPP
 #define SGAL_PROTO_HPP
@@ -26,7 +26,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/Container.hpp"
+#include "SGAL/Group.hpp"
 #include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_type.hpp"
 #include "SGAL/Execution_function.hpp"
@@ -38,7 +38,7 @@ class Element;
 class Container_proto;
 class Field_info;
 
-class Proto : public Container {
+class Proto : public Group {
 public:
   typedef boost::variant<Boolean,
                          Float,
@@ -71,8 +71,13 @@ public:
   /*! Destruct. */
   virtual ~Proto();
 
-  /*! Clone the container from the prototype container.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
+
+  /*! Clone the container (virtual constructor) with deep copy.
+   * \return a clone of this container.
    */
   virtual Container* clone();
 

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_TRIANGULATION_GEO_HPP
 #define SCGAL_TRIANGULATION_GEO_HPP
@@ -126,8 +126,10 @@ public:
   /*! Construct the prototype. */
   static Triangulation_geo* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -192,38 +194,38 @@ private:
     Kernel kernel;
   };
 
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static std::string s_tag;
 
-  /*! Indicates whether the representation is dirty. */
-  Boolean m_dirty;
-
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
-  /*! A temporary place holder for the coordinate set. */
+  //! Indicates whether the representation is dirty.
+  Boolean m_dirty;
+
+  //! A temporary place holder for the coordinate set.
   Shared_coord_array m_coord_array;
 
-  /*! A temporary place holder for the color set. */
+  //! A temporary place holder for the color set.
   Shared_color_array m_color_array;
 
-  /*! The width of the dual lines. */
+  //! The width of the dual lines.
   float m_line_width;
 
-  /*! Indicates whether to draw haloed lines. */
+  //! Indicates whether to draw haloed lines.
   bool m_draw_haloed;
 
-  /*! Default value. */
+  //! Default value.
   static const float s_def_line_width;
   static const bool s_def_draw_haloed;
 
-  /*! The triangulation representation. */
+  //! The triangulation representation.
   Triangulation_3 m_triangulation;
 
-  /* Indicates that the bbox is set externally. */
+  //! Indicates that the bbox is set externally.
   bool m_bb_is_pre_set;
 
-  /*! The time is took to compute the minkowski sum in seconds. */
+  //! The time is took to compute the minkowski sum in seconds.
   float m_time;
 
 protected:
@@ -266,8 +268,8 @@ protected:
 inline Triangulation_geo* Triangulation_geo::prototype()
 { return new Triangulation_geo(true); }
 
-//! \brief clones.
-inline Container* Triangulation_geo::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Triangulation_geo::create()
 { return new Triangulation_geo(); }
 
 //! \brief sets the coordinate set.

@@ -53,14 +53,11 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  /*! Construct. */
   Light(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destruct. */
   virtual ~Light();
-
-  /*! Clone */
-  virtual Container* clone();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -120,48 +117,45 @@ public:
   virtual void add_to_scene(Scene_graph* scene_graph);
 
 protected:
-  /*! a uniqu id for a light (0-7) */
+  //! a uniqe id for a light (0-7).
   Int32 m_id;
 
-  /*! indicates whether the light is on or off */
+  //! indicates whether the light is on or off.
   Boolean m_is_on;
 
-  /*! The intensity of the light (0-1) */
+  //! The intensity of the light (0-1).
   Float m_intensity;
 
-  /*! The ambient intensity of the light (0-1) */
+  //! The ambient intensity of the light (0-1).
   Float m_ambient_intensity;
 
-  /*! The color of the light (applied to ambient, diffuse and specular) */
+  //! The color of the light (applied to ambient, diffuse and specular).
   Vector3f m_color;
 
 private:
   // Defaults values
 
-  /*! Indicates whether the light is on or off */
+  //! Indicates whether the light is on or off.
   static const Boolean m_def_is_on;
 
-  /*! The intensity of the light (0-1) */
+  //! The intensity of the light (0-1).
   static const Float m_def_intensity;
 
-  /*! The ambient intensity of the light (0-1) */
+  //! The ambient intensity of the light (0-1).
   static const Float m_def_ambient_intensity;
 
-  /*! The color of the light (applied to ambient, diffuse and specular) */
+  //! The color of the light (applied to ambient, diffuse and specular).
   static const Vector3f m_def_color;
 
-  /*! The node prototype */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
-  /*! Reference count */
+  //! Reference count.
   Uint m_ref;
 
   // void init(void);
   // int m_dirty_id, m_dirty_count;
 };
-
-//! \brief clones.
-inline Container* Light::clone() { SGAL_error(); return 0; }
 
 //! \brief sets the light color.
 inline void Light::set_color(const Vector3f& color) { m_color = color; }

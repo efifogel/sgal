@@ -17,7 +17,7 @@
 // $Id: $
 // $Revision: 11857 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_PROXIMITY_SENSOR_HPP
 #define SGAL_PROXIMITY_SENSOR_HPP
@@ -70,8 +70,10 @@ public:
   /*! Construct the prototype */
   static Proximity_sensor* prototype();
 
-  /*! Clone */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -131,27 +133,27 @@ public:
   Scene_graph* get_scene_graph() const;
 
 protected :
-  /*! obtains the tag (type) of the container */
+  //! obtains the tag (type) of the container
   virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
+  //! The tag that identifies this container type
   static const std::string s_tag;
 
-  /*! The node prototype */
+  //! The node prototype
   static Container_proto* s_prototype;
 
-  /*! The scene graph */
+  //! The scene graph
   Scene_graph* m_scene_graph;
 
-  /*! Indicates whether the sensor is enabled */
+  //! Indicates whether the sensor is enabled
   Boolean m_enabled;
 
   Vector3f m_position;
 
   Rotation m_orientation;
 
-  // default values
+  //! default values
   static Boolean s_def_enabled;
 };
 
@@ -159,30 +161,31 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Proximity_sensor* Proximity_sensor::prototype()
 { return new Proximity_sensor(false, true); }
 
-/*! \brief \brief clones. */
-inline Container* Proximity_sensor::clone() { return new Proximity_sensor(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Proximity_sensor::create()
+{ return new Proximity_sensor(); }
 
-/*! \brief draws the node while traversing the scene graph. */
+//! \brief draws the node while traversing the scene graph.
 inline
 Action::Trav_directive Proximity_sensor::draw(Draw_action* /* draw_action */)
 { return Action::TRAV_CONT; }
 
-/*! \brief */
+//! \brief
 inline Boolean Proximity_sensor::get_enabled() const { return m_enabled; }
 
-/*! \brief sets the scene-graph pointer. */
+//! \brief sets the scene-graph pointer.
 inline void Proximity_sensor::set_scene_graph(Scene_graph* sg)
 { m_scene_graph = sg; }
 
-/*! \brief obtains the scene-graph pointer. */
+//! \brief obtains the scene-graph pointer.
 inline Scene_graph* Proximity_sensor::get_scene_graph() const
 { return m_scene_graph; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Proximity_sensor::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

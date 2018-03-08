@@ -17,7 +17,7 @@
 // $Id: $
 // $Revision: 6147 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_GRADIENT_BACKGROUND_HPP
 #define SGAL_GRADIENT_BACKGROUND_HPP
@@ -57,8 +57,10 @@ public:
   /*! Construct the prototype */
   static Gradient_background* prototype();
 
-  /*! Clone */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -148,8 +150,8 @@ private:
 inline Gradient_background* Gradient_background::prototype()
 { return new Gradient_background(true); }
 
-/*! \brief clones. */
-inline Container* Gradient_background::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Gradient_background::create()
 { return new Gradient_background(); }
 
 /*! \brief sets the color of the upper left corner. */

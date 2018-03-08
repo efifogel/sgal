@@ -65,8 +65,10 @@ public:
   /* Construct the prototype. */
   static Sphere* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -174,8 +176,8 @@ private:
 //! \brief constructs the prototype.
 inline Sphere* Sphere::prototype() { return new Sphere(true); }
 
-//! \brief clones.
-inline Container* Sphere::clone() { return new Sphere(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Sphere::create() { return new Sphere(); }
 
 //! \brief sets the sphere center.
 inline void Sphere::set_center(const Vector3f& center)

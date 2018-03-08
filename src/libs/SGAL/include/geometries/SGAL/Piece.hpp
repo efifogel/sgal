@@ -59,8 +59,10 @@ public:
   /* Construct the prototype. */
   static Piece* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -160,8 +162,8 @@ private:
 //! \brief constructs the prototype.
 inline Piece* Piece::prototype() { return new Piece(true); }
 
-//! \brief clones.
-inline Container* Piece::clone() { return new Piece(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Piece::create() { return new Piece(); }
 
 //! \brief obtains the width.
 inline Uint Piece::get_width() const { return m_width; }

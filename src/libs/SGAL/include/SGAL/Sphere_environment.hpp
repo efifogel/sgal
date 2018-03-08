@@ -68,8 +68,10 @@ public:
   /*! Construct the prototype */
   static Sphere_environment* prototype();
 
-  /*! Clone */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -142,8 +144,8 @@ private:
 inline Sphere_environment* Sphere_environment::prototype()
 { return new Sphere_environment(true); }
 
-//! \brief clones.
-inline Container* Sphere_environment::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Sphere_environment::create()
 { return new Sphere_environment(); }
 
 //! \brief sets the alpha value.

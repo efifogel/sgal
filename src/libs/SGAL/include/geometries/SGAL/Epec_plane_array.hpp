@@ -65,8 +65,10 @@ public:
   /* Construct the prototype. */
   static Epec_plane_array* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -129,52 +131,53 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Epec_plane_array* Epec_plane_array::prototype()
 { return new Epec_plane_array(true); }
 
-/*! \brief clones. */
-inline Container* Epec_plane_array::clone() { return new Epec_plane_array(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Epec_plane_array::create()
+{ return new Epec_plane_array(); }
 
-/*! \brief Size. */
+//! \brief Size. */
 inline Uint Epec_plane_array::size() const { return m_array.size(); }
 
-/*! \brief Resize. */
+//! \brief Resize. */
 inline void Epec_plane_array::resize(Uint n) { m_array.resize(n); }
 
-/*! \brief clears the array. */
+//! \brief clears the array. */
 inline void Epec_plane_array::clear() { m_array.clear(); }
 
-/*! \brief obtains the (non-const) begin iterator. */
+//! \brief obtains the (non-const) begin iterator.
 inline Epec_plane_array::Exact_plane_iter Epec_plane_array::begin()
 { return m_array.begin(); }
 
-/*! \brief obtains the (const) begin iterator. */
+//! \brief obtains the (const) begin iterator.
 inline Epec_plane_array::Exact_plane_const_iter Epec_plane_array::begin()
   const
 { return m_array.begin(); }
 
-/*! \brief obtains the (non-const) pass-the-end iterator. */
+//! \brief obtains the (non-const) pass-the-end iterator.
 inline Epec_plane_array::Exact_plane_iter
 Epec_plane_array::end() { return m_array.end(); }
 
-/*! \brief obtains the (const) pass-the-end iterator. */
+//! \brief obtains the (const) pass-the-end iterator.
 inline Epec_plane_array::Exact_plane_const_iter Epec_plane_array::end() const
 { return m_array.end(); }
 
-/*! \brief array indexing (non-const) operator. */
+//! \brief array indexing (non-const) operator.
 inline Epec_plane_3& Epec_plane_array::operator[](Uint n)
 { return m_array[n]; }
 
-/*! \brief array indexing (const) operator. */
+//! \brief array indexing (const) operator.
 inline const Epec_plane_3& Epec_plane_array::operator[](Uint n) const
 { return m_array[n]; }
 
-/*! \brief inserts a new element at the end. */
+//! \brief inserts a new element at the end.
 inline void Epec_plane_array::push_back(const Epec_plane_3& p)
 { m_array.push_back(p); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Epec_plane_array::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

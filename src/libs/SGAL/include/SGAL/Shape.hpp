@@ -86,10 +86,10 @@ public:
    */
   static Shape* prototype();
 
-  /*! Clone.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -427,8 +427,8 @@ private:
 //! \brief constructs the prototype.
 inline Shape* Shape::prototype() { return new Shape(true); }
 
-//! \brief clones.
-inline Container* Shape::clone() { return new Shape(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Shape::create() { return new Shape(); }
 
 /*! \brief obtains the flag that indicates whether to draw into the depth
  * buffer.

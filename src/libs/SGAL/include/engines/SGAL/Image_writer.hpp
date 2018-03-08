@@ -63,8 +63,10 @@ public:
   /*! Construct the prototype. */
   static Image_writer* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
@@ -177,13 +179,13 @@ protected:
   Shared_image m_image;
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
-  // Default values:
+  //! Default values:
   const static std::string s_def_dir_name;
   const static std::string s_def_file_name;
   const static File_format_2d::Id s_def_file_format;
@@ -201,9 +203,8 @@ private:
 inline Image_writer* Image_writer::prototype()
 { return new Image_writer(true); }
 
-//! \brief clones.
-inline Container* Image_writer::clone()
-{ return new Image_writer(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Image_writer::create() { return new Image_writer(); }
 
 //! \brief sets the name of the dir where the snapshot is written to.
 inline void Image_writer::set_dir_name(std::string dir_name)

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_APPEARANCE_HPP
 #define SGAL_APPEARANCE_HPP
@@ -75,8 +75,10 @@ public:
   /*! Construct the prototype. */
   static Appearance* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -434,8 +436,9 @@ private:
 //! \brief constructs the prototype.
 inline Appearance* Appearance::prototype() { return new Appearance(true); }
 
-//! \brief clones.
-inline Container* Appearance::clone() { return new Appearance(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Appearance::create()
+{ return new Appearance(); }
 
 //! \brief obtains the texture attribute.
 inline Appearance::Shared_texture Appearance::get_texture() const

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
  * A geometry container that represents an arrangement induced by arcs of
@@ -87,8 +87,10 @@ public:
   /* Construct the prototype. */
   static Arrangement_on_sphere_geo* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
@@ -204,20 +206,20 @@ protected:
    */
   Aos_geo_vector m_aoses;
 
-  /*! An overlay-traits class for computing the overlay. */
+  //! An overlay-traits class for computing the overlay.
   CGAL::Arr_default_overlay_traits<Aos> m_overlay_traits;
 
-  /*! Create the renderers. */
+  //! Create the renderers.
   void create_renderers();
 
-  /*! Detsroy the renderers. */
+  //! Detsroy the renderers.
   void destroy_renderers();
 
  private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The container prototype. */
+  //! The container prototype.
   static Container_proto* s_prototype;
 };
 
@@ -229,8 +231,8 @@ protected:
 inline Arrangement_on_sphere_geo* Arrangement_on_sphere_geo::prototype()
 { return new Arrangement_on_sphere_geo(true); }
 
-//! \brief clones.
-inline Container* Arrangement_on_sphere_geo::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Arrangement_on_sphere_geo::create()
 { return new Arrangement_on_sphere_geo(); }
 
 /*! \brief adds a geometry container that represents an arrangement on a

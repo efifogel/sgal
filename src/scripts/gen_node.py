@@ -465,16 +465,16 @@ def print_prototype_declaration(out, name):
   print_line(out, "static %s* prototype();" % name)
   print_empty_line(out)
 
-# Clone description.
-clone_desc = '''/*! Clone.
- * \\return the cloned container.
+# Create description.
+create_desc = '''/*! Create a new container of this type (virtual copy constructor).
+ * \return a new container of this type.
  */
 '''
 
-#! Print clone() declaration.
-def print_clone_declaration(out):
-  print_block(out, clone_desc)
-  print_line(out, "virtual Container* clone();")
+#! Print create() declaration.
+def print_create_declaration(out):
+  print_block(out, create_desc)
+  print_line(out, "virtual Container* create();")
   print_empty_line(out)
 
 #! Print init_prototype() declaration.
@@ -706,11 +706,13 @@ def print_prototype_definition(out, class_name):
   print_line(out, "//! \\brief constructs the prototype.")
   print_line(out, "inline %s* %s::prototype() { return new %s(true); }" %
              (class_name, class_name, class_name))
+  print_empty_line(out)
 
-def print_clone_definition(out, class_name):
-  print_line(out, "//! \\brief clones.")
-  print_line(out, "inline Container* %s::clone() { return new %s(); }" %
+def print_create_definition(out, class_name):
+  print_line(out, "//! \\brief creates a new container of this type (virtual copy constructor).")
+  print_line(out, "inline Container* %s::create() { return new %s(); }" %
              (class_name, class_name))
+  print_empty_line(out)
 
 #! Print the setter, getter, adder, and remover function definition.
 # As a convension, if the field has geometry, the definition of the
@@ -825,7 +827,7 @@ def generate_hpp(library, config, fields, out):
   print_constructor_declaration(out, class_name)
   print_destructor_declaration(out, class_name)
   print_prototype_declaration(out, class_name)
-  print_clone_declaration(out)
+  print_create_declaration(out)
 
   # Print prototype handling declarations:
   print_group(out, "Protoype handlers",
@@ -874,9 +876,7 @@ def generate_hpp(library, config, fields, out):
   print_empty_line(out)
 
   print_prototype_definition(out, class_name)
-  print_empty_line(out)
-  print_clone_definition(out, class_name)
-  print_empty_line(out)
+  print_create_definition(out, class_name)
 
   # Print declarations of fields manipulators:
   print_hpp_fields_manipulators_definitions(out, class_name, fields)

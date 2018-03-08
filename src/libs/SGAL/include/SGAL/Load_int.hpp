@@ -17,17 +17,17 @@
 // $Source$
 // $Revision: 1308 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_LOAT_INT_HPP
 #define SGAL_LOAT_INT_HPP
 
 /*! \file
- * Interface to Scene_graph objects which use async loading.  
+ * Interface to Scene_graph objects which use async loading.
  *
  * There are three methods inthis interrface: to get a pointer
  * to the data of the object, to convert the data (to tri strips
- * in case of geometry) and an update method to indicate that 
+ * in case of geometry) and an update method to indicate that
  * a level of the data is ready.
  * <P>This is a pure virtual class.
  */

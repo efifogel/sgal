@@ -51,8 +51,10 @@ public:
   static Transformation_engine* prototype()
   { return new Transformation_engine(true); }
 
-  /*! Clone */
-  virtual Container* clone() { return new Transformation_engine(); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   // protoype handling
   virtual void init_prototype();
@@ -91,6 +93,10 @@ private:
   Float m_angle;
   Float m_last_fraction;
 };
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Transformation_engine::create()
+{ return new Transformation_engine(); }
 
 SGAL_END_NAMESPACE
 

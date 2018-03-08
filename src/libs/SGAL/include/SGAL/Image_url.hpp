@@ -63,8 +63,10 @@ public:
   /*! Construct the prototype. */
   static Image_url* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -187,8 +189,9 @@ private:
 //! \brief constructs the prototype.
 inline Image_url* Image_url::prototype() { return new Image_url(true); }
 
-//! \brief clones.
-inline Container* Image_url::clone() { return new Image_url(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Image_url::create()
+{ return new Image_url(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Image_url::get_tag() const { return s_tag; }

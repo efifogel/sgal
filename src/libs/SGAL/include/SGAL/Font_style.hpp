@@ -89,9 +89,10 @@ public:
    */
   static Font_style* prototype() { return new Font_style(true); }
 
-  /*! Clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone() { return new Font_style(); }
+  virtual Container* create();
 
   /*! Initialize the container prototype.
    */
@@ -471,6 +472,10 @@ private:
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Font_style::create()
+{ return new Font_style(); }
 
 //! \brief obtains the font family.
 inline const String_array& Font_style::get_families() const

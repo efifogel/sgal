@@ -58,8 +58,10 @@ public:
   /*! Construct the prototype. */
   static Multisample* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -129,8 +131,9 @@ private:
 /*! \brief constructs the prototype. */
 inline Multisample* Multisample::prototype() { return new Multisample(true); }
 
-/*! \brief clones. */
-inline Container* Multisample::clone() { return new Multisample(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Multisample::create()
+{ return new Multisample(); }
 
 /*! \brief sets the flag that indicates whether accumulation is enabled. */
 inline void Multisample::set_enabled(Boolean flag) { m_enabled = flag; }

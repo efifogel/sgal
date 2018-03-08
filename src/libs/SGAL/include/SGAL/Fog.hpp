@@ -17,16 +17,16 @@
 // $Id: $
 // $Revision: 6147 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_FOG_HPP
 #define SGAL_FOG_HPP
 
 /*! \file
  * Purpose: An implementation of Fog.
- *                        
+ *
  * Description:  Not implemented yet
- *              
+ *
  *  Inherits from Node.
  */
 
@@ -61,8 +61,10 @@ public:
   /*! Construct the prototype */
   static Fog* prototype() { return new Fog(true); }
 
-  /*! Clone */
-  virtual Container* clone() { return new Fog(); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   enum Fog_mode {
     LINEAR_FOG,
@@ -103,17 +105,17 @@ public:
 #if 0
   virtual Attribute_list get_attributes() { }
 #endif
-  
+
 private:
   void init(void);
 
   Boolean m_on;
-  Int m_mode; 
-  Float m_density; 
-  Float m_start; 
-  Float m_end; 
-  Float m_index; 
-  Vector4f m_color; 
+  Int m_mode;
+  Float m_density;
+  Float m_start;
+  Float m_end;
+  Float m_index;
+  Vector4f m_color;
 };
 
 inline void Fog::set_color(const Vector4f& color)
@@ -121,6 +123,10 @@ inline void Fog::set_color(const Vector4f& color)
 
 inline void Fog::get_color(Vector4f& color)
 { get_color(&color[0], &color[1], &color[2], &color[3]); }
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Fog::create()
+{ return new Fog(); }
 
 SGAL_END_NAMESPACE
 

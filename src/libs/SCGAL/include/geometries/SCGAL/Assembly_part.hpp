@@ -17,7 +17,7 @@
 // $Id: Assembly_part.hpp 13487 2012-06-05 23:31:41Z efif $
 // $Revision: 13487 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_ASSEMBLY_PART_HPP
 #define SCGAL_ASSEMBLY_PART_HPP
@@ -77,8 +77,10 @@ class SGAL_SCGAL_DECL Assembly_part : public Group {
   /* Construct the prototype. */
   static Assembly_part* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -157,8 +159,9 @@ private:
 inline Assembly_part* Assembly_part::prototype()
 { return new Assembly_part(true); }
 
-//! \brief clones.
-inline Container* Assembly_part::clone() { return new Assembly_part(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Assembly_part::create()
+{ return new Assembly_part(); }
 
 SGAL_END_NAMESPACE
 

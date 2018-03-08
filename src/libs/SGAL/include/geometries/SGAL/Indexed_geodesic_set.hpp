@@ -61,8 +61,10 @@ public:
   /* Construct the prototype. */
   static Indexed_geodesic_set* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
@@ -186,8 +188,8 @@ private:
 inline Indexed_geodesic_set* Indexed_geodesic_set::prototype()
 { return new Indexed_geodesic_set(true); }
 
-//! \brief clones.
-inline Container* Indexed_geodesic_set::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Indexed_geodesic_set::create()
 { return new Indexed_geodesic_set(); }
 
 //! \brief obtains.

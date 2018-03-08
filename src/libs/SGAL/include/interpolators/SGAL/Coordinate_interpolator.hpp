@@ -68,8 +68,10 @@ public:
   static Coordinate_interpolator* prototype()
   { return new Coordinate_interpolator(true); }
 
-  /*! Clone */
-  virtual Container* clone() { return new Coordinate_interpolator (); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the container prototype */
   virtual void init_prototype();
@@ -128,6 +130,10 @@ private:
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Coordinate_interpolator::create()
+{ return new Coordinate_interpolator(); }
 
 SGAL_END_NAMESPACE
 

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_LOWER_ENVELOPE_PLANE_GEO_HPP
 #define SCGAL_LOWER_ENVELOPE_PLANE_GEO_HPP
@@ -82,8 +82,10 @@ public:
   /*! Construct the prototype. */
   static Lower_envelope_plane_geo* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -173,10 +175,10 @@ protected:
   Shared_exact_coord_array_2d get_bounding_polygon() const;
 
 private:
-  /*! The tag that identifies this container type */
+  //! The tag that identifies this container type
   static const std::string s_tag;
 
-  /*! The node prototype */
+  //! The node prototype
   static Container_proto* s_prototype;
 
   /*! Indicates whether the envelope data structure is owned, i.e., explicitly
@@ -185,22 +187,22 @@ private:
    */
   Boolean m_owned_envelope;
 
-  /*! The lower envelope data structure */
+  //! The lower envelope data structure
   Envelope_diagram_2* m_envelope;
 
-  /*! An array of direction ccordinates */
+  //! An array of direction ccordinates
   Shared_exact_plane_array m_plane_array;
 
-  /*! The color array */
+  //! The color array
   Shared_color_array m_color_array;
 
-  /*! The bounding polygon of the lower envelope */
+  //! The bounding polygon of the lower envelope
   Shared_exact_coord_array_2d m_bounding_polygon;
 
-  /*! Indicates whther the surface patches should be drawn. */
+  //! Indicates whther the surface patches should be drawn.
   bool m_draw_patches;
 
-  // Default value */
+  //! Default value.
   static bool s_def_draw_patches;
 
   /*! Obtain all planes.
@@ -222,8 +224,8 @@ private:
 inline Lower_envelope_plane_geo* Lower_envelope_plane_geo::prototype()
 { return new Lower_envelope_plane_geo(true); }
 
-//! \brief clones.
-inline Container* Lower_envelope_plane_geo::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Lower_envelope_plane_geo::create()
 { return new Lower_envelope_plane_geo(); }
 
 //! \brief sets the plane array.

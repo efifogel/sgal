@@ -72,8 +72,10 @@ public:
    */
   static Scalar_interpolator* prototype();
 
-  /*! Clone */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -122,13 +124,12 @@ private:
 inline Scalar_interpolator* Scalar_interpolator::prototype()
 { return new Scalar_interpolator(false, true); }
 
-//! \brief clones.
-inline Container* Scalar_interpolator::clone()
-{ return new Scalar_interpolator (); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Scalar_interpolator::create()
+{ return new Scalar_interpolator(); }
 
 //! \brief obtains the tag (type) of the container.
-inline const std::string& Scalar_interpolator::get_tag() const
-{ return s_tag; }
+inline const std::string& Scalar_interpolator::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

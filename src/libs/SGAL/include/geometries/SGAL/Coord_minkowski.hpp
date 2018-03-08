@@ -56,8 +56,10 @@ public:
   /* Construct the prototype. */
   static Coord_minkowski* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Set the attributes of this node.
    * \param elem lists of attribute names and values extracted from the input
@@ -142,8 +144,8 @@ private:
 inline Coord_minkowski* Coord_minkowski::prototype()
 { return new Coord_minkowski(true); }
 
-//! \brief clones.
-inline Container* Coord_minkowski::clone() { return new Coord_minkowski(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Coord_minkowski::create() { return new Coord_minkowski(); }
 
 //! \brief sets the coordinate-set node.
 inline void Coord_minkowski::set_coord_array1(Shared_coord_array coord)

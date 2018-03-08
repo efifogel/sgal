@@ -71,10 +71,10 @@ public:
    */
   static Route* prototype();
 
-  /*! Clone.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -147,8 +147,8 @@ private:
 //! \brief constructs the prototype.
 inline Route* Route::prototype() { return new Route(true); }
 
-//! \brief clones.
-inline Container* Route::clone() { return new Route(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Route::create() { return new Route(); }
 
 //! \brief obtains the source node.
 inline Route::Shared_container Route::get_source_node() { return m_src_node; }

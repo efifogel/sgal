@@ -59,8 +59,10 @@ public:
   /*! Construct the prototype. */
   static Sphere_plane_intersection* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
@@ -164,8 +166,8 @@ private:
 inline Sphere_plane_intersection* Sphere_plane_intersection::prototype()
 { return new Sphere_plane_intersection(true); }
 
-//! \brief clones.
-inline Container* Sphere_plane_intersection::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Sphere_plane_intersection::create()
 { return new Sphere_plane_intersection(); }
 
 //! \brief obtains the sphere radius.

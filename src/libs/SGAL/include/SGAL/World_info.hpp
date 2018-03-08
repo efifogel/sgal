@@ -50,8 +50,10 @@ public:
   /*! Construct the prototype. */
   static World_info* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -84,8 +86,8 @@ private:
 /*! \brief constructs the prototype. */
 inline World_info* World_info::prototype() { return new World_info(true); }
 
-/*! \brief clones. */
-inline Container* World_info::clone() { return new World_info(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* World_info::create() { return new World_info(); }
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& World_info::get_tag() const { return s_tag; }
@@ -93,4 +95,3 @@ inline const std::string& World_info::get_tag() const { return s_tag; }
 SGAL_END_NAMESPACE
 
 #endif
-

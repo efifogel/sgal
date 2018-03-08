@@ -70,8 +70,10 @@ public:
   /* Construct the prototype */
   static Cone* prototype();
 
-  /*! Clone */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -195,8 +197,8 @@ private:
 //! \brief constructs the prototype.
 inline Cone* Cone::prototype() { return new Cone(true); }
 
-//! \brief clones.
-inline Container* Cone::clone() { return new Cone(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Cone::create() { return new Cone(); }
 
 //! \brief sets the radius of the bottom disk.
 inline void Cone::set_bottom_radius(Float radius)

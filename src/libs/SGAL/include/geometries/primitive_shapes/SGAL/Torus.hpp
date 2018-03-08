@@ -63,8 +63,10 @@ public:
   /* Construct the prototype. */
   static Torus* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
@@ -111,26 +113,26 @@ public:
   Uint get_stacks() const;
 
 protected:
-  /*! The spine_height of the ellipsoid. */
+  //! The spine_height of the ellipsoid.
   Float m_spine_radius;
 
-  /*! The number of vertical slices (horizontal) longitudes. */
+  //! The number of vertical slices (horizontal) longitudes.
   Uint m_slices;
 
-  /*! The number of horizontal stacks (vertical) latitudes. */
+  //! The number of horizontal stacks (vertical) latitudes.
   Uint m_stacks;
 
-  /*! obtains the tag (type) of the container. */
+  //! obtains the tag (type) of the container.
   virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static std::string s_tag;
 
-  /*! The container prototype. */
+  //! The container prototype.
   static Container_proto* s_prototype;
 
-  /*! Default values for Torus. */
+  //! Default values for Torus.
   static const Float s_def_cross_section_radius; // Override Extrusion def.
   static const Float s_def_spine_radius;
   static const Uint s_def_slices;
@@ -141,22 +143,22 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Torus* Torus::prototype() { return new Torus(true); }
 
-/*! \brief clones. */
-inline Container* Torus::clone() { return new Torus(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Torus::create() { return new Torus(); }
 
-/*! \brief obtains the spine radius of the ellipsoid. */
+//! \brief obtains the spine radius of the ellipsoid.
 inline Float Torus::get_spine_radius() const { return m_spine_radius; }
 
-/*! \brief obtains the number of slices (horizontal) longitudes. */
+//! \brief obtains the number of slices (horizontal) longitudes.
 inline Uint Torus::get_slices() const { return m_slices; }
 
-/*! \brief obtains the number of stacks (vertical) latitudes. */
+//! \brief obtains the number of stacks (vertical) latitudes.
 inline Uint Torus::get_stacks() const { return m_stacks; }
 
-  /*! obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Torus::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

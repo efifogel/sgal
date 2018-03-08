@@ -17,7 +17,7 @@
 // $Source$
 // $Revision: 1308 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_OPEN_GL_OS_INIT_HPP
 #define SGAL_OPEN_GL_OS_INIT_HPP

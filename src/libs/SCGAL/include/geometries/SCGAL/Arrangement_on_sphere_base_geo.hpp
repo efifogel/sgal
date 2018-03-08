@@ -86,9 +86,6 @@ public:
   /*! Destructor. */
   virtual ~Arrangement_on_sphere_base_geo();
 
-  /*! Clone. */
-  virtual Container* clone() = 0;
-
   /*! Initialize the container prototype. */
   virtual void init_prototype();
 

@@ -17,7 +17,7 @@
 // $Source$
 // $Revision: 1308 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 /*! Implements Rotation interpolator with asynchronic loading of compressed
  * data
@@ -28,12 +28,12 @@
 
 #include "SGAL/basic.hpp"
 #include "Rotation_interpolator.h"
-#include "Interpolator_int.h"  
+#include "Interpolator_int.h"
 #include "Load_int.h"
-         
+
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_SGAL_DECL Comp_rotation_interpolator : 
+class SGAL_SGAL_DECL Comp_rotation_interpolator :
   public Rotation_interpolator,
   public Interpolator_int,      // Encoding interface methods
   public Load_int               // Async. loading capability
@@ -49,7 +49,12 @@ public:
   /* Construct the prototype */
   static Comp_rotation_interpolator* prototype()
   { return new Comp_rotation_interpolator(false, true); }
-  
+
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
+
   /*! Clone */
   virtual Container* clone() { return new Comp_rotation_interpolator(); }
 
@@ -57,8 +62,8 @@ public:
 
   // Overiding base interpolator functions
   virtual Attribute_list get_attributes();
-    
-  // Load_int methods 
+
+  // Load_int methods
   // ---------------
   virtual void AllocateMemory() {}  // Not used
   virtual Item_primitive* get_data();
@@ -87,6 +92,10 @@ private:
   static const float m_value_bin_factor;
   static const float m_AngleBinFactor;
 };
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Comp_rotation_interpolator::create()
+{ return new Comp_rotation_interpolator(); }
 
 SGAL_END_NAMESPACE
 

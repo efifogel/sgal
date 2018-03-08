@@ -56,9 +56,10 @@ public:
    */
   virtual ~Bindable_node();
 
-  /*! Clone
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
   /*! Set the attributes of this node.
    */
@@ -144,8 +145,8 @@ private:
 #pragma warning( pop )
 #endif
 
-//! \brief clones.
-inline Container* Bindable_node::clone() { return new Bindable_node(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Bindable_node::create() { return new Bindable_node(); }
 
 //! \brief obtains the bindable stack.
 inline Bindable_stack* Bindable_node::get_stack()

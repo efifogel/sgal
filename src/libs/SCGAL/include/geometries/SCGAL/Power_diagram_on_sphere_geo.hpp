@@ -135,8 +135,10 @@ public:
   /*! Construct the prototype. */
   static Power_diagram_on_sphere_geo* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
@@ -293,10 +295,10 @@ protected:
   virtual const std::string& get_tag() const { return s_tag; }
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static std::string s_tag;
 
-  /*! The container prototype */
+  //! The container prototype.
   static Container_proto* s_prototype;
 
   /*! Indicates whether the vos data structure is owned, i.e., explicitly
@@ -305,43 +307,43 @@ private:
    */
   Boolean m_owned_vos;
 
-  /*! The arrangement of great-circle arcs on a sphere. */
+  //! The arrangement of great-circle arcs on a sphere.
   Voronoi_on_sphere* m_vos;
 
-  /*! An array of direction ccordinates. */
+  //! An array of direction ccordinates.
   Shared_coeff_array m_coeff_array;
 
-  /*! Indicates whether the rendering of edges is enabled or not. */
+  //! Indicates whether the rendering of edges is enabled or not.
   Boolean m_site_enabled;
 
-  /*! The edge rendering style. */
+  //! The edge rendering style.
   Site_style m_site_style;
 
-  /*! The edge rendering type. */
+  //! The edge rendering type.
   Uint m_site_count;
 
-  /*! Indicates whether edges are rendered directed or not. */
+  //! Indicates whether edges are rendered directed or not.
   Boolean m_site_directed;
 
-  /*! The site radius. */
+  //! The site radius.
   Float m_site_radius;
 
-  /*! The site line width (when drawn as a line) */
+  //! The site line width (when drawn as a line).
   Float m_site_line_width;
 
-  /*! The angle of a single triangle in the fan drawing of a site. */
+  //! The angle of a single triangle in the fan drawing of a site.
   Float m_site_delta_angle;
 
-  /*! The site renderer. */
+  //! The site renderer.
   Inflated_site_renderer* m_inflated_site_renderer;
 
-  /*! The site renderer. */
+  //! The site renderer.
   Site_renderer* m_site_renderer;
 
-  /*! The non-flat site renderer. */
+  //! The non-flat site renderer.
   Site_other_renderer* m_site_other_renderer;
 
-  /*! Default values. */
+  //! Default values.
   static const Boolean s_def_site_enabled;
   static const Site_style s_def_site_style;
   static const Uint s_def_site_count;
@@ -391,8 +393,8 @@ private:
 inline Power_diagram_on_sphere_geo* Power_diagram_on_sphere_geo::prototype()
 { return new Power_diagram_on_sphere_geo(true); }
 
-//! \brief clones.
-inline Container* Power_diagram_on_sphere_geo::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Power_diagram_on_sphere_geo::create()
 { return new Power_diagram_on_sphere_geo(); }
 
 //! \brief obtains the coordinate array.

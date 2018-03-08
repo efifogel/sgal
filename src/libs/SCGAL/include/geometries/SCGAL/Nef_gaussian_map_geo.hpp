@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 /*!
  * A node in the scene graph that maintains a polyhedron.
@@ -145,8 +145,10 @@ public:
   /*! Construct the prototype. */
   static Nef_gaussian_map_geo* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -510,15 +512,15 @@ protected:
   void set_marked_facet_color(const SGAL::Vector3f& color);
 };
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Nef_gaussian_map_geo* Nef_gaussian_map_geo::prototype()
 { return new Nef_gaussian_map_geo(true); }
 
-/*! \brief clones. */
-inline Container* Nef_gaussian_map_geo::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Nef_gaussian_map_geo::create()
 { return new Nef_gaussian_map_geo(); }
 
-/*! \brief sets the operand gausian maps of the minkowski sum. */
+//! \brief sets the operand gausian maps of the minkowski sum.
 inline void Nef_gaussian_map_geo::insert_ngm(Shared_nef_gaussian_map_geo ngm)
 {
   m_ngm_nodes.push_back(ngm);
@@ -527,45 +529,45 @@ inline void Nef_gaussian_map_geo::insert_ngm(Shared_nef_gaussian_map_geo ngm)
   m_dirty_bounding_sphere = true;
 }
 
-/*! \brief sets the flag that indicates whether to draw the sphere. */
+//! \brief sets the flag that indicates whether to draw the sphere.
 inline void Nef_gaussian_map_geo::set_draw_dual_sphere(Boolean draw_bg)
 { m_draw_dual_sphere = draw_bg; }
 
-/*! \brief sets the width of the lines. */
+//! \brief sets the width of the lines.
 inline void Nef_gaussian_map_geo::set_dual_line_width(Float width)
 { m_dual_line_width = width; }
 
-/*! \brief obtaints the width of the lines. */
+//! \brief obtaints the width of the lines.
 inline Float Nef_gaussian_map_geo::get_dual_line_width() const
 { return m_dual_line_width; }
 
-/*! \brief sets the curve color. */
+//! \brief sets the curve color.
 inline void Nef_gaussian_map_geo::set_dual_line_color(const Vector3f& color)
 { m_dual_line_color = color; }
 
-/*! \brief obtains the curve color. */
+//! \brief obtains the curve color.
 inline const Vector3f& Nef_gaussian_map_geo::get_dual_line_color()
 { return m_dual_line_color; }
 
-/*! \brief sets the sphere color. */
+//! \brief sets the sphere color.
 inline void Nef_gaussian_map_geo::set_dual_sphere_color(const Vector3f& color)
 { m_dual_sphere_color = color; }
 
-/*! \brief obtains the sphere color. */
+//! \brief obtains the sphere color.
 inline const Vector3f& Nef_gaussian_map_geo::get_dual_sphere_color() const
 { return m_dual_sphere_color; }
 
-/*! \brief sets the color of the marked vertex. */
+//! \brief sets the color of the marked vertex.
 inline void
 Nef_gaussian_map_geo::set_marked_vertex_color(const Vector3f& color)
 { m_marked_vertex_color = color; }
 
-/*! \brief sets the color of the marked edge. */
+//! \brief sets the color of the marked edge.
 inline void
 Nef_gaussian_map_geo::set_marked_edge_color(const Vector3f& color)
 { m_marked_edge_color = color; }
 
-/*! \brief sets the color of the marked facet. */
+//! \brief sets the color of the marked facet.
 inline void
 Nef_gaussian_map_geo::set_marked_facet_color(const Vector3f& color)
 { m_marked_facet_color = color; }

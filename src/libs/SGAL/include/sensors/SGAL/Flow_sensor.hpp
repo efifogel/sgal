@@ -17,7 +17,7 @@
 // $Id: $
 // $Revision: 11857 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_FLOW_SENSOR_HPP
 #define SGAL_FLOW_SENSOR_HPP
@@ -85,8 +85,10 @@ public:
   /* Construct the prototype. */
   static Flow_sensor* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -130,34 +132,34 @@ protected:
   virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static std::string s_tag;
 
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
-  /*! true after all interpolators have been loaded. */
+  //! true after all interpolators have been loaded.
   Boolean m_is_animation_loading_done;
 
-  /*! true when the loading of the model's level 0 is completed. */
+  //! true when the loading of the model's level 0 is completed.
   Boolean m_is_level0_loading_done;
 
-  /*! true when the loading of the model is completed. */
+  //! true when the loading of the model is completed.
   Boolean m_is_loading_done;
 
-  /*! true when a snapshot of the model is completed. */
+  //! true when a snapshot of the model is completed.
   Boolean m_is_snapshot_done;
 
-  /*! true indicates the collaboration is currently active. */
+  //! true indicates the collaboration is currently active.
   Boolean m_collaborated;
 
-  /*! total number of polygons. */
+  //! total number of polygons.
   Uint m_num_polygons;
 
-  /*! total number of polygons produced. */
+  //! total number of polygons produced.
   Uint m_accum_num_polygons;
 
-  /*! total memory allocated for geometry. */
+  //! total memory allocated for geometry.
   Uint m_geomMemory;
 
   Int_queue m_polygon_count_q;
@@ -166,13 +168,14 @@ private:
   Float m_rate;
 };
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Flow_sensor* Flow_sensor::prototype() { return new Flow_sensor(true); }
 
-/*! \brief clones. */
-inline Container* Flow_sensor::clone() { return new Flow_sensor(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Flow_sensor::create()
+{ return new Flow_sensor(); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Flow_sensor::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

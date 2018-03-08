@@ -74,10 +74,10 @@ public:
    */
   static Coord_array_3d* prototype();
 
-  /*! Clone.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -175,8 +175,8 @@ private:
 inline Coord_array_3d* Coord_array_3d::prototype()
 { return new Coord_array_3d(true); }
 
-//! \brief clones.
-inline Container* Coord_array_3d::clone() { return new Coord_array_3d(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Coord_array_3d::create() { return new Coord_array_3d(); }
 
 //! \brief obtains the array size.
 inline Size Coord_array_3d::size() const { return m_array.size(); }

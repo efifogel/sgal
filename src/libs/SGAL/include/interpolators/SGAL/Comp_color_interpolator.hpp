@@ -45,18 +45,24 @@ public:
   /* Construct the prototype */
   static Comp_color_interpolator* prototype()
   { return new Comp_color_interpolator(false, true); }
-  
-  /*! Clone */
-  virtual Container* clone() { return new Comp_color_interpolator(); }
+
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
 protected:
   virtual float get_key_bin() { return m_default_key_bin; }
   virtual float get_value_bin_factor() { return m_value_bin_factor; }
-  
+
 private:
   static const float m_default_key_bin;
   static const float m_value_bin_factor;
 };
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Comp_color_interpolator::create()
+{ return new Comp_color_interpolator(); }
 
 SGAL_END_NAMESPACE
 

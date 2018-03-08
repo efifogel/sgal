@@ -52,11 +52,11 @@ public:
   virtual void Update(Boolean is_last);
   virtual void delete_data();
 
-  static Prog_indexed_tri_set * new_object() { return new Prog_indexed_tri_set(); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
-  /*! Clone */
-  virtual Container * clone() { return new Prog_indexed_tri_set(); }
-  
 private:
   short m_currentLevel;
 
@@ -92,4 +92,6 @@ private:
   void DestroyData();
 };
 
-
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Prog_indexed_tri_set::create()
+{ return new Prog_indexed_tri_set(); }

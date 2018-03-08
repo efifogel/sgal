@@ -17,7 +17,7 @@
 // $Source$
 // $Revision: 6147 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_ENVIRONMENT_BACKGROUND_HPP
 #define SGAL_ENVIRONMENT_BACKGROUND_HPP
@@ -56,8 +56,10 @@ public:
   static Environment_background * prototype()
   { return new Environment_background(true); }
 
-  /*! Clone */
-  virtual Container * clone() { return new Environment_background(); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Set the attributes of this container */
   virtual void set_attributes(Element * elem);
@@ -112,6 +114,10 @@ private:
   /*! The back texture */
   Image_texture * m_back_texture;
 };
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Environment_background::create()
+{ return new Environment_background(); }
 
 SGAL_END_NAMESPACE
 

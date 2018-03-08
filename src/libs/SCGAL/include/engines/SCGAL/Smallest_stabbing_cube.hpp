@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_SMALLEST_STABBING_CUBE_HPP
 #define SGAL_SMALLEST_STABBING_CUBE_HPP
@@ -95,8 +95,10 @@ public:
   /* Construct the prototype. */
   static Smallest_stabbing_cube* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Set the attributes of this node.
    * \param elem lists of attribute names and values extracted from the input
@@ -167,8 +169,8 @@ private:
 inline Smallest_stabbing_cube* Smallest_stabbing_cube::prototype()
 { return new Smallest_stabbing_cube(true); }
 
-//! \brief clones.
-inline Container* Smallest_stabbing_cube::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Smallest_stabbing_cube::create()
 { return new Smallest_stabbing_cube(); }
 
 //! \brief obtains the tag (type) of the container.

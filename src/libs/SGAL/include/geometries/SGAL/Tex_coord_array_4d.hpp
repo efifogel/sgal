@@ -67,10 +67,10 @@ public:
    */
   static Tex_coord_array_4d* prototype();
 
-  /*! Clone.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -164,8 +164,8 @@ private:
 inline Tex_coord_array_4d* Tex_coord_array_4d::prototype()
 { return new Tex_coord_array_4d(true); }
 
-//! \brief clones.
-inline Container* Tex_coord_array_4d::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Tex_coord_array_4d::create()
 { return new Tex_coord_array_4d(); }
 
 //! \brief obtains the array size.

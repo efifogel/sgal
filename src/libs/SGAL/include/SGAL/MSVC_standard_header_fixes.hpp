@@ -17,7 +17,7 @@
 // $Source$
 // $Revision: 6690 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_MSVC_STANDARD_HEADER_FIXES_HPP
 #define SGAL_MSVC_STANDARD_HEADER_FIXES_HPP

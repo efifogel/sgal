@@ -72,8 +72,10 @@ public:
   /*! Construct the prototype. */
   static Texture_2d* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -155,8 +157,8 @@ private:
 //! \brief constructs the prototype.
 inline Texture_2d* Texture_2d::prototype() { return new Texture_2d(true); }
 
-//! \brief clones.
-inline Container* Texture_2d::clone() { return new Texture_2d(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Texture_2d::create() { return new Texture_2d(); }
 
 //! \brief obtains the texture image.
 inline Texture_2d::Shared_image Texture_2d::get_image() const

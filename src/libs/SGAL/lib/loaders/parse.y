@@ -96,6 +96,7 @@ typedef Element::Field_multi_str_attr_list      Field_multi_str_attr_list;
 typedef Element::Field_multi_str_attr_iter      Field_multi_str_attr_iter;
 
 class Vrml_scanner;
+class Proto;
 
 typedef boost::shared_ptr<std::string>        Shared_string;
 typedef boost::shared_ptr<Container>          Shared_container;
@@ -122,9 +123,9 @@ SGAL_END_NAMESPACE
 
 %type <Group*> statements
 %type <Shared_container> statement
-%type <Shared_container> nodeStatement protoStatement routeStatement
+%type <Shared_container> nodeStatement routeStatement
 %type <Shared_container> node sfnodeValue
-%type <Shared_container> proto externproto
+%type <Proto*> protoRooting
 
 %type <Shared_string> NUMBER STRING_LITERAL
 %type <Shared_string> IDENTIFIER
@@ -381,7 +382,7 @@ statements      : %empty { $$ = root; }
                 ;
 
 statement       : nodeStatement { std::swap($$, $1); }
-                | protoStatement { std::swap($$, $1); }
+                | protoStatement { $$ = Shared_container(nullptr); }
                 | routeStatement { std::swap($$, $1); }
                 ;
 
@@ -398,23 +399,19 @@ nodeStatement   : node { scene_graph->add_container($1); std::swap($$, $1); }
                 }
                 ;
 
-protoStatement  : proto { std::swap($$, $1); }
-                | externproto { std::swap($$, $1); }
+protoStatement  : proto
+                | externproto
                 ;
 
-protoRooting    : %empty { root = new Group; }
+protoRooting    : %empty { root = $$ = Proto::prototype(); }
                 ;
 
 proto           : K_PROTO protoRooting nodeTypeId "[" interfaceDeclarations "]" "{" statements "}"
                 {
-                  auto proto_container = Proto::prototype();
-                  SGAL_assertion(proto_container);
-                  proto_container->set_tag(*$3);
-                  proto_container->set_field_infos($5);
+                  $2->set_tag(*$3);
+                  $2->set_field_infos($5);
                   auto* factory = Container_factory::get_instance();
-                  factory->do_register(proto_container);
-
-                  //! \todo Handle the statements... $* is a Group node.
+                  factory->do_register($2);
                 }
                 ;
 
@@ -484,12 +481,7 @@ interfaceDeclaration : restrictedInterfaceDeclaration { std::swap($$, $1); }
 
 externproto     : K_EXTERNPROTO nodeTypeId "[" externInterfaceDeclarations "]" URLList
                 {
-                  $$ = Container_factory::get_instance()->create(*$2);
-                  if (!$$) {
-                    error(yyla.location,
-                          std::string("Unknown node type \"") + *$2 + "\"");
-                    YYERROR;
-                  }
+                  SGAL_error_msg("\"EXTERNPROTO\" not implemented yet!");
                   /*! \todo */
                 }
                 ;

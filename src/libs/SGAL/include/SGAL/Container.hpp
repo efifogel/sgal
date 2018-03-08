@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_CONTAINER_HPP
 #define SGAL_CONTAINER_HPP
@@ -97,12 +97,17 @@ public:
   /*! Destructor. */
   virtual ~Container();
 
-  /*! Clone the container.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone() = 0;
+  virtual Container* create() = 0;
 
-  /*! Clone the container; then, copy all fields from this container to the
-   * copy container.
+  /*! Clone the container (virtual constructor) with deep copy.
+   * \return a clone of this container.
+   */
+  virtual Container* clone();
+
+  /*! Clone the container (virtual constructor) with shalow copy.
    * Notice that fields that are containers themselves not deeply-copied and so
    * are members of array of containers.
    * \return a copy of this container.

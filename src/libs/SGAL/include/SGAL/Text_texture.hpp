@@ -64,8 +64,10 @@ public:
   /* Construct the prototype. */
   static Text_texture* prototype() { return new Text_texture(true); }
 
-  /*! Clone. */
-  virtual Container* clone() { return new Text_texture(); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
@@ -122,6 +124,10 @@ private:
   void on_field_changed(Field_info* field_info = nullptr);
   //! \todo void draw_text(HDC hdc, const std::string& text, int width, int height);
 };
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Text_texture::create()
+{ return new Text_texture(); }
 
 SGAL_END_NAMESPACE
 

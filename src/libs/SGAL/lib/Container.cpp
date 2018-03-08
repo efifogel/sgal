@@ -221,10 +221,23 @@ void Container::process_content_changed()
 void Container::field_changed(const Field_info* /* field_info */)
 { process_content_changed(); }
 
-//! \brief clones & copies the container.
+//! \brief clones the container (virtual constructor) with deep-copy.
+Container* Container::clone()
+{
+  auto cont = create();
+  for (auto source : m_fields) {
+    auto* field_info = source.first;
+    auto* source_field = source.second;
+    auto* target_field = cont->add_field(field_info);
+    target_field->delegate(source_field);
+  }
+  return cont;
+}
+
+//! \brief clones the container (virtual constructor) with shalow copy.
 Container* Container::copy()
 {
-  auto cont = clone();
+  auto cont = create();
   for (auto source : m_fields) {
     auto* field_info = source.first;
     auto* source_field = source.second;

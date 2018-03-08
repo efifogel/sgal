@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
  * A geometry container that represents an arrangement induced by arcs of
@@ -108,8 +108,10 @@ public:
   /* Construct the prototype. */
   static Arrangement_of_polygeodesics_on_sphere_geo* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
@@ -213,7 +215,7 @@ protected:
    */
   Boolean m_owned_aos;
 
-  /*! The arrangement of great-circle arcs on a sphere. */
+  //! The arrangement of great-circle arcs on a sphere.
   Aos* m_aos;
 
   typedef std::vector<Shared_aos_geo>                   Aos_geo_vector;
@@ -235,10 +237,10 @@ protected:
   void destroy_renderers();
 
  private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The container prototype. */
+  //! The container prototype.
   static Container_proto* s_prototype;
 };
 
@@ -251,8 +253,8 @@ inline Arrangement_of_polygeodesics_on_sphere_geo*
 Arrangement_of_polygeodesics_on_sphere_geo::prototype()
 { return new Arrangement_of_polygeodesics_on_sphere_geo(true); }
 
-//! \brief clones.
-inline Container* Arrangement_of_polygeodesics_on_sphere_geo::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Arrangement_of_polygeodesics_on_sphere_geo::create()
 { return new Arrangement_of_polygeodesics_on_sphere_geo(); }
 
 /*! \brief adds a geometry container that represents an arrangement on a

@@ -72,10 +72,10 @@ public:
    */
   static Script* prototype();
 
-  /*! Clone.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -335,8 +335,8 @@ private:
 //! \brief constructs the prototype.
 inline Script* Script::prototype() { return new Script(true); }
 
-//! \brief clones.
-inline Container* Script::clone() { return new Script(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Script::create() { return new Script(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Script::get_tag() const { return s_tag; }

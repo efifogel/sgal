@@ -58,10 +58,10 @@ public:
    */
   static Billboard* prototype();
 
-  /*! Clone.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -169,8 +169,8 @@ private:
 //! \brief constructs the prototype.
 inline Billboard* Billboard::prototype() { return new Billboard(true); }
 
-//! \brief clone.
-inline Container* Billboard::clone() { return new Billboard(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Billboard::create() { return new Billboard(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Billboard::get_tag() const { return s_tag; }
@@ -190,4 +190,3 @@ inline Boolean Billboard::is_transformed() const
 SGAL_END_NAMESPACE
 
 #endif
-

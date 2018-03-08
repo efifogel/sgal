@@ -50,8 +50,10 @@ public:
   /*! Construct the prototype. */
   static Image_sphere_environment* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Set the attributes of this image textute extracted from the VRML or X3D
    * file.
@@ -95,8 +97,8 @@ private:
 inline Image_sphere_environment* Image_sphere_environment::prototype()
 { return new Image_sphere_environment(true); }
 
-//! \brief clones.
-inline Container* Image_sphere_environment::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Image_sphere_environment::create()
 { return new Image_sphere_environment(); }
 
 //! \brief obtains the tag (type) of the container.

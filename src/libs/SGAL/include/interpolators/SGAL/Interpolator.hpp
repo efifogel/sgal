@@ -56,22 +56,19 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  /*! Construct. */
   Interpolator(Boolean interpolate_flag = true, Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destruct. */
   virtual ~Interpolator();
 
-  /*! Clone */
-  virtual Container* clone();
-
-  /*! Initialize the container prototype */
+  /*! Initialize the container prototype. */
   virtual void init_prototype();
 
-  /*! Delete the container prototype */
+  /*! Delete the container prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the container prototype */
+  /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
 
   /// \name field handlers
@@ -84,36 +81,33 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! The interpolation execution function */
+  //! The interpolation execution function.
   virtual void execute(const Field_info* field_info) = 0;
 
-  /*! Obtain the range keys */
+  //! Obtain the range keys.
   const Float_array& get_keys() const { return m_keys; }
 
-  /*! Obtain the range keys */
+  //! Obtain the range keys.
   Float_array& get_keys() { return m_keys; }
 
 protected:
-  /*! The interpolator range keys */
+  //! The interpolator range keys.
   Float_array m_keys;
 
-  /*! The fraction of the interpolator range */
+  //! The fraction of the interpolator range.
   Float m_fraction;
 
-  /*! Indicates whether to interpolate between keys */
+  //! Indicates whether to interpolate between keys.
   Boolean m_interpolate_flag;
 
 private:
-  /*! The node prototype */
+  //! The node prototype.
   static Container_proto* s_prototype;
 };
 
 #if (defined _MSC_VER)
 #pragma warning( pop )
 #endif
-
-//! \brief clones.
-inline Container* Interpolator::clone() { SGAL_error(); return 0; }
 
 SGAL_END_NAMESPACE
 

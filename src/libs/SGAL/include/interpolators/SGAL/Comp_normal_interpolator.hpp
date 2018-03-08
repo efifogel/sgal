@@ -38,7 +38,7 @@ public:
   /*! Constructor */
   Comp_normal_interpolator(Boolean interpolate_flag = true,
                            Boolean proto = false);
-  
+
   /*! Destructor */
   virtual ~Comp_normal_interpolator() {}
 
@@ -46,18 +46,24 @@ public:
   static Comp_normal_interpolator* prototype()
   { return new Comp_normal_interpolator(false, true); }
 
-  /*! Clone */
-  virtual Container* clone() { return new Comp_normal_interpolator(); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   virtual void delete_prototype() {}
 protected:
   virtual float get_key_bin() { return m_default_key_bin; }
   virtual float get_value_bin() { return m_value_bin_factor; }
-  
+
 private:
   static const float m_default_key_bin;
   static const float m_value_bin_factor;
 };
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Comp_normal_interpolator::create()
+{ return new Comp_normal_interpolator(); }
 
 SGAL_END_NAMESPACE
 

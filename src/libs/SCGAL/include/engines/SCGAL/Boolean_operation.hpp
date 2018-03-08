@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_BOOLEAN_OPERATION_HPP
 #define SCGAL_BOOLEAN_OPERATION_HPP
@@ -85,8 +85,10 @@ public:
   /* Construct the prototype. */
   static Boolean_operation* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -165,35 +167,35 @@ public:
   const std::vector<Shared_indexed_face_set>& get_result() const;
 
 protected:
-  /*! 1st operand. */
+  //! 1st operand.
   Shared_indexed_face_set m_operand1;
 
-  /*! 2nd operand. */
+  //! 2nd operand.
   Shared_indexed_face_set m_operand2;
 
-  /*! Result. */
+  //! Result.
   std::vector<Shared_indexed_face_set> m_result;
 
-  /*! The operation. */
+  //! The operation.
   Operation m_operation;
 
-  /*! Obtain the tag (type) of the container. */
+  //! Obtain the tag (type) of the container.
   virtual const std::string& get_tag() const;
 
 private:
-  /*! Trigger of the engine that makes the engine excute. */
+  //! Trigger of the engine that makes the engine excute.
   Boolean m_trigger;
 
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The prototype of this node. */
+  //! The prototype of this node.
   static Container_proto* s_prototype;
 
-  /*! The array of operation names. */
+  //! The array of operation names.
   static const char* s_operation_names[];
 
-  /*! The array of operation tags. */
+  //! The array of operation tags.
   static const Bso::Boolean_operation_tag s_operation_tags[];
 };
 
@@ -205,8 +207,9 @@ private:
 inline Boolean_operation* Boolean_operation::prototype()
 { return new Boolean_operation(true); }
 
-//! \brief clones.
-inline Container* Boolean_operation::clone() { return new Boolean_operation(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Boolean_operation::create()
+{ return new Boolean_operation(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Boolean_operation::get_tag() const { return s_tag; }

@@ -20,7 +20,7 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
- * Implements scalar interpolator with asynchronic loading of compressed data  
+ * Implements scalar interpolator with asynchronic loading of compressed data
  */
 
 #ifndef SGAL_COMP_SCALAR_INTERPOLATOR_HPP
@@ -28,12 +28,12 @@
 
 #include "SGAL/basic.hpp"
 #include "Scalar_interpolator.h"
-#include "Interpolator_int.h"  
+#include "Interpolator_int.h"
 #include "Load_int.h"
-         
+
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_SGAL_DECL Comp_scalar_interpolator : 
+class SGAL_SGAL_DECL Comp_scalar_interpolator :
   public Scalar_interpolator,
   public Interpolator_int,      // Encoding interface methods
   public Load_int               // Async. loading capability
@@ -50,15 +50,17 @@ public:
   static Comp_scalar_interpolator* prototype()
   { return new Comp_scalar_interpolator(false, true); }
 
-  /*! Clone */
-  virtual Container* clone() { return new Comp_scalar_interpolator(); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   virtual void delete_prototype() {}
 
   // Overiding base interpolator functions
   virtual Attribute_list get_attributes();
-    
-  // Load_int methods 
+
+  // Load_int methods
   virtual void AllocateMemory() {}  // Not used
   virtual Item_primitive* get_data();
   virtual void convert() {} // Not used
@@ -83,6 +85,10 @@ private:
   static const float m_default_key_bin;
   static const float m_value_bin_factor;
 };
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Comp_scalar_interpolator::create()
+{ return new Comp_scalar_interpolator(); }
 
 SGAL_END_NAMESPACE
 

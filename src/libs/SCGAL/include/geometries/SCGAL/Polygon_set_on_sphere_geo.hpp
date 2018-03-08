@@ -14,8 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
-//                 Ophir Setter      <ophir.setter@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
+//             Ophir Setter      <ophir.setter@gmail.com>
 
 /*! \file
  * A geometry container that represents a general polygon set embedded on a
@@ -112,8 +112,10 @@ public:
   /* Construct the prototype. */
   static Polygon_set_on_sphere_geo* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
@@ -186,28 +188,27 @@ protected:
    */
   Polygon_set m_polygon_set;
 
-  /*!
-    enum that specifies the operation type.
+  /*! enum that specifies the operation type.
     Should be equal to one of the following values: SET_COMPLEMENT,
     SET_INTERSECTION, SET_UNION, SET_DIFFERENCE, SET_SYMMETRIC_DIFFERENCE,
     or NUM_OF_OPERATIONS (which specifies no operation).
    */
   Operation_type m_operation_type;
 
-  /*! An array of indices into the vertex-coordinate array */
+  //! An array of indices into the vertex-coordinate array
   Uint_container m_poly_indices;
 
  private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The container prototype. */
+  //! The container prototype.
   static Container_proto* s_prototype;
 
   //! Names of Booleans set operations.
   static std::string s_operation_types[];
 
-  /*! Default values. */
+  //! Default values.
 };
 
 #if defined(_MSC_VER)
@@ -218,8 +219,8 @@ protected:
 inline Polygon_set_on_sphere_geo* Polygon_set_on_sphere_geo::prototype()
 { return new Polygon_set_on_sphere_geo(true); }
 
-//! \brief clones.
-inline Container* Polygon_set_on_sphere_geo::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Polygon_set_on_sphere_geo::create()
 { return new Polygon_set_on_sphere_geo(); }
 
 //! \brief obtains the tag (type) of the container.

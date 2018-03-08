@@ -47,8 +47,10 @@ public:
   static Color_interpolator* prototype()
   { return new Color_interpolator(false, true); }
 
-  /*! Clone */
-  virtual Container* clone() { return new Color_interpolator(); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   virtual void delete_prototype() {}
 protected:
@@ -63,6 +65,10 @@ private:
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Color_interpolator::create()
+{ return new Color_interpolator(); }
 
 SGAL_END_NAMESPACE
 

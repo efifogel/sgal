@@ -24,7 +24,7 @@
 
 /*! \file
  * Purpose: A class that implements a progressive compressed image texture.
- *    
+ *
  *  Inherits from Texture
  */
 
@@ -40,7 +40,7 @@ SGAL_BEGIN_NAMESPACE
 class Element;
 
 class SGAL_SGAL_DECL Image_texture_wt : public Texture {
-public: 
+public:
   /*! Constructor */
   Image_texture_wt(Boolean proto = false);
 
@@ -50,14 +50,20 @@ public:
   /* Construct the prototype */
   static Image_texture_wt* prototype() { return new Image_texture_wt(true); }
 
-  /*! Clone */
-  virtual Container* clone() { return new Image_texture_wt(); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Set the attributes of this node */
   virtual void set_attributes(Element * elem);
 
   // virtual Attribute_list get_attributes();
 };
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Image_textureWT::create()
+{ return new Image_textureWT(); }
 
 SGAL_END_NAMESPACE
 

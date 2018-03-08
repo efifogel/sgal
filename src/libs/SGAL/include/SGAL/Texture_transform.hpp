@@ -68,10 +68,10 @@ public:
    */
   static Texture_transform* prototype();
 
-  /*! Clone.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -192,8 +192,8 @@ private:
 inline Texture_transform* Texture_transform::prototype()
 { return new Texture_transform(true); }
 
-//! \brief clones.
-inline Container* Texture_transform::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Texture_transform::create()
 { return new Texture_transform(); }
 
 //! \brief obtains the tag (type) of the container.

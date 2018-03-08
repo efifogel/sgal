@@ -69,8 +69,10 @@ public:
   /* Construct the prototype. */
   static Spot_light* prototype();
 
-  /*! Clone */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -192,8 +194,8 @@ private:
 //! \brief constructs the prototype.
 inline Spot_light* Spot_light::prototype() { return new Spot_light(true); }
 
-//! \brief clones.
-inline Container* Spot_light::clone() { return new Spot_light(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Spot_light::create() { return new Spot_light(); }
 
 //! \brief sets the direction of the light.
 inline void Spot_light::set_direction(const Vector3f& direction)

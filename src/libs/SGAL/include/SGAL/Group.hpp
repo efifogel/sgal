@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_GROUP_HPP
 #define SGAL_GROUP_HPP
@@ -93,10 +93,10 @@ public:
    */
   static Group* prototype();
 
-  /*! Clone this object.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -360,8 +360,9 @@ private:
 //! \brief constructs the prototype.
 inline Group* Group::prototype() { return new Group(true); }
 
-//! \brief clone.
-inline Container* Group::clone() { return new Group(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Group::create()
+{ return new Group(); }
 
 //! \brief obtains the beginning iterator of the children.
 inline Group::Container_iterator Group::children_begin()

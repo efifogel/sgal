@@ -75,10 +75,10 @@ public:
    */
   static Transform* prototype();
 
-  /*! Clone.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -283,8 +283,9 @@ private:
 //! \brief constructs the prototype.
 inline Transform* Transform::prototype() { return new Transform(true); }
 
-//! \brief clones.
-inline Container* Transform::clone() { return new Transform(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Transform::create()
+{ return new Transform(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Transform::get_tag() const { return s_tag; }

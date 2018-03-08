@@ -86,8 +86,10 @@ public:
    */
   static Snapshotter* prototype();
 
-  /*! Clone */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype.
    */
@@ -160,7 +162,7 @@ protected:
    */
   virtual const std::string& get_tag() const;
 
-  /*! The trigger of the engine, which makes the engine excute. */
+  //! The trigger of the engine, which makes the engine excute.
   Boolean m_trigger;
 
   /*! The color buffer, whcih is the source for subsequent gl OpenGL calls,
@@ -168,23 +170,23 @@ protected:
    */
   Mode m_mode;
 
-  /*! Indicates whether the rows are in reverse order (window system style) */
+  //! Indicates whether the rows are in reverse order (window system style)
   Boolean m_flip;
 
-  /*! A place holder for the image. */
+  //! A place holder for the image.
   Shared_image m_image;
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The node prototype */
+  //! The node prototype
   static Container_proto* s_prototype;
 
-  /*! The color buffer names. */
+  //! The color buffer names.
   static const Char* s_mode_names[];
 
-  // Default values
+  //! Default values
   //@{
   static const Boolean s_def_flip;
   static const Mode s_def_mode;
@@ -202,8 +204,9 @@ private:
 //! \brief constructs the prototype.
 inline Snapshotter* Snapshotter::prototype() { return new Snapshotter(true); }
 
-//! \brief clones.
-inline Container* Snapshotter::clone() { return new Snapshotter(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Snapshotter::create()
+{ return new Snapshotter(); }
 
 //! \brief triggers the snapshot.
 inline void Snapshotter::trigger() { m_trigger = true; }

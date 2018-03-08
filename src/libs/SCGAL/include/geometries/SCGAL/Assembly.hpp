@@ -80,8 +80,10 @@ public:
   /* Construct the prototype. */
   static Assembly* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -239,22 +241,22 @@ protected:
   find_next_silhouette_halfedge(Sgm::Halfedge_const_handle silhouette_he);
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
-  /*! Is the internal representation dirty and requires cleaning. */
+  //! Is the internal representation dirty and requires cleaning.
   Boolean m_dirty;
 
-  /*! When trigerred, the puzzle solves itself. */
+  //! When trigerred, the puzzle solves itself.
   Boolean m_trigger;
 
-  /*! Once solved, indicates whether the puzzle is interlocked. */
+  //! Once solved, indicates whether the puzzle is interlocked.
   Boolean m_interlocked;
 
-  /*! A representative translation vector of the solution. */
+  //! A representative translation vector of the solution.
   Vector3f m_translation;
 
   /*! A representative components vector. The ith element indicates whether
@@ -262,73 +264,73 @@ private:
    */
   Boolean_array m_components;
 
-  /*! The index of the solution (accounting only solutions at vertices). */
+  //! The index of the solution (accounting only solutions at vertices).
   Uint m_solution_id;
 
-  /*! The number of parts in the puzzle. */
+  //! The number of parts in the puzzle.
   Uint m_number_of_parts;
 
-  /*! A container of puzzle parts. */
+  //! A container of puzzle parts.
   Assembly_part_list m_parts;
 
-  /*! A container of containers of (reflected) Gaussian map geometries. */
+  //! A container of containers of (reflected) Gaussian map geometries.
   Sgm_geo_list_list m_parts_reflected_sgm_geos;
 
-  /* The pairwise Minkowski sums map. */
+  //! The pairwise Minkowski sums map.
   Minkowski_sum_list_map m_minkowski_sum_lists;
 
-  /*! The pairwise Minkowski-sum projections. */
+  //! The pairwise Minkowski-sum projections.
   Projection_list_map m_projection_lists;
 
-  /*! The union of the pairwise Minkowski-sum projections per part. */
+  //! The union of the pairwise Minkowski-sum projections per part.
   Projection_map m_part_projections;
 
-  /*! The final arrangement. */
+  //! The final arrangement.
   Aos_graph* m_aos_graph;
 
-  /* The (only) NDBG face which stores a graph*/
+  //! The (only) NDBG face which stores a graph.
   Aos_graph::Face_handle m_aos_face_with_graph;
 
-  /*! Space holder. */
+  //! Space holder.
   Shared_appearance m_appearance;
 
-  /*! Space holder. */
+  //! Space holder.
   Shared_material m_material;
 
-  /*! Space holder. */
+  //! Space holder.
   Shared_appearance m_sphere_appearance;
 
-  /*! Space holder. */
+  //! Space holder.
   Shared_material m_sphere_material;
 
-  /*! A node that holds the Sgm shapes. */
+  //! A node that holds the Sgm shapes.
   Shared_switch m_sgm_geo_node;
 
-  /*! A node that holds the reflected Sgm shapes. */
+  //! A node that holds the reflected Sgm shapes.
   Shared_switch m_reflected_sgm_geo_node;
 
-  /*! A node that holds the Minkowski-sum Sgm shapes. */
+  //! A node that holds the Minkowski-sum Sgm shapes.
   Shared_switch m_ms_sgm_geo_node;
 
-  /*! A node that holds the Minkowski-sum projection Aos shapes. */
+  //! A node that holds the Minkowski-sum projection Aos shapes.
   Shared_switch m_projection_aos_geo_node;
 
-  /*! A node that holds the per-part Minkowski-sum projection Aos shapes. */
+  //! A node that holds the per-part Minkowski-sum projection Aos shapes.
   Shared_switch m_part_projection_aos_geo_node;
 
-  /*! A shape node that holds the graph Aos. */
+  //! A shape node that holds the graph Aos.
   Shared_shape m_graph_node;
 
-  /*! A switch node. */
+  //! A switch node.
   Shared_switch m_switch;
 
-  /*! Indicates whether to draw the alternate geometry. */
+  //! Indicates whether to draw the alternate geometry.
   Boolean m_draw_alternate;
 
-  /*! Indicates whether to increment the alternate geometry. */
+  //! Indicates whether to increment the alternate geometry.
   Boolean m_inc_alternate;
 
-  /*! Space holder. */
+  //! Space holder.
   Container_array m_childs_save;
 
   /*! Indicates whether to draw the Gausian maps of the Minkowski sums of the
@@ -513,8 +515,8 @@ private:
 //! \brief constructs the prototype.
 inline Assembly* Assembly::prototype() { return new Assembly(true); }
 
-//! \brief clones.
-inline  Container* Assembly::clone() { return new Assembly(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Assembly::create() { return new Assembly(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Assembly::get_tag() const { return s_tag; }

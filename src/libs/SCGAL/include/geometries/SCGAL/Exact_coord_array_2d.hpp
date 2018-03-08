@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_EXACT_COORD_ARRAY_2D_HPP
 #define SCGAL_EXACT_COORD_ARRAY_2D_HPP
@@ -70,8 +70,10 @@ public:
   /* Construct the prototype. */
   static Exact_coord_array_2d* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /// \name Protoype handling
   //@{
@@ -160,19 +162,19 @@ private:
   /*! Clean the raw inexact coordinates. */
   void clean_inexact_coords() const;
 
-  /*! The tag that identifies this container type */
+  //! The tag that identifies this container type
   static const std::string s_tag;
 
-  /*! The node prototype */
+  //! The node prototype
   static Container_proto* s_prototype;
 
-  /*! The exact coordinate array */
+  //! The exact coordinate array
   Exact_point_vector m_array;
 
-  /*! Indicates whether the inexact coordinates is dirty. */
+  //! Indicates whether the inexact coordinates is dirty.
   mutable bool m_dirty_inexact_coords;
 
-  /*! The inexact coordinates. */
+  //! The inexact coordinates.
   mutable std::vector<Vector2f> m_inexact_coords;
 };
 
@@ -184,8 +186,8 @@ private:
 inline Exact_coord_array_2d* Exact_coord_array_2d::prototype()
 { return new Exact_coord_array_2d(true); }
 
-//! \brief clones.
-inline Container* Exact_coord_array_2d::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Exact_coord_array_2d::create()
 { return new Exact_coord_array_2d(); }
 
 //! \brief obtains the size.

@@ -45,8 +45,10 @@ public:
   /* Construct the prototype */
   static Field_def* prototype() { return new Field_def(true); }
 
-  /*! Clone */
-  virtual Container* clone() { return new Field_def(); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   // protoype handling
   virtual void init_prototype();
@@ -88,6 +90,10 @@ private:
 
 inline Container* Field_def::get_containerValue() const
 { return m_containerValue; }
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Field_def::create()
+{ return new Field_def(); }
 
 SGAL_END_NAMESPACE
 

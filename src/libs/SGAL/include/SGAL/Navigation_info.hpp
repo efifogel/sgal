@@ -52,8 +52,10 @@ public:
   /*! Construct the prototype. */
   static Navigation_info* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -135,8 +137,8 @@ private:
 inline Navigation_info* Navigation_info::prototype()
 { return new Navigation_info(true); }
 
-//! \brief clones.
-inline Container* Navigation_info::clone() { return new Navigation_info(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Navigation_info::create() { return new Navigation_info(); }
 
 //! \brief sets the navigation paradigm list.
 inline void Navigation_info::set_types(const String_array& types)

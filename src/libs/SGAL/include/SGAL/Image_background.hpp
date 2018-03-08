@@ -17,7 +17,7 @@
 // $Id: $
 // $Revision: 6147 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_IMAGE_BACKGROUND_HPP
 #define SGAL_IMAGE_BACKGROUND_HPP
@@ -60,8 +60,10 @@ public:
   /*! Construct the prototype. */
   static Image_background* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Set the attributes of this container. */
   virtual void set_attributes(Element* elem);
@@ -90,27 +92,28 @@ protected:
   virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
-  /*! An apperance used for the background. */
+  //! An apperance used for the background.
   Shared_appearance m_appearance;
 
-  /*! Indicates whether the appearance is a default. */
+  //! Indicates whether the appearance is a default.
   Boolean m_is_default_appearance;
 };
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Image_background* Image_background::prototype()
 { return new Image_background(true); }
 
-/*! \brief clones. */
-inline Container* Image_background::clone() { return new Image_background(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Image_background::create()
+{ return new Image_background(); }
 
-/*! \brief obtains the tag (type) of the container */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Image_background::get_tag() const { return s_tag; }
 
 #if defined(_MSC_VER)

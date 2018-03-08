@@ -52,8 +52,10 @@ public:
   /*! Construct the prototype */
   static Color_background* prototype() { return new Color_background(true); }
 
-  /*! Clone */
-  virtual Container* clone() { return new Color_background(); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! \breif drwas the background */
   virtual void draw(Draw_action* draw_action);
@@ -103,6 +105,10 @@ private:
   /*! Default background color. */
   static const Vector4f m_def_color;
 };
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Color_background::create()
+{ return new Color_background(); }
 
 SGAL_END_NAMESPACE
 

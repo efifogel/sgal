@@ -77,10 +77,10 @@ public:
    */
   static Vector3f_interpolator* prototype();
 
-  /*! Clone.
-   * \return the clone.
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
    */
-  virtual Container* clone();
+  virtual Container* create();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
@@ -137,16 +137,16 @@ protected:
   virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static std::string s_tag;
 
-  /*! The node prototype .*/
+  //! The node prototype.
   static Container_proto* s_prototype;
 
-  /*! The last range location. */
+  //! The last range location.
   Uint m_last_location;
 
-  /*! The interpolator value. */
+  //! The interpolator value.
   Vector3f m_value;
 };
 
@@ -154,30 +154,30 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Vector3f_interpolator* Vector3f_interpolator::prototype()
 { return new Vector3f_interpolator(false, true); }
 
-/*! \brief clones. */
-inline Container* Vector3f_interpolator::clone()
-{ return new Vector3f_interpolator (); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Vector3f_interpolator::create()
+{ return new Vector3f_interpolator(); }
 
-/*! \brief obtains the range keys. */
+//! \brief obtains the range keys.
 inline const std::vector<Float>& Vector3f_interpolator::get_keys() const
 { return m_keys; }
 
-/*! \brief obtains the range keys. */
+//! \brief obtains the range keys.
 inline std::vector<Float>& Vector3f_interpolator::get_keys() { return m_keys; }
 
-/*! \brief obtains the domain values. */
+//! \brief obtains the domain values.
 inline const std::vector<Vector3f>& Vector3f_interpolator::get_values() const
 { return m_values; }
 
-/*! \brief obtains the domain values. */
+//! \brief obtains the domain values.
 inline std::vector<Vector3f>& Vector3f_interpolator::get_values()
 { return m_values; }
 
-/*! Obtain the tag (type) of the container. */
+//! Obtain the tag (type) of the container.
 inline const std::string& Vector3f_interpolator::get_tag() const
 { return s_tag; }
 

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
  * A geometry container that represents an arrangement induced by arcs of
@@ -78,17 +78,19 @@ protected:
   typedef Arrangement_on_torus                         Aos;
 
 public:
-  /*! Constructor. */
+  /*! Construct. */
   Arrangement_on_torus_geo(Boolean proto = false);
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Arrangement_on_torus_geo();
 
   /* Construct the prototype. */
   static Arrangement_on_torus_geo* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
@@ -217,10 +219,10 @@ protected:
   void destroy_renderers();
 
  private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The container prototype. */
+  //! The container prototype.
   static Container_proto* s_prototype;
 };
 
@@ -232,8 +234,8 @@ protected:
 inline Arrangement_on_torus_geo* Arrangement_on_torus_geo::prototype()
 { return new Arrangement_on_torus_geo(true); }
 
-//! \brief clones.
-inline Container* Arrangement_on_torus_geo::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Arrangement_on_torus_geo::create()
 { return new Arrangement_on_torus_geo(); }
 
 //! \brief draws the arrangement vertices.

@@ -55,8 +55,10 @@ public:
   /*! Construct the prototype */
   static Incrementor* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
@@ -112,26 +114,26 @@ protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
-  /*! The minimum value */
+  //! The minimum value
   Int32 m_min_value;
 
-  /*! The maximum value */
+  //! The maximum value
   Int32 m_max_value;
 
-  /*! Trigger the engine to excute. */
+  //! Trigger the engine to excute.
   Boolean m_trigger;
 
-  /*! The counter value */
+  //! The counter value
   Int32 m_value;
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The node prototype */
+  //! The node prototype
   static Container_proto* s_prototype;
 
-  // Default values:
+  //! Default values
   static const Int32 s_def_min_value;
   static const Int32 s_def_max_value;
 };
@@ -139,8 +141,9 @@ private:
 //! \brief constructs the prototype.
 inline Incrementor* Incrementor::prototype() { return new Incrementor(true); }
 
-//! \brief clones.
-inline Container* Incrementor::clone() { return new Incrementor(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Incrementor::create()
+{ return new Incrementor(); }
 
 //! \brief obtains the minimum value.
 inline Int32 Incrementor::get_min_value() const { return m_min_value; }

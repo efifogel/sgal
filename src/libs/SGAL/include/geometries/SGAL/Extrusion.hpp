@@ -77,8 +77,10 @@ public:
   /* Construct the prototype. */
   static Extrusion* prototype();
 
-  /*! Clone */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Set the flag that specifies whether the extruded shape is open at the
    * beginning.
@@ -279,8 +281,8 @@ private:
 //! \brief constructs the prototype.
 inline Extrusion* Extrusion::prototype() { return new Extrusion(true); }
 
-//! \brief clones.
-inline Container* Extrusion::clone() { return new Extrusion(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Extrusion::create() { return new Extrusion(); }
 
 /*! \brief obtains the flag that specifies whether the extruded shape is
  * open at the beginning.

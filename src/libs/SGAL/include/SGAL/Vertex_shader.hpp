@@ -17,7 +17,7 @@
 // $Id: $
 // $Revision: $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_VERTEX_SHADER_HPP
 #define SGAL_VERTEX_SHADER_HPP
@@ -48,8 +48,10 @@ public:
   /*! Construct the prototype. */
   static Vertex_shader* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -92,8 +94,8 @@ private:
 inline Vertex_shader* Vertex_shader::prototype()
 { return new Vertex_shader(true); }
 
-/*! \brief clones. */
-inline Container* Vertex_shader::clone() { return new Vertex_shader(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Vertex_shader::create() { return new Vertex_shader(); }
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Vertex_shader::get_tag() const { return s_tag; }

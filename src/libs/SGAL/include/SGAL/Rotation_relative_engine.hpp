@@ -39,6 +39,9 @@
         this is a new cycle).
 */
 
+#ifndef CGAL_RELATIVE_ENGINE_HPP
+#define CGAL_RELATIVE_ENGINE_HPP
+
 #include "SGAL/basic.hpp"
 #include "Node.h"
 #include "Rotation.h"
@@ -68,8 +71,10 @@ public:
   static Rotation_relative_engine * prototype()
   { return new Rotation_relative_engine(true); }
 
-  /*! Clone */
-  virtual Container * clone() { return new Rotation_relative_engine(); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   // protoype handling
   virtual void init_prototype();
@@ -104,4 +109,10 @@ private:
   Float m_last_fraction;
 };
 
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Rotation_relative_engine::create()
+{ return new Rotation_relative_engine(); }
+
 SGAL_END_NAMESPACE
+
+#endif

@@ -66,8 +66,10 @@ public:
   /* Construct the prototype */
   static Surface_border* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -303,24 +305,24 @@ protected:
   }
 
 private:
-  /*! Trigger of the engine that makes the engine excute. */
+  //! Trigger of the engine that makes the engine excute.
   Boolean m_trigger;
 
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The prototype of this node. */
+  //! The prototype of this node.
   static Container_proto* s_prototype;
 
-  /*! Default value. */
+  //! Default value.
 };
 
 //! \brief constructs the prototype.
 inline Surface_border* Surface_border::prototype()
 { return new Surface_border(true); }
 
-//! \brief clones.
-inline Container* Surface_border::clone() { return new Surface_border(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Surface_border::create() { return new Surface_border(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Surface_border::get_tag() const { return s_tag; }

@@ -45,9 +45,15 @@ public:
   static Normal_interpolator* prototype()
   { return new Normal_interpolator(false, true); }
 
-  /*! Clone */
-  virtual Container* clone() { return new Normal_interpolator (); }
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 };
+
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Normal_interpolator::create()
+{ return new Normal_interpolator(); }
 
 SGAL_END_NAMESPACE
 

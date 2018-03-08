@@ -57,8 +57,10 @@ public:
   /*! Construct the prototype. */
   static Collision* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
@@ -92,8 +94,8 @@ private:
 /*! \brief constructs the prototype. */
 inline Collision* Collision::prototype() { return new Collision(true); }
 
-/*! \brief clones. */
-inline Container* Collision::clone() { return new Collision(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Collision::create() { return new Collision(); }
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Collision::get_tag() const { return s_tag; }

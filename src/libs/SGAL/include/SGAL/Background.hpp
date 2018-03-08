@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_BACKGROUND_HPP
 #define SGAL_BACKGROUND_HPP
@@ -60,8 +60,10 @@ public:
   /*! Construct the prototype. */
   static Background* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the protoype. */
   virtual void init_prototype();
@@ -138,8 +140,8 @@ private:
 //! \brief constructs the prototype.
 inline Background* Background::prototype() { return new Background(true); }
 
-//! \brief clones.
-inline Container* Background::clone() { return new Background(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Background::create() { return new Background(); }
 
 //! \brief sets the scene graph.
 inline void Background::set_scene_graph(Scene_graph* sg)

@@ -64,8 +64,10 @@ public:
   /*! Construct the prototype. */
   static Image_texture* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Set the attributes of this image textute extracted from the VRML or X3D
    * file.
@@ -175,8 +177,8 @@ private:
 inline Image_texture* Image_texture::prototype()
 { return new Image_texture(true); }
 
-//! \brief clones.
-inline Container* Image_texture::clone() { return new Image_texture(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Image_texture::create() { return new Image_texture(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Image_texture::get_tag() const { return s_tag; }

@@ -17,7 +17,7 @@
 // $Id: $
 // $Revision: 12369 $
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_VIEW_SENSOR_HPP
 #define SGAL_VIEW_SENSOR_HPP
@@ -76,8 +76,10 @@ public:
   /*! Construct the prototype. */
   static View_sensor* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -132,10 +134,10 @@ protected :
   virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
+  //! The tag that identifies this container type
   static const std::string s_tag;
 
-  /*! The node prototype */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
   Vector3f m_translation;
@@ -152,16 +154,17 @@ private:
   Boolean m_local_view_name_set;
 };
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline View_sensor* View_sensor::prototype() { return new View_sensor(true); }
 
-/*! \brief clones. */
-inline Container* View_sensor::clone() { return new View_sensor(); }
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* View_sensor::create()
+{ return new View_sensor(); }
 
 inline Action::Trav_directive View_sensor::draw(Draw_action* /* draw_action */)
 { return Action::TRAV_CONT; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& View_sensor::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

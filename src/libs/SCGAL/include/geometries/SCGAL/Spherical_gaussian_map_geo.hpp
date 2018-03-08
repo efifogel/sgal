@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_SPHERICAL_GAUSSIAN_MAP_GEO_HPP
 #define SCGAL_SPHERICAL_GAUSSIAN_MAP_GEO_HPP
@@ -110,34 +110,34 @@ private:
    */
   Boolean m_owned_sgm;
 
-  /*! The spherical Gaussian map representation. */
+  //! The spherical Gaussian map representation.
   Sgm* m_sgm;
 
-  /*! Indicates whether to compute the minkowski sum. */
+  //! Indicates whether to compute the minkowski sum.
   Boolean m_minkowski_sum;
 
-  /*! For benchmarking. */
+  //! For benchmarking.
   float m_time;
 
-  /*! The vertices renderer. */
+  //! The vertices renderer.
   Arrangement_renderer::Renderer* m_vertices_renderer;
 
-  /*! The vertices renderer. */
+  //! The vertices renderer.
   Arrangement_renderer::Renderer* m_colored_vertices_renderer;
 
-  /*! The edges renderer. */
+  //! The edges renderer.
   Arrangement_renderer::Renderer* m_edges_renderer;
 
-  /*! The colored edges renderer. */
+  //! The colored edges renderer.
   Arrangement_renderer::Renderer* m_colored_edges_renderer;
 
-  /*! The inflated line edges renderer. */
+  //! The inflated line edges renderer.
   Arrangement_renderer::Renderer* m_inflated_line_edges_renderer;
 
-  /*! The inflated strip edges renderer. */
+  //! The inflated strip edges renderer.
   Arrangement_renderer::Renderer* m_inflated_strip_edges_renderer;
 
-  /*! The inflated tube edges renderer. */
+  //! The inflated tube edges renderer.
   Arrangement_renderer::Renderer* m_inflated_tube_edges_renderer;
 
   /*! Transform the coordinates of the SGM into spheres.
@@ -169,8 +169,10 @@ public:
   /*! Construct the prototype. */
   static Spherical_gaussian_map_geo* prototype();
 
-  /*! Clone. */
-  virtual Container* clone();
+  /*! Create a new container of this type (virtual copy constructor).
+   * \return a new container of this type.
+   */
+  virtual Container* create();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -242,8 +244,8 @@ public:
 inline Spherical_gaussian_map_geo* Spherical_gaussian_map_geo::prototype()
 { return new Spherical_gaussian_map_geo(true); }
 
-//! \brief clones.
-inline Container* Spherical_gaussian_map_geo::clone()
+//! \brief creates a new container of this type (virtual copy constructor).
+inline Container* Spherical_gaussian_map_geo::create()
 { return new Spherical_gaussian_map_geo(); }
 
 //! \brief obtains the tag (type) of the container.
