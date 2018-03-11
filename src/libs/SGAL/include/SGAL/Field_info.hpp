@@ -128,6 +128,13 @@ public:
    */
   const char* get_rule_name() const;
 
+  /*! Clone the field, the (field) info of which is this object, of a source
+   * container and store it in a target container.
+   * \param[in] source the source container.
+   * \param[in] target the target container.
+   */
+  virtual void clone(const Container* source, Container* target) const = 0;
+
   /*! Create an object that holds a pointer to the value of an actual field
    * with this info.
    * \param container the container of the field.
@@ -136,7 +143,7 @@ public:
 
   /*! Detach the value of a field, the (field) info of which is this object,
    * from the container that contains the field before the field is overriden.
-   * \param container (in) The container that contains the field.
+   * \param[in] container The container that contains the field.
    */
   virtual void detach(Container* container) const = 0;
 

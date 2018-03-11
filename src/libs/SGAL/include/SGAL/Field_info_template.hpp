@@ -28,6 +28,7 @@
 #include <string>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Array_types.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Field_rule.hpp"
@@ -90,6 +91,32 @@ struct Detacher<Shared_container> {
   }
 };
 
+/*! \class Cloner Field_info_template.hpp
+ */
+template <typename T>
+struct Cloner {
+  void operator()(const T& source, T& target) { target = source; }
+};
+
+template <>
+struct Cloner<Shared_container> {
+  void operator()(Shared_container source, Shared_container& target)
+  { target = Shared_container(source->clone()); }
+};
+
+template <>
+struct Cloner<Shared_container_array> {
+  void operator()(Shared_container_array source, Shared_container_array& target)
+  {
+    target.resize(source.size());
+    std::transform(source.begin(), source.end(), target.begin(),
+                   [](Shared_container cont)
+                   { return Shared_container(cont->clone()); });
+  }
+};
+
+/*!
+ */
 template <typename T>
 struct Handle_function {
   typedef T* (Container::* type)(const Field_info*);
@@ -105,17 +132,17 @@ public:
   typedef typename Handle_function<T>::type     Handle;
 
 private:
-  /*! The field handle function. */
+  //! The field handle function.
   Handle m_handle;
 
-  /*! The field initial value. */
+  //! The field initial value.
   T m_initial_value;
 
-  /*! Indicates whether to initialize the filed with the initial value. */
+  //! Indicates whether to initialize the filed with the initial value.
   bool m_use_initial_value;
 
 public:
-  /*! Constructor. */
+  /*! Construct. */
   Field_info_template(Uint id, const std::string& name, Field_rule rule,
                       Handle handle, T initial_value,
                       Execution_function execution = nullptr,
@@ -141,11 +168,25 @@ public:
     m_use_initial_value(use_initial_value)
   {}
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Field_info_template() {}
 
-  /*! Obtain the field-info type id. */
+  /*! Obtain the field-info type id.
+   */
   virtual Field_type get_type_id() const { return type_id; }
+
+  /*! Clone the field, the (field) info of which is this object, of a source
+   * container and store it in a target container.
+   * \param[in] source the source container.
+   * \param[in] target the target container.
+   */
+  virtual void clone(const Container* source, Container* target) const
+  {
+    const T* source_handle = ((const_cast<Container*>(source))->*m_handle)(this);
+    T* target_handle = (target->*m_handle)(this);
+    Cloner<T> cloner;
+    cloner(*source_handle, *target_handle);
+  }
 
   /*! Create an object that holds a pointer to the value of an actual field
    * with this info.
