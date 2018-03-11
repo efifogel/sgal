@@ -406,8 +406,19 @@ public:
     *m_value = value;
   }
 
-  /*! Obtain the value from the value holder */
+  /*! Obtain the (non-const) value from the value holder.
+   */
   Value_type* get_value()
+  {
+    // lock m_CS to protect the value when copied
+    // (will unlock automaticaly at end of function)
+    //! \todo Auto_lock Auto_lock(&m_CS);
+    return m_value;
+  }
+
+  /*! Obtain the (const) value from the value holder.
+   */
+  const Value_type* get_value() const
   {
     // lock m_CS to protect the value when copied
     // (will unlock automaticaly at end of function)
