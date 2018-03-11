@@ -141,13 +141,6 @@ inline Box* Box::prototype() { return new Box(true); }
 //! \brief creates a new container of this type (virtual copy constructor).
 inline Container* Box::create() { return new Box(); }
 
-//! \brief sets the size of the box.
-inline void Box::set_size(const Vector3f& size)
-{
-  m_size = size;
-  m_dirty_bounding_sphere = true;
-}
-
 //! \brief gets the size of the box.
 inline void Box::get_size(Vector3f& size) const { size = m_size; }
 
