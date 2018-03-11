@@ -161,7 +161,7 @@ void Container_factory::do_register(Container* container)
 //! \brief creates a container according to the type.
 Shared_container Container_factory::create(const std::string& type)
 {
-  Cont_iter iter = m_map.find(type);
+  auto iter = m_map.find(type);
   if (iter != m_map.end()) return Shared_container(iter->second->clone());
 
   // try to add the "sgal" prefix:
