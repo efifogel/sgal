@@ -250,4 +250,12 @@ Container_proto* Box::get_prototype()
   return s_prototype;
 }
 
+//! \brief sets the size of the box.
+void Box::set_size(const Vector3f& size)
+{
+  m_size = size;
+  m_dirty_bounding_sphere = true;
+  add_field(SIZE);
+}
+
 SGAL_END_NAMESPACE
