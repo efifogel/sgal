@@ -63,20 +63,20 @@
  *
  * The underlying idea is simple: the class Base is expected to have a stable
  * interface, since it is reused in several projects. Therefore, it declares
- * only the pure virtual function delegate(Value_holder_base&), that will be
+ * only the pure virtual function copy(Value_holder_base&), that will be
  * subjected to multiple dispatch. Now you need a place for all the
- * project-specific versions of delegate() that have been removed from
+ * project-specific versions of copy() that have been removed from
  * Value_holder_base. This role is played by another base class,
- * Value_holder_target, which defines a virtual function delegate_impl(D&) for
+ * Value_holder_target, which defines a virtual function delegate(D&) for
  * each (project-specific) derived class D, e.g., Value_holder<Boolean>&. These
  * are the functions were the multiple polymorphism ultimately land on. Note
  * that only the implementors of derived classes need to know about
- * delegate_impl() and users only need to know about delegate().
+ * delegate() and users only need to know about copy().
  * Concrete classes, here Value_middle, derive from both Value_holder_base and
- * Value_holder_target, and implement Value_holder_base::delegate() so that
- * the proper delegate_impl() is called. This requires casting from a
- * Value_holder_base& (the parameter of delegate()) to a Value_holder_target&
- * (where delegate_impl is declared), a case known as cross-casting, as it
+ * Value_holder_target, and implement Value_holder_base::copy() so that
+ * the proper delegate() is called. This requires casting from a
+ * Value_holder_base& (the parameter of copy()) to a Value_holder_target&
+ * (where delegate is declared), a case known as cross-casting, as it
  * crosses the boundaries of a single inheritance hierarchy. Usually
  * cross-casting requires a dynamic_cast, but we can dispense with that by
  * providing a common derived class (Value_holder_middle). Since
@@ -87,30 +87,30 @@
  * Value_holder_base& to Value_holder_middle&, then from Value_holder_middle&
  * to Value_holder_target&. Note that static_cast is resolved at compile-time,
  * while dynamic_cast would incur a run-time performance penalty.
- * The final step is to avoid the manual implementation of delegate() (where
+ * The final step is to avoid the manual implementation of copy() (where
  * the multiple dispatch takes place) in each concrete class. A general
- * implementation of delegate() requires type information about either the
+ * implementation of copy() requires type information about either the
  * parameter (that we only know being a Value_holder_base&) or about the
  * receiver itself. Inside each derived class, we know the actual type of
- * *this, but how can we move the implementation of delegate() outside the
+ * *this, but how can we move the implementation of copy() outside the
  * derived classes without losing type information?
  * In C++, type-safe reuse is often accomplished through templates. In this
- * case, we need to derive a template class Velue_delegator from
- * Value_holder_middle (so to redefine Value_holder_base::delegate()) and the
+ * case, we need to derive a template class Value_copier from
+ * Value_holder_middle (so to redefine Value_holder_base::copy()) and the
  * parameter of the template must provide the necessary type information.
- * Therefore, each concrete class is expected to derive from Velue_delegator
- * (to inherit the implementation of delegate()) and also to provide its own
- * type to Velue_delegator as a parameter. This lead to a somewhat unusual,
+ * Therefore, each concrete class is expected to derive from Value_copier
+ * (to inherit the implementation of copy()) and also to provide its own
+ * type to Value_copier as a parameter. This lead to a somewhat unusual,
  * "recursive" declaration for all the derived classes:
  *
  * template <typename ValueType>
- * class Value_holder : public Velue_delegator<Value_holder<ValueType> > {
+ * class Value_holder : public Value_copier<Value_holder<ValueType> > {
  * public:
  *   // implements all the functions
- *   // delegate_impl declared in Target
+ *   // delegate declared in Target
  * } ;
  *
- * The template class Velue_delegator plays two roles in this scheme: It
+ * The template class Value_copier plays two roles in this scheme: It
  * statically encodes the dynamic type of one parameter, and implements the
  * multiple dispatch using two static_cast, avoiding the replication of
  * boiler-plate code typical of double dispatch.
@@ -118,17 +118,17 @@
  *
  * Value_holder<Float> f;
  * Value_holder<Int32> i;
- * Value_holder_base& theF = a;
- * Value_holder_base& theI = b;
- * theF.delegate(theI);
+ * Value_holder_base& targetF = a;
+ * Value_holder_base& sourceI = b;
+ * targetF.copy(sourceI);
  *
- * First, Value_holder<Float>::delegate(theI) is called. This function call is
- * dispatched to Velue_delegator<Value_holder<Float>>::delegate(theI) through
- * normal polymorphism. Inside delegate(), theI is cast to a reference to
+ * First, Value_holder<Float>::copy(sourceI) is called. This function call is
+ * dispatched to Value_copier<Value_holder<Float>>::copy(sourceI) through
+ * normal polymorphism. Inside copy(), sourceI is cast to a reference to
  * Value_holder_middle, then
- * Value_holder_middle::delegate_impl(Value_holder<Float>&) is called. Since
- * delegate_impl() is virtual, that means calling
- * Value_holder<Int32>::delegate_impl(Value_holder<Float>&), fully resolving
+ * Value_holder_middle::delegate(Value_holder<Float>& target) is called. Since
+ * delegate() is virtual, that means calling
+ * Value_holder<Int32>::delegate(Value_holder<Float>& target), fully resolving
  * our call via multiple polymorphism.
  * To conclude, note the use of virtual inheritance from Value_holder_middle:
  * this is necessary to allow further derivation from a derived class. Without
@@ -136,11 +136,11 @@
  * class Value_holder_base, and this does not correspond to the concept of
  * IS-A (a relationship where one class A is a subclass of another class B).
  *
- * class C : public Velue_delegator<C>, public Value_holder<Float>
+ * class C : public Value_copier<C>, public Value_holder<Float>
  * {
  * public:
  *   // implements all the functions
- *   // delegate_impl declared in Value_holder_target
+ *   // delegate declared in Value_holder_target
  * };
  */
 
@@ -165,57 +165,56 @@ public:
   /*! Destructor */
   virtual ~Value_holder_base() {}
 
-  /*! Delegate the value of a Value_holder source object to the value of a
-   * destination (other) Value_holder object.
+  /*! Copy the value of a Value_holder source object to the value of this
+   * Value_holder object.
    */
-  virtual void delegate(Value_holder_base& other) = 0;
-
-  /*! Virtual copy constructor */
-  virtual Value_holder_base* clone() = 0;
+  virtual void copy(const Value_holder_base& source) = 0;
 };
 
 template <typename ValueType> class Value_holder;
 class Value_holder_target {
 public:
   // Single fields
-  virtual void delegate_impl(Value_holder<Boolean>&) = 0;
-  virtual void delegate_impl(Value_holder<Float>&) = 0;
-  virtual void delegate_impl(Value_holder<Uint>&) = 0;
-  virtual void delegate_impl(Value_holder<Int32>&) = 0;
-  virtual void delegate_impl(Value_holder<Scene_time>&) = 0;
-  virtual void delegate_impl(Value_holder<Vector2f>&) = 0;
-  virtual void delegate_impl(Value_holder<Vector3f>&) = 0;
-  virtual void delegate_impl(Value_holder<Vector4f>&) = 0;
-  virtual void delegate_impl(Value_holder<Rotation>&) = 0;
-  virtual void delegate_impl(Value_holder<Bounding_sphere>&) = 0;
-  virtual void delegate_impl(Value_holder<std::string>&) = 0;
-  virtual void delegate_impl(Value_holder<Shared_container>&) = 0;
+  virtual void delegate(Value_holder<Boolean>&) const = 0;
+  virtual void delegate(Value_holder<Float>&) const = 0;
+  virtual void delegate(Value_holder<Uint>&) const = 0;
+  virtual void delegate(Value_holder<Int32>&) const = 0;
+  virtual void delegate(Value_holder<Scene_time>&) const = 0;
+  virtual void delegate(Value_holder<Vector2f>&) const = 0;
+  virtual void delegate(Value_holder<Vector3f>&) const = 0;
+  virtual void delegate(Value_holder<Vector4f>&) const = 0;
+  virtual void delegate(Value_holder<Rotation>&) const = 0;
+  virtual void delegate(Value_holder<Bounding_sphere>&) const = 0;
+  virtual void delegate(Value_holder<std::string>&) const = 0;
+  virtual void delegate(Value_holder<Shared_container>&) const = 0;
 
   // Multi fields
-  virtual void delegate_impl(Value_holder<Boolean_array>&) = 0;
-  virtual void delegate_impl(Value_holder<Float_array>&) = 0;
-  virtual void delegate_impl(Value_holder<Uint_array>&) = 0;
-  virtual void delegate_impl(Value_holder<Int32_array>&) = 0;
-  virtual void delegate_impl(Value_holder<Scene_time_array>&) = 0;
-  virtual void delegate_impl(Value_holder<Vector2f_array>&) = 0;
-  virtual void delegate_impl(Value_holder<Vector3f_array>&) = 0;
-  virtual void delegate_impl(Value_holder<Vector4f_array>&) = 0;
-  virtual void delegate_impl(Value_holder<Rotation_array>&) = 0;
-  virtual void delegate_impl(Value_holder<Bounding_sphere_array>&) = 0;
-  virtual void delegate_impl(Value_holder<String_array>&) = 0;
-  virtual void delegate_impl(Value_holder<Shared_container_array>&) = 0;
+  virtual void delegate(Value_holder<Boolean_array>&) const = 0;
+  virtual void delegate(Value_holder<Float_array>&) const = 0;
+  virtual void delegate(Value_holder<Uint_array>&) const = 0;
+  virtual void delegate(Value_holder<Int32_array>&) const = 0;
+  virtual void delegate(Value_holder<Scene_time_array>&) const = 0;
+  virtual void delegate(Value_holder<Vector2f_array>&) const = 0;
+  virtual void delegate(Value_holder<Vector3f_array>&) const = 0;
+  virtual void delegate(Value_holder<Vector4f_array>&) const = 0;
+  virtual void delegate(Value_holder<Rotation_array>&) const = 0;
+  virtual void delegate(Value_holder<Bounding_sphere_array>&) const = 0;
+  virtual void delegate(Value_holder<String_array>&) const = 0;
+  virtual void delegate(Value_holder<Shared_container_array>&) const = 0;
 };
 
 class Value_middle :
   public Value_holder_target, public Value_holder_base {};
 
+/*! Generic copier of the source value holder. */
 template <typename T>
-class Velue_delegator : virtual public Value_middle {
+class Value_copier : virtual public Value_middle {
 public:
-  virtual void delegate(Value_holder_base& other)
-  { static_cast<Value_middle&>(other).delegate_impl(static_cast<T&>(*this)); }
+  virtual void copy(const Value_holder_base& source)
+  { static_cast<const Value_middle&>(source).delegate(static_cast<T&>(*this)); }
 };
 
+/*! Dispatcher of the delegation operation. */
 template <typename ValueType1, typename ValueType2>
 class Delegate_dispatcher {
 public:
@@ -365,7 +364,7 @@ public:
  * value type can be any basic type, a complex type, or an array of the above.
  */
 template <typename ValueType>
-class Value_holder : public Velue_delegator<Value_holder<ValueType> > {
+class Value_holder : public Value_copier<Value_holder<ValueType> > {
 public:
   typedef ValueType Value_type;
 
@@ -378,7 +377,7 @@ private:
   Boolean m_allocated_internally;
 
 public:
-  /*! Constructor */
+  /*! Construct. */
   Value_holder(Value_type* value) :
     m_value(value),
     m_allocated_internally(false)
@@ -389,7 +388,7 @@ public:
     }
   }
 
-  /*! Destructor */
+  /*! Destruct. */
   virtual ~Value_holder()
   {
     if (m_allocated_internally) {
@@ -419,208 +418,190 @@ public:
   //! \delegator single fields specific implementations
   //@{
   // Boolean
-  void delegate_impl(Value_holder<Boolean>& other)
+  void delegate(Value_holder<Boolean>& target) const
   {
     Delegate_dispatcher<Value_type, Boolean> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // Float
-  void delegate_impl(Value_holder<Float>& other)
+  void delegate(Value_holder<Float>& target) const
   {
     Delegate_dispatcher<Value_type, Float> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // Uint
-  void delegate_impl(Value_holder<Uint>& other)
+  void delegate(Value_holder<Uint>& target) const
   {
     Delegate_dispatcher<Value_type, Uint> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // Int32
-  void delegate_impl(Value_holder<Int32>& other)
+  void delegate(Value_holder<Int32>& target) const
   {
     Delegate_dispatcher<Value_type, Int32> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // Scene_time
-  void delegate_impl(Value_holder<Scene_time>& other)
+  void delegate(Value_holder<Scene_time>& target) const
   {
     Delegate_dispatcher<Value_type, Scene_time> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // Vector2f
-  void delegate_impl(Value_holder<Vector2f>& other)
+  void delegate(Value_holder<Vector2f>& target) const
   {
     Delegate_dispatcher<Value_type, Vector2f> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // Vector3f
-  void delegate_impl(Value_holder<Vector3f>& other)
+  void delegate(Value_holder<Vector3f>& target) const
   {
     Delegate_dispatcher<Value_type, Vector3f> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // Vector4f
-  void delegate_impl(Value_holder<Vector4f>& other)
+  void delegate(Value_holder<Vector4f>& target) const
   {
     Delegate_dispatcher<Value_type, Vector4f> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // Rotation
-  void delegate_impl(Value_holder<Rotation>& other)
+  void delegate(Value_holder<Rotation>& target) const
   {
     Delegate_dispatcher<Value_type, Rotation> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // Bounding_sphere
-  void delegate_impl(Value_holder<Bounding_sphere>& other)
+  void delegate(Value_holder<Bounding_sphere>& target) const
   {
     Delegate_dispatcher<Value_type, Bounding_sphere> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // std::string
-  void delegate_impl(Value_holder<std::string>& other)
+  void delegate(Value_holder<std::string>& target) const
   {
     Delegate_dispatcher<Value_type, std::string> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // Shared_container
-  void delegate_impl(Value_holder<Shared_container>& other)
+  void delegate(Value_holder<Shared_container>& target) const
   {
     Delegate_dispatcher<Value_type, Shared_container> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
   //@}
 
   //! \delegator multi fields specific implementations
   //@{
   // Boolean_array
-  void delegate_impl(Value_holder<Boolean_array>& other)
+  void delegate(Value_holder<Boolean_array>& target) const
   {
     Delegate_dispatcher<Value_type, Boolean_array> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // Float_array
-  void delegate_impl(Value_holder<Float_array>& other)
+  void delegate(Value_holder<Float_array>& target) const
   {
     Delegate_dispatcher<Value_type, Float_array> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // Uint_array
-  void delegate_impl(Value_holder<Uint_array>& other)
+  void delegate(Value_holder<Uint_array>& target) const
   {
     Delegate_dispatcher<Value_type, Uint_array> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // Int32_array
-  void delegate_impl(Value_holder<Int32_array>& other)
+  void delegate(Value_holder<Int32_array>& target) const
   {
     Delegate_dispatcher<Value_type, Int32_array> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // Scene_time_array
-  void delegate_impl(Value_holder<Scene_time_array>& other)
+  void delegate(Value_holder<Scene_time_array>& target) const
   {
     Delegate_dispatcher<Value_type, Scene_time_array> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // Vector2f_array
-  void delegate_impl(Value_holder<Vector2f_array>& other)
+  void delegate(Value_holder<Vector2f_array>& target) const
   {
     Delegate_dispatcher<Value_type, Vector2f_array> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // Vector3f_array
-  void delegate_impl(Value_holder<Vector3f_array>& other)
+  void delegate(Value_holder<Vector3f_array>& target) const
   {
     Delegate_dispatcher<Value_type, Vector3f_array> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // Vector4f_array
-  void delegate_impl(Value_holder<Vector4f_array>& other)
+  void delegate(Value_holder<Vector4f_array>& target) const
   {
     Delegate_dispatcher<Value_type, Vector4f_array> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // Rotation_array
-  void delegate_impl(Value_holder<Rotation_array>& other)
+  void delegate(Value_holder<Rotation_array>& target) const
   {
     Delegate_dispatcher<Value_type, Rotation_array> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // Bounding_sphere_array
-  void delegate_impl(Value_holder<Bounding_sphere_array>& other)
+  void delegate(Value_holder<Bounding_sphere_array>& target) const
   {
     Delegate_dispatcher<Value_type, Bounding_sphere_array> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
 
   // String_array
-  void delegate_impl(Value_holder<String_array>& other)
+  void delegate(Value_holder<String_array>& target) const
   {
     Delegate_dispatcher<Value_type, String_array> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
+
   // Shared_container_array
-  void delegate_impl(Value_holder<Shared_container_array>& other)
+  void delegate(Value_holder<Shared_container_array>& target) const
   {
     Delegate_dispatcher<Value_type, Shared_container_array> dd;
-    dd(m_value, other.get_value());
+    dd(m_value, target.get_value());
   }
   //@}
 
-  // /*! Delegate the value to the value of another Value object. */
-  // virtual void delegate(Value_holder_base* other)
+  // //! \brief copies the value to the value of another Value object.
+  // virtual void copy(Value_holder_base* source)
   // {
-  //   Value_holder<T>* other = dynamic_cast<Value_holder<Value_type>*>(other);
-  //   SGAL_assertion(other);
+  //   SGAL_assertion(source);
+  //   Value_holder<T>* other = dynamic_cast<Value_holder<Value_type>*>(source);
 
-  //    // lock the both fields critical section
+  //   // lock the critical section of both fields:
   //   // (will unlock automaticaly at end of function)
   //   //! \todo Auto_lock Auto_lock(&m_cs);
   //   //! \todo Auto_lock Auto_lock_other(&specific_other->m_cs);
 
-  //   *m_value = *(other->m_value);
+  //   set_value(*(other->get_value()));
   // }
-
-  /*! Create a new instance of Value_holder with the same held value. */
-  virtual Value_holder_base* clone()
-  {
-    // Allocate memory for the new value and copy the current value to it
-    Value_type* new_value = new Value_type;
-    // lock m_CS to protect the value copy
-    // (will unlock automaticaly at end of function)
-    //! \todo Auto_lock auto_lock(&m_cs);
-    *new_value = *m_value;
-
-    // Allocate a new holder and construct it with the allocated value
-    Value_holder<Value_type>* new_holder =
-      new Value_holder<Value_type>(new_value);
-    // Mark the holder as created by copy - to indicate the destructor to
-    // m_value on destruction
-    new_holder->m_allocated_internally = true;
-    return new_holder;
-  }
 };
 
 SGAL_END_NAMESPACE

@@ -62,7 +62,11 @@ void Field::disconnect(Field* field)
 
 //! \brief delegates the value.
 void Field::delegate(Field* target)
-{ (target->get_value_holder())->delegate(*m_value_holder); }
+{ (target->get_value_holder())->copy(*m_value_holder); }
+
+//! \brief copies the value.
+void Field::copy(const Field* source)
+{ get_value_holder()->copy(*(source->get_value_holder())); }
 
 /*! \brief propagates the data from this field to the fields connected to this
  * field, generating a cascading of events effect.
@@ -89,7 +93,8 @@ void Field::cascade()
     if (m_field_info) m_field_info->detach(m_container);
 
     // Set the connected field's value to this field's value:
-    delegate(connected_field);
+    // delegate(connected_field);
+    connected_field->copy(this);
 
     // Apply cascade on the connected field:
     connected_field->cascade();

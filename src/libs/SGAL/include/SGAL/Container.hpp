@@ -107,13 +107,6 @@ public:
    */
   virtual Container* clone();
 
-  /*! Clone the container (virtual constructor) with shalow copy.
-   * Notice that fields that are containers themselves not deeply-copied and so
-   * are members of array of containers.
-   * \return a copy of this container.
-   */
-  virtual Container* copy();
-
   /*! Initialize the node prototype.
    */
   virtual void init_prototype() {};
@@ -264,22 +257,33 @@ public:
   /*! Processe change of content. */
   void process_content_changed();
 
+  /*! Copy a given container.
+   * \param other[in] the container to copy.
+   * \param shallow[in] indicates whether to perform a shallow copy. When
+   * shallow copy is applied handles to containers are copied, but the
+   * containers themselves are not copied. Fields that are handles to containers
+   * and fields that are array of handles to containers are affected by this
+   * flag.
+   */
+  void copy(const Container* other, Boolean shallow = false);
+
+  typedef std::map<const Field_info*, Field*>           Field_map;
+
+  /*! Obtain the xxx. */
+  const Field_map& get_fields() const { return m_fields; }
+
 protected:
   /*! A pointer to the execution coordinator. */
   Execution_coordinator* m_execution_coordinator;
 
 private:
-  typedef std::map<const Field_info*, Field*>           Field_map;
-  typedef Field_map::iterator                           Field_iter;
-  typedef Field_map::const_iterator                     Field_const_iter;
-
-  /*! The name of the container. Given as the value of the DEF tag. */
+  //! The name of the container. Given as the value of the DEF tag.
   std::string m_name;
 
-  // A search structure to find Field_info's for fields. */
+  //! A search structure to find Field_info's for fields.
   Field_map m_fields;
 
-  /*! A list of observers. */
+  //! A list of observers.
   Observer_list m_observers;
 
   //! \todo Critical_section m_field_cs;

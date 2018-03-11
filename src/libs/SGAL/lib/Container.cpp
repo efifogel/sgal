@@ -26,6 +26,7 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Formatter.hpp"
+#include "SGAL/Field_type.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -224,27 +225,39 @@ void Container::field_changed(const Field_info* /* field_info */)
 //! \brief clones the container (virtual constructor) with deep-copy.
 Container* Container::clone()
 {
-  auto cont = create();
-  for (auto source : m_fields) {
-    auto* field_info = source.first;
-    auto* source_field = source.second;
-    auto* target_field = cont->add_field(field_info);
-    target_field->delegate(source_field);
-  }
+  auto* cont = create();
+  cont->copy(this);
   return cont;
 }
 
-//! \brief clones the container (virtual constructor) with shalow copy.
-Container* Container::copy()
+//! \brief copies a given container.
+void Container::copy(const Container* source, Boolean shallow)
 {
-  auto cont = create();
-  for (auto source : m_fields) {
-    auto* field_info = source.first;
-    auto* source_field = source.second;
-    auto* target_field = cont->add_field(field_info);
-    target_field->delegate(source_field);
+  for (auto tmp : source->m_fields) {
+    auto* field_info = tmp.first;
+    auto* source_field = tmp.second;
+    auto* target_field = add_field(field_info);
+    auto type = field_info->get_type_id();
+    if (shallow ||
+        (type != Field_type::SF_SHARED_CONTAINER) ||
+        (type != Field_type::MF_SHARED_CONTAINER))
+    {
+      target_field->copy(source_field);
+      target_field->cascade();  // invoke the execution function
+      continue;
+    }
+    // Deep copy
+    if (type == Field_type::SF_SHARED_CONTAINER) {
+      // (Deeply) copy a single container field.
+      // const auto* source_value_holder = source_field->get_value_holder();
+      // const auto* source_value_holder = target_field->get_value_holder();
+
+      // auto* cont = source_field->clone();
+      // target_field->delegate(cont);
+      continue;
+    }
+    // (Deeply) copy a multi-container field.
   }
-  return cont;
 }
 
 SGAL_END_NAMESPACE

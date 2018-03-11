@@ -103,17 +103,31 @@ public:
   /*! Determine whether cascading is blocked. */
   Boolean is_blocked() const;
 
-  /*! Obtain the value member. */
-  virtual Value_holder_base* get_value_holder() { return m_value_holder; }
-
-  /*! Delegate the value.
+  /*! Obtain the value member.
    */
-  void delegate(Field* source);
+  virtual Value_holder_base* get_value_holder();
+
+  /*! Obtain the value member.
+   */
+  virtual const Value_holder_base* get_value_holder() const;
+
+  /*! Delegate the value. Copy the value of this field to a given target field.
+   * \param target the target field to delegate the value to.
+   */
+  void delegate(Field* target);
+  void copy(const Field* source);
 };
 
 #if (defined _MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief obtains the value member.
+inline Value_holder_base* Field::get_value_holder() { return m_value_holder; }
+
+//! \brief obtains the value member.
+inline const Value_holder_base* Field::get_value_holder() const
+{ return m_value_holder; }
 
 //! \brief obtains the field info.
 inline const Field_info* Field::get_field_info() const { return m_field_info; }
