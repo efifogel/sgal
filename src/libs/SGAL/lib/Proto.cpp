@@ -57,15 +57,6 @@ Container* Proto::create()
   return proto;
 }
 
-//! \brief clones the container from the prototype container.
-Container* Proto::clone()
-{
-  auto proto = new Proto();
-  SGAL_assertion(proto);
-  proto->set_prototype(get_prototype());
-  return proto;
-}
-
 //! \brief initializes the container prototype.
 void Proto::init_prototype()
 {

@@ -76,11 +76,6 @@ public:
    */
   virtual Container* create();
 
-  /*! Clone the container (virtual constructor) with deep copy.
-   * \return a clone of this container.
-   */
-  virtual Container* clone();
-
   /// \name Container protoype handling
   //@{
   /*! Initialize the container prototype. */

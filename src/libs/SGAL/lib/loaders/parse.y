@@ -403,7 +403,11 @@ protoStatement  : proto
                 | externproto
                 ;
 
-protoRooting    : %empty { root = $$ = Proto::prototype(); }
+protoRooting    : %empty
+                {
+                  root = $$ = Proto::prototype();
+                  $$->init_prototype();
+                }
                 ;
 
 proto           : K_PROTO protoRooting nodeTypeId "[" interfaceDeclarations "]" "{" statements "}"
