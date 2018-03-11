@@ -372,21 +372,24 @@ def print_field_enumeration(out, derived_class_name, fields):
   print_empty_line(out)
 
 #! Print forward declarations
-def print_forward_declarations(out, fields):
-  print_line(out, 'class Container_proto;')
-  print_line(out, 'class Element;')
+def print_forward_declarations(config, out, fields):
   forward_types = set()
+  forward_types.add("Container_proto")
+  forward_types.add("Element")
+
   for field in fields[:]:
     type = field['type']
     if type.startswith('Shared_'):
       main_type = get_single_type(type[7:])
-      forward_types.add(main_type)
+      forward_types.add(main_type.capitalize())
 
-  if 0 == len(forward_types):
-    return
+  if config.has_option('class', 'shared_types'):
+    types = ast.literal_eval(config.get('class', 'shared_types'))
+    for type in types:
+      forward_types.add(type);
 
   for item in forward_types:
-    print_line(out, 'class {};'.format(item.capitalize()))
+    print_line(out, 'class {};'.format(item))
   print_empty_line(out)
 
 # Print typedef definitions of shared containers.
@@ -813,7 +816,7 @@ def generate_hpp(library, config, fields, out):
   print_empty_line(out)
   print_line(out, "SGAL_BEGIN_NAMESPACE")
   print_empty_line(out)
-  print_forward_declarations(out, fields)
+  print_forward_declarations(config, out, fields)
 
   print_line(out, 'class SGAL_{}_DECL {} : public {} {{'.format(library, class_name, derived_class_name))
   print_line(out, "public:")
