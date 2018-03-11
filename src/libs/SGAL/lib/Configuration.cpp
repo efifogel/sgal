@@ -66,7 +66,7 @@ const Boolean Configuration::s_def_override_light_model(true);
 const Boolean Configuration::s_def_override_tex_gen(true);
 const Boolean Configuration::s_def_override_light_enable(true);
 const Uint Configuration::s_def_export_scene_root(2);
-const Boolean Configuration::s_def_export_non_visible(false);
+const Boolean Configuration::s_def_export_non_visible(true);
 const Boolean Configuration::s_def_override_export_non_visible(false);
 
 const Char* Configuration::s_geometry_drawing_mode_names[] =
@@ -425,7 +425,7 @@ void Configuration::set_attributes(Element* elem)
       continue;
     }
     if (name == "exportSceneRoot") {
-      set_export_scene_root(to_boolean(value));
+      set_export_scene_root(boost::lexical_cast<Uint>(value));
       elem->mark_delete(ai);
       continue;
     }
