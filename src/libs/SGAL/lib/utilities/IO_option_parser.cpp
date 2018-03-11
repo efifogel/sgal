@@ -61,9 +61,9 @@ IO_option_parser::IO_option_parser() :
     ("output-file", po::value<std::string>(&m_output_file), "output file")
     ("output-path", po::value<std::string>(&m_output_path)->default_value("."), "output path")
     ("binary", po::value<Boolean>(&m_binary)->default_value(true), "binary")
-    ("export-scene-root", po::value<Uint>(&m_export_scene_root)->default_value(2),
+    ("export-scene-root", po::value<Uint>(&m_export_scene_root),
      "The root of the scene to export; (0, 1, ...")
-    ("export-non-visible", po::value<Boolean>(&m_export_non_visible)->default_value(false),
+    ("export-non-visible", po::value<Boolean>(&m_export_non_visible),
      "export non-visible geometries")
     ;
 }
