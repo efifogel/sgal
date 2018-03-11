@@ -230,33 +230,14 @@ Container* Container::clone()
   return cont;
 }
 
-//! \brief copies a given container.
-void Container::copy(const Container* source, Boolean shallow)
+//! \brief deeply copies a given container.
+void Container::copy(const Container* source)
 {
   for (auto tmp : source->m_fields) {
     auto* field_info = tmp.first;
-    auto* source_field = tmp.second;
     auto* target_field = add_field(field_info);
-    auto type = field_info->get_type_id();
-    if (shallow ||
-        (type != Field_type::SF_SHARED_CONTAINER) ||
-        (type != Field_type::MF_SHARED_CONTAINER))
-    {
-      target_field->copy(source_field);
-      target_field->cascade();  // invoke the execution function
-      continue;
-    }
-    // Deep copy
-    if (type == Field_type::SF_SHARED_CONTAINER) {
-      // (Deeply) copy a single container field.
-      // const auto* source_value_holder = source_field->get_value_holder();
-      // const auto* source_value_holder = target_field->get_value_holder();
-
-      // auto* cont = source_field->clone();
-      // target_field->delegate(cont);
-      continue;
-    }
-    // (Deeply) copy a multi-container field.
+    field_info->clone(source, this);
+    target_field->cascade();  // invoke the execution function
   }
 }
 

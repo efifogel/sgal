@@ -257,15 +257,12 @@ public:
   /*! Processe change of content. */
   void process_content_changed();
 
-  /*! Copy a given container.
+  /*! Deeply copy a given container. Containers that are fields of the source
+   * container are cloned, and so are elements of array of containers that are
+   * fields of the source container
    * \param other[in] the container to copy.
-   * \param shallow[in] indicates whether to perform a shallow copy. When
-   * shallow copy is applied handles to containers are copied, but the
-   * containers themselves are not copied. Fields that are handles to containers
-   * and fields that are array of handles to containers are affected by this
-   * flag.
    */
-  void copy(const Container* other, Boolean shallow = false);
+  void copy(const Container* other);
 
   typedef std::map<const Field_info*, Field*>           Field_map;
 
