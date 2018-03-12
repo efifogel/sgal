@@ -268,6 +268,7 @@ void Appearance::set_material(Shared_material material)
 //! \brief processes change of material.
 void Appearance::material_changed(const Field_info* /* field_info */)
 {
+  if (!m_material) return;
   if (m_material->get_transparency() != 0.0f) {
     set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
     set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
