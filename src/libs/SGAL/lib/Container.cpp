@@ -225,7 +225,6 @@ void Container::field_changed(const Field_info* /* field_info */)
 //! \brief clones the container (virtual constructor) with deep-copy.
 Container* Container::clone()
 {
-  std::cout << "Container::clone() " << get_tag() << std::endl;
   auto* cont = create();
   cont->copy(this);
   return cont;
@@ -234,16 +233,12 @@ Container* Container::clone()
 //! \brief deeply copies a given container.
 void Container::copy(const Container* source)
 {
-  std::cout << "Container::copy() " << source->get_tag() << std::endl;
   auto* proto = get_prototype();
   for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const auto* field_info = (*it).second;
     if (! field_info) continue;
-    std::cout << field_info->get_name() << std::endl;
     field_info->clone(source, this);
-    std::cout << field_info->get_name() << std::endl;
     field_info->execute(this);
-    std::cout << field_info->get_name() << std::endl;
   }
 }
 
