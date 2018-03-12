@@ -25,6 +25,10 @@
 
 SGAL_BEGIN_NAMESPACE
 
+//! \brief executes the execution_function.
+void Field_info::execute(Container* container) const
+{ if (m_exec_func) (container->*m_exec_func)(this); }
+
 //! \brief exports the (single) Boolean field.
 void Field_info::write(Formatter* formatter, Boolean value,
                        Boolean default_value, Boolean declaration) const
