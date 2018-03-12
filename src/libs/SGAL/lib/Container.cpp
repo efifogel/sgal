@@ -236,7 +236,7 @@ void Container::copy(const Container* source)
   auto* proto = get_prototype();
   for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const auto* field_info = (*it).second;
-    if (! field_info) continue;
+    SGAL_assertion(field_info);
     field_info->clone(source, this);
     field_info->execute(this);
   }
