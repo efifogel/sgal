@@ -484,7 +484,7 @@ void Configuration::set_verbosity_level(Uint level)
 
 //! \brief obtains the bindable stack.
 Bindable_stack* Configuration::get_stack()
-{ return m_scene_graph->get_configuration_stack(); }
+{ return (m_scene_graph) ? m_scene_graph->get_configuration_stack() : nullptr; }
 
 //! \brief enables the camera---called when the camera is bound.
 void Configuration::enable() {}

@@ -54,7 +54,7 @@ Background::~Background() {}
 
 //! Obtain the bindable stack.
 Bindable_stack* Background::get_stack()
-{ return m_scene_graph->get_background_stack(); }
+{ return (m_scene_graph) ? m_scene_graph->get_background_stack() : nullptr; }
 
 //! \brief sets the attributes of this object.
 void Background::set_attributes(Element* elem)

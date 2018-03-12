@@ -456,7 +456,7 @@ void Camera::add_to_scene(Scene_graph* sg)
 
 //! \brief obtains the bindable stack.
 Bindable_stack* Camera::get_stack()
-{ return m_scene_graph->get_camera_stack(); }
+{ return (m_scene_graph) ? m_scene_graph->get_camera_stack() : nullptr; }
 
 //! \brief enables the camera---called when the camera is bound.
 void Camera::enable() { init(); }

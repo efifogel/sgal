@@ -128,6 +128,11 @@ void Bindable_node::set_is_bound(Boolean is_bound)
  */
 void Bindable_node::set_bind(const Field_info * /* field_info */)
 {
+  // If the scene graph hasn't been constructed yet, a null stack is obtained.
+  // In this case there nothing to be done.
+  auto* stack = get_stack();
+  if (! stack) return;
+
   if (m_set_bind) {
     auto top = top_stack();
     if (this == top) return;
