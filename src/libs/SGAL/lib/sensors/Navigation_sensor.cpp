@@ -43,7 +43,7 @@ Container_proto* Navigation_sensor::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Navigation_sensor, "Navigation_sensor");
 
-/*! Constructor */
+//! \brief constructs.
 Navigation_sensor::Navigation_sensor(const Vector3f& translation,
                                      const Rotation& rotation,
                                      Boolean proto) :
@@ -62,10 +62,10 @@ Navigation_sensor::Navigation_sensor(const Vector3f& translation,
   m_translating(false), m_rotating(false)
 {}
 
-/*! Destructor */
+//! \brief destructs.
 Navigation_sensor::~Navigation_sensor() {}
 
-/*! Initialize the node prototype. */
+//! \brief initializes the node prototype.
 void Navigation_sensor::init_prototype()
 {
   if (s_prototype) return;
@@ -117,56 +117,56 @@ void Navigation_sensor::init_prototype()
                                           rotation_done_func));
 }
 
-/*! \brief deletes the prototype. */
+//! \brief deletes the prototype.
 void Navigation_sensor::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the prototype. */
+//! \brief obtains the prototype.
 Container_proto* Navigation_sensor::get_prototype()
 {
   if (!s_prototype) Navigation_sensor::init_prototype();
   return s_prototype;
 }
 
-/*! \brief setss the translation field. */
+//! \brief setss the translation field.
 void Navigation_sensor::set_translation(const Vector3f& translation)
 { set_translation(translation[0], translation[1], translation[2]); }
 
-/*! \brief sets the translation field. */
+//! \brief sets the translation field.
 void Navigation_sensor::set_translation(float v0, float v1, float v2)
 { m_translation.set(v0, v1, v2); }
 
-/*! \brief sets the rotation field. */
+//! \brief sets the rotation field.
 void Navigation_sensor::set_rotation(const Rotation& rotation)
 {
   set_rotation(rotation[0], rotation[1], rotation[2], rotation.get_angle());
 }
 
-/*! \brief sets the rotation field. */
+//! \brief sets the rotation field.
 void Navigation_sensor::set_rotation(float v0, float v1, float v2, float angle)
 {
   m_rotation.set_axis(v0, v1, v2);
   m_rotation.set_angle(angle);
 }
 
-/*! \brief registers the mouse and mostion events. */
+//! \brief registers the mouse and mostion events.
 void Navigation_sensor::register_events()
 {
   Mouse_event::doregister(this);
   Motion_event::doregister(this);
 }
 
-/*! registers the mouse and mostion events */
+//! registers the mouse and mostion events.
 void Navigation_sensor::unregister_events()
 {
   Mouse_event::unregister(this);
   Motion_event::unregister(this);
 }
 
-/*! handles mouse events. */
+//! handles mouse events.
 void Navigation_sensor::handle(Mouse_event* event)
 {
   switch (event->get_button()) {
@@ -190,15 +190,15 @@ void Navigation_sensor::handle(Mouse_event* event)
   }
 }
 
-/*! \brief handles motion events. */
+//! \brief handles motion events.
 void Navigation_sensor::handle(Motion_event* event)
 { mouse_move(event->get_x(), event->get_y()); }
 
-/*! \brief prints an identification message. */
+//! \brief prints an identification message.
 void Navigation_sensor::identify()
 { std::cout << "Agent: Navigation_sensor" << std::endl; }
 
-/*! \brief activated when dragging is started. */
+//! \brief activated when dragging is started.
 void Navigation_sensor::start_dragging(const Vector2sh& /* point */)
 {
   transform_done();
@@ -214,7 +214,7 @@ void Navigation_sensor::start_dragging(const Vector2sh& /* point */)
   m_drag_locked = true;
 }
 
-/*! \brief sets the dragging speed of the sensor. */
+//! \brief sets the dragging speed of the sensor.
 void Navigation_sensor::set_dragging_speed(float dragging_speed)
 {
   m_dragging_speed = dragging_speed;
@@ -222,11 +222,11 @@ void Navigation_sensor::set_dragging_speed(float dragging_speed)
   m_half_dragging_speed = m_dragging_speed * 0.5f;
 }
 
-/*! \brief sets the minimum zoom in distance. */
+//! \brief sets the minimum zoom in distance.
 void Navigation_sensor::set_min_zoom_distance(float val)
 { m_min_zoom_distance = val; }
 
-/*! \brief handles mouse dragging. */
+//! \brief handles mouse dragging.
 void Navigation_sensor::mouse_drag(const Vector2sh& from,
                                    const Vector2sh& to)
 {
@@ -256,7 +256,7 @@ void Navigation_sensor::mouse_drag(const Vector2sh& from,
 #endif
 }
 
-/*! \brief issues events at the end of a transformation session. */
+//! \brief issues events at the end of a transformation session.
 void Navigation_sensor::transform_done()
 {
   if (m_translating) {
@@ -278,7 +278,7 @@ void Navigation_sensor::transform_done()
   }
 }
 
-/*! \brief unlockes the dragging at when it is done. */
+//! \brief unlockes the dragging at when it is done.
 void Navigation_sensor::dragging_done(const Vector2sh& /* point */)
 {
   transform_done();
@@ -291,7 +291,7 @@ void Navigation_sensor::dragging_done(const Vector2sh& /* point */)
 #endif
 }
 
-/*! \brief handles a track ball update. */
+//! \brief handles a track ball update.
 void Navigation_sensor::track_ball(const Vector2sh& from,
                                    const Vector2sh& to, float speed)
 {
@@ -353,7 +353,7 @@ void Navigation_sensor::track_ball(const Vector2sh& from,
   m_reset = false;
 }
 
-/*! \brief handles a translation update. */
+//! \brief handles a translation update.
 void Navigation_sensor::translate(const Vector3f& distance, float speed)
 {
   m_translating = true;
@@ -396,7 +396,7 @@ void Navigation_sensor::translate(const Vector3f& distance, float speed)
   m_reset = false;
 }
 
-/* \brief */
+//! \brief
 bool Navigation_sensor::allow_zoom_in(const Vector3f& trans)
 {
   if (m_min_zoom_distance == 0) return true;
@@ -431,7 +431,7 @@ bool Navigation_sensor::allow_zoom_in(const Vector3f& trans)
   return (abs(dist) > m_min_zoom_distance  && dist * old_dist >= 0);
 }
 
-/*! \brief sets the attributes of the object extracted from the input file. */
+//! \brief sets the attributes of the object extracted from the input file.
 void Navigation_sensor::set_attributes(Element* elem)
 {
   Bindable_node::set_attributes(elem);
@@ -459,14 +459,14 @@ void Navigation_sensor::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene. */
+//! \brief adds the container to a given scene.
 void Navigation_sensor::add_to_scene(Scene_graph* sg)
 {
   set_scene_graph(sg);
 }
 
 #if 0
-/*! \brief */
+//! \brief
 Attribute_list Navigation_sensor::get_attributes()
 {
   Attribute_list attribs;
@@ -523,7 +523,7 @@ bool Navigation_sensor::left_button_double_click()
   return true;
 }
 
-/*! \brief */
+//! \brief
 bool Navigation_sensor::is_left_button_double_click()
 {
   bool double_click = m_is_left_button_double_click;
@@ -531,24 +531,24 @@ bool Navigation_sensor::is_left_button_double_click()
   return double_click;
 }
 
-/*! \brief obtains the bindable stack. */
+//! \brief obtains the bindable stack.
 Bindable_stack* Navigation_sensor::get_stack()
 {
-  return m_scene_graph->get_navigation_info_stack();
+  return (m_scene_graph) ? m_scene_graph->get_navigation_info_stack() : nullptr;
 }
 
-/*! \brief enables the bindable node. */
+//! \brief enables the bindable node.
 void Navigation_sensor::enable()
 {
   register_events();
   set_dragging_speed(m_scene_graph->compute_speed_factor());
 }
 
-/*! \brief disabless the bindable node. */
+//! \brief disabless the bindable node.
 void Navigation_sensor::disable() { unregister_events(); }
 
 #if 0
-/*! \brief */
+//! \brief
 Window_handle* Drag_sensor::get_win_handle()
 {
   Context* context = m_scene_graph->get_context();
@@ -556,7 +556,7 @@ Window_handle* Drag_sensor::get_win_handle()
   return 0;
 }
 
-/*! \brief */
+//! \brief
 Window_handle* Drag_sensor::get_win_handle() const
 {
   Context* context = m_scene_graph->get_context();
