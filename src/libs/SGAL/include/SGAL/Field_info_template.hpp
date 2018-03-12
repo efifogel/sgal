@@ -101,7 +101,7 @@ struct Cloner {
 template <>
 struct Cloner<Shared_container> {
   void operator()(Shared_container source, Shared_container& target)
-  { target = Shared_container(source->clone()); }
+  { target = Shared_container((source) ? source->clone() : nullptr); }
 };
 
 template <>
@@ -111,7 +111,7 @@ struct Cloner<Shared_container_array> {
     target.resize(source.size());
     std::transform(source.begin(), source.end(), target.begin(),
                    [](Shared_container cont)
-                   { return Shared_container(cont->clone()); });
+                   { return Shared_container((cont) ? cont->clone() : nullptr); });
   }
 };
 
