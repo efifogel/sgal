@@ -105,8 +105,13 @@ public:
    */
   Field_rule get_rule() const;
 
-  /*! Obtain the execution function */
+  /*! Obtain the execution function.
+   */
   Execution_function execution_function() const;
+
+  /*! Execute the execution_function.
+   */
+  void execute(Container* container) const;
 
   /*! Equality opetator.
    */
