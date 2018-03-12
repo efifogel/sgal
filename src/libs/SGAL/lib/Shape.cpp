@@ -116,7 +116,6 @@ void Shape::set_appearance(Shared_appearance app)
   m_appearance = app;
   const auto* field_info = get_field_info(APPEARANCE);
   field_changed(field_info);
-  add_field(APPEARANCE);
 }
 
 //! \brief obtains the appearance.
@@ -137,7 +136,6 @@ void Shape::set_geometry(Shared_geometry geometry)
 
   const Field_info* field_info = get_field_info(GEOMETRY);
   field_changed(field_info);
-  add_field(GEOMETRY);
 
 #if 0
   //! \todo

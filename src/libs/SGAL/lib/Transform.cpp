@@ -306,7 +306,6 @@ void Transform::set_translation(float v0, float v1, float v2)
   m_dirty_matrix = true;
   m_dirty_inverse = true;
   m_dirty_bounding_sphere = true;
-  add_field(TRANSLATION);
 }
 
 //! \brief sets the rotation.
@@ -318,7 +317,6 @@ void Transform::set_rotation(float v0, float v1, float v2, float angle)
   m_dirty_matrix = true;
   m_dirty_inverse = true;
   m_dirty_bounding_sphere = true;
-  add_field(ROTATION);
 }
 
 //! \brief sets the scale factors.
@@ -331,7 +329,6 @@ void Transform::set_scale(float s0, float s1, float s2)
   m_dirty_matrix = true;
   m_dirty_inverse = true;
   m_dirty_bounding_sphere = true;
-  add_field(SCALE);
 }
 
 //! \brief sets the translation.
@@ -395,7 +392,6 @@ void Transform::set_scale_orientation(float v0, float v1, float v2, float v3)
   m_dirty_matrix = true;
   m_dirty_inverse = true;
   m_dirty_bounding_sphere = true;
-  add_field(SCALE_ORIENTATION);
 }
 
 //! \brief obtains the scale-orientation.
@@ -432,7 +428,6 @@ void Transform::set_center(float v0, float v1, float v2)
   m_dirty_matrix = true;
   m_dirty_inverse = true;
   m_dirty_bounding_sphere = true;
-  add_field(CENTER);
 }
 
 //! \brief obtains the center of rotation.

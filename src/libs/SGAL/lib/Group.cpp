@@ -104,7 +104,6 @@ void Group::set_childs(Container_array& childs)
   SGAL_error_msg("Not implemented yet!");
   m_dirty_other = true;
   m_childs = childs;
-  add_field(CHILDREN);
 }
 
 //! \brief obtains the (const) children array.
@@ -137,7 +136,6 @@ void Group::add_child(Shared_container node)
   node->register_observer(observer);
   field_changed(field_info);
   m_dirty_other = true;
-  add_field(CHILDREN);
 }
 
 //! \brief removes a given child from the sequence of children of the group.
@@ -446,7 +444,6 @@ void Group::set_visible()
   if (!m_is_visible) {
     m_is_visible = true;
     m_dirty_bounding_sphere = true;
-    add_field(IS_VISIBLE);
   }
 }
 
@@ -458,7 +455,6 @@ void Group::set_invisible()
   if (m_is_visible) {
     m_is_visible = false;
     m_dirty_bounding_sphere = true;
-    add_field(IS_VISIBLE);
   }
 }
 
@@ -468,7 +464,6 @@ void Group::set_visible(Boolean flag)
   if (flag != m_is_visible) {
     m_is_visible = flag;
     m_dirty_bounding_sphere = true;
-    add_field(IS_VISIBLE);
   }
 }
 
@@ -478,7 +473,6 @@ void Group::add_light(Shared_light light)
   // Insert the light at the front of the array.
   m_childs.insert(m_childs.begin(), light);
   ++m_num_lights;
-  add_field(CHILDREN);
 }
 
 //! \brief removes a light source from the group.
@@ -498,7 +492,6 @@ void Group::add_touch_sensor(Shared_touch_sensor touch_sensor)
   }
   m_touch_sensor = touch_sensor;
   m_childs.push_back(touch_sensor);
-  add_field(CHILDREN);
 }
 
 //! \brief removes a touch sensor from the group.
