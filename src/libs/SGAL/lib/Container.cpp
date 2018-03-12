@@ -238,7 +238,6 @@ void Container::copy(const Container* source)
     const auto* field_info = (*it).second;
     SGAL_assertion(field_info);
     field_info->clone(source, this);
-    field_info->execute(this);
   }
 }
 

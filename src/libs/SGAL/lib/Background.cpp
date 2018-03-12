@@ -44,6 +44,7 @@ REGISTER_TO_FACTORY(Background, "Background");
 //! \brief constructs.
 Background::Background(Boolean proto) :
   Bindable_node(proto),
+  m_scene_graph(nullptr),
   m_clear_color(true),
   m_clear_depth(true),
   m_clear_stencil(false)
