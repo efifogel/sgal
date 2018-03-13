@@ -24,6 +24,8 @@
 #include "SGAL/Proto.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Field_type.hpp"
+#include "SGAL/Field_info.hpp"
+#include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/multi_istream_iterator.hpp"
@@ -54,6 +56,7 @@ Container* Proto::create()
 {
   auto proto = new Proto();
   SGAL_assertion(proto);
+  proto->set_prototype(get_prototype());
   return proto;
 }
 
@@ -75,9 +78,7 @@ Container_proto* Proto::get_prototype()
 }
 
 //! \brief \todo.
-void Proto::execute(const Field_info* field_info)
-{
-}
+void Proto::execute(const Field_info* field_info) {}
 
 //! \brief adds a field information record to the prototype.
 void Proto::add_field_info(Field_rule rule, Field_type type,
@@ -349,7 +350,23 @@ void Proto::set_field_infos(Element* elem)
 //! \brief sets the attributes of the object extracted from the input file.
 void Proto::set_attributes(Element* elem)
 {
-  std::cout << "Proto::set_attributes" << std::endl;
+  // Find the children default value and clone it.
+  auto* field_info = get_field_info(CHILDREN);
+  SGAL_assertion(field_info);
+  auto* childs_field_info = reinterpret_cast<MF_shared_container*>(field_info);
+  SGAL_assertion(childs_field_info);
+  const auto& proto_childs = childs_field_info->get_initial_value();
+
+  Container_array& childs = get_childs();
+  childs.resize(proto_childs.size());
+
+  //! \todo Instead of simply cloning, we need to replace the fields in the
+  // source sub-graphs with the formal values of corresponding fields given
+  // in the declaration section.
+  std::transform(proto_childs.begin(), proto_childs.end(), childs.begin(),
+                 [] (Shared_container cont)
+                 { return Shared_container(cont->clone()); });
+
   // Group::set_attributes(elem);
   // SGAL_error_msg("Not implemented yet!");
 }
