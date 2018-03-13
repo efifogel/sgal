@@ -188,7 +188,7 @@ void Assembly::init_prototype()
   Boolean_handle_function trigger_func =
     static_cast<Boolean_handle_function>(&Assembly::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          Field_rule::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_IN,
                                           trigger_func,
                                           exec_func));
 
@@ -225,7 +225,7 @@ void Assembly::init_prototype()
   Boolean_handle_function draw_alternate_func =
     static_cast<Boolean_handle_function>(&Assembly::draw_alternate_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_ALT, "drawAlternate",
-                                          Field_rule::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_IN,
                                           draw_alternate_func, exec_func));
 
   // incAlternate
@@ -244,7 +244,7 @@ void Assembly::init_prototype()
     (&Assembly::draw_aos_minkowski_sums_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_AOS_MINKOWSKI_SUMS,
                                           "drawAosMinkowskiSums",
-                                          Field_rule::RULE_EXPOSED_FIELD,
+                                          Field_rule::RULE_IN,
                                           draw_aos_minkowski_sums_func,
                                           exec_func));
 
@@ -1459,33 +1459,33 @@ void Assembly::visit_aos_vertex(Aos_graph::Vertex_handle v,
       if (curr_h->delta() != NULL){
         for (auto key_it = curr_h->delta()->begin();
              key_it != curr_h->delta()->end(); ++key_it) {
-					if (boost::edge(key_it->second, key_it->first, g).second){
-						boost::remove_edge(key_it->second, key_it->first, g);
-						remove.push_back(*key_it);
-					}
-				}
-			}
+          if (boost::edge(key_it->second, key_it->first, g).second){
+            boost::remove_edge(key_it->second, key_it->first, g);
+            remove.push_back(*key_it);
+          }
+        }
+      }
 
-			if (curr_h->local_delta() != NULL){
-				for (auto key_it = curr_h->local_delta()->begin();
+      if (curr_h->local_delta() != NULL){
+        for (auto key_it = curr_h->local_delta()->begin();
              key_it != curr_h->local_delta()->end(); ++key_it) {
-					if (boost::edge(key_it->second, key_it->first, g).second){
-						boost::remove_edge(key_it->second, key_it->first, g);
-						remove.push_back(*key_it);
-					}
-				}
-			}
-		}
-		while (++curr_h != first);
-	}
+          if (boost::edge(key_it->second, key_it->first, g).second){
+            boost::remove_edge(key_it->second, key_it->first, g);
+            remove.push_back(*key_it);
+          }
+        }
+      }
+    }
+    while (++curr_h != first);
+  }
 
-	ct.test(v, empty, remove);
-	ct.update(remove, empty);
+  ct.test(v, empty, remove);
+  ct.update(remove, empty);
 
-	// restore g
+  // restore g
   for (auto key_it = remove.begin(); key_it != remove.end(); ++key_it) {
-		boost::add_edge(key_it->second, key_it->first, g);
-	}
+    boost::add_edge(key_it->second, key_it->first, g);
+  }
 }
 
 //! \brief processes the NDBG.
@@ -1507,12 +1507,13 @@ void Assembly::process_aos_graph()
 
   clock_t start_time = clock();
 
-  Connectivity_tester<Cell_const_handle> ct (m_number_of_parts,
-                                             *(m_aos_face_with_graph->graph()),
-                                             m_solutions, m_aos_face_with_graph,
+  Connectivity_tester<Cell_const_handle> ct(m_number_of_parts,
+                                            *(m_aos_face_with_graph->graph()),
+                                            m_solutions, m_aos_face_with_graph,
                                              true);
   m_aos_face_with_graph->set_visited(true);
-  propagate_aos_face(m_aos_face_with_graph, *(m_aos_face_with_graph->graph()), ct);
+  propagate_aos_face(m_aos_face_with_graph,
+                     *(m_aos_face_with_graph->graph()), ct);
   ct.finish();
 
   clock_t end_time = clock();
@@ -1676,7 +1677,7 @@ void Assembly::inc_alt_changed(const Field_info* /* field_info */)
   m_switch->set_which_choice(which_choice);
 }
 
-/* \brief processes change of the flag that indicates whether  to draw the
+/* \brief processes change of the flag that indicates whether to draw the
  * Gausian maps of the Minkowski sums of the parts.
  */
 void Assembly::draw_aos_minkowski_sums_changed(const Field_info* field_info)
@@ -1694,7 +1695,7 @@ void Assembly::draw_aos_minkowski_sums_changed(const Field_info* field_info)
   }
 }
 
-/* \brief processes change of the flag that indicates whether  to increment
+/* \brief processes change of the flag that indicates whether to increment
  * the Minkowski sums of the parts.
  */
 void Assembly::inc_minkowski_sums_changed(const Field_info* /* field_info */)
