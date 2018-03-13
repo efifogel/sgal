@@ -25,17 +25,14 @@ DEF POSITION PositionInterpolator {
 	     0 0 -2, 0 0 0, 0 0 2, 0 0 0 ]
 }
 
-Group {
+DEF TRANS Transform {
+  translation 1 2 3
   children [
-    DEF TRANS Transform {
-      children [
-	Shape {
-	  appearance Appearance {
-	    material DEF COLOR Material {diffuseColor 1 0 0}
-	  }
-	  geometry Box{}
-	}
-       ]
+    Shape {
+      appearance Appearance {
+        material Material {diffuseColor 1 0 0}
+      }
+      geometry Box {}
     }
    ]
 }
