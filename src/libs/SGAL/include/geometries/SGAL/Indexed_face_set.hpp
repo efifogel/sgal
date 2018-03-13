@@ -90,6 +90,11 @@ public:
    */
   virtual Container* create();
 
+  /*! Clone the container (virtual constructor) with deep copy.
+   * \return a clone of this container.
+   */
+  virtual Container* clone();
+
   /// \name Protoype handling
   //@{
   /*! Initialize the node prototype. */
@@ -708,8 +713,7 @@ private:
    */
   Boolean m_fair;
 
-  /*! Indicates whether to repair the normals of facets..
-   */
+  //! Indicates whether to repair the normals of facets..
   Boolean m_repair_normals;
 
   /*! Indicates whether to repair the orientation of facets of closed polyhedral
@@ -725,19 +729,19 @@ private:
   /*! Computes the convex hull of the coordinate set. */
   void convex_hull();
 
-  /*! The time is took to compute the minkowski sum in seconds. */
+  //! The time is took to compute the minkowski sum in seconds.
   float m_time;
 
-  /*! Indicates whether all edges are creased. */
+  //! Indicates whether all edges are creased.
   Boolean m_creased;
 
-  /*! Indicates whether all edges are smooth. */
+  //! Indicates whether all edges are smooth.
   Boolean m_smooth;
 
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 };
 

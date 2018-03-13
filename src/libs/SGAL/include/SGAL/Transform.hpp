@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_TRANSFORM_HPP
 #define SGAL_TRANSFORM_HPP
@@ -62,12 +62,12 @@ public:
     LAST
   };
 
-  /*! Constructor.
+  /*! Construct.
    * \param proto (in) determines whether to construct a prototype.
    */
   Transform(Boolean proto = false);
 
-  /*! Destructor. */
+  /*! Destruct. */
   virtual ~Transform();
 
   /* Construct the prototype.
@@ -79,6 +79,11 @@ public:
    * \return a new container of this type.
    */
   virtual Container* create();
+
+  /*! Clone the container (virtual constructor) with deep copy.
+   * \return a clone of this container.
+   */
+  virtual Container* clone();
 
   /// \name Protoype handling
   //@{
@@ -209,37 +214,37 @@ protected:
   virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
-  /*! The translation vector. */
+  //! The translation vector.
   Vector3f m_translation;
 
-  /*! The rotation vector. */
+  //! The rotation vector.
   Rotation m_rotation;
 
-  /*! The scale vector. */
+  //! The scale vector.
   Vector3f m_scale;
 
-  /*! The scale oriantation vector. */
+  //! The scale oriantation vector.
   Rotation m_scale_orientation;
 
-  /*! The center of the transform. */
+  //! The center of the transform.
   Vector3f m_center;
 
-  /*! The matrix representing the transform. */
+  //! The matrix representing the transform.
   Matrix4f m_matrix;
 
-  /*! The inverse of the matrix representing the transform. */
+  //! The inverse of the matrix representing the transform.
   Matrix4f m_inverse_matrix;
 
-  /*! Indicates whether the matrix is not up-to-date. */
+  //! Indicates whether the matrix is not up-to-date.
   Boolean m_dirty_matrix;
 
-  /*! Indicates whether the transform should be reset. */
+  //! Indicates whether the transform should be reset.
   bool m_reset;
 
   /*! Indicates whether the inverse transform matrix is dirty and thus must
@@ -259,7 +264,7 @@ private:
    */
   Boolean m_transformed;
 
-  /*! Default values */
+  //! Default values.
   static const Vector3f s_def_translation;
   static const Rotation s_def_rotation;
   static const Vector3f s_def_scale;

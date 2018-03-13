@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
 #include <algorithm>
@@ -69,6 +69,14 @@ Transform::Transform(Boolean proto) :
 
 //! \brief destructor.
 Transform::~Transform() {}
+
+//! \brief clones the container (virtual constructor) with deep-copy.
+Container* Transform::clone()
+{
+  if (m_dirty_parts) clean_parts();
+  if (m_dirty_matrix) clean_matrix();
+  Container::clone();
+}
 
 //! \brief sets the affine transform 4x4 matrix.
 void Transform::set_matrix(const Matrix4f& matrix)

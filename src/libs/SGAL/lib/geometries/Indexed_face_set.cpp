@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
 #include <sstream>
@@ -1274,6 +1274,24 @@ void Indexed_face_set::set_repair(Boolean triangulate_holes,
   m_triangulate_holes = triangulate_holes;
   m_repair_orientation = repair_orientation;
   if (m_triangulate_holes || m_repair_orientation) m_repaired = false;
+}
+
+//! \brief clones the container (virtual constructor) with deep-copy.
+Container* Indexed_face_set::clone()
+{
+  if (is_dirty_coord_array()) clean_coords();
+  if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  if (!m_repaired && (m_triangulate_holes || m_repair_orientation)) {
+    repair();
+    if (is_dirty_coord_array()) clean_coords();
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
+  else if (is_convex_hull() && is_dirty_polyhedron()) {
+    clean_polyhedron();
+    if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
+  }
+  if (!m_normals_repaired && m_repair_normals) repair_normals();
+  Container::clone();
 }
 
 SGAL_END_NAMESPACE
