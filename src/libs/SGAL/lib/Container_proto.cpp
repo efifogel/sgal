@@ -78,12 +78,7 @@ void Container_proto::add_field_info(Field_info* field_info)
  */
 Field_info* Container_proto::get_field_info(Uint id) const
 {
-  //! !todo currently not all field enums are made field-info records.
-//   if (id >= m_first_id) {
-//     Field_info_id_const_iter fi = m_field_info_ids.find(id);
-//     return (fi != m_field_info_ids.end()) ? (*fi).second : NULL;
-//   }
-  Field_info_id_const_iter fi = m_field_info_ids.find(id);
+  auto fi = m_field_info_ids.find(id);
   if (fi != m_field_info_ids.end()) return (*fi).second;
   if (m_ancestor) return m_ancestor->get_field_info(id);
   return nullptr;
@@ -101,10 +96,10 @@ Field_info* Container_proto::get_field_info(const std::string& name) const
   Field_info_name_const_iter fi;
 
   for (fi = m_field_info_names.begin(); fi != m_field_info_names.end(); ++fi) {
-    std::string cur_name = (*fi).first;
-    if (cur_name == name) break;
-    //! \todo is the following really necessary?
-    // (cur_name + "_changed") == name || ("set_" + cur_name) == name)
+    if ((*fi).first == name) break;
+    //! \todo add (optional?) "set_" to all input fields and (optional?)
+    // "_changed" to all output fields; first, need to fix the rule types of
+    // all fields.
   }
 
   // Return the id - if it is found
