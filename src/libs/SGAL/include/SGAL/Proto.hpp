@@ -58,6 +58,7 @@ public:
                          Rotation_array,
                          String_array,
                          Shared_container_array> Variant_field;
+
   /*! Construct.
    * \param[in] proto determines whether to construct a prototype.
    */
@@ -93,7 +94,7 @@ public:
   /// \name field handlers
   //@{
   /*! Obtain a handle to a dynamically generated field.
-   * \param field_info (in) the field information record.
+   * \param[in] field_info the field information record.
    * \return a pointer to the field.
    */
   template <typename T>
