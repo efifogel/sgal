@@ -49,10 +49,10 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Node.hpp"
-#include "SGAL/Field_info.hpp"
 #include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_type.hpp"
-#include "SGAL/Group.hpp"
+#include "SGAL/Field_info.hpp"
+#include "SGAL/Field_infos.hpp"
 #include "SGAL/Group.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Container_factory.hpp"
@@ -125,7 +125,6 @@ SGAL_END_NAMESPACE
 %type <Shared_container> statement
 %type <Shared_container> nodeStatement routeStatement
 %type <Shared_container> node sfnodeValue
-%type <Proto*> protoRooting
 
 %type <Shared_string> NUMBER STRING_LITERAL
 %type <Shared_string> IDENTIFIER
@@ -405,17 +404,30 @@ protoStatement  : proto
 
 protoRooting    : %empty
                 {
-                  root = $$ = Proto::prototype();
-                  $$->init_prototype();
+                  root = new Group;
+                  SGAL_assertion(root);
                 }
                 ;
 
 proto           : K_PROTO protoRooting nodeTypeId "[" interfaceDeclarations "]" "{" statements "}"
                 {
-                  $2->set_tag(*$3);
-                  $2->set_field_infos($5);
+                  // Construct a new prototype contasiner.
+                  auto* proto = Proto::prototype();
+                  // Set the tag of the new prototype container.
+                  proto->set_tag(*$3);
                   auto* factory = Container_factory::get_instance();
-                  factory->do_register($2);
+                  // Register the new prototype container (using the tag).
+                  factory->do_register(proto);
+                  // Set the field-info records of this container.
+                  proto->set_field_infos($5);
+                  auto* field_info = proto->get_field_info(Proto::CHILDREN);
+                  SGAL_assertion(field_info);
+                  auto* childs_field_info =
+                    reinterpret_cast<MF_shared_container*>(field_info);
+                  SGAL_assertion(childs_field_info);
+                  childs_field_info->set_initial_value(root->get_childs());
+                  delete root;
+                  root = nullptr;
                 }
                 ;
 
