@@ -171,6 +171,16 @@ public:
   /*! Destruct. */
   virtual ~Field_info_template() {}
 
+  /*! Set the initial value.
+   * \param[in] the initial value;
+   */
+  void set_initial_value(const T& value) { m_initial_value = value; }
+
+  /*! Obtain the initial value.
+   * \return the initial value;
+   */
+  const T& get_initial_value() const { return m_initial_value; }
+
   /*! Obtain the field-info type id.
    */
   virtual Field_type get_type_id() const { return type_id; }
