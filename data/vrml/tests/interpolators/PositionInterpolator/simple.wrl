@@ -26,7 +26,6 @@ DEF POSITION PositionInterpolator {
 }
 
 DEF TRANS Transform {
-  translation 1 2 3
   children [
     Shape {
       appearance Appearance {
