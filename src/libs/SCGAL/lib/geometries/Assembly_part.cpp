@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
 #pragma warning( disable : 4800)
@@ -64,6 +64,13 @@ Assembly_part::Assembly_part(Boolean proto) :
 
 //! \brief destructor.
 Assembly_part::~Assembly_part() { clear(); }
+
+//! \brief clones the container (virtual constructor) with deep-copy.
+Container* Assembly_part::clone()
+{
+  if (m_dirty) clean();
+  Container::clone();
+}
 
 //! \brief initializes the node prototype.
 void Assembly_part::init_prototype()

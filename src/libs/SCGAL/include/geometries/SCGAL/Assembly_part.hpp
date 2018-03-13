@@ -17,7 +17,7 @@
 // $Id: Assembly_part.hpp 13487 2012-06-05 23:31:41Z efif $
 // $Revision: 13487 $
 //
-// Author(s) : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_ASSEMBLY_PART_HPP
 #define SCGAL_ASSEMBLY_PART_HPP
@@ -82,6 +82,11 @@ class SGAL_SCGAL_DECL Assembly_part : public Group {
    */
   virtual Container* create();
 
+  /*! Clone the container (virtual constructor) with deep copy.
+   * \return a clone of this container.
+   */
+  virtual Container* clone();
+
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
@@ -116,7 +121,7 @@ class SGAL_SCGAL_DECL Assembly_part : public Group {
 
 protected:
   /*! Obtain the tag (type) of the container. */
-  virtual const std::string& get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const;
 
   /*! Construct all the SGM's that comprise this part. */
   void clean_sgm_geos(Container* node);
@@ -125,22 +130,22 @@ protected:
   void clean_sgm_geos(Group* group);
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static std::string s_tag;
 
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
-  /*! Is the internal representation dirty and requires cleaning. */
+  //! Is the internal representation dirty and requires cleaning.
   Boolean m_dirty;
 
-  /*! A non-negative number unique among the parts of a given puzzle. */
+  //! A non-negative number unique among the parts of a given puzzle.
   Uint m_id;
 
-  /*! The list of Sgm geometries. */
+  //! The list of Sgm geometries.
   Sgm_geo_list m_sgm_geos;
 
-  /*! The list of Sgm appearances. */
+  //! The list of Sgm appearances.
   Appearance_list m_sgm_apps;
 
   /*! A list of flags that indicates whether the corresponding appearance is
@@ -154,6 +159,9 @@ private:
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief obtains the tag (type) of the container.
+inline const std::string& Assembly_part::get_tag() const { return s_tag; }
 
 //! \brief constructs the prototype.
 inline Assembly_part* Assembly_part::prototype()
