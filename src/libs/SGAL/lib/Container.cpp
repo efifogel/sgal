@@ -237,7 +237,11 @@ void Container::copy(const Container* source)
   for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const auto* field_info = (*it).second;
     SGAL_assertion(field_info);
+    auto rule = field_info->get_rule();
+    if ((rule == Field_rule::RULE_IN) || (rule == Field_rule::RULE_OUT))
+      continue;
     field_info->clone(source, this);
+    field_info->execute(this);
   }
 }
 
