@@ -162,14 +162,14 @@ void Container_factory::do_register(Container* container)
 Shared_container Container_factory::create(const std::string& type)
 {
   auto iter = m_map.find(type);
-  if (iter != m_map.end()) return Shared_container(iter->second->clone());
+  if (iter != m_map.end()) return Shared_container(iter->second->create());
 
   // try to add the "sgal" prefix:
   // The "sgal" prefix is added to containers that differ from the standard
   std::string alt_name("sgal");
   alt_name += type;
   iter = m_map.find(alt_name);
-  if (iter != m_map.end()) return Shared_container(iter->second->clone());
+  if (iter != m_map.end()) return Shared_container(iter->second->create());
   return Shared_container();
 }
 
