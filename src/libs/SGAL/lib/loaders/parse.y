@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel
 
 // %debug
 %require "2.7"
@@ -125,6 +127,7 @@ SGAL_END_NAMESPACE
 %type <Shared_container> statement
 %type <Shared_container> nodeStatement routeStatement
 %type <Shared_container> node sfnodeValue
+%type <Proto*> protoRooting
 
 %type <Shared_string> NUMBER STRING_LITERAL
 %type <Shared_string> IDENTIFIER
@@ -404,30 +407,26 @@ protoStatement  : proto
 
 protoRooting    : %empty
                 {
-                  root = new Group;
-                  SGAL_assertion(root);
+                  // Construct a new prototype contasiner.
+                  root = $$ = Proto::prototype();
                 }
                 ;
 
 proto           : K_PROTO protoRooting nodeTypeId "[" interfaceDeclarations "]" "{" statements "}"
                 {
-                  // Construct a new prototype contasiner.
-                  auto* proto = Proto::prototype();
                   // Set the tag of the new prototype container.
-                  proto->set_tag(*$3);
+                  $2->set_tag(*$3);
                   auto* factory = Container_factory::get_instance();
                   // Register the new prototype container (using the tag).
-                  factory->do_register(proto);
+                  factory->do_register($2);
                   // Set the field-info records of this container.
-                  proto->set_field_infos($5);
-                  auto* field_info = proto->get_field_info(Proto::CHILDREN);
+                  $2->set_field_infos($5);
+                  auto* field_info = $2->get_field_info(Proto::CHILDREN);
                   SGAL_assertion(field_info);
-                  auto* childs_field_info =
-                    reinterpret_cast<MF_shared_container*>(field_info);
-                  SGAL_assertion(childs_field_info);
-                  childs_field_info->set_initial_value(root->get_childs());
-                  delete root;
-                  root = nullptr;
+                  // Move the value of the 'children' field to the initial-value
+                  // of the associated information-record (of the prototype), so
+                  // that it can be accessed directly from the prototype.
+                  field_info->move_field_to_initial_value($2);
                 }
                 ;
 
