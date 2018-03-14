@@ -14,10 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 11857 $
+// SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s) : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_NAVIGATION_SENSOR_HPP
 #define SGAL_NAVIGATION_SENSOR_HPP
@@ -78,7 +77,7 @@ public:
     LAST
   };
 
-  /*! Constructor
+  /*! Construct.
    * \param translation (in) the init value of translation.
    * \param rotation (in) the init value of rotation.
    */
@@ -86,7 +85,7 @@ public:
                     const Rotation& rotation = Rotation(),
                     Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destruct. */
   virtual ~Navigation_sensor();
 
   /* Construct the prototype. */
@@ -125,19 +124,24 @@ public:
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
-  /*! Set the rotation field. */
+  /*! Set the rotation field.
+   */
   void set_rotation(const Rotation& rotation);
 
-  /*! Set the rotation field. */
+  /*! Set the rotation field.
+   */
   void set_rotation(Float v0, Float v1, Float v2, Float v3);
 
-  /*! Set the translation field. */
+  /*! Set the translation field.
+   */
   void set_translation(const Vector3f& translation);
 
-  /*! Set the translation field. */
+  /*! Set the translation field.
+   */
   void set_translation(Float v0, Float v1, Float v2);
 
-  /*! Set the scene graph. */
+  /*! Set the scene graph.
+   */
   void set_scene_graph(Scene_graph* sg);
 
 #if 0
@@ -145,16 +149,20 @@ public:
   Window_handle* get_win_handle() const;
 #endif
 
-  /*! Register the mouse and mostion events. */
+  /*! Register the mouse and mostion events.
+   */
   void register_events();
 
-  /*! Register the mouse and mostion events. */
+  /*! Register the mouse and mostion events.
+   */
   void unregister_events();
 
-  /*! Print out the name of this agent (for debugging purposes) */
+  /*! Print out the name of this agent (for debugging purposes).
+   */
   virtual void identify();
 
-  /*! Handle mouse events. */
+  /*! Handle mouse events.
+   */
   virtual void handle(Mouse_event* event);
 
   /*! Handle motion events. */
@@ -165,7 +173,8 @@ public:
    */
   void set_dragging_speed(Float dragging_speed);
 
-  /*! Obtain the dragging speed. */
+  /*! Obtain the dragging speed.
+   */
   Float get_dragging_speed() const;
 
   /*! Set the minimum zoom in distance.
@@ -175,11 +184,13 @@ public:
 
   virtual bool is_left_button_double_click();
 
-  /*! Reset the sensor to the default translation and rotation. */
+  /*! Reset the sensor to the default translation and rotation.
+   */
   void reset();
 
 protected:
-  /*! Obtain the tag (type) of the container. */
+  /*! Obtain the tag (type) of the container.
+   */
   virtual const std::string& get_tag() const;
 
   // functions that implement the virtual functions of Event_filter and
@@ -198,7 +209,8 @@ protected:
    */
   virtual void mouse_drag(const Vector2sh& from, const Vector2sh & to);
 
-  /*! Unlocke the dragging at when it is done. */
+  /*! Unlocke the dragging at when it is done.
+   */
   virtual void dragging_done(const Vector2sh& point);
 
   /*! Handle a track ball update.
@@ -235,10 +247,12 @@ protected:
    */
   virtual Bindable_stack* get_stack();
 
-  /*! Enable the bindable node. */
+  /*! Enable the bindable node.
+   */
   virtual void enable();
 
-  /*! Disable the bindable node. */
+  /*! Disable the bindable node.
+   */
   virtual void disable();
 
 private:
@@ -290,7 +304,8 @@ private:
   //! Indicates that rotation is being performed.
   bool m_rotating;
 
-  /*! Issue events at the end of a transformation session. */
+  /*! Issue events at the end of a transformation session.
+   */
   void transform_done();
 
   bool setup_cursor();
