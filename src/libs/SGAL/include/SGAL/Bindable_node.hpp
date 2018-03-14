@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_BINDABLE_NODE_HPP
 #define SGAL_BINDABLE_NODE_HPP
@@ -134,10 +134,10 @@ protected:
   virtual void disable() {}
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static std::string s_tag;
 
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 };
 
