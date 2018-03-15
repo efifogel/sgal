@@ -580,7 +580,7 @@ void Transform::init_prototype()
   auto reset_func =
     static_cast<Boolean_handle_function>(&Transform::reset_handle);
   s_prototype->add_field_info(new SF_bool(RESET, "reset",
-                                          Field_rule::RULE_OUT,
+                                          Field_rule::RULE_IN,
                                           reset_func,
                                           exec_func));
 }
