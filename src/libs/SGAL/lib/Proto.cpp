@@ -363,17 +363,19 @@ void Proto::set_attributes(Element* elem)
   childs.resize(proto_childs.size());
 
   /*! \todo Instead of simply cloning, we need to replace the fields in the
-   * source sub-graphs with the formal values of the corresponding fields given
-   * in the declaration section. These values are stored as the initial values
-   * of field-information records (in the prototype). Make sure to skip the
-   * 'children' field-information record when the list of information records
-   * are processed.
+   *        source sub-graphs with the formal values of the corresponding fields
+   *        given in the declaration section. These values are stored as the
+   *        initial values of field-information records (in the prototype). Make
+   *        sure to skip the 'children' field-information record when the list
+   *        of information records are processed.
+   * \todo Introduce a mechanism that indicates whether to clone or simply copy
+   *       the handle.
    * \todo need to call:
-   * 1. cont->add_scene_graph(scene_graph), and
-   * 2. scene_graph->add_container(cont)
-   * where cont is the cloned container, for every cloned container.
-   * It implies, that we need to pass the scene graph to the clone() function
-   * as an argument.
+   *       1. cont->add_scene_graph(scene_graph), and
+   *       2. scene_graph->add_container(cont)
+   *       where cont is the cloned container, for every cloned container.
+   *       It implies, that we need to pass the scene graph to the clone()
+   *       function as an argument.
    */
   std::transform(proto_childs.begin(), proto_childs.end(), childs.begin(),
                  [] (Shared_container cont)
