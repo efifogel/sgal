@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 /*!
  * \todo Introduce "enable" event
@@ -39,7 +41,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Navigation_sensor::s_tag = "NavigationSensor";
-Container_proto* Navigation_sensor::s_prototype(NULL);
+Container_proto* Navigation_sensor::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Navigation_sensor, "Navigation_sensor");
 
@@ -48,7 +50,7 @@ Navigation_sensor::Navigation_sensor(const Vector3f& translation,
                                      const Rotation& rotation,
                                      Boolean proto) :
   Bindable_node(proto),
-  m_scene_graph(NULL),
+  m_scene_graph(nullptr),
   m_translation(translation),
   m_rotation(rotation),
   m_drag_locked(false),
@@ -121,7 +123,7 @@ void Navigation_sensor::init_prototype()
 void Navigation_sensor::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the prototype.
@@ -436,11 +438,9 @@ void Navigation_sensor::set_attributes(Element* elem)
 {
   Bindable_node::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "translation") {
       Vector3f vec(value);
       set_translation(vec);
@@ -460,10 +460,7 @@ void Navigation_sensor::set_attributes(Element* elem)
 }
 
 //! \brief adds the container to a given scene.
-void Navigation_sensor::add_to_scene(Scene_graph* sg)
-{
-  set_scene_graph(sg);
-}
+void Navigation_sensor::add_to_scene(Scene_graph* sg) { set_scene_graph(sg); }
 
 #if 0
 //! \brief

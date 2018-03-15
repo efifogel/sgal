@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_FIELD_INFO_HPP
 #define SGAL_FIELD_INFO_HPP
@@ -139,6 +141,13 @@ public:
    * \param[in] target the target container.
    */
   virtual void clone(const Container* source, Container* target) const = 0;
+
+  /*! Move the value of the field, of a given container, associated with this
+   * field-information record to the initial value of the field-information
+   * record.
+   * \param container the container that holds the field.
+   */
+  virtual void move_field_to_initial_value(Container* container) = 0;
 
   /*! Create an object that holds a pointer to the value of an actual field
    * with this info.

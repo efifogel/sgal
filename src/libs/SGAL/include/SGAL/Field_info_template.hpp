@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_FIELD_INFO_TEMPLATE_HPP
 #define SGAL_FIELD_INFO_TEMPLATE_HPP
@@ -106,13 +108,28 @@ struct Cloner<Shared_container> {
 
 template <>
 struct Cloner<Shared_container_array> {
-  void operator()(Shared_container_array source, Shared_container_array& target)
+  void operator()(const Shared_container_array& source,
+                  Shared_container_array& target)
   {
     target.resize(source.size());
     std::transform(source.begin(), source.end(), target.begin(),
                    [](Shared_container cont)
                    { return Shared_container((cont) ? cont->clone() : nullptr); });
   }
+};
+
+/*! \class Mover Field_info_template.hpp
+ */
+template <typename T>
+struct Mover {
+  void operator()(const T& source, T& target) { target = source; }
+};
+
+template <>
+struct Mover<Shared_container_array> {
+  template <typename T>
+  void operator()(const std::vector<T> source, std::vector<T>& target)
+  { target = std::move(source); }
 };
 
 /*!
@@ -171,11 +188,6 @@ public:
   /*! Destruct. */
   virtual ~Field_info_template() {}
 
-  /*! Set the initial value.
-   * \param[in] the initial value;
-   */
-  void set_initial_value(const T& value) { m_initial_value = value; }
-
   /*! Obtain the initial value.
    * \return the initial value;
    */
@@ -196,6 +208,19 @@ public:
     T* target_handle = (target->*m_handle)(this);
     Cloner<T> cloner;
     cloner(*source_handle, *target_handle);
+  }
+
+  /*! Move the value of the field, of a given container, associated with this
+   * field-information record to the initial value of the field-information
+   * record.
+   * \param container the container that holds the field.
+   */
+  virtual void move_field_to_initial_value(Container* container)
+  {
+    T* handle = ((const_cast<Container*>(container))->*m_handle)(this);
+    Mover<T> mover;
+    mover(*handle, m_initial_value);
+    // m_initial_value = std::move(*handle);
   }
 
   /*! Create an object that holds a pointer to the value of an actual field
