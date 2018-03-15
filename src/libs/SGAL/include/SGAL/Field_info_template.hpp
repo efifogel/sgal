@@ -37,6 +37,7 @@
 #include "SGAL/Field_type.hpp"
 #include "SGAL/Value_holder.hpp"
 #include "SGAL/Execution_function.hpp"
+#include "Field_info_transformer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -204,10 +205,26 @@ public:
    */
   virtual void clone(const Container* source, Container* target) const
   {
-    const T* source_handle = ((const_cast<Container*>(source))->*m_handle)(this);
-    T* target_handle = (target->*m_handle)(this);
+    const auto* source_handle =
+      ((const_cast<Container*>(source))->*m_handle)(this);
+    auto* target_handle = (target->*m_handle)(this);
     Cloner<T> cloner;
     cloner(*source_handle, *target_handle);
+  }
+
+  /*! Transform the field, the (field) info of which is this object, of a source
+   * container and store it in a target container.
+   * \param[in] source the source container.
+   * \param[in] target the target container.
+   */
+  virtual void transform(const Container* source, Container* target,
+                         Field_value_transformer& op) const
+  {
+    const auto* source_handle =
+      ((const_cast<Container*>(source))->*m_handle)(this);
+    auto* target_handle = (target->*m_handle)(this);
+    Field_info_transformer<T> transformer;
+    transformer(*source_handle, *target_handle, op);
   }
 
   /*! Move the value of the field, of a given container, associated with this
@@ -217,10 +234,9 @@ public:
    */
   virtual void move_field_to_initial_value(Container* container)
   {
-    T* handle = ((const_cast<Container*>(container))->*m_handle)(this);
+    auto* handle = ((const_cast<Container*>(container))->*m_handle)(this);
     Mover<T> mover;
     mover(*handle, m_initial_value);
-    // m_initial_value = std::move(*handle);
   }
 
   /*! Create an object that holds a pointer to the value of an actual field
@@ -229,8 +245,8 @@ public:
    */
   virtual Value_holder_base* create_value_holder(Container* container) const
   {
-    T* handle = (container->*m_handle)(this);
-    Value_holder<T>* holder = new Value_holder<T>(handle);
+    auto* handle = (container->*m_handle)(this);
+    auto* holder = new Value_holder<T>(handle);
     if (m_use_initial_value) holder->set_value(m_initial_value);
     return holder;
   }
@@ -241,7 +257,7 @@ public:
    */
   virtual void detach(Container* container) const
   {
-    T* handle = (container->*m_handle)(this);     // Obtain the value
+    auto* handle = (container->*m_handle)(this);     // Obtain the value
     Detacher<T> detacher;
     detacher(*handle, container, this);
   }
@@ -258,7 +274,7 @@ public:
   virtual void write(Container* container, Formatter* formatter,
                      Boolean declaration = false) const
   {
-    const T* handle = (container->*m_handle)(this);
+    const auto* handle = (container->*m_handle)(this);
     Field_info::write(formatter, *handle, m_initial_value, declaration);
   }
 };
