@@ -257,13 +257,6 @@ public:
   /*! Processe change of content. */
   void process_content_changed();
 
-  /*! Deeply copy a given container. Containers that are fields of the source
-   * container are cloned, and so are elements of array of containers that are
-   * fields of the source container
-   * \param other[in] the container to copy.
-   */
-  void copy(const Container* other);
-
   typedef std::map<const Field_info*, Field*>           Field_map;
 
   /*! Obtain the xxx. */
@@ -272,6 +265,13 @@ public:
 protected:
   /*! A pointer to the execution coordinator. */
   Execution_coordinator* m_execution_coordinator;
+
+  /*! Deeply copy a given container. Containers that are fields of the source
+   * container are cloned, and so are elements of array of containers that are
+   * fields of the source container
+   * \param other[in] the container to copy.
+   */
+  void copy(const Container* other);
 
 private:
   //! The name of the container. Given as the value of the DEF tag.
