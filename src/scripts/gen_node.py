@@ -361,6 +361,15 @@ def print_group(out, desc, fnc, *args):
   print_line(out, "//@}")
   print_empty_line(out)
 
+#! print friend declarations.
+def print_friends(config, out):
+  if not config.has_option('class', 'friends'):
+    return
+  friends = ast.literal_eval(config.get('class', 'friends'))
+  for friend in friends:
+    print_line(out, 'friend class {};'.format(friend))
+  print_empty_line(out)
+
 #! Print enumerations.
 def print_field_enumeration(out, derived_class_name, fields):
   print_line(out, "enum {", inc=True)
@@ -822,6 +831,7 @@ def generate_hpp(library, config, fields, out):
   print_line(out, "public:")
   increase_indent()
 
+  print_friends(config, out)
   print_field_enumeration(out, derived_class_name, fields)	# enumerations
   print_shared_typedefs(config, out, fields)			# typedefs
   print_array_typedefs(out, fields)				# typedefs
