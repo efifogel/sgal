@@ -1074,8 +1074,8 @@ def print_init_prototype_definition(config, out, class_name, derived_class_name,
   print_line(out, "// Add the field-info records to the prototype:")
   # print_line(out, "auto exec_func = static_cast<Execution_function>(&%s::structure_changed);" % class_name)
   default_exec_function = ''
-  if config.has_option('class', 'execution_function'):
-    default_exec_function = config.get('class', 'execution_function')
+  if config.has_option('fields', 'execution-function'):
+    default_exec_function = config.get('class', 'execution-function')
   if default_exec_function:
     print_line(out, 'auto exec_func = static_cast<Execution_function>(&{});'.format(default_exec_function))
 
