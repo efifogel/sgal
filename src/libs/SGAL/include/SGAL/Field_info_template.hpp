@@ -37,7 +37,7 @@
 #include "SGAL/Field_type.hpp"
 #include "SGAL/Value_holder.hpp"
 #include "SGAL/Execution_function.hpp"
-#include "Field_info_transformer.hpp"
+#include "SGAL/Field_info_transformer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
