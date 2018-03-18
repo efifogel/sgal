@@ -101,7 +101,7 @@ is in the LD_LIBRARY_PATH.
 * libboost-all-dev
 * libmagick++-dev
 * libgmp-dev
-* libmpfr-dev
+* libmpfr-dev (Currently, a special version of this linrary must be used; see Section 2.5.4. V8 for details.)
 * libv8-dev
 * libfreetype6-dev
 * bison, YACC-compatible parser generator >= 2.7.91
