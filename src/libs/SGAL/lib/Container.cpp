@@ -241,7 +241,6 @@ void Container::copy(const Container* source)
     if ((rule == Field_rule::RULE_IN) || (rule == Field_rule::RULE_OUT))
       continue;
     field_info->clone(source, this);
-    field_info->execute(this);
   }
 }
 
