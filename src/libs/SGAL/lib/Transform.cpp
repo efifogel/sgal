@@ -73,9 +73,42 @@ Transform::~Transform() {}
 //! \brief clones the container (virtual constructor) with deep-copy.
 Container* Transform::clone()
 {
-  if (m_dirty_parts) clean_parts();
-  if (m_dirty_matrix) clean_matrix();
-  Container::clone();
+  auto* cont = new Transform;
+  SGAL_assertion(cont);
+
+  // Clone only the fields that belong to the base container.
+  auto* proto = get_prototype();
+  for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
+    if ((*it).first > FIRST) continue;
+    const auto* field_info = (*it).second;
+    SGAL_assertion(field_info);
+    auto rule = field_info->get_rule();
+    if ((rule == Field_rule::RULE_IN) || (rule == Field_rule::RULE_OUT))
+      continue;
+    field_info->clone(this, cont);
+  }
+
+  // Clone (copy) the fields of this container:
+  cont->copy_local(this);
+  return cont;
+}
+
+//! \brief copies only the local fields of a given container.
+void Transform::copy_local(const Transform* other)
+{
+  if (!other->m_dirty_parts) {
+    m_translation = other->m_translation;
+    m_rotation = other->m_rotation;
+    m_scale = other->m_scale;
+    m_scale_orientation = other->m_scale_orientation;
+    m_center = other->m_center;
+  }
+  if (!other->m_dirty_matrix) {
+    m_matrix.set(other->m_matrix);
+  }
+  m_dirty_parts = other->m_dirty_parts;
+  m_dirty_matrix = other->m_dirty_matrix;
+  m_dirty_inverse = other->m_dirty_inverse;
 }
 
 //! \brief sets the affine transform 4x4 matrix.
@@ -311,9 +344,7 @@ void Transform::set_translation(float v0, float v1, float v2)
 {
   if (m_dirty_parts) clean_parts();
   m_translation.set(v0, v1, v2);
-  m_dirty_matrix = true;
-  m_dirty_inverse = true;
-  m_dirty_bounding_sphere = true;
+  parts_changed(get_field_info(TRANSLATION));
 }
 
 //! \brief sets the rotation.
@@ -322,9 +353,7 @@ void Transform::set_rotation(float v0, float v1, float v2, float angle)
   if (m_dirty_parts) clean_parts();
   m_rotation.set_axis(v0, v1, v2);
   m_rotation.set_angle(angle);
-  m_dirty_matrix = true;
-  m_dirty_inverse = true;
-  m_dirty_bounding_sphere = true;
+  parts_changed(get_field_info(ROTATION));
 }
 
 //! \brief sets the scale factors.
@@ -334,9 +363,7 @@ void Transform::set_scale(float s0, float s1, float s2)
   m_scale[0] = s0;
   m_scale[1] = s1;
   m_scale[2] = s2;
-  m_dirty_matrix = true;
-  m_dirty_inverse = true;
-  m_dirty_bounding_sphere = true;
+  parts_changed(get_field_info(SCALE));
 }
 
 //! \brief sets the translation.
@@ -397,9 +424,7 @@ void Transform::set_scale_orientation(float v0, float v1, float v2, float v3)
 {
   if (m_dirty_parts) clean_parts();
   m_scale_orientation.set(v0, v1, v2, v3);
-  m_dirty_matrix = true;
-  m_dirty_inverse = true;
-  m_dirty_bounding_sphere = true;
+  parts_changed(get_field_info(SCALE_ORIENTATION));
 }
 
 //! \brief obtains the scale-orientation.
@@ -433,9 +458,7 @@ void Transform::set_center(float v0, float v1, float v2)
   m_center[0] = v0;
   m_center[1] = v1;
   m_center[2] = v2;
-  m_dirty_matrix = true;
-  m_dirty_inverse = true;
-  m_dirty_bounding_sphere = true;
+  parts_changed(get_field_info(CENTER));
 }
 
 //! \brief obtains the center of rotation.
@@ -461,12 +484,13 @@ const Vector3f& Transform::get_center()
 /*! \brief raises the matrix dirty flag, and sets the flag that indicates that
  * rendering is required.
  */
-void Transform::parts_changed(const Field_info* /* field_info */)
+void Transform::parts_changed(const Field_info* field_info)
 {
   m_dirty_matrix = true;
   m_dirty_inverse = true;
   m_dirty_bounding_sphere = true;
   set_rendering_required();
+  field_changed(field_info);
 }
 
 /*! \brief culls the transform node.

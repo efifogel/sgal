@@ -209,6 +209,10 @@ public:
    */
   void parts_changed(const Field_info* field_info = nullptr);
 
+  /*! Copy only the local fields of a given container.
+   */
+  void copy_local(const Transform* other);
+
 protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
