@@ -21,12 +21,22 @@
 #ifndef SGAL_FIELD_VALUE_TRANSFORMER_HPP
 #define SGAL_FIELD_VALUE_TRANSFORMER_HPP
 
+#include <boost/shared_ptr.hpp>
+
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
+#include "SGAL/Vector2f.hpp"
+#include "SGAL/Vector3f.hpp"
+#include "SGAL/Vector4f.hpp"
+#include "SGAL/Rotation.hpp"
+#include "SGAL/Bounding_sphere.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class SGAL_SGAL_DECL Field_value_transformer {
 public:
+  typedef boost::shared_ptr<Container>                  Shared_container;
+
   virtual Boolean operator()(Boolean value) { return value; }
   virtual Float operator()(Float value) { return value; }
   virtual Uint operator()(Uint value) { return value; }
