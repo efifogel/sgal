@@ -579,7 +579,7 @@ if (SGAL_USE_V8)
   set(SGAL_V8_LIBRARIES ${V8_LIBRARY} v8_libplatform)
 endif()
 
-#Add all include directories
+# Add all include directories
 include_directories(include/)
 include_directories(include/SGAL)
 include_directories(include/engines)
@@ -623,7 +623,6 @@ else()
   add_library(SGAL STATIC ${SGAL_SRC_FILES})
 endif()
 
-
 set_target_properties(SGAL PROPERTIES
   VERSION "${SGAL_SOVERSION}"
   SOVERSION "${SGAL_SONAME_VERSION}"
@@ -653,22 +652,23 @@ target_link_libraries(SGAL
 set_property(TARGET SGAL PROPERTY INSTALL_RPATH_USE_LINK_PATH TRUE)
 set_property(TARGET SGAL PROPERTY INSTALL_RPATH "${CGAL_DIR}/lib")
 
-set(SGAL_INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/engines
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/events
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/geo
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/geometries
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/geometries/primitive_shapes
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/interpolators
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/IO
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/lights
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/loaders
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/primitives
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/sensors
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/utilities)
+set(SGAL_SGAL_INCLUDE_DIRS
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/engines
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/events
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/geo
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/geometries
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/geometries/primitive_shapes
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/interpolators
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/IO
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/lights
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/loaders
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/primitives
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/sensors
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/utilities
+  CACHE PATH "SGAL source include directories")
 
-foreach (dir ${SGAL_INCLUDE_DIRS})
+foreach (dir ${SGAL_SGAL_INCLUDE_DIRS})
   if (EXISTS ${dir}/SGAL)
     install(DIRECTORY ${dir}/SGAL
             DESTINATION ${SGAL_INSTALL_INC_DIR}
@@ -678,7 +678,12 @@ foreach (dir ${SGAL_INCLUDE_DIRS})
   endif()
 endforeach()
 
+# set_target_properties(SGAL PROPERTIES
+#   PUBLIC_HEADER "$SGAL_PUBLIC_HEADERS")
+
 install(TARGETS SGAL
-        RUNTIME DESTINATION ${SGAL_INSTALL_BIN_DIR}
-        LIBRARY DESTINATION ${SGAL_INSTALL_LIB_DIR}
-        ARCHIVE DESTINATION ${SGAL_INSTALL_LIB_DIR})
+  EXPORT SGALTargets
+  RUNTIME DESTINATION ${SGAL_INSTALL_BIN_DIR} COMPONENT bin
+  LIBRARY DESTINATION ${SGAL_INSTALL_LIB_DIR} COMPONENT shlib
+#  PUBLIC_HEADER DESTINATION "${SGAL_INSTALL_INC_DIR}/SGAL" COMPONENT dev
+  ARCHIVE DESTINATION ${SGAL_INSTALL_LIB_DIR})

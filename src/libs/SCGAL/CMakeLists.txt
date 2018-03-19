@@ -195,14 +195,15 @@ target_link_libraries(SCGAL SGAL ${NON_WIN32_LIBRARIES})
 set_property(TARGET SCGAL PROPERTY INSTALL_RPATH_USE_LINK_PATH TRUE)
 set_property(TARGET SCGAL PROPERTY INSTALL_RPATH "${CGAL_DIR}/lib")
 
-set(SCGAL_INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/engines
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/geo
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/geometries
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/primitives)
+set(SGAL_SCGAL_INCLUDE_DIRS
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/engines
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/geo
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/geometries
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/primitives
+  CACHE PATH "SCGAL source include directories")
 
-foreach (dir ${SCGAL_INCLUDE_DIRS})
+foreach (dir ${SGAL_SCGAL_INCLUDE_DIRS})
   if (EXISTS ${dir}/SCGAL)
     install(DIRECTORY ${dir}/SCGAL
             DESTINATION ${SGAL_INSTALL_INC_DIR}

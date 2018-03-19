@@ -1,0 +1,18 @@
+# - Config file for the SGAL package
+# It defines the following variables
+#  SGAL_INCLUDE_DIRS - include directories for SGAL
+#  SGAL_LIBRARIES    - libraries to link against
+#  SGAL_EXECUTABLE   - the bar executable
+
+# Compute paths
+get_filename_component(SGAL_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+set(SGAL_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+if(NOT TARGET SGAL AND NOT SGAL_BINARY_DIR)
+  include("${SGAL_CMAKE_DIR}/SGALTargets.cmake")
+endif()
+
+# These are IMPORTED targets created by SGALTargets.cmake
+set(SGAL_LIBRARIES SGAL)
+set(SGAL_EXECUTABLE player)
