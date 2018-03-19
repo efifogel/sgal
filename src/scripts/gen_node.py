@@ -9,7 +9,53 @@ from sets import Set
 import ConfigParser, os
 import ast
 import distutils.util
+import collections
 
+# Ordered set
+class OrderedSet(collections.OrderedDict, collections.MutableSet):
+  def update(self, *args, **kwargs):
+    if kwargs:
+      raise TypeError("update() takes no keyword arguments")
+
+    for s in args:
+      for e in s:
+         self.add(e)
+
+  def add(self, elem):
+    self[elem] = None
+
+  def discard(self, elem):
+    self.pop(elem, None)
+
+  def __le__(self, other):
+    return all(e in other for e in self)
+
+  def __lt__(self, other):
+    return self <= other and self != other
+
+  def __ge__(self, other):
+    return all(e in self for e in other)
+
+  def __gt__(self, other):
+    return self >= other and self != other
+
+  def __repr__(self):
+    return 'OrderedSet([%s])' % (', '.join(map(repr, self.keys())))
+
+  def __str__(self):
+    return '{%s}' % (', '.join(map(repr, self.keys())))
+
+  difference = property(lambda self: self.__sub__)
+  difference_update = property(lambda self: self.__isub__)
+  intersection = property(lambda self: self.__and__)
+  intersection_update = property(lambda self: self.__iand__)
+  issubset = property(lambda self: self.__le__)
+  issuperset = property(lambda self: self.__ge__)
+  symmetric_difference = property(lambda self: self.__xor__)
+  symmetric_difference_update = property(lambda self: self.__ixor__)
+  union = property(lambda self: self.__or__)
+
+#
 def is_valid_file(parser, arg):
   if not os.path.exists(arg):
     parser.error("The file %s does not exist!" % arg)
@@ -479,7 +525,7 @@ def print_prototype_declaration(out, name):
 
 # Create description.
 create_desc = '''/*! Create a new container of this type (virtual copy constructor).
- * \return a new container of this type.
+ * \\return a new container of this type.
  */
 '''
 
@@ -756,22 +802,57 @@ def print_get_tag_definition(out, class_name):
 
 #! Print the include directives in the hpp
 def print_hpp_include_directives(config, out, library, derived_class_name):
+  incs = collections.OrderedDict()
+  incs['os'] = OrderedSet()
+  incs['stl'] = OrderedSet()
+  incs['boost'] = OrderedSet()
+  incs['CGAL'] = OrderedSet()
+  incs['SGAL'] = OrderedSet()
+
+  # cpp includes:
   hat = has_array_type(fields)
-  print_line(out, '#include <string>')
+  incs['stl'].add('string')
   if (hat):
-    print_line(out, '#include <vector>')
-  print_empty_line(out)
-  if has_shared_type(fields):
-    print_line(out, '#include <boost/shared_ptr.hpp>')
-    print_empty_line(out)
-  print_line(out, '#include \"SGAL/basic.hpp\"')
-  print_line(out, '#include \"SGAL/Types.hpp\"')
+    incs['stl'].add('vector')
+
+  # boost includes:
+  if has_shared_type(fields) or config.has_option('class', 'shared_types'):
+    incs['boost'].add('boost/shared_ptr.hpp')
+
+  # SGAL_includes:
+  incs['SGAL'].add('SGAL/basic.hpp')
+  incs['SGAL'].add('SGAL/Types.hpp')
   if hat:
-    print_line(out, '#include \"SGAL/Array_types.hpp\"')
-  print_line(out, '#include \"SGAL/{}.hpp\"'.format(derived_class_name))
+    incs['SGAL'].add('SGAL/Array_types.hpp')
+  incs['SGAL'].add('SGAL/{}.hpp'.format(derived_class_name))
+
+  # Library incs:
   if 'SGAL' != library:
-    print_empty_line(out)
-    print_line(out, '#include \"{}/basic.hpp\"'.format(library))
+    if not library in incs:
+      incs[library] = OrderedSet()
+    incs[library].add('{}/basic.hpp'.format(library))
+
+  # Add headers from config;
+  if config.has_option('class', 'includes'):
+    includes = ast.literal_eval(config.get('class', 'includes'))
+    for inc in includes:
+      lib = inc
+      tmp, file = os.path.split(lib)
+      while tmp:
+        lib = tmp
+        tmp, file = os.path.split(lib)
+      if not lib in incs:
+        incs[lib] = OrderedSet()
+      incs[lib].add(inc)
+
+  for key, value in incs.iteritems():
+    if 0 != len(value):
+      for item in value:
+        if key != library:
+          print_line(out, '#include <{}>'.format(item))
+        else:
+          print_line(out, '#include \"{}\"'.format(item))
+      print_empty_line(out)
 
 # Print additional protected function declarations:
 def print_protected_function_declarations(config, out):
@@ -822,7 +903,6 @@ def generate_hpp(library, config, fields, out):
   print_line(out, '#define {}_{}_HPP'.format(library, class_name.upper()))
   print_empty_line(out)
   print_hpp_include_directives(config, out, library, derived_class_name)
-  print_empty_line(out)
   print_line(out, "SGAL_BEGIN_NAMESPACE")
   print_empty_line(out)
   print_forward_declarations(config, out, fields)
