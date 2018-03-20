@@ -118,7 +118,7 @@ if (SGAL_USE_SCGAL)
   export(TARGETS SGAL SCGAL player-bin
     FILE "${PROJECT_BINARY_DIR}/SGALTargets.cmake")
 else()
-  export(TARGETS SGAL player
+  export(TARGETS SGAL player-bin
     FILE "${PROJECT_BINARY_DIR}/SGALTargets.cmake")
 endif()
 
