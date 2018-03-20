@@ -576,7 +576,7 @@ source_group(src FILES ${SGAL_OTHER_SRC_FILES} ${SGAL_OTHER_HEADER_FILES})
 if (SGAL_USE_V8)
   add_definitions(-DSGAL_USE_V8)
   set(SGAL_SRC_FILES ${SGAL_SRC_FILES} lib/Script.cpp)
-  set(SGAL_V8_LIBRARIES ${V8_LIBRARY} v8_libplatform)
+  set(SGAL_V8_LIBRARIES ${V8_LIBRARY} ${V8_LIBRARY_DIR}/libv8_libplatform.so)
 endif()
 
 # Add all include directories
