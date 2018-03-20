@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 2.6)
 project(SGAL)
+if(POLICY CMP0011)
+  cmake_policy(SET CMP0011 NEW)
+endif()
 
-#Define options
+# Define options
 option(BUILD_SHARED_LIBS "Build shared libs instead of static libs" ON)
 option(SGAL_USE_SCGAL "Use SCGAL library" ON)
 option(SGAL_USE_V8 "Use V8 Javascript engine library" ON)
