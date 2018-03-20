@@ -129,6 +129,8 @@ export(PACKAGE SGAL)
 # Create the SGALConfig.cmake and SGALConfigVersion files
 file(RELATIVE_PATH REL_INCLUDE_DIR "${SGAL_INSTALL_CMAKE_DIR}"
    "${SGAL_INSTALL_INC_DIR}")
+file(RELATIVE_PATH REL_BIN_DIR "${SGAL_INSTALL_CMAKE_DIR}"
+   "${SGAL_INSTALL_BIN_DIR}")
 
 # ... for the build tree
 # set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}")
@@ -136,11 +138,13 @@ set(CONF_INCLUDE_DIRS
   "${SGAL_SGAL_INCLUDE_DIRS}"
   "${SGAL_SCGAL_INCLUDE_DIRS}"
   "${SGAL_BOOST_INCLUDE_DIRS}")
+set(CONF_GEN_NODE "${SGAL_GEN_NODE}")
 configure_file(SGALConfig.cmake.in
   "${PROJECT_BINARY_DIR}/SGALConfig.cmake" @ONLY)
 
 # ... for the install tree
 set(CONF_INCLUDE_DIRS "\${SGAL_CMAKE_DIR}/${REL_INCLUDE_DIR}")
+set(CONF_GEN_NODE "\${SGAL_CMAKE_DIR}/${REL_BIN_DIR}/gen_node.py")
 configure_file(SGALConfig.cmake.in
   "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/SGALConfig.cmake" @ONLY)
 
