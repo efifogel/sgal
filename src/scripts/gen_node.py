@@ -626,11 +626,10 @@ def print_field_getter_declaration(out, field):
     raise Exception("Pass method %s is invalid!" % pass_method)
 
 #! Print setter definition
-def print_field_setter_definition(out, inlining, class_name, field):
+def print_field_setter_definition(config, out, inlining, class_name, field):
   type = field['type']
   name = field['name']
   inline = 'inline ' if inlining else ""
-  contaminated = field['contaminated']
   general_type = get_general_type(type)
   pass_method = s_field_passing_method[general_type]
   desc = field['desc']
@@ -642,10 +641,10 @@ def print_field_setter_definition(out, inlining, class_name, field):
   else:
     raise Exception('Pass method {} is invalid!'.format(pass_method))
   print_line(out, "{", inc=True)
-  if contaminated:
-    for item in contaminated.split(','):
-      print_line(out, 'm_dirty_{} = true;'.format(item))
   print_line(out, 'm_{} = {};'.format(name, name))
+  exec_func = get_execution_function(config, field)
+  if exec_func:
+    print_line(out, '{}(get_field_info({}));'.format(exec_func, name.upper()))
   print_line(out, "}", dec=True)
 
 #! Print setter definition
@@ -775,11 +774,11 @@ def print_create_definition(out, class_name):
 #! Print the setter, getter, adder, and remover function definition.
 # As a convension, if the field has geometry, the definition of the
 # corresponding setter, adder, remover are placed in the cpp file.
-def print_hpp_field_manipulators_definitions(out, class_name, field):
+def print_hpp_field_manipulators_definitions(config, out, class_name, field):
   geometry = field['geometry']
-  contaminated = field['contaminated']
-  if not contaminated:
-    print_field_setter_definition(out, True, class_name, field)
+  exec_func = get_execution_function(config, field)
+  if not exec_func:
+    print_field_setter_definition(config, out, True, class_name, field)
     print_empty_line(out)
   type = field['type']
   general_type = get_general_type(type)
@@ -791,9 +790,9 @@ def print_hpp_field_manipulators_definitions(out, class_name, field):
   print_empty_line(out)
 
 #! Print declarations of field setters, getters, adders, and removers:
-def print_hpp_fields_manipulators_definitions(out, class_name, fields):
+def print_hpp_fields_manipulators_definitions(config, out, class_name, fields):
   for field in fields[:]:
-    print_hpp_field_manipulators_definitions(out, class_name, field)
+    print_hpp_field_manipulators_definitions(config, out, class_name, field)
 
 #! Print get_tag() definition.
 def print_get_tag_definition(out, class_name):
@@ -972,7 +971,7 @@ def generate_hpp(library, config, fields, out):
   print_create_definition(out, class_name)
 
   # Print declarations of fields manipulators:
-  print_hpp_fields_manipulators_definitions(out, class_name, fields)
+  print_hpp_fields_manipulators_definitions(config, out, class_name, fields)
 
   print_get_tag_definition(out, class_name)
 
@@ -1142,6 +1141,14 @@ def print_destructor_definition(out, class_name, fields):
     print_line(out, "}", dec=True)
   print_empty_line(out)
 
+def get_execution_function(config, field):
+  exec_function = field['execution-function']
+  if (exec_function):
+    return exec_function
+  if config.has_option('fields', 'execution-function'):
+    return config.get('fields', 'execution-function')
+  return ''
+
 def print_init_prototype_definition(config, out, class_name, derived_class_name, fields):
   print_line(out, "//! \\brief initilalizes the container prototype.")
   print_line(out, "void %s::init_prototype()" % class_name)
@@ -1214,18 +1221,18 @@ def print_prototype_handling_definitions(config, out, class_name, derived_class_
   print_empty_line(out)
   print_get_prototype_definition(out)
 
-def print_set_field(out, field, iterator, op):
+def print_set_field(config, out, field, iterator, op):
   name = field['name']
   type = field['type']
   tmp = name.replace('_', ' ').title().replace(' ', '')
   field_name = tmp[:1].lower() + tmp[1:]
   print_line(out, 'if (name == \"{}\") {{'.format(field_name), inc=True)
-  op(out, field)
+  op(config, out, field)
   print_line(out, 'elem->mark_delete({});'.format(iterator))
   print_line(out, "continue;")
   print_line(out, "}", dec=True)
 
-def print_set_field_from_string(out, field):
+def print_set_field_from_string(config, out, field):
   name = field['name']
   type = field['type']
   if type == 'String':
@@ -1259,9 +1266,8 @@ def print_set_field_from_string(out, field):
   print_call(out, statement)
 
 #! Print the code that handles a multi-string attribute.
-def print_set_field_from_multi_string(out, filed):
+def print_set_field_from_multi_string(config, out, field):
   name = field['name']
-  contaminated = field['contaminated']
   print_line(out, 'm_{}.resize(value.size());'.format(name))
   print_line(out, 'auto tit = m_{}.begin();'.format(name))
   print_line(out, 'for (auto sit : value) *tit++ = std::move(*sit);')
@@ -1269,17 +1275,18 @@ def print_set_field_from_multi_string(out, filed):
   # C++17. It requires 'auto' of formal variable of lambda functions.
   # std::transform(value.begin(), value.end(), m_{}.begin(),
   #                [](auto s) -> std::string { return std::move(*s); });
-  for item in contaminated.split():
-    print_line(out, 'm_dirty_{} = true;'.format(item))
+  exec_func = get_execution_function(config, field)
+  if exec_func:
+    print_line(out, '{}(get_field_info({}));'.format(exec_func, name.upper()))
 
 #! Print the code that handles a container attribute.
-def print_set_field_from_container(out, field):
+def print_set_field_from_container(config, out, field):
   name = field['name']
   type = field['type']
   field_class_type = type[7:].capitalize()
   print_line(out, 'set_{}(boost::dynamic_pointer_cast<{}>(cont));'.format(name, field_class_type))
 
-def print_set_field_from_multi_container(out, field):
+def print_set_field_from_multi_container(config, out, field):
   name = field['name']
   type = field['type']
   field_class_type = type[7:][:-6].capitalize()
@@ -1287,7 +1294,7 @@ def print_set_field_from_multi_container(out, field):
   print_line(out, 'add_{}(boost::dynamic_pointer_cast<{}>(*ci));'.format(name[:-1], field_class_type))
   print_line(out, "}", dec=True)
 
-def print_set_attributes_definition(out, class_name, derived_class_name, fields):
+def print_set_attributes_definition(config, out, class_name, derived_class_name, fields):
   print_line(out, "//! \\brief sets the attributes of this node.")
   print_line(out, "void %s::set_attributes(Element* elem)" % class_name)
   print_line(out, "{", inc=True)
@@ -1314,7 +1321,7 @@ def print_set_attributes_definition(out, class_name, derived_class_name, fields)
     print_line(out, "const auto& name = elem->get_name(ai);")
     print_line(out, "const auto& value = elem->get_value(ai);")
     for field in string_fields[:]:
-      print_set_field(out, field, 'ai', print_set_field_from_string)
+      print_set_field(config, out, field, 'ai', print_set_field_from_string)
     print_line(out, "}", dec=True)
     print_empty_line(out)
 
@@ -1324,7 +1331,7 @@ def print_set_attributes_definition(out, class_name, derived_class_name, fields)
     print_line(out, "const auto& name = elem->get_name(msai);")
     print_line(out, "auto& value = elem->get_value(msai);")
     for field in multi_string_fields[:]:
-      print_set_field(out, field, 'msai', print_set_field_from_multi_string)
+      print_set_field(config, out, field, 'msai', print_set_field_from_multi_string)
     print_line(out, "}", dec=True)
     print_empty_line(out)
 
@@ -1335,7 +1342,7 @@ def print_set_attributes_definition(out, class_name, derived_class_name, fields)
     print_line(out, "auto cont = elem->get_value(cai);")
 
     for field in container_fields[:]:
-      print_set_field(out, field, 'cai', print_set_field_from_container)
+      print_set_field(config, out, field, 'cai', print_set_field_from_container)
     print_line(out, "}", dec=True)
 
   #! Multi-container fields
@@ -1344,7 +1351,7 @@ def print_set_attributes_definition(out, class_name, derived_class_name, fields)
     print_line(out, "const auto& name = elem->get_name(mcai);")
     print_line(out, "auto& cont_list = elem->get_value(mcai);")
     for field in multi_container_fields[:]:
-      print_set_field(out, field, 'mcai', print_set_field_from_multi_container)
+      print_set_field(config, out, field, 'mcai', print_set_field_from_multi_container)
     print_line(out, "}", dec=True)
     print_empty_line(out)
 
@@ -1385,14 +1392,14 @@ def print_cpp_field_adder_definition(out, class_name, field):
   print_line(out, "}", dec=True)
 
 #! Print the setter, getter, adder, and remover function definition.
-# As a convension, if the field contaminates other when it is assigned, the
+# As a convension, if the field has an execution function, the
 # definition of the corresponding setter, adder, remover are placed in the
 # cpp file.
-def print_cpp_field_manipulators_definitions(out, class_name, field):
+def print_cpp_field_manipulators_definitions(config, out, class_name, field):
   geometry = field['geometry']
-  contaminated = field['contaminated']
-  if contaminated:
-    print_field_setter_definition(out, False, class_name, field)
+  exec_func = get_execution_function(config, field)
+  if exec_func:
+    print_field_setter_definition(config, out, False, class_name, field)
     print_empty_line(out)
   type = field['type']
   general_type = get_general_type(type)
@@ -1402,9 +1409,9 @@ def print_cpp_field_manipulators_definitions(out, class_name, field):
     print_empty_line(out)
 
 #! Print declarations of field setters and getters:
-def print_cpp_fields_manipulators_definitions(out, class_name, fields):
+def print_cpp_fields_manipulators_definitions(config, out, class_name, fields):
   for field in fields[:]:
-    print_cpp_field_manipulators_definitions(out, class_name, field)
+    print_cpp_field_manipulators_definitions(config, out, class_name, field)
 
  #! Print the definition of the field_changed() member function.
 def print_field_changed_definition(out, class_name):
@@ -1446,17 +1453,17 @@ def generate_cpp(config, fields, out):
   print_constructor_definition(config, out, class_name, derived_class_name, fields)
   print_destructor_definition(out, class_name, fields)
   print_prototype_handling_definitions(config, out, class_name, derived_class_name, fields)
-  print_set_attributes_definition(out, class_name, derived_class_name, fields)
+  print_set_attributes_definition(config, out, class_name, derived_class_name, fields)
 
   # Print getters, setters, adders, and removers:
   cpp_fields = []
   for field in fields[:]:
-    contaminated = field['contaminated']
-    if contaminated:
+    exec_func = get_execution_function(config, field)
+    if exec_func:
       cpp_fields.append(field)
 
   if 0 < len(cpp_fields):
-    print_cpp_fields_manipulators_definitions(out, class_name, cpp_fields)
+    print_cpp_fields_manipulators_definitions(config, out, class_name, cpp_fields)
     # print_cpp_field_draw_definitions()
     # print_cpp_field_cull_definitions()
     # print_cpp_field_isect_definitions()
@@ -1554,8 +1561,7 @@ if __name__ == '__main__':
         rule = vals[2]
         default_value = vals[3]
         exec_function = vals[4]
-        contaminated = vals[5]
-        desc = vals[6].strip('\"')
+        desc = vals[5].strip('\"')
         # Assume that a type that starts with 'Shared' is either a shared
         # container or a shared container array.
         if not type.startswith('Shared_'):
@@ -1567,7 +1573,6 @@ if __name__ == '__main__':
           'rule': rule,
           'default-value': default_value,
           'execution-function': exec_function,
-          'contaminated': contaminated,
           'desc': desc,
           'geometry': False
         }
