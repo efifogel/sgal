@@ -92,7 +92,8 @@ s_sgal_types = {
   'Tex_coord_array_2d',
   'Tex_coord_array_3d',
   'Tex_coord_array_4d',
-  'Tex_coord_array'
+  'Tex_coord_array',
+  'Indexed_face_set'
 }
 
 # Map from C++ types to feild types
