@@ -14,17 +14,28 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_NAVIGATION_INFO_TYPES_HPP
-#define SGAL_NAVIGATION_INFO_TYPES_HPP
+#ifndef SGAL_NAVIGATION_TYPE_HPP
+#define SGAL_NAVIGATION_TYPE_HPP
 
 #include "SGAL/basic.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-/*! The navigation types */
-enum Navigation_info_type { NONE, EXAMINE, FLY, WALK, TRANSFORM, NUM_TYPES };
+//! The navigation types.
+enum class Navigation_type {
+  NONE,
+  ANY,
+  EXAMINE,
+  FLY,
+  WALK,
+  TRANSFORM,
+  NUM_TYPES
+};
+
+//! The navigation types literals.
+extern const char* s_navigation_types[];
 
 SGAL_END_NAMESPACE
 

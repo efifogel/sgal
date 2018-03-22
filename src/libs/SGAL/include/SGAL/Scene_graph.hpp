@@ -54,7 +54,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Navigation_info_types.hpp"
+#include "SGAL/Navigation_type.hpp"
 #include "SGAL/Bindable_stack.hpp"
 #include "SGAL/File_format_3d.hpp"
 
@@ -272,7 +272,7 @@ public:
   Bindable_stack* get_camera_stack();
 
   /*! Route the Navigation_info node properly. */
-  void route_navigation_info(Navigation_info* nav, Navigation_info_type type);
+  void route_navigation_info(Navigation_info* nav, Navigation_type type);
 
   /*! Set the context. */
   void set_context(Context* context);

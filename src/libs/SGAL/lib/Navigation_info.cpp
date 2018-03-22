@@ -14,16 +14,17 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <string.h>
+
 #include <boost/assign/list_of.hpp>
 #include <boost/algorithm/string/trim.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Navigation_info.hpp"
-#include "SGAL/Navigation_info_types.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -31,57 +32,54 @@
 #include "SGAL/Field.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Scene_graph.hpp"
-#include "SGAL/Attribute_error.hpp"
+#include "SGAL/io_navigation_type.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 std::string Navigation_info::s_tag = "NavigationInfo";
 Container_proto* Navigation_info::s_prototype(nullptr);
+const std::list<Navigation_type> Navigation_info::s_supported_types =
+  {Navigation_type::EXAMINE};
 
 REGISTER_TO_FACTORY(Navigation_info, "Navigation_info");
 
-// Default values
-const String_array Navigation_info::s_def_types =
-  boost::assign::list_of(static_cast<std::string>("WALK"));
+const char* s_navigation_types[] =
+  {"NONE", "ANY", "EXAMINE", "FLY", "WALK", "TRANSFORM"};
 
-const char* Navigation_info::s_type_strings[] =
-  {"NONE", "EXAMINE", "FLY", "WALK", "TRANSFORM"};
+// Default values
+const Navigation_type Navigation_info::s_def_type(Navigation_type::WALK);
+const String_array Navigation_info::s_def_types = {std::string("WALK")};
 
 //! \brief constructor.
 Navigation_info::Navigation_info(Boolean proto) :
   Navigation_sensor(Vector3f(), Rotation(), proto),
-  m_any(false),
   m_types(s_def_types),
-  m_type(SGAL::WALK)
+  m_type(s_def_type)
 {}
 
 //! Destructor.
 Navigation_info::~Navigation_info() {}
 
+//! \brief sets the type.
+bool Navigation_info::is_supported(Navigation_type type)
+{
+  // Compare with supported types:
+  for (auto t : s_supported_types) if (t == type) return true;
+  return false;
+}
+
+//! \brief sets the navigation paradigm list.
+inline void Navigation_info::set_types(const String_array& types)
+{
+  m_types = types;
+  types_changed(get_field_info(TYPES));
+}
+
 //! \brief parses the type string-attribute.
 void Navigation_info::add_type(const std::string& type)
 {
-  auto trimmed_type = type;
-  boost::algorithm::trim(trimmed_type);
-
-  // Compare with supported types:
-  for (size_t j = 0; j < SGAL::NUM_TYPES; ++j) {
-    const auto* nav_type = s_type_strings[j];
-    if (trimmed_type.compare(0, strlen(nav_type), nav_type) == 0) {
-      m_types.push_back(std::move(trimmed_type));
-      m_type = (Navigation_info_type) j;
-      return;
-    }
-  }
-
-  // Compare with "ANY":
-  const auto* nav_type = "ANY";
-  if (trimmed_type.compare(0, strlen(nav_type), nav_type) == 0) {
-    m_any = true;
-    return;
-  }
-
-  throw Attribute_error(std::string("Unrecognized navigation type \"").append(type).append("\"!"));
+  m_types.push_back(type);
+  types_changed(get_field_info(TYPES));
 }
 
 //! \brief sets the attributes of this node.
@@ -93,10 +91,7 @@ void Navigation_info::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "type") {
-      m_types.clear();
-      m_any = false;
-      m_type = SGAL::NONE;
-      add_type(value);
+      add_type((value));
       elem->mark_delete(ai);
       continue;
     }
@@ -107,10 +102,10 @@ void Navigation_info::set_attributes(Element* elem)
     const auto& name = elem->get_name(msai);
     auto& value = elem->get_value(msai);
     if (name == "type") {
-      m_types.clear();
-      m_any = false;
-      m_type = SGAL::NONE;
-      for (auto type_p : value) add_type(*type_p);
+      m_types.resize(value.size());
+      auto tit = m_types.begin();
+      for (auto sit : value) *tit++ = std::move(*sit);
+      types_changed(get_field_info(TYPES));
       elem->mark_delete(msai);
       continue;
     }
@@ -139,12 +134,14 @@ void Navigation_info::init_prototype()
   s_prototype = new Container_proto(Navigation_sensor::get_prototype());
 
   // types string
+  auto exec_func =
+    static_cast<Execution_function>(&Navigation_info::types_changed);
   auto types_func =
     static_cast<String_array_handle_function>(&Navigation_info::types_handle);
   s_prototype->add_field_info(new MF_string(TYPES, "type",
                                             Field_rule::RULE_EXPOSED_FIELD,
                                             types_func,
-                                            s_def_types));
+                                            s_def_types, exec_func));
 }
 
 //! \brief deletes the prototype.
@@ -159,6 +156,24 @@ Container_proto* Navigation_info::get_prototype()
 {
   if (!s_prototype) init_prototype();
   return s_prototype;
+}
+
+//! \brief processes change of types.
+void Navigation_info::types_changed(const Field_info* field_info)
+{
+  // Find the first supported type:
+  for (const auto& type_str : m_types) {
+    auto type = boost::lexical_cast<Navigation_type>(type_str);
+    if (type == Navigation_type::ANY) {
+      set_type(Navigation_type::EXAMINE);
+      break;
+    }
+    if (is_supported(type)) {
+      set_type(type);
+      break;
+    }
+  }
+  field_changed(field_info);
 }
 
 SGAL_END_NAMESPACE

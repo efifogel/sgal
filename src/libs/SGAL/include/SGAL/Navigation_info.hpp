@@ -14,14 +14,16 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_NAVIGATION_INFO_HPP
 #define SGAL_NAVIGATION_INFO_HPP
 
+#include <list>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Array_types.hpp"
-#include "SGAL/Navigation_info_types.hpp"
+#include "SGAL/Navigation_type.hpp"
 #include "SGAL/Navigation_sensor.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -43,13 +45,16 @@ public:
     LAST
   };
 
-  /*! Constructor. */
+  /*! Construct.
+   */
   Navigation_info(Boolean proto = false);
 
-  /*! Destructor. */
+  /*! Destruct.
+   */
   virtual ~Navigation_info();
 
-  /*! Construct the prototype. */
+  /*! Construct the prototype.
+   */
   static Navigation_info* prototype();
 
   /*! Create a new container of this type (virtual copy constructor).
@@ -57,13 +62,16 @@ public:
    */
   virtual Container* create();
 
-  /*! Initialize the node prototype. */
+  /*! Initialize the node prototype.
+   */
   virtual void init_prototype();
 
-  /*! Delete the node prototype. */
+  /*! Delete the node prototype.
+   */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype. */
+  /*! Obtain the node prototype.
+   */
   virtual Container_proto* get_prototype();
 
   /// \name field handlers
@@ -71,7 +79,8 @@ public:
   String_array* types_handle(const Field_info*) { return &m_types; }
   //@}
 
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node.
+   */
   virtual void set_attributes(Element* elem);
 
   /*! Add the container to a given scene.
@@ -81,14 +90,20 @@ public:
 
   /*! Set the navigation paradigm list.
    */
-  void set_types(const String_array& justify);
+  void set_types(const String_array& types);
 
   /*! Obtain the navigation paradigm list.
    */
   const String_array& get_types() const;
 
-  /*! Set the type */
-  void set_type(Navigation_info_type type);
+  /*! Process change of types.
+   * \param[in] field_info the field information record of the types.
+   */
+  void types_changed(const Field_info* field_info = nullptr);
+
+  /*! Set the type.
+   */
+  void set_type(Navigation_type type);
 
   /*! Set the 'any' Boolean flag that indicates whether the user can
    * change navigation types.
@@ -96,37 +111,40 @@ public:
   void set_any(Boolean any);
 
 protected:
-  /*! Obtain the tag (type) of the container */
+  /*! Obtain the tag (type) of the container.
+   */
   virtual const std::string& get_tag() const;
 
+  /*! Determine whether a navigation type is supported.
+   */
+  bool is_supported(Navigation_type type);
+
   // Default values
+  static const Navigation_type s_def_type;
   static const String_array s_def_types;
 
 private:
-  /*! The navigation type strings. */
-  static const char* s_type_strings[];
-
-  /*! The tag that identifies this container type. */
-  static std::string s_tag;
-
-  /*! The node prototype. */
-  static Container_proto* s_prototype;
-
-  /*! Indicates whether to allow the user to change navigation type. */
-  bool m_any;
+  /*! Add a type from a string.
+   * \param[in] the input type as a string.
+   */
+  void add_type(const std::string& type);
 
   /*! A list of navigation paradigms; one of "WALK", "EXAMINE", "FLY", or
    * "NONE".
    */
   String_array m_types;
 
-  /*! The navigation type. */
-  Navigation_info_type m_type;
+  //! The navigation type.
+  Navigation_type m_type;
 
-  /*! Add a type from a string.
-   * \param[in] the input type as a string.
-   */
-  void add_type(const std::string& type);
+  //! A list of supported types.
+  static const std::list<Navigation_type> s_supported_types;
+
+  //! The tag that identifies this container type.
+  static std::string s_tag;
+
+  //! The node prototype.
+  static Container_proto* s_prototype;
 };
 
 #if defined(_MSC_VER)
@@ -140,22 +158,12 @@ inline Navigation_info* Navigation_info::prototype()
 //! \brief creates a new container of this type (virtual copy constructor).
 inline Container* Navigation_info::create() { return new Navigation_info(); }
 
-//! \brief sets the navigation paradigm list.
-inline void Navigation_info::set_types(const String_array& types)
-{ m_types = types; }
+//! \brief sets the type.
+inline void Navigation_info::set_type(Navigation_type type) { m_type = type; }
 
 //! \brief obtains the navigation paradigm list.
 inline const String_array& Navigation_info::get_types() const
 { return m_types; }
-
-//! \brief sets the type.
-inline void Navigation_info::set_type(Navigation_info_type type)
-{ m_type = type; }
-
-/*! \brief sets the 'any' Boolean flag, which indicates whether the user can
- * change navigation types.
- */
-inline void Navigation_info::set_any(Boolean any) { m_any = any; }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Navigation_info::get_tag() const { return s_tag; }

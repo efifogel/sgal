@@ -36,7 +36,7 @@
 #include "SGAL/Context.hpp"
 #include "SGAL/Background.hpp"
 #include "SGAL/Navigation_info.hpp"
-#include "SGAL/Navigation_info_types.hpp"
+#include "SGAL/Navigation_type.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Load_int.hpp"
 #include "SGAL/Draw_action.hpp"
@@ -575,10 +575,10 @@ void Scene_graph::add_snaphotter(Snapshotter* snapshotter)
 
 //! \brief routes the Navigation_info node properly.
 void Scene_graph::route_navigation_info(Navigation_info* nav,
-                                        Navigation_info_type type)
+                                        Navigation_type type)
 {
   switch (type) {
-   case SGAL::EXAMINE:
+   case Navigation_type::EXAMINE:
     {
       // Create the navigation_info fields:
       nav->add_field(Navigation_sensor::TRANSLATION);
@@ -602,12 +602,14 @@ void Scene_graph::route_navigation_info(Navigation_info* nav,
     }
     break;
 
-   case SGAL::FLY: SGAL_warning_msg(0, "\"FLY\" not supported yet!"); break;
-   case SGAL::WALK: SGAL_warning_msg(0, "\"WALK\" not supported yet!"); break;
+   case Navigation_type::FLY:
+    SGAL_warning_msg(0, "\"FLY\" not supported yet!"); break;
+   case Navigation_type::WALK:
+    SGAL_warning_msg(0, "\"WALK\" not supported yet!"); break;
 
-   case SGAL::NONE:
-   case SGAL::TRANSFORM: break;
-   case NUM_TYPES: SGAL_assertion(0); return;
+   case Navigation_type::NONE:
+   case Navigation_type::TRANSFORM: break;
+   case Navigation_type::NUM_TYPES: SGAL_assertion(0); return;
   }
 }
 
@@ -735,7 +737,7 @@ void Scene_graph::create_defaults()
     SGAL_assertion(m_navigation_info);
     m_navigation_info->set_scene_graph(this);
     m_navigation_info_stack.insert(m_navigation_info);
-    route_navigation_info(m_navigation_info, EXAMINE);
+    route_navigation_info(m_navigation_info, Navigation_type::EXAMINE);
   }
 
   // The default camera:
