@@ -159,5 +159,5 @@ install(FILES
   DESTINATION "${SGAL_INSTALL_CMAKE_DIR}" COMPONENT dev)
 
 # Install the export set for use with the install-tree
-install(EXPORT SGALTargets DESTINATION
-  "${SGAL_INSTALL_CMAKE_DIR}" COMPONENT dev)
+install(EXPORT SGALTargets
+  DESTINATION "${SGAL_INSTALL_CMAKE_DIR}" COMPONENT dev)
