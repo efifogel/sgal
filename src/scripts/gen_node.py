@@ -442,11 +442,21 @@ def print_forward_declarations(config, out, fields):
   if config.has_option('class', 'shared_types'):
     types = ast.literal_eval(config.get('class', 'shared_types'))
     for type in types:
-      forward_types.add(type);
+      forward_types.add(type)
 
   for item in forward_types:
     print_line(out, 'class {};'.format(item))
   print_empty_line(out)
+
+# Print typedef definitions
+def print_typedefs(config, out, fields):
+  if config.has_option('class', 'public_typedefs'):
+    typedefs = ast.literal_eval(config.get('class', 'public_typedefs'))
+    for typedef in typedefs:
+      print_line(out, '{};'.format(typedef))
+    print_empty_line(out)
+  print_shared_typedefs(config, out, fields)
+  print_array_typedefs(out, fields)
 
 # Print typedef definitions of shared containers.
 def print_shared_typedefs(config, out, fields):
@@ -455,7 +465,7 @@ def print_shared_typedefs(config, out, fields):
   if config.has_option('class', 'shared_types'):
     types = ast.literal_eval(config.get('class', 'shared_types'))
     for type in types:
-      shared_container_types.add(type.lower());
+      shared_container_types.add(type.lower())
 
   for field in fields[:]:
     type = field['type']
@@ -730,7 +740,7 @@ def print_protected_data_members(config, out):
   for datum in protected_data:
     desc = config.get(datum, 'desc')
     declaration = config.get(datum, 'declaration')
-    print_line(out, '/* {} */'.format(desc))
+    print_line(out, '//! {}'.format(desc))
     print_line(out, '{};'.format(declaration))
     print_empty_line(out)
 
@@ -875,7 +885,7 @@ def print_function_declarations(config, out, functions):
   for fnc in functions:
     desc = config.get(fnc, 'desc')
     signature = config.get(fnc, 'signature')
-    print_line(out, '/* {}'.format(desc))
+    print_line(out, '/*! {}'.format(desc))
     print_line(out, ' */')
     print_line(out, '{};'.format(signature))
     print_empty_line(out)
@@ -913,8 +923,7 @@ def generate_hpp(library, config, fields, out):
 
   print_friends(config, out)
   print_field_enumeration(out, derived_class_name, fields)	# enumerations
-  print_shared_typedefs(config, out, fields)			# typedefs
-  print_array_typedefs(out, fields)				# typedefs
+  print_typedefs(config, out, fields)			        # typedefs
 
   # Print misc. member function declarations:
   print_constructor_declaration(out, class_name)
