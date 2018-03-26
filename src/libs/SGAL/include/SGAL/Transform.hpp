@@ -85,6 +85,18 @@ public:
    */
   virtual Container* clone();
 
+  /*! Apply a unary operation on every field of the container.
+   * \param op[in] the unary operation to apply.
+   */
+  virtual void apply(Field_value_applier& op);
+
+  /*! Transform every field of this container using a unary operation into
+   * a corresponding field in a target container.
+   * \param target[in] the target container.
+   * \param op[in] the unary operation to apply.
+   */
+  virtual void transform(Container* target, Field_value_transformer& op);
+
   /// \name Protoype handling
   //@{
   /*! Initialize the node prototype. */

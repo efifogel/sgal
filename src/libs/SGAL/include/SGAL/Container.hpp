@@ -60,6 +60,8 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Execution_coordinator.hpp"
 #include "SGAL/Container_observer.hpp"
+#include "SGAL/Field_value_applier.hpp"
+#include "SGAL/Field_value_transformer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -106,6 +108,18 @@ public:
    * \return a clone of this container.
    */
   virtual Container* clone();
+
+  /*! Apply a unary operation on every field of the container.
+   * \param op[in] the unary operation to apply.
+   */
+  virtual void apply(Field_value_applier& op);
+
+  /*! Transform every field of this container using a unary operation into
+   * a corresponding field in a target container.
+   * \param target[in] the target container.
+   * \param op[in] the unary operation to apply.
+   */
+  virtual void transform(Container* target, Field_value_transformer& op);
 
   /*! Initialize the node prototype.
    */

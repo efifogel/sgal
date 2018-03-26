@@ -33,6 +33,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
+class Container;
+
 class SGAL_SGAL_DECL Field_value_transformer {
 public:
   typedef boost::shared_ptr<Container>                  Shared_container;

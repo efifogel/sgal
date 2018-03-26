@@ -37,6 +37,7 @@
 #include "SGAL/Field_type.hpp"
 #include "SGAL/Value_holder.hpp"
 #include "SGAL/Execution_function.hpp"
+#include "SGAL/Field_info_applier.hpp"
 #include "SGAL/Field_info_transformer.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -212,11 +213,24 @@ public:
     cloner(*source_handle, *target_handle);
   }
 
+  /*! Apply an operation on the field, the (field) info of which is this object,
+   * of a given container.
+   * \param[in] cont the container that holds the field.
+   * \param[in] op the unary operator.
+   */
+  virtual void apply(const Container* cont, Field_value_applier& op) const
+  {
+    const auto* cont_handle = ((const_cast<Container*>(cont))->*m_handle)(this);
+    Field_info_applier<T> applier;
+    applier(*cont_handle, op);
+  }
+
   /*! Transform the field, the (field) info of which is this object, of a source
    * container and store it in a target container.
    * \param[in] source the source container.
    * \param[in] target the target container.
-   */
+   * \param[in] op the unary transform operator.
+    */
   virtual void transform(const Container* source, Container* target,
                          Field_value_transformer& op) const
   {

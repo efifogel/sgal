@@ -111,6 +111,22 @@ void Transform::copy_local(const Transform* other)
   m_dirty_inverse = other->m_dirty_inverse;
 }
 
+//! \brief applies an unary operation on every field of the container.
+void Transform::apply(Field_value_applier& op)
+{
+  if (m_dirty_parts) clean_parts();
+  Container::apply(op);
+}
+
+/*! \brief transforms every field of this container using a unary operation into
+ * a corresponding field in a target container.
+ */
+void Transform::transform(Container* target, Field_value_transformer& op)
+{
+  if (m_dirty_parts) clean_parts();
+  Container::transform(target, op);
+}
+
 //! \brief sets the affine transform 4x4 matrix.
 void Transform::set_matrix(const Matrix4f& matrix)
 {

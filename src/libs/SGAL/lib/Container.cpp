@@ -244,4 +244,34 @@ void Container::copy(const Container* source)
   }
 }
 
+//! \brief applies a unary operation on every field of the container.
+void Container::apply(Field_value_applier& op)
+{
+  auto* proto = get_prototype();
+  for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
+    const auto* field_info = (*it).second;
+    SGAL_assertion(field_info);
+    auto rule = field_info->get_rule();
+    if ((rule == Field_rule::RULE_IN) || (rule == Field_rule::RULE_OUT))
+      continue;
+    field_info->apply(this, op);
+  }
+}
+
+/*! \brief transforms every field of this container using a unary operation into
+ * a corresponding field in a target container.
+ */
+void Container::transform(Container* target, Field_value_transformer& op)
+{
+  auto* proto = get_prototype();
+  for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
+    const auto* field_info = (*it).second;
+    SGAL_assertion(field_info);
+    auto rule = field_info->get_rule();
+    if ((rule == Field_rule::RULE_IN) || (rule == Field_rule::RULE_OUT))
+      continue;
+    field_info->transform(this, target, op);
+  }
+}
+
 SGAL_END_NAMESPACE
