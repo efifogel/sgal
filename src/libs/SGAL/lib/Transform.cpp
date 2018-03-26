@@ -124,6 +124,8 @@ void Transform::apply(Field_value_applier& op)
 void Transform::transform(Container* target, Field_value_transformer& op)
 {
   if (m_dirty_parts) clean_parts();
+  static_cast<Transform*>(target)->m_dirty_matrix = m_dirty_matrix;
+  static_cast<Transform*>(target)->m_dirty_inverse = m_dirty_inverse;
   Container::transform(target, op);
 }
 
