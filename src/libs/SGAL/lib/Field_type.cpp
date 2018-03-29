@@ -17,7 +17,7 @@
 // Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
-#include "Field_type.hpp"
+#include "SGAL/Field_type.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
