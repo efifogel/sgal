@@ -450,8 +450,8 @@ def print_forward_declarations(config, out, fields):
 
 # Print typedef definitions
 def print_typedefs(config, out, fields):
-  if config.has_option('class', 'public_typedefs'):
-    typedefs = ast.literal_eval(config.get('class', 'public_typedefs'))
+  if config.has_option('class', 'public-typedefs'):
+    typedefs = ast.literal_eval(config.get('class', 'public-typedefs'))
     for typedef in typedefs:
       print_line(out, '{};'.format(typedef))
     print_empty_line(out)
