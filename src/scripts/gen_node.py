@@ -729,19 +729,20 @@ def print_field_data_members(out, fields):
     name = field['name']
     type = field['type']
     desc = field['desc']
-    print_line(out, "/*! The %s. */" % desc)
+    print_line(out, "//! The %s." % desc)
     print_line(out, "%s m_%s;" % (type, name))
     print_empty_line(out)
 
 def print_protected_data_members(config, out):
   protected_data = {}
-  if config.has_option('class', 'protected_data'):
-    protected_data = ast.literal_eval(config.get('class', 'protected_data'))
+  if config.has_option('class', 'protected-data'):
+    protected_data = ast.literal_eval(config.get('class', 'protected-data'))
   for datum in protected_data:
     desc = config.get(datum, 'desc')
-    declaration = config.get(datum, 'declaration')
+    type = config.get(datum, 'type')
+    name = config.get(datum, 'name')
     print_line(out, '//! {}'.format(desc))
-    print_line(out, '{};'.format(declaration))
+    print_line(out, '{} {};'.format(type, name))
     print_empty_line(out)
 
 def print_get_tag_declaration(out):
@@ -875,9 +876,9 @@ def print_protected_function_declarations(config, out):
 # Print additional public function declarations:
 def print_public_function_declarations(config, out):
   functions = {}
-  if not config.has_option('class', 'public_functions'):
+  if not config.has_option('class', 'public-functions'):
     return;
-  functions = ast.literal_eval(config.get('class', 'public_functions'))
+  functions = ast.literal_eval(config.get('class', 'public-functions'))
   print_function_declarations(config, out, functions)
 
 # Print function decalarions:
@@ -1116,12 +1117,13 @@ def print_constructor_definition(config, out, class_name, derived_class_name, fi
                inc=True)
     print_line(out, '{}(proto),'.format(derived_class_name))
     protected_data = {}
-    if config.has_option('class', 'protected_data'):
-      protected_data = ast.literal_eval(config.get('class', 'protected_data'))
+    if config.has_option('class', 'protected-data'):
+      protected_data = ast.literal_eval(config.get('class', 'protected-data'))
       for datum in protected_data:
-        if config.has_option(datum, 'initialization'):
-          init = config.get(datum, 'initialization')
-          print_line(out, '{},'.format(init))
+        if config.has_option(datum, 'value'):
+          name = config.get(datum, 'name')
+          value = config.get(datum, 'value')
+          print_line(out, '{}({}),'.format(name, value))
 
     for field in initializable_fields[:-1]:
       name = field['name']
