@@ -27,24 +27,32 @@ SGAL_BEGIN_NAMESPACE
 
 template <typename T>
 struct Field_info_applier {
+  /*! Apply an unary operation of a single filed.
+   * \param[in] handle the field handle.
+   * \param[in] op the unary operation.
+   */
   template <typename FieldApplier>
-  void operator()(const T& cont, FieldApplier& op) const { op(cont); }
+  void operator()(const T& handle, FieldApplier& op) const { op(handle); }
 };
 
 template <typename T>
 struct Field_info_applier<std::vector<T> > {
+  /*! Apply an unary operation on every element of a vector of fields.
+   * \param[in] vect the multi field.
+   * \param[in] op the unary operation.
+   */
   template <typename FieldApplier>
-  void operator()(const std::vector<T>& cont, FieldApplier& op) const
+  void operator()(const std::vector<T>& vect, FieldApplier& op) const
   {
     /*! Observe that the call:
-     *   std::for_each(cont.begin(), cont.end(), op);
+     *   std::for_each(vect.begin(), vect.end(), op);
      * will not do the job, because it is interpreted as the a call using
      * the lambda expression:
-     *   [](decltype(*std::begin(cont)) cont){ op(cont); });
+     *   [](decltype(*std::begin(vect)) handle){ op(handle); });
      * which captures 'op' by copy.
      */
-    std::for_each(cont.begin(), cont.end(),
-                  [&op](decltype(*std::begin(cont)) cont) { op(cont); });
+    std::for_each(vect.begin(), vect.end(),
+                  [&op](decltype(*std::begin(vect)) handle) { op(handle); });
   }
 };
 

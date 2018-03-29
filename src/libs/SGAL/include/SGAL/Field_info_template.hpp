@@ -220,9 +220,9 @@ public:
    */
   virtual void apply(const Container* cont, Field_value_applier& op) const
   {
-    const auto* cont_handle = ((const_cast<Container*>(cont))->*m_handle)(this);
+    const auto* handle = ((const_cast<Container*>(cont))->*m_handle)(this);
     Field_info_applier<T> applier;
-    applier(*cont_handle, op);
+    applier(*handle, op);
   }
 
   /*! Transform the field, the (field) info of which is this object, of a source
