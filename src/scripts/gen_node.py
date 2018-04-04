@@ -439,8 +439,13 @@ def print_forward_declarations(config, out, fields):
       main_type = get_single_type(type[7:])
       forward_types.add(main_type.capitalize())
 
-  if config.has_option('class', 'shared_types'):
-    types = ast.literal_eval(config.get('class', 'shared_types'))
+  if config.has_option('class', 'shared-types'):
+    types = ast.literal_eval(config.get('class', 'shared-types'))
+    for type in types:
+      forward_types.add(type)
+
+  if config.has_option('class', 'forward-declarations'):
+    types = ast.literal_eval(config.get('class', 'forward-declarations'))
     for type in types:
       forward_types.add(type)
 
@@ -462,8 +467,8 @@ def print_typedefs(config, out, fields):
 def print_shared_typedefs(config, out, fields):
   shared_container_types = set()
 
-  if config.has_option('class', 'shared_types'):
-    types = ast.literal_eval(config.get('class', 'shared_types'))
+  if config.has_option('class', 'shared-types'):
+    types = ast.literal_eval(config.get('class', 'shared-types'))
     for type in types:
       shared_container_types.add(type.lower())
 
@@ -827,7 +832,7 @@ def print_hpp_include_directives(config, out, library, derived_class_name):
     incs['stl'].add('vector')
 
   # boost includes:
-  if has_shared_type(fields) or config.has_option('class', 'shared_types'):
+  if has_shared_type(fields) or config.has_option('class', 'shared-types'):
     incs['boost'].add('boost/shared_ptr.hpp')
 
   # SGAL_includes:
