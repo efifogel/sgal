@@ -31,17 +31,17 @@ class Container;
 class Container_proto;
 
 #if !defined (SGAL_LIB)
-#define REGISTER_TO_FACTORY(class_name, name)                         \
-struct Reg_##class_name {                                             \
-  Reg_##class_name() {                                                \
-    Container_factory* factory = Container_factory::get_instance();   \
-    factory->do_register(class_name::prototype());                     \
-  }                                                                   \
-  virtual ~Reg_##class_name() {}                                      \
+#define REGISTER_TO_FACTORY(class_name, name)                             \
+struct Reg_##class_name {                                                 \
+  Reg_##class_name() {                                                    \
+    SGAL::Container_factory* factory = Container_factory::get_instance(); \
+    factory->do_register(class_name::prototype());                        \
+  }                                                                       \
+  virtual ~Reg_##class_name() {}                                          \
 } instance_##class_name;
 
 #define REGISTER_OBJECT(className) \
-  Container_factory::get_instance()->do_register(className::prototype())
+  SGAL::Container_factory::get_instance()->do_register(className::prototype())
 #else
 
 #define REGISTER_TO_FACTORY(class_name, name)

@@ -310,6 +310,14 @@ s_field_size = {
   'Shared_container_array': 0
 }
 
+#! Obtain the type name and namespace
+def get_type_attributes(type, library):
+  try:
+    namespace, name = type.split("::")
+    return name, namespace
+  except ValueError:
+    return type, library
+
 #! Determines whether the fields contain a geometry node
 def has_geometry_type(fields):
   for field in fields[:]:
@@ -353,7 +361,8 @@ def get_single_type(type):
 def has_shared_type(fields):
   for field in fields[:]:
     type = field['type']
-    if type.startswith('Shared_'):
+    type_name, type_namespace = get_type_attributes(type, library)
+    if type_name.startswith('Shared_'):
       return True
   return False
 
@@ -418,9 +427,9 @@ def print_friends(config, out):
   print_empty_line(out)
 
 #! Print enumerations.
-def print_field_enumeration(out, derived_class_name, fields):
+def print_field_enumeration(out, derived_class, fields):
   print_line(out, "enum {", inc=True)
-  print_line(out, "FIRST = %s::LAST - 1," % derived_class_name)
+  print_line(out, "FIRST = %s::LAST - 1," % derived_class)
   for field in fields[:]:
     print_line(out, field['name'].upper() + ',')
   print_line(out, "LAST")
@@ -435,8 +444,9 @@ def print_forward_declarations(config, out, fields):
 
   for field in fields[:]:
     type = field['type']
-    if type.startswith('Shared_'):
-      main_type = get_single_type(type[7:])
+    type_name, type_namespace = get_type_attributes(type, library)
+    if type_name.startswith('Shared_'):
+      main_type = get_single_type(type_name[7:])
       forward_types.add(main_type.capitalize())
 
   if config.has_option('class', 'shared-types'):
@@ -474,8 +484,9 @@ def print_shared_typedefs(config, out, fields):
 
   for field in fields[:]:
     type = field['type']
-    if type.startswith('Shared_'):
-      main_type = type[7:]
+    type_name, type_namespace = get_type_attributes(type, library)
+    if type_name.startswith('Shared_'):
+      main_type = type_name[7:]
       if main_type.endswith('_array'):
         main_type = main_type[:-6]
       shared_container_types.add(main_type)
@@ -494,8 +505,9 @@ def print_array_typedefs(out, fields):
   shared_array_container_types = set()
   for field in fields[:]:
     type = field['type']
-    if type.startswith('Shared_'):
-      main_type = type[7:]
+    type_name, type_namespace = get_type_attributes(type, library)
+    if type_name.startswith('Shared_'):
+      main_type = type_name[7:]
       if main_type.endswith('_array'):
         main_type = main_type[:-6]
         shared_array_container_types.add(main_type)
@@ -516,9 +528,12 @@ constructor_desc = '''/*! Construct from prototype.
 '''
 
 #! Print the constructor declaration.
-def print_constructor_declaration(out, name):
+def print_constructor_declaration(out, name, library):
   print_block(out, constructor_desc)
-  print_line(out, "%s(Boolean proto = false);" % name)
+  if 'SGAL' == library:
+    print_line(out, '{}(Boolean proto = false);'.format(name))
+  else:
+    print_line(out, '{}(SGAL::Boolean proto = false);'.format(name))
   print_empty_line(out)
 
 #! Print the destructor declaration.
@@ -546,9 +561,12 @@ create_desc = '''/*! Create a new container of this type (virtual copy construct
 '''
 
 #! Print create() declaration.
-def print_create_declaration(out):
+def print_create_declaration(out, library):
   print_block(out, create_desc)
-  print_line(out, "virtual Container* create();")
+  if 'SGAL' == library:
+    print_line(out, "virtual Container* create();")
+  else:
+    print_line(out, "virtual SGAL::Container* create();")
   print_empty_line(out)
 
 #! Print init_prototype() declaration.
@@ -567,17 +585,21 @@ get_prototype_desc = '''/*! Obtain the node prototype.
 '''
 
 #! Print get_prototype() declaration.
-def print_get_prototype_declaration(out):
+def print_get_prototype_declaration(out, library):
   print_block(out, get_prototype_desc);
-  print_line(out, "virtual Container_proto* get_prototype();")
+  if 'SGAL' == library:
+    print_line(out, 'virtual Container_proto* get_prototype();')
+  else:
+    print_line(out, 'virtual SGAL::Container_proto* get_prototype();')
 
 #! Print prototype handling declarations.
-def print_prototype_handling_declarations(out):
+def print_prototype_handling_declarations(out, args):
+  library = args[0]
   print_init_prototype_declaration(out)
   print_empty_line(out);
   print_delete_prototype_declaration(out)
   print_empty_line(out);
-  print_get_prototype_declaration(out)
+  print_get_prototype_declaration(out, library)
 
 # set_attribute() description
 get_prototype_desc = '''/*! Set the attributes of the transform.
@@ -586,29 +608,38 @@ get_prototype_desc = '''/*! Set the attributes of the transform.
 '''
 
 #! Print attribute handling declarations.
-def print_attribute_handling_declaration(out):
-  print_line(out, "virtual void set_attributes(Element* elem);")
+def print_attribute_handling_declaration(out, args):
+  library = args[0]
+  if 'SGAL' == library:
+    print_line(out, "virtual void set_attributes(Element* elem);")
+  else:
+    print_line(out, "virtual void set_attributes(SGAL::Element* elem);")
 
 #! Print field handling declarations
 def print_fields_handling_declarations(out, args):
   fields = args[0]
+  library = args[1]
   for field in fields[:]:
     type = field['type']
     name = field['name']
-    print_line(out, "%s* %s_handle(const Field_info*) { return &m_%s; }" % (type, name, name));
+    if 'SGAL' == library:
+      print_line(out, '{}* {}_handle(const Field_info*) {{ return &m_{}; }}'.format(type, name, name));
+    else:
+      print_line(out, '{}* {}_handle(const SGAL::Field_info*) {{ return &m_{}; }}'.format(type, name, name));
 
 #! Print setter and declaration
-def print_field_setter_declaration(out, field):
+def print_field_setter_declaration(out, field, library):
   type = field['type']
   name = field['name']
-  general_type = get_general_type(type)
+  type_name, type_namespace = get_type_attributes(type, library)
+  general_type = get_general_type(type_name)
   pass_method = s_field_passing_method[general_type]
   desc = field['desc']
-  print_line(out, "/*! Set the %s. */" % desc)
+  print_line(out, '/*! Set the {}. */'.format(desc))
   if pass_method == 'value':
-    print_line(out, "void set_%s(%s %s);" % (name, type, name));
+    print_line(out, 'void set_{}({} {});'.format(name, type, name));
   elif pass_method == 'reference':
-    print_line(out, "void set_%s(const %s& %s);" % (name, type, name));
+    print_line(out, 'void set_{}(const {}& {});'.format(name, type, name));
   else:
     raise Exception("Pass method %s is invalid!" % pass_method)
 
@@ -616,15 +647,16 @@ def print_field_adder_declaration(out, field):
   name = field['name']
   type = field['type']
   desc = field['desc']
+  type_name, type_namespace = get_type_attributes(type, library)
   print_line(out, '/*! Add a {} to the array of {}. */'.format(desc[:-1], desc))
-  print_line(out, 'void add_{}({} {});'.format(name[:-1], type[:-6], name[:-1]));
+  print_line(out, 'void add_{}({} {});'.format(name[:-1], type_name[:-6], name[:-1]));
 
 #! Print setter declaration
 def print_field_getter_declaration(out, field):
   type = field['type']
   name = field['name']
-  type = field['type']
-  general_type = get_general_type(type)
+  type_name, type_namespace = get_type_attributes(type, library)
+  general_type = get_general_type(type_name)
   pass_method = s_field_passing_method[general_type]
   compound = s_field_return_qualification[general_type]
   desc = field['desc']
@@ -646,7 +678,8 @@ def print_field_setter_definition(config, out, inlining, class_name, field):
   type = field['type']
   name = field['name']
   inline = 'inline ' if inlining else ""
-  general_type = get_general_type(type)
+  type_name, type_namespace = get_type_attributes(type, library)
+  general_type = get_general_type(type_name)
   pass_method = s_field_passing_method[general_type]
   desc = field['desc']
   print_line(out, '//! \\brief sets the {}.'.format(desc))
@@ -668,20 +701,22 @@ def print_hpp_field_adder_definition(out, class_name, field):
   type = field['type']
   name = field['name']
   desc = field['desc']
+  type_name, type_namespace = get_type_attributes(type, library)
   print_line(out, '//! \\brief adds a {} to the array of {}..'.format(desc[:-1], desc))
-  print_line(out, 'inline void {}::add_{}({} {})'.format(class_name, name[:-1], type[:-6], name[:-1]))
+  print_line(out, 'inline void {}::add_{}({} {})'.format(class_name, name[:-1], type_name[:-6], name[:-1]))
   print_line(out , '{{ m_{}.push_back({}); }}'.format(name, name[:-1]))
 
 #! Print getter definition
 def print_field_getter_definition(out, class_name, field):
   type = field['type']
   name = field['name']
-  general_type = get_general_type(type)
+  type_name, type_namespace = get_type_attributes(type, library)
+  general_type = get_general_type(type_name)
   pass_method = s_field_passing_method[general_type]
   compound = s_field_return_qualification[general_type]
   desc = field['desc']
   ext_type = type
-  if type.startswith('Shared_'):
+  if type_name.startswith('Shared_'):
     ext_type = class_name + '::' + type
   if pass_method == 'value':
     if not compound:
@@ -709,10 +744,11 @@ def print_field_getter_definition(out, class_name, field):
 
 #! Handle field setter & getter declarations
 def print_field_manipulators_declarations(out, field, last=False):
-  print_field_setter_declaration(out, field)
+  print_field_setter_declaration(out, field, library)
   print_empty_line(out)
   type = field['type']
-  general_type = get_general_type(type)
+  type_name, type_namespace = get_type_attributes(type, library)
+  general_type = get_general_type(type_name)
   field_element_type = s_field_element_type[general_type]
   if field_element_type == 'multi-container':
     print_field_adder_declaration(out, field)
@@ -750,9 +786,12 @@ def print_protected_data_members(config, out):
     print_line(out, '{} {};'.format(type, name))
     print_empty_line(out)
 
-def print_get_tag_declaration(out):
+def print_get_tag_declaration(out, library):
   print_line(out, '/*! Obtain the tag (type) of the container. */')
-  print_line(out, 'virtual const String& get_tag() const;')
+  if 'SGAL' == library:
+    print_line(out, 'virtual const String& get_tag() const;')
+  else:
+    print_line(out, 'virtual const SGAL::String& get_tag() const;')
   print_empty_line(out)
 
 #! Print the field static members
@@ -760,20 +799,27 @@ def print_static_member_declarations(out, fields):
   print_line(out, "// Default values:")
   for field in fields[:]:
     type = field['type']
-    if type.startswith('Shared_'):
+    type_name, type_namespace = get_type_attributes(type, library)
+    if type_name.startswith('Shared_'):
       continue
     name = field['name']
     desc = field['desc']
     print_line(out, "static const %s s_def_%s;" % (type, name))
 
-def print_tag_data_member(out):
+def print_tag_data_member(out, library):
   print_line(out, "/*! The tag that identifies this container type. */")
-  print_line(out, "static const String s_tag;")
+  if 'SGAL' == library:
+    print_line(out, "static const String s_tag;")
+  else:
+    print_line(out, "static const SGAL::String s_tag;")
   print_empty_line(out)
 
-def print_prototype_data_member(out):
+def print_prototype_data_member(out, library):
   print_line(out, "/*! The container prototype. */")
-  print_line(out, "static Container_proto* s_prototype;");
+  if 'SGAL' == library:
+    print_line(out, "static Container_proto* s_prototype;");
+  else:
+    print_line(out, "static SGAL::Container_proto* s_prototype;");
   print_empty_line(out)
 
 def print_prototype_definition(out, class_name):
@@ -782,10 +828,12 @@ def print_prototype_definition(out, class_name):
              (class_name, class_name, class_name))
   print_empty_line(out)
 
-def print_create_definition(out, class_name):
+def print_create_definition(out, class_name, library):
   print_line(out, "//! \\brief creates a new container of this type (virtual copy constructor).")
-  print_line(out, "inline Container* %s::create() { return new %s(); }" %
-             (class_name, class_name))
+  if 'SGAL' == library:
+    print_line(out, 'inline Container* {}::create() {{ return new {}(); }}'.format(class_name, class_name))
+  else:
+    print_line(out, 'inline SGAL::Container* {}::create() {{ return new {}(); }}'.format(class_name, class_name))
   print_empty_line(out)
 
 #! Print the setter, getter, adder, and remover function definition.
@@ -798,7 +846,8 @@ def print_hpp_field_manipulators_definitions(config, out, class_name, field):
     print_field_setter_definition(config, out, True, class_name, field)
     print_empty_line(out)
   type = field['type']
-  general_type = get_general_type(type)
+  type_name, type_namespace = get_type_attributes(type, library)
+  general_type = get_general_type(type_name)
   field_element_type = s_field_element_type[general_type]
   if not geometry and field_element_type == 'multi-container':
     print_hpp_field_adder_definition(out, class_name, field)
@@ -812,12 +861,15 @@ def print_hpp_fields_manipulators_definitions(config, out, class_name, fields):
     print_hpp_field_manipulators_definitions(config, out, class_name, field)
 
 #! Print get_tag() definition.
-def print_get_tag_definition(out, class_name):
+def print_get_tag_definition(out, class_name, library):
   print_line(out, "//! \\brief obtains the tag (type) of the container.")
-  print_line(out, "inline const String& %s::get_tag() const { return s_tag; }" % class_name)
+  if 'SGAL' == library:
+    print_line(out, 'inline const String& {}::get_tag() const {{ return s_tag; }}'.format(class_name))
+  else:
+    print_line(out, 'inline const SGAL::String& {}::get_tag() const {{ return s_tag; }}'.format(class_name))
 
 #! Print the include directives in the hpp
-def print_hpp_include_directives(config, out, library, derived_class_name):
+def print_hpp_include_directives(config, out, library, derived_class):
   incs = collections.OrderedDict()
   incs['os'] = OrderedSet()
   incs['stl'] = OrderedSet()
@@ -840,7 +892,13 @@ def print_hpp_include_directives(config, out, library, derived_class_name):
   incs['SGAL'].add('SGAL/Types.hpp')
   if hat:
     incs['SGAL'].add('SGAL/Array_types.hpp')
-  incs['SGAL'].add('SGAL/{}.hpp'.format(derived_class_name))
+
+  # Derived class
+  try:
+    derived_class_namespace, derived_class_name = derived_class.split("::")
+    incs[derived_class_namespace].add('{}/{}.hpp'.format(derived_class_namespace, derived_class_name))
+  except ValueError:
+    incs[library].add('{}/{}.hpp'.format(library, derived_class))
 
   # Library incs:
   if 'SGAL' != library:
@@ -902,9 +960,12 @@ field_changed_desc = '''/*! Process change of field.
  */
 '''
 #! Print the declaration of the field_changed() member function:
-def print_field_changed_declaration(out):
+def print_field_changed_declaration(out, library):
   print_block(out, field_changed_desc)
-  print_line(out, "virtual void field_changed(const Field_info* field_info);")
+  if 'SGAL' == library:
+    print_line(out, "virtual void field_changed(const Field_info* field_info);")
+  else:
+    print_line(out, "virtual void field_changed(const SGAL::Field_info* field_info);")
   print_empty_line(out)
 
 #! Generate the .hpp file
@@ -918,36 +979,36 @@ def generate_hpp(library, config, fields, out):
   print_line(out, '#ifndef {}_{}_HPP'.format(library, class_name.upper()))
   print_line(out, '#define {}_{}_HPP'.format(library, class_name.upper()))
   print_empty_line(out)
-  print_hpp_include_directives(config, out, library, derived_class_name)
-  print_line(out, "SGAL_BEGIN_NAMESPACE")
+  print_hpp_include_directives(config, out, library, derived_class)
+  print_line(out, '{}_BEGIN_NAMESPACE'.format(library.upper()))
   print_empty_line(out)
   print_forward_declarations(config, out, fields)
 
-  print_line(out, 'class SGAL_{}_DECL {} : public {} {{'.format(library, class_name, derived_class_name))
+  print_line(out, 'class SGAL_{}_DECL {} : public {} {{'.format(library, class_name, derived_class))
   print_line(out, "public:")
   increase_indent()
 
   print_friends(config, out)
-  print_field_enumeration(out, derived_class_name, fields)	# enumerations
+  print_field_enumeration(out, derived_class, fields)	# enumerations
   print_typedefs(config, out, fields)			        # typedefs
 
   # Print misc. member function declarations:
-  print_constructor_declaration(out, class_name)
+  print_constructor_declaration(out, class_name, library)
   print_destructor_declaration(out, class_name)
   print_prototype_declaration(out, class_name)
-  print_create_declaration(out)
+  print_create_declaration(out, library)
 
   # Print prototype handling declarations:
   print_group(out, "Protoype handlers",
-              print_prototype_handling_declarations)
+              print_prototype_handling_declarations, library)
 
   # Print attribute handling declarations:
   print_group(out, "Attribute handlers",
-              print_attribute_handling_declaration)
+              print_attribute_handling_declaration, library)
 
   # Print field handling declarations:
   print_group(out, "Field handlers",
-              print_fields_handling_declarations, fields)
+              print_fields_handling_declarations, fields, library)
 
   # Print declarations of field setters and getters:
   print_group(out, "getters & setters",
@@ -955,7 +1016,7 @@ def generate_hpp(library, config, fields, out):
 
   #! Print the declaration of the field_changed() member function:
   if is_geometry_node(config, fields):
-    print_field_changed_declaration(out)
+    print_field_changed_declaration(out, lbrary)
 
   # Print additional public functions:
   print_public_function_declarations(config, out)
@@ -966,7 +1027,7 @@ def generate_hpp(library, config, fields, out):
 
   print_protected_data_members(config, out)
   print_field_data_members(out, fields)
-  print_get_tag_declaration(out)
+  print_get_tag_declaration(out, library)
 
   # Print additional protected functions:
   print_protected_function_declarations(config, out)
@@ -975,8 +1036,8 @@ def generate_hpp(library, config, fields, out):
   print_line(out, "private:")
   increase_indent()
 
-  print_tag_data_member(out)
-  print_prototype_data_member(out)
+  print_tag_data_member(out, library)
+  print_prototype_data_member(out, library)
   print_static_member_declarations(out, fields)
 
   decrease_indent()
@@ -984,15 +1045,15 @@ def generate_hpp(library, config, fields, out):
   print_empty_line(out)
 
   print_prototype_definition(out, class_name)
-  print_create_definition(out, class_name)
+  print_create_definition(out, class_name, library)
 
   # Print declarations of fields manipulators:
   print_hpp_fields_manipulators_definitions(config, out, class_name, fields)
 
-  print_get_tag_definition(out, class_name)
+  print_get_tag_definition(out, class_name, library)
 
   print_empty_line(out)
-  print_line(out, "SGAL_END_NAMESPACE")
+  print_line(out, '{}_END_NAMESPACE'.format(library.upper()))
   print_empty_line(out)
   print_line(out, "#endif")
 
@@ -1002,7 +1063,7 @@ def generate_hpp(library, config, fields, out):
 #! \param output_path the output path.
 def generate_hpp_from_path(library, config, fields, output_path):
   class_name = config.get('DEFAULT', 'name')
-  derived_class_name = config.get('class', 'base')
+  derived_class = config.get('class', 'base')
 
   hpp_filename = os.path.join(output_path, class_name + ".hpp")
   with open(hpp_filename, 'w') as out:
@@ -1024,18 +1085,19 @@ def print_cpp_include_directives(out, fields):
   field_names_lexical_cast = set()
   for field in fields[:]:
     type = field['type']
-    if type == 'String':
+    type_name, type_namespace = get_type_attributes(type, library)
+    if type_name == 'String':
       include_boost_algorithm_string = True
-    elif type == 'Boolean':
+    elif type_name == 'Boolean':
       include_to_boolean = True;
     else:
-      single_type = get_single_type(type)
-      general_type = get_general_type(type)
+      single_type = get_single_type(type_name)
+      general_type = get_general_type(type_name)
       lexical_cast = s_field_lexical_cast[general_type]
       if lexical_cast[0]:
         include_boost_lexical_cast = True
         if lexical_cast[1]:
-          single_type = get_single_type(type)
+          single_type = get_single_type(type_name)
           field_names_lexical_cast.add(single_type.lower())
           if type.endswith('_array'):
             include_sstream = True
@@ -1096,7 +1158,8 @@ def print_static_member_definitions(out, class_name):
   print_line(out, "// Default values:")
   for field in fields[:]:
     type = field['type']
-    if type.startswith('Shared_'):
+    type_name, type_namespace = get_type_attributes(type, library)
+    if type_name.startswith('Shared_'):
       continue
     name = field['name']
     default_value = field['default-value']
@@ -1107,20 +1170,27 @@ def print_static_member_definitions(out, class_name):
   print_empty_line(out)
 
 #! Print constructor definition.
-def print_constructor_definition(config, out, class_name, derived_class_name, fields):
+def print_constructor_definition(config, out, class_name, derived_class, fields, library):
   print_line(out, '//! \\brief construct from prototype.')
   initializable_fields = []
   for field in fields[:]:
     type = field['type']
-    if not type.startswith('Shared_'):
+    type_name, type_namespace = get_type_attributes(type, library)
+    if not type_name.startswith('Shared_'):
       initializable_fields.append(field)
 
   if 0 == len(initializable_fields):
-    print_line(out, '{}::{}(Boolean proto) : {}(proto) {{}}'.format(class_name, class_name, derived_class_name))
+    if 'SGAL' == library:
+      print_line(out, '{}::{}(Boolean proto) : {}(proto) {{}}'.format(class_name, class_name, derived_class))
+    else:
+      print_line(out, '{}::{}(SGAL::Boolean proto) : {}(proto) {{}}'.format(class_name, class_name, derived_class))
   else:
-    print_line(out, '{}::{}(Boolean proto) :'.format(class_name, class_name),
-               inc=True)
-    print_line(out, '{}(proto),'.format(derived_class_name))
+    if 'SGAL' == library:
+      print_line(out, '{}::{}(Boolean proto) :'.format(class_name, class_name), inc=True)
+    else:
+      print_line(out, '{}::{}(SGAL::Boolean proto) :'.format(class_name, class_name), inc=True)
+
+    print_line(out, '{}(proto),'.format(derived_class))
     protected_data = {}
     if config.has_option('class', 'protected-data'):
       protected_data = ast.literal_eval(config.get('class', 'protected-data'))
@@ -1166,14 +1236,16 @@ def get_execution_function(config, field):
     return config.get('fields', 'execution-function')
   return ''
 
-def print_init_prototype_definition(config, out, class_name, derived_class_name, fields):
+def print_init_prototype_definition(config, out, class_name, derived_class, fields, library):
   print_line(out, "//! \\brief initilalizes the container prototype.")
   print_line(out, "void %s::init_prototype()" % class_name)
   print_line(out, "{", inc=True)
 
   print_line(out, "if (s_prototype) return;")
-  print_line(out, "s_prototype = new Container_proto(%s::get_prototype());" %
-             derived_class_name)
+  if 'SGAL' == library:
+    print_line(out, 's_prototype = new Container_proto({}::get_prototype());'.format(derived_class))
+  else:
+    print_line(out, 's_prototype = new SGAL::Container_proto({}::get_prototype());'.format(derived_class))
   print_empty_line(out)
   print_line(out, "// Add the field-info records to the prototype:")
   # print_line(out, "auto exec_func = static_cast<Execution_function>(&%s::structure_changed);" % class_name)
@@ -1191,7 +1263,8 @@ def print_init_prototype_definition(config, out, class_name, derived_class_name,
     exec_function = field['execution-function']
     tmp = name.replace('_', ' ').title().replace(' ', '')
     field_name = tmp[:1].lower() + tmp[1:]
-    general_type = get_general_type(type)
+    type_name, type_namespace = get_type_attributes(type, library)
+    general_type = get_general_type(type_name)
     field_handle_type = s_field_handle_type[general_type]
     print_empty_line(out)
     print_line(out, "// %s" % field_name)
@@ -1221,9 +1294,12 @@ def print_delete_prototype_definition(out):
   print_line(out, "}", dec=True)
   print_empty_line(out)
 
-def print_get_prototype_definition(out):
+def print_get_prototype_definition(out, library):
   print_line(out, "//! \\brief obtains the node prototype.")
-  print_line(out, "Container_proto* %s::get_prototype()" % class_name)
+  if 'SGAL' == library:
+    print_line(out, 'Container_proto* {}::get_prototype()'.format(class_name))
+  else:
+    print_line(out, 'SGAL::Container_proto* {}::get_prototype()'.format(class_name))
   print_line(out, "{", inc=True)
   print_line(out, 'if (s_prototype == nullptr) {}::init_prototype();'.format(class_name));
   print_line(out, "return s_prototype;")
@@ -1231,12 +1307,12 @@ def print_get_prototype_definition(out):
   print_empty_line(out)
 
 #! Print the definitions of the prototype handling functions.
-def print_prototype_handling_definitions(config, out, class_name, derived_class_name, fields):
-  print_init_prototype_definition(config, out, class_name, derived_class_name, fields)
+def print_prototype_handling_definitions(config, out, class_name, derived_class, fields, library):
+  print_init_prototype_definition(config, out, class_name, derived_class, fields, library)
   print_empty_line(out)
   print_delete_prototype_definition(out)
   print_empty_line(out)
-  print_get_prototype_definition(out)
+  print_get_prototype_definition(out, library)
 
 def print_set_field(config, out, field, iterator, op):
   name = field['name']
@@ -1252,15 +1328,17 @@ def print_set_field(config, out, field, iterator, op):
 def print_set_field_from_string(config, out, field):
   name = field['name']
   type = field['type']
-  if type == 'String':
+  type_name, type_namespace = get_type_attributes(type, library)
+  if type_name == 'String':
     print_line(out, 'set_{}(boost::algorithm::trim_copy(value));'.format(name))
     return
 
-  if type == 'Boolean':
+  if type_name == 'Boolean':
     print_line(out, 'set_{}(to_boolean(value));'.format(name))
     return
 
-  general_type = get_general_type(type)
+  type_name, type_namespace = get_type_attributes(type, library)
+  general_type = get_general_type(type_name)
   lexical_cast = s_field_lexical_cast[general_type]
   if not lexical_cast[0]:
     raise Exception('I do not know how to set field {} of type {} from a string!'.format(name, type))
@@ -1300,22 +1378,24 @@ def print_set_field_from_multi_string(config, out, field):
 def print_set_field_from_container(config, out, field):
   name = field['name']
   type = field['type']
-  field_class_type = type[7:].capitalize()
+  type_name, type_namespace = get_type_attributes(type, library)
+  field_class_type = type_name[7:].capitalize()
   print_line(out, 'set_{}(boost::dynamic_pointer_cast<{}>(cont));'.format(name, field_class_type))
 
 def print_set_field_from_multi_container(config, out, field):
   name = field['name']
   type = field['type']
-  field_class_type = type[7:][:-6].capitalize()
+  type_name, type_namespace = get_type_attributes(type, library)
+  field_class_type = type_name[7:][:-6].capitalize()
   print_line(out, "for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++) {", inc=True)
   print_line(out, 'add_{}(boost::dynamic_pointer_cast<{}>(*ci));'.format(name[:-1], field_class_type))
   print_line(out, "}", dec=True)
 
-def print_set_attributes_definition(config, out, class_name, derived_class_name, fields):
+def print_set_attributes_definition(config, out, class_name, derived_class, fields):
   print_line(out, "//! \\brief sets the attributes of this node.")
   print_line(out, "void %s::set_attributes(Element* elem)" % class_name)
   print_line(out, "{", inc=True)
-  print_line(out, "%s::set_attributes(elem);" % derived_class_name)
+  print_line(out, "%s::set_attributes(elem);" % derived_class)
   print_empty_line(out)
 
   string_fields = []
@@ -1324,7 +1404,8 @@ def print_set_attributes_definition(config, out, class_name, derived_class_name,
   multi_container_fields = []
   for field in fields[:]:
     type = field['type']
-    general_type = get_general_type(type)
+    type_name, type_namespace = get_type_attributes(type, library)
+    general_type = get_general_type(type_name)
     field_element_type = s_field_element_type[general_type]
     if field_element_type == 'string': string_fields.append(field)
     elif field_element_type == 'multi-string': multi_string_fields.append(field)
@@ -1397,12 +1478,13 @@ def print_register_observer(out, field, single=True):
   print_line(out, "field_changed(field_info);")
 
 #! Print setter definition
-def print_cpp_field_adder_definition(out, class_name, field):
+def print_cpp_field_adder_definition(out, class_name, field, library):
   type = field['type']
   name = field['name']
   desc = field['desc']
+  type_name, type_namespace = get_type_attributes(type, library)
   print_line(out, '//! \\brief adds a {} to the array of {}..'.format(desc[:-1], desc))
-  print_line(out, 'void {}::add_{}({} {})'.format(class_name, name[:-1], type[:-6], name[:-1]))
+  print_line(out, 'void {}::add_{}({} {})'.format(class_name, name[:-1], type_name[:-6], name[:-1]))
   print_line(out, "{", inc=True)
   print_line(out , 'm_{}.push_back({});'.format(name, name[:-1]))
   print_register_observer(out, field, single=True)
@@ -1412,34 +1494,41 @@ def print_cpp_field_adder_definition(out, class_name, field):
 # As a convension, if the field has an execution function, the
 # definition of the corresponding setter, adder, remover are placed in the
 # cpp file.
-def print_cpp_field_manipulators_definitions(config, out, class_name, field):
+def print_cpp_field_manipulators_definitions(config, out, class_name, field, library):
   geometry = field['geometry']
   exec_func = get_execution_function(config, field)
   if exec_func:
     print_field_setter_definition(config, out, False, class_name, field)
     print_empty_line(out)
   type = field['type']
-  general_type = get_general_type(type)
+  type_name, type_namespace = get_type_attributes(type, library)
+  general_type = get_general_type(type_name)
   field_element_type = s_field_element_type[general_type]
   if geometry and field_element_type == 'multi-container':
-    print_cpp_field_adder_definition(out, class_name, field)
+    print_cpp_field_adder_definition(out, class_name, field, library)
     print_empty_line(out)
 
 #! Print declarations of field setters and getters:
-def print_cpp_fields_manipulators_definitions(config, out, class_name, fields):
+def print_cpp_fields_manipulators_definitions(config, out, class_name, fields, library):
   for field in fields[:]:
-    print_cpp_field_manipulators_definitions(config, out, class_name, field)
+    print_cpp_field_manipulators_definitions(config, out, class_name, field, library)
 
  #! Print the definition of the field_changed() member function.
-def print_field_changed_definition(out, class_name):
+def print_field_changed_definition(out, class_name, library):
   print_line(out, "//! \\brief processes change of field.")
-  print_line(out, 'void {}::field_changed(const Field_info* field_info)'.format(class_name))
+  if 'SGAL' == library:
+    print_line(out, 'void {}::field_changed(const Field_info* field_info)'.format(class_name))
+  else:
+    print_line(out, 'void {}::field_changed(const SGAL::Field_info* field_info)'.format(class_name))
   print_line(out, "{", inc=True)
   print_line(out, "switch (field_info->get_id()) {", inc=True)
   print_line(out, "case BOUNDING_SPHERE: m_dirty_bounding_sphere = true; break;")
   print_line(out, "default: break;")
   print_line(out, "}", dec=True)
-  print_line(out, "Node::field_changed(field_info);")
+  if 'SGAL' == library:
+    print_line(out, "Node::field_changed(field_info);")
+  else:
+    print_line(out, "SGAL::Node::field_changed(field_info);")
   print_line(out, "}", dec=True)
   print_empty_line(out)
 
@@ -1447,7 +1536,7 @@ def print_field_changed_definition(out, class_name):
 #! \param config
 #! \param fields
 #! \param out
-def generate_cpp(config, fields, out):
+def generate_cpp(library, config, fields, out):
   print_line(out, copyright_text)
   print_line(out, "// Generated by " + os.path.basename(__file__))
   print_empty_line(out)
@@ -1460,17 +1549,23 @@ def generate_cpp(config, fields, out):
   # 2. convert first character of each word to uppper case, and
   # 3. re-concatenate.
   node_name = class_name.replace('_', ' ').title().replace(' ', '')
-  print_line(out, 'const String {}::s_tag = \"{}\";'.format(class_name, node_name))
+  if 'SGAL' == library:
+    print_line(out, 'const String {}::s_tag = \"{}\";'.format(class_name, node_name))
+  else:
+    print_line(out, 'const SGAL::String {}::s_tag = \"{}\";'.format(class_name, node_name))
 
   # Print prototype defintion:
-  print_line(out, "Container_proto* %s::s_prototype(nullptr);" % class_name)
+  if 'SGAL' == library:
+    print_line(out, "Container_proto* %s::s_prototype(nullptr);" % class_name)
+  else:
+    print_line(out, "SGAL::Container_proto* %s::s_prototype(nullptr);" % class_name)
   print_empty_line(out)
 
   print_static_member_definitions(out, class_name)
-  print_constructor_definition(config, out, class_name, derived_class_name, fields)
+  print_constructor_definition(config, out, class_name, derived_class, fields, library)
   print_destructor_definition(out, class_name, fields)
-  print_prototype_handling_definitions(config, out, class_name, derived_class_name, fields)
-  print_set_attributes_definition(config, out, class_name, derived_class_name, fields)
+  print_prototype_handling_definitions(config, out, class_name, derived_class, fields, library)
+  print_set_attributes_definition(config, out, class_name, derived_class, fields)
 
   # Print getters, setters, adders, and removers:
   cpp_fields = []
@@ -1480,13 +1575,13 @@ def generate_cpp(config, fields, out):
       cpp_fields.append(field)
 
   if 0 < len(cpp_fields):
-    print_cpp_fields_manipulators_definitions(config, out, class_name, cpp_fields)
+    print_cpp_fields_manipulators_definitions(config, out, class_name, cpp_fields, library)
     # print_cpp_field_draw_definitions()
     # print_cpp_field_cull_definitions()
     # print_cpp_field_isect_definitions()
 
   if is_geometry_node(config, fields):
-    print_field_changed_definition(out, class_name)
+    print_field_changed_definition(out, class_name, library)
 
   print_line(out, "SGAL_END_NAMESPACE")
 
@@ -1496,11 +1591,11 @@ def generate_cpp(config, fields, out):
 #! \param output_path
 def generate_cpp_from_path(library, config, fields, output_path):
   class_name = config.get('DEFAULT', 'name')
-  derived_class_name = config.get('class', 'base')
+  derived_class = config.get('class', 'base')
 
   hpp_filename = os.path.join(output_path, class_name + ".cpp")
   with open(hpp_filename, 'w') as out:
-    generate_cpp(config, fields, out)
+    generate_cpp(library, config, fields, out)
 
 # Main function
 if __name__ == '__main__':
@@ -1551,7 +1646,7 @@ if __name__ == '__main__':
   with open(fullname, 'r') as confis:
     config.readfp(confis)
     class_name = config.get('DEFAULT', 'name')
-    derived_class_name = config.get('class', 'base')
+    derived_class = config.get('class', 'base')
     fields_filename = config.get('fields', 'spec')
 
     # Extract field specification full file name:
@@ -1581,8 +1676,9 @@ if __name__ == '__main__':
         desc = vals[5].strip('\"')
         # Assume that a type that starts with 'Shared' is either a shared
         # container or a shared container array.
-        if not type.startswith('Shared_'):
-          if not type in s_field_type:
+        type_name, type_namespace = get_type_attributes(type, library)
+        if not type_name.startswith('Shared_'):
+          if not type_name in s_field_type:
             raise Exception('Type {} of field \"{}::{}\" is unknown!'.format(type, class_name, name))
         field = {
           'name': name,
