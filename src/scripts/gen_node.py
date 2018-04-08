@@ -82,18 +82,21 @@ indent = 0
 delta = 2
 
 # A set of types defined in SGAL:
-s_sgal_types = {
-  'Color_array',
-  'Coord_array_1d',
-  'Coord_array_2d',
-  'Coord_array_3d',
-  'Coord_array',
-  'Normal_array',
-  'Tex_coord_array_2d',
-  'Tex_coord_array_3d',
-  'Tex_coord_array_4d',
-  'Tex_coord_array',
-  'Indexed_face_set'
+s_types = {
+  'SGAL': {
+    'Container',
+    'Color_array',
+    'Coord_array_1d',
+    'Coord_array_2d',
+    'Coord_array_3d',
+    'Coord_array',
+    'Normal_array',
+    'Tex_coord_array_2d',
+    'Tex_coord_array_3d',
+    'Tex_coord_array_4d',
+    'Tex_coord_array',
+    'Indexed_face_set'
+  }
 }
 
 # Map from C++ types to feild types
@@ -310,6 +313,20 @@ s_field_size = {
   'Shared_container_array': 0
 }
 
+#! Obtain the field handle type.
+def get_field_handle_type(type):
+  if 'SGAL' == library:
+    return s_field_handle_type[type]
+  else:
+    return 'SGAL::' + s_field_handle_type[type]
+
+#! Obtain the field type.
+def get_field_type(type):
+  if 'SGAL' == library:
+    return s_field_type[type]
+  else:
+    return 'SGAL::' + s_field_type[type]
+
 #! Obtain the type name and namespace
 def get_type_attributes(type, library):
   try:
@@ -438,30 +455,61 @@ def print_field_enumeration(out, derived_class, fields):
 
 #! Print forward declarations
 def print_forward_declarations(config, out, fields):
-  forward_types = set()
-  forward_types.add("Container_proto")
-  forward_types.add("Element")
+  forward_types = collections.OrderedDict()
+  forward_types['SGAL'] = OrderedSet()
+  if not library in forward_types:
+    forward_types[library] = OrderedSet()
+
+  forward_types['SGAL'].add("Container_proto")
+  forward_types['SGAL'].add("Element")
 
   for field in fields[:]:
     type = field['type']
     type_name, type_namespace = get_type_attributes(type, library)
     if type_name.startswith('Shared_'):
-      main_type = get_single_type(type_name[7:])
-      forward_types.add(main_type.capitalize())
+      main_type = get_single_type(type_name[7:]).capitalize()
 
-  if config.has_option('class', 'shared-types'):
-    types = ast.literal_eval(config.get('class', 'shared-types'))
-    for type in types:
-      forward_types.add(type)
+      # Override type_namespace:
+      found = False;
+      for namespace, types in s_types.iteritems():
+        if main_type in types:
+          type_namespace = namespace
+          found = True;
+          break;
+      if not found:
+        type_namespace = library
+
+      # Add to forward types:
+      if not type_namespace in forward_types:
+        forward_types[type_namespace] = OrderedSet()
+      forward_types[type_namespace].add(main_type)
 
   if config.has_option('class', 'forward-declarations'):
     types = ast.literal_eval(config.get('class', 'forward-declarations'))
     for type in types:
-      forward_types.add(type)
+      type_name, type_namespace = get_type_attributes(type, library)
+      if not type_namespace in forward_types:
+        forward_types[type_namespace] = OrderedSet()
+      forward_types[type_namespace].add(type)
 
-  for item in forward_types:
-    print_line(out, 'class {};'.format(item))
-  print_empty_line(out)
+  if config.has_option('class', 'shared-types'):
+    types = ast.literal_eval(config.get('class', 'shared-types'))
+    for type in types:
+      type_name, type_namespace = get_type_attributes(type, library)
+      if not type_namespace in forward_types:
+        forward_types[type_namespace] = OrderedSet()
+      forward_types[type_namespace].add(type)
+
+  # print:
+  for key, value in forward_types.iteritems():
+    if 0 != len(value):
+      print_line(out, '{}_BEGIN_NAMESPACE'.format(key))
+      print_empty_line(out)
+      for item in value:
+        print_line(out, 'class {};'.format(item))
+      print_empty_line(out)
+      print_line(out, '{}_END_NAMESPACE'.format(key))
+      print_empty_line(out)
 
 # Print typedef definitions
 def print_typedefs(config, out, fields):
@@ -495,8 +543,16 @@ def print_shared_typedefs(config, out, fields):
     return
 
   for item in shared_container_types:
-    statement = 'typedef boost::shared_ptr<{}>'.format(item.capitalize())
-    statement = '{:<46}Shared_{};'.format(statement, item)
+    # Add namespace if necessary:
+    type = item.capitalize()
+    for namespace, types in s_types.iteritems():
+      if type in types:
+        type = '{}::{}'.format(namespace, type)
+        found = True;
+        break;
+
+    statement = 'typedef boost::shared_ptr<{}>'.format(type)
+    statement = '{:<64}Shared_{};'.format(statement, item)
     print_line(out, statement)
   print_empty_line(out)
 
@@ -893,18 +949,18 @@ def print_hpp_include_directives(config, out, library, derived_class):
   if hat:
     incs['SGAL'].add('SGAL/Array_types.hpp')
 
+  # Library incs:
+  if 'SGAL' != library:
+    if not library in incs:
+      incs[library] = OrderedSet()
+    incs[library].add('{}/basic.hpp'.format(library))
+
   # Derived class
   try:
     derived_class_namespace, derived_class_name = derived_class.split("::")
     incs[derived_class_namespace].add('{}/{}.hpp'.format(derived_class_namespace, derived_class_name))
   except ValueError:
     incs[library].add('{}/{}.hpp'.format(library, derived_class))
-
-  # Library incs:
-  if 'SGAL' != library:
-    if not library in incs:
-      incs[library] = OrderedSet()
-    incs[library].add('{}/basic.hpp'.format(library))
 
   # Add headers from config;
   if config.has_option('class', 'includes'):
@@ -919,6 +975,7 @@ def print_hpp_include_directives(config, out, library, derived_class):
         incs[lib] = OrderedSet()
       incs[lib].add(inc)
 
+  # Print
   for key, value in incs.iteritems():
     if 0 != len(value):
       for item in value:
@@ -980,9 +1037,9 @@ def generate_hpp(library, config, fields, out):
   print_line(out, '#define {}_{}_HPP'.format(library, class_name.upper()))
   print_empty_line(out)
   print_hpp_include_directives(config, out, library, derived_class)
+  print_forward_declarations(config, out, fields)
   print_line(out, '{}_BEGIN_NAMESPACE'.format(library.upper()))
   print_empty_line(out)
-  print_forward_declarations(config, out, fields)
 
   print_line(out, 'class SGAL_{}_DECL {} : public {} {{'.format(library, class_name, derived_class))
   print_line(out, "public:")
@@ -990,7 +1047,7 @@ def generate_hpp(library, config, fields, out):
 
   print_friends(config, out)
   print_field_enumeration(out, derived_class, fields)	# enumerations
-  print_typedefs(config, out, fields)			        # typedefs
+  print_typedefs(config, out, fields)			# typedefs
 
   # Print misc. member function declarations:
   print_constructor_declaration(out, class_name, library)
@@ -1070,89 +1127,70 @@ def generate_hpp_from_path(library, config, fields, output_path):
     generate_hpp(library, config, fields, out)
 
 def print_cpp_include_directives(out, fields):
-  include_sstream = False
-  include_iterator = False
-  include_algorithm = False
-  include_std = False
-  include_boost_algorithm_string = False
-  include_boost_lexical_cast = False
-  include_boost = False
+  incs = collections.OrderedDict()
+  incs['os'] = OrderedSet()
+  incs['stl'] = OrderedSet()
+  incs['boost'] = OrderedSet()
+  incs['CGAL'] = OrderedSet()
+  incs['SGAL'] = OrderedSet()
 
-  include_multi_istream_iterator = False;
-  include_to_boolean = False;
+  # Add include SGAL headers:
+  incs['SGAL'].add('SGAL/Element.hpp')
+  incs['SGAL'].add('SGAL/Container_proto.hpp')
+  incs['SGAL'].add('SGAL/Field_infos.hpp')
+  incs['SGAL'].add('SGAL/Field.hpp')
+
+  # Add class header
+  if not library in incs:
+    incs[library] = OrderedSet()
+  incs[library].add('{}/{}.hpp'.format(library, class_name))
 
   field_names_shared_container = set()
-  field_names_lexical_cast = set()
   for field in fields[:]:
     type = field['type']
     type_name, type_namespace = get_type_attributes(type, library)
     if type_name == 'String':
-      include_boost_algorithm_string = True
+      incs['boost'].add('boost/algorithm/string.hpp')
     elif type_name == 'Boolean':
-      include_to_boolean = True;
+      incs['SGAL'].add('SGAL/to_boolean.hpp')
     else:
       single_type = get_single_type(type_name)
       general_type = get_general_type(type_name)
       lexical_cast = s_field_lexical_cast[general_type]
       if lexical_cast[0]:
-        include_boost_lexical_cast = True
+        incs['boost'].add('boost/lexical_cast.hpp')
         if lexical_cast[1]:
           single_type = get_single_type(type_name)
-          field_names_lexical_cast.add(single_type.lower())
+          incs['SGAL'].add('SGAL/io_{}.hpp'.format(single_type.lower()))
           if type.endswith('_array'):
-            include_sstream = True
-            include_iterator = True
-            include_algorithm = True
-            include_multi_istream_iterator = True
+            incs['stl'].add('sstream')
+            incs['stl'].add('iterator')
+            incs['stl'].add('algorithm')
+            incs['SGAL'].add('SGAL/multi_istream_iterator.hpp')
 
       if single_type.startswith('Shared_'):
+        found = False;
         field_class_type = single_type[7:].capitalize()
-        if  'Container' != field_class_type:
-          field_names_shared_container.add(field_class_type)
+        for namespace, types in s_types.iteritems():
+          if field_class_type in types:
+            lib = namespace
+            if not lib in incs:
+              incs[lib] = OrderedSet()
+            incs[lib].add('{}/{}.hpp'.format(lib, field_class_type))
+            found = True;
+            break;
+        if not found:
+          incs[library].add('{}/{}.hpp'.format(library, field_class_type))
 
-  if (include_sstream):
-    print_line(out, '#include <sstream>')
-    include_std = True
-  if (include_iterator):
-    print_line(out, '#include <iterator>')
-    include_std = True
-  if (include_algorithm):
-    print_line(out, '#include <algorithm>')
-    include_std = True
-  if (include_std):
-    print_empty_line(out)
-
-  if (include_boost_algorithm_string):
-    print_line(out, '#include <boost/algorithm/string.hpp>')
-    include_boost = True
-  if (include_boost_lexical_cast):
-    print_line(out, '#include <boost/lexical_cast.hpp>')
-    include_boost = True
-  if (include_boost):
-    print_empty_line(out)
-
-  # Print include SGAL headers:
-  print_line(out, "#include \"SGAL/Element.hpp\"")
-  print_line(out, "#include \"SGAL/Container_proto.hpp\"")
-  print_line(out, "#include \"SGAL/Field_infos.hpp\"")
-  print_line(out, "#include \"SGAL/Field.hpp\"")
-  if include_to_boolean:
-    print_line(out, "#include \"SGAL/to_boolean.hpp\"")
-  if include_multi_istream_iterator:
-    print_line(out, "#include \"SGAL/multi_istream_iterator.hpp\"")
-  for item in set(field_names_lexical_cast):
-    print_line(out, '#include \"SGAL/io_{}.hpp\"'.format(item))
-  for item in set(field_names_shared_container):
-    if item in s_sgal_types:
-      print_line(out, '#include \"SGAL/{}.hpp\"'.format(item))
-  print_empty_line(out)
-
-  # Print include library headers:
-  print_line(out, '#include \"{}/{}.hpp\"'.format(library, class_name))
-  for item in set(field_names_shared_container):
-    if item not in s_sgal_types:
-      print_line(out, '#include \"{}/{}.hpp\"'.format(library, item))
-  print_empty_line(out)
+  # Print
+  for key, value in incs.iteritems():
+    if 0 != len(value):
+      for item in value:
+        if key != library:
+          print_line(out, '#include <{}>'.format(item))
+        else:
+          print_line(out, '#include \"{}\"'.format(item))
+      print_empty_line(out)
 
 def print_static_member_definitions(out, class_name):
   print_line(out, "// Default values:")
@@ -1248,12 +1286,12 @@ def print_init_prototype_definition(config, out, class_name, derived_class, fiel
     print_line(out, 's_prototype = new SGAL::Container_proto({}::get_prototype());'.format(derived_class))
   print_empty_line(out)
   print_line(out, "// Add the field-info records to the prototype:")
-  # print_line(out, "auto exec_func = static_cast<Execution_function>(&%s::structure_changed);" % class_name)
+  # print_line(out, "auto exec_func = static_cast<SGAL::Execution_function>(&%s::structure_changed);" % class_name)
   default_exec_function = ''
   if config.has_option('fields', 'execution-function'):
     default_exec_function = config.get('fields', 'execution-function')
   if default_exec_function:
-    print_line(out, 'auto exec_func = static_cast<Execution_function>(&{});'.format(default_exec_function))
+    print_line(out, 'auto exec_func = static_cast<SGAL::Execution_function>(&{});'.format(default_exec_function))
 
   for field in fields[:]:
     name = field['name']
@@ -1265,15 +1303,18 @@ def print_init_prototype_definition(config, out, class_name, derived_class, fiel
     field_name = tmp[:1].lower() + tmp[1:]
     type_name, type_namespace = get_type_attributes(type, library)
     general_type = get_general_type(type_name)
-    field_handle_type = s_field_handle_type[general_type]
+    field_handle_type = get_field_handle_type(general_type)
     print_empty_line(out)
     print_line(out, "// %s" % field_name)
     if (exec_function):
-      print_line(out, 'auto {}_exec_func = static_cast<Execution_function>(&{});'.format(name, exec_function))
+      print_line(out, 'auto {}_exec_func = static_cast<SGAL::Execution_function>(&{});'.format(name, exec_function))
     print_line(out, 'auto {}_func = reinterpret_cast<{}>(&{}::{}_handle);'.format(name, field_handle_type, class_name, name))
     field_enum = name.upper()
-    field_type = s_field_type[general_type]
-    statement = 's_prototype->add_field_info(new {}({}, \"{}\",  Field_rule::RULE_{}, {}_func'.format(field_type, field_enum, field_name, rule, name)
+    field_type = get_field_type(general_type)
+    if 'SGAL' == library:
+      statement = 's_prototype->add_field_info(new {}({}, \"{}\",  Field_rule::RULE_{}, {}_func'.format(field_type, field_enum, field_name, rule, name)
+    else:
+      statement = 's_prototype->add_field_info(new {}({}, \"{}\",  SGAL::Field_rule::RULE_{}, {}_func'.format(field_type, field_enum, field_name, rule, name)
     if (default_value):
       statement = statement + ', s_def_{}'.format(name)
     if (exec_function):
@@ -1393,9 +1434,12 @@ def print_set_field_from_multi_container(config, out, field):
 
 def print_set_attributes_definition(config, out, class_name, derived_class, fields):
   print_line(out, "//! \\brief sets the attributes of this node.")
-  print_line(out, "void %s::set_attributes(Element* elem)" % class_name)
+  if 'SGAL' == library:
+    print_line(out, 'void {}::set_attributes(Element* elem)'.format(class_name))
+  else:
+    print_line(out, 'void {}::set_attributes(SGAL::Element* elem)'.format(class_name))
   print_line(out, "{", inc=True)
-  print_line(out, "%s::set_attributes(elem);" % derived_class)
+  print_line(out, '{}::set_attributes(elem);'.format(derived_class))
   print_empty_line(out)
 
   string_fields = []
@@ -1541,7 +1585,7 @@ def generate_cpp(library, config, fields, out):
   print_line(out, "// Generated by " + os.path.basename(__file__))
   print_empty_line(out)
   print_cpp_include_directives(out, fields)
-  print_line(out, "SGAL_BEGIN_NAMESPACE")
+  print_line(out, '{}_BEGIN_NAMESPACE'.format(library.upper()))
   print_empty_line(out)
 
   # Print tag definition:
@@ -1583,7 +1627,7 @@ def generate_cpp(library, config, fields, out):
   if is_geometry_node(config, fields):
     print_field_changed_definition(out, class_name, library)
 
-  print_line(out, "SGAL_END_NAMESPACE")
+  print_line(out, '{}_END_NAMESPACE'.format(library.upper()))
 
 #! Generate the .cpp file
 #! \param config
