@@ -313,7 +313,23 @@ s_field_size = {
   'Shared_container_array': 0
 }
 
-#! Obtain the field handle type.
+#! Obtain the complete type including the namespace of a given type.
+def get_complete_type(type, library):
+  for namespace, types in s_types.iteritems():
+    if type in types:
+      if namespace != library:
+        return '{}::{}'.format(namespace, type)
+      break;
+  return type
+
+#! Obtain the namespace of a given type
+def get_type_namespace(type, library):
+  for namespace, types in s_types.iteritems():
+    if type in types:
+      return namespace
+  return library
+
+#! Obtain the field handle type of a given type.
 def get_field_handle_type(type):
   if 'SGAL' == library:
     return s_field_handle_type[type]
@@ -470,14 +486,7 @@ def print_forward_declarations(config, out, fields):
       main_type = get_single_type(type_name[7:]).capitalize()
 
       # Override type_namespace:
-      found = False;
-      for namespace, types in s_types.iteritems():
-        if main_type in types:
-          type_namespace = namespace
-          found = True;
-          break;
-      if not found:
-        type_namespace = library
+      type_namespace = get_type_namespace(main_type, library)
 
       # Add to forward types:
       if not type_namespace in forward_types:
@@ -544,13 +553,7 @@ def print_shared_typedefs(config, out, fields):
 
   for item in shared_container_types:
     # Add namespace if necessary:
-    type = item.capitalize()
-    for namespace, types in s_types.iteritems():
-      if type in types:
-        type = '{}::{}'.format(namespace, type)
-        found = True;
-        break;
-
+    type = get_complete_type(item.capitalize(), library)
     statement = 'typedef boost::shared_ptr<{}>'.format(type)
     statement = '{:<64}Shared_{};'.format(statement, item)
     print_line(out, statement)
@@ -1169,18 +1172,11 @@ def print_cpp_include_directives(out, fields):
             incs['SGAL'].add('SGAL/multi_istream_iterator.hpp')
 
       if single_type.startswith('Shared_'):
-        found = False;
         field_class_type = single_type[7:].capitalize()
-        for namespace, types in s_types.iteritems():
-          if field_class_type in types:
-            lib = namespace
-            if not lib in incs:
-              incs[lib] = OrderedSet()
-            incs[lib].add('{}/{}.hpp'.format(lib, field_class_type))
-            found = True;
-            break;
-        if not found:
-          incs[library].add('{}/{}.hpp'.format(library, field_class_type))
+        namespace = get_type_namespace(field_class_type, library)
+        if not namespace in incs:
+          incs[namespace] = OrderedSet()
+        incs[namespace].add('{}/{}.hpp'.format(namespace, field_class_type))
 
   # Print
   for key, value in incs.iteritems():
@@ -1375,7 +1371,10 @@ def print_set_field_from_string(config, out, field):
     return
 
   if type_name == 'Boolean':
-    print_line(out, 'set_{}(to_boolean(value));'.format(name))
+    if 'SGAL' == library:
+      print_line(out, 'set_{}(to_boolean(value));'.format(name))
+    else:
+      print_line(out, 'set_{}(SGAL::to_boolean(value));'.format(name))
     return
 
   type_name, type_namespace = get_type_attributes(type, library)
@@ -1420,15 +1419,15 @@ def print_set_field_from_container(config, out, field):
   name = field['name']
   type = field['type']
   type_name, type_namespace = get_type_attributes(type, library)
-  field_class_type = type_name[7:].capitalize()
+  field_class_type = get_complete_type(type_name[7:].capitalize(), library)
   print_line(out, 'set_{}(boost::dynamic_pointer_cast<{}>(cont));'.format(name, field_class_type))
 
 def print_set_field_from_multi_container(config, out, field):
   name = field['name']
   type = field['type']
   type_name, type_namespace = get_type_attributes(type, library)
-  field_class_type = type_name[7:][:-6].capitalize()
   print_line(out, "for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++) {", inc=True)
+  field_class_type = get_complete_type(type_name[7:][:-6].capitalize(), library)
   print_line(out, 'add_{}(boost::dynamic_pointer_cast<{}>(*ci));'.format(name[:-1], field_class_type))
   print_line(out, "}", dec=True)
 
