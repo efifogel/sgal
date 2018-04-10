@@ -499,7 +499,7 @@ def print_forward_declarations(config, out, fields):
       type_name, type_namespace = get_type_attributes(type, library)
       if not type_namespace in forward_types:
         forward_types[type_namespace] = OrderedSet()
-      forward_types[type_namespace].add(type)
+      forward_types[type_namespace].add(type_name)
 
   if config.has_option('class', 'shared-types'):
     types = ast.literal_eval(config.get('class', 'shared-types'))
