@@ -84,18 +84,21 @@ delta = 2
 # A set of types defined in SGAL:
 s_types = {
   'SGAL': {
-    'Container',
     'Color_array',
+    'Container',
+    'Coord_array',
     'Coord_array_1d',
     'Coord_array_2d',
     'Coord_array_3d',
-    'Coord_array',
+    "Group",
+    'Indexed_face_set',
+    'Node',
     'Normal_array',
+    "Shape",
+    'Tex_coord_array',
     'Tex_coord_array_2d',
     'Tex_coord_array_3d',
-    'Tex_coord_array_4d',
-    'Tex_coord_array',
-    'Indexed_face_set'
+    'Tex_coord_array_4d'
   }
 }
 
