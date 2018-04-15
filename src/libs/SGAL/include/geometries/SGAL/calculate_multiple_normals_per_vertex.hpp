@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_CALCULATE_MULTIPLE_NORMALS_PER_VERTEX_HPP
 #define SGAL_CALCULATE_MULTIPLE_NORMALS_PER_VERTEX_HPP
@@ -59,11 +59,11 @@ private:
   typedef boost::shared_ptr<Normal_array>       Shared_normal_array;
 
   Shared_normal_array m_normal_array;
-  Mesh_set::Facet_indices& m_normal_indices;
+  Facet_indices& m_normal_indices;
 
 public:
   Calculate_multiple_normals_per_vertex_visitor
-  (Shared_normal_array normal_array, Mesh_set::Facet_indices& normal_indices) :
+  (Shared_normal_array normal_array, Facet_indices& normal_indices) :
     m_normal_array(normal_array),
     m_normal_indices(normal_indices)
   {}
@@ -79,8 +79,7 @@ public:
 template <typename Polyhedron_>
 void calculate_multiple_normals_per_vertex
 (Polyhedron_& polyhedron,
- boost::shared_ptr<Normal_array> normal_array,
- Mesh_set::Facet_indices& normal_indices)
+ boost::shared_ptr<Normal_array> normal_array, Facet_indices& normal_indices)
 {
   typedef Polyhedron_                                   Polyhedron;
   typedef typename Polyhedron::Facet                    Facet;

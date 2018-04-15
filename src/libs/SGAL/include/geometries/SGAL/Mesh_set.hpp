@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_MESH_SET_HPP
 #define SGAL_MESH_SET_HPP
@@ -50,14 +50,11 @@ public:
     LAST
   };
 
-  typedef boost::variant<Triangle_indices, Quad_indices, Polygon_indices,
-                         Flat_indices>                      Facet_indices;
-
-  /*! Constructor.
+  /*! Construct.
    */
   Mesh_set(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destruct. */
   virtual ~Mesh_set();
 
   /*! Initialize the node prototype. */
