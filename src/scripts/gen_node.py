@@ -472,6 +472,270 @@ def print_field_enumeration(out, derived_class, fields):
   print_line(out, "};", dec=True)
   print_empty_line(out)
 
+#! Print an enumeration:
+def print_enumeration(config, out, enum):
+  desc = config.get(datum, 'desc')
+  print_line(out, '//! {}.'.format(desc))
+  print_line(out, 'enum {} {{'.format(enum), inc=True)
+  tokens = ast.literal_eval(config.get(enum, 'tokens'))
+  for token in tokens[:]:
+    geometry = field['geometry']
+    if geometry:
+      return True
+  return False
+
+#! A geometry node is either a geometry container, or a container that
+# inherits from a geometry node, or a container node that contains
+# at least one geometry node.
+# Each field has a Boolean atribute called 'geometry' that determines whether
+# the field is a geometry node. In addition the configuration file of each node
+# has an attribute called 'geometry' that determines wheher the node inherits
+# from a geometry node.
+def is_geometry_node(config, fields):
+  if has_geometry_type(fields):
+    return True
+
+  if not config.has_option('class', 'geometry'):
+    return False
+
+  opt = config.get('class', 'geometry')
+  return distutils.util.strtobool(opt)
+
+#! Determines whether the fileds contains an array field
+def has_array_type(fields):
+  for field in fields[:]:
+    type = field['type']
+    if type.endswith('_array'):
+      return True
+  return False
+
+def get_single_type(type):
+  if type.endswith('_array'):
+    return type[:-6]
+  else:
+    return type
+
+#! Determines whether the fileds contains a shared-container field
+def has_shared_type(fields):
+  for field in fields[:]:
+    type = field['type']
+    type_name, type_namespace = get_type_attributes(type, library)
+    if type_name.startswith('Shared_'):
+      return True
+  return False
+
+# Obtain the general field type
+def get_general_type(type):
+  if type.startswith('Shared_'):
+    if type.endswith('_array'):
+      return 'Shared_container_array'
+    else:
+      return 'Shared_container'
+  else:
+    return type
+
+#! Increase the indentation level.
+def increase_indent():
+  global indent
+  indent += delta
+
+#! Decrease the indentation level.
+def decrease_indent():
+  global indent
+  indent -= delta
+
+#! Print a single indented line.
+def print_line(out, line, eol=True, inc=False, dec=False):
+  if (dec): decrease_indent()
+  print ('{}{}'.format(indent * ' ', line), file=out, end='\n' if eol else '')
+  if (inc): increase_indent()
+
+#! Print a call to a function that might exceed 80 characters.
+def print_call(out, statement):
+  print_line(out, statement)
+
+#! Print a block of lines equally indented.
+def print_block(out, block):
+  lines = block.expandtabs(delta).splitlines()
+  for line in lines[:]:
+    print_line(out, line)
+
+#! Print an empty line.
+def print_empty_line(out):
+  print_line(out, '')
+
+#! Print a block statements.
+def print_group(out, desc, fnc, *args):
+  print_block(out, "/// \\name %s" % desc)
+  print_line(out, "//@{")
+  if not args:
+    fnc(out)
+  else:
+    fnc(out, args)
+  print_line(out, "//@}")
+  print_empty_line(out)
+
+#! print friend declarations.
+def print_friends(config, out):
+  if not config.has_option('class', 'friends'):
+    return
+  friends = ast.literal_eval(config.get('class', 'friends'))
+  for friend in friends:
+    print_line(out, 'friend class {};'.format(friend))
+  print_empty_line(out)
+
+#! Print enumerations.
+def print_field_enumeration(out, derived_class, fields):
+  print_line(out, "enum {", inc=True)
+  print_line(out, "FIRST = %s::LAST - 1," % derived_class)
+  for field in fields[:]:
+    print_line(out, field['name'].upper() + ',')
+  print_line(out, "LAST")
+  print_line(out, "};", dec=True)
+  print_empty_line(out)
+
+#! Print an enumeration:
+def print_enumeration(config, out, enum):
+  desc = config.get(datum, 'desc')
+  print_line(out, '//! {}.'.format(desc))
+  print_line(out, 'enum {} {{'.format(enum), inc=True)
+  tokens = ast.literal_eval(config.get(enum, 'tokens'))
+  for token in tokens[:]:
+    geometry = field['geometry']
+    if geometry:
+      return True
+  return False
+
+#! A geometry node is either a geometry container, or a container that
+# inherits from a geometry node, or a container node that contains
+# at least one geometry node.
+# Each field has a Boolean atribute called 'geometry' that determines whether
+# the field is a geometry node. In addition the configuration file of each node
+# has an attribute called 'geometry' that determines wheher the node inherits
+# from a geometry node.
+def is_geometry_node(config, fields):
+  if has_geometry_type(fields):
+    return True
+
+  if not config.has_option('class', 'geometry'):
+    return False
+
+  opt = config.get('class', 'geometry')
+  return distutils.util.strtobool(opt)
+
+#! Determines whether the fileds contains an array field
+def has_array_type(fields):
+  for field in fields[:]:
+    type = field['type']
+    if type.endswith('_array'):
+      return True
+  return False
+
+def get_single_type(type):
+  if type.endswith('_array'):
+    return type[:-6]
+  else:
+    return type
+
+#! Determines whether the fileds contains a shared-container field
+def has_shared_type(fields):
+  for field in fields[:]:
+    type = field['type']
+    type_name, type_namespace = get_type_attributes(type, library)
+    if type_name.startswith('Shared_'):
+      return True
+  return False
+
+# Obtain the general field type
+def get_general_type(type):
+  if type.startswith('Shared_'):
+    if type.endswith('_array'):
+      return 'Shared_container_array'
+    else:
+      return 'Shared_container'
+  else:
+    return type
+
+#! Increase the indentation level.
+def increase_indent():
+  global indent
+  indent += delta
+
+#! Decrease the indentation level.
+def decrease_indent():
+  global indent
+  indent -= delta
+
+#! Print a single indented line.
+def print_line(out, line, eol=True, inc=False, dec=False):
+  if (dec): decrease_indent()
+  print ('{}{}'.format(indent * ' ', line), file=out, end='\n' if eol else '')
+  if (inc): increase_indent()
+
+#! Print a call to a function that might exceed 80 characters.
+def print_call(out, statement):
+  print_line(out, statement)
+
+#! Print a block of lines equally indented.
+def print_block(out, block):
+  lines = block.expandtabs(delta).splitlines()
+  for line in lines[:]:
+    print_line(out, line)
+
+#! Print an empty line.
+def print_empty_line(out):
+  print_line(out, '')
+
+#! Print a block statements.
+def print_group(out, desc, fnc, *args):
+  print_block(out, "/// \\name %s" % desc)
+  print_line(out, "//@{")
+  if not args:
+    fnc(out)
+  else:
+    fnc(out, args)
+  print_line(out, "//@}")
+  print_empty_line(out)
+
+#! print friend declarations.
+def print_friends(config, out):
+  if not config.has_option('class', 'friends'):
+    return
+  friends = ast.literal_eval(config.get('class', 'friends'))
+  for friend in friends:
+    print_line(out, 'friend class {};'.format(friend))
+  print_empty_line(out)
+
+#! Print enumerations.
+def print_field_enumeration(out, derived_class, fields):
+  print_line(out, "enum {", inc=True)
+  print_line(out, "FIRST = %s::LAST - 1," % derived_class)
+  for field in fields[:]:
+    print_line(out, field['name'].upper() + ',')
+  print_line(out, "LAST")
+  print_line(out, "};", dec=True)
+  print_empty_line(out)
+
+#! Print an enumeration:
+def print_enumeration(config, out, enum):
+  desc = config.get(enum, 'desc')
+  print_line(out, '//! {}.'.format(desc))
+  print_line(out, 'enum {} {{'.format(enum), inc=True)
+  tokens = ast.literal_eval(config.get(enum, 'tokens'))
+  for token in tokens[:-1]:
+    print_line(out, '{},'.format(token));
+  print_line(out, tokens[-1]);
+  print_line(out, "};", dec=True)
+
+#! Print all enumerations
+def print_enumerations(config, out, derived_class, fields):
+  print_field_enumeration(out, derived_class, fields)
+  if config.has_option('class', 'public-enumerations'):
+    enumarations = ast.literal_eval(config.get('class', 'public-enumerations'))
+    for enum in enumarations:
+      print_enumeration(config, out, enum)
+    print_empty_line(out)
+
 #! Print forward declarations
 def print_forward_declarations(config, out, fields):
   forward_types = collections.OrderedDict()
@@ -1052,8 +1316,8 @@ def generate_hpp(library, config, fields, out):
   increase_indent()
 
   print_friends(config, out)
-  print_field_enumeration(out, derived_class, fields)	# enumerations
-  print_typedefs(config, out, fields)			# typedefs
+  print_enumerations(config, out, derived_class, fields)	# enumerations
+  print_typedefs(config, out, fields)				# typedefs
 
   # Print misc. member function declarations:
   print_constructor_declaration(out, class_name, library)
