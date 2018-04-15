@@ -316,7 +316,7 @@ s_field_size = {
   'Shared_container_array': 0
 }
 
-#! Obtain the complete type including the namespace of a given type.
+#! Obtain the complete type including the namespace or class of a given type.
 def get_complete_type(type, library):
   for namespace, types in s_types.iteritems():
     if type in types:
@@ -349,7 +349,7 @@ def get_field_type(type):
 #! Obtain the type name and namespace
 def get_type_attributes(type, library):
   try:
-    namespace, name = type.split("::")
+    namespace, name = type.split("::", 1)
     return name, namespace
   except ValueError:
     return type, library
@@ -1554,7 +1554,11 @@ def print_init_prototype_definition(config, out, class_name, derived_class, fiel
   if config.has_option('fields', 'execution-function'):
     default_exec_function = config.get('fields', 'execution-function')
   if default_exec_function:
-    print_line(out, 'auto exec_func = static_cast<SGAL::Execution_function>(&{});'.format(default_exec_function))
+    ef_name, ef_scope_name = get_type_attributes(default_exec_function, class_name)
+    if 'SGAL' == library:
+      print_line(out, 'auto exec_func = static_cast<Execution_function>(&{}::{});'.format(ef_scope_name, ef_name))
+    else:
+      print_line(out, 'auto exec_func = static_cast<SGAL::Execution_function>(&{}::{});'.format(ef_scope_name, ef_name))
 
   for field in fields[:]:
     name = field['name']
@@ -1570,7 +1574,11 @@ def print_init_prototype_definition(config, out, class_name, derived_class, fiel
     print_empty_line(out)
     print_line(out, "// %s" % field_name)
     if (exec_function):
-      print_line(out, 'auto {}_exec_func = static_cast<SGAL::Execution_function>(&{});'.format(name, exec_function))
+      ef_name, ef_scope_name = get_type_attributes(exec_function, class_name)
+      if 'SGAL' == library:
+        print_line(out, 'auto {}_exec_func = static_cast<Execution_function>(&{}::{});'.format(name, ef_scope_name, ef_name))
+      else:
+        print_line(out, 'auto {}_exec_func = static_cast<SGAL::Execution_function>(&{}::{});'.format(name, ef_scope_name, ef_name))
     print_line(out, 'auto {}_func = reinterpret_cast<{}>(&{}::{}_handle);'.format(name, field_handle_type, class_name, name))
     field_enum = name.upper()
     field_type = get_field_type(general_type)
