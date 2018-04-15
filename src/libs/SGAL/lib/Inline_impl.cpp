@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s) : Efi Fogel        <efifogel@gmail.com>
+// Author(s): Efi Fogel        <efifogel@gmail.com>
 
 #include <iostream>
 #include <fstream>
@@ -45,7 +45,6 @@ void Inline::add_to_scene(Scene_graph* sg)
 //! \brief cleans (generate) the children.
 void Inline::clean_childs()
 {
-  std::cout << "Inline::clean_childs()" << std::endl;
   Group::clean_childs();
   const auto& filename = m_url[0];
 
