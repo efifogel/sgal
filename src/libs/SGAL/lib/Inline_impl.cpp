@@ -27,6 +27,14 @@
 
 SGAL_BEGIN_NAMESPACE
 
+/*! Process change of url field.
+ */
+void Inline::url_changed(const Field_info* field_info)
+{
+  m_dirty_childs = true;
+  field_changed(field_info);
+}
+
 //! \brief adds the container to a given scene.
 void Inline::add_to_scene(Scene_graph* sg)
 {
@@ -37,6 +45,7 @@ void Inline::add_to_scene(Scene_graph* sg)
 //! \brief cleans (generate) the children.
 void Inline::clean_childs()
 {
+  std::cout << "Inline::clean_childs()" << std::endl;
   Group::clean_childs();
   const auto& filename = m_url[0];
 
