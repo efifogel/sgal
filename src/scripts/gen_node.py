@@ -981,21 +981,27 @@ def print_field_adder_declaration(out, field):
 def print_field_getter_declaration(out, field):
   type = field['type']
   name = field['name']
+  clean_func = field['clean-function']
   type_name, type_namespace = get_type_attributes(type, library)
   general_type = get_general_type(type_name)
   pass_method = s_field_passing_method[general_type]
   compound = s_field_return_qualification[general_type]
   desc = field['desc']
-  print_line(out, "/*! Obtain the %s. */" % desc)
+  print_line(out, '/*! Obtain the {}. */'.format(desc))
   if pass_method == 'value':
     if not compound:
-      print_line(out, "%s get_%s() const;" % (type, name))
+      if clean_func:
+        print_line(out, '{} get_{}();'.format(type, name))
+      else:
+        print_line(out, '{} get_{}() const;'.format(type, name))
     else:
-      print_line(out, "const %s get_%s() const;" % (type, name))
-      print_line(out, "%s get_%s();" % (type, name))
+      if not clean_func:
+        print_line(out, 'const {} get_{}() const;'.format(type, name))
+      print_line(out, '{} get_{}();'.format(type, name))
   elif pass_method == 'reference':
-    print_line(out, "const %s& get_%s() const;" % (type, name))
-    print_line(out, "%s& get_%s();" % (type, name))
+    if not clean_func:
+      print_line(out, 'const {}& get_{}() const;'.format(type, name))
+    print_line(out, '{}& get_{}();'.format(type, name))
   else:
     raise Exception("Pass method %s is invalid!" % pass_method)
 
@@ -1033,9 +1039,11 @@ def print_hpp_field_adder_definition(out, class_name, field):
   print_line(out , '{{ m_{}.push_back({}); }}'.format(name, name[:-1]))
 
 #! Print getter definition
-def print_field_getter_definition(out, class_name, field):
+def print_field_getter_definition(out, inlining, class_name, field):
   type = field['type']
   name = field['name']
+  inline = 'inline ' if inlining else ""
+  clean_func = field['clean-function']
   type_name, type_namespace = get_type_attributes(type, library)
   general_type = get_general_type(type_name)
   pass_method = s_field_passing_method[general_type]
@@ -1047,24 +1055,46 @@ def print_field_getter_definition(out, class_name, field):
   if pass_method == 'value':
     if not compound:
       print_line(out, '//! \\brief obtains the {}.'.format(desc))
-      print_line(out, 'inline {} {}::get_{}() const'.format(ext_type, class_name, name))
-      print_line(out, '{{ return m_{}; }}'.format(name))
+      if clean_func:
+        print_line(out, '{} {} {}::get_{}()'.format(inline, ext_type, class_name, name))
+        print_line(out, "{", inc=True)
+        print_line(out, 'if (m_dirty_{}) clean_{}();'.format(clean_func, clean_func));
+        print_line(out, 'return m_{};'.format(name))
+        print_line(out, "}", dec=True)
+      else:
+        print_line(out, '{} {} {}::get_{}() const'.format(inline, ext_type, class_name, name))
+        print_line(out, '{{ return m_{}; }}'.format(name))
+    #
     else:
+      if not clean_func:
+        print_line(out, '//! \\brief obtains the {}.'.format(desc))
+        print_line(out, '{} const {} {}::get_{}() const'.format(inline, ext_type, class_name, name))
+        print_line(out, '{{ return m_{}; }}'.format(name))
+        print_empty_line(out)
       print_line(out, '//! \\brief obtains the {}.'.format(desc))
-      print_line(out, 'inline const {} {}::get_{}() const'.format(ext_type, class_name, name))
-      print_line(out, '{{ return m_{}; }}'.format(name))
-      print_empty_line(out)
-      print_line(out, '//! \\brief obtains the {}.'.format(desc))
-      print_line(out, 'inline {} {}::get_{}()'.format(ext_type, class_name, name))
-      print_line(out, '{{ return m_{}; }}'.format(name))
+      print_line(out, '{} {} {}::get_{}()'.format(inline, ext_type, class_name, name))
+      if clean_func:
+        print_line(out, "{", inc=True)
+        print_line(out, 'if (m_dirty_{}) clean_{}();'.format(clean_func, clean_func));
+        print_line(out, 'return m_{};'.format(name))
+        print_line(out, "}", dec=True)
+      else:
+        print_line(out, '{{ return m_{}; }}'.format(name))
   elif pass_method == 'reference':
-    print_line(out, '//! \\brief obtains the {}.'.format(desc))
-    print_line(out, 'inline const {}& {}::get_{}() const'.format(ext_type, class_name, name))
-    print_line(out, '{{ return m_{}; }}'.format(name))
+    if not clean_func:
+      print_line(out, '//! \\brief obtains the {}.'.format(desc))
+      print_line(out, '{} const {}& {}::get_{}() const'.format(inline, ext_type, class_name, name))
+      print_line(out, '{{ return m_{}; }}'.format(name))
     print_empty_line(out)
     print_line(out, '//! \\brief obtains the {}.'.format(desc))
-    print_line(out, 'inline {}& {}::get_{}()'.format(ext_type, class_name, name))
-    print_line(out, '{{ return m_{}; }}'.format(name))
+    print_line(out, '{} {}& {}::get_{}()'.format(inline, ext_type, class_name, name))
+    if clean_func:
+      print_line(out, "{", inc=True)
+      print_line(out, 'if (m_dirty_{}) clean_{}();'.format(clean_func, clean_func));
+      print_line(out, 'return m_{};'.format(name))
+      print_line(out, "}", dec=True)
+    else:
+      print_line(out, '{{ return m_{}; }}'.format(name))
   else:
     raise Exception("Pass method %s is invalid!" % pass_method)
 
@@ -1168,6 +1198,7 @@ def print_create_definition(out, class_name, library):
 def print_hpp_field_manipulators_definitions(config, out, class_name, field):
   geometry = field['geometry']
   exec_func = get_execution_function(config, field)
+  clean_func = field['clean-function']
   if not exec_func:
     print_field_setter_definition(config, out, True, class_name, field)
     print_empty_line(out)
@@ -1178,7 +1209,8 @@ def print_hpp_field_manipulators_definitions(config, out, class_name, field):
   if not geometry and field_element_type == 'multi-container':
     print_hpp_field_adder_definition(out, class_name, field)
     print_empty_line(out)
-  print_field_getter_definition(out, class_name, field)
+  if not clean_func:
+    print_field_getter_definition(out, True, class_name, field)
   print_empty_line(out)
 
 #! Print declarations of field setters, getters, adders, and removers:
@@ -1815,6 +1847,7 @@ def print_cpp_field_adder_definition(out, class_name, field, library):
 def print_cpp_field_manipulators_definitions(config, out, class_name, field, library):
   geometry = field['geometry']
   exec_func = get_execution_function(config, field)
+  clean_func = field['clean-function']
   if exec_func:
     print_field_setter_definition(config, out, False, class_name, field)
     print_empty_line(out)
@@ -1824,6 +1857,9 @@ def print_cpp_field_manipulators_definitions(config, out, class_name, field, lib
   field_element_type = s_field_element_type[general_type]
   if geometry and field_element_type == 'multi-container':
     print_cpp_field_adder_definition(out, class_name, field, library)
+    print_empty_line(out)
+  if clean_func:
+    print_field_getter_definition(out, False, class_name, field)
     print_empty_line(out)
 
 #! Print declarations of field setters and getters:
@@ -1991,7 +2027,8 @@ if __name__ == '__main__':
         rule = vals[2]
         default_value = vals[3]
         exec_function = vals[4]
-        desc = vals[5].strip('\"')
+        clean_function = vals[5]
+        desc = vals[6].strip('\"')
         # Assume that a type that starts with 'Shared' is either a shared
         # container or a shared container array.
         type_name, type_namespace = get_type_attributes(type, library)
@@ -2004,6 +2041,7 @@ if __name__ == '__main__':
           'rule': rule,
           'default-value': default_value,
           'execution-function': exec_function,
+          'clean-function': clean_function,
           'desc': desc,
           'geometry': False
         }
