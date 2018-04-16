@@ -14,20 +14,19 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
+// SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Gl_mapper.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-Gl_wrapper* Gl_wrapper::s_instance = NULL;
+Gl_mapper* Gl_mapper::s_instance = nullptr;
 
 /*! Constructor */
-Gl_wrapper::Gl_wrapper()
+Gl_mapper::Gl_mapper()
 {
   m_gl_token_names[0xffffffff] = "-1";
   m_gl_token_names[GL_VERSION_1_1] = "GL_VERSION_1_1";
@@ -1332,20 +1331,20 @@ Gl_wrapper::Gl_wrapper()
 }
 
 /*! Destructor */
-Gl_wrapper::~Gl_wrapper()
+Gl_mapper::~Gl_mapper()
 {
   m_gl_token_names.clear();
 }
 
 /*! Obtain the singletone */
-Gl_wrapper* Gl_wrapper::get_instance()
+Gl_mapper* Gl_mapper::get_instance()
 {
-  if (s_instance == NULL) s_instance = new Gl_wrapper();
+  if (s_instance == NULL) s_instance = new Gl_mapper();
   return s_instance;
 }
 
 /*! Find the name of a token */
-const char* Gl_wrapper::find_name(GLenum num)
+const char* Gl_mapper::find_name(GLenum num)
 {
   Name_const_iter it = m_gl_token_names.find(num);
   if (it == m_gl_token_names.end()) return "";
@@ -1353,7 +1352,7 @@ const char* Gl_wrapper::find_name(GLenum num)
 }
 
 /*! \brief checks whether openGl errors have occured. */
-void Gl_wrapper::check_error()
+void Gl_mapper::check_error()
 {
   GLenum err = glGetError();
   while (err != GL_NO_ERROR) {
