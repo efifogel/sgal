@@ -1044,7 +1044,20 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPM_TEYE_TINO_MOTR_VANO\n");
-  SGAL_error_msg("Not implemented yet!");
+
+  glColor3fv(get(m_color_array, 0));
+  const auto& coords = triangle_coord_indices();
+  const auto& tex_coords = triangle_tex_coord_indices();
+  glBegin(GL_TRIANGLES);
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][2]));
+    glVertex3fv(m_coord_array->datum(coords[i][2]));
+  }
+  glEnd();
 }
 
 // void draw_FSNO_FIYE_FAPM_TEYE_TINO_MOTR_VANO(); invalid
