@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s) : Efi Fogel        <efifogel@gmail.com>
+// Author(s): Efi Fogel        <efifogel@gmail.com>
 
 #include <iostream>
 #include <fstream>
@@ -26,6 +26,14 @@
 #include "Vrml_scanner.hpp"
 
 SGAL_BEGIN_NAMESPACE
+
+/*! Process change of url field.
+ */
+void Inline::url_changed(const Field_info* field_info)
+{
+  m_dirty_childs = true;
+  field_changed(field_info);
+}
 
 //! \brief adds the container to a given scene.
 void Inline::add_to_scene(Scene_graph* sg)

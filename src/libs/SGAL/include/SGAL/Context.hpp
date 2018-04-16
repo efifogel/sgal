@@ -128,6 +128,7 @@
 #endif
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Bit_mask.hpp"
 #include "SGAL/Vector4ub.hpp"

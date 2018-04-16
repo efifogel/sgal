@@ -84,18 +84,21 @@ delta = 2
 # A set of types defined in SGAL:
 s_types = {
   'SGAL': {
-    'Container',
     'Color_array',
+    'Container',
+    'Coord_array',
     'Coord_array_1d',
     'Coord_array_2d',
     'Coord_array_3d',
-    'Coord_array',
+    "Group",
+    'Indexed_face_set',
+    'Node',
     'Normal_array',
+    "Shape",
+    'Tex_coord_array',
     'Tex_coord_array_2d',
     'Tex_coord_array_3d',
-    'Tex_coord_array_4d',
-    'Tex_coord_array',
-    'Indexed_face_set'
+    'Tex_coord_array_4d'
   }
 }
 
@@ -313,7 +316,7 @@ s_field_size = {
   'Shared_container_array': 0
 }
 
-#! Obtain the complete type including the namespace of a given type.
+#! Obtain the complete type including the namespace or class of a given type.
 def get_complete_type(type, library):
   for namespace, types in s_types.iteritems():
     if type in types:
@@ -346,7 +349,7 @@ def get_field_type(type):
 #! Obtain the type name and namespace
 def get_type_attributes(type, library):
   try:
-    namespace, name = type.split("::")
+    namespace, name = type.split("::", 1)
     return name, namespace
   except ValueError:
     return type, library
@@ -468,6 +471,270 @@ def print_field_enumeration(out, derived_class, fields):
   print_line(out, "LAST")
   print_line(out, "};", dec=True)
   print_empty_line(out)
+
+#! Print an enumeration:
+def print_enumeration(config, out, enum):
+  desc = config.get(datum, 'desc')
+  print_line(out, '//! {}.'.format(desc))
+  print_line(out, 'enum {} {{'.format(enum), inc=True)
+  tokens = ast.literal_eval(config.get(enum, 'tokens'))
+  for token in tokens[:]:
+    geometry = field['geometry']
+    if geometry:
+      return True
+  return False
+
+#! A geometry node is either a geometry container, or a container that
+# inherits from a geometry node, or a container node that contains
+# at least one geometry node.
+# Each field has a Boolean atribute called 'geometry' that determines whether
+# the field is a geometry node. In addition the configuration file of each node
+# has an attribute called 'geometry' that determines wheher the node inherits
+# from a geometry node.
+def is_geometry_node(config, fields):
+  if has_geometry_type(fields):
+    return True
+
+  if not config.has_option('class', 'geometry'):
+    return False
+
+  opt = config.get('class', 'geometry')
+  return distutils.util.strtobool(opt)
+
+#! Determines whether the fileds contains an array field
+def has_array_type(fields):
+  for field in fields[:]:
+    type = field['type']
+    if type.endswith('_array'):
+      return True
+  return False
+
+def get_single_type(type):
+  if type.endswith('_array'):
+    return type[:-6]
+  else:
+    return type
+
+#! Determines whether the fileds contains a shared-container field
+def has_shared_type(fields):
+  for field in fields[:]:
+    type = field['type']
+    type_name, type_namespace = get_type_attributes(type, library)
+    if type_name.startswith('Shared_'):
+      return True
+  return False
+
+# Obtain the general field type
+def get_general_type(type):
+  if type.startswith('Shared_'):
+    if type.endswith('_array'):
+      return 'Shared_container_array'
+    else:
+      return 'Shared_container'
+  else:
+    return type
+
+#! Increase the indentation level.
+def increase_indent():
+  global indent
+  indent += delta
+
+#! Decrease the indentation level.
+def decrease_indent():
+  global indent
+  indent -= delta
+
+#! Print a single indented line.
+def print_line(out, line, eol=True, inc=False, dec=False):
+  if (dec): decrease_indent()
+  print ('{}{}'.format(indent * ' ', line), file=out, end='\n' if eol else '')
+  if (inc): increase_indent()
+
+#! Print a call to a function that might exceed 80 characters.
+def print_call(out, statement):
+  print_line(out, statement)
+
+#! Print a block of lines equally indented.
+def print_block(out, block):
+  lines = block.expandtabs(delta).splitlines()
+  for line in lines[:]:
+    print_line(out, line)
+
+#! Print an empty line.
+def print_empty_line(out):
+  print_line(out, '')
+
+#! Print a block statements.
+def print_group(out, desc, fnc, *args):
+  print_block(out, "/// \\name %s" % desc)
+  print_line(out, "//@{")
+  if not args:
+    fnc(out)
+  else:
+    fnc(out, args)
+  print_line(out, "//@}")
+  print_empty_line(out)
+
+#! print friend declarations.
+def print_friends(config, out):
+  if not config.has_option('class', 'friends'):
+    return
+  friends = ast.literal_eval(config.get('class', 'friends'))
+  for friend in friends:
+    print_line(out, 'friend class {};'.format(friend))
+  print_empty_line(out)
+
+#! Print enumerations.
+def print_field_enumeration(out, derived_class, fields):
+  print_line(out, "enum {", inc=True)
+  print_line(out, "FIRST = %s::LAST - 1," % derived_class)
+  for field in fields[:]:
+    print_line(out, field['name'].upper() + ',')
+  print_line(out, "LAST")
+  print_line(out, "};", dec=True)
+  print_empty_line(out)
+
+#! Print an enumeration:
+def print_enumeration(config, out, enum):
+  desc = config.get(datum, 'desc')
+  print_line(out, '//! {}.'.format(desc))
+  print_line(out, 'enum {} {{'.format(enum), inc=True)
+  tokens = ast.literal_eval(config.get(enum, 'tokens'))
+  for token in tokens[:]:
+    geometry = field['geometry']
+    if geometry:
+      return True
+  return False
+
+#! A geometry node is either a geometry container, or a container that
+# inherits from a geometry node, or a container node that contains
+# at least one geometry node.
+# Each field has a Boolean atribute called 'geometry' that determines whether
+# the field is a geometry node. In addition the configuration file of each node
+# has an attribute called 'geometry' that determines wheher the node inherits
+# from a geometry node.
+def is_geometry_node(config, fields):
+  if has_geometry_type(fields):
+    return True
+
+  if not config.has_option('class', 'geometry'):
+    return False
+
+  opt = config.get('class', 'geometry')
+  return distutils.util.strtobool(opt)
+
+#! Determines whether the fileds contains an array field
+def has_array_type(fields):
+  for field in fields[:]:
+    type = field['type']
+    if type.endswith('_array'):
+      return True
+  return False
+
+def get_single_type(type):
+  if type.endswith('_array'):
+    return type[:-6]
+  else:
+    return type
+
+#! Determines whether the fileds contains a shared-container field
+def has_shared_type(fields):
+  for field in fields[:]:
+    type = field['type']
+    type_name, type_namespace = get_type_attributes(type, library)
+    if type_name.startswith('Shared_'):
+      return True
+  return False
+
+# Obtain the general field type
+def get_general_type(type):
+  if type.startswith('Shared_'):
+    if type.endswith('_array'):
+      return 'Shared_container_array'
+    else:
+      return 'Shared_container'
+  else:
+    return type
+
+#! Increase the indentation level.
+def increase_indent():
+  global indent
+  indent += delta
+
+#! Decrease the indentation level.
+def decrease_indent():
+  global indent
+  indent -= delta
+
+#! Print a single indented line.
+def print_line(out, line, eol=True, inc=False, dec=False):
+  if (dec): decrease_indent()
+  print ('{}{}'.format(indent * ' ', line), file=out, end='\n' if eol else '')
+  if (inc): increase_indent()
+
+#! Print a call to a function that might exceed 80 characters.
+def print_call(out, statement):
+  print_line(out, statement)
+
+#! Print a block of lines equally indented.
+def print_block(out, block):
+  lines = block.expandtabs(delta).splitlines()
+  for line in lines[:]:
+    print_line(out, line)
+
+#! Print an empty line.
+def print_empty_line(out):
+  print_line(out, '')
+
+#! Print a block statements.
+def print_group(out, desc, fnc, *args):
+  print_block(out, "/// \\name %s" % desc)
+  print_line(out, "//@{")
+  if not args:
+    fnc(out)
+  else:
+    fnc(out, args)
+  print_line(out, "//@}")
+  print_empty_line(out)
+
+#! print friend declarations.
+def print_friends(config, out):
+  if not config.has_option('class', 'friends'):
+    return
+  friends = ast.literal_eval(config.get('class', 'friends'))
+  for friend in friends:
+    print_line(out, 'friend class {};'.format(friend))
+  print_empty_line(out)
+
+#! Print enumerations.
+def print_field_enumeration(out, derived_class, fields):
+  print_line(out, "enum {", inc=True)
+  print_line(out, "FIRST = %s::LAST - 1," % derived_class)
+  for field in fields[:]:
+    print_line(out, field['name'].upper() + ',')
+  print_line(out, "LAST")
+  print_line(out, "};", dec=True)
+  print_empty_line(out)
+
+#! Print an enumeration:
+def print_enumeration(config, out, enum):
+  desc = config.get(enum, 'desc')
+  print_line(out, '//! {}.'.format(desc))
+  print_line(out, 'enum {} {{'.format(enum), inc=True)
+  tokens = ast.literal_eval(config.get(enum, 'tokens'))
+  for token in tokens[:-1]:
+    print_line(out, '{},'.format(token));
+  print_line(out, tokens[-1]);
+  print_line(out, "};", dec=True)
+
+#! Print all enumerations
+def print_enumerations(config, out, derived_class, fields):
+  print_field_enumeration(out, derived_class, fields)
+  if config.has_option('class', 'public-enumerations'):
+    enumarations = ast.literal_eval(config.get('class', 'public-enumerations'))
+    for enum in enumarations:
+      print_enumeration(config, out, enum)
+    print_empty_line(out)
 
 #! Print forward declarations
 def print_forward_declarations(config, out, fields):
@@ -714,21 +981,27 @@ def print_field_adder_declaration(out, field):
 def print_field_getter_declaration(out, field):
   type = field['type']
   name = field['name']
+  clean_func = field['clean-function']
   type_name, type_namespace = get_type_attributes(type, library)
   general_type = get_general_type(type_name)
   pass_method = s_field_passing_method[general_type]
   compound = s_field_return_qualification[general_type]
   desc = field['desc']
-  print_line(out, "/*! Obtain the %s. */" % desc)
+  print_line(out, '/*! Obtain the {}. */'.format(desc))
   if pass_method == 'value':
     if not compound:
-      print_line(out, "%s get_%s() const;" % (type, name))
+      if clean_func:
+        print_line(out, '{} get_{}();'.format(type, name))
+      else:
+        print_line(out, '{} get_{}() const;'.format(type, name))
     else:
-      print_line(out, "const %s get_%s() const;" % (type, name))
-      print_line(out, "%s get_%s();" % (type, name))
+      if not clean_func:
+        print_line(out, 'const {} get_{}() const;'.format(type, name))
+      print_line(out, '{} get_{}();'.format(type, name))
   elif pass_method == 'reference':
-    print_line(out, "const %s& get_%s() const;" % (type, name))
-    print_line(out, "%s& get_%s();" % (type, name))
+    if not clean_func:
+      print_line(out, 'const {}& get_{}() const;'.format(type, name))
+    print_line(out, '{}& get_{}();'.format(type, name))
   else:
     raise Exception("Pass method %s is invalid!" % pass_method)
 
@@ -766,9 +1039,11 @@ def print_hpp_field_adder_definition(out, class_name, field):
   print_line(out , '{{ m_{}.push_back({}); }}'.format(name, name[:-1]))
 
 #! Print getter definition
-def print_field_getter_definition(out, class_name, field):
+def print_field_getter_definition(out, inlining, class_name, field):
   type = field['type']
   name = field['name']
+  inline = 'inline ' if inlining else ""
+  clean_func = field['clean-function']
   type_name, type_namespace = get_type_attributes(type, library)
   general_type = get_general_type(type_name)
   pass_method = s_field_passing_method[general_type]
@@ -780,24 +1055,46 @@ def print_field_getter_definition(out, class_name, field):
   if pass_method == 'value':
     if not compound:
       print_line(out, '//! \\brief obtains the {}.'.format(desc))
-      print_line(out, 'inline {} {}::get_{}() const'.format(ext_type, class_name, name))
-      print_line(out, '{{ return m_{}; }}'.format(name))
+      if clean_func:
+        print_line(out, '{} {} {}::get_{}()'.format(inline, ext_type, class_name, name))
+        print_line(out, "{", inc=True)
+        print_line(out, 'if (m_dirty_{}) clean_{}();'.format(clean_func, clean_func));
+        print_line(out, 'return m_{};'.format(name))
+        print_line(out, "}", dec=True)
+      else:
+        print_line(out, '{} {} {}::get_{}() const'.format(inline, ext_type, class_name, name))
+        print_line(out, '{{ return m_{}; }}'.format(name))
+    #
     else:
+      if not clean_func:
+        print_line(out, '//! \\brief obtains the {}.'.format(desc))
+        print_line(out, '{} const {} {}::get_{}() const'.format(inline, ext_type, class_name, name))
+        print_line(out, '{{ return m_{}; }}'.format(name))
+        print_empty_line(out)
       print_line(out, '//! \\brief obtains the {}.'.format(desc))
-      print_line(out, 'inline const {} {}::get_{}() const'.format(ext_type, class_name, name))
-      print_line(out, '{{ return m_{}; }}'.format(name))
-      print_empty_line(out)
-      print_line(out, '//! \\brief obtains the {}.'.format(desc))
-      print_line(out, 'inline {} {}::get_{}()'.format(ext_type, class_name, name))
-      print_line(out, '{{ return m_{}; }}'.format(name))
+      print_line(out, '{} {} {}::get_{}()'.format(inline, ext_type, class_name, name))
+      if clean_func:
+        print_line(out, "{", inc=True)
+        print_line(out, 'if (m_dirty_{}) clean_{}();'.format(clean_func, clean_func));
+        print_line(out, 'return m_{};'.format(name))
+        print_line(out, "}", dec=True)
+      else:
+        print_line(out, '{{ return m_{}; }}'.format(name))
   elif pass_method == 'reference':
-    print_line(out, '//! \\brief obtains the {}.'.format(desc))
-    print_line(out, 'inline const {}& {}::get_{}() const'.format(ext_type, class_name, name))
-    print_line(out, '{{ return m_{}; }}'.format(name))
+    if not clean_func:
+      print_line(out, '//! \\brief obtains the {}.'.format(desc))
+      print_line(out, '{} const {}& {}::get_{}() const'.format(inline, ext_type, class_name, name))
+      print_line(out, '{{ return m_{}; }}'.format(name))
     print_empty_line(out)
     print_line(out, '//! \\brief obtains the {}.'.format(desc))
-    print_line(out, 'inline {}& {}::get_{}()'.format(ext_type, class_name, name))
-    print_line(out, '{{ return m_{}; }}'.format(name))
+    print_line(out, '{} {}& {}::get_{}()'.format(inline, ext_type, class_name, name))
+    if clean_func:
+      print_line(out, "{", inc=True)
+      print_line(out, 'if (m_dirty_{}) clean_{}();'.format(clean_func, clean_func));
+      print_line(out, 'return m_{};'.format(name))
+      print_line(out, "}", dec=True)
+    else:
+      print_line(out, '{{ return m_{}; }}'.format(name))
   else:
     raise Exception("Pass method %s is invalid!" % pass_method)
 
@@ -901,6 +1198,7 @@ def print_create_definition(out, class_name, library):
 def print_hpp_field_manipulators_definitions(config, out, class_name, field):
   geometry = field['geometry']
   exec_func = get_execution_function(config, field)
+  clean_func = field['clean-function']
   if not exec_func:
     print_field_setter_definition(config, out, True, class_name, field)
     print_empty_line(out)
@@ -911,7 +1209,8 @@ def print_hpp_field_manipulators_definitions(config, out, class_name, field):
   if not geometry and field_element_type == 'multi-container':
     print_hpp_field_adder_definition(out, class_name, field)
     print_empty_line(out)
-  print_field_getter_definition(out, class_name, field)
+  if not clean_func:
+    print_field_getter_definition(out, True, class_name, field)
   print_empty_line(out)
 
 #! Print declarations of field setters, getters, adders, and removers:
@@ -1049,8 +1348,8 @@ def generate_hpp(library, config, fields, out):
   increase_indent()
 
   print_friends(config, out)
-  print_field_enumeration(out, derived_class, fields)	# enumerations
-  print_typedefs(config, out, fields)			# typedefs
+  print_enumerations(config, out, derived_class, fields)	# enumerations
+  print_typedefs(config, out, fields)				# typedefs
 
   # Print misc. member function declarations:
   print_constructor_declaration(out, class_name, library)
@@ -1287,7 +1586,11 @@ def print_init_prototype_definition(config, out, class_name, derived_class, fiel
   if config.has_option('fields', 'execution-function'):
     default_exec_function = config.get('fields', 'execution-function')
   if default_exec_function:
-    print_line(out, 'auto exec_func = static_cast<SGAL::Execution_function>(&{});'.format(default_exec_function))
+    ef_name, ef_scope_name = get_type_attributes(default_exec_function, class_name)
+    if 'SGAL' == library:
+      print_line(out, 'auto exec_func = static_cast<Execution_function>(&{}::{});'.format(ef_scope_name, ef_name))
+    else:
+      print_line(out, 'auto exec_func = static_cast<SGAL::Execution_function>(&{}::{});'.format(ef_scope_name, ef_name))
 
   for field in fields[:]:
     name = field['name']
@@ -1303,7 +1606,11 @@ def print_init_prototype_definition(config, out, class_name, derived_class, fiel
     print_empty_line(out)
     print_line(out, "// %s" % field_name)
     if (exec_function):
-      print_line(out, 'auto {}_exec_func = static_cast<SGAL::Execution_function>(&{});'.format(name, exec_function))
+      ef_name, ef_scope_name = get_type_attributes(exec_function, class_name)
+      if 'SGAL' == library:
+        print_line(out, 'auto {}_exec_func = static_cast<Execution_function>(&{}::{});'.format(name, ef_scope_name, ef_name))
+      else:
+        print_line(out, 'auto {}_exec_func = static_cast<SGAL::Execution_function>(&{}::{});'.format(name, ef_scope_name, ef_name))
     print_line(out, 'auto {}_func = reinterpret_cast<{}>(&{}::{}_handle);'.format(name, field_handle_type, class_name, name))
     field_enum = name.upper()
     field_type = get_field_type(general_type)
@@ -1540,6 +1847,7 @@ def print_cpp_field_adder_definition(out, class_name, field, library):
 def print_cpp_field_manipulators_definitions(config, out, class_name, field, library):
   geometry = field['geometry']
   exec_func = get_execution_function(config, field)
+  clean_func = field['clean-function']
   if exec_func:
     print_field_setter_definition(config, out, False, class_name, field)
     print_empty_line(out)
@@ -1549,6 +1857,9 @@ def print_cpp_field_manipulators_definitions(config, out, class_name, field, lib
   field_element_type = s_field_element_type[general_type]
   if geometry and field_element_type == 'multi-container':
     print_cpp_field_adder_definition(out, class_name, field, library)
+    print_empty_line(out)
+  if clean_func:
+    print_field_getter_definition(out, False, class_name, field)
     print_empty_line(out)
 
 #! Print declarations of field setters and getters:
@@ -1716,7 +2027,8 @@ if __name__ == '__main__':
         rule = vals[2]
         default_value = vals[3]
         exec_function = vals[4]
-        desc = vals[5].strip('\"')
+        clean_function = vals[5]
+        desc = vals[6].strip('\"')
         # Assume that a type that starts with 'Shared' is either a shared
         # container or a shared container array.
         type_name, type_namespace = get_type_attributes(type, library)
@@ -1729,6 +2041,7 @@ if __name__ == '__main__':
           'rule': rule,
           'default-value': default_value,
           'execution-function': exec_function,
+          'clean-function': clean_function,
           'desc': desc,
           'geometry': False
         }

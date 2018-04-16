@@ -515,7 +515,7 @@ set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Gfx_conf.cpp)
 #ifeq ($(SGAL_USE_GLUT), 1)
 #set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Glut_font.cpp
 #endif
-set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Gl_wrapper.cpp)
+set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Gl_mapper.cpp)
 set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Group.cpp)
 set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Halftone.cpp)
 set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Image_background.cpp)

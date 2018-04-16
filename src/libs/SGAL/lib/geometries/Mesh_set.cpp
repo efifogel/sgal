@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <vector>
 #include <utility>
@@ -479,28 +479,28 @@ Flat_indices& Mesh_set::get_empty_flat_tex_coord_indices()
 }
 
 //! \brief obtains the facet coordinate indices.
-const Mesh_set::Facet_indices& Mesh_set::get_facet_coord_indices()
+const Facet_indices& Mesh_set::get_facet_coord_indices()
 {
   if (is_dirty_facet_coord_indices()) clean_facet_coord_indices();
   return m_facet_coord_indices;
 }
 
 //! \brief obtains the facet normal indices.
-const Mesh_set::Facet_indices& Mesh_set::get_facet_normal_indices()
+const Facet_indices& Mesh_set::get_facet_normal_indices()
 {
   if (is_dirty_facet_normal_indices()) clean_facet_normal_indices();
   return m_facet_normal_indices;
 }
 
 //! \brief obtains the facet color indices.
-const Mesh_set::Facet_indices& Mesh_set::get_facet_color_indices()
+const Facet_indices& Mesh_set::get_facet_color_indices()
 {
   if (is_dirty_facet_color_indices()) clean_facet_color_indices();
   return m_facet_color_indices;
 }
 
 //! \brief obtains the facet texture coordinate indices.
-const Mesh_set::Facet_indices& Mesh_set::get_facet_tex_coord_indices()
+const Facet_indices& Mesh_set::get_facet_tex_coord_indices()
 {
   if (is_dirty_facet_tex_coord_indices()) clean_facet_tex_coord_indices();
   return m_facet_tex_coord_indices;
@@ -1054,7 +1054,7 @@ Bounding_box Mesh_set::bounding_box()
 
 //! \brief resizes a facet indices structure with the same size as another.
 void Mesh_set::resize_facet_indices(Facet_indices& target,
-                                  const Facet_indices& source)
+                                    const Facet_indices& source)
 {
   Resize_facet_indices_visitor visitor(target);
   boost::apply_visitor(visitor, source);

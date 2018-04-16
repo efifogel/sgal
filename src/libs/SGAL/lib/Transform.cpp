@@ -122,9 +122,16 @@ void Transform::apply(Field_value_applier& op)
  */
 void Transform::transform(Container* target, Field_value_transformer& op)
 {
+  //! \todo better define the matrix as a field and simply clean it if dirty.
   if (m_dirty_parts) clean_parts();
-  static_cast<Transform*>(target)->m_dirty_matrix = m_dirty_matrix;
-  static_cast<Transform*>(target)->m_dirty_inverse = m_dirty_inverse;
+  if (m_dirty_matrix)
+    static_cast<Transform*>(target)->m_dirty_matrix = m_dirty_matrix;
+  else
+    static_cast<Transform*>(target)->m_matrix = m_matrix;
+  if (m_dirty_inverse)
+    static_cast<Transform*>(target)->m_dirty_inverse = m_dirty_inverse;
+  else
+    static_cast<Transform*>(target)->m_inverse_matrix = m_inverse_matrix;
   Container::transform(target, op);
 }
 

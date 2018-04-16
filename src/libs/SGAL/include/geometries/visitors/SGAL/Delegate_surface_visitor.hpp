@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_DELEGATE_SURFACE_VISITOR_HPP
 #define SGAL_DELEGATE_SURFACE_VISITOR_HPP
@@ -41,7 +41,7 @@ public:
   Delegate_surface_visitor(Geo_set::Primitive_type primitive_type,
                            Size num_primitives,
                            Shared_coord_array coord_array,
-                           const Mesh_set::Facet_indices& coord_indices) :
+                           const Facet_indices& coord_indices) :
     m_primitive_type(primitive_type),
     m_num_primitives(num_primitives),
     m_coord_array(coord_array),
@@ -79,7 +79,7 @@ private:
   /*! The coordinate indices of the mesh for which a polyhedron data structure
    * is constructed.
    */
-  const Mesh_set::Facet_indices m_coord_indices;
+  const Facet_indices m_coord_indices;
 };
 
 SGAL_END_NAMESPACE
