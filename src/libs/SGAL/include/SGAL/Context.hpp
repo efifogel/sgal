@@ -131,6 +131,7 @@
 #include "SGAL/Container.hpp"
 #include "SGAL/Bit_mask.hpp"
 #include "SGAL/Vector4ub.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Matrix4f.hpp"
 #include "SGAL/Vector4f.hpp"
 #include "SGAL/Gfx.hpp"
