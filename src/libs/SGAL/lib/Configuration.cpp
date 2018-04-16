@@ -60,7 +60,7 @@ const Uint Configuration::s_def_verbose_level(0);
 const Boolean Configuration::s_def_seamless_cube_map(true);
 const Boolean Configuration::s_def_override_material(true);
 const Boolean Configuration::s_def_override_tex_enable(true);
-const Boolean Configuration::s_def_override_tex_env(true);
+const Boolean Configuration::s_def_override_tex_env(false);
 const Boolean Configuration::s_def_override_blend_func(true);
 const Boolean Configuration::s_def_override_light_model(true);
 const Boolean Configuration::s_def_override_tex_gen(true);
