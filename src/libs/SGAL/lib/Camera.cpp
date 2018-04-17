@@ -170,6 +170,7 @@ void Camera::clean_distance()
   const auto& sb = nav_root->get_bounding_sphere();
   const auto& target = sb.get_center();
   auto bb_radius = sb.get_radius();
+  if (0.0f == bb_radius) return;
   m_radius = bb_radius * m_radius_scale;
   auto my_sin = sinf(m_field_of_view * 0.5f);
   m_distance = m_radius / my_sin;
