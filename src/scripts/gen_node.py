@@ -789,13 +789,13 @@ def print_forward_declarations(config, out, fields):
 
 # Print typedef definitions
 def print_typedefs(config, out, fields):
+  print_shared_typedefs(config, out, fields)
+  print_array_typedefs(out, fields)
   if config.has_option('class', 'public-typedefs'):
     typedefs = ast.literal_eval(config.get('class', 'public-typedefs'))
     for typedef in typedefs:
       print_line(out, '{};'.format(typedef))
     print_empty_line(out)
-  print_shared_typedefs(config, out, fields)
-  print_array_typedefs(out, fields)
 
 # Print typedef definitions of shared containers.
 def print_shared_typedefs(config, out, fields):
@@ -1056,23 +1056,23 @@ def print_field_getter_definition(out, inlining, class_name, field):
     if not compound:
       print_line(out, '//! \\brief obtains the {}.'.format(desc))
       if clean_func:
-        print_line(out, '{} {} {}::get_{}()'.format(inline, ext_type, class_name, name))
+        print_line(out, '{}{} {}::get_{}()'.format(inline, ext_type, class_name, name))
         print_line(out, "{", inc=True)
         print_line(out, 'if (m_dirty_{}) clean_{}();'.format(clean_func, clean_func));
         print_line(out, 'return m_{};'.format(name))
         print_line(out, "}", dec=True)
       else:
-        print_line(out, '{} {} {}::get_{}() const'.format(inline, ext_type, class_name, name))
+        print_line(out, '{}{} {}::get_{}() const'.format(inline, ext_type, class_name, name))
         print_line(out, '{{ return m_{}; }}'.format(name))
     #
     else:
       if not clean_func:
         print_line(out, '//! \\brief obtains the {}.'.format(desc))
-        print_line(out, '{} const {} {}::get_{}() const'.format(inline, ext_type, class_name, name))
+        print_line(out, '{}const {} {}::get_{}() const'.format(inline, ext_type, class_name, name))
         print_line(out, '{{ return m_{}; }}'.format(name))
         print_empty_line(out)
       print_line(out, '//! \\brief obtains the {}.'.format(desc))
-      print_line(out, '{} {} {}::get_{}()'.format(inline, ext_type, class_name, name))
+      print_line(out, '{}{} {}::get_{}()'.format(inline, ext_type, class_name, name))
       if clean_func:
         print_line(out, "{", inc=True)
         print_line(out, 'if (m_dirty_{}) clean_{}();'.format(clean_func, clean_func));
@@ -1083,11 +1083,11 @@ def print_field_getter_definition(out, inlining, class_name, field):
   elif pass_method == 'reference':
     if not clean_func:
       print_line(out, '//! \\brief obtains the {}.'.format(desc))
-      print_line(out, '{} const {}& {}::get_{}() const'.format(inline, ext_type, class_name, name))
+      print_line(out, '{}const {}& {}::get_{}() const'.format(inline, ext_type, class_name, name))
       print_line(out, '{{ return m_{}; }}'.format(name))
     print_empty_line(out)
     print_line(out, '//! \\brief obtains the {}.'.format(desc))
-    print_line(out, '{} {}& {}::get_{}()'.format(inline, ext_type, class_name, name))
+    print_line(out, '{}{}& {}::get_{}()'.format(inline, ext_type, class_name, name))
     if clean_func:
       print_line(out, "{", inc=True)
       print_line(out, 'if (m_dirty_{}) clean_{}();'.format(clean_func, clean_func));
@@ -1211,7 +1211,7 @@ def print_hpp_field_manipulators_definitions(config, out, class_name, field):
     print_empty_line(out)
   if not clean_func:
     print_field_getter_definition(out, True, class_name, field)
-  print_empty_line(out)
+    print_empty_line(out)
 
 #! Print declarations of field setters, getters, adders, and removers:
 def print_hpp_fields_manipulators_definitions(config, out, class_name, fields):
@@ -1268,8 +1268,8 @@ def print_hpp_include_directives(config, out, library, derived_class):
   if config.has_option('class', 'includes'):
     includes = ast.literal_eval(config.get('class', 'includes'))
     for inc in includes:
-      lib = inc
-      tmp, file = os.path.split(lib)
+      lib = 'stl'
+      tmp, file = os.path.split(inc)
       while tmp:
         lib = tmp
         tmp, file = os.path.split(lib)
