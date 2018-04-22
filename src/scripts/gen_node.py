@@ -1009,6 +1009,7 @@ def print_field_getter_declaration(out, field):
 def print_field_setter_definition(config, out, inlining, class_name, field):
   type = field['type']
   name = field['name']
+  observed = distutils.util.strtobool(field['observed'])
   inline = 'inline ' if inlining else ""
   type_name, type_namespace = get_type_attributes(type, library)
   general_type = get_general_type(type_name)
@@ -1022,10 +1023,16 @@ def print_field_setter_definition(config, out, inlining, class_name, field):
   else:
     raise Exception('Pass method {} is invalid!'.format(pass_method))
   print_line(out, "{", inc=True)
-  print_line(out, 'm_{} = {};'.format(name, name))
   exec_func = get_execution_function(config, field)
+  if observed or exec_func:
+    print_line(out, 'auto* field_info = get_field_info({});'.format(name.upper()))
+    if observed:
+      print_line(out, 'field_info->detach(this);')
+  print_line(out, 'm_{} = {};'.format(name, name))
   if exec_func:
-    print_line(out, '{}(get_field_info({}));'.format(exec_func, name.upper()))
+    print_line(out, '{}(field_info);'.format(exec_func))
+  elif observed:
+    raise Exception('Field {} does not have an execution function, but is observed!'.format(name))
   print_line(out, "}", dec=True)
 
 #! Print setter definition
@@ -2028,7 +2035,8 @@ if __name__ == '__main__':
         default_value = vals[3]
         exec_function = vals[4]
         clean_function = vals[5]
-        desc = vals[6].strip('\"')
+        observed = vals[6]
+        desc = vals[7].strip('\"')
         # Assume that a type that starts with 'Shared' is either a shared
         # container or a shared container array.
         type_name, type_namespace = get_type_attributes(type, library)
@@ -2042,6 +2050,7 @@ if __name__ == '__main__':
           'default-value': default_value,
           'execution-function': exec_function,
           'clean-function': clean_function,
+          'observed': observed,
           'desc': desc,
           'geometry': False
         }
