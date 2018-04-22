@@ -69,7 +69,7 @@ template <> struct Is_scalar<Shared_container_array> : Selector<false> {};
 /*! \class Detacher Field_info_template.hpp
  * Detacher is a generic class that detaches a value of a field from the
  * container that contains the field before the field is overriden with a new
- * value. Essentially, there is nothing to for most type of field.
+ * value. Essentially, there is nothing to do for most type of field.
  * If the field is a container (shared container to be precise) itself, then
  * the container that contains the field might have been registered as an
  * observer. In this case, it must be unregistered just before it is overriden.
@@ -91,6 +91,35 @@ struct Detacher<Shared_container> {
     if (value) {
       Container::Observer observer(container, field_info);
       value->unregister_observer(observer);
+    }
+  }
+};
+
+/*! \class Attacher Field_info_template.hpp
+ * Attacher is a generic class that attaches a value of a field to the
+ * container that contains the field after the field is overriden with a new
+ * value. Essentially, there is nothing to do for most type of field.
+ * If the field is a container (shared container to be precise) itself, then
+ * the container that contains the field might need to be registered as an
+ * observer. In this case, it must be registered just after it is overriden.
+ * Observe that if the new field value (that is a container) should register
+ * the containing container, it should be carried out by the dedicated
+ * execution function stored in the field-info record.
+ */
+template <typename T>
+struct Attacher {
+  void operator()(T& value, Container* container, const Field_info* field_info)
+  {}
+};
+
+template <>
+struct Attacher<Shared_container> {
+  void operator()(Shared_container& value,
+                  Container* container, const Field_info* field_info)
+  {
+    if (value) {
+      Container::Observer observer(container, field_info);
+      value->register_observer(observer);
     }
   }
 };
@@ -274,6 +303,17 @@ public:
     auto* handle = (container->*m_handle)(this);     // Obtain the value
     Detacher<T> detacher;
     detacher(*handle, container, this);
+  }
+
+  /*! Attach the value of a field, the (field) info of which is this object,
+   * to the container that contains the field after the field is overriden.
+   * \param[in] container the container that contains the field.
+   */
+  virtual void attach(Container* container) const
+  {
+    auto* handle = (container->*m_handle)(this);     // Obtain the value
+    Attacher<T> attacher;
+    attacher(*handle, container, this);
   }
 
   /*! Determine whether the field is a scalar
