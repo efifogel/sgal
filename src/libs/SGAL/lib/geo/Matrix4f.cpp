@@ -14,14 +14,43 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <assert.h>
+#include <cstring>
 
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Matrix4f.hpp"
 
 SGAL_BEGIN_NAMESPACE
+
+//! \brief initializes the matrix.
+void Matrix4f::set(const float* m)
+{ ::memcpy(m_matrix, m, sizeof(float) * 16); }
+
+//! \brief sets the matrix.
+inline void Matrix4f::set(const Matrix4f& v)
+{ ::memcpy(m_matrix, v.m_matrix, sizeof(float) * 16); }
+
+//! \brief obtains the matrix.
+inline void Matrix4f::get(Matrix4f& v) const
+{ ::memcpy(v.m_matrix, m_matrix, sizeof(float) * 16); }
+
+//! \brief sets this matrix from its elements.
+void Matrix4f::set(float a00, float a01, float a02, float a03,
+                   float a10, float a11, float a12, float a13,
+                   float a20, float a21, float a22, float a23,
+                   float a30, float a31, float a32, float a33)
+{
+  m_matrix[0][0] = a00; m_matrix[0][1] = a01;
+  m_matrix[0][2] = a02; m_matrix[0][3] = a03;
+  m_matrix[1][0] = a10; m_matrix[1][1] = a11;
+  m_matrix[1][2] = a12; m_matrix[1][3] = a13;
+  m_matrix[2][0] = a20; m_matrix[2][1] = a21;
+  m_matrix[2][2] = a22; m_matrix[2][3] = a23;
+  m_matrix[3][0] = a30; m_matrix[3][1] = a31;
+  m_matrix[3][2] = a32; m_matrix[3][3] = a33;
+}
 
 //! \brief sets this matrix to be the identity matrix.
 void Matrix4f::make_identity()
@@ -341,7 +370,7 @@ void Matrix4f::invert_affine(const Matrix4f& m)
   m_matrix[3][3] = 1.0f;
 }
 
-/*! sets this matrix to be the inverse of m with the assumption that
+/*! \brief sets this matrix to be the inverse of m with the assumption that
  * the top left 3x3 submatrix is an orthogonal matrix (the columns
  * are orthogonal to each other, but each column may not be unit vector).
  */

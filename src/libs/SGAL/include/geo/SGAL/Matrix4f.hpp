@@ -14,16 +14,10 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_MATRIX4F_HPP
 #define SGAL_MATRIX4F_HPP
-
-/*! \file
- *
- */
-
-#include <string.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector3f.hpp"
@@ -37,22 +31,26 @@ private:
   float m_matrix[4][4];
 
 public:
-  /*! Default constructor */
+  /*! Construct default.
+   */
   Matrix4f();
 
-  /*! Copy constructor */
+  /*! Construct copy.
+   */
   Matrix4f(const Matrix4f& m);
 
-  /*! Constructor */
+  /*! Construct from an array.
+   */
   Matrix4f(const Float matrix[]);
 
-  /*! Constructor */
+  /*! Construct from elements.
+   */
   Matrix4f(float a00, float a01, float a02, float a03,
            float a10, float a11, float a12, float a13,
            float a20, float a21, float a22, float a23,
            float a30, float a31, float a32, float a33);
 
-  /*! A constructor that sets this matrix to be m1 * m2.
+  /*! Construct from two multiplicands; set this matrix to be m1 * m2.
    * It is provided to enable the call to the emplace() function, a member of
    * certain container, which constructs the matrix in place.
    * \param m1 (in) the first matrix.
@@ -63,6 +61,10 @@ public:
   Matrix4f(const Matrix4f& m1, const Matrix4f& m2);
 
   float get(int row, int col) const;
+  void set(float a00, float a01, float a02, float a03,
+           float a10, float a11, float a12, float a13,
+           float a20, float a21, float a22, float a23,
+           float a30, float a31, float a32, float a33);
   void set(int row, int col, float v);
   void set(const float m[]);
   void set_row(int r, const Vector3f& v);
@@ -144,12 +146,8 @@ private:
 #endif
 };
 
-//! \brief constructor.
+//! \brief constructs from an array.
 inline Matrix4f::Matrix4f(const Float matrix[]) { set(matrix); }
-
-//! \brief initializes the matrix.
-inline void Matrix4f::set(const float* m)
-{ ::memcpy(m_matrix, m, sizeof(float) * 16); }
 
 //! \brief obtains the ith row.
 inline float* Matrix4f::operator[](int i) { return m_matrix[i]; }
@@ -211,14 +209,6 @@ inline void Matrix4f::get_col(int c, float* x, float* y, float* z, float* w)
 inline void Matrix4f::get_col(int c, Vector3f& v) const
 { v[0] = m_matrix[0][c]; v[1] = m_matrix[1][c]; v[2] = m_matrix[2][c]; }
 
-//! \brief sets the matrix.
-inline void Matrix4f::set(const Matrix4f& v)
-{ ::memcpy(m_matrix, v.m_matrix, sizeof(float) * 16); }
-
-//! \brief obtains the matrix.
-inline void Matrix4f::get(Matrix4f& v) const
-{ ::memcpy(v.m_matrix, m_matrix, sizeof(float) * 16); }
-
 //! \brief determines whether the matrix is equal to another.
 inline Boolean Matrix4f::equal(const Matrix4f& v) const
 {
@@ -249,29 +239,25 @@ inline Matrix4f& Matrix4f::operator*=(const Matrix4f& m)
   return * this;
 }
 
-//! \brief default constructor.
+//! \brief constructs default.
 inline Matrix4f::Matrix4f() { this->make_identity(); }
 
-//! \brief copy constructor.
+//! \brief constructs copy.
 inline Matrix4f::Matrix4f(const Matrix4f& m) { set(m); }
 
-//! \brief constructor.
+//! \brief constructs from elements.
+inline Matrix4f::Matrix4f(float a00, float a01, float a02, float a03,
+                          float a10, float a11, float a12, float a13,
+                          float a20, float a21, float a22, float a23,
+                          float a30, float a31, float a32, float a33)
+{
+  set(a00, a01, a02, a03, a10, a11, a12, a13,
+      a20, a21, a22, a23, a30, a31, a32, a33);
+}
+
+//! \brief constructs from two multiplicands.
 inline Matrix4f::Matrix4f(const Matrix4f& m1, const Matrix4f& m2)
 { mult(m1, m2); }
-
-//! \brief exporter.
-inline std::ostream& operator<<(std::ostream& os, const Matrix4f& mat)
-{
-  os << mat[0][0] << ", " << mat[0][1] << ", "
-     << mat[0][2] << ", " << mat[0][3] << std::endl
-     << mat[1][0] << ", " << mat[1][1] << ", "
-     << mat[1][2] << ", " << mat[1][3] << std::endl
-     << mat[2][0] << ", " << mat[2][1] << ", "
-     << mat[2][2] << ", " << mat[2][3] << std::endl
-     << mat[3][0] << ", " << mat[3][1] << ", "
-     << mat[3][2] << ", " << mat[3][3] << std::endl;
-    return os;
-}
 
 SGAL_END_NAMESPACE
 
