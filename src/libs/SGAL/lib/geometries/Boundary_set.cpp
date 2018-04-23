@@ -1654,9 +1654,10 @@ void Boundary_set::clean_vertex_tex_coord_buffer(Uint size,
   m_dirty_tex_coord_buffer = false;
 }
 
-//! \brief computes flat indices for the normals or for the colors.
-void Boundary_set::compute_flat_indices(const Facet_indices& indices,
-                                        Flat_indices& target)
+//! \brief computes flat indices for the normals or for the colors per-primitive.
+void
+Boundary_set::compute_flat_indices_per_primitive(const Facet_indices& indices,
+                                                 Flat_indices& target)
 {
   if (empty_facet_indices(indices)) {
     if (PT_TRIANGLES == m_primitive_type) {
@@ -1698,6 +1699,50 @@ void Boundary_set::compute_flat_indices(const Facet_indices& indices,
   }
 }
 
+//! \brief computes flat indices for the colors per-mesh.
+void Boundary_set::compute_flat_indices_per_mesh(const Facet_indices& indices,
+                                                 Flat_indices& target)
+{
+  if (empty_facet_indices(indices)) {
+    if (PT_TRIANGLES == m_primitive_type) {
+      size_t j(0);
+      for (size_t i = 0; i < get_num_primitives(); ++i) {
+        target[j++] = 0;
+        target[j++] = 0;
+        target[j++] = 0;
+      }
+      return;
+    }
+    SGAL_assertion(PT_QUADS == m_primitive_type);
+    size_t j(0);
+    for (size_t i = 0; i < get_num_primitives(); ++i) {
+      target[j++] = 0;
+      target[j++] = 0;
+      target[j++] = 0;
+      target[j++] = 0;
+    }
+    return;
+  }
+  auto& source = boost::get<Flat_indices>(indices);
+  if (PT_TRIANGLES == m_primitive_type) {
+    size_t j(0);
+    for (size_t i = 0; i < get_num_primitives(); ++i) {
+      target[j++] = source[0];
+      target[j++] = source[0];
+      target[j++] = source[0];
+    }
+    return;
+  }
+  SGAL_assertion(PT_QUADS == m_primitive_type);
+  size_t j(0);
+  for (size_t i = 0; i < get_num_primitives(); ++i) {
+    target[j++] = source[0];
+    target[j++] = source[0];
+    target[j++] = source[0];
+    target[j++] = source[0];
+  }
+}
+
 //! \brief cleans the local coordinates, normals, and color, vertex buffers.
 void Boundary_set::clean_local_cnc_vertex_buffers()
 {
@@ -1709,14 +1754,21 @@ void Boundary_set::clean_local_cnc_vertex_buffers()
   if (m_normal_attachment == AT_PER_PRIMITIVE) {
     auto size = size_facet_indices(m_facet_coord_indices);
     tmp_normal_indices.resize(size);
-    compute_flat_indices(m_facet_normal_indices, tmp_normal_indices);
+    compute_flat_indices_per_primitive(m_facet_normal_indices,
+                                       tmp_normal_indices);
   }
   Facet_indices tmp_facet_color_indices = Flat_indices();
   auto& tmp_color_indices = boost::get<Flat_indices>(tmp_facet_color_indices);
   if (m_color_attachment == AT_PER_PRIMITIVE) {
     auto size = size_facet_indices(m_facet_coord_indices);
     tmp_color_indices.resize(size);
-    compute_flat_indices(m_facet_color_indices, tmp_color_indices);
+    compute_flat_indices_per_primitive(m_facet_color_indices,
+                                       tmp_color_indices);
+  }
+  else if (m_color_attachment == AT_PER_MESH) {
+    auto size = size_facet_indices(m_facet_coord_indices);
+    tmp_color_indices.resize(size);
+    compute_flat_indices_per_mesh(m_facet_color_indices, tmp_color_indices);
   }
 
   auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
@@ -1724,7 +1776,9 @@ void Boundary_set::clean_local_cnc_vertex_buffers()
     (empty_facet_indices(m_facet_normal_indices) ?
      begin_facet_indices(m_facet_coord_indices) :
      begin_facet_indices(m_facet_normal_indices));
-  auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
+  auto color_indices_begin =
+    ((m_color_attachment == AT_PER_PRIMITIVE) ||
+     (m_color_attachment == AT_PER_MESH)) ?
     begin_facet_indices(tmp_facet_color_indices) :
     (empty_facet_indices(m_facet_color_indices) ?
      begin_facet_indices(m_facet_coord_indices) :
@@ -1756,14 +1810,21 @@ void Boundary_set::clean_local_cnct2_vertex_buffers()
   if (m_normal_attachment == AT_PER_PRIMITIVE) {
     auto size = size_facet_indices(m_facet_coord_indices);
     tmp_normal_indices.resize(size);
-    compute_flat_indices(m_facet_normal_indices, tmp_normal_indices);
+    compute_flat_indices_per_primitive(m_facet_normal_indices,
+                                       tmp_normal_indices);
   }
   Facet_indices tmp_facet_color_indices = Flat_indices();
   auto& tmp_color_indices = boost::get<Flat_indices>(tmp_facet_color_indices);
   if (m_color_attachment == AT_PER_PRIMITIVE) {
     auto size = size_facet_indices(m_facet_coord_indices);
     tmp_color_indices.resize(size);
-    compute_flat_indices(m_facet_color_indices, tmp_color_indices);
+    compute_flat_indices_per_primitive(m_facet_color_indices,
+                                       tmp_color_indices);
+  }
+  else if (m_color_attachment == AT_PER_MESH) {
+    auto size = size_facet_indices(m_facet_coord_indices);
+    tmp_color_indices.resize(size);
+    compute_flat_indices_per_mesh(m_facet_color_indices, tmp_color_indices);
   }
 
   auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
@@ -1771,7 +1832,9 @@ void Boundary_set::clean_local_cnct2_vertex_buffers()
     (empty_facet_indices(m_facet_normal_indices) ?
      begin_facet_indices(m_facet_coord_indices) :
      begin_facet_indices(m_facet_normal_indices));
-  auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
+  auto color_indices_begin =
+    ((m_color_attachment == AT_PER_PRIMITIVE) ||
+     (m_color_attachment == AT_PER_MESH)) ?
     begin_facet_indices(tmp_facet_color_indices) :
     (empty_facet_indices(m_facet_color_indices) ?
      begin_facet_indices(m_facet_coord_indices) :
@@ -1811,14 +1874,21 @@ void Boundary_set::clean_local_cnct3_vertex_buffers()
   if (m_normal_attachment == AT_PER_PRIMITIVE) {
     auto size = size_facet_indices(m_facet_coord_indices);
     tmp_normal_indices.resize(size);
-    compute_flat_indices(m_facet_normal_indices, tmp_normal_indices);
+    compute_flat_indices_per_primitive(m_facet_normal_indices,
+                                       tmp_normal_indices);
   }
   Facet_indices tmp_facet_color_indices = Flat_indices();
   auto& tmp_color_indices = boost::get<Flat_indices>(tmp_facet_color_indices);
   if (m_color_attachment == AT_PER_PRIMITIVE) {
     auto size = size_facet_indices(m_facet_coord_indices);
     tmp_color_indices.resize(size);
-    compute_flat_indices(m_facet_color_indices, tmp_color_indices);
+    compute_flat_indices_per_primitive(m_facet_color_indices,
+                                       tmp_color_indices);
+  }
+  else if (m_color_attachment == AT_PER_MESH) {
+    auto size = size_facet_indices(m_facet_coord_indices);
+    tmp_color_indices.resize(size);
+    compute_flat_indices_per_mesh(m_facet_color_indices, tmp_color_indices);
   }
 
   auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
@@ -1826,7 +1896,9 @@ void Boundary_set::clean_local_cnct3_vertex_buffers()
     (empty_facet_indices(m_facet_normal_indices) ?
      begin_facet_indices(m_facet_coord_indices) :
      begin_facet_indices(m_facet_normal_indices));
-  auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
+  auto color_indices_begin =
+    ((m_color_attachment == AT_PER_PRIMITIVE) ||
+     (m_color_attachment == AT_PER_MESH)) ?
     begin_facet_indices(tmp_facet_color_indices) :
     (empty_facet_indices(m_facet_color_indices) ?
      begin_facet_indices(m_facet_coord_indices) :
@@ -1868,7 +1940,8 @@ void Boundary_set::clean_local_cnct4_vertex_buffers()
   if (m_normal_attachment == AT_PER_PRIMITIVE) {
     auto size = size_facet_indices(m_facet_coord_indices);
     tmp_normal_indices.resize(size);
-    compute_flat_indices(m_facet_normal_indices, tmp_normal_indices);
+    compute_flat_indices_per_primitive(m_facet_normal_indices,
+                                       tmp_normal_indices);
   }
 
   Facet_indices tmp_facet_color_indices = Flat_indices();
@@ -1876,7 +1949,13 @@ void Boundary_set::clean_local_cnct4_vertex_buffers()
   if (m_color_attachment == AT_PER_PRIMITIVE) {
     auto size = size_facet_indices(m_facet_coord_indices);
     tmp_color_indices.resize(size);
-    compute_flat_indices(m_facet_color_indices, tmp_color_indices);
+    compute_flat_indices_per_primitive(m_facet_color_indices,
+                                       tmp_color_indices);
+  }
+  else if (m_color_attachment == AT_PER_MESH) {
+    auto size = size_facet_indices(m_facet_coord_indices);
+    tmp_color_indices.resize(size);
+    compute_flat_indices_per_mesh(m_facet_color_indices, tmp_color_indices);
   }
 
   auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
@@ -1884,7 +1963,9 @@ void Boundary_set::clean_local_cnct4_vertex_buffers()
     (empty_facet_indices(m_facet_normal_indices) ?
      begin_facet_indices(m_facet_coord_indices) :
      begin_facet_indices(m_facet_normal_indices));
-  auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
+  auto color_indices_begin =
+    ((m_color_attachment == AT_PER_PRIMITIVE) ||
+     (m_color_attachment == AT_PER_MESH)) ?
     begin_facet_indices(tmp_facet_color_indices) :
     (empty_facet_indices(m_facet_color_indices) ?
      begin_facet_indices(m_facet_coord_indices) :
@@ -1918,7 +1999,8 @@ void Boundary_set::clean_local_cn_vertex_buffers()
   if (m_normal_attachment == AT_PER_PRIMITIVE) {
     auto size = size_facet_indices(m_facet_coord_indices);
     tmp_normal_indices.resize(size);
-    compute_flat_indices(m_facet_normal_indices, tmp_normal_indices);
+    compute_flat_indices_per_primitive(m_facet_normal_indices,
+                                       tmp_normal_indices);
   }
   auto normal_indices_begin =
     (m_normal_attachment == AT_PER_PRIMITIVE) ?
@@ -1947,7 +2029,8 @@ void Boundary_set::clean_local_cnt2_vertex_buffers()
   if (m_normal_attachment == AT_PER_PRIMITIVE) {
     auto size = size_facet_indices(m_facet_coord_indices);
     tmp_normal_indices.resize(size);
-    compute_flat_indices(m_facet_normal_indices, tmp_normal_indices);
+    compute_flat_indices_per_primitive(m_facet_normal_indices,
+                                       tmp_normal_indices);
   }
 
   auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
@@ -1984,7 +2067,8 @@ void Boundary_set::clean_local_cnt3_vertex_buffers()
   if (m_normal_attachment == AT_PER_PRIMITIVE) {
     auto size = size_facet_indices(m_facet_coord_indices);
     tmp_normal_indices.resize(size);
-    compute_flat_indices(m_facet_normal_indices, tmp_normal_indices);
+    compute_flat_indices_per_primitive(m_facet_normal_indices,
+                                       tmp_normal_indices);
   }
 
   auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
@@ -2022,7 +2106,8 @@ void Boundary_set::clean_local_cnt4_vertex_buffers()
   if (m_normal_attachment == AT_PER_PRIMITIVE) {
     auto size = size_facet_indices(m_facet_coord_indices);
     tmp_normal_indices.resize(size);
-    compute_flat_indices(m_facet_normal_indices, tmp_normal_indices);
+    compute_flat_indices_per_primitive(m_facet_normal_indices,
+                                       tmp_normal_indices);
   }
 
   auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
@@ -2054,10 +2139,18 @@ void Boundary_set::clean_local_cc_vertex_buffers()
   if (m_color_attachment == AT_PER_PRIMITIVE) {
     auto size = size_facet_indices(m_facet_coord_indices);
     tmp_color_indices.resize(size);
-    compute_flat_indices(m_facet_color_indices, tmp_color_indices);
+    compute_flat_indices_per_primitive(m_facet_color_indices,
+                                       tmp_color_indices);
+  }
+  else if (m_color_attachment == AT_PER_MESH) {
+    auto size = size_facet_indices(m_facet_coord_indices);
+    tmp_color_indices.resize(size);
+    compute_flat_indices_per_mesh(m_facet_color_indices, tmp_color_indices);
   }
 
-  auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
+  auto color_indices_begin =
+    ((m_color_attachment == AT_PER_PRIMITIVE) ||
+     (m_color_attachment == AT_PER_MESH)) ?
     begin_facet_indices(tmp_facet_color_indices) :
     (empty_facet_indices(m_facet_color_indices) ?
      begin_facet_indices(m_facet_coord_indices) :
@@ -2088,10 +2181,18 @@ void Boundary_set::clean_local_cct2_vertex_buffers()
   if (m_color_attachment == AT_PER_PRIMITIVE) {
     auto size = size_facet_indices(m_facet_coord_indices);
     tmp_color_indices.resize(size);
-    compute_flat_indices(m_facet_color_indices, tmp_color_indices);
+    compute_flat_indices_per_primitive(m_facet_color_indices,
+                                       tmp_color_indices);
+  }
+  else if (m_color_attachment == AT_PER_MESH) {
+    auto size = size_facet_indices(m_facet_coord_indices);
+    tmp_color_indices.resize(size);
+    compute_flat_indices_per_mesh(m_facet_color_indices, tmp_color_indices);
   }
 
-  auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
+  auto color_indices_begin =
+    ((m_color_attachment == AT_PER_PRIMITIVE) ||
+     (m_color_attachment == AT_PER_MESH)) ?
     begin_facet_indices(tmp_facet_color_indices) :
     (empty_facet_indices(m_facet_color_indices) ?
      begin_facet_indices(m_facet_coord_indices) :
@@ -2119,10 +2220,18 @@ void Boundary_set::clean_local_cct3_vertex_buffers()
   if (m_color_attachment == AT_PER_PRIMITIVE) {
     auto size = size_facet_indices(m_facet_coord_indices);
     tmp_color_indices.resize(size);
-    compute_flat_indices(m_facet_color_indices, tmp_color_indices);
+    compute_flat_indices_per_primitive(m_facet_color_indices,
+                                       tmp_color_indices);
+  }
+  else if (m_color_attachment == AT_PER_MESH) {
+    auto size = size_facet_indices(m_facet_coord_indices);
+    tmp_color_indices.resize(size);
+    compute_flat_indices_per_mesh(m_facet_color_indices, tmp_color_indices);
   }
 
-  auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
+  auto color_indices_begin =
+    ((m_color_attachment == AT_PER_PRIMITIVE) ||
+     (m_color_attachment == AT_PER_MESH)) ?
     begin_facet_indices(tmp_facet_color_indices) :
     (empty_facet_indices(m_facet_color_indices) ?
      begin_facet_indices(m_facet_coord_indices) :
@@ -2155,10 +2264,18 @@ void Boundary_set::clean_local_cct4_vertex_buffers()
   if (m_color_attachment == AT_PER_PRIMITIVE) {
     auto size = size_facet_indices(m_facet_coord_indices);
     tmp_color_indices.resize(size);
-    compute_flat_indices(m_facet_color_indices, tmp_color_indices);
+    compute_flat_indices_per_primitive(m_facet_color_indices,
+                                       tmp_color_indices);
+  }
+  else if (m_color_attachment == AT_PER_MESH) {
+    auto size = size_facet_indices(m_facet_coord_indices);
+    tmp_color_indices.resize(size);
+    compute_flat_indices_per_mesh(m_facet_color_indices, tmp_color_indices);
   }
 
-  auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
+  auto color_indices_begin =
+    ((m_color_attachment == AT_PER_PRIMITIVE) ||
+     (m_color_attachment == AT_PER_MESH)) ?
     begin_facet_indices(tmp_facet_color_indices) :
     (empty_facet_indices(m_facet_color_indices) ?
      begin_facet_indices(m_facet_coord_indices) :

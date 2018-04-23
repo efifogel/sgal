@@ -789,13 +789,13 @@ def print_forward_declarations(config, out, fields):
 
 # Print typedef definitions
 def print_typedefs(config, out, fields):
+  print_shared_typedefs(config, out, fields)
+  print_array_typedefs(out, fields)
   if config.has_option('class', 'public-typedefs'):
     typedefs = ast.literal_eval(config.get('class', 'public-typedefs'))
     for typedef in typedefs:
       print_line(out, '{};'.format(typedef))
     print_empty_line(out)
-  print_shared_typedefs(config, out, fields)
-  print_array_typedefs(out, fields)
 
 # Print typedef definitions of shared containers.
 def print_shared_typedefs(config, out, fields):
@@ -1009,6 +1009,7 @@ def print_field_getter_declaration(out, field):
 def print_field_setter_definition(config, out, inlining, class_name, field):
   type = field['type']
   name = field['name']
+  observed = distutils.util.strtobool(field['observed'])
   inline = 'inline ' if inlining else ""
   type_name, type_namespace = get_type_attributes(type, library)
   general_type = get_general_type(type_name)
@@ -1022,10 +1023,16 @@ def print_field_setter_definition(config, out, inlining, class_name, field):
   else:
     raise Exception('Pass method {} is invalid!'.format(pass_method))
   print_line(out, "{", inc=True)
-  print_line(out, 'm_{} = {};'.format(name, name))
   exec_func = get_execution_function(config, field)
+  if observed or exec_func:
+    print_line(out, 'auto* field_info = get_field_info({});'.format(name.upper()))
+    if observed:
+      print_line(out, 'field_info->detach(this);')
+  print_line(out, 'm_{} = {};'.format(name, name))
   if exec_func:
-    print_line(out, '{}(get_field_info({}));'.format(exec_func, name.upper()))
+    print_line(out, '{}(field_info);'.format(exec_func))
+  elif observed:
+    raise Exception('Field {} does not have an execution function, but is observed!'.format(name))
   print_line(out, "}", dec=True)
 
 #! Print setter definition
@@ -1056,23 +1063,23 @@ def print_field_getter_definition(out, inlining, class_name, field):
     if not compound:
       print_line(out, '//! \\brief obtains the {}.'.format(desc))
       if clean_func:
-        print_line(out, '{} {} {}::get_{}()'.format(inline, ext_type, class_name, name))
+        print_line(out, '{}{} {}::get_{}()'.format(inline, ext_type, class_name, name))
         print_line(out, "{", inc=True)
         print_line(out, 'if (m_dirty_{}) clean_{}();'.format(clean_func, clean_func));
         print_line(out, 'return m_{};'.format(name))
         print_line(out, "}", dec=True)
       else:
-        print_line(out, '{} {} {}::get_{}() const'.format(inline, ext_type, class_name, name))
+        print_line(out, '{}{} {}::get_{}() const'.format(inline, ext_type, class_name, name))
         print_line(out, '{{ return m_{}; }}'.format(name))
     #
     else:
       if not clean_func:
         print_line(out, '//! \\brief obtains the {}.'.format(desc))
-        print_line(out, '{} const {} {}::get_{}() const'.format(inline, ext_type, class_name, name))
+        print_line(out, '{}const {} {}::get_{}() const'.format(inline, ext_type, class_name, name))
         print_line(out, '{{ return m_{}; }}'.format(name))
         print_empty_line(out)
       print_line(out, '//! \\brief obtains the {}.'.format(desc))
-      print_line(out, '{} {} {}::get_{}()'.format(inline, ext_type, class_name, name))
+      print_line(out, '{}{} {}::get_{}()'.format(inline, ext_type, class_name, name))
       if clean_func:
         print_line(out, "{", inc=True)
         print_line(out, 'if (m_dirty_{}) clean_{}();'.format(clean_func, clean_func));
@@ -1083,11 +1090,11 @@ def print_field_getter_definition(out, inlining, class_name, field):
   elif pass_method == 'reference':
     if not clean_func:
       print_line(out, '//! \\brief obtains the {}.'.format(desc))
-      print_line(out, '{} const {}& {}::get_{}() const'.format(inline, ext_type, class_name, name))
+      print_line(out, '{}const {}& {}::get_{}() const'.format(inline, ext_type, class_name, name))
       print_line(out, '{{ return m_{}; }}'.format(name))
     print_empty_line(out)
     print_line(out, '//! \\brief obtains the {}.'.format(desc))
-    print_line(out, '{} {}& {}::get_{}()'.format(inline, ext_type, class_name, name))
+    print_line(out, '{}{}& {}::get_{}()'.format(inline, ext_type, class_name, name))
     if clean_func:
       print_line(out, "{", inc=True)
       print_line(out, 'if (m_dirty_{}) clean_{}();'.format(clean_func, clean_func));
@@ -1211,7 +1218,7 @@ def print_hpp_field_manipulators_definitions(config, out, class_name, field):
     print_empty_line(out)
   if not clean_func:
     print_field_getter_definition(out, True, class_name, field)
-  print_empty_line(out)
+    print_empty_line(out)
 
 #! Print declarations of field setters, getters, adders, and removers:
 def print_hpp_fields_manipulators_definitions(config, out, class_name, fields):
@@ -1268,8 +1275,8 @@ def print_hpp_include_directives(config, out, library, derived_class):
   if config.has_option('class', 'includes'):
     includes = ast.literal_eval(config.get('class', 'includes'))
     for inc in includes:
-      lib = inc
-      tmp, file = os.path.split(lib)
+      lib = 'stl'
+      tmp, file = os.path.split(inc)
       while tmp:
         lib = tmp
         tmp, file = os.path.split(lib)
@@ -1545,20 +1552,28 @@ def print_constructor_definition(config, out, class_name, derived_class, fields,
 #! Print destructor definition.
 def print_destructor_definition(out, class_name, fields):
   print_line(out, "//! \\brief destruct.")
-  field_names = []
+  array_fields = []
+  observed_fields = []
   for field in fields[:]:
     name = field['name']
     type = field['type']
+    observed = distutils.util.strtobool(field['observed'])
     if type.endswith('_array'):
-      field_names.append(name)
-  if 0 == len(field_names):
+      array_fields.append(name)
+    if observed:
+      observed_fields.append(name)
+  if (0 == len(array_fields)) and (0 == len(observed_fields)):
     print_line(out, "%s::~%s() {}" % (class_name, class_name))
-  else:
-    print_line(out, "%s::~%s()" % (class_name, class_name))
-    print_line(out, "{", inc=True)
-    for field_name in field_names[:]:
-      print_line(out, "m_%s.clear();" % field_name)
-    print_line(out, "}", dec=True)
+    print_empty_line(out)
+    return
+
+  print_line(out, "%s::~%s()" % (class_name, class_name))
+  print_line(out, "{", inc=True)
+  for name in array_fields[:]:
+    print_line(out, 'm_{}.clear();'.format(name))
+  for name in observed_fields:
+    print_line(out, 'get_field_info({})->detach(this);'.format(name.upper()))
+  print_line(out, "}", dec=True)
   print_empty_line(out)
 
 def get_execution_function(config, field):
@@ -2028,7 +2043,8 @@ if __name__ == '__main__':
         default_value = vals[3]
         exec_function = vals[4]
         clean_function = vals[5]
-        desc = vals[6].strip('\"')
+        observed = vals[6]
+        desc = vals[7].strip('\"')
         # Assume that a type that starts with 'Shared' is either a shared
         # container or a shared container array.
         type_name, type_namespace = get_type_attributes(type, library)
@@ -2042,6 +2058,7 @@ if __name__ == '__main__':
           'default-value': default_value,
           'execution-function': exec_function,
           'clean-function': clean_function,
+          'observed': observed,
           'desc': desc,
           'geometry': False
         }

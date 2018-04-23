@@ -179,6 +179,12 @@ public:
    */
   virtual void detach(Container* container) const = 0;
 
+  /*! Attach the value of a field, the (field) info of which is this object,
+   * to the container that contains the field after the field is overriden.
+   * \param[in] container The container that contains the field.
+   */
+  virtual void attach(Container* container) const = 0;
+
   /*! Determine whether the field is a scalar
    * \return \true if the field is a scalar and false otherwise.
    */

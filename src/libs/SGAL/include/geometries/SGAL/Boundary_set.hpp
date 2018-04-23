@@ -993,9 +993,16 @@ protected:
   Uint num_tex_coordinates() const;
 
   /*! Compute flat indices for the normals or for the colors.
-   * This function is invoked when the attachment is not per-vertex.
+   * This function is invoked when the attachment is per-primitive.
    */
-  void compute_flat_indices(const Facet_indices& source, Flat_indices& target);
+  void compute_flat_indices_per_primitive(const Facet_indices& source,
+                                          Flat_indices& target);
+
+  /*! Compute flat indices for the colors.
+   * This function is invoked when the attachment is per-mesh.
+   */
+  void compute_flat_indices_per_mesh(const Facet_indices& source,
+                                     Flat_indices& target);
 
   void compute_flat_tex_coords_2d(size_t num_verts);
   void compute_polygon_tex_coords_2d();

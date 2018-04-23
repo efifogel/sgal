@@ -98,6 +98,7 @@ public:
   Boolean less(const Vector3f& v) const;
   Boolean almost_equal(const Vector3f& v, Float tol) const;
   void combine(Float a, const Vector3f& v1, Float b, const Vector3f& v2);
+  void blend(Float a, const Vector3f& v1, const Vector3f& v2);
   void full_xform_pt(const Vector3f& v, const Matrix4f& m);
   void clamp(const Vector3f& v, const Vector3f& my_min, const Vector3f& my_max);
 
@@ -412,6 +413,10 @@ inline void Vector3f::combine(Float a, const Vector3f& v1, Float b,
   m_vector[1] = a * v1[1] + b * v2[1];
   m_vector[2] = a * v1[2] + b * v2[2];
 }
+
+//! \brief
+inline void Vector3f::blend(Float a, const Vector3f& v1, const Vector3f& v2)
+{ combine(a, v1, 1.0f-a, v2); }
 
 Boolean operator>(const Vector3f& v1, const Vector3f& v2);
 Boolean operator<(const Vector3f& v1, const Vector3f& v2);
