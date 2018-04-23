@@ -1552,20 +1552,28 @@ def print_constructor_definition(config, out, class_name, derived_class, fields,
 #! Print destructor definition.
 def print_destructor_definition(out, class_name, fields):
   print_line(out, "//! \\brief destruct.")
-  field_names = []
+  array_fields = []
+  observed_fields = []
   for field in fields[:]:
     name = field['name']
     type = field['type']
+    observed = distutils.util.strtobool(field['observed'])
     if type.endswith('_array'):
-      field_names.append(name)
-  if 0 == len(field_names):
+      array_fields.append(name)
+    if observed:
+      observed_fields.append(name)
+  if (0 == len(array_fields)) and (0 == len(observed_fields)):
     print_line(out, "%s::~%s() {}" % (class_name, class_name))
-  else:
-    print_line(out, "%s::~%s()" % (class_name, class_name))
-    print_line(out, "{", inc=True)
-    for field_name in field_names[:]:
-      print_line(out, "m_%s.clear();" % field_name)
-    print_line(out, "}", dec=True)
+    print_empty_line(out)
+    return
+
+  print_line(out, "%s::~%s()" % (class_name, class_name))
+  print_line(out, "{", inc=True)
+  for name in array_fields[:]:
+    print_line(out, 'm_{}.clear();'.format(name))
+  for name in observed_fields:
+    print_line(out, 'get_field_info({})->detach(this);'.format(name.upper()))
+  print_line(out, "}", dec=True)
   print_empty_line(out)
 
 def get_execution_function(config, field):
