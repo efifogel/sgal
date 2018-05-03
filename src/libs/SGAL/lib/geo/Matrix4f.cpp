@@ -29,11 +29,11 @@ void Matrix4f::set(const float* m)
 { ::memcpy(m_matrix, m, sizeof(float) * 16); }
 
 //! \brief sets the matrix.
-inline void Matrix4f::set(const Matrix4f& v)
+void Matrix4f::set(const Matrix4f& v)
 { ::memcpy(m_matrix, v.m_matrix, sizeof(float) * 16); }
 
 //! \brief obtains the matrix.
-inline void Matrix4f::get(Matrix4f& v) const
+void Matrix4f::get(Matrix4f& v) const
 { ::memcpy(v.m_matrix, m_matrix, sizeof(float) * 16); }
 
 //! \brief sets this matrix from its elements.
