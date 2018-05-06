@@ -26,10 +26,10 @@ static const char* s_type_names[] = {
   "SFBool", "SFFloat", "SFUint32", "SFInt32",
   "SFTime", "SFVec2f", "SFVec3f", "SFColor",
   "SFVec4f", "SFRotation", "SFSphereBound", "SFImage",
-  "SFString", "SFSharedContainer", "MFBool", "MFFloat",
+  "SFString", "SFNode", "MFBool", "MFFloat",
   "MFUint32", "MFInt32", "MFTime", "MFVec2f",
   "MFVec3f", "MFColor", "MFVec4f", "MFRotation",
-  "MFSphereBound", "MFImage", "MFString", "MFSharedContainer",
+  "MFSphereBound", "MFImage", "MFString", "MFNode",
 };
 
 //! \brief obtains the name of a type.
