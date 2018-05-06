@@ -1148,7 +1148,6 @@ void Script::add_field_info(Field_rule rule, Field_type type,
    case Field_type::MF_SHARED_CONTAINER:
     {
      Shared_container_array initial_value;
-     SGAL_error_msg("Not supported yet!");
      variant_field = initial_value;
      add_fi<Field_type::MF_SHARED_CONTAINER>(id, name, rule, initial_value,
                                              exec_func, prototype);
