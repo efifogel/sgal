@@ -15,6 +15,7 @@
 // PARTICULAR PURPOSE.
 //
 // Author(s) : Efi Fogel         <efifogel@gmail.com>
+//             Ram Shaked        <ramsha7@gmail.com>
 
 #ifndef SGAL_GROUP_HPP
 #define SGAL_GROUP_HPP
@@ -266,10 +267,14 @@ public:
     field_changed(field_info);
   }
 
-  /* Remove a given child from the sequence of children of the group.
+  /*! Remove a given child from the sequence of children of the group.
    * \param[in] node the child node to remove.
    */
   void remove_child(Shared_container node);
+
+  /*! Remove all children of the group.
+   */
+  void clear_childs();
 
   /*! Add a touch sensor to the group.
    * \param[in] touch_sensor The touch sensor node to add.
@@ -336,6 +341,12 @@ protected:
   void allocate_selection_ids();
 
 private:
+  /*! Remove a child and invoke field-changed according to specified flag.
+   * \param invoke_field_changed[in] true to invoke field-changed notification.
+   */
+  void remove_child(Shared_container node, bool invoke_field_changed);
+
+
   //! The tag that represents the container.
   static const std::string s_tag;
 

@@ -15,6 +15,7 @@
 // PARTICULAR PURPOSE.
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
+//                 Ram Shaked        <ramsha7@gmail.com>
 
 #include <algorithm>
 #include <iostream>
@@ -141,6 +142,11 @@ void Group::add_child(Shared_container node)
 //! \brief removes a given child from the sequence of children of the group.
 void Group::remove_child(Shared_container node)
 {
+  remove_child(node, true);
+}
+
+void Group::remove_child(Shared_container node, bool invoke_field_changed)
+{
   auto light = boost::dynamic_pointer_cast<Light>(node);
   if (light) {
     remove_light(light);
@@ -159,8 +165,14 @@ void Group::remove_child(Shared_container node)
   node->unregister_observer(observer);
   m_childs.erase(std::remove(m_childs.begin(), m_childs.end(), node),
                  m_childs.end());
+  if (invoke_field_changed)
+    field_changed(field_info);
+}
 
-  field_changed(field_info);
+void Group::clear_childs() {
+  while (m_childs.size() > 1)
+    remove_child(m_childs.back(), false); // don't invoke field-changed.
+  remove_child(m_childs.back(), true);    // last remove -> invoke field-changed.
 }
 
 //! \brief traverses the children of the group.
