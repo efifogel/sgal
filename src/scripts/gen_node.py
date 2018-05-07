@@ -1294,12 +1294,20 @@ def print_hpp_include_directives(config, out, library, derived_class):
           print_line(out, '#include \"{}\"'.format(item))
       print_empty_line(out)
 
+# Print additional private function declarations:
+def print_private_function_declarations(config, out):
+  functions = {}
+  if not config.has_option('class', 'private-functions'):
+    return;
+  functions = ast.literal_eval(config.get('class', 'private-functions'))
+  print_function_declarations(config, out, functions)
+
 # Print additional protected function declarations:
 def print_protected_function_declarations(config, out):
   functions = {}
-  if not config.has_option('class', 'protected_functions'):
+  if not config.has_option('class', 'protected-functions'):
     return;
-  functions = ast.literal_eval(config.get('class', 'protected_functions'))
+  functions = ast.literal_eval(config.get('class', 'protected-functions'))
   print_function_declarations(config, out, functions)
 
 # Print additional public function declarations:
@@ -1405,6 +1413,9 @@ def generate_hpp(library, config, fields, out):
   print_tag_data_member(out, library)
   print_prototype_data_member(out, library)
   print_static_member_declarations(out, fields)
+
+  # Print additional private functions:
+  print_private_function_declarations(config, out)
 
   decrease_indent()
   print_line(out, "};")
