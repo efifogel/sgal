@@ -28,8 +28,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-typedef CGAL::Polygon_2<SGAL::Epec_kernel>            Epec_polygon;
-typedef CGAL::Polygon_with_holes_2<SGAL::Epec_kernel> Epec_polygon_with_holes;
+typedef CGAL::Polygon_2<SGAL::Epec_kernel>            Epec_polygon_2;
+typedef CGAL::Polygon_with_holes_2<SGAL::Epec_kernel> Epec_polygon_with_holes_2;
 
 SGAL_END_NAMESPACE
 
