@@ -26,7 +26,6 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Image.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_rule.hpp"

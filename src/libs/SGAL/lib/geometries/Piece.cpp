@@ -34,7 +34,6 @@
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Tex_coord_array.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Piece.hpp"
 #include "SGAL/Utilities.hpp"

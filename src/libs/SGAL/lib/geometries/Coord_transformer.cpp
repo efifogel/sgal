@@ -35,7 +35,6 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Draw_action.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Matrix4f.hpp"
 #include "SGAL/Container_factory.hpp"

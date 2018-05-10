@@ -31,7 +31,6 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Trace.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

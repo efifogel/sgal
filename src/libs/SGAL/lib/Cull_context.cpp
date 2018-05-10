@@ -32,7 +32,6 @@
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Point_light.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Camera.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Matrix4f.hpp"

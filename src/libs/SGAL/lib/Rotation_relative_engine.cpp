@@ -30,7 +30,6 @@
 #include "Field.h"
 #include "String_utils.h"
 #include "Element.h"
-#include "Trace.h"
 #include "SGAL/Execution_function.hpp"
 
 SGAL_BEGIN_NAMESPACE

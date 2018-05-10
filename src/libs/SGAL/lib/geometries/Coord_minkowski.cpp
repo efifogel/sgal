@@ -25,7 +25,6 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Draw_action.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Matrix4f.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Coord_array_3d.hpp"

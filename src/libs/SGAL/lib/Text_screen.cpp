@@ -24,7 +24,6 @@
 #include "SGAL/Font_texture.hpp"
 #include "SGAL/Text_screen.hpp"
 #include "SGAL/Appearance.hpp"
-#include "SGAL/Trace.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

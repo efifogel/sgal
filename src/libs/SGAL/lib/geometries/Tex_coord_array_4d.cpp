@@ -21,7 +21,6 @@
 #include "SGAL/Tex_coord_array_4d.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_rule.hpp"

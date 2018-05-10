@@ -52,6 +52,7 @@ public:
     EXPORT,
     FONT,
     PROTO,
+    DXF,
     NUM_CODES
   };
 

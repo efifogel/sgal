@@ -23,7 +23,6 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_info.hpp"
-#include "SGAL/Trace.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

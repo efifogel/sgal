@@ -21,8 +21,13 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Dxf_parser.hpp"
+#include "SGAL/Trace.hpp"
 
 SGAL_BEGIN_NAMESPACE
+
+const std::array<String, 8> Dxf_parser::m_code_type_names = {
+  "STRING", "FLOAT", "DOUBLE", "INT8", "INT16", "INT32", "UINT", "BOOL"
+};
 
 const std::vector<Dxf_parser::Code_range> Dxf_parser::m_code_ranges = {
   {0, 9, STRING},       // String (With the introduction of extended symbol
@@ -112,6 +117,9 @@ Loader_code Dxf_parser::operator()()
 //! \brief parses the header section.
 void Dxf_parser::parse_header()
 {
+  SGAL_TRACE_CODE(Trace::DXF,
+                  std::cout << "Dxf_parser::parse_header()" << std::endl;);
+
   bool done(false);
   while (!done) {
     int n;
@@ -143,11 +151,14 @@ Dxf_parser::Code_type Dxf_parser::read_code(int code)
 {
   int n;
   m_is >> n;
+  SGAL_TRACE_CODE(Trace::DXF,
+                  std::cout << "Dxf_parser::read_header_variable() code: "
+                  << n << std::endl;);
   SGAL_assertion(n == code);
   auto cr_it = std::find_if(m_code_ranges.begin(), m_code_ranges.end(),
                             [&](const Code_range& code_range)
                             {
-                              return ((code_range.m_min << code) &&
+                              return ((code_range.m_min <= code) &&
                                       (code <= code_range.m_max));
                             });
 
@@ -167,6 +178,9 @@ void Dxf_parser::read_header_variable()
   SGAL_assertion(c == '$');
   std::string str;
   m_is >> str;
+  SGAL_TRACE_CODE(Trace::DXF,
+                  std::cout << "Dxf_parser::read_header_variable() name: "
+                  << str << std::endl;);
   auto it = m_header_variables.find(str);
   if (it == m_header_variables.end()) {
     std::string unrecognized_msg("unrecognized header variable ");
@@ -179,9 +193,15 @@ void Dxf_parser::read_header_variable()
   auto& handle = header_var.m_handle;
 
   auto dim = codes.size();
+  SGAL_TRACE_CODE(Trace::DXF,
+                  std::cout << "Dxf_parser::read_header_variable() dimension: "
+                  << dim << std::endl;);
   if (1 == dim) {
     auto code = codes.front();
     auto code_type = read_code(code);
+    SGAL_TRACE_CODE(Trace::DXF,
+                    std::cout << "Dxf_parser::read_header_variable() code type: "
+                    << m_code_type_names[code_type] << std::endl;);
     switch (code_type) {
      case STRING: import_header_variable<String_header>(handle); break;
      case FLOAT: import_header_variable<Float_header>(handle); break;
@@ -195,11 +215,17 @@ void Dxf_parser::read_header_variable()
     return;
   }
 
+  SGAL_assertion((dim == 2) || (dim == 3));
   size_t i(0);
   for (auto code : codes) {
     auto code_type = read_code(code);
-    // verify that the code type matches DOUBLE
-    m_is >> (m_header.*(boost::get<Double_2d_header>(handle)))[i++];
+    SGAL_TRACE_CODE(Trace::DXF,
+                    std::cout << "Dxf_parser::read_header_variable() code type: "
+                    << m_code_type_names[code_type] << std::endl;);
+    SGAL_assertion(DOUBLE == code_type);
+    if (dim == 2)
+      m_is >> (m_header.*(boost::get<Double_2d_header>(handle)))[i++];
+    else m_is >> (m_header.*(boost::get<Double_3d_header>(handle)))[i++];
   }
 }
 

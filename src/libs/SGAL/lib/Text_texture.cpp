@@ -25,7 +25,6 @@
 #include "SGAL/Image.h"
 #include "SGAL/Texture.hpp"
 #include "SGAL/Container_proto.h"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Field_rule.hpp"

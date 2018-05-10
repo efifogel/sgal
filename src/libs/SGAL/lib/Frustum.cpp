@@ -35,7 +35,6 @@
 #include "SGAL/Types.hpp"
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Plane.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 

@@ -26,7 +26,6 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Texture_font.hpp"
 #include "SGAL/Appearance.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Texture.hpp"
 #include "SGAL/Image_texture.hpp"
 #include "SGAL/Material.hpp"

@@ -29,6 +29,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Dxf_header.hpp"
 #include "SGAL/Loader_code.hpp"
+#include "SGAL/Trace.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -131,7 +132,13 @@ private:
    */
   template <typename T>
   String_header import_header_variable(Header_variable_type handle)
-  { m_is >> m_header.*(boost::get<T>(handle)); }
+  {
+    m_is >> m_header.*(boost::get<T>(handle));
+    SGAL_TRACE_CODE(Trace::DXF,
+                    std::cout << "Dxf_parser::read_header_variable() value: "
+                    << m_header.*(boost::get<T>(handle))
+                    << std::endl;);
+  }
 
   //! Information of a header variable.
   struct Header_variable {
@@ -146,6 +153,7 @@ private:
   static const std::map<String, Section_parser> m_sections;
   static const std::map<String, Header_variable> m_header_variables;
   static const std::vector<Code_range> m_code_ranges;
+  static const std::array<String, 8> m_code_type_names;
 };
 
 SGAL_END_NAMESPACE

@@ -26,7 +26,6 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Element.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_rule.hpp"

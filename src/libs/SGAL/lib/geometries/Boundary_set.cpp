@@ -48,7 +48,6 @@
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Context.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/GL_error.hpp"
 #include "SGAL/Bounding_box.hpp"

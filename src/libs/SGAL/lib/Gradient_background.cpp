@@ -24,7 +24,6 @@
 #include "Draw_action.h"
 #include "Element.h"
 #include "Container_proto.h"
-#include "Trace.h"
 
 SGAL_BEGIN_NAMESPACE
 

@@ -20,7 +20,6 @@
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Color_map.hpp"
-#include "SGAL/Trace.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

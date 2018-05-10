@@ -33,7 +33,6 @@
 #include "SGAL/Cull_context.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Action.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Gl_wrapper.hpp"

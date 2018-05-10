@@ -33,7 +33,6 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Transform.hpp"
 #include "SGAL/Bounding_sphere.hpp"

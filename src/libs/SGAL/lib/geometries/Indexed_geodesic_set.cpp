@@ -25,7 +25,6 @@
 #include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Coord_array_3d.hpp"

@@ -25,7 +25,6 @@
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Utilities.hpp"
