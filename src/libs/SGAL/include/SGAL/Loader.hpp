@@ -23,6 +23,7 @@
 #include <boost/regex.hpp>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Loader_code.hpp"
 #include "SGAL/Loader_errors.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Indices_types.hpp"
@@ -42,8 +43,6 @@ class Material;
 
 class SGAL_SGAL_DECL Loader {
 public:
-  enum Return_code {RETRY = 1, SUCCESS = 0, FAILURE = -1};
-
   /*! Construct */
   Loader();
 
@@ -51,13 +50,13 @@ public:
    * \param[in] filename the name of the file to load.
    * \param[in] sg the scene graph
    */
-  Return_code load(const char* filename, Scene_graph* scene_graph);
+  Loader_code load(const char* filename, Scene_graph* scene_graph);
 
   /*! Parse a scene graph from a text stream.
    * \param[in] its the text stream to parse.
    * \param[in] sg the scene graph
    */
-  Return_code parse(std::istream& is, Scene_graph* scene_graph);
+  Loader_code parse(std::istream& is, Scene_graph* scene_graph);
 
   /*! Load a scene graph from a buffer.
    * \param[in] data the buffer that contains the model description.
@@ -65,7 +64,7 @@ public:
    * \param[in] filename the name of the source file of the data.
    * \param[in] sg the scene graph
    */
-  Return_code load(char* data, size_t size, const char* filename,
+  Loader_code load(char* data, size_t size, const char* filename,
                    Scene_graph* scene_graph);
 
   /*! Load a scene graph from a buffer.
@@ -73,30 +72,30 @@ public:
    * \param[in] size the size of the buffer.
    * \param[in] sg the scene graph
    */
-  Return_code load(char* data, size_t size, Scene_graph* scene_graph);
+  Loader_code load(char* data, size_t size, Scene_graph* scene_graph);
 
   /*! Load a scene graph from an stl file.
    * \param[in] is the stream to load.
    * \param[in] sg the scene graph
    */
-  Return_code load_stl(std::istream& is, Scene_graph* scene_graph);
+  Loader_code load_stl(std::istream& is, Scene_graph* scene_graph);
 
   /*! Load a scene graph from an stl stream.
    * \param[in] is the stream to load.
    * \param[in] sg the scene graph
    */
-  Return_code load_stl(std::istream& is, size_t size, Scene_graph* scene_graph);
+  Loader_code load_stl(std::istream& is, size_t size, Scene_graph* scene_graph);
 
   /*! Load a scene graph from an stl buffer.
    * \param[in] data the buffer that contains a model in the STL format.
    * \param[in] size the size of the buffer.
    * \param[in] sg the scene graph
    */
-  Return_code load_stl(char* data, size_t size, Scene_graph* sg);
+  Loader_code load_stl(char* data, size_t size, Scene_graph* sg);
 
   /*! Read a scene graph from a stream in the STL binary format.
    */
-  Return_code read_stl(std::istream& is, size_t size, Scene_graph* scene_graph,
+  Loader_code read_stl(std::istream& is, size_t size, Scene_graph* scene_graph,
                        const Vector3f& color);
 
   /*! Load a scene graph represented in the off file format from a stream.
@@ -104,16 +103,18 @@ public:
    * \param[in] is the stream to load.
    * \param[in] sg the scene graph
    */
-  Return_code load_off(std::istream& is, Scene_graph* scene_graph,
+  Loader_code load_off(std::istream& is, Scene_graph* scene_graph,
                        const boost::smatch& what);
 
   /*! Load a scene graph represented in the obj file format from a stream.
+   * \param[in] is the stream to load.
+   * \param[in] sg the scene graph
    */
-  Return_code parse_obj(std::istream& is, Scene_graph* sg);
+  Loader_code parse_obj(std::istream& is, Scene_graph* sg);
 
   /*! Prase a material library file, which is part of the obj format.
    */
-  Return_code parse_mtl(const std::string& filename, Scene_graph* sg);
+  Loader_code parse_mtl(const std::string& filename, Scene_graph* sg);
 
   /*! Set the flag that indicates whether to construct multiple shapes when
    * colors are present (one shape per color).
@@ -124,6 +125,12 @@ public:
    * (one shape per color).
    */
   bool multiple_shapes() const;
+
+  // /*! Load a scene graph represented in the dxf file format from a stream.
+  //  * \param[in] is the stream to load.
+  //  * \param[in] sg the scene graph
+  //  */
+  // Loader_code load_dxf(std::istream& is, Scene_graph* sg);
 
 protected:
   class Triangle {
@@ -144,7 +151,7 @@ protected:
 
   /*! Read a traingle (1 normal and 3 vertices)
    */
-  Return_code read_triangle(std::istream& is, Triangle& triangle);
+  Loader_code read_triangle(std::istream& is, Triangle& triangle);
 
 private:
   typedef boost::shared_ptr<Shape>                  Shared_shape;
@@ -217,7 +224,7 @@ private:
 
   /*! Update an IndexedFaceSet container.
    */
-  Return_code update_ifs(Scene_graph* scene_graph,
+  Loader_code update_ifs(Scene_graph* scene_graph,
                          Shared_indexed_face_set ifs,
                          Shared_coord_array_3d shared_coords,
                          Shared_normal_array shared_normals,
@@ -227,6 +234,52 @@ private:
                          Polygon_indices& normal_indices,
                          Polygon_indices& tex_coord_indices);
 
+  // /// \name DXF format handling
+  // //! @{
+  // /*! Read a HEADER variable.
+  //  */
+  // void read_header_variable(std::istream& is);
+
+  // /*! Skip the HEADER section.
+  //  */
+  // void skip_header(std::istream& is);
+
+  // /*! Read all sections except for the HEADER section and skipp all read
+  //  * SECTIONS except for the ENTITIES section.
+  //  */
+  // void read_sections(std::istream& is);
+
+  // /*! Skip a TABLES section.
+  //  */
+  // void skip_tables(std::istream& is);
+
+  // /*! Skip a BLOCKS section.
+  //  */
+  // void skip_blocks(std::istream& is);
+
+  // /*! Read a polygon.
+  //  */
+  // void read_polygon();
+
+  // /*! Read an ENTITIES section.
+  //  */
+  // void read_entities(std::istream& is);
+
+  // /*! Read a comment line.
+  //  */
+  // void read_comment(std::istream& is);
+
+  // /*! Read a circle.
+  //  */
+  // //void read_circle();
+  // //void read_circle();
+  // //void read_circle();
+
+  // /*! Read a circle defined by its center and radius.
+  //  */
+  // //void read_center_and_radius();
+
+  // //@}
 };
 
 /*! \brief sets the flag that indicates whether to construct multiple shapes when

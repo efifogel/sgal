@@ -62,6 +62,7 @@
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Transform.hpp"
 #include "SGAL/Loader.hpp"
+#include "SGAL/Loader_code.hpp"
 #include "SGAL/Navigation_info.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Shape.hpp"
@@ -250,11 +251,11 @@ void Player_scene::create_scene(char* data, int size)
   if (0 < m_option_parser->get_num_input_files()) {
     const auto& filename = m_option_parser->get_input_file(0);
     auto rc = loader.load(data, size, filename.c_str(), m_scene_graph);
-    if (rc < 0) return;
+    if (rc == SGAL::Loader_code::FAILURE) return;
   }
   else {
     auto rc = loader.load(data, size, m_scene_graph);
-    if (rc < 0) return;
+    if (rc == SGAL::Loader_code::FAILURE) return;
   }
   print_stat();
 
@@ -312,7 +313,7 @@ void Player_scene::create_scene()
   SGAL::Loader loader;
   loader.set_multiple_shapes(m_option_parser->multiple_shapes());
   auto rc = loader.load(m_fullname.c_str(), m_scene_graph);
-  if (rc < 0) return;
+  if (rc == SGAL::Loader_code::FAILURE) return;
   print_stat();
 
   // dump

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <string>
 #include <iostream>
@@ -42,6 +42,7 @@
 #include "SGAL/Normal_array.hpp"
 #include "SGAL/Tex_coord_array_2d.hpp"
 #include "SGAL/find_file.hpp"
+#include "SGAL/Dxf_parser.hpp"
 
 #include "Vrml_scanner.hpp"
 
@@ -51,7 +52,7 @@ SGAL_BEGIN_NAMESPACE
 Loader::Loader() : m_multiple_shapes(false) {}
 
 //! \brief loads a scene graph from a file.
-Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
+Loader_code Loader::load(const char* filename, Scene_graph* sg)
 {
   SGAL_assertion(filename);
 
@@ -62,14 +63,14 @@ Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
   std::ifstream is(filename, std::ifstream::binary);
   if (!is.good()) {
     throw Open_file_error(m_filename);
-    return FAILURE;
+    return Loader_code::FAILURE;
   }
 
   // Verify that the file is not empty.
   if (is.peek() == std::char_traits<char>::eof()) {
     throw Empty_error(m_filename);
     is.close();
-    return FAILURE;
+    return Loader_code::FAILURE;
   }
 
   // Obtain the file extension.
@@ -86,7 +87,7 @@ Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
   is.read(line, 80);
   if (!is) {
     throw Read_error(m_filename);
-    return FAILURE;
+    return Loader_code::FAILURE;
   }
   auto it = line;
   for (; it != &line[80]; ++it) if (*it == '\n') break;
@@ -102,9 +103,9 @@ Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
     // If the first line starts with "OFF" and the file extension is off,
     // assume that the file format is OFF.
     auto rc = load_off(is, sg, what);
-    if (rc <= 0) {
+    if (static_cast<int>(rc) <= 0) {
       is.close();
-      if (rc == SUCCESS)
+      if (rc == Loader_code::SUCCESS)
         std::cerr << "Warning: File extension " << file_extension
                   << " does not match file format (OFF)" << std::endl;
       return rc;
@@ -120,7 +121,7 @@ Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
   {
     is.seekg(0, is.beg);        // rewind
     auto rc = parse(is, sg);
-    if (rc <= 0) {
+    if (static_cast<int>(rc) <= 0) {
       is.close();
       return rc;
     }
@@ -134,8 +135,8 @@ Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
   if (boost::iequals(file_extension, ".obj")) {
     auto rc = parse_obj(is, sg);
     is.close();
-    if (rc <= 0) {
-      if (rc < 0) throw Parse_error(m_filename);
+    if (static_cast<int>(rc) <= 0) {
+      if (static_cast<int>(rc) < 0) throw Parse_error(m_filename);
       return rc;
     }
   }
@@ -146,8 +147,8 @@ Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
   else if (boost::iequals(file_extension, ".stl")) {
     auto rc = load_stl(is, sg);
     is.close();
-    if (rc <= 0) {
-      if (rc == SUCCESS) {
+    if (static_cast<int>(rc) <= 0) {
+      if (rc == Loader_code::SUCCESS) {
         if (0 == magic.compare(0, 5, "solid")) {
           std::cerr << "Warning: The file magic string " << "\"solid\""
                     << " does not match the file format (binary STL)"
@@ -158,11 +159,24 @@ Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
     }
   }
 
+  // If the extension is .dxf, assume that the file is in the dxf format.
+  // If the return code of the loader is positive, the file might be in a
+  // different format. In this case, continue trying matching.
+  if (boost::iequals(file_extension, ".dxf")) {
+    Dxf_parser parser(is, sg);
+    auto rc = parser();
+    is.close();
+    if (static_cast<int>(rc) <= 0) {
+      if (static_cast<int>(rc) < 0) throw Parse_error(m_filename);
+      return rc;
+    }
+  }
+
   // Assume that the file is in the binary STL format.
   is.seekg(0, is.beg);
   auto rc = load_stl(is, sg);
   is.close();
-  if (rc == SUCCESS) {
+  if (rc == Loader_code::SUCCESS) {
     if (!boost::iequals(file_extension, ".stl"))
       std::cerr << "Warning: The file extension " << file_extension
                 << " does not match the file format (binary STL)" << std::endl;
@@ -175,14 +189,14 @@ Loader::Return_code Loader::load(const char* filename, Scene_graph* sg)
 }
 
 //! \brief loads a scene graph from an input stream.
-Loader::Return_code
+Loader_code
 Loader::load_stl(std::istream& is, size_t size, Scene_graph* sg)
 {
   char str[81];
   is.read(str, 80);
   if (!is) {
     throw Read_error(m_filename);
-    return FAILURE;
+    return Loader_code::FAILURE;
   }
 
   std::string title(str);
@@ -198,24 +212,24 @@ Loader::load_stl(std::istream& is, size_t size, Scene_graph* sg)
     color.set(red, green, blue);
   }
   auto rc = read_stl(is, size, sg, color);
-  if (rc < 0) return rc;
-  return SUCCESS;
+  if (static_cast<int>(rc) < 0) return rc;
+  return Loader_code::SUCCESS;
 }
 
 //! \brief loads a scene graph from an stl file.
-Loader::Return_code Loader::load_stl(char* data, size_t size,
+Loader_code Loader::load_stl(char* data, size_t size,
                                      Scene_graph* sg)
 {
   boost::interprocess::bufferstream is(data, size);
   if (!is.good()) {
     throw Overflow_error(m_filename);
-    return FAILURE;
+    return Loader_code::FAILURE;
   }
   return load_stl(is, size, sg);
 }
 
 //! \brief loads a scene graph from an stl file.
-Loader::Return_code Loader::load_stl(std::istream& is, Scene_graph* sg)
+Loader_code Loader::load_stl(std::istream& is, Scene_graph* sg)
 {
   is.seekg(0, is.end);
   size_t size = is.tellg();
@@ -225,7 +239,7 @@ Loader::Return_code Loader::load_stl(std::istream& is, Scene_graph* sg)
 }
 
 //! \brief parses a scene graph from a stream.
-Loader::Return_code Loader::parse(std::istream& its, Scene_graph* sg)
+Loader_code Loader::parse(std::istream& its, Scene_graph* sg)
 {
   Vrml_scanner scanner(&its);
   scanner.set_filename(m_filename);
@@ -237,15 +251,15 @@ Loader::Return_code Loader::parse(std::istream& its, Scene_graph* sg)
   Vrml_parser parser(scanner, sg, root, maybe_binary_stl);
   auto rc = parser.parse();
   if (0 != rc) {
-    if (maybe_binary_stl) return RETRY;
+    if (maybe_binary_stl) return Loader_code::RETRY;
     throw Parse_error(m_filename);
-    return FAILURE;
+    return Loader_code::FAILURE;
   }
-  return SUCCESS;
+  return Loader_code::SUCCESS;
 }
 
 //! \brief loads a scene graph from a buffer.
-Loader::Return_code
+Loader_code
 Loader::load(char* data, size_t size, const char* filename, Scene_graph* sg)
 {
   // Try to determine the file type from its extension.
@@ -253,35 +267,35 @@ Loader::load(char* data, size_t size, const char* filename, Scene_graph* sg)
     std::string file_extension = boost::filesystem::extension(filename);
     if (boost::iequals(file_extension, ".stl")) {
       auto rc = load_stl(data, size, sg);
-      if (rc <= 0) return rc;
+      if (static_cast<int>(rc) <= 0) return rc;
     }
   }
   return load(data, size, sg);
 }
 
 //! \brief loads a scene graph from a buffer.
-Loader::Return_code Loader::load(char* data, size_t size, Scene_graph* sg)
+Loader_code Loader::load(char* data, size_t size, Scene_graph* sg)
 {
   boost::interprocess::bufferstream is(data, size);
   if (!is.good()) {
     throw Overflow_error(m_filename);
-    return FAILURE;
+    return Loader_code::FAILURE;
   }
 
   auto rc = parse(is, sg);
-  if (rc < 0) {
+  if (static_cast<int>(rc) < 0) {
     is.clear();
     return rc;
   }
 
   is.clear();
 
-  if (rc == RETRY) rc = load_stl(data, size, sg);
+  if (rc == Loader_code::RETRY) rc = load_stl(data, size, sg);
   return rc;
 }
 
 //! \bried read a traingle (1 normal and 3 vertices)
-Loader::Return_code Loader::read_triangle(std::istream& is, Triangle& triangle)
+Loader_code Loader::read_triangle(std::istream& is, Triangle& triangle)
 {
   Float x, y, z;
 
@@ -313,9 +327,9 @@ Loader::Return_code Loader::read_triangle(std::istream& is, Triangle& triangle)
 
   if (!is) {
     throw Read_error(m_filename);
-    return FAILURE;
+    return Loader_code::FAILURE;
   }
-  return SUCCESS;
+  return Loader_code::SUCCESS;
 }
 
 //! \brief computes a new Indexed Face Set container.
@@ -528,7 +542,7 @@ void Loader::add_colored_shape(Scene_graph* scene_graph, Group* group,
 }
 
 //! \brief reads a scene graph from a stream in the STL binary format.
-Loader::Return_code Loader::read_stl(std::istream& is, size_t size,
+Loader_code Loader::read_stl(std::istream& is, size_t size,
                                      Scene_graph* scene_graph,
                                      const Vector3f& color)
 {
@@ -546,7 +560,7 @@ Loader::Return_code Loader::read_stl(std::istream& is, size_t size,
   //   spacer--2
   if (size != 84 + total_num_tris * 50) {
     throw Inconsistent_error(m_filename);
-    return FAILURE;
+    return Loader_code::FAILURE;
   }
 
   // Read all triangles while discarding collinear triangles.
@@ -556,7 +570,7 @@ Loader::Return_code Loader::read_stl(std::istream& is, size_t size,
     Triangle triangle;
     do {
       auto rc = read_triangle(is, triangle);
-      if (rc < 0) return rc;
+      if (static_cast<int>(rc) < 0) return rc;
       ++i;
     } while (Vector3f::collinear(triangle.v0, triangle.v1, triangle.v2));
     triangles.push_back(triangle);
@@ -564,7 +578,7 @@ Loader::Return_code Loader::read_stl(std::istream& is, size_t size,
   // Check end condition:
   if (!is) {
     throw Read_error(m_filename);
-    return FAILURE;
+    return Loader_code::FAILURE;
   }
 
   // Construct shape nodes
@@ -575,7 +589,7 @@ Loader::Return_code Loader::read_stl(std::istream& is, size_t size,
     else add_shape(scene_graph, root, triangles);
   }
 
-  return SUCCESS;
+  return Loader_code::SUCCESS;
 }
 
 /*! \brief loads a scene graph represented in the off file format from a stream.
@@ -588,7 +602,7 @@ Loader::Return_code Loader::read_stl(std::istream& is, size_t size,
  *    what[4]---4 components including a final homogeneous component
  *    what[5]---n components
  */
-Loader::Return_code Loader::load_off(std::istream& is, Scene_graph* sg,
+Loader_code Loader::load_off(std::istream& is, Scene_graph* sg,
                                      const boost::smatch& what)
 {
   sg->set_input_format_id(File_format_3d::ID_OFF);
@@ -622,7 +636,7 @@ Loader::Return_code Loader::load_off(std::istream& is, Scene_graph* sg,
   is >> num_vertices >> num_facets >> num_edges;
   if ((num_vertices << 1) < num_facets) {
     throw Inconsistent_error(m_filename);
-    return FAILURE;
+    return Loader_code::FAILURE;
   }
   // std::cout << num_vertices << std::endl;
   // std::cout << num_facets << std::endl;
@@ -709,29 +723,28 @@ Loader::Return_code Loader::load_off(std::istream& is, Scene_graph* sg,
   ifs->set_num_primitives(num_facets);
   ifs->add_to_scene(sg);
 
-  return SUCCESS;
+  return Loader_code::SUCCESS;
 }
 
 /*! Obtain the number represented by a symbol.
  */
 template <typename Number_type>
-Loader::Return_code get_number(const Vrml_parser::symbol_type& symbol,
-                                    Number_type& number)
+bool get_number(const Vrml_parser::symbol_type& symbol, Number_type& number)
 {
   if (symbol.token() != Vrml_parser::token::TOK_NUMBER) {
     std::cerr << "Error at " << symbol.location << ": "
               << "invalid symbol" << std::endl;
-    return Loader::FAILURE;
+    return false;
   }
   Shared_string number_str(symbol.value.as<Shared_string>());
   number = boost::lexical_cast<Number_type>(*number_str);
-  return Loader::SUCCESS;
+  return true;
 }
 
 /*! Read a number from a scanner.
  */
 template <typename Number_type>
-Loader::Return_code read_number(Vrml_scanner& scanner, Number_type& number)
+bool read_number(Vrml_scanner& scanner, Number_type& number)
 {
   Vrml_parser::symbol_type symbol(scanner.mylex());
   return get_number(symbol, number);
@@ -739,21 +752,21 @@ Loader::Return_code read_number(Vrml_scanner& scanner, Number_type& number)
 
 /*! Obtain the string represented by a symbol.
  */
-Loader::Return_code get_string(const Vrml_parser::symbol_type& symbol,
+bool get_string(const Vrml_parser::symbol_type& symbol,
                                Shared_string& str)
 {
   if (symbol.token() != Vrml_parser::token::TOK_IDENTIFIER) {
     std::cerr << "Error at " << symbol.location << ": "
               << "invalid string" << std::endl;
-    return Loader::FAILURE;
+    return false;
   }
   str = symbol.value.as<Shared_string>();
-  return Loader::SUCCESS;
+  return true;
 }
 
 /*! Read a string from a scanner.
  */
-Loader::Return_code read_string(Vrml_scanner& scanner, Shared_string& str)
+bool read_string(Vrml_scanner& scanner, Shared_string& str)
 {
   Vrml_parser::symbol_type symbol(scanner.mylex());
   return get_string(symbol, str);
@@ -761,20 +774,19 @@ Loader::Return_code read_string(Vrml_scanner& scanner, Shared_string& str)
 
 /*! Read a line.
  */
-Loader::Return_code read_obj_line(Vrml_scanner& scanner)
+bool read_obj_line(Vrml_scanner& scanner)
 {
   while (true) {
     Vrml_parser::symbol_type symbol(scanner.mylex());
     if (symbol.token() == Vrml_parser::token::TOK_K_LINE_END) break;
   }
-  return Loader::SUCCESS;
+  return true;
 }
 
 /*! Read coords and perhaps colors from an obj file.
  */
-Loader::Return_code read_obj_coords_and_colors(Vrml_scanner& scanner,
-                                               Coord_array_3d* coords,
-                                               Color_array* colors)
+bool read_obj_coords_and_colors(Vrml_scanner& scanner, Coord_array_3d* coords,
+                                Color_array* colors)
 {
   Vrml_parser::location_type loc;
   std::array<float, 6> nums;
@@ -788,13 +800,13 @@ Loader::Return_code read_obj_coords_and_colors(Vrml_scanner& scanner,
                 << ". Remaining coordinates are ignored!" << std::endl;
       break;
     }
-    if (get_number(num_symbol, nums[j++]) < 0) return Loader::FAILURE;
+    if (! get_number(num_symbol, nums[j++])) return false;
   }
 
   if ((j < 3) || (j == 5)) {
     std::cerr << "Error at " << loc << ": "
               << "wrong number of coordinates" << std::endl;
-    return Loader::FAILURE;
+    return false;
   }
   if (j == 4) {
     nums[0] /= nums[3];
@@ -807,13 +819,12 @@ Loader::Return_code read_obj_coords_and_colors(Vrml_scanner& scanner,
     Vector3f c(nums[3], nums[4], nums[5]);
     colors->push_back(c);
   }
-  return Loader::SUCCESS;
+  return true;
 }
 
 /*! Read texture coordinates from an obj file.
  */
-Loader::Return_code read_obj_tex_coords(Vrml_scanner& scanner,
-                                        Tex_coord_array_2d* tex_coords)
+bool read_obj_tex_coords(Vrml_scanner& scanner, Tex_coord_array_2d* tex_coords)
 {
   Vrml_parser::location_type loc;
   std::array<float, 6> nums;
@@ -827,13 +838,13 @@ Loader::Return_code read_obj_tex_coords(Vrml_scanner& scanner,
                 << ". Remaining coordinates are ignored!" << std::endl;
       break;
     }
-    if (get_number(num_symbol, nums[j++]) < 0) return Loader::FAILURE;
+    if (! get_number(num_symbol, nums[j++])) return false;
   }
 
   if (j < 2) {
     std::cerr << "Error at " << loc << ": "
               << "insufficient number of texture coordinates" << std::endl;
-    return Loader::FAILURE;
+    return false;
   }
   if (j == 3) {
     nums[0] /= nums[2];
@@ -841,13 +852,12 @@ Loader::Return_code read_obj_tex_coords(Vrml_scanner& scanner,
   }
   Vector2f v(nums[0], nums[1]);
   tex_coords->push_back(v);
-  return Loader::SUCCESS;
+  return true;
 }
 
 /*! Read normals from an obj file.
  */
-Loader::Return_code read_obj_normals(Vrml_scanner& scanner,
-                                     Normal_array* normals)
+bool read_obj_normals(Vrml_scanner& scanner, Normal_array* normals)
 {
   Vrml_parser::location_type loc;
   std::array<float, 3> nums;
@@ -861,26 +871,26 @@ Loader::Return_code read_obj_normals(Vrml_scanner& scanner,
                 << ". Remaining normals coordinates are ignored!" << std::endl;
       break;
     }
-    if (get_number(num_symbol, nums[j++]) < 0) return Loader::FAILURE;
+    if (! get_number(num_symbol, nums[j++])) return false;
   }
 
   if (j < 3) {
     std::cerr << "Error at " << loc << ": "
               << "insufficient number of normal coordinates" << std::endl;
-    return Loader::FAILURE;
+    return false;
   }
   Vector3f n(nums[0], nums[1], nums[2]);
   normals->push_back(n);
-  return Loader::SUCCESS;
+  return true;
 }
 
 /*! Read indices of coordinates from an obj file.
  */
-Loader::Return_code read_obj_facet(Vrml_scanner& scanner,
-                                   Polygon_indices& coord_indices,
-                                   Polygon_indices& normal_indices,
-                                   Polygon_indices& tex_coord_indices,
-                                   size_t num_coords)
+bool read_obj_facet(Vrml_scanner& scanner,
+                    Polygon_indices& coord_indices,
+                    Polygon_indices& normal_indices,
+                    Polygon_indices& tex_coord_indices,
+                    size_t num_coords)
 {
   coord_indices.resize(coord_indices.size()+1);
   auto& facet_coord_indices = coord_indices.back();
@@ -900,11 +910,11 @@ Loader::Return_code read_obj_facet(Vrml_scanner& scanner,
     }
     auto loc = v_symbol.location;
     int i;
-    if (get_number(v_symbol, i) < 0) return Loader::FAILURE;
+    if (! get_number(v_symbol, i)) return false;
     if (0 == i) {
       std::cerr << "Error at " << v_symbol.location << ": "
                 << "zero index is illegal" << std::endl;
-      return Loader::FAILURE;
+      return false;
     }
     size_t index = (i > 0) ? i - 1 : num_coords + i;
     if (num_slashes == 0) facet_coord_indices.push_back(index);
@@ -915,20 +925,19 @@ Loader::Return_code read_obj_facet(Vrml_scanner& scanner,
     }
     else {
       SGAL_error();
-      return Loader::FAILURE;
+      return false;
     }
   }
   if (!facet_normal_indices.empty())
     normal_indices.push_back(std::move(facet_normal_indices));
   if (!facet_tex_coord_indices.empty())
     tex_coord_indices.push_back(std::move(facet_tex_coord_indices));
-  return Loader::SUCCESS;
+  return true;
 }
 
 /*! Read material library.
  */
-Loader::Return_code Loader::parse_mtl(const std::string& filename,
-                                      Scene_graph* sg)
+Loader_code Loader::parse_mtl(const std::string& filename, Scene_graph* sg)
 {
   std::string fullname;
   std::list<fi::path> dirs;
@@ -938,13 +947,13 @@ Loader::Return_code Loader::parse_mtl(const std::string& filename,
   find_file(filename, dirs, fullname);
   if (fullname.empty()) {
     throw Find_file_error(filename);
-    return FAILURE;
+    return Loader_code::FAILURE;
   }
   // Open source file.
   std::ifstream mtl_is(fullname);
   if (!mtl_is.good()) {
     throw Open_file_error(fullname);
-    return Loader::FAILURE;
+    return Loader_code::FAILURE;
   }
 
   Vrml_scanner scanner(&mtl_is);
@@ -959,7 +968,7 @@ Loader::Return_code Loader::parse_mtl(const std::string& filename,
      case Vrml_parser::token::TOK_K_NEW_MATERIAL:
       {
         Shared_string name;
-        if (read_string(scanner, name) < 0) return FAILURE;
+        if (! read_string(scanner, name)) return Loader_code::FAILURE;
         app = create_appearance(sg, *name);
         mat = create_material(sg);
         app->set_material(mat);
@@ -969,7 +978,7 @@ Loader::Return_code Loader::parse_mtl(const std::string& filename,
      case Vrml_parser::token::TOK_K_SPECULAR_EXPONENT:
       {
         float number;
-        if (read_number(scanner, number) < 0) return Loader::FAILURE;
+        if (! read_number(scanner, number)) return Loader_code::FAILURE;
         std::cerr << "Specular Exponent not supported yet!" << std::endl;
       }
       break;
@@ -977,9 +986,9 @@ Loader::Return_code Loader::parse_mtl(const std::string& filename,
      case Vrml_parser::token::TOK_K_AMBIENT_COLOR:
       {
         float r, g, b;
-        if (read_number(scanner, r) < 0) return Loader::FAILURE;
-        if (read_number(scanner, g) < 0) return Loader::FAILURE;
-        if (read_number(scanner, b) < 0) return Loader::FAILURE;
+        if (! read_number(scanner, r)) return Loader_code::FAILURE;
+        if (! read_number(scanner, g)) return Loader_code::FAILURE;
+        if (! read_number(scanner, b)) return Loader_code::FAILURE;
         if ((r != 1) && (g != 1) & (b != 1)) mat->set_ambient_color(r, g, b);
       }
       break;
@@ -987,9 +996,9 @@ Loader::Return_code Loader::parse_mtl(const std::string& filename,
      case Vrml_parser::token::TOK_K_DIFFUSE_COLOR:
       {
         float r, g, b;
-        if (read_number(scanner, r) < 0) return Loader::FAILURE;
-        if (read_number(scanner, g) < 0) return Loader::FAILURE;
-        if (read_number(scanner, b) < 0) return Loader::FAILURE;
+        if (! read_number(scanner, r)) return Loader_code::FAILURE;
+        if (! read_number(scanner, g)) return Loader_code::FAILURE;
+        if (! read_number(scanner, b)) return Loader_code::FAILURE;
         mat->set_diffuse_color(r, g, b);
       }
       break;
@@ -997,9 +1006,9 @@ Loader::Return_code Loader::parse_mtl(const std::string& filename,
      case Vrml_parser::token::TOK_K_SPECULAR_COLOR:
       {
         float r, g, b;
-        if (read_number(scanner, r) < 0) return Loader::FAILURE;
-        if (read_number(scanner, g) < 0) return Loader::FAILURE;
-        if (read_number(scanner, b) < 0) return Loader::FAILURE;
+        if (! read_number(scanner, r)) return Loader_code::FAILURE;
+        if (! read_number(scanner, g)) return Loader_code::FAILURE;
+        if (! read_number(scanner, b)) return Loader_code::FAILURE;
         mat->set_specular_color(r, g, b);
       }
       break;
@@ -1007,9 +1016,9 @@ Loader::Return_code Loader::parse_mtl(const std::string& filename,
      case Vrml_parser::token::TOK_K_EMISSIVE_COLOR:
       {
         float r, g, b;
-        if (read_number(scanner, r) < 0) return Loader::FAILURE;
-        if (read_number(scanner, g) < 0) return Loader::FAILURE;
-        if (read_number(scanner, b) < 0) return Loader::FAILURE;
+        if (! read_number(scanner, r)) return Loader_code::FAILURE;
+        if (! read_number(scanner, g)) return Loader_code::FAILURE;
+        if (! read_number(scanner, b)) return Loader_code::FAILURE;
         mat->set_emissive_color(r, g, b);
       }
       break;
@@ -1017,7 +1026,7 @@ Loader::Return_code Loader::parse_mtl(const std::string& filename,
      case Vrml_parser::token::TOK_K_OPTICAL_DENSITY:
       {
         float number;
-        if (read_number(scanner, number) < 0) return Loader::FAILURE;
+        if (! read_number(scanner, number)) return Loader_code::FAILURE;
         std::cerr << "Optical Density not supported yet!" << std::endl;
       }
       break;
@@ -1025,7 +1034,7 @@ Loader::Return_code Loader::parse_mtl(const std::string& filename,
      case Vrml_parser::token::TOK_K_DISSOLVE:
       {
         float number;
-        if (read_number(scanner, number) < 0) return Loader::FAILURE;
+        if (! read_number(scanner, number)) return Loader_code::FAILURE;
         mat->set_transparency(1.0f - number);
       }
       break;
@@ -1033,7 +1042,7 @@ Loader::Return_code Loader::parse_mtl(const std::string& filename,
      case Vrml_parser::token::TOK_K_TRANSPARENCY:
       {
         float number;
-        if (read_number(scanner, number) < 0) return Loader::FAILURE;
+        if (! read_number(scanner, number)) return Loader_code::FAILURE;
         mat->set_transparency(number);
       }
       break;
@@ -1041,7 +1050,7 @@ Loader::Return_code Loader::parse_mtl(const std::string& filename,
      case Vrml_parser::token::TOK_K_ILLUMINATION:
       {
         float number;
-        if (read_number(scanner, number) < 0) return Loader::FAILURE;
+        if (! read_number(scanner, number)) return Loader_code::FAILURE;
         std::cerr << "illumination not supported yet!" << std::endl;
       }
       break;
@@ -1051,7 +1060,7 @@ Loader::Return_code Loader::parse_mtl(const std::string& filename,
   }
   scanner.pop_state();
   mtl_is.close();
-  return Loader::SUCCESS;
+  return Loader_code::SUCCESS;
 }
 
 /*! Convert polygons to triangles and clear the polygons.
@@ -1085,7 +1094,7 @@ void to_quad_indices(Polygon_indices& indices, Quad_indices& quad_indices)
 
 /*! Update an IndexedFaceSet container.
  */
-Loader::Return_code
+Loader_code
 Loader::update_ifs(Scene_graph* sg,
                    Shared_indexed_face_set ifs,
                    Shared_coord_array_3d shared_coords,
@@ -1181,11 +1190,11 @@ Loader::update_ifs(Scene_graph* sg,
   ifs->facet_coord_indices_changed();
   ifs->add_to_scene(sg);
 
-  return SUCCESS;
+  return Loader_code::SUCCESS;
 }
 
 // \brief loads a scene graph represented in the obj file format from a stream.
-Loader::Return_code Loader::parse_obj(std::istream& is, Scene_graph* sg)
+Loader_code Loader::parse_obj(std::istream& is, Scene_graph* sg)
 {
   sg->set_input_format_id(File_format_3d::ID_OBJ);
   auto* root = sg->initialize();            // obtain root
@@ -1230,33 +1239,35 @@ Loader::Return_code Loader::parse_obj(std::istream& is, Scene_graph* sg)
         break;
 
        case Vrml_parser::token::TOK_K_VERTEX:
-        if (read_obj_coords_and_colors(scanner, coords, colors) < 0)
-          return FAILURE;
+        if (! read_obj_coords_and_colors(scanner, coords, colors))
+          return Loader_code::FAILURE;
         break;
 
        case Vrml_parser::token::TOK_K_TEXTURE_COORDINATE:
-        if (read_obj_tex_coords(scanner, tex_coords) < 0) return FAILURE;
+        if (! read_obj_tex_coords(scanner, tex_coords))
+          return Loader_code::FAILURE;
         break;
 
        case Vrml_parser::token::TOK_K_NORMAL:
-        if (read_obj_normals(scanner, normals) < 0) return FAILURE;
+        if (! read_obj_normals(scanner, normals)) return Loader_code::FAILURE;
         break;
 
        case Vrml_parser::token::TOK_K_FACET:
-        if (read_obj_facet(scanner, coord_indices, normal_indices,
-                           tex_coord_indices, coords->size()) < 0)
-          return FAILURE;
+        if (! read_obj_facet(scanner, coord_indices, normal_indices,
+                             tex_coord_indices, coords->size()))
+          return Loader_code::FAILURE;
         break;
 
        case Vrml_parser::token::TOK_K_SMOOTH:
-        if (read_obj_line(scanner) < 0) return FAILURE;
+        if (! read_obj_line(scanner)) return Loader_code::FAILURE;
         break;
 
        case Vrml_parser::token::TOK_K_MATERIAL_LIB:
         {
           Shared_string name;
-          if (read_string(scanner, name) < 0) return FAILURE;
-          if (parse_mtl(*name, sg) < 0) return FAILURE;
+          if (! read_string(scanner, name)) return Loader_code::FAILURE;
+          auto rc = parse_mtl(*name, sg);
+          if (static_cast<int>(rc) < 0) return Loader_code::FAILURE;
         }
         break;
 
@@ -1270,7 +1281,7 @@ Loader::Return_code Loader::parse_obj(std::istream& is, Scene_graph* sg)
           }
           // Record the new appearance.
           Shared_string name;
-          if (read_string(scanner, name) < 0) return FAILURE;
+          if (! read_string(scanner, name)) return Loader_code::FAILURE;
           auto cont = sg->get_container(*name);
           app = boost::dynamic_pointer_cast<Appearance>(cont);
           if (!app) {
@@ -1285,10 +1296,10 @@ Loader::Return_code Loader::parse_obj(std::istream& is, Scene_graph* sg)
       }
     }
     // Finsh creating a Shape node
-    if (update_ifs(sg, ifs, shared_coords, shared_normals, shared_colors,
-                   shared_tex_coords, coord_indices, normal_indices,
-                   tex_coord_indices) < 0)
-      return Loader::FAILURE;
+    auto rc = update_ifs(sg, ifs, shared_coords, shared_normals, shared_colors,
+                         shared_tex_coords, coord_indices, normal_indices,
+                         tex_coord_indices);
+    if (static_cast<int>(rc) < 0) return Loader_code::FAILURE;
     if (!app) {
       app = create_appearance(sg);
       shape->set_appearance(app);
@@ -1297,7 +1308,7 @@ Loader::Return_code Loader::parse_obj(std::istream& is, Scene_graph* sg)
     if (done) break;
   }
   scanner.pop_state();
-  return SUCCESS;
+  return Loader_code::SUCCESS;
 }
 
 SGAL_END_NAMESPACE
