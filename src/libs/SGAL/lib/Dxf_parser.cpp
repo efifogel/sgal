@@ -25,11 +25,11 @@
 
 SGAL_BEGIN_NAMESPACE
 
-const std::array<String, 8> Dxf_parser::m_code_type_names = {
+const std::array<String, 8> Dxf_parser::s_code_type_names = {
   "STRING", "FLOAT", "DOUBLE", "INT8", "INT16", "INT32", "UINT", "BOOL"
 };
 
-const std::vector<Dxf_parser::Code_range> Dxf_parser::m_code_ranges = {
+const std::vector<Dxf_parser::Code_range> Dxf_parser::s_code_ranges = {
   {0, 9, STRING},       // String (With the introduction of extended symbol
                         // names in AutoCAD 2000, the 255 character limit has
                         // been lifted. There is no explicit limit to the
@@ -64,7 +64,8 @@ const std::vector<Dxf_parser::Code_range> Dxf_parser::m_code_ranges = {
   {1071, 1071, INT32}   // 32-bit integer value
 };
 
-const std::map<String, Dxf_parser::Section_parser> Dxf_parser::m_sections = {
+//!
+const std::map<String, Dxf_parser::Section_parser> Dxf_parser::s_sections = {
   { "HEADER", &Dxf_parser::parse_header },
   { "CLASSES", &Dxf_parser::parse_classes },
   { "TABLES", &Dxf_parser::parse_tables },
@@ -74,15 +75,25 @@ const std::map<String, Dxf_parser::Section_parser> Dxf_parser::m_sections = {
   { "THUMBNAILIMAGE", &Dxf_parser::parse_thumbnailimage }
 };
 
-#include "Dxf_header_variables.cpp"
+// #include "Dxf_header_variables.cpp"
+
+//!
+const std::map<int, Dxf_parser::Class_variable_type>
+Dxf_parser::s_class_variables = {
+  {1, &Dxf_class::m_record_name},
+  {2, &Dxf_class::m_class_name},
+  {3, &Dxf_class::m_application_name},
+  {90, &Dxf_class::m_proxy_capability_flags},
+  {91, &Dxf_class::m_instance_count},
+  {280, &Dxf_class::m_was_class_loaded_with_file},
+  {281, &Dxf_class::m_is_entity}
+};
 
 //! \brief constructs.
 Dxf_parser::Dxf_parser(std::istream& is, Scene_graph* sg) :
   m_is(is),
   m_scene_graph(sg)
-{
-  int16_t Dxf_header::*p = &Dxf_header::m_acadmaintver;
-}
+{}
 
 //! \brief parses.
 Loader_code Dxf_parser::operator()()
@@ -99,13 +110,13 @@ Loader_code Dxf_parser::operator()()
       break;
     }
 
-    SGAL_assertion(str == "SECTION");
+   SGAL_assertion(str == "SECTION");
     m_is >> n;
     SGAL_assertion(n == 2);
     std::string section;
     m_is >> section;
-    auto sec_it = m_sections.find(section);
-    if (sec_it == m_sections.end()) {
+    auto sec_it = s_sections.find(section);
+    if (sec_it == s_sections.end()) {
       SGAL_error_msg("unrecognize section");
     }
     (this->*(sec_it->second))();
@@ -130,19 +141,98 @@ void Dxf_parser::parse_header()
      case 999: read_comment(); break;
     }
   }
+  String str;
+  m_is >> str;
+  SGAL_assertion("ENDSEC" == str);
 }
 
-void Dxf_parser::parse_classes() {}
+//! \brief parses one class.
+void Dxf_parser::parse_class()
+{
+  m_classes.push_back(Dxf_class());
+  auto& dxf_class = m_classes.back();
 
-void Dxf_parser::parse_tables() {}
+  bool done(false);
+  while (!done) {
+    int code;
+    m_is >> code;
+    if (0 == code) {
+      done = true;
+      break;
+    }
 
-void Dxf_parser::parse_blocks() {}
+    auto it = s_class_variables.find(code);
+    SGAL_assertion(it != s_class_variables.end());
+    auto handle = it->second;
 
-void Dxf_parser::parse_entities() {}
+    auto cr_it = std::find_if(s_code_ranges.begin(), s_code_ranges.end(),
+                              [&](const Code_range& code_range)
+                              {
+                                return ((code_range.m_min <= code) &&
+                                      (code <= code_range.m_max));
+                              });
+    SGAL_assertion(cr_it != s_code_ranges.end());
+    auto code_type = cr_it->m_type;
+    switch (code_type) {
+     case STRING: import_string_class_variable(handle, dxf_class); break;
+     case INT8: import_class_variable<Int8_class>(handle, dxf_class); break;
+     case INT32: import_class_variable<Int32_class>(handle, dxf_class); break;
+     default: SGAL_error();
+    }
+  }
+}
 
-void Dxf_parser::parse_objects() {}
+/*! Parse the CLASSES section.
+ */
+void Dxf_parser::parse_classes()
+{
+  SGAL_TRACE_CODE(Trace::DXF,
+                  std::cout << "Dxf_parser::parse_classes()" << std::endl;);
 
-void Dxf_parser::parse_thumbnailimage() {}
+  int n;
+  m_is >> n;
+  SGAL_assertion(0 == n);
+
+  do {
+    String str;
+    m_is >> str;
+    if ("ENDSEC" == str) return;
+
+    SGAL_assertion("CLASS" == str);
+    parse_class();
+  } while (true);
+}
+
+void Dxf_parser::parse_tables()
+{
+  SGAL_TRACE_CODE(Trace::DXF,
+                  std::cout << "Dxf_parser::parse_tables()" << std::endl;);
+}
+
+void Dxf_parser::parse_blocks()
+{
+  SGAL_TRACE_CODE(Trace::DXF,
+                  std::cout << "Dxf_parser::parse_blocks()" << std::endl;);
+}
+
+void Dxf_parser::parse_entities()
+{
+  SGAL_TRACE_CODE(Trace::DXF,
+                  std::cout << "Dxf_parser::parse_entities()" << std::endl;);
+}
+
+void Dxf_parser::parse_objects()
+{
+  SGAL_TRACE_CODE(Trace::DXF,
+                  std::cout << "Dxf_parser::parse_objects()" << std::endl;);
+}
+
+void Dxf_parser::parse_thumbnailimage()
+{
+  SGAL_TRACE_CODE(Trace::DXF,
+                  std::cout << "Dxf_parser::parse_thumbnailimage()"
+                  << std::endl;);
+}
 
 /*! \brief reads a value from the input string and verify that it matches a
  * given code.
@@ -155,14 +245,14 @@ Dxf_parser::Code_type Dxf_parser::read_code(int code)
                   std::cout << "Dxf_parser::read_header_variable() code: "
                   << n << std::endl;);
   SGAL_assertion(n == code);
-  auto cr_it = std::find_if(m_code_ranges.begin(), m_code_ranges.end(),
+  auto cr_it = std::find_if(s_code_ranges.begin(), s_code_ranges.end(),
                             [&](const Code_range& code_range)
                             {
                               return ((code_range.m_min <= code) &&
                                       (code <= code_range.m_max));
                             });
 
-  if (cr_it == m_code_ranges.end()) {
+  if (cr_it == s_code_ranges.end()) {
     std::string unrecognized_msg("unrecognized code range");
     unrecognized_msg += std::to_string(code) + "!";
     SGAL_error_msg(unrecognized_msg.c_str());
@@ -181,8 +271,8 @@ void Dxf_parser::read_header_variable()
   SGAL_TRACE_CODE(Trace::DXF,
                   std::cout << "Dxf_parser::read_header_variable() name: "
                   << str << std::endl;);
-  auto it = m_header_variables.find(str);
-  if (it == m_header_variables.end()) {
+  auto it = s_header_variables.find(str);
+  if (it == s_header_variables.end()) {
     std::string unrecognized_msg("unrecognized header variable ");
     unrecognized_msg += str + "!";
     SGAL_error_msg(unrecognized_msg.c_str());
@@ -201,9 +291,9 @@ void Dxf_parser::read_header_variable()
     auto code_type = read_code(code);
     SGAL_TRACE_CODE(Trace::DXF,
                     std::cout << "Dxf_parser::read_header_variable() code type: "
-                    << m_code_type_names[code_type] << std::endl;);
+                    << s_code_type_names[code_type] << std::endl;);
     switch (code_type) {
-     case STRING: import_header_variable<String_header>(handle); break;
+     case STRING: import_string_header_variable(handle); break;
      case FLOAT: import_header_variable<Float_header>(handle); break;
      case DOUBLE: import_header_variable<Double_header>(handle); break;
      case INT8: import_header_variable<Int8_header>(handle); break;
@@ -221,7 +311,7 @@ void Dxf_parser::read_header_variable()
     auto code_type = read_code(code);
     SGAL_TRACE_CODE(Trace::DXF,
                     std::cout << "Dxf_parser::read_header_variable() code type: "
-                    << m_code_type_names[code_type] << std::endl;);
+                    << s_code_type_names[code_type] << std::endl;);
     SGAL_assertion(DOUBLE == code_type);
     if (dim == 2)
       m_is >> (m_header.*(boost::get<Double_2d_header>(handle)))[i++];

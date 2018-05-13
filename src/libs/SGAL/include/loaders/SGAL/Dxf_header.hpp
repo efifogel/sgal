@@ -33,9 +33,18 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // AC1012 = R13, AC1014 = R14, AC1500 = AutoCAD 2000
   double m_angbase;     // Angle 0 direction
   int16_t m_angdir;     // 1 = Clockwise angles, 0 = Counterclockwise
+  bool m_attdia;        // Controls whether the INSERT command uses a dialog
+                        // box for attribute value entry
   int16_t m_attmode;    // Attribute visibility: 0 = None, 1 = Normal, 2 = All
+  bool m_attreq;        // Controls whether INSERT uses default attribute
+                        // settings during insertion of blocks
   int16_t m_aunits;     // Units format for angles
   int16_t m_auprec;     // Units precision for angles
+  bool m_axismode;      // Axis on
+  double m_axisunit[2]; // Axis X and Y tick spacing
+  bool m_blipmode;      // Display blips for click locations
+  bool m_cameradisplay; // Turns the display of camera objects on or off
+  double m_cameraheight; // Specifies the default height for new camera objects
   int16_t m_cecolor;    // Current entity color number:
                         // 0 = BYBLOCK, 256 = BYLAYER
   double m_celtscale;   // Current entity linetype scale
@@ -57,6 +66,7 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // 0 = Top, 1 = Middle, 2 = Bottom
   double m_cmlscale;    // Current multiline scale
   String m_cmlstyle;    // Current multiline style name
+  bool m_delobj;        // Controls object deletion
   int16_t m_dimadec;    // Number of precision places displayed in angular
                         // dimensions
   int16_t m_dimalt;     // Alternate unit dimensioning performed if nonzero
@@ -86,6 +96,7 @@ struct SGAL_SGAL_DECL Dxf_header {
   String m_dimapost;    // Alternate dimensioning suffix
   int16_t m_dimaso;     // 1 = Create associative dimensioning,
                         // 0 = Draw individual entities
+  int8_t m_dimassoc;    // Controls the associativity of dimension objects
   double m_dimasz;      // Dimensioning arrow size
   int16_t m_dimatfit;   // Controls dimension text and arrow placement when
                         // space is not sufficient to place both within the
@@ -129,7 +140,15 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // for dimension fractions and tolerances. AutoCAD
                         // multiplies DIMTXT by DIMTFAC to set the fractional
                         // or tolerance text height.
+  int16_t m_dimfrac;    // Sets the fraction format when DIMLUNIT is set to
+                        // Architectural or Fractional.
+  double m_dimfxl;      // Sets the total length of the extension lines starting
+                        // from the dimension line toward the dimension origin
+  bool m_dimfxlon;      // Controls whether extension lines are set to a fixed
+                        // length
   double m_dimgap;      // Dimension line gap
+  double m_dimjogang;   // Determines the angle of the transverse segment of the
+                        // dimension line in a jogged radius dimension
   int16_t m_dimjust;    // Horizontal dimension text position:
                         // 0 = Above dimension line and center-justified
                         //     between extension lines,
@@ -144,6 +163,9 @@ struct SGAL_SGAL_DECL Dxf_header {
   String m_dimldrblk;   // Arrow block name for leaders
   double m_dimlfac;     // Linear measurements scale factor
   int16_t m_dimlim;     // Dimension limits generated if nonzero
+  String m_dimltex1;    // Sets the line type of the first extension line
+  String m_dimltex2;    // Sets the line type of the second extension line
+  String m_dimltype;    // Sets the line type of the dimension line
   int16_t m_dimlunit;   // Sets units for all dimension types except Angular:
                         // 1 = Scientific; 2 = Decimal; 3 = Engineering
                         // 4 = Architectural; 5 = Fractional;
@@ -234,14 +256,27 @@ struct SGAL_SGAL_DECL Dxf_header {
                         //   letters A to Z, the numerals 0 to 9, spaces,
                         //   and any special characters not used by Microsoft
                         //   Windows and AutoCAD for other purposes.
-  int16_t m_filletrad;  // Fillet radius
+  bool m_fastzoom;      // Fast zoom enabled
+  double m_filletrad;   // Fillet radius
   int16_t m_fillmode;   // Fill mode on if nonzero
   String m_fingerprintguid;// Set at creation time, uniquely identifies a
                         // particular drawing
+  bool m_gridmode;      // Grid mode on
+  double m_gridunit[2]; // Grid X and Y spacing
+  int8_t m_halogap;     // Specifies a gap to be displayed where an object is
+                        // hidden by another object; the value is specified as
+                        // a percent of one unit and is independent of the zoom
+                        // level. A haloed line is shortened at the point where
+                        // it is hidden when HIDE or the Hidden option of
+                        // SHADEMODE is used
+  bool m_handling;      // Handles available
   String m_handseed;    // Next available handle
+  int8_t m_hidetext;    // Ignore text objects
   String m_hyperlinkbase;// Path for all relative hyperlinks in the
                         // drawing. If null, the drawing path is used.
   double m_insbase[3];  // Insertion base set by BASE command (in WCS)
+  int8_t m_indexctl;    // Controls whether layer and spatial indexes are
+                        // created and saved in drawing files
   int16_t m_insunits;   // Default drawing units for AutoCAD DesignCenter
                         // blocks:
                         // 0 = Unitless; 1 = Inches; 2 = Feet; 3 = Miles;
@@ -252,11 +287,31 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // 16 = Hectometers; 17 = Gigameters;
                         // 18 = Astronomical units; 19 = Light years;
                         // 20 = Parsecs
+  int16_t m_intersectioncolor; // Specifies the entity color of intersection
+                        // polylines
+  int8_t m_intersectiondisplay; // Specifies the display of intersection
+                        // polylines
   int8_t m_joinstyle;   // Lineweight joint setting for new objects:
                         // 0=none; 1= round; 2 = angle; 3 = flat
+  String m_lastsavedby; // Name of the last user to modify the file
+  double m_latitude;    // The latitude of the geographic location assigned to
+                        // the drawing
+  double m_lenslength;  // Stores the length of the lens in millimeters used in
+                        // perspective viewing
+  bool m_lightglyphdisplay; // Turns on and off the display of light glyphs
   int16_t m_limcheck;   // Nonzero if limits checking is on
   double m_limmax[2];   // XY drawing limits upper-right corner (in WCS)
   double m_limmin[2];   // XY drawing limits lower-left corner (in WCS)
+  double m_loftang1;    // Sets the draft angle through the first cross section
+                        // in a loft operation
+  double m_loftang2;    // Sets the draft angle through the second cross section
+                        // in a loft operation
+  double m_loftmag1;    // Sets the magnitude of the draft angle through the
+                        // first cross section in a loft operation
+  double m_loftmag2;    // Sets the magnitude of the draft angle through the
+                        // second cross section in a loft operation
+  double m_longitude;   // The longitude of the geographic location assigned to
+                        // the drawing
   double m_ltscale;     // Global linetype scale
   int16_t m_lunits;     // Units format for coordinates and distances
   int16_t m_luprec;     // Units precision for coordinates and distances
@@ -268,6 +323,20 @@ struct SGAL_SGAL_DECL Dxf_header {
   int16_t m_measurement;// Sets drawing units: 0 = English; 1 = Metric
   String m_menu;        // Name of menu file
   int16_t m_mirrtext;   // Mirror text if nonzero
+  double m_northdirection; // Specifies the angle between the Y axis of WCS and
+                        // the grid north
+  int16_t m_obscolor;   // pecifies the color of obscured lines. An obscured
+                        // line is a hidden line made visible by changing its
+                        // color and line type and is visible only when the HIDE
+                        // or SHADEMODE command is used. The OBSCUREDCOLOR
+                        // setting is visible only if the OBSCUREDLTYPE is
+                        // turned ON by setting it to a value other than 0
+  int8_t m_obsltype;    // Specifies the line type of obscured lines. Obscured
+                        // line types are independent of zoom level, unlike
+                        // regular AutoCAD line types. Value 0 turns off display
+                        // of obscured lines and is the default
+  bool m_olestartup;    // Controls whether the source application of an
+                        // embedded OLE object loads when plotting
   int16_t m_orthomode;  // Ortho mode on if nonzero
   int16_t m_pdmode;     // Point Display mode
   double m_pdsize;      // Point display size
@@ -285,7 +354,18 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // 0 = Each segment of the polyline starts and ends
                         //     with a dash
   double m_plinewid;    // Default polyline width
+  String m_projectname; // Assigns a project name to the current drawing. Used
+                        // when an external reference or image is not found on
+                        // its original path. The project name points to a
+                        // section in the registry that can contain one or more
+                        // search paths for each project name defined. Project
+                        // names and their search directories are created from
+                        // the Files tab of the Options dialog box.
   int16_t m_proxygraphics; // Controls the saving of proxy object images
+  double m_psolheight;  // Controls the default height for a swept solid object
+                        // created with the POLYSOLID command
+  double m_psolwidth;   // Controls the default width for a swept solid object
+                        // created with the POLYSOLID command
   int16_t m_psltscale;  // Controls paper space linetype scaling:
                         // 1 = No special linetype scaling
                         // 0 = Viewport scaling governs linetype scaling
@@ -333,6 +413,7 @@ struct SGAL_SGAL_DECL Dxf_header {
   double m_pucsxdir[3]; // Current paper space UCS X axis
   double m_pucsydir[3]; // Current paper space UCS Y axis
   int16_t m_qtextmode;  // Quick Text mode on if nonzero
+  bool m_realworldscale; // Drawing is scaled to the real world
   int16_t m_regenmode;  // REGENAUTO mode on if nonzero
   int16_t m_shadedge;   // 0 = Faces shaded, edges not highlighted
                         // 1 = Faces shaded, edges highlighted in black
@@ -342,9 +423,18 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // default 70
   double m_sketchinc;   // Sketch record increment
   int16_t m_skpoly;     // 0 = Sketch lines, 1 = Sketch polylines
+  bool m_snapmode;      // Snap mode on
+  double m_snapunit[2]; // Snap grid X and Y spacing
+  bool m_solidhist;     // Controls whether new composite solids retain a
+  int8_t m_sortents;    // Controls the object sorting methods; accessible from
+                        // the Options dialog box User Preferences tab
   int16_t m_splframe;   // Spline control polygon display: 1 = On, 0 = Off
   int16_t m_splinesegs; // Number of line segments per spline patch
   int16_t m_splinetype; // Spline curve type for PEDIT Spline
+  double m_stepsize;    // Specifies the size of each step when in walk or fly
+                        // mode, in drawing units
+  double m_stepspersec; // Specifies the number of steps taken per second when
+  String m_stylesheet;  // Path to the stylesheet for the drawing
   int16_t m_surftab1;   // Number of mesh tabulations in first direction
   int16_t m_surftab2;   // Number of mesh tabulations in second direction
   int16_t m_surftype;   // Surface type for PEDIT Smooth
@@ -366,6 +456,7 @@ struct SGAL_SGAL_DECL Dxf_header {
   double m_thickness;   // Current thickness set by ELEV command
   int16_t m_tilemode;   // 1 for previous release compatibility mode, 0
                         // otherwise
+  bool m_tilemodelightsynch; // Unknown
   double m_tracewid;    // Default trace width
   int16_t m_treedepth;  // Specifies the maximum depth of the spatial index
   String m_ucsbase;     // Name of the UCS that defines the origin and
@@ -416,10 +507,14 @@ struct SGAL_SGAL_DECL Dxf_header {
   int16_t m_usrtimer;   // 0 = Timer off, 1 = Timer on
   String m_versionguid; // Uniquely identifies a particular version of a
                         // drawing. Updated when the drawing is modified.
+  double m_viewctr[2];  // XY center of current view on screen
+  double m_viewdir[3];  // Viewing direction (direction from target in WCS)
+  double m_viewsize;    // Height of view
   int16_t m_visretain;  // 0 = Don't retain xref-dependent visibility settings
                         // 1 = Retain xref-dependent visibility settings
   int16_t m_worldview;  // 1 = Set UCS to WCS during DVIEW/VPOINT,
                         // 0 = Don't change UCS
+  bool m_xclipframe;    // Controls the visibility of xref clipping boundaries
   bool m_xedit;         // Controls whether the current drawing can be
                         // edited in-place when being referenced by another
                         // drawing.
@@ -429,4 +524,47 @@ struct SGAL_SGAL_DECL Dxf_header {
 
 SGAL_END_NAMESPACE
 
+#endif
+
+#if 0
+  m_3ddwfprec;          // Controls the precision of 3D DWF or 3D DWFx
+                        // publishing
+  u32 m_cmaterial;      //  Sets the material of new objects
+  m_coords;             // Controls the display of coordinates
+  m_cshadow;            // Shadow mode for a 3D object
+  m_dgnframe;           // Determines whether DGN underlay frames are visible
+                        // or plotted in the current drawing
+  m_dimarcsym;          // Controls the display of the arc symbol in an arc
+                        // length dimension.
+  m_dimfit;             // Placement of text and arrowheads
+  m_dimtfill;           // Controls the background of dimension tex
+  m_dimtfillclr;        // Sets the color for the text background in dimensions
+  m_dimtxtdirection;    // Specifies the reading direction of the dimension text
+  m_dimunit;            // Units format for all dimension style family members
+                        // except angular
+  m_dragmode;           // Controls the way dragged objects are displayed
+  m_dwfframe;           // Controls the way dragged objects are displayed
+  m_interferecolor;     // Represents the ACI color index of the "interference
+                        // objects" created during the interfere command
+  u32 m_interfereobjvs; // Hard-pointer ID to the visual stype for interference
+                        // objects
+  u32 m_interferevpvs;  // Hard-pointer ID to the visual styoe for the viewport
+                        // during interference checking
+  m_loftnormals;        // Controls the normals of a lofted object where it
+                        // passes through cross sections.
+  i32 m_loftparam;      // Controls the shape of lofted solids and surfaces
+  i32 m_osmode;         // Running object snap modes
+  m_pickstyle;          // Controls the group selection and associative hatch
+                        // selection
+  m_requiredversions;   //  Unknown
+  m_shadowplanelocation; // Location of the ground shadow plane.
+                        // This is a Z axis ordinate
+  m_showhist;           // Controls the Show History property for solids in a
+                        // drawing
+  m_snapbase;           // Snap/grid/base point (in UCS)
+  m_snapisopair;        // Isometric plane
+  m_snapstyle;          // Snap style
+                        // history of their original components
+                        // you are in walk or fly mode
+  m_timezone;           // Sets the time zone for the sun in the drawing
 #endif

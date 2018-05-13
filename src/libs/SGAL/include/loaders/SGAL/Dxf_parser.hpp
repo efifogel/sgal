@@ -28,6 +28,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Dxf_header.hpp"
+#include "SGAL/Dxf_class.hpp"
 #include "SGAL/Loader_code.hpp"
 #include "SGAL/Trace.hpp"
 
@@ -63,6 +64,10 @@ protected:
    */
   void read_comment();
 
+  /*! Parse one class.
+   */
+  void parse_class();
+
 private:
   enum Section_type {
     HEADER = 0,
@@ -96,8 +101,12 @@ private:
   //! Header data.
   Dxf_header m_header;
 
+  // Classes.
+  std::list<Dxf_class> m_classes;
+
   typedef void(Dxf_parser::*Section_parser)(void);
 
+  //
   typedef String Dxf_header::*          String_header;
   typedef float Dxf_header::*           Float_header;
   typedef double Dxf_header::*          Double_header;
@@ -119,7 +128,16 @@ private:
                          Int16_header,
                          Int32_header,
                          Uint_header,
-                         Bool_header>     Header_variable_type;
+                         Bool_header>   Header_variable_type;
+
+  //
+  typedef String Dxf_class::*           String_class;
+  typedef int32_t Dxf_class::*          Int32_class;
+  typedef int8_t Dxf_class::*           Int8_class;
+
+  //! The variant type of handle to all types of data members.
+  typedef boost::variant<String_class, Int8_class, Int32_class>
+                                        Class_variable_type;
 
   /*! Read a value from the input string and verify that it matches a given
    * code.
@@ -131,12 +149,63 @@ private:
    * \param[i] handle the handle to the variable.
    */
   template <typename T>
-  String_header import_header_variable(Header_variable_type handle)
+  void import_header_variable(Header_variable_type handle)
   {
     m_is >> m_header.*(boost::get<T>(handle));
     SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout << "Dxf_parser::read_header_variable() value: "
+                    std::cout << "Dxf_parser::import_header_variable() value: "
                     << m_header.*(boost::get<T>(handle))
+                    << std::endl;);
+  }
+
+  /*! Import a string value to a string header variable.
+   * \param[i] handle the handle to the string variable.
+   */
+  void import_string_header_variable(Header_variable_type handle)
+  {
+    // use getline() cause the string might be empty.
+    // When used immediately after whitespace-delimited input, getline consumes
+    // the endline character left on the input stream by operator>>, and returns
+    // immediately. Ignore all leftover characters.
+    m_is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::getline(m_is, m_header.*(boost::get<String_header>(handle)));
+    SGAL_TRACE_CODE(Trace::DXF,
+                    std::cout
+                    << "Dxf_parser::import_string_header_variable() value: "
+                    << m_header.*(boost::get<String_header>(handle))
+                    << std::endl;);
+  }
+
+  /*! Import a value to a header variable (of the same type, naturally).
+   * \param[i] handle the handle to the variable.
+   */
+  template <typename T>
+    void import_class_variable(Class_variable_type handle,
+                               Dxf_class& dxf_class)
+  {
+    m_is >> dxf_class.*(boost::get<T>(handle));
+    SGAL_TRACE_CODE(Trace::DXF,
+                    std::cout << "Dxf_parser::import_class_variable() value: "
+                    << dxf_class.*(boost::get<T>(handle))
+                    << std::endl;);
+  }
+
+  /*! Import a string value to a string class variable.
+   * \param[i] handle the handle to the string variable.
+   */
+  void import_string_class_variable(Class_variable_type handle,
+                                    Dxf_class& dxf_class)
+  {
+    // use getline() cause the string might be empty.
+    // When used immediately after whitespace-delimited input, getline consumes
+    // the endline character left on the input stream by operator>>, and returns
+    // immediately. Ignore all leftover characters.
+    m_is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::getline(m_is, dxf_class.*(boost::get<String_class>(handle)));
+    SGAL_TRACE_CODE(Trace::DXF,
+                    std::cout
+                    << "Dxf_parser::import_string_class_variable() value: "
+                    << dxf_class.*(boost::get<String_class>(handle))
                     << std::endl;);
   }
 
@@ -149,11 +218,11 @@ private:
     std::list<int> m_codes;
   };
 
-
-  static const std::map<String, Section_parser> m_sections;
-  static const std::map<String, Header_variable> m_header_variables;
-  static const std::vector<Code_range> m_code_ranges;
-  static const std::array<String, 8> m_code_type_names;
+  static const std::map<String, Section_parser> s_sections;
+  static const std::map<String, Header_variable> s_header_variables;
+  static const std::vector<Code_range> s_code_ranges;
+  static const std::array<String, 8> s_code_type_names;
+  static const std::map<int, Class_variable_type> s_class_variables;
 };
 
 SGAL_END_NAMESPACE
