@@ -29,6 +29,8 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Dxf_header.hpp"
 #include "SGAL/Dxf_class.hpp"
+#include "SGAL/Dxf_table.hpp"
+#include "SGAL/Dxf_block.hpp"
 #include "SGAL/Loader_code.hpp"
 #include "SGAL/Trace.hpp"
 
@@ -103,6 +105,12 @@ private:
 
   // Classes.
   std::list<Dxf_class> m_classes;
+
+  // Tables.
+  std::list<Dxf_table> m_tables;
+
+  // Blocks.
+  std::list<Dxf_block> m_block;
 
   typedef void(Dxf_parser::*Section_parser)(void);
 
