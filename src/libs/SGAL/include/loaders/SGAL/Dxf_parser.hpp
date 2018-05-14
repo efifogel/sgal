@@ -30,6 +30,15 @@
 #include "SGAL/Dxf_header.hpp"
 #include "SGAL/Dxf_class.hpp"
 #include "SGAL/Dxf_table.hpp"
+#include "SGAL/Dxf_appid_table.hpp"
+#include "SGAL/Dxf_block_record_table.hpp"
+#include "SGAL/Dxf_dimstyle_table.hpp"
+#include "SGAL/Dxf_layer_table.hpp"
+#include "SGAL/Dxf_ltype_table.hpp"
+#include "SGAL/Dxf_style_table.hpp"
+#include "SGAL/Dxf_ucs_table.hpp"
+#include "SGAL/Dxf_view_table.hpp"
+#include "SGAL/Dxf_vport_table.hpp"
 #include "SGAL/Dxf_block.hpp"
 #include "SGAL/Loader_code.hpp"
 #include "SGAL/Trace.hpp"
@@ -50,6 +59,7 @@ public:
 
 protected:
 
+  // Sec tion parsers:
   void parse_header();
   void parse_classes();
   void parse_tables();
@@ -57,6 +67,17 @@ protected:
   void parse_entities();
   void parse_objects();
   void parse_thumbnailimage();
+
+  // Table parsers
+  void parse_appid_table();
+  void parse_block_record_table();
+  void parse_dimstyle_table();
+  void parse_layer_table();
+  void parse_ltype_table();
+  void parse_style_table();
+  void parse_ucs_table();
+  void parse_view_table();
+  void parse_vport_table();
 
   /*! Read a HEADER variable.
    */
@@ -69,6 +90,10 @@ protected:
   /*! Parse one class.
    */
   void parse_class();
+
+  /*! Parse one table.
+   */
+  void parse_table();
 
 private:
   enum Section_type {
@@ -107,14 +132,18 @@ private:
   std::list<Dxf_class> m_classes;
 
   // Tables.
-  std::list<Dxf_table> m_tables;
+  std::list<Dxf_table*> m_tables;
 
   // Blocks.
   std::list<Dxf_block> m_block;
 
+  //! The type of a section parser member function.
   typedef void(Dxf_parser::*Section_parser)(void);
 
-  //
+  /// \name Header types
+  //@{
+
+  // Header data member types.
   typedef String Dxf_header::*          String_header;
   typedef float Dxf_header::*           Float_header;
   typedef double Dxf_header::*          Double_header;
@@ -126,7 +155,7 @@ private:
   typedef unsigned int Dxf_header::*    Uint_header;
   typedef bool Dxf_header::*            Bool_header;
 
-  //! The variant type of handle to all types of data members.
+  //! The variant type of handle to all types of HEADER data members.
   typedef boost::variant<String_header,
                          Float_header,
                          Double_header,
@@ -137,15 +166,104 @@ private:
                          Int32_header,
                          Uint_header,
                          Bool_header>   Header_variable_type;
+  //@}
 
-  //
+  /// \name Class types
+  //@{
+
+  //! Class data member types.
   typedef String Dxf_class::*           String_class;
   typedef int32_t Dxf_class::*          Int32_class;
   typedef int8_t Dxf_class::*           Int8_class;
 
-  //! The variant type of handle to all types of data members.
+  //! The variant type of handle to all types of class data members.
   typedef boost::variant<String_class, Int8_class, Int32_class>
                                         Class_variable_type;
+
+  //@}
+
+  /// \name Table types
+  //@{
+
+  //! The type of a table parser member function.
+  typedef void(Dxf_parser::*Table_parser)(void);
+
+  // APPID Table types
+  typedef String Dxf_appid_table::*     String_appid_table;
+  typedef int16_t Dxf_appid_table::*    Int16_appid_table;
+
+  //! The variant type of handle to all types of APPID table data members.
+  typedef boost::variant<String_appid_table, Int16_appid_table>
+                                        Appid_table_variable_type;
+
+  // BLOCK_RECORD Table types
+  typedef String Dxf_block_record_table::*      String_block_record_table;
+
+  //! The variant type of handle to all types of  table data members.
+  typedef boost::variant<String_block_record_table>
+                                        Block_record_table_variable_type;
+
+  // DIMSTYLE Table types
+  typedef String Dxf_dimstyle_table::*  String_dimstyle_table;
+
+  //! The variant type of handle to all types of  table data members.
+  typedef boost::variant<String_dimstyle_table>
+                                        Dimstyle_table_variable_type;
+  // LAYER Table types
+  typedef String Dxf_layer_table::*     String_layer_table;
+
+  //! The variant type of handle to all types of  table data members.
+  typedef boost::variant<String_layer_table>
+                                        Layer_table_variable_type;
+  // LTYPE Table types
+  typedef String Dxf_ltype_table::*     String_ltype_table;
+
+  //! The variant type of handle to all types of  table data members.
+  typedef boost::variant<String_ltype_table>
+                                        Ltype_table_variable_type;
+  // STYLE Table types
+  typedef String Dxf_style_table::*     String_style_table;
+
+  //! The variant type of handle to all types of  table data members.
+  typedef boost::variant<String_style_table>
+                                        Style_table_variable_type;
+  // UCS Table types
+  typedef String Dxf_ucs_table::*       String_ucs_table;
+
+  //! The variant type of handle to all types of  table data members.
+  typedef boost::variant<String_ucs_table>
+                                        Ucs_table_variable_type;
+  // VIEW Table types
+  typedef String Dxf_view_table::*      String_view_table;
+
+  //! The variant type of handle to all types of  table data members.
+  typedef boost::variant<String_view_table>
+                                        View_table_variable_type;
+  // VPORT Table types
+  typedef String Dxf_vport_table::*      String_vport_table;
+  typedef bool Dxf_vport_table::*        Bool_vport_table;
+  typedef int8_t Dxf_vport_table::*      Int8_vport_table;
+  typedef int16_t Dxf_vport_table::*     Int16_vport_table;
+  typedef int32_t Dxf_vport_table::*     Int32_vport_table;
+  typedef double Dxf_vport_table::*      Double_vport_table;
+  typedef Uint Dxf_vport_table::*        Uint_vport_table;
+
+  //! The variant type of handle to all types of  table data members.
+  typedef boost::variant<String_vport_table,
+                         Bool_vport_table,
+                         Int8_vport_table,
+                         Int16_vport_table,
+                         Int32_vport_table,
+                         Double_vport_table,
+                         Uint_vport_table>
+                                        Vport_table_variable_type;
+
+  //@}
+
+  /*! Obtain the type of a code
+   * \param code the given code.
+   */
+  static Code_type code_type(int code);
 
   /*! Read a value from the input string and verify that it matches a given
    * code.
@@ -156,64 +274,32 @@ private:
   /*! Import a value to a header variable (of the same type, naturally).
    * \param[i] handle the handle to the variable.
    */
-  template <typename T>
-  void import_header_variable(Header_variable_type handle)
+  template <typename T, typename VariableType, typename Target>
+  void import_variable(VariableType handle, Target& target)
   {
-    m_is >> m_header.*(boost::get<T>(handle));
+    m_is >> target.*(boost::get<T>(handle));
     SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout << "Dxf_parser::import_header_variable() value: "
-                    << m_header.*(boost::get<T>(handle))
+                    std::cout << "Dxf_parser::import_variable() value: "
+                    << target.*(boost::get<T>(handle))
                     << std::endl;);
   }
 
   /*! Import a string value to a string header variable.
    * \param[i] handle the handle to the string variable.
    */
-  void import_string_header_variable(Header_variable_type handle)
+  template <typename T, typename VariableType, typename Target>
+  void import_string_variable(VariableType handle, Target& target)
   {
     // use getline() cause the string might be empty.
     // When used immediately after whitespace-delimited input, getline consumes
     // the endline character left on the input stream by operator>>, and returns
     // immediately. Ignore all leftover characters.
     m_is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::getline(m_is, m_header.*(boost::get<String_header>(handle)));
+    std::getline(m_is, target.*(boost::get<T>(handle)));
     SGAL_TRACE_CODE(Trace::DXF,
                     std::cout
-                    << "Dxf_parser::import_string_header_variable() value: "
-                    << m_header.*(boost::get<String_header>(handle))
-                    << std::endl;);
-  }
-
-  /*! Import a value to a header variable (of the same type, naturally).
-   * \param[i] handle the handle to the variable.
-   */
-  template <typename T>
-    void import_class_variable(Class_variable_type handle,
-                               Dxf_class& dxf_class)
-  {
-    m_is >> dxf_class.*(boost::get<T>(handle));
-    SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout << "Dxf_parser::import_class_variable() value: "
-                    << dxf_class.*(boost::get<T>(handle))
-                    << std::endl;);
-  }
-
-  /*! Import a string value to a string class variable.
-   * \param[i] handle the handle to the string variable.
-   */
-  void import_string_class_variable(Class_variable_type handle,
-                                    Dxf_class& dxf_class)
-  {
-    // use getline() cause the string might be empty.
-    // When used immediately after whitespace-delimited input, getline consumes
-    // the endline character left on the input stream by operator>>, and returns
-    // immediately. Ignore all leftover characters.
-    m_is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::getline(m_is, dxf_class.*(boost::get<String_class>(handle)));
-    SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout
-                    << "Dxf_parser::import_string_class_variable() value: "
-                    << dxf_class.*(boost::get<String_class>(handle))
+                    << "Dxf_parser::import_string_variable() value: "
+                    << target.*(boost::get<T>(handle))
                     << std::endl;);
   }
 
@@ -226,11 +312,30 @@ private:
     std::list<int> m_codes;
   };
 
+  /*! Parse common table section, which aplies to all table types.
+   * \return maximum number of entries in table.
+   */
+  int parse_common_table(Dxf_table& table, const std::string& type);
+
   static const std::map<String, Section_parser> s_sections;
   static const std::map<String, Header_variable> s_header_variables;
   static const std::vector<Code_range> s_code_ranges;
   static const std::array<String, 8> s_code_type_names;
   static const std::map<int, Class_variable_type> s_class_variables;
+  static const std::map<String, Table_parser> s_tables;
+
+  // Table variable mappings
+  static const std::map<int, Appid_table_variable_type> s_appid_table_variables;
+  static const std::map<int, Block_record_table_variable_type>
+    s_block_record_table_variables;
+  static const std::map<int, Dimstyle_table_variable_type>
+    s_dimstyle_table_variables;
+  static const std::map<int, Layer_table_variable_type> s_layer_table_variables;
+  static const std::map<int, Ltype_table_variable_type> s_ltype_table_variables;
+  static const std::map<int, Style_table_variable_type> s_style_table_variables;
+  static const std::map<int, Ucs_table_variable_type> s_ucs_table_variables;
+  static const std::map<int, View_table_variable_type> s_view_table_variables;
+  static const std::map<int, Vport_table_variable_type> s_vport_table_variables;
 };
 
 SGAL_END_NAMESPACE
