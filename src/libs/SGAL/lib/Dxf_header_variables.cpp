@@ -16,10 +16,28 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
+#include <map>
+
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 #include "SGAL/Dxf_parser.hpp"
 
 SGAL_BEGIN_NAMESPACE
+
+/*! This file contains the description of DXF header variables. In
+ * particular, it consists of the initialization of a mapping from variable
+ * names to a truct that consists of the handle to the variable and a list
+ * of codes that precede the values of the variable, respectively.
+ * The DXF header variables listed below are extracted from
+ *   http://help.autodesk.com/view/ACD/2017/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
+ * The page is entitled "Autodesk Autocad 2017", which may lead the belief that
+ * the list is complete. However, some variables had to be added.
+ * Additional variables where taken from
+ *  https://docs.rs/dxf/0.2.0/dxf/struct.Header.html
+ *
+ * Also, some of the codes listed in the Autodesk pahe where erroneous (i.e.,
+ * HIDETEXT, INTERSECTIONDISPLAY).
+ */
 
 const std::map<String, Dxf_parser::Header_variable>
 Dxf_parser::s_header_variables = {
@@ -27,16 +45,14 @@ Dxf_parser::s_header_variables = {
   {"ACADVER",         {&Dxf_header::m_acadver, {1}}},
   {"ANGBASE",         {&Dxf_header::m_angbase, {50}}},
   {"ANGDIR",          {&Dxf_header::m_angdir, {70}}},
-  {"ATTDIA",          {&Dxf_header::m_attdia, {290}}},
   {"ATTMODE",         {&Dxf_header::m_attmode, {70}}},
-  {"ATTREQ",          {&Dxf_header::m_attreq, {290}}},
   {"AUNITS",          {&Dxf_header::m_aunits, {70}}},
   {"AUPREC",          {&Dxf_header::m_auprec, {70}}},
   {"CECOLOR",         {&Dxf_header::m_cecolor, {62}}},
   {"CELTSCALE",       {&Dxf_header::m_celtscale, {40}}},
   {"CELTYPE",         {&Dxf_header::m_celtype, {6}}},
   {"CELWEIGHT",       {&Dxf_header::m_celweight, {370}}},
-  {"CPSNID",          {&Dxf_header::m_cpsnid, {390}}},
+  {"CEPSNID",         {&Dxf_header::m_cepsnid, {390}}},
   {"CEPSNTYPE",       {&Dxf_header::m_cepsntype, {380}}},
   {"CHAMFERA",        {&Dxf_header::m_chamfera, {40}}},
   {"CHAMFERB",        {&Dxf_header::m_chamferb, {40}}},
@@ -46,6 +62,7 @@ Dxf_parser::s_header_variables = {
   {"CMLJUST",         {&Dxf_header::m_cmljust, {70}}},
   {"CMLSCALE",        {&Dxf_header::m_cmlscale, {40}}},
   {"CMLSTYLE",        {&Dxf_header::m_cmlstyle, {2}}},
+  {"CSHADOW",         {&Dxf_header::m_cshadow, {280}}},
   {"DIMADEC",         {&Dxf_header::m_dimadec, {70}}},
   {"DIMALT",          {&Dxf_header::m_dimalt, {70}}},
   {"DIMALTD",         {&Dxf_header::m_dimaltd, {70}}},
@@ -56,7 +73,7 @@ Dxf_parser::s_header_variables = {
   {"DIMALTU",         {&Dxf_header::m_dimaltu, {70}}},
   {"DIMALTZ",         {&Dxf_header::m_dimaltz, {70}}},
   {"DIMAPOST",        {&Dxf_header::m_dimapost, {1}}},
-  {"DIMASO",          {&Dxf_header::m_dimaso, {70}}},
+  {"DIMASO",          {&Dxf_header::m_dimaso, {70}}}, // Obsolete; see DIMASSOC.
   {"DIMASSOC",        {&Dxf_header::m_dimassoc, {280}}},
   {"DIMASZ",          {&Dxf_header::m_dimasz, {40}}},
   {"DIMATFIT",        {&Dxf_header::m_dimatfit, {70}}},
@@ -116,6 +133,7 @@ Dxf_parser::s_header_variables = {
   {"DIMUPT",          {&Dxf_header::m_dimupt, {70}}},
   {"DIMZIN",          {&Dxf_header::m_dimzin, {70}}},
   {"DISPSILH",        {&Dxf_header::m_dispsilh, {70}}},
+  {"DRAGVS",          {&Dxf_header::m_dragvs, {349}}},
   {"DWGCODEPAGE",     {&Dxf_header::m_dwgcodepage, {3}}},
   {"ELEVATION",       {&Dxf_header::m_elevation, {40}}},
   {"ENDCAPS",         {&Dxf_header::m_endcaps, {280}}},
@@ -132,6 +150,9 @@ Dxf_parser::s_header_variables = {
   {"INDEXCTL",        {&Dxf_header::m_indexctl, {280}}},
   {"INSBASE",         {&Dxf_header::m_insbase, {10, 20, 30}}},
   {"INSUNITS",        {&Dxf_header::m_insunits, {70}}},
+  {"INTERFERECOLOR",  {&Dxf_header::m_interferecolor, {62}}},
+  {"INTERFEREOBJVS",  {&Dxf_header::m_interfereobjvs, {345}}},
+  {"INTERFEREVPVS",   {&Dxf_header::m_interferevpvs, {346}}},
   {"INTERSECTIONCOLOR", {&Dxf_header::m_intersectioncolor, {70}}},
   {"INTERSECTIONDISPLAY", {&Dxf_header::m_intersectiondisplay, {280}}},
   {"JOINSTYLE",       {&Dxf_header::m_joinstyle, {280}}},
@@ -183,6 +204,7 @@ Dxf_parser::s_header_variables = {
   {"REGENMODE",       {&Dxf_header::m_regenmode, {70}}},
   {"SHADEDGE",        {&Dxf_header::m_shadedge, {70}}},
   {"SHADEDIF",        {&Dxf_header::m_shadedif, {70}}},
+  {"SHADOWPLANELOCATION", {&Dxf_header::m_shadowplanelocation, {40}}},
   {"SKETCHINC",       {&Dxf_header::m_sketchinc, {40}}},
   {"SKPOLY",          {&Dxf_header::m_skpoly, {70}}},
   {"SORTENTS",        {&Dxf_header::m_sortents, {280}}},
@@ -240,71 +262,3 @@ Dxf_parser::s_header_variables = {
 };
 
 SGAL_END_NAMESPACE
-
-#if 0
-  {"3DDWFPREC",       {&Dxf_header::m_3ddwfprec {}}},,
-  {"AXISMODE",        {&Dxf_header::m_axismode, {290}}},
-  {"AXISUNIT",        {&Dxf_header::m_axisunit, {}}},
-  {"BLIPMODE",        {&Dxf_header::m_blipmode, {290}}},
-  {"CAMERADISPLAY",   {&Dxf_header::m_cameradisplay, {290}}},
-  {"CAMERAHEIGHT",    {&Dxf_header::m_cameraheight, {}}},
-  {"CMATERIAL",       {&Dxf_header::m_cmaterial, {}}},
-  {"COORDS",          {&Dxf_header::m_coords, {}}},
-  {"CSHADOW",         {&Dxf_header::m_cshadow, {}}},
-  {"DELOBJ",          {&Dxf_header::m_delobj, {}}},
-  {"DGNFRAME",        {&Dxf_header::m_dgnframe, {}}},
-  {"DIMARCSYM",       {&Dxf_header::m_dimarcsym, {}}},
-  {"DIMFIT",          {&Dxf_header::m_dimfit, {}}},
-  {"DIMFXL",          {&Dxf_header::m_dimfxl, {}}},
-  {"DIMFXLON",        {&Dxf_header::m_dimfxlon, {}}},
-  {"DIMJOGANG",       {&Dxf_header::m_dimjogang, {}}},
-  {"DIMLTEX1",        {&Dxf_header::m_dimltex1, {}}},
-  {"DIMLTEX2",        {&Dxf_header::m_dimltex2, {}}},
-  {"DIMLTYPE",        {&Dxf_header::m_dimltype, {}}},
-  {"DIMTFILL",        {&Dxf_header::m_dimtfill, {}}},
-  {"DIMTFILLCLR",     {&Dxf_header::m_dimtfillclr, {}}},
-  {"DIMTXTDIRECTION", {&Dxf_header::m_dimtxtdirection, {}}},
-  {"DIMUNIT",         {&Dxf_header::m_dimunit, {}}},
-  {"DRAGMODE",        {&Dxf_header::m_dragmode, {}}},
-  {"DWFFRAME",        {&Dxf_header::m_dwfframe, {}}},
-  {"FASTZOOM",        {&Dxf_header::m_fastzoom, {290}}},
-  {"GRIDMODE",        {&Dxf_header::m_gridmode, {290}}},
-  {"GRIDUNIT",        {&Dxf_header::m_gridunit, {}}},
-  {"HANDLING",        {&Dxf_header::m_handling, {}}},
-  {"INTERFERECOLOR",  {&Dxf_header::m_interferecolor, {}}},
-  {"INTERFEREOBJVS",  {&Dxf_header::m_interfereobjvs, {}}},
-  {"INTERFEREVPVS",   {&Dxf_header::m_interferevpvs, {}}},
-  {"LASTSAVEDBY",     {&Dxf_header::m_lastsavedby, {}}},
-  {"LATITUDE",        {&Dxf_header::m_latitude, {}}},
-  {"LENSLENGTH",      {&Dxf_header::m_lenslength, {}}},
-  {"LIGHTGLYPHDISPLAY", {&Dxf_header::m_lightglyphdisplay, {}}},
-  {"LOFTANG1",        {&Dxf_header::m_loftang1, {}}},
-  {"LOFTANG2",        {&Dxf_header::m_loftang2, {}}},
-  {"LOFTMAG1",        {&Dxf_header::m_loftmag1, {}}},
-  {"LOFTMAG2",        {&Dxf_header::m_loftmag2, {}}},
-  {"LOFTNORMALS",     {&Dxf_header::m_loftnormals, {}}},
-  {"LOFTPARAM",       {&Dxf_header::m_loftparam, {}}},
-  {"LONGITUDE",       {&Dxf_header::m_longitude, {}}},
-  {"NORTHDIRECTION",  {&Dxf_header::m_northdirection, {}}},
-  {"OSMODE",          {&Dxf_header::m_osmode, {}}},
-  {"PICKSTYLE",       {&Dxf_header::m_pickstyle, {}}},
-  {"PSOLHEIGHT",      {&Dxf_header::m_psolheight, {}}},
-  {"PSOLWIDTH",       {&Dxf_header::m_psolwidth, {}}},
-  {"REALWORLDSCALE",  {&Dxf_header::m_realworldscale, {290}}},
-  {"REQUIREDVERSIONS", {&Dxf_header::m_requiredversions, {}}},
-  {"SHADOWPLANELOCATION", {&Dxf_header::m_shadowplanelocation, {}}},
-  {"SHOWHIST",        {&Dxf_header::m_showhist, {}}},
-  {"SNAPBASE",        {&Dxf_header::m_snapbase, {}}},
-  {"SNAPISOPAIR",     {&Dxf_header::m_snapisopair, {}}},
-  {"SNAPMODE",        {&Dxf_header::m_snapmode, {}}},
-  {"SNAPSTYLE",       {&Dxf_header::m_snapstyle, {}}},
-  {"SNAPUNIT",        {&Dxf_header::m_snapunit, {}}},
-  {"SOLIDHIST",       {&Dxf_header::m_solidhist, {290}}},
-  {"STEPSIZE",        {&Dxf_header::m_stepsize, {}}},
-  {"STEPSPERSEC",     {&Dxf_header::m_stepspersec, {}}},
-  {"TILEMODELIGHTSYNCH", {&Dxf_header::m_tilemodelightsynch, {}}},
-  {"TIMEZONE",        {&Dxf_header::m_timezone, {}}},
-  {"VIEWCTR",         {&Dxf_header::m_viewctr, {}}},
-  {"VIEWDIR",         {&Dxf_header::m_viewdir, {}}},
-  {"VIEWSIZE",        {&Dxf_header::m_viewsize, {}}},
-#endif
