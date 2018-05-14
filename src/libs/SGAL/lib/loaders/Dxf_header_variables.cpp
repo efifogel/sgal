@@ -26,7 +26,7 @@ SGAL_BEGIN_NAMESPACE
 
 /*! This file contains the description of DXF header variables. In
  * particular, it consists of the initialization of a mapping from variable
- * names to a truct that consists of the handle to the variable and a list
+ * names to a struct that consists of the handle to the variable and a list
  * of codes that precede the values of the variable, respectively.
  * The DXF header variables listed below are extracted from
  *   http://help.autodesk.com/view/ACD/2017/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
