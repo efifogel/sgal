@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_TABLE_HPP
-#define SGAL_DXF_TABLE_HPP
+#ifndef SGAL_DXF_UCS_ENTRY_HPP
+#define SGAL_DXF_UCS_ENTRY_HPP
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -25,8 +25,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-struct SGAL_SGAL_DECL Dxf_table {
-  std::vector<Dxf_table_entry*> m_entries;
+struct SGAL_SGAL_DECL Dxf_ucs_entry: public Dxf_table_entry {
 };
 
 SGAL_END_NAMESPACE

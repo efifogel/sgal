@@ -16,15 +16,16 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_LAYER_TABLE_HPP
-#define SGAL_DXF_LAYER_TABLE_HPP
+#ifndef SGAL_DXF_DIMSTYLE_ENTRY_HPP
+#define SGAL_DXF_DIMSTYLE_ENTRY_HPP
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Dxf_table_entry.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-struct SGAL_SGAL_DECL Dxf_layer_table: public Dxf_table {
+struct SGAL_SGAL_DECL Dxf_dimstyle_entry: public Dxf_table_entry {
 };
 
 SGAL_END_NAMESPACE

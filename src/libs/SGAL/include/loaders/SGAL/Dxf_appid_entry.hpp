@@ -16,15 +16,16 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_APPID_TABLE_HPP
-#define SGAL_DXF_APPID_TABLE_HPP
+#ifndef SGAL_DXF_APPID_ENTRY_HPP
+#define SGAL_DXF_APPID_ENTRY_HPP
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Dxf_table_entry.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-struct SGAL_SGAL_DECL Dxf_appid_table: public Dxf_table {
+struct SGAL_SGAL_DECL Dxf_appid_entry: public Dxf_table_entry {
   String m_name;        // User-supplied (or application-supplied) application
                         // name (for extended data).
   int16_t m_flags;      // 16 = If set, table entry is externally dependent on

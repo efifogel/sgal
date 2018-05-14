@@ -31,8 +31,8 @@ SGAL_BEGIN_NAMESPACE
  *   http://help.autodesk.com/view/ACD/2017/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
  */
 
-const std::map<int, Dxf_parser::Vport_table_variable_type>
-Dxf_parser::s_vport_table_variables = {
+const std::map<int, Dxf_parser::Vport_entry_variable_type>
+Dxf_parser::s_vport_entry_variables = {
   {100, &Dxf_vport_table::m_marker},
   {2, &Dxf_vport_table::m_name},
   {70, &Dxf_vport_table::m_flags},

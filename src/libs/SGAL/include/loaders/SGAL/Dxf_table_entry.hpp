@@ -16,15 +16,24 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_STYLE_TABLE_HPP
-#define SGAL_DXF_STYLE_TABLE_HPP
+#ifndef SGAL_DXF_TABLE_ENTRY_HPP
+#define SGAL_DXF_TABLE_ENTRY_HPP
+
+#include <cstdint>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-struct SGAL_SGAL_DECL Dxf_style_table: public Dxf_table {
+struct SGAL_SGAL_DECL Dxf_table_entry {
+  String m_handle;      // Handle
+  String m_owner_dict;  // Hard owner ID/handle to owner dictionary (optional)
+  String m_owner_obj;   // Soft-pointer ID/handle to owner object
+  String m_group;       // "{ACAD_XDICTIONARY" and "}" indicate the start and
+                        // end, respectively, of an extension dictionary group.
+                        // This group exists only if persistent reactors have
+                        // been attached to this object (optional)
 };
 
 SGAL_END_NAMESPACE

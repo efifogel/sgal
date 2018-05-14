@@ -23,6 +23,7 @@
 #include <map>
 #include <list>
 #include <vector>
+#include <array>
 
 #include <boost/variant.hpp>
 
@@ -30,15 +31,15 @@
 #include "SGAL/Dxf_header.hpp"
 #include "SGAL/Dxf_class.hpp"
 #include "SGAL/Dxf_table.hpp"
-#include "SGAL/Dxf_appid_table.hpp"
-#include "SGAL/Dxf_block_record_table.hpp"
-#include "SGAL/Dxf_dimstyle_table.hpp"
-#include "SGAL/Dxf_layer_table.hpp"
-#include "SGAL/Dxf_ltype_table.hpp"
-#include "SGAL/Dxf_style_table.hpp"
-#include "SGAL/Dxf_ucs_table.hpp"
-#include "SGAL/Dxf_view_table.hpp"
-#include "SGAL/Dxf_vport_table.hpp"
+#include "SGAL/Dxf_appid_entry.hpp"
+#include "SGAL/Dxf_block_record_entry.hpp"
+#include "SGAL/Dxf_dimstyle_entry.hpp"
+#include "SGAL/Dxf_layer_entry.hpp"
+#include "SGAL/Dxf_ltype_entry.hpp"
+#include "SGAL/Dxf_style_entry.hpp"
+#include "SGAL/Dxf_ucs_entry.hpp"
+#include "SGAL/Dxf_view_entry.hpp"
+#include "SGAL/Dxf_vport_entry.hpp"
 #include "SGAL/Dxf_block.hpp"
 #include "SGAL/Loader_code.hpp"
 #include "SGAL/Trace.hpp"
@@ -68,7 +69,7 @@ protected:
   void parse_objects();
   void parse_thumbnailimage();
 
-  // Table parsers
+  // Table entry parsers
   void parse_appid_table();
   void parse_block_record_table();
   void parse_dimstyle_table();
@@ -132,7 +133,19 @@ private:
   std::list<Dxf_class> m_classes;
 
   // Tables.
-  std::list<Dxf_table*> m_tables;
+  enum Table_type {
+    APPID = 0,
+    BLOCK_RECORD,
+    DIMSTYLE,
+    LAYER,
+    LTYPE,
+    STYLE,
+    UCS,
+    VIEW,
+    VPORT,
+    NUM_TABLE_TYPES
+  };
+  std::array<Dxf_table, NUM_TABLE_TYPES> m_tables;
 
   // Blocks.
   std::list<Dxf_block> m_block;
@@ -188,75 +201,79 @@ private:
   //! The type of a table parser member function.
   typedef void(Dxf_parser::*Table_parser)(void);
 
-  // APPID Table types
-  typedef String Dxf_appid_table::*     String_appid_table;
-  typedef int16_t Dxf_appid_table::*    Int16_appid_table;
+  // APPID table-entry types
+  typedef String Dxf_appit_entry::*     String_appit_entry;
+  typedef int16_t Dxf_appit_entry::*    Int16_appit_entry;
 
-  //! The variant type of handle to all types of APPID table data members.
-  typedef boost::variant<String_appid_table, Int16_appid_table>
-                                        Appid_table_variable_type;
+  //! The variant type of handle to all types of APPID table-entry data members.
+  typedef boost::variant<String_appit_entry, Int16_appit_entry>
+                                        Appid_entry_variable_type;
 
-  // BLOCK_RECORD Table types
-  typedef String Dxf_block_record_table::*      String_block_record_table;
+  // BLOCK_RECORD table-entry types
+  typedef String Dxf_block_record_entry::*      String_block_record_entry;
 
-  //! The variant type of handle to all types of  table data members.
-  typedef boost::variant<String_block_record_table>
-                                        Block_record_table_variable_type;
+  //! The variant type of handle to all types of table-entry data members.
+  typedef boost::variant<String_block_record_entry>
+                                        Block_record_entry_variable_type;
 
-  // DIMSTYLE Table types
-  typedef String Dxf_dimstyle_table::*  String_dimstyle_table;
+  // DIMSTYLE table-entry types
+  typedef String Dxf_dimstyle_entry::*  String_dimstyle_entry;
 
-  //! The variant type of handle to all types of  table data members.
-  typedef boost::variant<String_dimstyle_table>
-                                        Dimstyle_table_variable_type;
-  // LAYER Table types
-  typedef String Dxf_layer_table::*     String_layer_table;
+  //! The variant type of handle to all types of table-entry data members.
+  typedef boost::variant<String_dimstyle_entry>
+                                        Dimstyle_entry_variable_type;
 
-  //! The variant type of handle to all types of  table data members.
-  typedef boost::variant<String_layer_table>
-                                        Layer_table_variable_type;
-  // LTYPE Table types
-  typedef String Dxf_ltype_table::*     String_ltype_table;
+  // LAYER table-entry types
+  typedef String Dxf_layer_entry::*     String_layer_entry;
 
-  //! The variant type of handle to all types of  table data members.
-  typedef boost::variant<String_ltype_table>
-                                        Ltype_table_variable_type;
-  // STYLE Table types
-  typedef String Dxf_style_table::*     String_style_table;
+  //! The variant type of handle to all types of table-entry data members.
+  typedef boost::variant<String_layer_entry>
+                                        Layer_entry_variable_type;
 
-  //! The variant type of handle to all types of  table data members.
-  typedef boost::variant<String_style_table>
-                                        Style_table_variable_type;
-  // UCS Table types
-  typedef String Dxf_ucs_table::*       String_ucs_table;
+  // LTYPE table-entry types
+  typedef String Dxf_ltype_entry::*     String_ltype_entry;
 
-  //! The variant type of handle to all types of  table data members.
-  typedef boost::variant<String_ucs_table>
-                                        Ucs_table_variable_type;
-  // VIEW Table types
-  typedef String Dxf_view_table::*      String_view_table;
+  //! The variant type of handle to all types of table-entry data members.
+  typedef boost::variant<String_ltype_entry>
+                                        Ltype_entry_variable_type;
 
-  //! The variant type of handle to all types of  table data members.
-  typedef boost::variant<String_view_table>
-                                        View_table_variable_type;
-  // VPORT Table types
-  typedef String Dxf_vport_table::*      String_vport_table;
-  typedef bool Dxf_vport_table::*        Bool_vport_table;
-  typedef int8_t Dxf_vport_table::*      Int8_vport_table;
-  typedef int16_t Dxf_vport_table::*     Int16_vport_table;
-  typedef int32_t Dxf_vport_table::*     Int32_vport_table;
-  typedef double Dxf_vport_table::*      Double_vport_table;
-  typedef Uint Dxf_vport_table::*        Uint_vport_table;
+  // STYLE table-entry types
+  typedef String Dxf_style_entry::*     String_style_entry;
 
-  //! The variant type of handle to all types of  table data members.
-  typedef boost::variant<String_vport_table,
-                         Bool_vport_table,
-                         Int8_vport_table,
-                         Int16_vport_table,
-                         Int32_vport_table,
-                         Double_vport_table,
-                         Uint_vport_table>
-                                        Vport_table_variable_type;
+  //! The variant type of handle to all types of table-entry data members.
+  typedef boost::variant<String_style_entry>
+                                        Style_entry_variable_type;
+
+  // UCS table-entry types
+  typedef String Dxf_ucs_entry::*       String_ucs_entry;
+
+  //! The variant type of handle to all types of table-entry data members.
+  typedef boost::variant<String_ucs_entry>
+                                        Ucs_entry_variable_type;
+  // VIEW table-entry types
+  typedef String Dxf_view_entry::*      String_view_entry;
+
+  //! The variant type of handle to all types of table-entry data members.
+  typedef boost::variant<String_view_entry>
+                                        View_entry_variable_type;
+  // VPORT table-entry types
+  typedef String Dxf_vport_entry::*      String_vport_entry;
+  typedef bool Dxf_vport_entry::*        Bool_vport_entry;
+  typedef int8_t Dxf_vport_entry::*      Int8_vport_entry;
+  typedef int16_t Dxf_vport_entry::*     Int16_vport_entry;
+  typedef int32_t Dxf_vport_entry::*     Int32_vport_entry;
+  typedef double Dxf_vport_entry::*      Double_vport_entry;
+  typedef Uint Dxf_vport_entry::*        Uint_vport_entry;
+
+  //! The variant type of handle to all types of table-entry data members.
+  typedef boost::variant<String_vport_entry,
+                         Bool_vport_entry,
+                         Int8_vport_entry,
+                         Int16_vport_entry,
+                         Int32_vport_entry,
+                         Double_vport_entry,
+                         Uint_vport_entry>
+                                        Vport_entry_variable_type;
 
   //@}
 
@@ -315,7 +332,7 @@ private:
   /*! Parse common table section, which aplies to all table types.
    * \return maximum number of entries in table.
    */
-  int parse_common_table(Dxf_table& table, const std::string& type);
+  int parse_common_table(Dxf_table& table);
 
   static const std::map<String, Section_parser> s_sections;
   static const std::map<String, Header_variable> s_header_variables;
@@ -324,18 +341,18 @@ private:
   static const std::map<int, Class_variable_type> s_class_variables;
   static const std::map<String, Table_parser> s_tables;
 
-  // Table variable mappings
-  static const std::map<int, Appid_table_variable_type> s_appid_table_variables;
-  static const std::map<int, Block_record_table_variable_type>
-    s_block_record_table_variables;
-  static const std::map<int, Dimstyle_table_variable_type>
-    s_dimstyle_table_variables;
-  static const std::map<int, Layer_table_variable_type> s_layer_table_variables;
-  static const std::map<int, Ltype_table_variable_type> s_ltype_table_variables;
-  static const std::map<int, Style_table_variable_type> s_style_table_variables;
-  static const std::map<int, Ucs_table_variable_type> s_ucs_table_variables;
-  static const std::map<int, View_table_variable_type> s_view_table_variables;
-  static const std::map<int, Vport_table_variable_type> s_vport_table_variables;
+  // Table-entry variable mappings
+  static const std::map<int, Appid_entry_variable_type> s_appit_entry_variables;
+  static const std::map<int, Block_record_entry_variable_type>
+    s_block_record_entry_variables;
+  static const std::map<int, Dimstyle_entry_variable_type>
+    s_dimstyle_entry_variables;
+  static const std::map<int, Layer_entry_variable_type> s_layer_entry_variables;
+  static const std::map<int, Ltype_entry_variable_type> s_ltype_entry_variables;
+  static const std::map<int, Style_entry_variable_type> s_style_entry_variables;
+  static const std::map<int, Ucs_entry_variable_type> s_ucs_entry_variables;
+  static const std::map<int, View_entry_variable_type> s_view_entry_variables;
+  static const std::map<int, Vport_entry_variable_type> s_vport_entry_variables;
 };
 
 SGAL_END_NAMESPACE
