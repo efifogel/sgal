@@ -109,45 +109,61 @@ Dxf_parser::s_tables = {
 };
 
 //!
-const std::map<int, Dxf_parser::Appid_entry_variable_type>
-Dxf_parser::s_appid_entry_variables = {
+typedef Dxf_table<Dxf_appid_entry>              Dxf_appid_table;
+template <>
+const std::map<int, Dxf_appid_table::Entry_variable_type>
+Dxf_appid_table::s_entry_variables = {
   {2, &Dxf_appid_entry::m_name},
   {70, &Dxf_appid_entry::m_flags}
 };
 
 //!
-const std::map<int, Dxf_parser::Block_record_entry_variable_type>
-Dxf_parser::s_block_record_entry_variables = {
+typedef Dxf_table<Dxf_block_record_entry>       Dxf_block_record_table;
+template <>
+const std::map<int, Dxf_block_record_table::Entry_variable_type>
+Dxf_block_record_table::s_entry_variables = {
 };
 
 //!
-const std::map<int, Dxf_parser::Dimstyle_entry_variable_type>
-Dxf_parser::s_dimstyle_entry_variables = {
+typedef Dxf_table<Dxf_dimstyle_entry>           Dxf_dimstyle_table;
+template <>
+const std::map<int, Dxf_dimstyle_table::Entry_variable_type>
+Dxf_dimstyle_table::s_entry_variables = {
 };
 
 //!
-const std::map<int, Dxf_parser::Layer_entry_variable_type>
-Dxf_parser::s_layer_entry_variables = {
+typedef Dxf_table<Dxf_layer_entry>              Dxf_layer_table;
+template <>
+const std::map<int, Dxf_layer_table::Entry_variable_type>
+Dxf_layer_table::s_entry_variables = {
 };
 
 //!
-const std::map<int, Dxf_parser::Ltype_entry_variable_type>
-Dxf_parser::s_ltype_entry_variables = {
+typedef Dxf_table<Dxf_ltype_entry>              Dxf_ltype_table;
+template <>
+const std::map<int, Dxf_ltype_table::Entry_variable_type>
+Dxf_ltype_table::s_entry_variables = {
 };
 
 //!
-const std::map<int, Dxf_parser::Style_entry_variable_type>
-Dxf_parser::s_style_entry_variables = {
+typedef Dxf_table<Dxf_style_entry>              Dxf_style_table;
+template <>
+const std::map<int, Dxf_style_table::Entry_variable_type>
+Dxf_style_table::s_entry_variables = {
 };
 
 //!
-const std::map<int, Dxf_parser::Ucs_entry_variable_type>
-Dxf_parser::s_ucs_entry_variables = {
+typedef Dxf_table<Dxf_ucs_entry>                Dxf_ucs_table;
+template <>
+const std::map<int, Dxf_ucs_table::Entry_variable_type>
+Dxf_ucs_table::s_entry_variables = {
 };
 
 //!
-const std::map<int, Dxf_parser::View_entry_variable_type>
-Dxf_parser::s_view_entry_variables = {
+typedef Dxf_table<Dxf_view_entry>               Dxf_view_table;
+template <>
+const std::map<int, Dxf_view_table::Entry_variable_type>
+Dxf_view_table::s_entry_variables = {
 };
 
 //! \brief constructs.
@@ -276,10 +292,10 @@ void Dxf_parser::parse_classes()
 }
 
 //! \brief parses common table section, which aplies to all table types.
-int Dxf_parser::parse_common_table(Dxf_table& table)
+int Dxf_parser::parse_base_table(Dxf_base_table& table)
 {
   SGAL_TRACE_CODE(Trace::DXF,
-                  std::cout << "Dxf_parser::parse_common_table()"
+                  std::cout << "Dxf_parser::parse_base_table()"
                   << std::endl;);
 
   size_t max_num(0);
@@ -290,7 +306,7 @@ int Dxf_parser::parse_common_table(Dxf_table& table)
     int code;
     m_is >> code;
     SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout << "Dxf_parser::parse_common_table() code: "
+                    std::cout << "Dxf_parser::parse_base_table() code: "
                     << code << std::endl;);
     if (0 == code) {
       done = true;
@@ -324,20 +340,18 @@ void Dxf_parser::parse_appid_table()
                   std::cout << "Dxf_parser::parse_appid_table()"
                   << std::endl;);
 
-  auto& table = m_tables[APPID];
-  auto num = parse_common_table(table);
+#if 0
+  auto& table = m_appid_table;
+  auto num = parse_base_table(table);
   auto& entries = table.m_entries;
   entries.resize(num);
-  size_t i(0);
 
-  while (true) {
+  for (auto& entry : entries) {
     std::string str;
     m_is >> str;
     if ("ENDTAB" == str) return;
 
     SGAL_assertion(str == "APPID");
-    auto* entry = new Dxf_appid_entry;
-    entries[i++] = entry;
 
     bool done(false);
     while (! done) {
@@ -352,12 +366,13 @@ void Dxf_parser::parse_appid_table()
       SGAL_assertion(it != s_appid_entry_variables.end());
       auto handle = it->second;
       switch (code_type(code)) {
-       STRING: import_string_variable<String_appid_entry>(handle, *entry); break;
-       INT16: import_variable<Int16_appid_entry>(handle, *entry); break;
+       STRING: import_string_variable<String_appid_entry>(handle, entry); break;
+       INT16: import_variable<Int16_appid_entry>(handle, entry); break;
        default: SGAL_error();
       }
     }
   }
+#endif
 }
 
 //! \brief parses a table of type BLOCK_RECORD.
@@ -422,22 +437,20 @@ void Dxf_parser::parse_vport_table()
   SGAL_TRACE_CODE(Trace::DXF,
                   std::cout << "Dxf_parser::parse_vport_table()"
                   << std::endl;);
-
-  auto& table = m_tables[VPORT];
-  auto num = parse_common_table(table);
-  table.m_entries.resize(num);
+#if 1
+  parse_table(m_vport_table, "VPORT");
+#else
+  auto& table = m_vport_table;
+  auto num = parse_base_table(table);
   auto& entries = table.m_entries;
   entries.resize(num);
-  size_t i(0);
 
-  while (true) {
+  for (auto& entry : entries) {
     std::string str;
     m_is >> str;
     if ("ENDTAB" == str) return;
 
     SGAL_assertion(str == "VPORT");
-    auto* entry = new Dxf_appid_entry;
-    entries[i++] = entry;
 
     bool done(false);
     while (!done) {
@@ -455,39 +468,17 @@ void Dxf_parser::parse_vport_table()
       SGAL_assertion(it != s_vport_entry_variables.end());
       auto handle = it->second;
       switch (code_type(code)) {
-       STRING: import_string_variable<String_vport_table>(handle, *entry); break;
-       BOOL: import_variable<Bool_vport_table>(handle, *entry); break;
-       INT8: import_variable<Int8_vport_table>(handle, *entry); break;
-       INT16: import_variable<Int16_vport_table>(handle, *entry); break;
-       INT32: import_variable<Int32_vport_table>(handle, *entry); break;
-       DOUBLE: import_variable<Double_vport_table>(handle, *entry); break;
+       STRING: import_string_variable<String_vport_entry>(handle, entry); break;
+       BOOL: import_variable<Bool_vport_entry>(handle, entry); break;
+       INT8: import_variable<Int8_vport_entry>(handle, entry); break;
+       INT16: import_variable<Int16_vport_entry>(handle, entry); break;
+       INT32: import_variable<Int32_vport_entry>(handle, entry); break;
+       DOUBLE: import_variable<Double_vport_entry>(handle, entry); break;
        default: SGAL_error();
       }
     }
   }
-}
-
-//! \brief parses one table.
-void Dxf_parser::parse_table()
-{
-  SGAL_TRACE_CODE(Trace::DXF,
-                  std::cout << "Dxf_parser::parse_table()" << std::endl;);
-
-  int n;
-  m_is >> n;
-  SGAL_assertion(2 == n);
-  std::string str;
-  m_is >> str;
-  auto table_it = s_tables.find(str);
-  if (table_it == s_tables.end()) {
-    SGAL_error_msg("unrecognize table");
-  }
-  (this->*(table_it->second))();
-
-  m_is >> str;
-  SGAL_assertion("ENDTAB" == str);
-  m_is >> n;
-  SGAL_assertion(0 == n);
+#endif
 }
 
 //! \brief parses the TABLES section.
@@ -506,7 +497,22 @@ void Dxf_parser::parse_tables()
     if ("ENDSEC" == str) return;
 
     SGAL_assertion("TABLE" == str);
-    parse_table();
+
+    int n;
+    m_is >> n;
+    SGAL_assertion(2 == n);
+    m_is >> str;
+    auto table_it = s_tables.find(str);
+    if (table_it == s_tables.end()) {
+      SGAL_error_msg("unrecognize table");
+    }
+    (this->*(table_it->second))();
+
+    m_is >> str;
+    SGAL_assertion("ENDTAB" == str);
+    m_is >> n;
+    SGAL_assertion(0 == n);
+
   } while (true);
 }
 

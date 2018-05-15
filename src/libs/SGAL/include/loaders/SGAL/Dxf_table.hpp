@@ -19,14 +19,39 @@
 #ifndef SGAL_DXF_TABLE_HPP
 #define SGAL_DXF_TABLE_HPP
 
+#include <map>
+
+#include <boost/variant.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/Dxf_table_entry.hpp"
+#include "SGAL/Dxf_base_table.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-struct SGAL_SGAL_DECL Dxf_table {
-  std::vector<Dxf_table_entry*> m_entries;
+template <typename Entry>
+struct SGAL_SGAL_DECL Dxf_table : Dxf_base_table {
+
+  // VPORT table-entry types
+  typedef String Entry::*               String_entry;
+  typedef bool Entry::*                 Bool_entry;
+  typedef int8_t Entry::*               Int8_entry;
+  typedef int16_t Entry::*              Int16_entry;
+  typedef int32_t Entry::*              Int32_entry;
+  typedef double Entry::*               Double_entry;
+  typedef Uint Entry::*                 Uint_entry;
+
+  typedef boost::variant<String_entry,
+                         Bool_entry,
+                         Int8_entry,
+                         Int16_entry,
+                         Int32_entry,
+                         Double_entry,
+                         Uint_entry>    Entry_variable_type;
+
+  std::vector<Entry> m_entries;
+
+  static const std::map<int, Entry_variable_type> s_entry_variables;
 };
 
 SGAL_END_NAMESPACE
