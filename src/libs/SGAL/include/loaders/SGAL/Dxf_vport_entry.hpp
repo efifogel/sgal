@@ -53,15 +53,23 @@ struct SGAL_SGAL_DECL Dxf_vport_entry: public Dxf_table_entry {
                         // point)
   double m_back_clipping_plane; // Back clipping plane (offset from target point)
   double m_view_height; // View height
+  double m_aspect_ratio; // Viewport aspect ratio
   double m_snap_rotation_angle; // Snap rotation angle
   double m_view_twist_angle; // View twist angle
-  int16_t m_circle_sides; // Circle sides
   Uint m_soft_frozen_layer; // Soft-pointer ID/handle to frozen layer objects;
                         // repeats for each frozen layers
   Uint m_hard_frozen_layer; // Hard-pointer ID/handle to frozen layer objects;
                         // repeats for each frozen layers
-  int16_t m_perspective_mode; // Bit flags and perspective mode
   String m_plot_style_sheet; // Plot style sheet
+
+  int16_t m_view_mode;  // View mode (see VIEWMODE system variable)
+  int16_t m_circle_sides; // Circle sides
+  int16_t m_fast_zoom;  // Fast zoom setting
+  int16_t m_ucs_icon;   // UCSICON setting
+  int16_t m_snap_on;    // Snap on/off
+  int16_t m_grid_on;    // Grid on/off
+  int16_t m_snap_style; // Snap style
+  int16_t m_snap_isopair; // Snap isopair
   int8_t m_render_mode; // Render mode:
                         // 0 = 2D Optimized (classic 2D)
                         // 1 = Wireframe
@@ -74,8 +82,12 @@ struct SGAL_SGAL_DECL Dxf_vport_entry: public Dxf_table_entry {
                         // the new 3D graphics pipeline. These values directly
                         // correspond to the SHADEMODE command and the
                         // AcDbAbstractViewTableRecord::RenderMode enum
-  int16_t m_view_mode;  // View mode (see VIEWMODE system variable)
-  int16_t m_ucs_icon;   // UCSICON setting
+  int16_t m_ucs_up;     // Value of UCSVP for this viewport.
+                        // 1 = viewport stores its own UCS which will become
+                        //     the current UCS whenever the viewport is
+                        //     activated.
+                        // 0 = UCS will not change when this viewport is
+                        //     activated.
   double m_ucs_origin[3]; // UCS origin 110, 120, 130
   double m_ucs_x_axis[3]; // UCS X-axis 111, 121, 131
   double m_ucs_y_axis[3]; // UCS X-axis 112, 122, 132

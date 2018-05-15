@@ -26,6 +26,7 @@
 #include <array>
 
 #include <boost/variant.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Dxf_header.hpp"
@@ -167,6 +168,16 @@ private:
   //! The type of a table parser member function.
   typedef void(Dxf_parser::*Table_parser)(void);
 
+  typedef String Dxf_table_entry::*             String_base_entry;
+  typedef Uint Dxf_table_entry::*               Uint_base_entry;
+  typedef boost::variant<String_base_entry, Uint_base_entry>
+                                                Base_entry_variable_type;
+
+
+  typedef String Dxf_base_table::*             String_base_table;
+  typedef Uint Dxf_base_table::*               Uint_base_table;
+  typedef boost::variant<String_base_table, Uint_base_table>
+                                                Base_table_variable_type;
   //@}
 
   //! The text input stream to parse.
@@ -216,7 +227,7 @@ private:
    */
   Code_type read_code(int code);
 
-  /*! Import a value to a header variable (of the same type, naturally).
+  /*! Import a value to a variable (of the same type, naturally).
    * \param[i] handle the handle to the variable.
    */
   template <typename T, typename VariableType, typename Target>
@@ -226,6 +237,19 @@ private:
     SGAL_TRACE_CODE(Trace::DXF,
                     std::cout << "Dxf_parser::import_variable() value: "
                     << target.*(boost::get<T>(handle))
+                    << std::endl;);
+  }
+
+  /*! Import a value to a variable (of the same type, naturally).
+   * \param[i] handle the handle to the variable.
+   */
+  template <typename T, typename VariableType, typename Target>
+  void import_variable(VariableType handle, Target& target, int index)
+  {
+    m_is >> (target.*(boost::get<T>(handle)))[index];
+    SGAL_TRACE_CODE(Trace::DXF,
+                    std::cout << "Dxf_parser::import_variable() value: "
+                    << (target.*(boost::get<T>(handle)))[index]
                     << std::endl;);
   }
 
@@ -248,6 +272,38 @@ private:
                     << std::endl;);
   }
 
+  /*! Import an value to ab int8_t variable.
+   * C/C++ defines int8_t to be 'signed char'; thus, a negative integer cannot
+   * be imported directly, since the preceding '-' is interpreted as the (sole)
+   * char input.
+   * \param[i] handle the handle to the variable.
+   */
+  template <typename T, typename VariableType, typename Target>
+  void import_int8_variable(VariableType handle, Target& target)
+  {
+    // First read as an integer; then, cast to int8_t.
+    int tmp;
+    m_is >> tmp;
+    target.*(boost::get<T>(handle)) = (int8_t) tmp;
+    SGAL_TRACE_CODE(Trace::DXF,
+                    std::cout << "Dxf_parser::import_variable() value: "
+                    << target.*(boost::get<T>(handle))
+                    << std::endl;);
+  }
+
+  /*! Import a hex value to an unsigned int variable.
+   * \param[i] handle the handle to the variable.
+   */
+  template <typename T, typename VariableType, typename Target>
+  void import_uint_variable(VariableType handle, Target& target)
+  {
+    m_is >> std::hex >> target.*(boost::get<T>(handle)) >> std::dec;
+    SGAL_TRACE_CODE(Trace::DXF,
+                    std::cout << "Dxf_parser::import_variable() value: "
+                    << std::hex << target.*(boost::get<T>(handle)) << std::dec
+                    << std::endl;);
+  }
+
   //! Information of a header variable.
   struct Header_variable {
     Header_variable(Header_variable_type handle, std::list<int> codes) :
@@ -267,24 +323,40 @@ private:
   template <typename Table>
   void parse_table(Table& table, const std::string& name)
   {
-    typedef typename Table::String_entry        String_entry;;
-    typedef typename Table::Bool_entry          Bool_entry;;
-    typedef typename Table::Int8_entry          Int8_entry;;
-    typedef typename Table::Int16_entry         Int16_entry;;
-    typedef typename Table::Int32_entry         Int32_entry;;
-    typedef typename Table::Double_entry        Double_entry;;
-    typedef typename Table::Uint_entry          Uint_entry;;
+    typedef typename Table::String_entry        String_entry;
+    typedef typename Table::Bool_entry          Bool_entry;
+    typedef typename Table::Int8_entry          Int8_entry;
+    typedef typename Table::Int16_entry         Int16_entry;
+    typedef typename Table::Int32_entry         Int32_entry;
+    typedef typename Table::Double_entry        Double_entry;
+    typedef typename Table::Uint_entry          Uint_entry;
+    typedef typename Table::Double_2d_entry     Double_2d_entry;
+    typedef typename Table::Double_3d_entry     Double_3d_entry;
 
+    bool exceeded(false);
     auto num = parse_base_table(table);
     auto& entries = table.m_entries;
     entries.resize(num);
-
-    for (auto& entry : entries) {
+    /*! EF: it seems that the max number of entries is not really respected.
+     * Instead of simply iterating over the entries and return when either
+     * we run out of entries or the max number is reached, we only look for
+     * the end code (namely 0). If we exceed the promised max number, we resize
+     * the table.
+     */
+    size_t i(0);
+    while (true) {
       std::string str;
       m_is >> str;
       if ("ENDTAB" == str) return;
 
       SGAL_assertion(str == name);
+      if (i == num) {
+        SGAL_warning_msg(exceeded, "Maximum number of entries exceeded!");
+        exceeded = true;
+        ++num;
+        entries.resize(num);
+      }
+      auto& entry = entries[i++];
 
       bool done(false);
       while (!done) {
@@ -297,17 +369,50 @@ private:
           done = true;
           break;
         }
+        auto ct = code_type(code);
+        auto bit = s_base_entry_variables.find(code);
+        if (bit != s_base_entry_variables.end()) {
+          auto handle = bit->second;
+          auto& base_entry = static_cast<Dxf_table_entry&>(entry);
+          switch (ct) {
+           case STRING:
+            if (100 == code) {
+              String tmp;
+              m_is >> tmp; /* What is a subclass marker for? */
+              break;
+            }
+            import_string_variable<String_base_entry>(handle, base_entry);
+            break;
+
+           case UINT: import_variable<Uint_base_entry>(handle, base_entry);
+            break;
+           default: break;
+          }
+          continue;
+        }
 
         auto it = table.s_entry_variables.find(code);
         SGAL_assertion(it != table.s_entry_variables.end());
-        auto handle = it->second;
-        switch (code_type(code)) {
-         STRING: import_string_variable<String_entry>(handle, entry); break;
-         BOOL: import_variable<Bool_entry>(handle, entry); break;
-         INT8: import_variable<Int8_entry>(handle, entry); break;
-         INT16: import_variable<Int16_entry>(handle, entry); break;
-         INT32: import_variable<Int32_entry>(handle, entry); break;
-         DOUBLE: import_variable<Double_entry>(handle, entry); break;
+        auto handle = it->second.m_handle;
+        auto size = it->second.m_size;
+        auto index = it->second.m_index;
+        switch (ct) {
+         case STRING: import_string_variable<String_entry>(handle, entry); break;
+         case BOOL: import_variable<Bool_entry>(handle, entry); break;
+         case INT8: import_int8_variable<Int8_entry>(handle, entry); break;
+
+         case INT16: import_variable<Int16_entry>(handle, entry); break;
+         case INT32: import_variable<Int32_entry>(handle, entry); break;
+         case UINT: import_uint_variable<Uint_entry>(handle, entry); break;
+
+         case DOUBLE:
+          switch (size) {
+           case 1: import_variable<Double_entry>(handle, entry); break;
+           case 2: import_variable<Double_2d_entry>(handle, entry, index); break;
+           case 3: import_variable<Double_3d_entry>(handle, entry, index); break;
+          }
+          break;
+
          default: SGAL_error();
         }
       }
@@ -320,19 +425,8 @@ private:
   static const std::array<String, 8> s_code_type_names;
   static const std::map<int, Class_variable_type> s_class_variables;
   static const std::map<String, Table_parser> s_tables;
-
-  // Table-entry variable mappings
-  //static const std::map<int, Appid_entry_variable_type> s_appid_entry_variables;
-  //static const std::map<int, Block_record_entry_variable_type>
-  //  s_block_record_entry_variables;
-  //static const std::map<int, Dimstyle_entry_variable_type>
-  //  s_dimstyle_entry_variables;
-  //static const std::map<int, Layer_entry_variable_type> s_layer_entry_variables;
-  //static const std::map<int, Ltype_entry_variable_type> s_ltype_entry_variables;
-  //static const std::map<int, Style_entry_variable_type> s_style_entry_variables;
-  //static const std::map<int, Ucs_entry_variable_type> s_ucs_entry_variables;
-  //static const std::map<int, View_entry_variable_type> s_view_entry_variables;
-  // static const std::map<int, Vport_entry_variable_type> s_vport_entry_variables;
+  static const std::map<int, Base_table_variable_type> s_base_table_variables;
+  static const std::map<int, Base_entry_variable_type> s_base_entry_variables;
 };
 
 SGAL_END_NAMESPACE

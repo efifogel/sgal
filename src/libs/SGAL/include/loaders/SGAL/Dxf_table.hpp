@@ -32,7 +32,7 @@ SGAL_BEGIN_NAMESPACE
 template <typename Entry>
 struct SGAL_SGAL_DECL Dxf_table : Dxf_base_table {
 
-  // VPORT table-entry types
+  // Table-entry types:
   typedef String Entry::*               String_entry;
   typedef bool Entry::*                 Bool_entry;
   typedef int8_t Entry::*               Int8_entry;
@@ -40,6 +40,8 @@ struct SGAL_SGAL_DECL Dxf_table : Dxf_base_table {
   typedef int32_t Entry::*              Int32_entry;
   typedef double Entry::*               Double_entry;
   typedef Uint Entry::*                 Uint_entry;
+  typedef double (Entry::*Double_2d_entry)[2];
+  typedef double (Entry::*Double_3d_entry)[3];
 
   typedef boost::variant<String_entry,
                          Bool_entry,
@@ -47,11 +49,23 @@ struct SGAL_SGAL_DECL Dxf_table : Dxf_base_table {
                          Int16_entry,
                          Int32_entry,
                          Double_entry,
-                         Uint_entry>    Entry_variable_type;
+                         Uint_entry,
+                         Double_2d_entry,
+                         Double_3d_entry>       Entry_variable_type;
 
   std::vector<Entry> m_entries;
 
-  static const std::map<int, Entry_variable_type> s_entry_variables;
+  struct Table_entry_variable {
+    Table_entry_variable(Entry_variable_type handle, int size, int index) :
+      m_handle(handle),
+      m_size(size),
+      m_index(index)
+    {}
+    Entry_variable_type m_handle;
+    int m_size;
+    int m_index;
+  };
+  static const std::map<int, Table_entry_variable> s_entry_variables;
 };
 
 SGAL_END_NAMESPACE
