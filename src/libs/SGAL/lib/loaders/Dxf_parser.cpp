@@ -154,6 +154,26 @@ Dxf_parser::s_base_entry_members = {
   {330, &Dxf_table_entry::m_owner_obj}
 };
 
+/* This object contains the description of DXF BLOCK variables.
+ * The DXF BLOCK variables listed below are extracted from
+ *   http://help.autodesk.com/view/ACD/2017/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
+ *
+ * EF: Why is block-name mapped twice (s 2 & 3 below)?
+ */
+const std::map<int, Dxf_parser::Block_member> Dxf_parser::s_block_members = {
+  {5, {&Dxf_block::m_handle, 1, 0}},
+  {330, {&Dxf_block::m_owner_handle, 1, 0}},
+  {8, {&Dxf_block::m_layer_name, 1, 0}},
+  {2, {&Dxf_block::m_name, 1, 0}},
+  {70, {&Dxf_block::m_flags, 1, 0}},
+  {10, {&Dxf_block::m_base_point, 3, 0}},
+  {20, {&Dxf_block::m_base_point, 3, 1}},
+  {30, {&Dxf_block::m_base_point, 3, 2}},
+  {3, {&Dxf_block::m_name, 1, 0}},
+  {1, {&Dxf_block::m_xref_path_name, 1, 0}},
+  {4, {&Dxf_block::m_description, 1, 0}}
+};
+
 //! \brief constructs.
 Dxf_parser::Dxf_parser(std::istream& is, Scene_graph* sg) :
   m_is(is),
@@ -445,89 +465,82 @@ void Dxf_parser::parse_tables()
   } while (true);
 }
 
+//! \brief parses one block.
+void Dxf_parser::parse_block()
+{
+  SGAL_TRACE_CODE(Trace::DXF,
+                  std::cout << "Dxf_parser::parse_block()" << std::endl;);
+
+  m_blocks.push_back(Dxf_block());
+  auto& block = m_blocks.back();
+
+  bool done(false);
+  while (!done) {
+    int code;
+    import_code(code);
+    if (0 == code) {
+      done = true;
+      break;
+    }
+
+    if (100 == code) {
+      import_string_value(m_marker);
+      continue;
+    }
+
+    if (102 == code) {
+      //! \todo store the values in the entry.
+      char c;
+      m_is >> c;
+      SGAL_assertion('{' == c);
+      String name;
+      import_string_value(name);
+      String str;
+      import_string_value(str);
+      while ("}" != str) {
+        import_string_value(str);
+      }
+      continue;
+    }
+
+    auto it = s_block_members.find(code);
+    SGAL_assertion(it != s_block_members.end());
+    auto handle = it->second.m_handle;
+    auto size = it->second.m_size;
+    auto index = it->second.m_index;
+    switch (code_type(code)) {
+     case STRING: import_string_member<String_block>(handle, block); break;
+     case UINT: import_uint_member<Uint_block>(handle, block); break;
+     case INT16: import_member<Int16_block>(handle, block); break;
+
+     case DOUBLE:
+      SGAL_assertion(3 == size);
+      import_member<Double_3d_block>(handle, block, index); break;
+      break;
+
+     default: SGAL_error();
+    }
+  }
+}
+
+//! \brief parses BLOCKS section
 void Dxf_parser::parse_blocks()
 {
   SGAL_TRACE_CODE(Trace::DXF,
                   std::cout << "Dxf_parser::parse_blocks()" << std::endl;);
 
-  std::string handle;
-  std::string layer_name;
-  std::string block_name;
-  std::string xref_path_name;
-  int flags;
-  int follow_flag;
-  double x_value;
-  double y_value;
-  double z_value;
-  double fp;
-
   int n;
   import_code(n);
-  SGAL_assertion(n == 0);
-  std::string str;
-  m_is >> str;
-  while (str == "BLOCK") {
-    do {
-      bool done(false);
-      while (!done) {
-        int code;
-        import_code(code);
-        switch (code) {
-         case 0: done = true; break;
-         case 1:
-          m_is >> xref_path_name;
-          break;
+  SGAL_assertion(0 == n);
 
-         case 2:
-         case 3:
-          m_is >> block_name;
-          break;     // block name
-
-         case 5: m_is >> handle;
-          break;         // handle
-
-         case 8: m_is >> layer_name;
-          break;     // layer name
-
-         case 10: m_is >> x_value;
-          break;       // x-value
-
-         case 20: m_is >> y_value;
-          break;       // y-value
-
-         case 30: m_is >> z_value;
-          break;       // z-value
-
-         case 40:
-         case 41:
-         case 42: m_is >> fp;
-          break;            // floating-point value
-
-         case 66: m_is >> follow_flag;
-          break;   // "Entities follow" flag
-
-         case 70: m_is >> flags;
-          break;         // block-type flags
-
-         case 100:
-          break;                       // subclass
-
-         case 102:
-          break;                       // control string
-
-         default:
-          std::string msg("unrecognized BLOCK group code ");
-          msg += std::to_string(code) + "!";
-          SGAL_error_msg(msg.c_str());
-        }
-      }
-      m_is >> str;
-    } while (str != "ENDBLK");
-    import_code(n);
-    SGAL_assertion(n == 0);
+  do {
+    String str;
     m_is >> str;
-  }
-  SGAL_assertion(str == "ENDSEC");
+    if ("ENDSEC" == str) return;
+
+    SGAL_assertion("BLOCK" == str);
+    parse_block();
+  } while (true);
 }
 
 void Dxf_parser::parse_entities()

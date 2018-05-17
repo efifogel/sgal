@@ -93,6 +93,10 @@ protected:
    */
   void parse_class();
 
+  /*! Parse one block.
+   */
+  void parse_block();
+
 private:
   enum Section_type {
     HEADER = 0,
@@ -146,6 +150,16 @@ private:
                          Int32_header,
                          Uint_header,
                          Bool_header>   Header_member_type;
+
+  //! Information of a header member.
+  struct Header_member {
+    Header_member(Header_member_type handle, std::list<int> codes) :
+      m_handle(handle), m_codes(codes)
+    {}
+    Header_member_type m_handle;
+    std::list<int> m_codes;
+  };
+
   //@}
 
   /// \name Class types
@@ -159,6 +173,34 @@ private:
   //! The variant type of handle to all types of class data members.
   typedef boost::variant<String_class, Int8_class, Int32_class>
                                         Class_member_type;
+
+  //@}
+
+  /// \name Block types
+  //@{
+
+  //! Class data member types.
+  typedef String Dxf_block::*           String_block;
+  typedef Uint Dxf_block::*             Uint_block;
+  typedef int16_t Dxf_block::*          Int16_block;
+  typedef double (Dxf_block::*Double_3d_block)[3];
+
+  //! The variant type of handle to all types of block data members.
+  typedef boost::variant<String_block,
+                         Uint_block,
+                         Int16_block,
+                         Double_3d_block>       Block_member_type;
+
+  //! Information of a header member.
+  struct Block_member {
+    Block_member(Block_member_type handle, int size, int index) :
+      m_handle(handle), m_size(size), m_index(index)
+    {}
+
+    Block_member_type m_handle;
+    int m_size;
+    int m_index;
+  };
 
   //@}
 
@@ -214,7 +256,7 @@ private:
   Vport_table m_vport_table;
 
   // Blocks.
-  std::list<Dxf_block> m_block;
+  std::list<Dxf_block> m_blocks;
 
   //! Marker
   String m_marker;
@@ -370,15 +412,6 @@ private:
                     << std::endl;);
   }
 
-  //! Information of a header member.
-  struct Header_member {
-    Header_member(Header_member_type handle, std::list<int> codes) :
-      m_handle(handle), m_codes(codes)
-    {}
-    Header_member_type m_handle;
-    std::list<int> m_codes;
-  };
-
   /*! Parse common table section, which aplies to all table types.
    * \return maximum number of entries in table.
    */
@@ -437,7 +470,7 @@ private:
         }
 
         if (100 == code) {
-          import_value(m_marker);
+          import_string_value(m_marker);
           continue;
         }
 
@@ -538,6 +571,7 @@ private:
   static const std::map<String, Table_parser> s_tables;
   static const std::map<int, Base_table_member_type> s_base_table_members;
   static const std::map<int, Base_entry_member_type> s_base_entry_members;
+  static const std::map<int, Block_member> s_block_members;
 };
 
 SGAL_END_NAMESPACE
