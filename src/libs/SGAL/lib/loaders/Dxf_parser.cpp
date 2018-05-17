@@ -503,23 +503,51 @@ void Dxf_parser::parse_block()
       continue;
     }
 
-    auto it = s_block_members.find(code);
-    SGAL_assertion(it != s_block_members.end());
-    auto handle = it->second.m_handle;
-    auto size = it->second.m_size;
-    auto index = it->second.m_index;
-    switch (code_type(code)) {
-     case STRING: import_string_member<String_block>(handle, block); break;
-     case UINT: import_uint_member<Uint_block>(handle, block); break;
-     case INT16: import_member<Int16_block>(handle, block); break;
+    auto bit = s_block_members.find(code);
+    if (bit != s_block_members.end()) {
+      auto handle = bit->second.m_handle;
+      auto size = bit->second.m_size;
+      auto index = bit->second.m_index;
+      switch (code_type(code)) {
+       case STRING: import_string_member<String_block>(handle, block); break;
+       case UINT: import_uint_member<Uint_block>(handle, block); break;
+       case INT16: import_member<Int16_block>(handle, block); break;
 
-     case DOUBLE:
-      SGAL_assertion(3 == size);
-      import_member<Double_3d_block>(handle, block, index); break;
-      break;
+       case DOUBLE:
+        SGAL_assertion(3 == size);
+        import_member<Double_3d_block>(handle, block, index); break;
+        break;
 
-     default: SGAL_error();
+       default: SGAL_error();
+      }
     }
+
+    read_unrecognized(code);
+  }
+}
+
+//! \brief parses one ENDBLK.
+void Dxf_parser::parse_endblk()
+{
+  SGAL_TRACE_CODE(Trace::DXF,
+                  std::cout << "Dxf_parser::parse_endblk()" << std::endl;);
+
+  bool done(false);
+  while (!done) {
+    int code;
+    import_code(code);
+    if (0 == code) {
+      done = true;
+      break;
+    }
+
+    if (100 == code) {
+      import_string_value(m_marker);
+      continue;
+    }
+
+    String str;
+    import_string_value(str);
   }
 }
 
@@ -538,8 +566,8 @@ void Dxf_parser::parse_blocks()
     m_is >> str;
     if ("ENDSEC" == str) return;
 
-    SGAL_assertion("BLOCK" == str);
-    parse_block();
+    if ("BLOCK" == str) parse_block();
+    else if ("ENDBLK" == str) parse_endblk();
   } while (true);
 }
 
@@ -565,7 +593,7 @@ void Dxf_parser::parse_thumbnailimage()
 /*! \brief reads a value from the input string and verify that it matches a
  * given code.
  */
-Dxf_parser::Code_type Dxf_parser::read_code(int expected)
+Dxf_parser::Code_type Dxf_parser::read_verify_code(int expected)
 {
   int code;
   import_code(code);
@@ -598,7 +626,7 @@ void Dxf_parser::read_header_member()
                   << dim << std::endl;);
   if (1 == dim) {
     auto code = codes.front();
-    auto code_type = read_code(code);
+    auto code_type = read_verify_code(code);
     SGAL_TRACE_CODE(Trace::DXF,
                     std::cout << "Dxf_parser::read_header_member() code type: "
                     << s_code_type_names[code_type] << std::endl;);
@@ -618,7 +646,7 @@ void Dxf_parser::read_header_member()
   SGAL_assertion((dim == 2) || (dim == 3));
   size_t i(0);
   for (auto code : codes) {
-    auto code_type = read_code(code);
+    auto code_type = read_verify_code(code);
     SGAL_TRACE_CODE(Trace::DXF,
                     std::cout << "Dxf_parser::read_header_member() code type: "
                     << s_code_type_names[code_type] << std::endl;);
@@ -634,6 +662,43 @@ void Dxf_parser::read_comment()
 {
   std::string str;
   std::getline(m_is, str);
+}
+
+//! \brief handles an unrecognized code.
+void Dxf_parser::read_unrecognized(int code)
+{
+  String str;
+  bool bval;
+  int ival;
+  Uint uval;
+  String msg("Unrecognized code ");
+  msg += std::to_string(code);
+  switch (code_type(code)) {
+   case STRING:
+    import_string_value(str);
+    msg += ", value: " + str;
+    break;
+
+   case BOOL:
+    m_is >> bval;
+    msg += ", value: " + std::to_string(bval);
+    break;
+
+   case INT8:
+   case INT16:
+   case INT32:
+    m_is >> ival;
+    msg += ", value: " + std::to_string(ival);
+    break;
+
+   case UINT:
+    msg += ", value: " + std::to_string(uval);
+    m_is >> uval;
+    break;
+
+   default: SGAL_error();
+  }
+  SGAL_warning_msg(0, msg.c_str());
 }
 
 SGAL_END_NAMESPACE

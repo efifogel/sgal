@@ -85,17 +85,17 @@ protected:
    */
   void read_header_member();
 
-  /*! Read a comment line.
-   */
-  void read_comment();
-
   /*! Parse one class.
    */
   void parse_class();
 
-  /*! Parse one block.
+  /*! Parse one BLOCK.
    */
   void parse_block();
+
+  /*! Parse one ENDBLK.
+   */
+  void parse_endblk();
 
 private:
   enum Section_type {
@@ -270,7 +270,7 @@ private:
    * code.
    * \return the type of the code.
    */
-  Code_type read_code(int code);
+  Code_type read_verify_code(int code);
 
   /*! Import a datum item.
    */
@@ -484,6 +484,7 @@ private:
           import_string_value(str);
           while ("}" != str) {
             import_string_value(str);
+            // entity.x_data[name].push_back(str);
           }
           continue;
         }
@@ -526,42 +527,18 @@ private:
           continue;
         }
 
-        // Handle an unrecognized code:
-        String str;
-        bool bval;
-        int ival;
-        Uint uval;
-        String msg("Unrecognized code ");
-        msg += std::to_string(code);
-        switch (ct) {
-         case STRING:
-          import_string_value(str);
-          msg += ", value: " + str;
-          break;
-
-         case BOOL:
-          m_is >> bval;
-          msg += ", value: " + std::to_string(bval);
-          break;
-
-         case INT8:
-         case INT16:
-         case INT32:
-          m_is >> ival;
-          msg += ", value: " + std::to_string(ival);
-          break;
-
-         case UINT:
-          msg += ", value: " + std::to_string(uval);
-          m_is >> uval;
-          break;
-
-         default: SGAL_error();
-        }
-        SGAL_warning_msg(0, msg.c_str());
+        read_unrecognized(code);
       }
     }
   }
+
+  /*! Read a comment line.
+   */
+  void read_comment();
+
+  /*! Handle an unrecognized code.
+   */
+  void read_unrecognized(int code);
 
   static const std::map<String, Section_parser> s_sections;
   static const std::map<String, Header_member> s_header_members;
