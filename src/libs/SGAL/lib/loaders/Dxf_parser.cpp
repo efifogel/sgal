@@ -520,6 +520,7 @@ void Dxf_parser::parse_block()
 
        default: SGAL_error();
       }
+      continue;
     }
 
     read_unrecognized(code);
