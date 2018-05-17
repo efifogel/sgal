@@ -266,6 +266,20 @@ private:
     }
   }
 
+  /*! Import a code.
+   * \param[code] the code variable.
+   */
+  template <typename T>
+  void import_code(T& code)
+  {
+    std::string tmp;
+    m_is >> code;
+    m_is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    SGAL_TRACE_CODE(Trace::DXF,
+                    std::cout << "Dxf_parser::import_code(): "
+                    << code << std::endl;);
+  }
+
   /*! Import a value.
    * \param[variable] the target variable.
    */
@@ -296,24 +310,32 @@ private:
   void import_member(MemberType handle, Target& target, int index)
   { import_value((target.*(boost::get<T>(handle)))[index]); }
 
-  /*! Import a string value to a string header member.
-   * \param[i] handle the handle to the string member.
+  /*! Import a string value.
+   * \param[handle] handle the handle to the string member.
+   * \param[target] target the target struct.
    */
-  template <typename T, typename MemberType, typename Target>
-  void import_string_member(MemberType handle, Target& target)
+  template <typename T>
+  void import_string_value(T& variable)
   {
     // use getline() cause the string might be empty.
     // When used immediately after whitespace-delimited input, getline consumes
     // the endline character left on the input stream by operator>>, and returns
     // immediately. Ignore all leftover characters.
-    m_is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::getline(m_is, target.*(boost::get<T>(handle)));
+    std::getline(m_is, variable);
+    variable.erase(variable.find_last_not_of(" \t\n\r\f\v") + 1);
     SGAL_TRACE_CODE(Trace::DXF,
                     std::cout
                     << "Dxf_parser::import_string_member() value: "
-                    << target.*(boost::get<T>(handle))
-                    << std::endl;);
+                    << variable << std::endl;);
   }
+
+  /*! Import a string value to a string header member.
+   * \param[handle] handle the handle to the string member.
+   * \param[target] target the target struct.
+   */
+  template <typename T, typename MemberType, typename Target>
+  void import_string_member(MemberType handle, Target& target)
+  { import_string_value(target.*(boost::get<T>(handle))); }
 
   /*! Import an value to ab int8_t member.
    * C/C++ defines int8_t to be 'signed char'; thus, a negative integer cannot
@@ -405,7 +427,7 @@ private:
       bool done(false);
       while (!done) {
         int code;
-        m_is >> code;
+        import_code(code);
         SGAL_TRACE_CODE(Trace::DXF,
                         std::cout << "Dxf_parser::parse_table() code: "
                         << code << std::endl;);
@@ -416,6 +438,32 @@ private:
 
         if (100 == code) {
           import_value(m_marker);
+          continue;
+        }
+
+        if (102 == code) {
+          //! \todo store the values in the entry.
+          char c;
+          m_is >> c;
+          SGAL_assertion('{' == c);
+          String name;
+          import_string_value(name);
+          import_string_value(str);
+          while ("}" != str) {
+            import_string_value(str);
+          }
+          continue;
+        }
+
+        if (1002 == code) {
+          //! \todo store the values in the entry.
+          String str;
+          import_string_value(str);
+          SGAL_assertion('{' == str[0]);
+          import_string_value(str);
+          while ("}" != str) {
+            import_string_value(str);
+          }
           continue;
         }
 
@@ -454,7 +502,7 @@ private:
         msg += std::to_string(code);
         switch (ct) {
          case STRING:
-          m_is >> str;
+          import_string_value(str);
           msg += ", value: " + str;
           break;
 
@@ -472,7 +520,8 @@ private:
 
          case UINT:
           msg += ", value: " + std::to_string(uval);
-          m_is >> uval; break;
+          m_is >> uval;
+          break;
 
          default: SGAL_error();
         }

@@ -125,13 +125,6 @@ Dxf_appid_table::s_entry_members = {
 };
 
 //!
-typedef Dxf_table<Dxf_block_record_entry>       Dxf_block_record_table;
-template <>
-const std::map<int, Dxf_block_record_table::Table_entry_member>
-Dxf_block_record_table::s_entry_members = {
-};
-
-//!
 typedef Dxf_table<Dxf_dimstyle_entry>           Dxf_dimstyle_table;
 template <>
 const std::map<int, Dxf_dimstyle_table::Table_entry_member>
@@ -173,20 +166,19 @@ Loader_code Dxf_parser::operator()()
   bool done(false);
   while (!done) {
     int n;
-    m_is >> n;
+    import_code(n);
     SGAL_assertion(n == 0);
     std::string str;
-    m_is >> str;
+    import_string_value(str);
     if (str == "EOF") {
       done = true;
       break;
     }
-
-   SGAL_assertion(str == "SECTION");
-    m_is >> n;
+    SGAL_assertion(str == "SECTION");
+    import_code(n);
     SGAL_assertion(n == 2);
     std::string section;
-    m_is >> section;
+    import_string_value(section);
     auto sec_it = s_sections.find(section);
     if (sec_it == s_sections.end()) {
       SGAL_error_msg("unrecognize section");
@@ -224,7 +216,7 @@ void Dxf_parser::parse_header()
   bool done(false);
   while (!done) {
     int n;
-    m_is >> n;
+    import_code(n);
     switch (n) {
      case 0: done = true; break;
      case 9: read_header_member(); break;
@@ -248,7 +240,7 @@ void Dxf_parser::parse_class()
   bool done(false);
   while (!done) {
     int code;
-    m_is >> code;
+    import_code(code);
     if (0 == code) {
       done = true;
       break;
@@ -273,7 +265,7 @@ void Dxf_parser::parse_classes()
                   std::cout << "Dxf_parser::parse_classes()" << std::endl;);
 
   int n;
-  m_is >> n;
+  import_code(n);
   SGAL_assertion(0 == n);
 
   do {
@@ -299,7 +291,7 @@ int Dxf_parser::parse_base_table(Dxf_base_table& table)
   bool done(false);
   while (!done) {
     int code;
-    m_is >> code;
+    import_code(code);
     SGAL_TRACE_CODE(Trace::DXF,
                     std::cout << "Dxf_parser::parse_base_table() code: "
                     << code << std::endl;);
@@ -335,7 +327,6 @@ int Dxf_parser::parse_base_table(Dxf_base_table& table)
     }
   }
   SGAL_assertion(start);
-  SGAL_assertion(0 != max_num);
 
   return max_num;
 }
@@ -428,7 +419,7 @@ void Dxf_parser::parse_tables()
                   std::cout << "Dxf_parser::parse_tables()" << std::endl;);
 
   int n;
-  m_is >> n;
+  import_code(n);
   SGAL_assertion(0 == n);
 
   do {
@@ -439,7 +430,7 @@ void Dxf_parser::parse_tables()
     SGAL_assertion("TABLE" == str);
 
     int n;
-    m_is >> n;
+    import_code(n);
     SGAL_assertion(2 == n);
     m_is >> str;
     auto table_it = s_tables.find(str);
@@ -448,7 +439,7 @@ void Dxf_parser::parse_tables()
     }
     (this->*(table_it->second))();
 
-    m_is >> n;
+    import_code(n);
     SGAL_assertion(0 == n);
 
   } while (true);
@@ -471,7 +462,7 @@ void Dxf_parser::parse_blocks()
   double fp;
 
   int n;
-  m_is >> n;
+  import_code(n);
   SGAL_assertion(n == 0);
   std::string str;
   m_is >> str;
@@ -480,24 +471,50 @@ void Dxf_parser::parse_blocks()
       bool done(false);
       while (!done) {
         int code;
-        m_is >> code;
+        import_code(code);
         switch (code) {
          case 0: done = true; break;
-         case 1: m_is >> xref_path_name; break;
+         case 1:
+          m_is >> xref_path_name;
+          break;
+
          case 2:
-         case 3: m_is >> block_name; break;     // block name
-         case 5: m_is >> handle; break;         // handle
-         case 8: m_is >> layer_name; break;     // layer name
-         case 10: m_is >> x_value; break;       // x-value
-         case 20: m_is >> y_value; break;       // y-value
-         case 30: m_is >> z_value; break;       // z-value
+         case 3:
+          m_is >> block_name;
+          break;     // block name
+
+         case 5: m_is >> handle;
+          break;         // handle
+
+         case 8: m_is >> layer_name;
+          break;     // layer name
+
+         case 10: m_is >> x_value;
+          break;       // x-value
+
+         case 20: m_is >> y_value;
+          break;       // y-value
+
+         case 30: m_is >> z_value;
+          break;       // z-value
+
          case 40:
          case 41:
-         case 42: m_is >> fp; break;            // floating-point value
-         case 66: m_is >> follow_flag; break;   // "Entities follow" flag
-         case 70: m_is >> flags; break;         // block-type flags
-         case 100: break;                       // subclass
-         case 102: break;                       // control string
+         case 42: m_is >> fp;
+          break;            // floating-point value
+
+         case 66: m_is >> follow_flag;
+          break;   // "Entities follow" flag
+
+         case 70: m_is >> flags;
+          break;         // block-type flags
+
+         case 100:
+          break;                       // subclass
+
+         case 102:
+          break;                       // control string
+
          default:
           std::string msg("unrecognized BLOCK group code ");
           msg += std::to_string(code) + "!";
@@ -506,7 +523,7 @@ void Dxf_parser::parse_blocks()
       }
       m_is >> str;
     } while (str != "ENDBLK");
-    m_is >> n;
+    import_code(n);
     SGAL_assertion(n == 0);
     m_is >> str;
   }
@@ -535,14 +552,11 @@ void Dxf_parser::parse_thumbnailimage()
 /*! \brief reads a value from the input string and verify that it matches a
  * given code.
  */
-Dxf_parser::Code_type Dxf_parser::read_code(int code)
+Dxf_parser::Code_type Dxf_parser::read_code(int expected)
 {
-  int n;
-  m_is >> n;
-  SGAL_TRACE_CODE(Trace::DXF,
-                  std::cout << "Dxf_parser::read_header_member() code: "
-                  << n << std::endl;);
-  SGAL_assertion(n == code);
+  int code;
+  import_code(code);
+  SGAL_assertion(code == expected);
   return code_type(code);
 }
 
@@ -553,10 +567,7 @@ void Dxf_parser::read_header_member()
   m_is >> c;
   SGAL_assertion(c == '$');
   std::string str;
-  m_is >> str;
-  SGAL_TRACE_CODE(Trace::DXF,
-                  std::cout << "Dxf_parser::read_header_member() name: "
-                  << str << std::endl;);
+  import_string_value(str);
   auto it = s_header_members.find(str);
   if (it == s_header_members.end()) {
     std::string unrecognized_msg("unrecognized header variable ");
@@ -608,7 +619,6 @@ void Dxf_parser::read_header_member()
 //! \brief reads a comment line.
 void Dxf_parser::read_comment()
 {
-  m_is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
   std::string str;
   std::getline(m_is, str);
 }

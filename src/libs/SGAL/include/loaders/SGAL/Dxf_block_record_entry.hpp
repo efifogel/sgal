@@ -19,6 +19,10 @@
 #ifndef SGAL_DXF_BLOCK_RECORD_ENTRY_HPP
 #define SGAL_DXF_BLOCK_RECORD_ENTRY_HPP
 
+#include <string>
+#include <string>
+#include <map>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Dxf_table_entry.hpp"
@@ -26,6 +30,42 @@
 SGAL_BEGIN_NAMESPACE
 
 struct SGAL_SGAL_DECL Dxf_block_record_entry: public Dxf_table_entry {
+  String m_name;        // Style name
+  Uint m_layout_handle; // Hard-pointer ID/handle to associated LAYOUT object
+  int16_t m_insertion_units; // Block insertion units.
+  int8_t m_explodability; // Block explodability
+  int8_t m_scalability; // Block scalability
+  Uint m_bitmap_preview_data; // DXF: Binary data for bitmap preview (optional)
+  int16_t m_insert_units; // Insert units:
+                        // 0 = Unitless
+                        // 1 = Inches
+                        // 2 = Feet
+                        // 3 = Miles
+                        // 4 = Millimeters
+                        // 5 = Centimeters
+                        // 6 = Meters
+                        // 7 = Kilometers
+                        // 8 = Microinches
+                        // 9 = Mils
+                        // 10 = Yards
+                        // 11 = Angstroms
+                        // 12 = Nanometers
+                        // 13 = Microns
+                        // 14 = Decimeters
+                        // 15 = Decameters
+                        // 16 = Hectometers
+                        // 17 = Gigameters
+                        // 18 = Astronomical units
+                        // 19 = Light years
+                        // 20 = Parsecs
+                        // 21 = US Survey Feet
+                        // 22 = US Survey Inch
+                        // 23 = US Survey Yard
+                        // 24 = US Survey Mile
+  // int16_t m_design_center_version_number; // Autodesk Design Center version number
+  String m_application_name; // Xdata application name "ACAD" (optional)
+  String m_string_data; // Xdata string data "DesignCenter Data" (optional)
+  std::map<String, std::vector<String> > m_xdata; // Begin xdata "{", "}" (opt.)
 };
 
 SGAL_END_NAMESPACE
