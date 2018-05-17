@@ -90,8 +90,8 @@ const std::map<String, Dxf_parser::Section_parser> Dxf_parser::s_sections = {
 };
 
 //!
-const std::map<int, Dxf_parser::Class_variable_type>
-Dxf_parser::s_class_variables = {
+const std::map<int, Dxf_parser::Class_member_type>
+Dxf_parser::s_class_members = {
   {1, &Dxf_class::m_record_name},
   {2, &Dxf_class::m_class_name},
   {3, &Dxf_class::m_application_name},
@@ -118,8 +118,8 @@ Dxf_parser::s_tables = {
 //!
 typedef Dxf_table<Dxf_appid_entry>              Dxf_appid_table;
 template <>
-const std::map<int, Dxf_appid_table::Table_entry_variable>
-Dxf_appid_table::s_entry_variables = {
+const std::map<int, Dxf_appid_table::Table_entry_member>
+Dxf_appid_table::s_entry_members = {
   {2, {&Dxf_appid_entry::m_name, 1, 0}},
   {70, {&Dxf_appid_entry::m_flags, 1, 0}}
 };
@@ -127,49 +127,35 @@ Dxf_appid_table::s_entry_variables = {
 //!
 typedef Dxf_table<Dxf_block_record_entry>       Dxf_block_record_table;
 template <>
-const std::map<int, Dxf_block_record_table::Table_entry_variable>
-Dxf_block_record_table::s_entry_variables = {
+const std::map<int, Dxf_block_record_table::Table_entry_member>
+Dxf_block_record_table::s_entry_members = {
 };
 
 //!
 typedef Dxf_table<Dxf_dimstyle_entry>           Dxf_dimstyle_table;
 template <>
-const std::map<int, Dxf_dimstyle_table::Table_entry_variable>
-Dxf_dimstyle_table::s_entry_variables = {
-};
-
-//!
-typedef Dxf_table<Dxf_style_entry>              Dxf_style_table;
-template <>
-const std::map<int, Dxf_style_table::Table_entry_variable>
-Dxf_style_table::s_entry_variables = {
+const std::map<int, Dxf_dimstyle_table::Table_entry_member>
+Dxf_dimstyle_table::s_entry_members = {
 };
 
 //!
 typedef Dxf_table<Dxf_ucs_entry>                Dxf_ucs_table;
 template <>
-const std::map<int, Dxf_ucs_table::Table_entry_variable>
-Dxf_ucs_table::s_entry_variables = {
+const std::map<int, Dxf_ucs_table::Table_entry_member>
+Dxf_ucs_table::s_entry_members = {
 };
 
 //!
-typedef Dxf_table<Dxf_view_entry>               Dxf_view_table;
-template <>
-const std::map<int, Dxf_view_table::Table_entry_variable>
-Dxf_view_table::s_entry_variables = {
-};
-
-//!
-const std::map<int, Dxf_parser::Base_table_variable_type>
-Dxf_parser::s_base_table_variables = {
+const std::map<int, Dxf_parser::Base_table_member_type>
+Dxf_parser::s_base_table_members = {
   {5, &Dxf_base_table::m_handle},
   {360, &Dxf_base_table::m_owner_dict},
   {330, &Dxf_base_table::m_owner_obj}
 };
 
 //!
-const std::map<int, Dxf_parser::Base_entry_variable_type>
-Dxf_parser::s_base_entry_variables = {
+const std::map<int, Dxf_parser::Base_entry_member_type>
+Dxf_parser::s_base_entry_members = {
   {5, &Dxf_table_entry::m_handle},
   {360, &Dxf_table_entry::m_owner_dict},
   {330, &Dxf_table_entry::m_owner_obj}
@@ -241,7 +227,7 @@ void Dxf_parser::parse_header()
     m_is >> n;
     switch (n) {
      case 0: done = true; break;
-     case 9: read_header_variable(); break;
+     case 9: read_header_member(); break;
      case 999: read_comment(); break;
     }
   }
@@ -268,13 +254,13 @@ void Dxf_parser::parse_class()
       break;
     }
 
-    auto it = s_class_variables.find(code);
-    SGAL_assertion(it != s_class_variables.end());
+    auto it = s_class_members.find(code);
+    SGAL_assertion(it != s_class_members.end());
     auto handle = it->second;
     switch (code_type(code)) {
-     case STRING: import_string_variable<String_class>(handle, dxf_class); break;
-     case INT8: import_variable<Int8_class>(handle, dxf_class); break;
-     case INT32: import_variable<Int32_class>(handle, dxf_class); break;
+     case STRING: import_string_member<String_class>(handle, dxf_class); break;
+     case INT8: import_member<Int8_class>(handle, dxf_class); break;
+     case INT32: import_member<Int32_class>(handle, dxf_class); break;
      default: SGAL_error();
     }
   }
@@ -338,13 +324,13 @@ int Dxf_parser::parse_base_table(Dxf_base_table& table)
       continue;
     }
 
-    auto it = s_base_table_variables.find(code);
-    SGAL_assertion(it != s_base_table_variables.end());
+    auto it = s_base_table_members.find(code);
+    SGAL_assertion(it != s_base_table_members.end());
     auto handle = it->second;
     switch (code_type(code)) {
       case STRING:
-       import_string_variable<String_base_table>(handle, table); break;
-     case UINT: import_variable<Uint_base_table>(handle, table); break;
+       import_string_member<String_base_table>(handle, table); break;
+     case UINT: import_member<Uint_base_table>(handle, table); break;
      default: SGAL_error();
     }
   }
@@ -554,14 +540,14 @@ Dxf_parser::Code_type Dxf_parser::read_code(int code)
   int n;
   m_is >> n;
   SGAL_TRACE_CODE(Trace::DXF,
-                  std::cout << "Dxf_parser::read_header_variable() code: "
+                  std::cout << "Dxf_parser::read_header_member() code: "
                   << n << std::endl;);
   SGAL_assertion(n == code);
   return code_type(code);
 }
 
 //! \brief reads a HEADER veriable.
-void Dxf_parser::read_header_variable()
+void Dxf_parser::read_header_member()
 {
   char c;
   m_is >> c;
@@ -569,10 +555,10 @@ void Dxf_parser::read_header_variable()
   std::string str;
   m_is >> str;
   SGAL_TRACE_CODE(Trace::DXF,
-                  std::cout << "Dxf_parser::read_header_variable() name: "
+                  std::cout << "Dxf_parser::read_header_member() name: "
                   << str << std::endl;);
-  auto it = s_header_variables.find(str);
-  if (it == s_header_variables.end()) {
+  auto it = s_header_members.find(str);
+  if (it == s_header_members.end()) {
     std::string unrecognized_msg("unrecognized header variable ");
     unrecognized_msg += str + "!";
     SGAL_error_msg(unrecognized_msg.c_str());
@@ -584,23 +570,23 @@ void Dxf_parser::read_header_variable()
 
   auto dim = codes.size();
   SGAL_TRACE_CODE(Trace::DXF,
-                  std::cout << "Dxf_parser::read_header_variable() dimension: "
+                  std::cout << "Dxf_parser::read_header_member() dimension: "
                   << dim << std::endl;);
   if (1 == dim) {
     auto code = codes.front();
     auto code_type = read_code(code);
     SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout << "Dxf_parser::read_header_variable() code type: "
+                    std::cout << "Dxf_parser::read_header_member() code type: "
                     << s_code_type_names[code_type] << std::endl;);
     switch (code_type) {
-     case STRING: import_string_variable<String_header>(handle, m_header); break;
-     case FLOAT: import_variable<Float_header>(handle, m_header); break;
-     case DOUBLE: import_variable<Double_header>(handle, m_header); break;
-     case INT8: import_variable<Int8_header>(handle, m_header); break;
-     case INT16: import_variable<Int16_header>(handle, m_header); break;
-     case INT32: import_variable<Int32_header>(handle, m_header); break;
-     case UINT: import_variable<Uint_header>(handle, m_header); break;
-     case BOOL: import_variable<Bool_header>(handle, m_header); break;
+     case STRING: import_string_member<String_header>(handle, m_header); break;
+     case FLOAT: import_member<Float_header>(handle, m_header); break;
+     case DOUBLE: import_member<Double_header>(handle, m_header); break;
+     case INT8: import_member<Int8_header>(handle, m_header); break;
+     case INT16: import_member<Int16_header>(handle, m_header); break;
+     case INT32: import_member<Int32_header>(handle, m_header); break;
+     case UINT: import_member<Uint_header>(handle, m_header); break;
+     case BOOL: import_member<Bool_header>(handle, m_header); break;
     }
     return;
   }
@@ -610,7 +596,7 @@ void Dxf_parser::read_header_variable()
   for (auto code : codes) {
     auto code_type = read_code(code);
     SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout << "Dxf_parser::read_header_variable() code type: "
+                    std::cout << "Dxf_parser::read_header_member() code type: "
                     << s_code_type_names[code_type] << std::endl;);
     SGAL_assertion(DOUBLE == code_type);
     if (dim == 2)

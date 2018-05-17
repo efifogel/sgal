@@ -26,7 +26,6 @@
 SGAL_BEGIN_NAMESPACE
 
 struct SGAL_SGAL_DECL Dxf_ltype_entry: public Dxf_table_entry {
-  String m_marker;      // Subclass marker (AcDbViewportTableRecord)
   String m_name;        // Viewport name
   int16_t m_flags;      // 16 = If set, table entry is externally dependent on
                         //      an xref

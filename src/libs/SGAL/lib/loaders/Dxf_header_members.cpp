@@ -26,9 +26,10 @@ SGAL_BEGIN_NAMESPACE
 
 /*! This file contains the description of DXF header variables. In
  * particular, it consists of the initialization of a mapping from variable
- * names to a struct that consists of the handle to the variable and a list
- * of codes that precede the values of the variable, respectively.
- * The DXF header variables listed below are extracted from
+ * names to structs that contains information about the the variables. The
+ * domain struct consists of the handle to the member in the header struct and
+ * a list of codes that precede the values of the variable, respectively.
+ * The DXF header members listed below are extracted from
  *   http://help.autodesk.com/view/ACD/2017/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
  * The page is entitled "Autodesk Autocad 2017", which may lead the belief that
  * the list is complete. However, some variables had to be added.
@@ -39,8 +40,8 @@ SGAL_BEGIN_NAMESPACE
  * HIDETEXT, INTERSECTIONDISPLAY).
  */
 
-const std::map<String, Dxf_parser::Header_variable>
-Dxf_parser::s_header_variables = {
+const std::map<String, Dxf_parser::Header_member>
+Dxf_parser::s_header_members = {
   {"ACADMAINTVER",    {&Dxf_header::m_acadmaintver, {70}}},
   {"ACADVER",         {&Dxf_header::m_acadver, {1}}},
   {"ANGBASE",         {&Dxf_header::m_angbase, {50}}},

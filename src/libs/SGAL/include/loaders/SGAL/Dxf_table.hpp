@@ -51,21 +51,24 @@ struct SGAL_SGAL_DECL Dxf_table : Dxf_base_table {
                          Double_entry,
                          Uint_entry,
                          Double_2d_entry,
-                         Double_3d_entry>       Entry_variable_type;
+                         Double_3d_entry>       Entry_member_type;
 
   std::vector<Entry> m_entries;
 
-  struct Table_entry_variable {
-    Table_entry_variable(Entry_variable_type handle, int size, int index) :
+  //!
+  struct Table_entry_member {
+    Table_entry_member(Entry_member_type handle, int size, int index) :
       m_handle(handle),
       m_size(size),
       m_index(index)
     {}
-    Entry_variable_type m_handle;
+
+    Entry_member_type m_handle;
     int m_size;
     int m_index;
   };
-  static const std::map<int, Table_entry_variable> s_entry_variables;
+
+  static const std::map<int, Table_entry_member> s_entry_members;
 };
 
 SGAL_END_NAMESPACE

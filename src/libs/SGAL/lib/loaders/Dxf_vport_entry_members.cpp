@@ -27,7 +27,7 @@ SGAL_BEGIN_NAMESPACE
 
 /*! This file contains the description of DXF VPORT table variables. In
  * particular, it consists of the initialization of a mapping from variable
- * names to the variable handle in the VPORT table struct.
+ * names to handles of members in the VPORT table struct.
  * The DXF VPORT table variables listed below are extracted from
  *   http://help.autodesk.com/view/ACD/2017/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
  *
@@ -40,9 +40,8 @@ SGAL_BEGIN_NAMESPACE
 typedef Dxf_table<Dxf_vport_entry>            Dxf_vport_table;
 
 template <>
-const std::map<int, Dxf_vport_table::Table_entry_variable>
-Dxf_vport_table::s_entry_variables = {
-  {100, {&Dxf_vport_entry::m_marker, 1, 0}},
+const std::map<int, Dxf_vport_table::Table_entry_member>
+Dxf_vport_table::s_entry_members = {
   {2, {&Dxf_vport_entry::m_name, 1, 0}},
   {70, {&Dxf_vport_entry::m_flags, 1, 0}},
   {10, {&Dxf_vport_entry::m_lower_left, 2, 0}},

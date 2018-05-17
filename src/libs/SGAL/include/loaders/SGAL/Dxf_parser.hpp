@@ -81,9 +81,9 @@ protected:
   void parse_view_table();
   void parse_vport_table();
 
-  /*! Read a HEADER variable.
+  /*! Read a HEADER member.
    */
-  void read_header_variable();
+  void read_header_member();
 
   /*! Read a comment line.
    */
@@ -145,7 +145,7 @@ private:
                          Int16_header,
                          Int32_header,
                          Uint_header,
-                         Bool_header>   Header_variable_type;
+                         Bool_header>   Header_member_type;
   //@}
 
   /// \name Class types
@@ -158,7 +158,7 @@ private:
 
   //! The variant type of handle to all types of class data members.
   typedef boost::variant<String_class, Int8_class, Int32_class>
-                                        Class_variable_type;
+                                        Class_member_type;
 
   //@}
 
@@ -171,13 +171,13 @@ private:
   typedef String Dxf_table_entry::*             String_base_entry;
   typedef Uint Dxf_table_entry::*               Uint_base_entry;
   typedef boost::variant<String_base_entry, Uint_base_entry>
-                                                Base_entry_variable_type;
+                                                Base_entry_member_type;
 
 
   typedef String Dxf_base_table::*             String_base_table;
   typedef Uint Dxf_base_table::*               Uint_base_table;
   typedef boost::variant<String_base_table, Uint_base_table>
-                                                Base_table_variable_type;
+                                                Base_table_member_type;
   //@}
 
   //! The text input stream to parse.
@@ -216,6 +216,9 @@ private:
   // Blocks.
   std::list<Dxf_block> m_block;
 
+  //! Marker
+  String m_marker;
+
   /*! Obtain the type of a code
    * \param code the given code.
    */
@@ -227,37 +230,77 @@ private:
    */
   Code_type read_code(int code);
 
-  /*! Import a value to a variable (of the same type, naturally).
-   * \param[i] handle the handle to the variable.
+  /*! Import a datum item.
    */
-  template <typename T, typename VariableType, typename Target>
-  void import_variable(VariableType handle, Target& target)
+  template <typename Table, typename MemberType, typename Target>
+  void import_table_value(Code_type ct, int size, MemberType handle,
+                          Target& target, int index)
   {
-    m_is >> target.*(boost::get<T>(handle));
-    SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout << "Dxf_parser::import_variable() value: "
-                    << target.*(boost::get<T>(handle))
-                    << std::endl;);
+    typedef typename Table::String_entry        String_entry;
+    typedef typename Table::Bool_entry          Bool_entry;
+    typedef typename Table::Int8_entry          Int8_entry;
+    typedef typename Table::Int16_entry         Int16_entry;
+    typedef typename Table::Int32_entry         Int32_entry;
+    typedef typename Table::Double_entry        Double_entry;
+    typedef typename Table::Uint_entry          Uint_entry;
+    typedef typename Table::Double_2d_entry     Double_2d_entry;
+    typedef typename Table::Double_3d_entry     Double_3d_entry;
+
+    switch (ct) {
+     case STRING: import_string_member<String_entry>(handle, target); break;
+     case BOOL: import_member<Bool_entry>(handle, target); break;
+     case INT8: import_int8_member<Int8_entry>(handle, target); break;
+     case INT16: import_member<Int16_entry>(handle, target); break;
+     case INT32: import_member<Int32_entry>(handle, target); break;
+     case UINT: import_uint_member<Uint_entry>(handle, target); break;
+
+     case DOUBLE:
+      switch (size) {
+       case 1: import_member<Double_entry>(handle, target); break;
+       case 2: import_member<Double_2d_entry>(handle, target, index); break;
+       case 3: import_member<Double_3d_entry>(handle, target, index); break;
+      }
+      break;
+
+     default: SGAL_error();
+    }
   }
 
-  /*! Import a value to a variable (of the same type, naturally).
-   * \param[i] handle the handle to the variable.
+  /*! Import a value.
+   * \param[variable] the target variable.
    */
-  template <typename T, typename VariableType, typename Target>
-  void import_variable(VariableType handle, Target& target, int index)
+  template <typename T>
+  void import_value(T& variable)
   {
-    m_is >> (target.*(boost::get<T>(handle)))[index];
+    m_is >> variable;
     SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout << "Dxf_parser::import_variable() value: "
-                    << (target.*(boost::get<T>(handle)))[index]
-                    << std::endl;);
+                    std::cout << "Dxf_parser::import_value() value: "
+                    << variable << std::endl;);
   }
 
-  /*! Import a string value to a string header variable.
-   * \param[i] handle the handle to the string variable.
+  /*! Import a value to a struct member (of the same type, naturally).
+   * \param[handle] handle the handle to the member.
+   * \param[target] target the target struct.
    */
-  template <typename T, typename VariableType, typename Target>
-  void import_string_variable(VariableType handle, Target& target)
+  template <typename T, typename MemberType, typename Target>
+  void import_member(MemberType handle, Target& target)
+  { import_value(target.*(boost::get<T>(handle))); }
+
+  /*! Import a value to an item of an array member (of the same type,
+   * naturally).
+   * \param[handle] handle the handle to the member.
+   * \param[target] target the target struct.
+   * \param[index] the index of the array item.
+   */
+  template <typename T, typename MemberType, typename Target>
+  void import_member(MemberType handle, Target& target, int index)
+  { import_value((target.*(boost::get<T>(handle)))[index]); }
+
+  /*! Import a string value to a string header member.
+   * \param[i] handle the handle to the string member.
+   */
+  template <typename T, typename MemberType, typename Target>
+  void import_string_member(MemberType handle, Target& target)
   {
     // use getline() cause the string might be empty.
     // When used immediately after whitespace-delimited input, getline consumes
@@ -267,49 +310,50 @@ private:
     std::getline(m_is, target.*(boost::get<T>(handle)));
     SGAL_TRACE_CODE(Trace::DXF,
                     std::cout
-                    << "Dxf_parser::import_string_variable() value: "
+                    << "Dxf_parser::import_string_member() value: "
                     << target.*(boost::get<T>(handle))
                     << std::endl;);
   }
 
-  /*! Import an value to ab int8_t variable.
+  /*! Import an value to ab int8_t member.
    * C/C++ defines int8_t to be 'signed char'; thus, a negative integer cannot
    * be imported directly, since the preceding '-' is interpreted as the (sole)
    * char input.
-   * \param[i] handle the handle to the variable.
+   * \param[i] handle the handle to the member.
    */
-  template <typename T, typename VariableType, typename Target>
-  void import_int8_variable(VariableType handle, Target& target)
+  template <typename T, typename MemberType, typename Target>
+  void import_int8_member(MemberType handle, Target& target)
   {
     // First read as an integer; then, cast to int8_t.
     int tmp;
     m_is >> tmp;
     target.*(boost::get<T>(handle)) = (int8_t) tmp;
     SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout << "Dxf_parser::import_variable() value: "
-                    << target.*(boost::get<T>(handle))
+                    std::cout << "Dxf_parser::import_member() value: "
+                    << (int)(target.*(boost::get<T>(handle)))
                     << std::endl;);
   }
 
-  /*! Import a hex value to an unsigned int variable.
-   * \param[i] handle the handle to the variable.
+  /*! Import a hex value to an unsigned int member.
+   * \param[i] handle the handle to the member.
    */
-  template <typename T, typename VariableType, typename Target>
-  void import_uint_variable(VariableType handle, Target& target)
+  template <typename T, typename MemberType, typename Target>
+  void import_uint_member(MemberType handle, Target& target)
   {
     m_is >> std::hex >> target.*(boost::get<T>(handle)) >> std::dec;
     SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout << "Dxf_parser::import_variable() value: "
-                    << std::hex << target.*(boost::get<T>(handle)) << std::dec
+                    std::cout << "Dxf_parser::import_member() value: "
+                    << std::hex << "0x"
+                    << target.*(boost::get<T>(handle)) << std::dec
                     << std::endl;);
   }
 
-  //! Information of a header variable.
-  struct Header_variable {
-    Header_variable(Header_variable_type handle, std::list<int> codes) :
+  //! Information of a header member.
+  struct Header_member {
+    Header_member(Header_member_type handle, std::list<int> codes) :
       m_handle(handle), m_codes(codes)
     {}
-    Header_variable_type m_handle;
+    Header_member_type m_handle;
     std::list<int> m_codes;
   };
 
@@ -369,64 +413,82 @@ private:
           done = true;
           break;
         }
+
+        if (100 == code) {
+          import_value(m_marker);
+          continue;
+        }
+
         auto ct = code_type(code);
-        auto bit = s_base_entry_variables.find(code);
-        if (bit != s_base_entry_variables.end()) {
+        auto bit = s_base_entry_members.find(code);
+        if (bit != s_base_entry_members.end()) {
           auto handle = bit->second;
           auto& base_entry = static_cast<Dxf_table_entry&>(entry);
           switch (ct) {
            case STRING:
-            if (100 == code) {
-              String tmp;
-              m_is >> tmp; /* What is a subclass marker for? */
-              break;
-            }
-            import_string_variable<String_base_entry>(handle, base_entry);
+            import_string_member<String_base_entry>(handle, base_entry);
             break;
 
-           case UINT: import_variable<Uint_base_entry>(handle, base_entry);
+           case UINT: import_uint_member<Uint_base_entry>(handle, base_entry);
             break;
            default: break;
           }
           continue;
         }
 
-        auto it = table.s_entry_variables.find(code);
-        SGAL_assertion(it != table.s_entry_variables.end());
-        auto handle = it->second.m_handle;
-        auto size = it->second.m_size;
-        auto index = it->second.m_index;
+        auto it = table.s_entry_members.find(code);
+        if (it != table.s_entry_members.end()) {
+          auto handle = it->second.m_handle;
+          auto size = it->second.m_size;
+          auto index = it->second.m_index;
+          import_table_value<Table>(ct, size, handle, entry, index);
+          continue;
+        }
+
+        // Handle an unrecognized code:
+        String str;
+        bool bval;
+        int ival;
+        Uint uval;
+        String msg("Unrecognized code ");
+        msg += std::to_string(code);
         switch (ct) {
-         case STRING: import_string_variable<String_entry>(handle, entry); break;
-         case BOOL: import_variable<Bool_entry>(handle, entry); break;
-         case INT8: import_int8_variable<Int8_entry>(handle, entry); break;
-
-         case INT16: import_variable<Int16_entry>(handle, entry); break;
-         case INT32: import_variable<Int32_entry>(handle, entry); break;
-         case UINT: import_uint_variable<Uint_entry>(handle, entry); break;
-
-         case DOUBLE:
-          switch (size) {
-           case 1: import_variable<Double_entry>(handle, entry); break;
-           case 2: import_variable<Double_2d_entry>(handle, entry, index); break;
-           case 3: import_variable<Double_3d_entry>(handle, entry, index); break;
-          }
+         case STRING:
+          m_is >> str;
+          msg += ", value: " + str;
           break;
+
+         case BOOL:
+          m_is >> bval;
+          msg += ", value: " + std::to_string(bval);
+          break;
+
+         case INT8:
+         case INT16:
+         case INT32:
+          m_is >> ival;
+          msg += ", value: " + std::to_string(ival);
+          break;
+
+         case UINT:
+          msg += ", value: " + std::to_string(uval);
+          m_is >> uval; break;
 
          default: SGAL_error();
         }
+        SGAL_warning_msg(0, msg.c_str());
       }
     }
   }
 
   static const std::map<String, Section_parser> s_sections;
-  static const std::map<String, Header_variable> s_header_variables;
+  static const std::map<String, Header_member> s_header_members;
   static const std::vector<Code_range> s_code_ranges;
   static const std::array<String, 8> s_code_type_names;
-  static const std::map<int, Class_variable_type> s_class_variables;
+  static const std::map<int, Class_member_type> s_class_members;
   static const std::map<String, Table_parser> s_tables;
-  static const std::map<int, Base_table_variable_type> s_base_table_variables;
-  static const std::map<int, Base_entry_variable_type> s_base_entry_variables;
+  static const std::map<int, Base_table_member_type> s_base_table_members;
+  static const std::map<int, Base_entry_member_type> s_base_entry_members;
 };
 
 SGAL_END_NAMESPACE

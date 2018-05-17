@@ -383,11 +383,13 @@ set(SGAL_SRC_FILES ${SGAL_SRC_FILES} ${SGAL_GEO_SRC_FILES} ${SGAL_GEO_HEADER_FIL
 source_group(src\\geo FILES ${SGAL_GEO_SRC_FILES} ${SGAL_GEO_HEADER_FILES})
 
 # Loaders
-set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_header_variables.cpp)
+set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_header_members.cpp)
 set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_parser.cpp)
-set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_layer_entry_variables.cpp)
-set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_ltype_entry_variables.cpp)
-set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_vport_entry_variables.cpp)
+set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_layer_entry_members.cpp)
+set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_ltype_entry_members.cpp)
+set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_style_entry_members.cpp)
+set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_view_entry_members.cpp)
+set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_vport_entry_members.cpp)
 set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Element.cpp)
 set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Utilities.cpp)
 set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/SGAL/Dxf_block.hpp)
