@@ -20,7 +20,7 @@
 #define SGAL_DXF_BLOCK_RECORD_ENTRY_HPP
 
 #include <string>
-#include <string>
+#include <list>
 #include <map>
 
 #include "SGAL/basic.hpp"
@@ -65,7 +65,7 @@ struct SGAL_SGAL_DECL Dxf_block_record_entry: public Dxf_table_entry {
   // int16_t m_design_center_version_number; // Autodesk Design Center version number
   String m_application_name; // Xdata application name "ACAD" (optional)
   String m_string_data; // Xdata string data "DesignCenter Data" (optional)
-  std::map<String, std::vector<String> > m_xdata; // Begin xdata "{", "}" (opt.)
+  std::map<String, std::list<String> > m_xdata; // Begin xdata "{", "}" (opt.)
 };
 
 SGAL_END_NAMESPACE
