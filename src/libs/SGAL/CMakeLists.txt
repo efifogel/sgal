@@ -393,11 +393,11 @@ set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_view_entry_
 set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_vport_entry_members.cpp)
 set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Element.cpp)
 set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Utilities.cpp)
-set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/SGAL/Dxf_block.hpp)
-set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/SGAL/Dxf_class.hpp)
-set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/SGAL/Dxf_header.hpp)
+set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/dxf/SGAL/Dxf_block.hpp)
+set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/dxf/SGAL/Dxf_class.hpp)
+set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/dxf/SGAL/Dxf_header.hpp)
 set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/SGAL/Dxf_parser.hpp)
-set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/SGAL/Dxf_table.hpp)
+set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/dxf/SGAL/Dxf_table.hpp)
 set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/SGAL/Element.hpp)
 set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/SGAL/Utilities.hpp)
 set(SGAL_SRC_FILES ${SGAL_SRC_FILES} ${SGAL_LOADERS_SRC_FILES} ${SGAL_LOADERS_HEADER_FILES})
@@ -607,6 +607,8 @@ include_directories(include/IO)
 include_directories(include/lights)
 include_directories(include/loaders)
 include_directories(include/loaders/dxf)
+include_directories(include/loaders/dxf/entities)
+include_directories(include/loaders/dxf/objects)
 include_directories(include/primitives)
 include_directories(include/sensors)
 include_directories(include/utilities)
@@ -678,6 +680,8 @@ set(SGAL_SGAL_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}/include/lights
   ${CMAKE_CURRENT_SOURCE_DIR}/include/loaders
   ${CMAKE_CURRENT_SOURCE_DIR}/include/loaders/dxf
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/loaders/dxf/entities
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/loaders/dxf/objects
   ${CMAKE_CURRENT_SOURCE_DIR}/include/primitives
   ${CMAKE_CURRENT_SOURCE_DIR}/include/sensors
   ${CMAKE_CURRENT_SOURCE_DIR}/include/utilities

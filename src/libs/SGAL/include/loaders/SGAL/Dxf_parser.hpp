@@ -85,6 +85,43 @@
 #include "SGAL/Dxf_wipeout_entity.hpp"
 #include "SGAL/Dxf_xline_entity.hpp"
 
+// Objects
+#include "SGAL/Dxf_acad_proxy_object.hpp"
+#include "SGAL/Dxf_acdbdictionarywdflt_object.hpp"
+#include "SGAL/Dxf_acdbnavisworksmodeldef_object.hpp"
+#include "SGAL/Dxf_acdbplaceholder_object.hpp"
+#include "SGAL/Dxf_datatable_object.hpp"
+#include "SGAL/Dxf_dictionary_object.hpp"
+#include "SGAL/Dxf_dictionaryvar_object.hpp"
+#include "SGAL/Dxf_dimassoc_object.hpp"
+#include "SGAL/Dxf_field_object.hpp"
+#include "SGAL/Dxf_geodata_object.hpp"
+#include "SGAL/Dxf_group_object.hpp"
+#include "SGAL/Dxf_idbuffer_object.hpp"
+#include "SGAL/Dxf_imagedef_object.hpp"
+#include "SGAL/Dxf_imagedef_reactor_object.hpp"
+#include "SGAL/Dxf_layer_filter_object.hpp"
+#include "SGAL/Dxf_layer_index_object.hpp"
+#include "SGAL/Dxf_layout_object.hpp"
+#include "SGAL/Dxf_lightlist_object.hpp"
+#include "SGAL/Dxf_material_object.hpp"
+#include "SGAL/Dxf_mlinestyle_object.hpp"
+#include "SGAL/Dxf_object_ptr_object.hpp"
+#include "SGAL/Dxf_plotsettings_object.hpp"
+#include "SGAL/Dxf_rastervariables_object.hpp"
+#include "SGAL/Dxf_render_object.hpp"
+#include "SGAL/Dxf_section_object.hpp"
+#include "SGAL/Dxf_sortentstable_object.hpp"
+#include "SGAL/Dxf_spatial_filter_object.hpp"
+#include "SGAL/Dxf_spatial_index_object.hpp"
+#include "SGAL/Dxf_sunstudy_object.hpp"
+#include "SGAL/Dxf_tablestyle_object.hpp"
+#include "SGAL/Dxf_underlaydefinition_object.hpp"
+#include "SGAL/Dxf_vba_project_object.hpp"
+#include "SGAL/Dxf_visualstyle_object.hpp"
+#include "SGAL/Dxf_wipeoutvariables_object.hpp"
+#include "SGAL/Dxf_xrecord_object.hpp"
+
 SGAL_BEGIN_NAMESPACE
 
 class Scene_graph;
@@ -263,10 +300,9 @@ private:
   //@}
 
   /// \name Entity types
-
   //@{
 
-  //! The type of a entity parser member function.
+  //! The type of an entity parser member function.
   typedef void(Dxf_parser::*Entity_parser)(void);
 
   typedef String Dxf_entity::*                  String_entity;
@@ -306,9 +342,6 @@ private:
     while (!done) {
       int code;
       import_code(code);
-      SGAL_TRACE_CODE(Trace::DXF,
-                      std::cout << "Dxf_parser::parse_entity() code: "
-                      << code << std::endl;);
       if (0 == code) {
         done = true;
         break;
@@ -461,6 +494,98 @@ private:
 
   //@}
 
+  /// \name Object types
+  //@{
+
+  //! The type of an object parser member function.
+  typedef void(Dxf_parser::*Object_parser)(void);
+
+  /*! Parse object. */
+  template <typename Object>
+  void parse_object(Object& object)
+  {
+    bool done(false);
+    while (!done) {
+      int code;
+      import_code(code);
+      if (0 == code) {
+        done = true;
+        break;
+      }
+
+      if (100 == code) {
+        import_string_value(m_marker);
+        continue;
+      }
+
+      if ((102 == code) || (1002 == code)) {
+        read_xdata_block(code, object);
+        continue;
+      }
+
+#if 0
+      auto ct = code_type(code);
+      auto bit = s_object_members.find(code);
+      if (bit != s_object_members.end()) {
+        auto handle = bit->second;
+        auto& base_object = static_cast<Dxf_object&>(object);
+        parse_base_object(ct, handle, base_object);
+        continue;
+      }
+
+      auto it = s_x_object.find(code);
+      if (it != s_x_object.end()) {
+        auto handle = it->second.m_handle;
+        auto size = it->second.m_size;
+        auto index = it->second.m_index;
+        import_y_value<Entity>(ct, size, handle, object, index);
+        continue;
+      }
+#endif
+
+      read_unrecognized(code);
+    }
+  }
+
+  void parse_acad_proxy_object();
+  void parse_acdbdictionarywdflt_object();
+  void parse_acdbplaceholder_object();
+  void parse_acdbnavisworksmodeldef_object();
+  void parse_datatable_object();
+  void parse_dictionary_object();
+  void parse_dictionaryvar_object();
+  void parse_dimassoc_object();
+  void parse_field_object();
+  void parse_geodata_object();
+  void parse_group_object();
+  void parse_idbuffer_object();
+  void parse_imagedef_object();
+  void parse_imagedef_reactor_object();
+  void parse_layer_index_object();
+  void parse_layer_filter_object();
+  void parse_layout_object();
+  void parse_lightlist_object();
+  void parse_material_object();
+  void parse_mlinestyle_object();
+  void parse_object_ptr_object();
+  void parse_plotsettings_object();
+  void parse_rastervariables_object();
+  void parse_render_object();
+  void parse_section_object();
+  void parse_spatial_index_object();
+  void parse_spatial_filter_object();
+  void parse_sortentstable_object();
+  void parse_sunstudy_object();
+  void parse_tablestyle_object();
+  void parse_underlaydefinition_object();
+  void parse_visualstyle_object();
+  void parse_vba_project_object();
+  void parse_wipeoutvariables_object();
+  void parse_xrecord_object();
+
+  void parse_dummy_object();
+  //@}
+
   //! The text input stream to parse.
   std::istream& m_is;
 
@@ -535,6 +660,46 @@ private:
   Dxf_viewport_entity m_viewport_entity;
   Dxf_wipeout_entity m_wipeout_entity;
   Dxf_xline_entity m_xline_entity;
+
+  // Objects
+  Dxf_acad_proxy_object m_acad_proxy_object;
+  Dxf_acdbdictionarywdflt_object m_acdbdictionarywdflt_object;
+  Dxf_acdbplaceholder_object m_acdbplaceholder_object;
+  Dxf_acdbnavisworksmodeldef_object m_acdbnavisworksmodeldef_object;
+  Dxf_datatable_object m_datatable_object;
+  Dxf_dictionary_object m_dictionary_object;
+  Dxf_dictionaryvar_object m_dictionaryvar_object;
+  Dxf_dimassoc_object m_dimassoc_object;
+  Dxf_field_object m_field_object;
+  Dxf_geodata_object m_geodata_object;
+  Dxf_group_object m_group_object;
+  Dxf_idbuffer_object m_idbuffer_object;
+  Dxf_imagedef_object m_imagedef_object;
+  Dxf_imagedef_reactor_object m_imagedef_reactor_object;
+  Dxf_layer_index_object m_layer_index_object;
+  Dxf_layer_filter_object m_layer_filter_object;
+  Dxf_layout_object m_layout_object;
+  Dxf_lightlist_object m_lightlist_object;
+  Dxf_material_object m_material_object;
+  Dxf_mlinestyle_object m_mlinestyle_object;
+  Dxf_object_ptr_object m_object_ptr_object;
+  Dxf_plotsettings_object m_plotsettings_object;
+  Dxf_rastervariables_object m_rastervariables_object;
+  Dxf_render_object m_render_object;
+  Dxf_section_object m_section_object;
+  Dxf_spatial_index_object m_spatial_index_object;
+  Dxf_spatial_filter_object m_spatial_filter_object;
+  Dxf_sortentstable_object m_sortentstable_object;
+  Dxf_sunstudy_object m_sunstudy_object;
+  Dxf_tablestyle_object m_tablestyle_object;
+  Dxf_underlaydefinition_object m_underlaydefinition_object;
+  Dxf_visualstyle_object m_visualstyle_object;
+  Dxf_vba_project_object m_vba_project_object;
+  Dxf_wipeoutvariables_object m_wipeoutvariables_object;
+  Dxf_xrecord_object m_xrecord_object;
+
+  struct Dxf_dummy_object : public Dxf_object {};
+  Dxf_dummy_object m_dummy_object;
 
   //! Marker
   String m_marker;
@@ -732,7 +897,13 @@ private:
   {
     char c;
     m_is >> c;
-    SGAL_assertion('{' == c);
+    if ('{' != c) {
+      //! \todo when is this valid and what should we do here?
+      String str;
+      import_string_value(str);
+      return;
+    }
+
     String name;
     if (102 == code) import_string_value(name);
     else m_is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -856,6 +1027,7 @@ private:
   static const std::map<int, Block_member> s_block_members;
   static const std::map<String, Entity_parser> s_entities;
   static const std::map<int, Entity_type> s_entity_members;
+  static const std::map<String, Object_parser> s_objects;
 };
 
 SGAL_END_NAMESPACE

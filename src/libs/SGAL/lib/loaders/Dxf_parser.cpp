@@ -221,7 +221,7 @@ const std::map<int, Dxf_parser::Entity_type> Dxf_parser::s_entity_members = {
   {5, &Dxf_entity::m_handle},
   {330, &Dxf_entity::m_owner_handle},
   {360, &Dxf_entity::m_owner_dict},
-  // {330, &Dxf_entity::m_owner_block}, reuse of same code
+  // {330, &Dxf_entity::m_owner_block}, reuse of same code ???
   {67, &Dxf_entity::m_is_in_paper_space},
   {410, &Dxf_entity::m_layout_tab_name},
   {8, &Dxf_entity::m_layer},
@@ -239,6 +239,48 @@ const std::map<int, Dxf_parser::Entity_type> Dxf_parser::s_entity_members = {
   {284, &Dxf_entity::m_shadow_mode}
 };
 
+//! Object parsers
+const std::map<String, Dxf_parser::Object_parser>
+Dxf_parser::s_objects = {
+  {"ACAD_PROXY_OBJECT", &Dxf_parser::parse_acad_proxy_object},
+  {"ACDBDICTIONARYWDFLT", &Dxf_parser::parse_acdbdictionarywdflt_object},
+  {"ACDBNAVISWORKSMODELDEF", &Dxf_parser::parse_acdbnavisworksmodeldef_object},
+  {"ACDBPLACEHOLDER", &Dxf_parser::parse_acdbplaceholder_object},
+  {"DATATABLE", &Dxf_parser::parse_datatable_object},
+  {"DICTIONARY", &Dxf_parser::parse_dictionary_object},
+  {"DICTIONARYVAR", &Dxf_parser::parse_dictionaryvar_object},
+  {"DIMASSOC", &Dxf_parser::parse_dimassoc_object},
+  {"FIELD", &Dxf_parser::parse_field_object},
+  {"GEODATA", &Dxf_parser::parse_geodata_object},
+  {"GROUP", &Dxf_parser::parse_group_object},
+  {"IDBUFFER", &Dxf_parser::parse_idbuffer_object},
+  {"IMAGEDEF", &Dxf_parser::parse_imagedef_object},
+  {"IMAGEDEF_REACTOR", &Dxf_parser::parse_imagedef_reactor_object},
+  {"LAYER_FILTER", &Dxf_parser::parse_layer_filter_object},
+  {"LAYER_INDEX", &Dxf_parser::parse_layer_index_object},
+  {"LAYOUT", &Dxf_parser::parse_layout_object},
+  {"LIGHTLIST", &Dxf_parser::parse_lightlist_object},
+  {"MATERIAL", &Dxf_parser::parse_material_object},
+  {"MLINESTYLE", &Dxf_parser::parse_mlinestyle_object},
+  {"OBJECT_PTR", &Dxf_parser::parse_object_ptr_object},
+  {"PLOTSETTINGS", &Dxf_parser::parse_plotsettings_object},
+  {"RASTERVARIABLES", &Dxf_parser::parse_rastervariables_object},
+  {"RENDER", &Dxf_parser::parse_render_object},
+  {"SECTION", &Dxf_parser::parse_section_object},
+  {"SORTENTSTABLE", &Dxf_parser::parse_sortentstable_object},
+  {"SPATIAL_FILTER", &Dxf_parser::parse_spatial_filter_object},
+  {"SPATIAL_INDEX", &Dxf_parser::parse_spatial_index_object},
+  {"SUNSTUDY", &Dxf_parser::parse_sunstudy_object},
+  {"TABLESTYLE", &Dxf_parser::parse_tablestyle_object},
+  {"UNDERLAYDEFINITION", &Dxf_parser::parse_underlaydefinition_object},
+  {"VBA_PROJECT", &Dxf_parser::parse_vba_project_object},
+  {"VISUALSTYLE", &Dxf_parser::parse_visualstyle_object},
+  {"WIPEOUTVARIABLES", &Dxf_parser::parse_wipeoutvariables_object},
+  {"XRECORD", &Dxf_parser::parse_xrecord_object},
+
+  {"SCALE", &Dxf_parser::parse_dummy_object}
+};
+
 //! \brief constructs.
 Dxf_parser::Dxf_parser(std::istream& is, Scene_graph* sg) :
   m_is(is),
@@ -248,17 +290,13 @@ Dxf_parser::Dxf_parser(std::istream& is, Scene_graph* sg) :
 //! \brief parses.
 Loader_code Dxf_parser::operator()()
 {
-  bool done(false);
-  while (!done) {
+  while (true) {
     int n;
     import_code(n);
     SGAL_assertion(n == 0);
     std::string str;
     import_string_value(str);
-    if (str == "EOF") {
-      done = true;
-      break;
-    }
+    if (str == "EOF") break;
     SGAL_assertion(str == "SECTION");
     import_code(n);
     SGAL_assertion(n == 2);
@@ -676,7 +714,11 @@ void Dxf_parser::parse_objects()
     m_is >> str;
     if ("ENDSEC" == str) return;
 
-    import_string_value(str);
+    auto it = s_objects.find(str);
+    if (it == s_objects.end()) {
+      SGAL_error_msg("unrecognize object");
+    }
+    (this->*(it->second))();
 
   } while (true);
 }
@@ -769,29 +811,45 @@ void Dxf_parser::read_unrecognized(int code)
   bool bval;
   int ival;
   Uint uval;
+  float fval;
+  double dval;
   String msg("Unrecognized code ");
   msg += std::to_string(code);
+
+  std::stringstream stream;
+
   switch (code_type(code)) {
    case STRING:
     import_string_value(str);
-    msg += ", value: " + str;
+    msg += ", string value: " + str;
     break;
 
    case BOOL:
     m_is >> bval;
-    msg += ", value: " + std::to_string(bval);
+    msg += ", Bool value: " + std::to_string(bval);
     break;
 
    case INT8:
    case INT16:
    case INT32:
     m_is >> ival;
-    msg += ", value: " + std::to_string(ival);
+    msg += ", int value: " + std::to_string(ival);
     break;
 
    case UINT:
-    msg += ", value: " + std::to_string(uval);
-    m_is >> uval;
+    m_is >> std::hex >> uval >> std::dec;
+    stream << std::hex << uval;
+    msg += ", unsigned int value: 0x" + stream.str();
+    break;
+
+   case FLOAT:
+    m_is >> fval;
+    msg += ", float value: " + std::to_string(fval);
+    break;
+
+   case DOUBLE:
+    m_is >> dval;
+    msg += ", double value: " + std::to_string(dval);
     break;
 
    default: SGAL_error();
@@ -1019,6 +1077,223 @@ void Dxf_parser::parse_wipeout_entity()
 void Dxf_parser::parse_xline_entity()
 {
   parse_entity(m_xline_entity);
+}
+
+// Object parsers
+//! \brief parses object.
+void Dxf_parser::parse_acad_proxy_object()
+{
+  parse_entity(m_rtext_entity);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_acdbdictionarywdflt_object()
+{
+  parse_object(m_acdbdictionarywdflt_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_acdbplaceholder_object()
+{
+  parse_object(m_acdbplaceholder_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_acdbnavisworksmodeldef_object()
+{
+  parse_object(m_acdbnavisworksmodeldef_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_datatable_object()
+{
+  parse_object(m_datatable_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_dictionary_object()
+{
+  parse_object(m_dictionary_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_dictionaryvar_object()
+{
+  parse_object(m_dictionaryvar_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_dimassoc_object()
+{
+  parse_object(m_dimassoc_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_field_object()
+{
+  parse_object(m_field_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_geodata_object()
+{
+  parse_object(m_geodata_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_group_object()
+{
+  parse_object(m_group_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_idbuffer_object()
+{
+  parse_object(m_idbuffer_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_imagedef_object()
+{
+  parse_object(m_imagedef_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_imagedef_reactor_object()
+{
+  parse_object(m_imagedef_reactor_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_layer_index_object()
+{
+  parse_object(m_layer_index_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_layer_filter_object()
+{
+  parse_object(m_layer_filter_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_layout_object()
+{
+  parse_object(m_layout_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_lightlist_object()
+{
+  parse_object(m_lightlist_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_material_object()
+{
+  parse_object(m_material_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_mlinestyle_object()
+{
+  parse_object(m_mlinestyle_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_object_ptr_object()
+{
+  parse_object(m_object_ptr_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_plotsettings_object()
+{
+  parse_object(m_plotsettings_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_rastervariables_object()
+{
+  parse_object(m_rastervariables_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_render_object()
+{
+  parse_object(m_render_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_section_object()
+{
+  parse_object(m_section_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_spatial_index_object()
+{
+  parse_object(m_spatial_index_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_spatial_filter_object()
+{
+  parse_object(m_spatial_filter_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_sortentstable_object()
+{
+  parse_object(m_sortentstable_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_sunstudy_object()
+{
+  parse_object(m_sunstudy_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_tablestyle_object()
+{
+  parse_object(m_tablestyle_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_underlaydefinition_object()
+{
+  parse_object(m_underlaydefinition_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_visualstyle_object()
+{
+  parse_object(m_visualstyle_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_vba_project_object()
+{
+  parse_object(m_vba_project_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_wipeoutvariables_object()
+{
+  parse_object(m_wipeoutvariables_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_xrecord_object()
+{
+  parse_object(m_xrecord_object);
+}
+
+//! \brief parses object.
+void Dxf_parser::parse_dummy_object()
+{
+  parse_object(m_dummy_object);
 }
 
 SGAL_END_NAMESPACE

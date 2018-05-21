@@ -16,15 +16,15 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF__ENTITY_HPP
-#define SGAL_DXF__ENTITY_HPP
+#ifndef SGAL_DXF_ACDBDICTIONARYWDFLT_OBJECT_HPP
+#define SGAL_DXF_ACDBDICTIONARYWDFLT_OBJECT_HPP
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Dxf_entity.hpp"
+#include "SGAL/Dxf_object.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-struct Dxf__entity : public Dxf_entity {
+struct Dxf_acdbdictionarywdflt_object : public Dxf_object {
 };
 
 SGAL_END_NAMESPACE
