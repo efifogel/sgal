@@ -606,6 +606,7 @@ include_directories(include/interpolators)
 include_directories(include/IO)
 include_directories(include/lights)
 include_directories(include/loaders)
+include_directories(include/loaders/dxf)
 include_directories(include/primitives)
 include_directories(include/sensors)
 include_directories(include/utilities)
@@ -676,6 +677,7 @@ set(SGAL_SGAL_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}/include/IO
   ${CMAKE_CURRENT_SOURCE_DIR}/include/lights
   ${CMAKE_CURRENT_SOURCE_DIR}/include/loaders
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/loaders/dxf
   ${CMAKE_CURRENT_SOURCE_DIR}/include/primitives
   ${CMAKE_CURRENT_SOURCE_DIR}/include/sensors
   ${CMAKE_CURRENT_SOURCE_DIR}/include/utilities

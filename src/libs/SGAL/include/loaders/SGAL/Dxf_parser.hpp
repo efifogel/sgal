@@ -24,6 +24,7 @@
 #include <list>
 #include <vector>
 #include <array>
+#include <type_traits>
 
 #include <boost/variant.hpp>
 #include <boost/lexical_cast.hpp>
@@ -44,6 +45,45 @@
 #include "SGAL/Dxf_block.hpp"
 #include "SGAL/Loader_code.hpp"
 #include "SGAL/Trace.hpp"
+
+// Entities
+#include "SGAL/Dxf_3dface_entity.hpp"
+#include "SGAL/Dxf_3dsolid_entity.hpp"
+#include "SGAL/Dxf_acad_proxy_entity.hpp"
+#include "SGAL/Dxf_arc_entity.hpp"
+#include "SGAL/Dxf_arcalignedtext_entity.hpp"
+#include "SGAL/Dxf_attdef_entity.hpp"
+#include "SGAL/Dxf_attrib_entity.hpp"
+#include "SGAL/Dxf_body_entity.hpp"
+#include "SGAL/Dxf_circle_entity.hpp"
+#include "SGAL/Dxf_dimension_entity.hpp"
+#include "SGAL/Dxf_ellipse_entity.hpp"
+#include "SGAL/Dxf_hatch_entity.hpp"
+#include "SGAL/Dxf_image_entity.hpp"
+#include "SGAL/Dxf_insert_entity.hpp"
+#include "SGAL/Dxf_leader_entity.hpp"
+#include "SGAL/Dxf_line_entity.hpp"
+#include "SGAL/Dxf_lwpolyline_entity.hpp"
+#include "SGAL/Dxf_mline_entity.hpp"
+#include "SGAL/Dxf_mtext_entity.hpp"
+#include "SGAL/Dxf_oleframe_entity.hpp"
+#include "SGAL/Dxf_ole2frame_entity.hpp"
+#include "SGAL/Dxf_point_entity.hpp"
+#include "SGAL/Dxf_polyline_entity.hpp"
+#include "SGAL/Dxf_ray_entity.hpp"
+#include "SGAL/Dxf_region_entity.hpp"
+#include "SGAL/Dxf_rtext_entity.hpp"
+#include "SGAL/Dxf_seqend_entity.hpp"
+#include "SGAL/Dxf_shape_entity.hpp"
+#include "SGAL/Dxf_solid_entity.hpp"
+#include "SGAL/Dxf_spline_entity.hpp"
+#include "SGAL/Dxf_text_entity.hpp"
+#include "SGAL/Dxf_tolerance_entity.hpp"
+#include "SGAL/Dxf_trace_entity.hpp"
+#include "SGAL/Dxf_vertex_entity.hpp"
+#include "SGAL/Dxf_viewport_entity.hpp"
+#include "SGAL/Dxf_wipeout_entity.hpp"
+#include "SGAL/Dxf_xline_entity.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -222,16 +262,142 @@ private:
                                                 Base_table_member_type;
   //@}
 
+  /// \name Entity types
+
+  //@{
+
+  //! The type of a entity parser member function.
+  typedef void(Dxf_parser::*Entity_parser)(void);
+
+  /*! Parse entity. */
+  template <typename Entity>
+  void parse_entity(Entity& entity)
+  {
+  }
+
+  /*! Parse 3dface entity. */
+  void parse_3dface_entity();
+
+  /*! Parse 3dsolid entity. */
+  void parse_3dsolid_entity();
+
+  /*! Parse acad_proxy entity. */
+  void parse_acad_proxy_entity();
+
+  /*! Parse arc entity. */
+  void parse_arc_entity();
+
+  /*! Parse arcalignedtext entity. */
+  void parse_arcalignedtext_entity();
+
+  /*! Parse attdef entity. */
+  void parse_attdef_entity();
+
+  /*! Parse attrib entity. */
+  void parse_attrib_entity();
+
+  /*! Parse body entity. */
+  void parse_body_entity();
+
+  /*! Parse circle entity. */
+  void parse_circle_entity();
+
+  /*! Parse dimension entity. */
+  void parse_dimension_entity();
+
+  /*! Parse ellipse entity. */
+  void parse_ellipse_entity();
+
+  /*! Parse hatch entity. */
+  void parse_hatch_entity();
+
+  /*! Parse image entity. */
+  void parse_image_entity();
+
+  /*! Parse insert entity. */
+  void parse_insert_entity();
+
+  /*! Parse leader entity. */
+  void parse_leader_entity();
+
+  /*! Parse line entity. */
+  void parse_line_entity();
+
+  /*! Parse lwpolyline entity. */
+  void parse_lwpolyline_entity();
+
+  /*! Parse mline entity. */
+  void parse_mline_entity();
+
+  /*! Parse mtext entity. */
+  void parse_mtext_entity();
+
+  /*! Parse oleframe entity. */
+  void parse_oleframe_entity();
+
+  /*! Parse ole2frame entity. */
+  void parse_ole2frame_entity();
+
+  /*! Parse point entity. */
+  void parse_point_entity();
+
+  /*! Parse polyline entity. */
+  void parse_polyline_entity();
+
+  /*! Parse ray entity. */
+  void parse_ray_entity();
+
+  /*! Parse region entity. */
+  void parse_region_entity();
+
+  /*! Parse rtext entity. */
+  void parse_rtext_entity();
+
+  /*! Parse seqend entity. */
+  void parse_seqend_entity();
+
+  /*! Parse shape entity. */
+  void parse_shape_entity();
+
+  /*! Parse solid entity. */
+  void parse_solid_entity();
+
+  /*! Parse spline entity. */
+  void parse_spline_entity();
+
+  /*! Parse text entity. */
+  void parse_text_entity();
+
+  /*! Parse tolerance entity. */
+  void parse_tolerance_entity();
+
+  /*! Parse trace entity. */
+  void parse_trace_entity();
+
+  /*! Parse vertex entity. */
+  void parse_vertex_entity();
+
+  /*! Parse viewport entity. */
+  void parse_viewport_entity();
+
+  /*! Parse wipeout entity. */
+  void parse_wipeout_entity();
+
+  /*! Parse xline entity. */
+  void parse_xline_entity();
+
+  //@}
+
   //! The text input stream to parse.
   std::istream& m_is;
 
   //! The scene graph.
   Scene_graph* m_scene_graph;
 
-  //! Header data.
+  //! Header data
   Dxf_header m_header;
 
-  // Classes.
+  // Classes
   std::list<Dxf_class> m_classes;
 
   // Tables
@@ -255,8 +421,47 @@ private:
   View_table m_view_table;
   Vport_table m_vport_table;
 
-  // Blocks.
+  // Blocks
   std::list<Dxf_block> m_blocks;
+
+  // Entities
+  Dxf_3dface_entity m_3dface_entity;
+  Dxf_3dsolid_entity m_3dsolid_entity;
+  Dxf_acad_proxy_entity m_acad_proxy_entity;
+  Dxf_arc_entity m_arc_entity;
+  Dxf_arcalignedtext_entity m_arcalignedtext_entity;
+  Dxf_attdef_entity m_attdef_entity;
+  Dxf_attrib_entity m_attrib_entity;
+  Dxf_body_entity m_body_entity;
+  Dxf_circle_entity m_circle_entity;
+  Dxf_dimension_entity m_dimension_entity;
+  Dxf_ellipse_entity m_ellipse_entity;
+  Dxf_hatch_entity m_hatch_entity;
+  Dxf_image_entity m_image_entity;
+  Dxf_insert_entity m_insert_entity;
+  Dxf_leader_entity m_leader_entity;
+  Dxf_line_entity m_line_entity;
+  Dxf_lwpolyline_entity m_lwpolyline_entity;
+  Dxf_mline_entity m_mline_entity;
+  Dxf_mtext_entity m_mtext_entity;
+  Dxf_oleframe_entity m_oleframe_entity;
+  Dxf_ole2frame_entity m_ole2frame_entity;
+  Dxf_point_entity m_point_entity;
+  Dxf_polyline_entity m_polyline_entity;
+  Dxf_ray_entity m_ray_entity;
+  Dxf_region_entity m_region_entity;
+  Dxf_rtext_entity m_rtext_entity;
+  Dxf_seqend_entity m_seqend_entity;
+  Dxf_shape_entity m_shape_entity;
+  Dxf_solid_entity m_solid_entity;
+  Dxf_spline_entity m_spline_entity;
+  Dxf_text_entity m_text_entity;
+  Dxf_tolerance_entity m_tolerance_entity;
+  Dxf_trace_entity m_trace_entity;
+  Dxf_vertex_entity m_vertex_entity;
+  Dxf_viewport_entity m_viewport_entity;
+  Dxf_wipeout_entity m_wipeout_entity;
+  Dxf_xline_entity m_xline_entity;
 
   //! Marker
   String m_marker;
@@ -417,6 +622,55 @@ private:
    */
   int parse_base_table(Dxf_base_table& table);
 
+  /*! Has_x_data is a service generic template struct that evaluates as follows:
+   * If A has a data member called x_data, then Has_x_data<A>::value == true,
+   * else (A doesn't have a data member called x_data)
+   * Has_x_data<B>::value == false.
+   */
+  template <typename T, typename = int>
+  struct Has_x_data : std::false_type {};
+
+  template <typename T>
+  struct Has_x_data<T, decltype((void) T::x_data, 0)> : std::true_type {};
+
+  /*! Store extended data.
+   * There are two implementations; one is dispatched when x_data is a data
+   * member of "Record" and the other is dispatched otherwise. We employ the
+   * dispatching by type mechanism; see
+   * http://barendgehrels.blogspot.co.il/2010/10/tag-dispatching-by-type-tag-dispatching.html
+   *
+   */
+  template <bool what, typename Record>
+  void store_x_data(Record& record, const String& name,
+                           const String& value, char (*)[what] = 0)
+  { record.x_data[name].push_back(value); }
+
+  /*! Store extended data.
+   */
+  template <bool what, typename Record>
+  void store_x_data(Record& record, const String& name,
+                           const String& value, char (*)[!what] = 0)
+  {}
+
+  /*! Read extended data
+   */
+  template <typename Record>
+  void read_x_data_block(int code, Record& record)
+  {
+    char c;
+    m_is >> c;
+    SGAL_assertion('{' == c);
+    String name;
+    if (102 == code) import_string_value(name);
+    else m_is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    String str;
+    import_string_value(str);
+    while ("}" != str) {
+      import_string_value(str);
+      store_x_data<Has_x_data<Record>::value>(record, name, str);
+    }
+  }
+
   /*! Parse a table.
    */
   template <typename Table>
@@ -474,30 +728,8 @@ private:
           continue;
         }
 
-        if (102 == code) {
-          //! \todo store the values in the entry.
-          char c;
-          m_is >> c;
-          SGAL_assertion('{' == c);
-          String name;
-          import_string_value(name);
-          import_string_value(str);
-          while ("}" != str) {
-            import_string_value(str);
-            // entity.x_data[name].push_back(str);
-          }
-          continue;
-        }
-
-        if (1002 == code) {
-          //! \todo store the values in the entry.
-          String str;
-          import_string_value(str);
-          SGAL_assertion('{' == str[0]);
-          import_string_value(str);
-          while ("}" != str) {
-            import_string_value(str);
-          }
+        if ((102 == code) || (1002 == code)) {
+          read_x_data_block(code, entry);
           continue;
         }
 
@@ -549,6 +781,7 @@ private:
   static const std::map<int, Base_table_member_type> s_base_table_members;
   static const std::map<int, Base_entry_member_type> s_base_entry_members;
   static const std::map<int, Block_member> s_block_members;
+  static const std::map<String, Entity_parser> s_entities;
 };
 
 SGAL_END_NAMESPACE

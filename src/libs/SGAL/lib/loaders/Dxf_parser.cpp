@@ -116,6 +116,48 @@ Dxf_parser::s_tables = {
 };
 
 //!
+const std::map<String, Dxf_parser::Entity_parser>
+Dxf_parser::s_entities = {
+  { "3DFACE", &Dxf_parser::parse_3dface_entity },
+  { "3DSOLID", &Dxf_parser::parse_3dsolid_entity },
+  { "ACAD_PROXY_ENTITY", &Dxf_parser::parse_acad_proxy_entity },
+  { "ARC", &Dxf_parser::parse_arc_entity },
+  { "ARCALIGNEDTEXT", &Dxf_parser::parse_arcalignedtext_entity },
+  { "ATTDEF", &Dxf_parser::parse_attdef_entity },
+  { "ATTRIB", &Dxf_parser::parse_attrib_entity },
+  { "BODY", &Dxf_parser::parse_body_entity },
+  { "CIRCLE", &Dxf_parser::parse_circle_entity },
+  { "DIMENSION", &Dxf_parser::parse_dimension_entity },
+  { "ELLIPSE", &Dxf_parser::parse_ellipse_entity },
+  { "HATCH", &Dxf_parser::parse_hatch_entity },
+  { "IMAGE", &Dxf_parser::parse_image_entity },
+  { "INSERT", &Dxf_parser::parse_insert_entity },
+  { "LEADER", &Dxf_parser::parse_leader_entity },
+  { "LINE", &Dxf_parser::parse_line_entity },
+  { "LWPOLYLINE", &Dxf_parser::parse_lwpolyline_entity },
+  { "MLINE", &Dxf_parser::parse_mline_entity },
+  { "MTEXT", &Dxf_parser::parse_mtext_entity },
+  { "OLEFRAME", &Dxf_parser::parse_oleframe_entity },
+  { "OLE2FRAME", &Dxf_parser::parse_ole2frame_entity },
+  { "POINT", &Dxf_parser::parse_point_entity },
+  { "POLYLINE", &Dxf_parser::parse_polyline_entity },
+  { "RAY", &Dxf_parser::parse_ray_entity },
+  { "REGION", &Dxf_parser::parse_region_entity },
+  { "RTEXT", &Dxf_parser::parse_rtext_entity },
+  { "SEQEND", &Dxf_parser::parse_seqend_entity },
+  { "SHAPE", &Dxf_parser::parse_shape_entity },
+  { "SOLID", &Dxf_parser::parse_solid_entity },
+  { "SPLINE", &Dxf_parser::parse_spline_entity },
+  { "TEXT", &Dxf_parser::parse_text_entity },
+  { "TOLERANCE", &Dxf_parser::parse_tolerance_entity },
+  { "TRACE", &Dxf_parser::parse_trace_entity },
+  { "VERTEX", &Dxf_parser::parse_vertex_entity },
+  { "VIEWPORT", &Dxf_parser::parse_viewport_entity },
+  { "WIPEOUT", &Dxf_parser::parse_wipeout_entity },
+  { "XLINE", &Dxf_parser::parse_xline_entity }
+};
+
+//!
 typedef Dxf_table<Dxf_appid_entry>              Dxf_appid_table;
 template <>
 const std::map<int, Dxf_appid_table::Table_entry_member>
@@ -572,16 +614,48 @@ void Dxf_parser::parse_blocks()
   } while (true);
 }
 
+//! \brief parse ENTITIES section
 void Dxf_parser::parse_entities()
 {
   SGAL_TRACE_CODE(Trace::DXF,
                   std::cout << "Dxf_parser::parse_entities()" << std::endl;);
+
+  int n;
+  import_code(n);
+  SGAL_assertion(0 == n);
+
+  do {
+    String str;
+    m_is >> str;
+    if ("ENDSEC" == str) return;
+
+    auto it = s_entities.find(str);
+    if (it == s_entities.end()) {
+      SGAL_error_msg("unrecognize entity");
+    }
+    (this->*(it->second))();
+
+  } while (true);
 }
 
+//! \brief parse OBJECTS section
 void Dxf_parser::parse_objects()
 {
   SGAL_TRACE_CODE(Trace::DXF,
                   std::cout << "Dxf_parser::parse_objects()" << std::endl;);
+
+  int n;
+  import_code(n);
+  SGAL_assertion(0 == n);
+
+  do {
+    String str;
+    m_is >> str;
+    if ("ENDSEC" == str) return;
+
+    import_string_value(str);
+
+  } while (true);
 }
 
 void Dxf_parser::parse_thumbnailimage()
@@ -700,6 +774,228 @@ void Dxf_parser::read_unrecognized(int code)
    default: SGAL_error();
   }
   SGAL_warning_msg(0, msg.c_str());
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_3dface_entity()
+{
+  parse_entity(m_3dface_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_3dsolid_entity()
+{
+  parse_entity(m_3dsolid_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_acad_proxy_entity()
+{
+  parse_entity(m_acad_proxy_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_arc_entity()
+{
+  parse_entity(m_arc_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_arcalignedtext_entity()
+{
+  parse_entity(m_arcalignedtext_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_attdef_entity()
+{
+  parse_entity(m_attdef_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_attrib_entity()
+{
+  parse_entity(m_attrib_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_body_entity()
+{
+  parse_entity(m_body_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_circle_entity()
+{
+  parse_entity(m_circle_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_dimension_entity()
+{
+  parse_entity(m_dimension_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_ellipse_entity()
+{
+  parse_entity(m_ellipse_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_hatch_entity()
+{
+  parse_entity(m_hatch_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_image_entity()
+{
+  parse_entity(m_image_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_insert_entity()
+{
+  parse_entity(m_insert_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_leader_entity()
+{
+  parse_entity(m_leader_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_line_entity()
+{
+  parse_entity(m_line_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_lwpolyline_entity()
+{
+  parse_entity(m_lwpolyline_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_mline_entity()
+{
+  parse_entity(m_mline_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_mtext_entity()
+{
+  parse_entity(m_mtext_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_oleframe_entity()
+{
+  parse_entity(m_oleframe_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_ole2frame_entity()
+{
+  parse_entity(m_ole2frame_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_point_entity()
+{
+  parse_entity(m_point_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_polyline_entity()
+{
+  parse_entity(m_polyline_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_ray_entity()
+{
+  parse_entity(m_ray_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_region_entity()
+{
+  parse_entity(m_region_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_rtext_entity()
+{
+  parse_entity(m_rtext_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_seqend_entity()
+{
+  parse_entity(m_seqend_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_shape_entity()
+{
+  parse_entity(m_shape_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_solid_entity()
+{
+  parse_entity(m_solid_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_spline_entity()
+{
+  parse_entity(m_spline_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_text_entity()
+{
+  parse_entity(m_text_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_tolerance_entity()
+{
+  parse_entity(m_tolerance_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_trace_entity()
+{
+  parse_entity(m_trace_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_vertex_entity()
+{
+  parse_entity(m_vertex_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_viewport_entity()
+{
+  parse_entity(m_viewport_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_wipeout_entity()
+{
+  parse_entity(m_wipeout_entity);
+}
+
+//! \brief parses entity.
+void Dxf_parser::parse_xline_entity()
+{
+  parse_entity(m_xline_entity);
 }
 
 SGAL_END_NAMESPACE
