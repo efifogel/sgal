@@ -163,6 +163,9 @@ Loader_code Loader::load(const char* filename, Scene_graph* sg)
   // If the return code of the loader is positive, the file might be in a
   // different format. In this case, continue trying matching.
   if (boost::iequals(file_extension, ".dxf")) {
+    sg->set_input_format_id(File_format_3d::ID_DXF);
+    auto* root = sg->initialize();
+
     Dxf_parser parser(is, sg);
     auto rc = parser();
     is.close();
@@ -543,8 +546,7 @@ void Loader::add_colored_shape(Scene_graph* scene_graph, Group* group,
 
 //! \brief reads a scene graph from a stream in the STL binary format.
 Loader_code Loader::read_stl(std::istream& is, size_t size,
-                                     Scene_graph* scene_graph,
-                                     const Vector3f& color)
+                             Scene_graph* scene_graph, const Vector3f& color)
 {
   scene_graph->set_input_format_id(File_format_3d::ID_STL);
   auto* root = scene_graph->initialize();

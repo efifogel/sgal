@@ -37,6 +37,7 @@ public:
     ID_STL,
     ID_OBJ,
     ID_JSON,
+    ID_DXF,
     NUM_IDS
   };
 
