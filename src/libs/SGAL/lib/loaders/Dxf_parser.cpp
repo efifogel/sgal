@@ -116,48 +116,6 @@ Dxf_parser::s_tables = {
 };
 
 //!
-const std::map<String, Dxf_parser::Entity_parser>
-Dxf_parser::s_entities = {
-  { "3DFACE", &Dxf_parser::parse_3dface_entity },
-  { "3DSOLID", &Dxf_parser::parse_3dsolid_entity },
-  { "ACAD_PROXY_ENTITY", &Dxf_parser::parse_acad_proxy_entity },
-  { "ARC", &Dxf_parser::parse_arc_entity },
-  { "ARCALIGNEDTEXT", &Dxf_parser::parse_arcalignedtext_entity },
-  { "ATTDEF", &Dxf_parser::parse_attdef_entity },
-  { "ATTRIB", &Dxf_parser::parse_attrib_entity },
-  { "BODY", &Dxf_parser::parse_body_entity },
-  { "CIRCLE", &Dxf_parser::parse_circle_entity },
-  { "DIMENSION", &Dxf_parser::parse_dimension_entity },
-  { "ELLIPSE", &Dxf_parser::parse_ellipse_entity },
-  { "HATCH", &Dxf_parser::parse_hatch_entity },
-  { "IMAGE", &Dxf_parser::parse_image_entity },
-  { "INSERT", &Dxf_parser::parse_insert_entity },
-  { "LEADER", &Dxf_parser::parse_leader_entity },
-  { "LINE", &Dxf_parser::parse_line_entity },
-  { "LWPOLYLINE", &Dxf_parser::parse_lwpolyline_entity },
-  { "MLINE", &Dxf_parser::parse_mline_entity },
-  { "MTEXT", &Dxf_parser::parse_mtext_entity },
-  { "OLEFRAME", &Dxf_parser::parse_oleframe_entity },
-  { "OLE2FRAME", &Dxf_parser::parse_ole2frame_entity },
-  { "POINT", &Dxf_parser::parse_point_entity },
-  { "POLYLINE", &Dxf_parser::parse_polyline_entity },
-  { "RAY", &Dxf_parser::parse_ray_entity },
-  { "REGION", &Dxf_parser::parse_region_entity },
-  { "RTEXT", &Dxf_parser::parse_rtext_entity },
-  { "SEQEND", &Dxf_parser::parse_seqend_entity },
-  { "SHAPE", &Dxf_parser::parse_shape_entity },
-  { "SOLID", &Dxf_parser::parse_solid_entity },
-  { "SPLINE", &Dxf_parser::parse_spline_entity },
-  { "TEXT", &Dxf_parser::parse_text_entity },
-  { "TOLERANCE", &Dxf_parser::parse_tolerance_entity },
-  { "TRACE", &Dxf_parser::parse_trace_entity },
-  { "VERTEX", &Dxf_parser::parse_vertex_entity },
-  { "VIEWPORT", &Dxf_parser::parse_viewport_entity },
-  { "WIPEOUT", &Dxf_parser::parse_wipeout_entity },
-  { "XLINE", &Dxf_parser::parse_xline_entity }
-};
-
-//!
 typedef Dxf_table<Dxf_appid_entry>              Dxf_appid_table;
 template <>
 const std::map<int, Dxf_appid_table::Table_entry_member>
@@ -214,6 +172,71 @@ const std::map<int, Dxf_parser::Block_member> Dxf_parser::s_block_members = {
   {3, {&Dxf_block::m_name, 1, 0}},
   {1, {&Dxf_block::m_xref_path_name, 1, 0}},
   {4, {&Dxf_block::m_description, 1, 0}}
+};
+
+//!
+const std::map<String, Dxf_parser::Entity_parser>
+Dxf_parser::s_entities = {
+  { "3DFACE", &Dxf_parser::parse_3dface_entity },
+  { "3DSOLID", &Dxf_parser::parse_3dsolid_entity },
+  { "ACAD_PROXY_ENTITY", &Dxf_parser::parse_acad_proxy_entity },
+  { "ARC", &Dxf_parser::parse_arc_entity },
+  { "ARCALIGNEDTEXT", &Dxf_parser::parse_arcalignedtext_entity },
+  { "ATTDEF", &Dxf_parser::parse_attdef_entity },
+  { "ATTRIB", &Dxf_parser::parse_attrib_entity },
+  { "BODY", &Dxf_parser::parse_body_entity },
+  { "CIRCLE", &Dxf_parser::parse_circle_entity },
+  { "DIMENSION", &Dxf_parser::parse_dimension_entity },
+  { "ELLIPSE", &Dxf_parser::parse_ellipse_entity },
+  { "HATCH", &Dxf_parser::parse_hatch_entity },
+  { "IMAGE", &Dxf_parser::parse_image_entity },
+  { "INSERT", &Dxf_parser::parse_insert_entity },
+  { "LEADER", &Dxf_parser::parse_leader_entity },
+  { "LINE", &Dxf_parser::parse_line_entity },
+  { "LWPOLYLINE", &Dxf_parser::parse_lwpolyline_entity },
+  { "MLINE", &Dxf_parser::parse_mline_entity },
+  { "MTEXT", &Dxf_parser::parse_mtext_entity },
+  { "OLEFRAME", &Dxf_parser::parse_oleframe_entity },
+  { "OLE2FRAME", &Dxf_parser::parse_ole2frame_entity },
+  { "POINT", &Dxf_parser::parse_point_entity },
+  { "POLYLINE", &Dxf_parser::parse_polyline_entity },
+  { "RAY", &Dxf_parser::parse_ray_entity },
+  { "REGION", &Dxf_parser::parse_region_entity },
+  { "RTEXT", &Dxf_parser::parse_rtext_entity },
+  { "SEQEND", &Dxf_parser::parse_seqend_entity },
+  { "SHAPE", &Dxf_parser::parse_shape_entity },
+  { "SOLID", &Dxf_parser::parse_solid_entity },
+  { "SPLINE", &Dxf_parser::parse_spline_entity },
+  { "TEXT", &Dxf_parser::parse_text_entity },
+  { "TOLERANCE", &Dxf_parser::parse_tolerance_entity },
+  { "TRACE", &Dxf_parser::parse_trace_entity },
+  { "VERTEX", &Dxf_parser::parse_vertex_entity },
+  { "VIEWPORT", &Dxf_parser::parse_viewport_entity },
+  { "WIPEOUT", &Dxf_parser::parse_wipeout_entity },
+  { "XLINE", &Dxf_parser::parse_xline_entity }
+};
+
+//!
+const std::map<int, Dxf_parser::Entity_type> Dxf_parser::s_entity_members = {
+  {5, &Dxf_entity::m_handle},
+  {330, &Dxf_entity::m_owner_handle},
+  {360, &Dxf_entity::m_owner_dict},
+  // {330, &Dxf_entity::m_owner_block}, reuse of same code
+  {67, &Dxf_entity::m_is_in_paper_space},
+  {410, &Dxf_entity::m_layout_tab_name},
+  {8, &Dxf_entity::m_layer},
+  {6, &Dxf_entity::m_line_type_name},
+  {62, &Dxf_entity::m_color},
+  {370, &Dxf_entity::m_lineweight_enum_value},
+  {48, &Dxf_entity::m_line_type_scale},
+  {60, &Dxf_entity::m_is_visible},
+  {92, &Dxf_entity::m_image_byte_count},
+   // {310, &Dxf_entity::m_preview_image_data},
+  {420, &Dxf_entity::m_color_24_bit},
+  {430, &Dxf_entity::m_color_name},
+  {440, &Dxf_entity::m_transparency},
+  {390, &Dxf_entity::m_plot_style},
+  {284, &Dxf_entity::m_shadow_mode}
 };
 
 //! \brief constructs.

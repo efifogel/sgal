@@ -269,10 +269,83 @@ private:
   //! The type of a entity parser member function.
   typedef void(Dxf_parser::*Entity_parser)(void);
 
+  typedef String Dxf_entity::*                  String_entity;
+  typedef Uint Dxf_entity::*                    Uint_entity;
+  typedef int8_t Dxf_entity::*                  Int8_entity;
+  typedef int16_t Dxf_entity::*                 Int16_entity;
+  typedef int32_t Dxf_entity::*                 Int32_entity;
+  typedef double Dxf_entity::*                  Double_entity;
+  typedef boost::variant<String_entity,
+                         Uint_entity,
+                         Int8_entity,
+                         Int16_entity,
+                         Int32_entity,
+                         Double_entity>         Entity_type;
+
+
+  /*! Parse base entity. */
+  template <typename Handle, typename Entity>
+  void parse_base_entity(Code_type ct, Handle handle, Entity& entity)
+  {
+    switch (ct) {
+     case STRING: import_string_member<String_entity>(handle, entity); break;
+     case UINT: import_uint_member<Uint_entity>(handle, entity);  break;
+     case INT8: import_int8_member<Int8_entity>(handle, entity);  break;
+     case INT16: import_member<Int16_entity>(handle, entity);  break;
+     case INT32: import_member<Int32_entity>(handle, entity);  break;
+     case DOUBLE: import_member<Double_entity>(handle, entity);  break;
+     default: break;
+    }
+  }
+
   /*! Parse entity. */
   template <typename Entity>
   void parse_entity(Entity& entity)
   {
+    bool done(false);
+    while (!done) {
+      int code;
+      import_code(code);
+      SGAL_TRACE_CODE(Trace::DXF,
+                      std::cout << "Dxf_parser::parse_entity() code: "
+                      << code << std::endl;);
+      if (0 == code) {
+        done = true;
+        break;
+      }
+
+      if (100 == code) {
+        import_string_value(m_marker);
+        continue;
+      }
+
+      if ((102 == code) || (1002 == code)) {
+        read_xdata_block(code, entity);
+        continue;
+      }
+
+      auto ct = code_type(code);
+      auto bit = s_entity_members.find(code);
+      if (bit != s_entity_members.end()) {
+        auto handle = bit->second;
+        auto& base_entity = static_cast<Dxf_entity&>(entity);
+        parse_base_entity(ct, handle, base_entity);
+        continue;
+      }
+
+#if 0
+      auto it = s_x_entity.find(code);
+      if (it != s_x_entity.end()) {
+        auto handle = it->second.m_handle;
+        auto size = it->second.m_size;
+        auto index = it->second.m_index;
+        import_y_value<Entity>(ct, size, handle, entity, index);
+        continue;
+      }
+#endif
+
+      read_unrecognized(code);
+    }
   }
 
   /*! Parse 3dface entity. */
@@ -622,16 +695,16 @@ private:
    */
   int parse_base_table(Dxf_base_table& table);
 
-  /*! Has_x_data is a service generic template struct that evaluates as follows:
-   * If A has a data member called x_data, then Has_x_data<A>::value == true,
+  /*! Has_xdata is a service generic template struct that evaluates as follows:
+   * If A has a data member called x_data, then Has_xdata<A>::value == true,
    * else (A doesn't have a data member called x_data)
-   * Has_x_data<B>::value == false.
+   * Has_xdata<B>::value == false.
    */
   template <typename T, typename = int>
-  struct Has_x_data : std::false_type {};
+  struct Has_xdata : std::false_type {};
 
   template <typename T>
-  struct Has_x_data<T, decltype((void) T::x_data, 0)> : std::true_type {};
+  struct Has_xdata<T, decltype((void) T::m_xdata, 0)> : std::true_type {};
 
   /*! Store extended data.
    * There are two implementations; one is dispatched when x_data is a data
@@ -641,21 +714,21 @@ private:
    *
    */
   template <bool what, typename Record>
-  void store_x_data(Record& record, const String& name,
+  void store_xdata(Record& record, const String& name,
                            const String& value, char (*)[what] = 0)
-  { record.x_data[name].push_back(value); }
+  { record.m_xdata[name].push_back(value); }
 
   /*! Store extended data.
    */
   template <bool what, typename Record>
-  void store_x_data(Record& record, const String& name,
+  void store_xdata(Record& record, const String& name,
                            const String& value, char (*)[!what] = 0)
   {}
 
   /*! Read extended data
    */
   template <typename Record>
-  void read_x_data_block(int code, Record& record)
+  void read_xdata_block(int code, Record& record)
   {
     char c;
     m_is >> c;
@@ -667,7 +740,7 @@ private:
     import_string_value(str);
     while ("}" != str) {
       import_string_value(str);
-      store_x_data<Has_x_data<Record>::value>(record, name, str);
+      store_xdata<Has_xdata<Record>::value>(record, name, str);
     }
   }
 
@@ -729,7 +802,7 @@ private:
         }
 
         if ((102 == code) || (1002 == code)) {
-          read_x_data_block(code, entry);
+          read_xdata_block(code, entry);
           continue;
         }
 
@@ -782,6 +855,7 @@ private:
   static const std::map<int, Base_entry_member_type> s_base_entry_members;
   static const std::map<int, Block_member> s_block_members;
   static const std::map<String, Entity_parser> s_entities;
+  static const std::map<int, Entity_type> s_entity_members;
 };
 
 SGAL_END_NAMESPACE
