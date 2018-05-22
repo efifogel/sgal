@@ -517,21 +517,100 @@ private:
     }
   }
 
-  /*! Handle special.
-   */
-  template <bool what, typename Record>
-  void handle_int16_value(int code, int16_t value, Record& record,
-                          char (*)[what] = 0)
-  { record.handle_value(code, value); }
+  /// Handle special codes.
+  //@{
 
-  /*! Store extended data.
-   */
+  //!
   template <bool what, typename Record>
-  void handle_int16_value(int code, int16_t value, Record& record,
-                          char (*)[!what] = 0)
-  {}
-  /////////////////////////////////////////////////////////////////
+  bool handle_value(int code, const String& value, Record& record,
+                    char (*)[what] = 0)
+  { return record.handle_value(code, value); }
 
+  //!
+  template <bool what, typename Record>
+  bool handle_value(int code, bool value, Record& record, char (*)[what] = 0)
+  { return record.handle_value(code, value); }
+
+  //!
+  template <bool what, typename Record>
+  bool handle_value(int code, int8_t value, Record& record, char (*)[what] = 0)
+  { return record.handle_value(code, value); }
+
+  //!
+  template <bool what, typename Record>
+  bool handle_value(int code, int16_t value, Record& record, char (*)[what] = 0)
+  { return record.handle_value(code, value); }
+
+  //!
+  template <bool what, typename Record>
+  bool handle_value(int code, int32_t value, Record& record, char (*)[what] = 0)
+  { return record.handle_value(code, value); }
+
+  //!
+  template <bool what, typename Record>
+  bool handle_value(int code, Uint value, Record& record, char (*)[what] = 0)
+  { return record.handle_value(code, value); }
+
+  //!
+  template <bool what, typename Record>
+  bool handle_value(int code, float value, Record& record, char (*)[what] = 0)
+  { return record.handle_value(code, value); }
+
+  //!
+  template <bool what, typename Record>
+  bool handle_value(int code, double value, Record& record, char (*)[what] = 0)
+  { return record.handle_value(code, value); }
+
+  //@}
+
+  /// Handle special codes place holders.
+  //@{
+
+  //!
+  template <bool what, typename Record>
+  bool handle_value(int code, const String& value, Record& record,
+                    char (*)[!what] = 0)
+  { return false; }
+
+  //!
+  template <bool what, typename Record>
+  bool handle_value(int code, bool value, Record& record, char (*)[!what] = 0)
+  { return false; }
+
+  //!
+  template <bool what, typename Record>
+  bool handle_value(int code, int8_t value, Record& record, char (*)[!what] = 0)
+  { return false; }
+
+  //!
+  template <bool what, typename Record>
+  bool handle_value(int code, int16_t value, Record& record, char (*)[!what] = 0)
+  { return false; }
+
+  //!
+  template <bool what, typename Record>
+  bool handle_value(int code, int32_t value, Record& record, char (*)[!what] = 0)
+  { return false; }
+
+  //!
+  template <bool what, typename Record>
+  bool handle_value(int code, Uint value, Record& record, char (*)[!what] = 0)
+  { return false; }
+
+  //!
+  template <bool what, typename Record>
+  bool handle_value(int code, float value, Record& record, char (*)[!what] = 0)
+  { return false; }
+
+  //!
+  template <bool what, typename Record>
+  bool handle_value(int code, double value, Record& record, char (*)[!what] = 0)
+  { return false; }
+
+  //@}
+
+  // Define a helper class that detects the presence of the member function
+  // handle_value()
   BOOST_TTI_HAS_MEMBER_FUNCTION(handle_value);
 
   /*! Read a value of a record that requires special handling
@@ -540,20 +619,93 @@ private:
   void read_record_special_value(int code, Record& record)
   {
     auto ct = code_type(code);
-    int16_t i16;
+
+    String str;
+    bool bool_val;
+    int8_t int8_val;
+    int16_t int16_val;
+    int32_t int32_val;
+    Uint uint_val;
+    float float_val;
+    double double_val;
+
+    std::stringstream stream;
+    String msg("Unrecognized code ");
+
+    // Below, we call the handle_value() member function only if Record has a
+    // member function called "handle_value" with the signature that matches
+    // the type of the value, e.g., for a String value, we require:
+    //    bool (Record::*)(int, const String&)
     switch (ct) {
-     case INT16:
-      m_is >> i16;
-      // Call the read_record_special_value() only if Record has a member
-      // function called "handle_value" with the signature:
-      //   bool (Record::*)(int, int16)
-      if (handle_int16_value<has_member_function_handle_value
-          <bool (Record::*)(int, int16_t)>::
-          value>(code, i16, record))
+     case STRING:
+      import_string_value(str);
+      if (handle_value<has_member_function_handle_value
+          <bool (Record::*)(int, const String&)>::value>(code, str, record))
         return;
-      // issue warning
+      msg += ", string value: " + str;
+      break;
+
+     case BOOL:
+      m_is >> bool_val;
+      if (handle_value<has_member_function_handle_value
+          <bool (Record::*)(int, bool)>::value>(code, bool_val, record))
+        return;
+      msg += ", Bool value: " + std::to_string(bool_val);
+      break;
+
+     case INT8:
+      m_is >> int32_val;
+      int8_val = (int8_t) int32_val;
+      if (handle_value<has_member_function_handle_value
+          <bool (Record::*)(int, int8_t)>::value>(code, int8_val, record))
+        return;
+      msg += ", int8_t value: " + std::to_string((int)int8_val);
+      break;
+
+     case INT16:
+      m_is >> int16_val;
+      if (handle_value<has_member_function_handle_value
+          <bool (Record::*)(int, int16_t)>::value>(code, int16_val, record))
+        return;
+      msg += ", int16_t value: " + std::to_string(int16_val);
+      break;
+
+     case INT32:
+      m_is >> int32_val;
+      if (handle_value<has_member_function_handle_value
+          <bool (Record::*)(int, int32_t)>::value>(code, int32_val, record))
+        return;
+      msg += ", int32_t value: " + std::to_string(int32_val);
+      break;
+
+     case UINT:
+      m_is >> std::hex >> uint_val >> std::dec;
+      if (handle_value<has_member_function_handle_value
+          <bool (Record::*)(int, Uint)>::value>(code, int32_val, record))
+        return;
+      stream << std::hex << uint_val;
+      msg += ", unsigned int value: 0x" + stream.str();
+      break;
+
+     case FLOAT:
+      m_is >> float_val;
+      if (handle_value<has_member_function_handle_value
+          <bool (Record::*)(int, float)>::value>(code, int32_val, record))
+        return;
+      msg += ", float value: " + std::to_string(float_val);
+      break;
+
+     case DOUBLE:
+      m_is >> double_val;
+      if (handle_value<has_member_function_handle_value
+          <bool (Record::*)(int, double)>::value>(code, int32_val, record))
+        return;
+      msg += ", double value: " + std::to_string(double_val);
+      break;
+
+     default: SGAL_error();
     }
-    // issue warning
+    SGAL_warning_msg(0, msg.c_str());
   }
 
   /*! Parse record. */
@@ -601,9 +753,6 @@ private:
       }
 
       read_record_special_value(code, record);
-      continue;
-
-      // read_unrecognized(code);
     }
   }
 
