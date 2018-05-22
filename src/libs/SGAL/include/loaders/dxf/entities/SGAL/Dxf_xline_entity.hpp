@@ -20,11 +20,12 @@
 #define SGAL_DXF_XLINE_ENTITY_HPP
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Dxf_entity.hpp"
+#include "SGAL/Dxf_base_entity.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-struct Dxf_xline_entity : public Dxf_entity {
+struct Dxf_xline_entity : public Dxf_base_entity {
+  typedef Dxf_base_entity                       Base;
 };
 
 SGAL_END_NAMESPACE

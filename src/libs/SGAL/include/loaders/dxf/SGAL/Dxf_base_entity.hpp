@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_ENTITY_HPP
-#define SGAL_DXF_ENTITY_HPP
+#ifndef SGAL_DXF_BASE_ENTITY_HPP
+#define SGAL_DXF_BASE_ENTITY_HPP
 
 #include <string>
 #include <list>
@@ -28,7 +28,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-struct Dxf_entity {
+struct Dxf_base_entity {
   String m_handle;      // Handle
   Uint m_owner_handle;  // Soft pointer ID/handle to owner dictionary (optional)
   Uint m_owner_dict;    // Hard owner ID/handle to owner dictionary (optional)

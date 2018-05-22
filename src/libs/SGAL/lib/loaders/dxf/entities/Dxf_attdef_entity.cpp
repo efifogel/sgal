@@ -16,21 +16,19 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_OBJECT_HPP
-#define SGAL_DXF_OBJECT_HPP
-
-#include <string>
-#include <list>
 #include <map>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Types.hpp"
+#include "SGAL/Dxf_record_wrapper.hpp"
+#include "SGAL/Dxf_attdef_entity.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-struct Dxf_object {
+typedef Dxf_record_wrapper<Dxf_attdef_entity>  Dxf_attdef_entity_wrapper;
+
+template <>
+const std::map<int, Dxf_attdef_entity_wrapper::Record_member>
+Dxf_attdef_entity_wrapper::s_record_members = {
 };
 
 SGAL_END_NAMESPACE
-
-#endif

@@ -43,6 +43,9 @@
 #include "SGAL/Dxf_view_entry.hpp"
 #include "SGAL/Dxf_vport_entry.hpp"
 #include "SGAL/Dxf_block.hpp"
+#include "SGAL/Dxf_base_entity.hpp"
+#include "SGAL/Dxf_base_object.hpp"
+#include "SGAL/Dxf_record_wrapper.hpp"
 #include "SGAL/Loader_code.hpp"
 #include "SGAL/Trace.hpp"
 
@@ -299,87 +302,25 @@ private:
                                                 Base_table_member_type;
   //@}
 
-  /// \name Entity types
+  /// \name Base entity types
   //@{
 
   //! The type of an entity parser member function.
   typedef void(Dxf_parser::*Entity_parser)(void);
 
-  typedef String Dxf_entity::*                  String_entity;
-  typedef Uint Dxf_entity::*                    Uint_entity;
-  typedef int8_t Dxf_entity::*                  Int8_entity;
-  typedef int16_t Dxf_entity::*                 Int16_entity;
-  typedef int32_t Dxf_entity::*                 Int32_entity;
-  typedef double Dxf_entity::*                  Double_entity;
-  typedef boost::variant<String_entity,
-                         Uint_entity,
-                         Int8_entity,
-                         Int16_entity,
-                         Int32_entity,
-                         Double_entity>         Entity_type;
+  typedef String Dxf_base_entity::*                  String_base_entity;
+  typedef Uint Dxf_base_entity::*                    Uint_base_entity;
+  typedef int8_t Dxf_base_entity::*                  Int8_base_entity;
+  typedef int16_t Dxf_base_entity::*                 Int16_base_entity;
+  typedef int32_t Dxf_base_entity::*                 Int32_base_entity;
+  typedef double Dxf_base_entity::*                  Double_base_entity;
+  typedef boost::variant<String_base_entity,
+                         Uint_base_entity,
+                         Int8_base_entity,
+                         Int16_base_entity,
+                         Int32_base_entity,
+                         Double_base_entity>         Base_entity_type;
 
-
-  /*! Parse base entity. */
-  template <typename Handle, typename Entity>
-  void parse_base_entity(Code_type ct, Handle handle, Entity& entity)
-  {
-    switch (ct) {
-     case STRING: import_string_member<String_entity>(handle, entity); break;
-     case UINT: import_uint_member<Uint_entity>(handle, entity);  break;
-     case INT8: import_int8_member<Int8_entity>(handle, entity);  break;
-     case INT16: import_member<Int16_entity>(handle, entity);  break;
-     case INT32: import_member<Int32_entity>(handle, entity);  break;
-     case DOUBLE: import_member<Double_entity>(handle, entity);  break;
-     default: break;
-    }
-  }
-
-  /*! Parse entity. */
-  template <typename Entity>
-  void parse_entity(Entity& entity)
-  {
-    bool done(false);
-    while (!done) {
-      int code;
-      import_code(code);
-      if (0 == code) {
-        done = true;
-        break;
-      }
-
-      if (100 == code) {
-        import_string_value(m_marker);
-        continue;
-      }
-
-      if ((102 == code) || (1002 == code)) {
-        read_xdata_block(code, entity);
-        continue;
-      }
-
-      auto ct = code_type(code);
-      auto bit = s_entity_members.find(code);
-      if (bit != s_entity_members.end()) {
-        auto handle = bit->second;
-        auto& base_entity = static_cast<Dxf_entity&>(entity);
-        parse_base_entity(ct, handle, base_entity);
-        continue;
-      }
-
-#if 0
-      auto it = s_x_entity.find(code);
-      if (it != s_x_entity.end()) {
-        auto handle = it->second.m_handle;
-        auto size = it->second.m_size;
-        auto index = it->second.m_index;
-        import_y_value<Entity>(ct, size, handle, entity, index);
-        continue;
-      }
-#endif
-
-      read_unrecognized(code);
-    }
-  }
 
   /*! Parse 3dface entity. */
   void parse_3dface_entity();
@@ -500,52 +441,18 @@ private:
   //! The type of an object parser member function.
   typedef void(Dxf_parser::*Object_parser)(void);
 
-  /*! Parse object. */
-  template <typename Object>
-  void parse_object(Object& object)
-  {
-    bool done(false);
-    while (!done) {
-      int code;
-      import_code(code);
-      if (0 == code) {
-        done = true;
-        break;
-      }
-
-      if (100 == code) {
-        import_string_value(m_marker);
-        continue;
-      }
-
-      if ((102 == code) || (1002 == code)) {
-        read_xdata_block(code, object);
-        continue;
-      }
-
-#if 0
-      auto ct = code_type(code);
-      auto bit = s_object_members.find(code);
-      if (bit != s_object_members.end()) {
-        auto handle = bit->second;
-        auto& base_object = static_cast<Dxf_object&>(object);
-        parse_base_object(ct, handle, base_object);
-        continue;
-      }
-
-      auto it = s_x_object.find(code);
-      if (it != s_x_object.end()) {
-        auto handle = it->second.m_handle;
-        auto size = it->second.m_size;
-        auto index = it->second.m_index;
-        import_y_value<Entity>(ct, size, handle, object, index);
-        continue;
-      }
-#endif
-
-      read_unrecognized(code);
-    }
-  }
+  typedef String Dxf_base_object::*                  String_base_object;
+  typedef Uint Dxf_base_object::*                    Uint_base_object;
+  typedef int8_t Dxf_base_object::*                  Int8_base_object;
+  typedef int16_t Dxf_base_object::*                 Int16_base_object;
+  typedef int32_t Dxf_base_object::*                 Int32_base_object;
+  typedef double Dxf_base_object::*                  Double_base_object;
+  typedef boost::variant<String_base_object,
+                         Uint_base_object,
+                         Int8_base_object,
+                         Int16_base_object,
+                         Int32_base_object,
+                         Double_base_object>         Base_object_type;
 
   void parse_acad_proxy_object();
   void parse_acdbdictionarywdflt_object();
@@ -586,6 +493,83 @@ private:
   void parse_dummy_object();
   //@}
 
+  /*! Parse base record. */
+  template <typename Handle, typename BaseRecord>
+  void read_base_record(Code_type ct, Handle handle, BaseRecord& record)
+  {
+    typedef BaseRecord                                  Base_record;
+
+    typedef String Base_record::*              String_record;
+    typedef Uint Base_record::*                Uint_record;
+    typedef int8_t Base_record::*              Int8_record;
+    typedef int16_t Base_record::*             Int16_record;
+    typedef int32_t Base_record::*             Int32_record;
+    typedef double Base_record::*              Double_record;
+
+    switch (ct) {
+     case STRING: import_string_member<String_record>(handle, record); break;
+     case UINT: import_uint_member<Uint_record>(handle, record);  break;
+     case INT8: import_int8_member<Int8_record>(handle, record);  break;
+     case INT16: import_member<Int16_record>(handle, record);  break;
+     case INT32: import_member<Int32_record>(handle, record);  break;
+     case DOUBLE: import_member<Double_record>(handle, record);  break;
+     default: break;
+    }
+  }
+
+  /*! Parse record. */
+  template <typename RecordWrapper, typename BaseMembers>
+  void parse_record(RecordWrapper& record_wrapper, BaseMembers& base_members)
+  {
+    typedef RecordWrapper                               Record_wrapper;
+    typedef typename Record_wrapper::Record             Record;
+    //typedef typename Record_wrapper::Base_record        Base_record;
+    typedef typename Record::Base                       Base_record;
+
+    auto& record = record_wrapper.m_record;
+    bool done(false);
+    while (!done) {
+      int code;
+      import_code(code);
+      if (0 == code) {
+        done = true;
+        break;
+      }
+
+      if (100 == code) {
+        import_string_value(m_marker);
+        continue;
+      }
+
+      if ((102 == code) || (1002 == code)) {
+        read_xdata_block(code, record);
+        continue;
+      }
+
+      auto ct = code_type(code);
+      auto bit = base_members.find(code);
+      if (bit != base_members.end()) {
+        auto handle = bit->second;
+        auto& base_record = static_cast<Base_record&>(record);
+        read_base_record(ct, handle, base_record);
+        continue;
+      }
+
+#if 0
+      auto it = s_x_entity.find(code);
+      if (it != s_x_entity.end()) {
+        auto handle = it->second.m_handle;
+        auto size = it->second.m_size;
+        auto index = it->second.m_index;
+        import_y_value<Entity>(ct, size, handle, entity, index);
+        continue;
+      }
+#endif
+
+      read_unrecognized(code);
+    }
+  }
+
   //! The text input stream to parse.
   std::istream& m_is;
 
@@ -623,83 +607,85 @@ private:
   std::list<Dxf_block> m_blocks;
 
   // Entities
-  Dxf_3dface_entity m_3dface_entity;
-  Dxf_3dsolid_entity m_3dsolid_entity;
-  Dxf_acad_proxy_entity m_acad_proxy_entity;
-  Dxf_arc_entity m_arc_entity;
-  Dxf_arcalignedtext_entity m_arcalignedtext_entity;
-  Dxf_attdef_entity m_attdef_entity;
-  Dxf_attrib_entity m_attrib_entity;
-  Dxf_body_entity m_body_entity;
-  Dxf_circle_entity m_circle_entity;
-  Dxf_dimension_entity m_dimension_entity;
-  Dxf_ellipse_entity m_ellipse_entity;
-  Dxf_hatch_entity m_hatch_entity;
-  Dxf_image_entity m_image_entity;
-  Dxf_insert_entity m_insert_entity;
-  Dxf_leader_entity m_leader_entity;
-  Dxf_line_entity m_line_entity;
-  Dxf_lwpolyline_entity m_lwpolyline_entity;
-  Dxf_mline_entity m_mline_entity;
-  Dxf_mtext_entity m_mtext_entity;
-  Dxf_oleframe_entity m_oleframe_entity;
-  Dxf_ole2frame_entity m_ole2frame_entity;
-  Dxf_point_entity m_point_entity;
-  Dxf_polyline_entity m_polyline_entity;
-  Dxf_ray_entity m_ray_entity;
-  Dxf_region_entity m_region_entity;
-  Dxf_rtext_entity m_rtext_entity;
-  Dxf_seqend_entity m_seqend_entity;
-  Dxf_shape_entity m_shape_entity;
-  Dxf_solid_entity m_solid_entity;
-  Dxf_spline_entity m_spline_entity;
-  Dxf_text_entity m_text_entity;
-  Dxf_tolerance_entity m_tolerance_entity;
-  Dxf_trace_entity m_trace_entity;
-  Dxf_vertex_entity m_vertex_entity;
-  Dxf_viewport_entity m_viewport_entity;
-  Dxf_wipeout_entity m_wipeout_entity;
-  Dxf_xline_entity m_xline_entity;
+  Dxf_record_wrapper<Dxf_3dface_entity> m_3dface_entity;
+  Dxf_record_wrapper<Dxf_3dsolid_entity> m_3dsolid_entity;
+  Dxf_record_wrapper<Dxf_acad_proxy_entity> m_acad_proxy_entity;
+  Dxf_record_wrapper<Dxf_arc_entity> m_arc_entity;
+  Dxf_record_wrapper<Dxf_arcalignedtext_entity> m_arcalignedtext_entity;
+  Dxf_record_wrapper<Dxf_attdef_entity> m_attdef_entity;
+  Dxf_record_wrapper<Dxf_attrib_entity> m_attrib_entity;
+  Dxf_record_wrapper<Dxf_body_entity> m_body_entity;
+  Dxf_record_wrapper<Dxf_circle_entity> m_circle_entity;
+  Dxf_record_wrapper<Dxf_dimension_entity> m_dimension_entity;
+  Dxf_record_wrapper<Dxf_ellipse_entity> m_ellipse_entity;
+  Dxf_record_wrapper<Dxf_hatch_entity> m_hatch_entity;
+  Dxf_record_wrapper<Dxf_image_entity> m_image_entity;
+  Dxf_record_wrapper<Dxf_insert_entity> m_insert_entity;
+  Dxf_record_wrapper<Dxf_leader_entity> m_leader_entity;
+  Dxf_record_wrapper<Dxf_line_entity> m_line_entity;
+  Dxf_record_wrapper<Dxf_lwpolyline_entity> m_lwpolyline_entity;
+  Dxf_record_wrapper<Dxf_mline_entity> m_mline_entity;
+  Dxf_record_wrapper<Dxf_mtext_entity> m_mtext_entity;
+  Dxf_record_wrapper<Dxf_oleframe_entity> m_oleframe_entity;
+  Dxf_record_wrapper<Dxf_ole2frame_entity> m_ole2frame_entity;
+  Dxf_record_wrapper<Dxf_point_entity> m_point_entity;
+  Dxf_record_wrapper<Dxf_polyline_entity> m_polyline_entity;
+  Dxf_record_wrapper<Dxf_ray_entity> m_ray_entity;
+  Dxf_record_wrapper<Dxf_region_entity> m_region_entity;
+  Dxf_record_wrapper<Dxf_rtext_entity> m_rtext_entity;
+  Dxf_record_wrapper<Dxf_seqend_entity> m_seqend_entity;
+  Dxf_record_wrapper<Dxf_shape_entity> m_shape_entity;
+  Dxf_record_wrapper<Dxf_solid_entity> m_solid_entity;
+  Dxf_record_wrapper<Dxf_spline_entity> m_spline_entity;
+  Dxf_record_wrapper<Dxf_text_entity> m_text_entity;
+  Dxf_record_wrapper<Dxf_tolerance_entity> m_tolerance_entity;
+  Dxf_record_wrapper<Dxf_trace_entity> m_trace_entity;
+  Dxf_record_wrapper<Dxf_vertex_entity> m_vertex_entity;
+  Dxf_record_wrapper<Dxf_viewport_entity> m_viewport_entity;
+  Dxf_record_wrapper<Dxf_wipeout_entity> m_wipeout_entity;
+  Dxf_record_wrapper<Dxf_xline_entity> m_xline_entity;
 
   // Objects
-  Dxf_acad_proxy_object m_acad_proxy_object;
-  Dxf_acdbdictionarywdflt_object m_acdbdictionarywdflt_object;
-  Dxf_acdbplaceholder_object m_acdbplaceholder_object;
-  Dxf_acdbnavisworksmodeldef_object m_acdbnavisworksmodeldef_object;
-  Dxf_datatable_object m_datatable_object;
-  Dxf_dictionary_object m_dictionary_object;
-  Dxf_dictionaryvar_object m_dictionaryvar_object;
-  Dxf_dimassoc_object m_dimassoc_object;
-  Dxf_field_object m_field_object;
-  Dxf_geodata_object m_geodata_object;
-  Dxf_group_object m_group_object;
-  Dxf_idbuffer_object m_idbuffer_object;
-  Dxf_imagedef_object m_imagedef_object;
-  Dxf_imagedef_reactor_object m_imagedef_reactor_object;
-  Dxf_layer_index_object m_layer_index_object;
-  Dxf_layer_filter_object m_layer_filter_object;
-  Dxf_layout_object m_layout_object;
-  Dxf_lightlist_object m_lightlist_object;
-  Dxf_material_object m_material_object;
-  Dxf_mlinestyle_object m_mlinestyle_object;
-  Dxf_object_ptr_object m_object_ptr_object;
-  Dxf_plotsettings_object m_plotsettings_object;
-  Dxf_rastervariables_object m_rastervariables_object;
-  Dxf_render_object m_render_object;
-  Dxf_section_object m_section_object;
-  Dxf_spatial_index_object m_spatial_index_object;
-  Dxf_spatial_filter_object m_spatial_filter_object;
-  Dxf_sortentstable_object m_sortentstable_object;
-  Dxf_sunstudy_object m_sunstudy_object;
-  Dxf_tablestyle_object m_tablestyle_object;
-  Dxf_underlaydefinition_object m_underlaydefinition_object;
-  Dxf_visualstyle_object m_visualstyle_object;
-  Dxf_vba_project_object m_vba_project_object;
-  Dxf_wipeoutvariables_object m_wipeoutvariables_object;
-  Dxf_xrecord_object m_xrecord_object;
+  Dxf_record_wrapper<Dxf_acad_proxy_object> m_acad_proxy_object;
+  Dxf_record_wrapper<Dxf_acdbdictionarywdflt_object> m_acdbdictionarywdflt_object;
+  Dxf_record_wrapper<Dxf_acdbplaceholder_object> m_acdbplaceholder_object;
+  Dxf_record_wrapper<Dxf_acdbnavisworksmodeldef_object> m_acdbnavisworksmodeldef_object;
+  Dxf_record_wrapper<Dxf_datatable_object> m_datatable_object;
+  Dxf_record_wrapper<Dxf_dictionary_object> m_dictionary_object;
+  Dxf_record_wrapper<Dxf_dictionaryvar_object> m_dictionaryvar_object;
+  Dxf_record_wrapper<Dxf_dimassoc_object> m_dimassoc_object;
+  Dxf_record_wrapper<Dxf_field_object> m_field_object;
+  Dxf_record_wrapper<Dxf_geodata_object> m_geodata_object;
+  Dxf_record_wrapper<Dxf_group_object> m_group_object;
+  Dxf_record_wrapper<Dxf_idbuffer_object> m_idbuffer_object;
+  Dxf_record_wrapper<Dxf_imagedef_object> m_imagedef_object;
+  Dxf_record_wrapper<Dxf_imagedef_reactor_object> m_imagedef_reactor_object;
+  Dxf_record_wrapper<Dxf_layer_index_object> m_layer_index_object;
+  Dxf_record_wrapper<Dxf_layer_filter_object> m_layer_filter_object;
+  Dxf_record_wrapper<Dxf_layout_object> m_layout_object;
+  Dxf_record_wrapper<Dxf_lightlist_object> m_lightlist_object;
+  Dxf_record_wrapper<Dxf_material_object> m_material_object;
+  Dxf_record_wrapper<Dxf_mlinestyle_object> m_mlinestyle_object;
+  Dxf_record_wrapper<Dxf_object_ptr_object> m_object_ptr_object;
+  Dxf_record_wrapper<Dxf_plotsettings_object> m_plotsettings_object;
+  Dxf_record_wrapper<Dxf_rastervariables_object> m_rastervariables_object;
+  Dxf_record_wrapper<Dxf_render_object> m_render_object;
+  Dxf_record_wrapper<Dxf_section_object> m_section_object;
+  Dxf_record_wrapper<Dxf_spatial_index_object> m_spatial_index_object;
+  Dxf_record_wrapper<Dxf_spatial_filter_object> m_spatial_filter_object;
+  Dxf_record_wrapper<Dxf_sortentstable_object> m_sortentstable_object;
+  Dxf_record_wrapper<Dxf_sunstudy_object> m_sunstudy_object;
+  Dxf_record_wrapper<Dxf_tablestyle_object> m_tablestyle_object;
+  Dxf_record_wrapper<Dxf_underlaydefinition_object> m_underlaydefinition_object;
+  Dxf_record_wrapper<Dxf_visualstyle_object> m_visualstyle_object;
+  Dxf_record_wrapper<Dxf_vba_project_object> m_vba_project_object;
+  Dxf_record_wrapper<Dxf_wipeoutvariables_object> m_wipeoutvariables_object;
+  Dxf_record_wrapper<Dxf_xrecord_object> m_xrecord_object;
 
-  struct Dxf_dummy_object : public Dxf_object {};
-  Dxf_dummy_object m_dummy_object;
+  struct Dxf_dummy_object : public Dxf_base_object {
+    typedef Dxf_base_object                     Base;
+  };
+  Dxf_record_wrapper<Dxf_dummy_object> m_dummy_object;
 
   //! Marker
   String m_marker;
@@ -1026,8 +1012,9 @@ private:
   static const std::map<int, Base_entry_member_type> s_base_entry_members;
   static const std::map<int, Block_member> s_block_members;
   static const std::map<String, Entity_parser> s_entities;
-  static const std::map<int, Entity_type> s_entity_members;
+  static const std::map<int, Base_entity_type> s_base_entity_members;
   static const std::map<String, Object_parser> s_objects;
+  static const std::map<int, Base_object_type> s_base_object_members;
 };
 
 SGAL_END_NAMESPACE

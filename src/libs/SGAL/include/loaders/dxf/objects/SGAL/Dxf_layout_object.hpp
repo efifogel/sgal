@@ -20,11 +20,12 @@
 #define SGAL_DXF_LAYOUT_OBJECT_HPP
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Dxf_object.hpp"
+#include "SGAL/Dxf_base_object.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-struct Dxf_layout_object : public Dxf_object {
+struct Dxf_layout_object : public Dxf_base_object {
+  typedef Dxf_base_object                       Base;
 };
 
 SGAL_END_NAMESPACE
