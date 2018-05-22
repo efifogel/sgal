@@ -18,6 +18,7 @@
 
 #include <string>
 #include <iostream>
+#include <functional>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Dxf_parser.hpp"

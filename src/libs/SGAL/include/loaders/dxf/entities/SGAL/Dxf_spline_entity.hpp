@@ -59,6 +59,10 @@ struct Dxf_spline_entity : public Dxf_base_entity {
     m_control_point_tolerance(0.0000001),
     m_fit_tolerance(0.0000000001)
   {}
+
+  /*! Handle a value that requires special handling (as opposed to only storing).
+   */
+  bool handle_value(int code, int16_t value);
 };
 
 SGAL_END_NAMESPACE

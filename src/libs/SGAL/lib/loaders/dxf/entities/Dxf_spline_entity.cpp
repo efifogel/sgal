@@ -54,4 +54,13 @@ Dxf_spline_entity_wrapper::s_record_members = {
   // {21, {&Dxf_spline_entity::m_fit_points, n, i}},
 };
 
+//! \brief handles a value that requires special handling.
+bool Dxf_spline_entity::handle_value(int code, int16_t value)
+{
+  switch (code) {
+   case 72: m_knot_values.resize(value); return true;
+  }
+  return false;
+}
+
 SGAL_END_NAMESPACE

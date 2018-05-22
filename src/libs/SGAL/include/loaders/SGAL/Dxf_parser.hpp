@@ -28,6 +28,7 @@
 
 #include <boost/variant.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/tti/has_member_function.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Dxf_header.hpp"
@@ -321,7 +322,6 @@ private:
                          Int32_base_entity,
                          Double_base_entity>         Base_entity_type;
 
-
   /*! Parse 3dface entity. */
   void parse_3dface_entity();
 
@@ -495,7 +495,7 @@ private:
 
   /*! Parse base record. */
   template <typename Handle, typename BaseRecord>
-  void read_base_record(Code_type ct, Handle handle, BaseRecord& record)
+  void read_base_record_value(Code_type ct, Handle handle, BaseRecord& record)
   {
     typedef BaseRecord                                  Base_record;
 
@@ -515,6 +515,45 @@ private:
      case DOUBLE: import_member<Double_record>(handle, record);  break;
      default: break;
     }
+  }
+
+  /*! Handle special.
+   */
+  template <bool what, typename Record>
+  void handle_int16_value(int code, int16_t value, Record& record,
+                          char (*)[what] = 0)
+  { record.handle_value(code, value); }
+
+  /*! Store extended data.
+   */
+  template <bool what, typename Record>
+  void handle_int16_value(int code, int16_t value, Record& record,
+                          char (*)[!what] = 0)
+  {}
+  /////////////////////////////////////////////////////////////////
+
+  BOOST_TTI_HAS_MEMBER_FUNCTION(handle_value);
+
+  /*! Read a value of a record that requires special handling
+   */
+  template <typename Record>
+  void read_record_special_value(int code, Record& record)
+  {
+    auto ct = code_type(code);
+    int16_t i16;
+    switch (ct) {
+     case INT16:
+      m_is >> i16;
+      // Call the read_record_special_value() only if Record has a member
+      // function called "handle_value" with the signature:
+      //   bool (Record::*)(int, int16)
+      if (handle_int16_value<has_member_function_handle_value
+          <bool (Record::*)(int, int16_t)>::
+          value>(code, i16, record))
+        return;
+      // issue warning
+    }
+    // issue warning
   }
 
   /*! Parse record. */
@@ -547,7 +586,7 @@ private:
       if (bit != base_members.end()) {
         auto handle = bit->second;
         auto& base_record = static_cast<Base_record&>(record);
-        read_base_record(ct, handle, base_record);
+        read_base_record_value(ct, handle, base_record);
         continue;
       }
 
@@ -561,7 +600,10 @@ private:
         continue;
       }
 
-      read_unrecognized(code);
+      read_record_special_value(code, record);
+      continue;
+
+      // read_unrecognized(code);
     }
   }
 
@@ -680,6 +722,7 @@ private:
 public:
   // Dummy object is used to parse unrecognized objects.
   struct Dxf_dummy_object : public Dxf_base_object {
+    static constexpr bool has_read_value = false;
     typedef Dxf_base_object                     Base;
   };
   Dxf_record_wrapper<Dxf_dummy_object> m_dummy_object;
@@ -844,7 +887,7 @@ private:
    */
   int parse_base_table(Dxf_base_table& table);
 
-  /*! Has_xdata is a service generic template struct that evaluates as follows:
+  /*! Has_xdata is a generic-template-struct service that evaluates as follows:
    * If A has a data member called x_data, then Has_xdata<A>::value == true,
    * else (A doesn't have a data member called x_data)
    * Has_xdata<B>::value == false.
