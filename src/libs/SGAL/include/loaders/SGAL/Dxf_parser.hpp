@@ -555,16 +555,15 @@ private:
         continue;
       }
 
-#if 0
-      auto it = s_x_entity.find(code);
-      if (it != s_x_entity.end()) {
+      auto& members = record_wrapper.s_record_members;
+      auto it = members.find(code);
+      if (it != members.end()) {
         auto handle = it->second.m_handle;
         auto size = it->second.m_size;
         auto index = it->second.m_index;
-        import_y_value<Entity>(ct, size, handle, entity, index);
+        read_table_value<Record_wrapper>(ct, size, handle, record, index);
         continue;
       }
-#endif
 
       read_unrecognized(code);
     }
@@ -682,11 +681,14 @@ private:
   Dxf_record_wrapper<Dxf_wipeoutvariables_object> m_wipeoutvariables_object;
   Dxf_record_wrapper<Dxf_xrecord_object> m_xrecord_object;
 
+public:
+  // Dummy object is used to parse unrecognized objects.
   struct Dxf_dummy_object : public Dxf_base_object {
     typedef Dxf_base_object                     Base;
   };
   Dxf_record_wrapper<Dxf_dummy_object> m_dummy_object;
 
+private:
   //! Marker
   String m_marker;
 
@@ -703,33 +705,33 @@ private:
 
   /*! Import a datum item.
    */
-  template <typename Table, typename MemberType, typename Target>
-  void import_table_value(Code_type ct, int size, MemberType handle,
-                          Target& target, int index)
+  template <typename Record, typename MemberType, typename Target>
+  void read_table_value(Code_type ct, int size, MemberType handle,
+                        Target& target, int index)
   {
-    typedef typename Table::String_entry        String_entry;
-    typedef typename Table::Bool_entry          Bool_entry;
-    typedef typename Table::Int8_entry          Int8_entry;
-    typedef typename Table::Int16_entry         Int16_entry;
-    typedef typename Table::Int32_entry         Int32_entry;
-    typedef typename Table::Double_entry        Double_entry;
-    typedef typename Table::Uint_entry          Uint_entry;
-    typedef typename Table::Double_2d_entry     Double_2d_entry;
-    typedef typename Table::Double_3d_entry     Double_3d_entry;
+    typedef typename Record::String_record      String_record;
+    typedef typename Record::Bool_record        Bool_record;
+    typedef typename Record::Int8_record        Int8_record;
+    typedef typename Record::Int16_record       Int16_record;
+    typedef typename Record::Int32_record       Int32_record;
+    typedef typename Record::Double_record      Double_record;
+    typedef typename Record::Uint_record        Uint_record;
+    typedef typename Record::Double_2d_record   Double_2d_record;
+    typedef typename Record::Double_3d_record   Double_3d_record;
 
     switch (ct) {
-     case STRING: import_string_member<String_entry>(handle, target); break;
-     case BOOL: import_member<Bool_entry>(handle, target); break;
-     case INT8: import_int8_member<Int8_entry>(handle, target); break;
-     case INT16: import_member<Int16_entry>(handle, target); break;
-     case INT32: import_member<Int32_entry>(handle, target); break;
-     case UINT: import_uint_member<Uint_entry>(handle, target); break;
+     case STRING: import_string_member<String_record>(handle, target); break;
+     case BOOL: import_member<Bool_record>(handle, target); break;
+     case INT8: import_int8_member<Int8_record>(handle, target); break;
+     case INT16: import_member<Int16_record>(handle, target); break;
+     case INT32: import_member<Int32_record>(handle, target); break;
+     case UINT: import_uint_member<Uint_record>(handle, target); break;
 
      case DOUBLE:
       switch (size) {
-       case 1: import_member<Double_entry>(handle, target); break;
-       case 2: import_member<Double_2d_entry>(handle, target, index); break;
-       case 3: import_member<Double_3d_entry>(handle, target, index); break;
+       case 1: import_member<Double_record>(handle, target); break;
+       case 2: import_member<Double_2d_record>(handle, target, index); break;
+       case 3: import_member<Double_3d_record>(handle, target, index); break;
       }
       break;
 
@@ -906,6 +908,7 @@ private:
   template <typename Table>
   void parse_table(Table& table, const std::string& name)
   {
+#if 0
     typedef typename Table::String_entry        String_entry;
     typedef typename Table::Bool_entry          Bool_entry;
     typedef typename Table::Int8_entry          Int8_entry;
@@ -915,6 +918,7 @@ private:
     typedef typename Table::Uint_entry          Uint_entry;
     typedef typename Table::Double_2d_entry     Double_2d_entry;
     typedef typename Table::Double_3d_entry     Double_3d_entry;
+#endif
 
     bool exceeded(false);
     auto num = parse_base_table(table);
@@ -985,7 +989,7 @@ private:
           auto handle = it->second.m_handle;
           auto size = it->second.m_size;
           auto index = it->second.m_index;
-          import_table_value<Table>(ct, size, handle, entry, index);
+          read_table_value<Table>(ct, size, handle, entry, index);
           continue;
         }
 

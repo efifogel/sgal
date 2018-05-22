@@ -282,6 +282,14 @@ Dxf_parser::s_objects = {
   {"SCALE", &Dxf_parser::parse_dummy_object}
 };
 
+// Dummy object is used to parse unrecognized objects.
+typedef Dxf_record_wrapper<Dxf_parser::Dxf_dummy_object>
+                                                Dxf_dummy_object_wrapper;
+
+template <>
+const std::map<int, Dxf_dummy_object_wrapper::Record_member>
+Dxf_dummy_object_wrapper::s_record_members = {};
+
 //!
 const std::map<int, Dxf_parser::Base_object_type>
 Dxf_parser::s_base_object_members = {

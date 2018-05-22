@@ -33,25 +33,25 @@ template <typename Entry>
 struct SGAL_SGAL_DECL Dxf_table : Dxf_base_table {
 
   // Table-entry types:
-  typedef String Entry::*               String_entry;
-  typedef bool Entry::*                 Bool_entry;
-  typedef int8_t Entry::*               Int8_entry;
-  typedef int16_t Entry::*              Int16_entry;
-  typedef int32_t Entry::*              Int32_entry;
-  typedef double Entry::*               Double_entry;
-  typedef Uint Entry::*                 Uint_entry;
-  typedef double (Entry::*Double_2d_entry)[2];
-  typedef double (Entry::*Double_3d_entry)[3];
+  typedef String Entry::*               String_record;
+  typedef bool Entry::*                 Bool_record;
+  typedef int8_t Entry::*               Int8_record;
+  typedef int16_t Entry::*              Int16_record;
+  typedef int32_t Entry::*              Int32_record;
+  typedef double Entry::*               Double_record;
+  typedef Uint Entry::*                 Uint_record;
+  typedef double (Entry::*Double_2d_record)[2];
+  typedef double (Entry::*Double_3d_record)[3];
 
-  typedef boost::variant<String_entry,
-                         Bool_entry,
-                         Int8_entry,
-                         Int16_entry,
-                         Int32_entry,
-                         Double_entry,
-                         Uint_entry,
-                         Double_2d_entry,
-                         Double_3d_entry>       Entry_member_type;
+  typedef boost::variant<String_record,
+                         Bool_record,
+                         Int8_record,
+                         Int16_record,
+                         Int32_record,
+                         Double_record,
+                         Uint_record,
+                         Double_2d_record,
+                         Double_3d_record>       Entry_member_type;
 
   std::vector<Entry> m_entries;
 

@@ -26,6 +26,34 @@ SGAL_BEGIN_NAMESPACE
 
 struct Dxf_spline_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
+
+  double m_normal;      // Normal vector (omitted if the spline is nonplanar)
+  int16_t m_flags;      // Spline flag (bit coded):
+                        // 1 = Closed spline
+                        // 2 = Periodic spline
+                        // 4 = Rational spline
+                        // 8 = Planar
+                        // 16 = Linear (planar bit is also set)
+  int16_t m_degree_of_curve; // Degree of the spline curve
+  double m_knot_tolerance; // Knot tolerance (default = 0.0000001)
+  double m_control_point_tolerance; // Control-point tolerance (def = 0.0000001)
+  double m_fit_tolerance; // Fit tolerance (default = 0.0000000001)
+  double m_start_tangent[3]; // Start tangent—may be omitted (in WCS)
+  double m_end_tangent[3]; // End tangent—may be omitted (in WCS)
+  std::vector<double> m_knot_values; // Knot value (one entry per knot)
+  double m_weight;      // Weight (if not 1); with multiple group pairs,
+                        // they are present if all are not 1
+  std::vector<double> m_control_points; // Control points (in WCS); one entry
+                        // per control point
+  std::vector<double> m_fit_points; // Fit points (in WCS); one entry
+                        // per fit point
+
+  // Construct (set default values).
+  Dxf_spline_entity() :
+    m_knot_tolerance(0.0000001),
+    m_control_point_tolerance(0.0000001),
+    m_fit_tolerance(0.0000000001)
+  {}
 };
 
 SGAL_END_NAMESPACE
