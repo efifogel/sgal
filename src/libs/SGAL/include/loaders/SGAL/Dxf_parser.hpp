@@ -527,14 +527,10 @@ private:
     typedef typename Record::Base                       Base_record;
 
     auto& record = record_wrapper.m_record;
-    bool done(false);
-    while (!done) {
+    while (true) {
       int code;
       import_code(code);
-      if (0 == code) {
-        done = true;
-        break;
-      }
+      if (0 == code) break;
 
       if (100 == code) {
         import_string_value(m_marker);
@@ -561,7 +557,7 @@ private:
         auto handle = it->second.m_handle;
         auto size = it->second.m_size;
         auto index = it->second.m_index;
-        read_table_value<Record_wrapper>(ct, size, handle, record, index);
+        read_record_value<Record_wrapper>(ct, size, handle, record, index);
         continue;
       }
 
@@ -706,8 +702,8 @@ private:
   /*! Import a datum item.
    */
   template <typename Record, typename MemberType, typename Target>
-  void read_table_value(Code_type ct, int size, MemberType handle,
-                        Target& target, int index)
+  void read_record_value(Code_type ct, int size, MemberType handle,
+                         Target& target, int index)
   {
     typedef typename Record::String_record      String_record;
     typedef typename Record::Bool_record        Bool_record;
@@ -989,7 +985,7 @@ private:
           auto handle = it->second.m_handle;
           auto size = it->second.m_size;
           auto index = it->second.m_index;
-          read_table_value<Table>(ct, size, handle, entry, index);
+          read_record_value<Table>(ct, size, handle, entry, index);
           continue;
         }
 

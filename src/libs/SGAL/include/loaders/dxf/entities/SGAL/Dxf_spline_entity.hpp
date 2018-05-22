@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2018 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -27,6 +27,9 @@ SGAL_BEGIN_NAMESPACE
 struct Dxf_spline_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
 
+  /// \name Data members
+  //@{
+
   double m_normal;      // Normal vector (omitted if the spline is nonplanar)
   int16_t m_flags;      // Spline flag (bit coded):
                         // 1 = Closed spline
@@ -47,6 +50,8 @@ struct Dxf_spline_entity : public Dxf_base_entity {
                         // per control point
   std::vector<double> m_fit_points; // Fit points (in WCS); one entry
                         // per fit point
+
+  //@}
 
   // Construct (set default values).
   Dxf_spline_entity() :
