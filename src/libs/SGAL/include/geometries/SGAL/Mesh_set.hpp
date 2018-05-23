@@ -981,7 +981,7 @@ void Mesh_set::set_coord_indices_from_range(InputIterator begin,
       is_tris = false;
     }
   }
-  SGAL_assertion(is_tris && is_quads);
+  SGAL_assertion(is_tris || is_quads);
 
   if (is_tris) {
     set_primitive_type(Geo_set::PT_TRIANGLES);
