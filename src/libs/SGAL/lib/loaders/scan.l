@@ -314,7 +314,7 @@ void Vrml_scanner::comment()
 void Vrml_scanner::comment_to_eol()
 {
   char c;
-  while (((c = yyinput()) != '\n') && (c != 0)) /* putchar(c) */ ;
+  while (((c = yyinput()) != '\n') && (c != 0) && (c != EOF)) /* putchar(c) */ ;
   if (c == '\n') unput(c);
   else { /* putchar(c) */; }
 }
