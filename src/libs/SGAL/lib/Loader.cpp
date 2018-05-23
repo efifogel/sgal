@@ -86,17 +86,21 @@ Loader_code Loader::load(const char* filename, Scene_graph* sg)
   char line[81];
   is.read(line, 80);
   if (!is) {
-    throw Read_error(m_filename);
-    return Loader_code::FAILURE;
+    if (is.eof()) is.clear();
+    else {
+      throw Read_error(m_filename);
+      return Loader_code::FAILURE;
+    }
   }
+  is.seekg(0, is.beg);          // rewind
   auto it = line;
   for (; it != &line[80]; ++it) if (*it == '\n') break;
   *it = '\0';
   std::string magic(line);
 
   // If the first line starts with "OFF", assume that the file is in the off
-  // format. If the return code of the loader is positive, the file might be i
-  // n a different format. In this case, continue trying matching.
+  // format. If the return code of the loader is positive, the file might be
+  // in a different format. In this case, continue trying matching.
   boost::smatch what;
   boost::regex re("(ST)?(C)?(N)?(4)?(n)?OFF\\s*(\\s#.*)?");
   if (boost::regex_match(magic, what, re)) {
@@ -105,7 +109,8 @@ Loader_code Loader::load(const char* filename, Scene_graph* sg)
     auto rc = load_off(is, sg, what);
     if (static_cast<int>(rc) <= 0) {
       is.close();
-      if (rc == Loader_code::SUCCESS)
+      if ((rc == Loader_code::SUCCESS) &&
+          !boost::iequals(file_extension, ".off"))
         std::cerr << "Warning: File extension " << file_extension
                   << " does not match file format (OFF)" << std::endl;
       return rc;
@@ -119,15 +124,12 @@ Loader_code Loader::load(const char* filename, Scene_graph* sg)
   else if ((0 == magic.compare(0, 5, "solid")) ||
            (0 == magic.compare(0, 5, "#VRML")))
   {
-    is.seekg(0, is.beg);        // rewind
     auto rc = parse(is, sg);
     if (static_cast<int>(rc) <= 0) {
       is.close();
       return rc;
     }
   }
-
-  is.seekg(0, is.beg);          // rewind
 
   // If the extension is .obj, assume that the file is in the obj format.
   // If the return code of the loader is positive, the file might be in a
@@ -605,8 +607,12 @@ Loader_code Loader::read_stl(std::istream& is, size_t size,
  *    what[5]---n components
  */
 Loader_code Loader::load_off(std::istream& is, Scene_graph* sg,
-                                     const boost::smatch& what)
+                             const boost::smatch& what)
 {
+  // Consume the magic string
+  std::string line;
+  std::getline(is, line);
+
   sg->set_input_format_id(File_format_3d::ID_OFF);
   bool has_colors = what.length(2);
 
