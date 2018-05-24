@@ -44,6 +44,10 @@ struct Dxf_xrecord_object : public Dxf_base_object {
 
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
+  bool handle_value(int code, int8_t value);
+
+  /*! Handle a value that requires special handling (as opposed to only storing).
+   */
   bool handle_value(int code, int16_t value);
 
   /*! Handle a value that requires special handling (as opposed to only storing).

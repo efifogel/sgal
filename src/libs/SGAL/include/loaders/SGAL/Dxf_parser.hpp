@@ -532,9 +532,9 @@ private:
   // { return record.handle_value(code, value); }
 
   //!
-  // template <bool what, typename Record>
-  // bool handle_value(int code, int8_t value, Record& record, char (*)[what] = 0)
-  // { return record.handle_value(code, value); }
+  template <bool what, typename Record>
+  bool handle_value(int code, int8_t value, Record& record, char (*)[what] = 0)
+  { return record.handle_value(code, value); }
 
   //!
   template <bool what, typename Record>
@@ -547,9 +547,9 @@ private:
   { return record.handle_value(code, value); }
 
   //!
-  // template <bool what, typename Record>
-  // bool handle_value(int code, Uint value, Record& record, char (*)[what] = 0)
-  // { return record.handle_value(code, value); }
+  template <bool what, typename Record>
+  bool handle_value(int code, Uint value, Record& record, char (*)[what] = 0)
+  { return record.handle_value(code, value); }
 
   //!
   // template <bool what, typename Record>
@@ -578,9 +578,9 @@ private:
   // { return false; }
 
   //!
-  // template <bool what, typename Record>
-  // bool handle_value(int code, int8_t value, Record& record, char (*)[!what] = 0)
-  // { return false; }
+  template <bool what, typename Record>
+  bool handle_value(int code, int8_t value, Record& record, char (*)[!what] = 0)
+  { return false; }
 
   //!
   template <bool what, typename Record>
@@ -593,9 +593,9 @@ private:
   { return false; }
 
   //!
-  // template <bool what, typename Record>
-  // bool handle_value(int code, Uint value, Record& record, char (*)[!what] = 0)
-  // { return false; }
+  template <bool what, typename Record>
+  bool handle_value(int code, Uint value, Record& record, char (*)[!what] = 0)
+  { return false; }
 
   //!
   // template <bool what, typename Record>
@@ -657,9 +657,9 @@ private:
      case INT8:
       m_is >> int32_val;
       int8_val = (int8_t) int32_val;
-      // if (handle_value<has_member_function_handle_value
-      //     <bool (Record::*)(int, int8_t)>::value>(code, int8_val, record))
-      //   return;
+      if (handle_value<has_member_function_handle_value
+          <bool (Record::*)(int, int8_t)>::value>(code, int8_val, record))
+        return;
       msg += ", int8_t value: " + std::to_string((int)int8_val);
       break;
 
@@ -681,9 +681,9 @@ private:
 
      case UINT:
       m_is >> std::hex >> uint_val >> std::dec;
-      // if (handle_value<has_member_function_handle_value
-      //     <bool (Record::*)(int, Uint)>::value>(code, int32_val, record))
-      //   return;
+      if (handle_value<has_member_function_handle_value
+          <bool (Record::*)(int, Uint)>::value>(code, uint_val, record))
+        return;
       stream << std::hex << uint_val;
       msg += ", unsigned int value: 0x" + stream.str();
       break;
@@ -1097,18 +1097,6 @@ private:
   template <typename Table>
   void parse_table(Table& table, const std::string& name)
   {
-#if 0
-    typedef typename Table::String_entry        String_entry;
-    typedef typename Table::Bool_entry          Bool_entry;
-    typedef typename Table::Int8_entry          Int8_entry;
-    typedef typename Table::Int16_entry         Int16_entry;
-    typedef typename Table::Int32_entry         Int32_entry;
-    typedef typename Table::Double_entry        Double_entry;
-    typedef typename Table::Uint_entry          Uint_entry;
-    typedef typename Table::Double_2d_entry     Double_2d_entry;
-    typedef typename Table::Double_3d_entry     Double_3d_entry;
-#endif
-
     bool exceeded(false);
     auto num = parse_base_table(table);
     auto& entries = table.m_entries;

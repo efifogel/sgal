@@ -39,7 +39,10 @@ Dxf_xrecord_object_wrapper::s_record_members = {
   // {103-104, STRING}
   // {110-169, DOUBLE}
   // {170-179, INT16}
-  // {281-369, except 330, 360
+  // {181-269,
+  // {270-279, INT16
+  // {280-289, INT8
+  // {290-369, except 330, 360
 };
 
 //! \brief handles a value that requires special handling.
@@ -54,10 +57,20 @@ bool Dxf_xrecord_object::handle_value(int code, const String& value)
 }
 
 //! \brief handles a value that requires special handling.
+bool Dxf_xrecord_object::handle_value(int code, int8_t value)
+{
+  //! What to do with the values?
+  if ((280 <= code) && (code <= 289)) return true;
+  return false;
+}
+
+//! \brief handles a value that requires special handling.
 bool Dxf_xrecord_object::handle_value(int code, int16_t value)
 {
   //! What to do with the values?
   if ((60 <= code) && (code <= 79)) return true;
+  if ((170 <= code) && (code <= 179)) return true;
+  if ((270 <= code) && (code <= 279)) return true;
   return false;
 }
 
