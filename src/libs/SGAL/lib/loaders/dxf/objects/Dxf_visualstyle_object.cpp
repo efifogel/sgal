@@ -32,7 +32,7 @@ const std::map<int, Dxf_visualstyle_object_wrapper::Record_member>
 Dxf_visualstyle_object_wrapper::s_record_members = {
   {2, {&Dxf_visualstyle_object::m_description, 1, 0}},
   {70, {&Dxf_visualstyle_object::m_type, 1, 0}},
-  {16, {&Dxf_visualstyle_object::m_face_lighting_model, 1, 0}},
+  {71, {&Dxf_visualstyle_object::m_face_lighting_model, 1, 0}},
   {72, {&Dxf_visualstyle_object::m_face_lighting_quality, 1, 0}},
   {73, {&Dxf_visualstyle_object::m_face_color_mode, 1, 0}},
   {90, {&Dxf_visualstyle_object::m_face_modifier, 1, 0}},
