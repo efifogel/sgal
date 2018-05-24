@@ -58,7 +58,56 @@ Dxf_spline_entity_wrapper::s_record_members = {
 bool Dxf_spline_entity::handle_value(int code, int16_t value)
 {
   switch (code) {
-   case 72: m_knot_values.resize(value); return true;
+   case 72: m_knot_values.reserve(value); return true;
+   case 73: m_control_points.reserve(value); return true;
+   case 74: m_fit_points.reserve(value); return true;
+  }
+  return false;
+}
+
+//! \brief handles a value that requires special handling.
+bool Dxf_spline_entity::handle_value(int code, double value)
+{
+  size_t i;
+
+  switch (code) {
+   case 40:
+    i = m_knot_values.size();
+    m_knot_values.resize(i + 1);
+    m_knot_values[i] = value;
+    return true;
+
+   case 10:
+    i = m_control_points.size();
+    m_control_points.resize(i + 1);
+    m_control_points[i][0] = value;
+    return true;
+
+   case 20:
+    i = m_control_points.size();
+    m_control_points[i-1][1] = value;
+    return true;
+
+   case 30:
+    i = m_control_points.size();
+    m_control_points[i-1][2] = value;
+    return true;
+
+   case 11:
+    i = m_fit_points.size();
+    m_fit_points.resize(i + 1);
+    m_fit_points[i][0] = value;
+    return true;
+
+   case 21:
+    i = m_fit_points.size();
+    m_fit_points[i-1][1] = value;
+    return true;
+
+   case 31:
+    i = m_fit_points.size();
+    m_fit_points[i-1][2] = value;
+    return true;
   }
   return false;
 }

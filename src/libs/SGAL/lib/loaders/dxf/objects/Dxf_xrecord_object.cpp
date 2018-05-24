@@ -29,6 +29,53 @@ typedef Dxf_record_wrapper<Dxf_xrecord_object>  Dxf_xrecord_object_wrapper;
 template <>
 const std::map<int, Dxf_xrecord_object_wrapper::Record_member>
 Dxf_xrecord_object_wrapper::s_record_members = {
+  {280, {&Dxf_xrecord_object::m_flags, 1, 0}}
+  // {1-4, STRING}
+  // {6-9, STRING}
+  // {10-59, DOUBLE}
+  // {60-79, INT16}
+  // {80-99, INT32}
+  // {101-101, STRING}
+  // {103-104, STRING}
+  // {110-169, DOUBLE}
+  // {170-179, INT16}
+  // {281-369, except 330, 360
 };
+
+//! \brief handles a value that requires special handling.
+bool Dxf_xrecord_object::handle_value(int code, const String& value)
+{
+  //! What to do with the values?
+  if ((1 <= code) && (code <= 4)) return true;
+  if ((6 <= code) && (code <= 9)) return true;
+  if (101 == code) return true;
+  if ((103 <= code) && (code <= 104)) return true;
+  return false;
+}
+
+//! \brief handles a value that requires special handling.
+bool Dxf_xrecord_object::handle_value(int code, int16_t value)
+{
+  //! What to do with the values?
+  if ((60 <= code) && (code <= 79)) return true;
+  return false;
+}
+
+//! \brief handles a value that requires special handling.
+bool Dxf_xrecord_object::handle_value(int code, int32_t value)
+{
+  //! What to do with the values?
+  if ((88 <= code) && (code <= 99)) return true;
+  return false;
+}
+
+//! \brief handles a value that requires special handling.
+bool Dxf_xrecord_object::handle_value(int code, double value)
+{
+  //! What to do with the values?
+  if ((10 <= code) && (code <= 59)) return true;
+  if ((110 <= code) && (code <= 169)) return true;
+  return false;
+}
 
 SGAL_END_NAMESPACE

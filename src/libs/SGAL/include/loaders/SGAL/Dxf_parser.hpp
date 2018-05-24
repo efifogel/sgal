@@ -527,14 +527,14 @@ private:
   { return record.handle_value(code, value); }
 
   //!
-  template <bool what, typename Record>
-  bool handle_value(int code, bool value, Record& record, char (*)[what] = 0)
-  { return record.handle_value(code, value); }
+  // template <bool what, typename Record>
+  // bool handle_value(int code, bool value, Record& record, char (*)[what] = 0)
+  // { return record.handle_value(code, value); }
 
   //!
-  template <bool what, typename Record>
-  bool handle_value(int code, int8_t value, Record& record, char (*)[what] = 0)
-  { return record.handle_value(code, value); }
+  // template <bool what, typename Record>
+  // bool handle_value(int code, int8_t value, Record& record, char (*)[what] = 0)
+  // { return record.handle_value(code, value); }
 
   //!
   template <bool what, typename Record>
@@ -547,14 +547,14 @@ private:
   { return record.handle_value(code, value); }
 
   //!
-  template <bool what, typename Record>
-  bool handle_value(int code, Uint value, Record& record, char (*)[what] = 0)
-  { return record.handle_value(code, value); }
+  // template <bool what, typename Record>
+  // bool handle_value(int code, Uint value, Record& record, char (*)[what] = 0)
+  // { return record.handle_value(code, value); }
 
   //!
-  template <bool what, typename Record>
-  bool handle_value(int code, float value, Record& record, char (*)[what] = 0)
-  { return record.handle_value(code, value); }
+  // template <bool what, typename Record>
+  // bool handle_value(int code, float value, Record& record, char (*)[what] = 0)
+  // { return record.handle_value(code, value); }
 
   //!
   template <bool what, typename Record>
@@ -573,14 +573,14 @@ private:
   { return false; }
 
   //!
-  template <bool what, typename Record>
-  bool handle_value(int code, bool value, Record& record, char (*)[!what] = 0)
-  { return false; }
+  // template <bool what, typename Record>
+  // bool handle_value(int code, bool value, Record& record, char (*)[!what] = 0)
+  // { return false; }
 
   //!
-  template <bool what, typename Record>
-  bool handle_value(int code, int8_t value, Record& record, char (*)[!what] = 0)
-  { return false; }
+  // template <bool what, typename Record>
+  // bool handle_value(int code, int8_t value, Record& record, char (*)[!what] = 0)
+  // { return false; }
 
   //!
   template <bool what, typename Record>
@@ -593,14 +593,14 @@ private:
   { return false; }
 
   //!
-  template <bool what, typename Record>
-  bool handle_value(int code, Uint value, Record& record, char (*)[!what] = 0)
-  { return false; }
+  // template <bool what, typename Record>
+  // bool handle_value(int code, Uint value, Record& record, char (*)[!what] = 0)
+  // { return false; }
 
   //!
-  template <bool what, typename Record>
-  bool handle_value(int code, float value, Record& record, char (*)[!what] = 0)
-  { return false; }
+  // template <bool what, typename Record>
+  // bool handle_value(int code, float value, Record& record, char (*)[!what] = 0)
+  // { return false; }
 
   //!
   template <bool what, typename Record>
@@ -631,6 +631,7 @@ private:
 
     std::stringstream stream;
     String msg("Unrecognized code ");
+    msg += std::to_string(code);
 
     // Below, we call the handle_value() member function only if Record has a
     // member function called "handle_value" with the signature that matches
@@ -647,18 +648,18 @@ private:
 
      case BOOL:
       m_is >> bool_val;
-      if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(int, bool)>::value>(code, bool_val, record))
-        return;
+      // if (handle_value<has_member_function_handle_value
+      //     <bool (Record::*)(int, bool)>::value>(code, bool_val, record))
+      //   return;
       msg += ", Bool value: " + std::to_string(bool_val);
       break;
 
      case INT8:
       m_is >> int32_val;
       int8_val = (int8_t) int32_val;
-      if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(int, int8_t)>::value>(code, int8_val, record))
-        return;
+      // if (handle_value<has_member_function_handle_value
+      //     <bool (Record::*)(int, int8_t)>::value>(code, int8_val, record))
+      //   return;
       msg += ", int8_t value: " + std::to_string((int)int8_val);
       break;
 
@@ -680,25 +681,25 @@ private:
 
      case UINT:
       m_is >> std::hex >> uint_val >> std::dec;
-      if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(int, Uint)>::value>(code, int32_val, record))
-        return;
+      // if (handle_value<has_member_function_handle_value
+      //     <bool (Record::*)(int, Uint)>::value>(code, int32_val, record))
+      //   return;
       stream << std::hex << uint_val;
       msg += ", unsigned int value: 0x" + stream.str();
       break;
 
      case FLOAT:
       m_is >> float_val;
-      if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(int, float)>::value>(code, int32_val, record))
-        return;
+      // if (handle_value<has_member_function_handle_value
+      //     <bool (Record::*)(int, float)>::value>(code, int32_val, record))
+      //   return;
       msg += ", float value: " + std::to_string(float_val);
       break;
 
      case DOUBLE:
       m_is >> double_val;
       if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(int, double)>::value>(code, int32_val, record))
+          <bool (Record::*)(int, double)>::value>(code, double_val, record))
         return;
       msg += ", double value: " + std::to_string(double_val);
       break;
