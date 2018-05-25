@@ -29,6 +29,9 @@ typedef Dxf_record_wrapper<Dxf_dictionaryvar_object>  Dxf_dictionaryvar_object_w
 template <>
 const std::map<int, Dxf_dictionaryvar_object_wrapper::Record_member>
 Dxf_dictionaryvar_object_wrapper::s_record_members = {
+  {5, {&Dxf_dictionaryvar_object::m_handle, 1, 0}},
+  {280, {&Dxf_dictionaryvar_object::m_object_schema_number, 1, 0}},
+  {1, {&Dxf_dictionaryvar_object::m_value, 1, 0}}
 };
 
 SGAL_END_NAMESPACE

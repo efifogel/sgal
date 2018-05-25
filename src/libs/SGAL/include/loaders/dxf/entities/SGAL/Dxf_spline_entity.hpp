@@ -26,6 +26,7 @@ SGAL_BEGIN_NAMESPACE
 
 struct Dxf_spline_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
+  typedef std::array<double, 3>                 Double_3;
 
   /// \name Data members
   //@{
@@ -46,10 +47,10 @@ struct Dxf_spline_entity : public Dxf_base_entity {
   std::vector<double> m_knot_values; // Knot value (one entry per knot)
   double m_weight;      // Weight (if not 1); with multiple group pairs,
                         // they are present if all are not 1
-  std::vector<double> m_control_points; // Control points (in WCS); one entry
+  std::vector<Double_3> m_control_points; // Control points (in WCS); one entry
                         // per control point
-  std::vector<double> m_fit_points; // Fit points (in WCS); one entry
-                        // per fit point
+  std::vector<Double_3> m_fit_points; // Fit points (in WCS); one entry per
+                        // fit point
 
   //@}
 
@@ -63,6 +64,10 @@ struct Dxf_spline_entity : public Dxf_base_entity {
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
   bool handle_value(int code, int16_t value);
+
+  /*! Handle a value that requires special handling (as opposed to only storing).
+   */
+  bool handle_value(int code, double value);
 };
 
 SGAL_END_NAMESPACE

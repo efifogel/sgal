@@ -19,12 +19,21 @@
 #ifndef SGAL_DXF_BASE_OBJECT_HPP
 #define SGAL_DXF_BASE_OBJECT_HPP
 
+#include <string>
+#include <list>
+#include <map>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 struct Dxf_base_object {
+  String m_handle;      // Handle
+  Uint m_owner_object;  // Soft pointer ID/handle to owner dictionary (optional)
+  Uint m_owner_dict;    // Hard owner ID/handle to owner dictionary (optional)
+  // Uint m_owner_handle;  // Soft-pointer ID/handle to owner BLOCK_RECORD object
+  std::map<String, std::list<String> > m_xdata; // Begin xdata "{", "}" (opt.)
 };
 
 SGAL_END_NAMESPACE

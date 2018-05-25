@@ -294,6 +294,9 @@ Dxf_dummy_object_wrapper::s_record_members = {};
 //!
 const std::map<int, Dxf_parser::Base_object_type>
 Dxf_parser::s_base_object_members = {
+  {5, &Dxf_base_object::m_handle},
+  {360, &Dxf_base_object::m_owner_dict},
+  {330, &Dxf_base_object::m_owner_object}
 };
 
 //! \brief constructs.

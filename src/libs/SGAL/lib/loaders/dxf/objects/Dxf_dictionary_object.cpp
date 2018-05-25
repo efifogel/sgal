@@ -29,6 +29,31 @@ typedef Dxf_record_wrapper<Dxf_dictionary_object>  Dxf_dictionary_object_wrapper
 template <>
 const std::map<int, Dxf_dictionary_object_wrapper::Record_member>
 Dxf_dictionary_object_wrapper::s_record_members = {
+  {5, {&Dxf_dictionary_object::m_handle, 1, 0}},
+  {280, {&Dxf_dictionary_object::m_is_hard_owner, 1, 0}},
+  {281, {&Dxf_dictionary_object::m_duplicate_record_handling, 1, 0}},
+  // {3, entry name
+  // {350, entry handle
 };
+
+//! \brief handles a value that requires special handling.
+bool Dxf_dictionary_object::handle_value(int code, const String& value)
+{
+  if (3 == code) {
+    m_entry_name = value;
+    return true;
+  }
+  return false;
+}
+
+//! \brief handles a value that requires special handling.
+bool Dxf_dictionary_object::handle_value(int code, Uint value)
+{
+  if (350 == code) {
+    m_value_handles[m_entry_name] = value;
+    return true;
+  }
+  return false;
+}
 
 SGAL_END_NAMESPACE

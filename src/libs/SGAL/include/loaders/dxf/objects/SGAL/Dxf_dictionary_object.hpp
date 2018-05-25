@@ -26,6 +26,38 @@ SGAL_BEGIN_NAMESPACE
 
 struct Dxf_dictionary_object : public Dxf_base_object {
   typedef Dxf_base_object                       Base;
+
+  /// \name Data members
+  //@{
+
+  String m_handle;      // Handle
+  int8_t m_is_hard_owner; // Hard-owner flag. If set to 1, indicates that
+                        // elements of the dictionary are to be treated as
+                        // hard-owned
+  int8_t m_duplicate_record_handling; // Duplicate record cloning flag
+                        // (determines how to merge duplicate entries):
+                        // 0 = Not applicable
+                        // 1 = Keep existing
+                        // 2 = Use clone
+                        // 3 = <xref>$0$<name>
+                        // 4 = $0$<name>
+                        // 5 = Unmangle name
+  std::map<String, Uint> m_value_handles; // A mapping from soft-owner
+                        // ID/handles to entry objects (one for each entry)
+                        // (optional)
+
+  //@}
+
+  /*! Handle a value that requires special handling (as opposed to only storing).
+   */
+  bool handle_value(int code, const String& value);
+
+  /*! Handle a value that requires special handling (as opposed to only storing).
+   */
+  bool handle_value(int code, Uint value);
+
+  //! The current entry name.
+  String m_entry_name;
 };
 
 SGAL_END_NAMESPACE

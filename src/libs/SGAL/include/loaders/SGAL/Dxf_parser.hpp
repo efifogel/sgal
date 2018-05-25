@@ -527,9 +527,9 @@ private:
   { return record.handle_value(code, value); }
 
   //!
-  template <bool what, typename Record>
-  bool handle_value(int code, bool value, Record& record, char (*)[what] = 0)
-  { return record.handle_value(code, value); }
+  // template <bool what, typename Record>
+  // bool handle_value(int code, bool value, Record& record, char (*)[what] = 0)
+  // { return record.handle_value(code, value); }
 
   //!
   template <bool what, typename Record>
@@ -552,9 +552,9 @@ private:
   { return record.handle_value(code, value); }
 
   //!
-  template <bool what, typename Record>
-  bool handle_value(int code, float value, Record& record, char (*)[what] = 0)
-  { return record.handle_value(code, value); }
+  // template <bool what, typename Record>
+  // bool handle_value(int code, float value, Record& record, char (*)[what] = 0)
+  // { return record.handle_value(code, value); }
 
   //!
   template <bool what, typename Record>
@@ -573,9 +573,9 @@ private:
   { return false; }
 
   //!
-  template <bool what, typename Record>
-  bool handle_value(int code, bool value, Record& record, char (*)[!what] = 0)
-  { return false; }
+  // template <bool what, typename Record>
+  // bool handle_value(int code, bool value, Record& record, char (*)[!what] = 0)
+  // { return false; }
 
   //!
   template <bool what, typename Record>
@@ -598,9 +598,9 @@ private:
   { return false; }
 
   //!
-  template <bool what, typename Record>
-  bool handle_value(int code, float value, Record& record, char (*)[!what] = 0)
-  { return false; }
+  // template <bool what, typename Record>
+  // bool handle_value(int code, float value, Record& record, char (*)[!what] = 0)
+  // { return false; }
 
   //!
   template <bool what, typename Record>
@@ -631,6 +631,7 @@ private:
 
     std::stringstream stream;
     String msg("Unrecognized code ");
+    msg += std::to_string(code);
 
     // Below, we call the handle_value() member function only if Record has a
     // member function called "handle_value" with the signature that matches
@@ -647,9 +648,9 @@ private:
 
      case BOOL:
       m_is >> bool_val;
-      if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(int, bool)>::value>(code, bool_val, record))
-        return;
+      // if (handle_value<has_member_function_handle_value
+      //     <bool (Record::*)(int, bool)>::value>(code, bool_val, record))
+      //   return;
       msg += ", Bool value: " + std::to_string(bool_val);
       break;
 
@@ -681,7 +682,7 @@ private:
      case UINT:
       m_is >> std::hex >> uint_val >> std::dec;
       if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(int, Uint)>::value>(code, int32_val, record))
+          <bool (Record::*)(int, Uint)>::value>(code, uint_val, record))
         return;
       stream << std::hex << uint_val;
       msg += ", unsigned int value: 0x" + stream.str();
@@ -689,16 +690,16 @@ private:
 
      case FLOAT:
       m_is >> float_val;
-      if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(int, float)>::value>(code, int32_val, record))
-        return;
+      // if (handle_value<has_member_function_handle_value
+      //     <bool (Record::*)(int, float)>::value>(code, int32_val, record))
+      //   return;
       msg += ", float value: " + std::to_string(float_val);
       break;
 
      case DOUBLE:
       m_is >> double_val;
       if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(int, double)>::value>(code, int32_val, record))
+          <bool (Record::*)(int, double)>::value>(code, double_val, record))
         return;
       msg += ", double value: " + std::to_string(double_val);
       break;
@@ -1096,18 +1097,6 @@ private:
   template <typename Table>
   void parse_table(Table& table, const std::string& name)
   {
-#if 0
-    typedef typename Table::String_entry        String_entry;
-    typedef typename Table::Bool_entry          Bool_entry;
-    typedef typename Table::Int8_entry          Int8_entry;
-    typedef typename Table::Int16_entry         Int16_entry;
-    typedef typename Table::Int32_entry         Int32_entry;
-    typedef typename Table::Double_entry        Double_entry;
-    typedef typename Table::Uint_entry          Uint_entry;
-    typedef typename Table::Double_2d_entry     Double_2d_entry;
-    typedef typename Table::Double_3d_entry     Double_3d_entry;
-#endif
-
     bool exceeded(false);
     auto num = parse_base_table(table);
     auto& entries = table.m_entries;

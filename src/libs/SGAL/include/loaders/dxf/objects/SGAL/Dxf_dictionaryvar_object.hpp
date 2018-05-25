@@ -26,6 +26,10 @@ SGAL_BEGIN_NAMESPACE
 
 struct Dxf_dictionaryvar_object : public Dxf_base_object {
   typedef Dxf_base_object                       Base;
+
+  String m_handle;      // Handle
+  int8_t m_object_schema_number; // Object schema number (currently set to 0)
+  String m_value;       // Value of variable
 };
 
 SGAL_END_NAMESPACE
