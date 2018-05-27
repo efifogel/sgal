@@ -19,13 +19,19 @@
 #ifndef SGAL_DXF_ACDBPLACEHOLDER_OBJECT_HPP
 #define SGAL_DXF_ACDBPLACEHOLDER_OBJECT_HPP
 
+#include <map>
+#include <vector>
+
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 #include "SGAL/Dxf_base_object.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 struct Dxf_acdbplaceholder_object : public Dxf_base_object {
   typedef Dxf_base_object                       Base;
+
+  std::map<String, std::vector<String> > m_xdata;
 };
 
 SGAL_END_NAMESPACE

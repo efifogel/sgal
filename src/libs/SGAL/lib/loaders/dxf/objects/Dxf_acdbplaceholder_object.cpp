@@ -24,7 +24,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-typedef Dxf_record_wrapper<Dxf_acdbplaceholder_object>  Dxf_acdbplaceholder_object_wrapper;
+typedef Dxf_record_wrapper<Dxf_acdbplaceholder_object>
+  Dxf_acdbplaceholder_object_wrapper;
 
 template <>
 const std::map<int, Dxf_acdbplaceholder_object_wrapper::Record_member>
