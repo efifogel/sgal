@@ -31,7 +31,6 @@ SGAL_BEGIN_NAMESPACE
 template <typename Record_>
 struct SGAL_SGAL_DECL Dxf_record_wrapper {
   typedef Record_                               Record;
-  typedef typename Record::Base                 Base_record;
 
   // Record types:
   typedef String Record::*                      String_record;

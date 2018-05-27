@@ -26,6 +26,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Dxf_base_table.hpp"
+#include "SGAL/Dxf_extended_data.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -54,6 +55,20 @@ struct SGAL_SGAL_DECL Dxf_table : Dxf_base_table {
                          Double_3d_record>       Entry_member_type;
 
   std::vector<Entry> m_entries;
+
+  //!
+  Dxf_extended_data* get_extended_data(const String& name)
+  {
+    // auto it = std::find_if(m_entries.begin(), m_entries.end(),
+    //                        [&](Entry& entry)
+    //                        { return (entry.m_name == name); });
+    // if (it == m_entries.end()) return nullptr;
+
+    // auto& entry = *it;
+    // m_extended_data.resize(m_extended_data.size() + 1);
+    // return &(m_extended_data.back());
+    return nullptr;
+  }
 
   //!
   struct Table_entry_member {

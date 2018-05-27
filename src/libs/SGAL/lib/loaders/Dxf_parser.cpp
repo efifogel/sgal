@@ -302,7 +302,8 @@ Dxf_parser::s_base_object_members = {
 //! \brief constructs.
 Dxf_parser::Dxf_parser(std::istream& is, Scene_graph* sg) :
   m_is(is),
-  m_scene_graph(sg)
+  m_scene_graph(sg),
+  m_extended_data(nullptr)
 {}
 
 //! \brief parses.

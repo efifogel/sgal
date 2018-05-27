@@ -22,6 +22,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Dxf_table_entry.hpp"
+#include "SGAL/Dxf_extended_data.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -39,6 +40,7 @@ struct SGAL_SGAL_DECL Dxf_appid_entry: public Dxf_table_entry {
                         //      benefit of AutoCAD commands. It can be ignored
                         //      by most programs that read DXF files and need
                         //      not be set by programs that write DXF files)
+  std::vector<Dxf_extended_data> m_extended_data;
 };
 
 SGAL_END_NAMESPACE

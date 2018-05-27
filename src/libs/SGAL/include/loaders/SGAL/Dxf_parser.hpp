@@ -30,6 +30,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/tti/has_member_function.hpp>
 
+#include "SGAL/Loader_code.hpp"
+#include "SGAL/Trace.hpp"
 #include "SGAL/basic.hpp"
 #include "SGAL/Dxf_header.hpp"
 #include "SGAL/Dxf_class.hpp"
@@ -47,8 +49,7 @@
 #include "SGAL/Dxf_base_entity.hpp"
 #include "SGAL/Dxf_base_object.hpp"
 #include "SGAL/Dxf_record_wrapper.hpp"
-#include "SGAL/Loader_code.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Dxf_extended_data.hpp"
 
 // Entities
 #include "SGAL/Dxf_3dface_entity.hpp"
@@ -493,6 +494,42 @@ private:
   void parse_dummy_object();
   //@}
 
+  /// Extended data group
+  //@{
+
+  // Extended-data data member types.
+  typedef String Dxf_extended_data::*   String_extended_data;
+  typedef float Dxf_extended_data::*    Float_extended_data;
+  typedef double Dxf_extended_data::*   Double_extended_data;
+  typedef int8_t Dxf_extended_data::*   Int8_extended_data;
+  typedef int16_t Dxf_extended_data::*  Int16_extended_data;
+  typedef int32_t Dxf_extended_data::*  Int32_extended_data;
+  typedef Uint Dxf_extended_data::*     Uint_extended_data;
+  typedef bool Dxf_extended_data::*     Bool_extended_data;
+
+  //! The variant type of handle to all types of HEADER data members.
+  typedef boost::variant<String_extended_data,
+                         Float_extended_data,
+                         Double_extended_data,
+                         Int8_extended_data,
+                         Int16_extended_data,
+                         Int32_extended_data,
+                         Uint_extended_data,
+                         Bool_extended_data>    Extended_data_member_type;
+
+  //! Information of an extended-data member.
+  struct Extended_data_member {
+    Extended_data_member(Extended_data_member_type handle, int size, int index) :
+      m_handle(handle), m_size(size), m_index(index)
+    {}
+
+    Extended_data_member_type m_handle;
+    int m_size;
+    int m_index;
+  };
+
+  //@}
+
   /*! Parse base record. */
   template <typename Handle, typename BaseRecord>
   void read_base_record_value(Code_type ct, Handle handle, BaseRecord& record)
@@ -715,7 +752,6 @@ private:
   {
     typedef RecordWrapper                               Record_wrapper;
     typedef typename Record_wrapper::Record             Record;
-    //typedef typename Record_wrapper::Base_record        Base_record;
     typedef typename Record::Base                       Base_record;
 
     auto& record = record_wrapper.m_record;
@@ -732,6 +768,10 @@ private:
       if ((102 == code) || (1002 == code)) {
         read_xdata_block(code, record);
         continue;
+      }
+
+      if ((1000 <= code) && (code <= 1071)) {
+        read_extended_data(code, record);
       }
 
       auto ct = code_type(code);
@@ -789,6 +829,8 @@ private:
   Ucs_table m_ucs_table;
   View_table m_view_table;
   Vport_table m_vport_table;
+
+  Dxf_extended_data* m_extended_data;
 
   // Blocks
   std::list<Dxf_block> m_blocks;
@@ -894,19 +936,20 @@ private:
 
   /*! Import a datum item.
    */
-  template <typename Record, typename MemberType, typename Target>
+  template <typename RecordWrapper, typename MemberType, typename Target>
   void read_record_value(Code_type ct, int size, MemberType handle,
                          Target& target, int index)
   {
-    typedef typename Record::String_record      String_record;
-    typedef typename Record::Bool_record        Bool_record;
-    typedef typename Record::Int8_record        Int8_record;
-    typedef typename Record::Int16_record       Int16_record;
-    typedef typename Record::Int32_record       Int32_record;
-    typedef typename Record::Double_record      Double_record;
-    typedef typename Record::Uint_record        Uint_record;
-    typedef typename Record::Double_2d_record   Double_2d_record;
-    typedef typename Record::Double_3d_record   Double_3d_record;
+    typedef RecordWrapper                               Record_wrapper;
+    typedef typename Record_wrapper::String_record      String_record;
+    typedef typename Record_wrapper::Bool_record        Bool_record;
+    typedef typename Record_wrapper::Int8_record        Int8_record;
+    typedef typename Record_wrapper::Int16_record       Int16_record;
+    typedef typename Record_wrapper::Int32_record       Int32_record;
+    typedef typename Record_wrapper::Double_record      Double_record;
+    typedef typename Record_wrapper::Uint_record        Uint_record;
+    typedef typename Record_wrapper::Double_2d_record   Double_2d_record;
+    typedef typename Record_wrapper::Double_3d_record   Double_3d_record;
 
     switch (ct) {
      case STRING: import_string_member<String_record>(handle, target); break;
@@ -1067,7 +1110,7 @@ private:
                            const String& value, char (*)[!what] = 0)
   {}
 
-  /*! Read extended data
+  /*! Read x data
    */
   template <typename Record>
   void read_xdata_block(int code, Record& record)
@@ -1090,6 +1133,35 @@ private:
       import_string_value(str);
       store_xdata<Has_xdata<Record>::value>(record, name, str);
     }
+  }
+
+  /*! Read extended data
+   */
+  template <typename Record>
+  void read_extended_data(int code, Record& record)
+  {
+    if (1001 == code) {
+      String app_name;
+      import_string_value(app_name);
+      // Look for the application
+      m_extended_data = m_appid_table.get_extended_data(app_name);
+      return;
+    }
+
+    if (m_extended_data = nullptr) {
+      SGAL_error_msg("Extended data name missing");
+      return;
+    }
+
+    // auto ct = code_type(code);
+    // auto it = s_extended_data_members.find(code);
+    // if (it != s_extended_data_members.end()) {
+    //   auto handle = it->second.m_handle;
+    //   auto size = it->second.m_size;
+    //   auto index = it->second.m_index;
+    //   read_record_value<Extended_data_wrapper>(ct, size, handle, m_extended_data, index);
+    //   continue;
+    // }
   }
 
   /*! Parse a table.
@@ -1196,6 +1268,7 @@ private:
   static const std::map<int, Base_entity_type> s_base_entity_members;
   static const std::map<String, Object_parser> s_objects;
   static const std::map<int, Base_object_type> s_base_object_members;
+  static const std::map<int, Extended_data_member> s_extended_data_members;
 };
 
 SGAL_END_NAMESPACE
