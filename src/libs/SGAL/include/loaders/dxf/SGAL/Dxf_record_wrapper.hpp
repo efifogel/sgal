@@ -53,8 +53,6 @@ struct SGAL_SGAL_DECL Dxf_record_wrapper {
                          Double_2d_record,
                          Double_3d_record>      Record_member_type;
 
-  Record m_record;
-
   //!
   struct Record_member {
     Record_member(Record_member_type handle, int size, int index) :

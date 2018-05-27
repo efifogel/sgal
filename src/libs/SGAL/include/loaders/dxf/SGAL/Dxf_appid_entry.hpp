@@ -16,6 +16,9 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
+#include <vector>
+#include <map>
+
 #ifndef SGAL_DXF_APPID_ENTRY_HPP
 #define SGAL_DXF_APPID_ENTRY_HPP
 
@@ -40,6 +43,7 @@ struct SGAL_SGAL_DECL Dxf_appid_entry: public Dxf_table_entry {
                         //      benefit of AutoCAD commands. It can be ignored
                         //      by most programs that read DXF files and need
                         //      not be set by programs that write DXF files)
+  std::map<String, std::vector<String> > m_xdata;
   std::vector<Dxf_extended_data> m_extended_data;
 };
 

@@ -29,6 +29,42 @@ typedef Dxf_record_wrapper<Dxf_hatch_entity>  Dxf_hatch_entity_wrapper;
 template <>
 const std::map<int, Dxf_hatch_entity_wrapper::Record_member>
 Dxf_hatch_entity_wrapper::s_record_members = {
+  {10, {&Dxf_hatch_entity::m_elevation_point, 3, 0}},
+  {20, {&Dxf_hatch_entity::m_elevation_point, 3, 1}},
+  {30, {&Dxf_hatch_entity::m_elevation_point, 3, 2}},
+  {210, {&Dxf_hatch_entity::m_extrusion_direction, 3, 0}},
+  {220, {&Dxf_hatch_entity::m_extrusion_direction, 3, 1}},
+  {230, {&Dxf_hatch_entity::m_extrusion_direction, 3, 2}},
+  {2, {&Dxf_hatch_entity::m_hatch_pattern_name, 1, 0}},
+  {70, {&Dxf_hatch_entity::m_flags, 1, 0}},
+  {63, {&Dxf_hatch_entity::m_pattern_fill_color, 1, 0}},
+  {71, {&Dxf_hatch_entity::m_associativity_flags, 1, 0}},
+  {91, {&Dxf_hatch_entity::m_num_boundary_paths, 1, 0}},
+  // varies m_boundary_path data; // Boundary path data. Repeats number of
+  {75, {&Dxf_hatch_entity::m_hatch_style, 1, 0}},
+  {76, {&Dxf_hatch_entity::m_hatch_patter_type, 1, 0}},
+  {52, {&Dxf_hatch_entity::m_hatch_patter_angle, 1, 0}},
+  {41, {&Dxf_hatch_entity::m_hatch_patter_scale, 1, 0}},
+  {73, {&Dxf_hatch_entity::m_boundary_annotation_flag, 1, 0}},
+  {77, {&Dxf_hatch_entity::m_hatch_patter_double_flag, 1, 0}},
+  {78, {&Dxf_hatch_entity::m_num_pattern_definition_lines, 1, 0}},
+  // varies // Pattern line data. Repeats number of times specified by code 78.
+  {47, {&Dxf_hatch_entity::m_pixel_size, 1, 0}},
+  {98, {&Dxf_hatch_entity::m_num_sed_points, 1, 0}},
+  {11, {&Dxf_hatch_entity::m_offset_vetor, 1, 0}},
+  {99, {&Dxf_hatch_entity::m_num_loops, 1, 0}},
+  {10, {&Dxf_hatch_entity::m_seed_point, 3, 0}},
+  {20, {&Dxf_hatch_entity::m_seed_point, 3, 1}},
+  {30, {&Dxf_hatch_entity::m_seed_point, 3, 2}},
+  {450, {&Dxf_hatch_entity::m_solid_hatch, 1, 0}},
+  {451, {&Dxf_hatch_entity::m_reserved1, 1, 0}},
+  {452, {&Dxf_hatch_entity::m_color_defined, 1, 0}},
+  {453, {&Dxf_hatch_entity::m_num_colors, 1, 0}},
+  {460, {&Dxf_hatch_entity::m_rotation_angle, 1, 0}},
+  {461, {&Dxf_hatch_entity::m_gradient, 1, 0}},
+  {462, {&Dxf_hatch_entity::m_color_tint_value, 1, 0}},
+  {463, {&Dxf_hatch_entity::m_reserved2, 1, 0}},
+  {470, {&Dxf_hatch_entity::m_string, 1, 0}}
 };
 
 SGAL_END_NAMESPACE

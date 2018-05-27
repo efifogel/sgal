@@ -19,14 +19,16 @@
 #include <map>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Dxf_record_wrapper.hpp"
 #include "SGAL/Dxf_extended_data.hpp"
-#include "SGAL/Dxf_parser.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-//!
-const std::map<int, Dxf_parser::Extended_data_member>
-Dxf_parser::s_extended_data_members = {
+typedef Dxf_record_wrapper<Dxf_extended_data>  Dxf_extended_data_wrapper;
+
+template <>
+const std::map<int, Dxf_extended_data_wrapper::Record_member>
+Dxf_extended_data_wrapper::s_record_members = {
   {1000, {&Dxf_extended_data::m_name, 1, 0}},
   {1003, {&Dxf_extended_data::m_layer_name, 1, 0}},
   {1005, {&Dxf_extended_data::m_entity_handle, 1, 0}},

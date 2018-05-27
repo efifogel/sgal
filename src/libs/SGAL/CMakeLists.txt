@@ -465,6 +465,7 @@ source_group(src\\loaders\\dxf\\objects FILES ${SGAL_LOADERS_DXF_OBJECTS_SRC_FIL
 
 # dxf loader
 set(SGAL_LOADERS_DXF_SRC_FILES ${SGAL_LOADERS_DXF_SRC_FILES} lib/loaders/dxf/Dxf_extended_data.cpp)
+set(SGAL_LOADERS_DXF_SRC_FILES ${SGAL_LOADERS_DXF_SRC_FILES} lib/loaders/dxf/Dxf_dimstyle_entry.cpp)
 set(SGAL_SRC_FILES ${SGAL_SRC_FILES} ${SGAL_LOADERS_DXF_SRC_FILES} ${SGAL_LOADERS_DXF_HEADER_FILES})
 source_group(src\\loaders\\dxf FILES ${SGAL_LOADERS_DXF_SRC_FILES} ${SGAL_LOADERS_DXF_HEADER_FILES})
 

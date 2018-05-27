@@ -29,7 +29,9 @@ typedef Dxf_record_wrapper<Dxf_spline_entity>  Dxf_spline_entity_wrapper;
 template <>
 const std::map<int, Dxf_spline_entity_wrapper::Record_member>
 Dxf_spline_entity_wrapper::s_record_members = {
-  {210, {&Dxf_spline_entity::m_normal, 1, 0}},
+  {210, {&Dxf_spline_entity::m_normal, 3, 0}},
+  {220, {&Dxf_spline_entity::m_normal, 3, 1}},
+  {230, {&Dxf_spline_entity::m_normal, 3, 2}},
   {70, {&Dxf_spline_entity::m_flags, 1, 0}},
   {71, {&Dxf_spline_entity::m_degree_of_curve, 1, 0}},
   // {72}; Number of knots

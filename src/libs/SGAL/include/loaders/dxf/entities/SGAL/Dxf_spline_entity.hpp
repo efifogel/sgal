@@ -31,7 +31,7 @@ struct Dxf_spline_entity : public Dxf_base_entity {
   /// \name Data members
   //@{
 
-  double m_normal;      // Normal vector (omitted if the spline is nonplanar)
+  double m_normal[3];   // Normal vector (omitted if the spline is nonplanar)
   int16_t m_flags;      // Spline flag (bit coded):
                         // 1 = Closed spline
                         // 2 = Periodic spline

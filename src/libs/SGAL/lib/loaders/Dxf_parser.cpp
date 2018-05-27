@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2018 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -27,7 +27,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::array<String, 8> Dxf_parser::s_code_type_names = {
-  "STRING", "FLOAT", "DOUBLE", "INT8", "INT16", "INT32", "UINT", "BOOL"
+  "STRING", "DOUBLE", "INT8", "INT16", "INT32", "UINT", "BOOL"
 };
 
 const std::vector<Dxf_parser::Code_range> Dxf_parser::s_code_ranges = {
@@ -74,7 +74,7 @@ const std::vector<Dxf_parser::Code_range> Dxf_parser::s_code_ranges = {
   {999, 999, STRING},   // Comment (string)
   {1000, 1009, STRING}, // String. (Same limits as indicated with 0-9 code
                         // range.)
-  {1010, 1059, FLOAT},  // Floating-point value
+  {1010, 1059, DOUBLE}, // Double-precision floating-point value
   {1060, 1070, INT16},  // 16-bit integer value
   {1071, 1071, INT32}   // 32-bit integer value
 };
@@ -123,13 +123,6 @@ const std::map<int, Dxf_appid_table::Table_entry_member>
 Dxf_appid_table::s_entry_members = {
   {2, {&Dxf_appid_entry::m_name, 1, 0}},
   {70, {&Dxf_appid_entry::m_flags, 1, 0}}
-};
-
-//!
-typedef Dxf_table<Dxf_dimstyle_entry>           Dxf_dimstyle_table;
-template <>
-const std::map<int, Dxf_dimstyle_table::Table_entry_member>
-Dxf_dimstyle_table::s_entry_members = {
 };
 
 //!
@@ -791,7 +784,6 @@ void Dxf_parser::read_header_member()
                     << s_code_type_names[code_type] << std::endl;);
     switch (code_type) {
      case STRING: import_string_member<String_header>(handle, m_header); break;
-     case FLOAT: import_member<Float_header>(handle, m_header); break;
      case DOUBLE: import_member<Double_header>(handle, m_header); break;
      case INT8: import_member<Int8_header>(handle, m_header); break;
      case INT16: import_member<Int16_header>(handle, m_header); break;
@@ -830,7 +822,6 @@ void Dxf_parser::read_unrecognized(int code)
   bool bval;
   int ival;
   Uint uval;
-  float fval;
   double dval;
   String msg("Unrecognized code ");
   msg += std::to_string(code);
@@ -859,11 +850,6 @@ void Dxf_parser::read_unrecognized(int code)
     m_is >> std::hex >> uval >> std::dec;
     stream << std::hex << uval;
     msg += ", unsigned int value: 0x" + stream.str();
-    break;
-
-   case FLOAT:
-    m_is >> fval;
-    msg += ", float value: " + std::to_string(fval);
     break;
 
    case DOUBLE:

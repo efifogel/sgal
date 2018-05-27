@@ -56,19 +56,42 @@ struct SGAL_SGAL_DECL Dxf_table : Dxf_base_table {
 
   std::vector<Entry> m_entries;
 
+  /*! Has_xdata is a generic-template-struct service that evaluates as follows:
+   * If A has a data member called x_data, then Has_xdata<A>::value == true,
+   * else (A doesn't have a data member called x_data)
+   * Has_xdata<B>::value == false.
+   */
+  template <typename T, typename = int>
+  struct Has_extended_data : std::false_type {};
+
+  //!
+  template <typename T>
+  struct Has_extended_data<T, decltype((void) T::m_extended_data, 0)> :
+    std::true_type {};
+
+  //!
+  template <bool what>
+  Dxf_extended_data* get_extended_data_impl(const String& name,
+                                            char (*)[what] = 0)
+  {
+    auto it = std::find_if(m_entries.begin(), m_entries.end(),
+                           [&](Entry& entry)
+                           { return (entry.m_name == name); });
+    if (it == m_entries.end()) return nullptr;
+
+    it->m_extended_data.resize(it->m_extended_data.size() + 1);
+    return &(it->m_extended_data.back());
+  }
+
+  //!
+  template <bool what>
+  Dxf_extended_data* get_extended_data_impl(const String& name,
+                                            char (*)[!what] = 0)
+  { return nullptr; }
+
   //!
   Dxf_extended_data* get_extended_data(const String& name)
-  {
-    // auto it = std::find_if(m_entries.begin(), m_entries.end(),
-    //                        [&](Entry& entry)
-    //                        { return (entry.m_name == name); });
-    // if (it == m_entries.end()) return nullptr;
-
-    // auto& entry = *it;
-    // m_extended_data.resize(m_extended_data.size() + 1);
-    // return &(m_extended_data.back());
-    return nullptr;
-  }
+  { return get_extended_data_impl<Has_extended_data<Entry>::value>(name); }
 
   //!
   struct Table_entry_member {
