@@ -51,9 +51,7 @@ const std::vector<Dxf_parser::Code_range> Dxf_parser::s_code_ranges = {
   {130, 132, DOUBLE},   // z-value of UCS
   {140, 149, DOUBLE},   // Double precision scalar floating-point value
   {170, 179, INT16},    // 16-bit integer value
-  {210, 210, DOUBLE},   // x-value of extrusion direction
-  {220, 220, DOUBLE},   // y-value of extrusion direction
-  {230, 230, DOUBLE},   // z-value of extrusion direction
+  {210, 239, DOUBLE},   // x-value of extrusion direction
   {270, 279, INT16},    // 16-bit integer value
   {280, 289, INT8},     // 8-bit integer value
   {290, 299, BOOL},     // Boolean flag value
@@ -218,8 +216,10 @@ Dxf_parser::s_entities = {
 };
 
 //!
-const std::map<int, Dxf_parser::Base_entity_type>
-Dxf_parser::s_base_entity_members = {
+typedef Dxf_simple_record_wrapper<Dxf_base_entity>      Base_entity_wrapper;
+template <>
+const std::map<int, Base_entity_wrapper::Record_member_type>
+Base_entity_wrapper::s_record_members = {
   {5, &Dxf_base_entity::m_handle},
   {330, &Dxf_base_entity::m_owner_handle},
   {360, &Dxf_base_entity::m_owner_dict},
@@ -286,14 +286,16 @@ Dxf_parser::s_objects = {
 // Dummy object is used to parse unrecognized objects.
 typedef Dxf_record_wrapper<Dxf_parser::Dxf_dummy_object>
                                                 Dxf_dummy_object_wrapper;
-
 template <>
 const std::map<int, Dxf_dummy_object_wrapper::Record_member>
 Dxf_dummy_object_wrapper::s_record_members = {};
 
 //!
-const std::map<int, Dxf_parser::Base_object_type>
-Dxf_parser::s_base_object_members = {
+typedef Dxf_simple_record_wrapper<Dxf_base_object>
+                                                Dxf_base_object_wrapper;
+template <>
+const std::map<int, Dxf_base_object_wrapper::Record_member_type>
+Dxf_base_object_wrapper::s_record_members = {
   {5, &Dxf_base_object::m_handle},
   {360, &Dxf_base_object::m_owner_dict},
   {330, &Dxf_base_object::m_owner_object}
@@ -808,295 +810,295 @@ void Dxf_parser::read_unrecognized(int code)
 
 //! \brief parses entity.
 void Dxf_parser::parse_3dface_entity()
-{ parse_record(m_3dface_entity, s_base_entity_members); }
+{ parse_record(m_3dface_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_3dsolid_entity()
-{ parse_record(m_3dsolid_entity, s_base_entity_members); }
+{ parse_record(m_3dsolid_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_acad_proxy_entity()
-{ parse_record(m_acad_proxy_entity, s_base_entity_members); }
+{ parse_record(m_acad_proxy_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_arc_entity()
-{ parse_record(m_arc_entity, s_base_entity_members); }
+{ parse_record(m_arc_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_arcalignedtext_entity()
-{ parse_record(m_arcalignedtext_entity, s_base_entity_members); }
+{ parse_record(m_arcalignedtext_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_attdef_entity()
-{ parse_record(m_attdef_entity, s_base_entity_members); }
+{ parse_record(m_attdef_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_attrib_entity()
-{ parse_record(m_attrib_entity, s_base_entity_members); }
+{ parse_record(m_attrib_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_body_entity()
-{ parse_record(m_body_entity, s_base_entity_members); }
+{ parse_record(m_body_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_circle_entity()
-{ parse_record(m_circle_entity, s_base_entity_members); }
+{ parse_record(m_circle_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_dimension_entity()
-{ parse_record(m_dimension_entity, s_base_entity_members); }
+{ parse_record(m_dimension_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_ellipse_entity()
-{ parse_record(m_ellipse_entity, s_base_entity_members); }
+{ parse_record(m_ellipse_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_hatch_entity()
-{ parse_record(m_hatch_entity, s_base_entity_members); }
+{ parse_record(m_hatch_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_image_entity()
-{ parse_record(m_image_entity, s_base_entity_members); }
+{ parse_record(m_image_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_insert_entity()
-{ parse_record(m_insert_entity, s_base_entity_members); }
+{ parse_record(m_insert_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_leader_entity()
-{ parse_record(m_leader_entity, s_base_entity_members); }
+{ parse_record(m_leader_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_line_entity()
-{ parse_record(m_line_entity, s_base_entity_members); }
+{ parse_record(m_line_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_lwpolyline_entity()
-{ parse_record(m_lwpolyline_entity, s_base_entity_members); }
+{ parse_record(m_lwpolyline_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_mline_entity()
-{ parse_record(m_mline_entity, s_base_entity_members); }
+{ parse_record(m_mline_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_mtext_entity()
-{ parse_record(m_mtext_entity, s_base_entity_members); }
+{ parse_record(m_mtext_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_oleframe_entity()
-{ parse_record(m_oleframe_entity, s_base_entity_members); }
+{ parse_record(m_oleframe_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_ole2frame_entity()
-{ parse_record(m_ole2frame_entity, s_base_entity_members); }
+{ parse_record(m_ole2frame_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_point_entity()
-{ parse_record(m_point_entity, s_base_entity_members); }
+{ parse_record(m_point_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_polyline_entity()
-{ parse_record(m_polyline_entity, s_base_entity_members); }
+{ parse_record(m_polyline_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_ray_entity()
-{ parse_record(m_ray_entity, s_base_entity_members); }
+{ parse_record(m_ray_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_region_entity()
-{ parse_record(m_region_entity, s_base_entity_members); }
+{ parse_record(m_region_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_rtext_entity()
-{ parse_record(m_rtext_entity, s_base_entity_members); }
+{ parse_record(m_rtext_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_seqend_entity()
-{ parse_record(m_seqend_entity, s_base_entity_members); }
+{ parse_record(m_seqend_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_shape_entity()
-{ parse_record(m_shape_entity, s_base_entity_members); }
+{ parse_record(m_shape_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_solid_entity()
-{ parse_record(m_solid_entity, s_base_entity_members); }
+{ parse_record(m_solid_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_spline_entity()
-{ parse_record(m_spline_entity, s_base_entity_members); }
+{ parse_record(m_spline_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_text_entity()
-{ parse_record(m_text_entity, s_base_entity_members); }
+{ parse_record(m_text_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_tolerance_entity()
-{ parse_record(m_tolerance_entity, s_base_entity_members); }
+{ parse_record(m_tolerance_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_trace_entity()
-{ parse_record(m_trace_entity, s_base_entity_members); }
+{ parse_record(m_trace_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_vertex_entity()
-{ parse_record(m_vertex_entity, s_base_entity_members); }
+{ parse_record(m_vertex_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_viewport_entity()
-{ parse_record(m_viewport_entity, s_base_entity_members); }
+{ parse_record(m_viewport_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_wipeout_entity()
-{ parse_record(m_wipeout_entity, s_base_entity_members); }
+{ parse_record(m_wipeout_entity); }
 
 //! \brief parses entity.
 void Dxf_parser::parse_xline_entity()
-{ parse_record(m_xline_entity, s_base_entity_members); }
+{ parse_record(m_xline_entity); }
 
 // Object parsers
 //! \brief parses object.
 void Dxf_parser::parse_acad_proxy_object()
-{ parse_record(m_acad_proxy_object, s_base_object_members); }
+{ parse_record(m_acad_proxy_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_acdbdictionarywdflt_object()
-{ parse_record(m_acdbdictionarywdflt_object, s_base_object_members); }
+{ parse_record(m_acdbdictionarywdflt_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_acdbplaceholder_object()
-{ parse_record(m_acdbplaceholder_object, s_base_object_members); }
+{ parse_record(m_acdbplaceholder_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_acdbnavisworksmodeldef_object()
-{ parse_record(m_acdbnavisworksmodeldef_object, s_base_object_members); }
+{ parse_record(m_acdbnavisworksmodeldef_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_datatable_object()
-{ parse_record(m_datatable_object, s_base_object_members); }
+{ parse_record(m_datatable_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_dictionary_object()
-{ parse_record(m_dictionary_object, s_base_object_members); }
+{ parse_record(m_dictionary_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_dictionaryvar_object()
-{ parse_record(m_dictionaryvar_object, s_base_object_members); }
+{ parse_record(m_dictionaryvar_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_dimassoc_object()
-{ parse_record(m_dimassoc_object, s_base_object_members); }
+{ parse_record(m_dimassoc_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_field_object()
-{ parse_record(m_field_object, s_base_object_members); }
+{ parse_record(m_field_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_geodata_object()
-{ parse_record(m_geodata_object, s_base_object_members); }
+{ parse_record(m_geodata_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_group_object()
-{ parse_record(m_group_object, s_base_object_members); }
+{ parse_record(m_group_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_idbuffer_object()
-{ parse_record(m_idbuffer_object, s_base_object_members); }
+{ parse_record(m_idbuffer_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_imagedef_object()
-{ parse_record(m_imagedef_object, s_base_object_members); }
+{ parse_record(m_imagedef_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_imagedef_reactor_object()
-{ parse_record(m_imagedef_reactor_object, s_base_object_members); }
+{ parse_record(m_imagedef_reactor_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_layer_index_object()
-{ parse_record(m_layer_index_object, s_base_object_members); }
+{ parse_record(m_layer_index_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_layer_filter_object()
-{ parse_record(m_layer_filter_object, s_base_object_members); }
+{ parse_record(m_layer_filter_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_layout_object()
-{ parse_record(m_layout_object, s_base_object_members); }
+{ parse_record(m_layout_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_lightlist_object()
-{ parse_record(m_lightlist_object, s_base_object_members); }
+{ parse_record(m_lightlist_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_material_object()
-{ parse_record(m_material_object, s_base_object_members); }
+{ parse_record(m_material_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_mlinestyle_object()
-{ parse_record(m_mlinestyle_object, s_base_object_members); }
+{ parse_record(m_mlinestyle_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_object_ptr_object()
-{ parse_record(m_object_ptr_object, s_base_object_members); }
+{ parse_record(m_object_ptr_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_plotsettings_object()
-{ parse_record(m_plotsettings_object, s_base_object_members); }
+{ parse_record(m_plotsettings_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_rastervariables_object()
-{ parse_record(m_rastervariables_object, s_base_object_members); }
+{ parse_record(m_rastervariables_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_render_object()
-{ parse_record(m_render_object, s_base_object_members); }
+{ parse_record(m_render_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_section_object()
-{ parse_record(m_section_object, s_base_object_members); }
+{ parse_record(m_section_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_spatial_index_object()
-{ parse_record(m_spatial_index_object, s_base_object_members); }
+{ parse_record(m_spatial_index_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_spatial_filter_object()
-{ parse_record(m_spatial_filter_object, s_base_object_members); }
+{ parse_record(m_spatial_filter_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_sortentstable_object()
-{ parse_record(m_sortentstable_object, s_base_object_members); }
+{ parse_record(m_sortentstable_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_sunstudy_object()
-{ parse_record(m_sunstudy_object, s_base_object_members); }
+{ parse_record(m_sunstudy_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_tablestyle_object()
-{ parse_record(m_tablestyle_object, s_base_object_members); }
+{ parse_record(m_tablestyle_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_underlaydefinition_object()
-{ parse_record(m_underlaydefinition_object, s_base_object_members); }
+{ parse_record(m_underlaydefinition_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_visualstyle_object()
-{ parse_record(m_visualstyle_object, s_base_object_members); }
+{ parse_record(m_visualstyle_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_vba_project_object()
-{ parse_record(m_vba_project_object, s_base_object_members); }
+{ parse_record(m_vba_project_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_wipeoutvariables_object()
-{ parse_record(m_wipeoutvariables_object, s_base_object_members); }
+{ parse_record(m_wipeoutvariables_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_xrecord_object()
-{ parse_record(m_xrecord_object, s_base_object_members); }
+{ parse_record(m_xrecord_object); }
 
 //! \brief parses object.
 void Dxf_parser::parse_dummy_object()
-{ parse_record(m_dummy_object, s_base_object_members); }
+{ parse_record(m_dummy_object); }
 
 SGAL_END_NAMESPACE

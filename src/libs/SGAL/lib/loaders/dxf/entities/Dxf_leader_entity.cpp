@@ -29,6 +29,32 @@ typedef Dxf_record_wrapper<Dxf_leader_entity>  Dxf_leader_entity_wrapper;
 template <>
 const std::map<int, Dxf_leader_entity_wrapper::Record_member>
 Dxf_leader_entity_wrapper::s_record_members = {
+  {3, {&Dxf_leader_entity::m_dimension_style_name, 1, 0}},
+  {71, {&Dxf_leader_entity::m_use_arrowheads, 1, 0}},
+  {72, {&Dxf_leader_entity::m_path_type, 1, 0}},
+  {73, {&Dxf_leader_entity::m_annotation_type, 1, 0}},
+  {74, {&Dxf_leader_entity::m_hookline_direction, 1, 0}},
+  {75, {&Dxf_leader_entity::m_hookline, 1, 0}},
+  {40, {&Dxf_leader_entity::m_text_annotation_height, 1, 0}},
+  {41, {&Dxf_leader_entity::m_text_annotation_width, 1, 0}},
+  {76, {&Dxf_leader_entity::m_vertex_count, 1, 0}},
+  // {10, {&Dxf_leader_entity::m_vertices, n, i, 0}},
+  // {20, {&Dxf_leader_entity::m_vertices, n, i, 1}},
+  // {30, {&Dxf_leader_entity::m_vertices, 1, i, 2}},
+  {77, {&Dxf_leader_entity::m_override_color, 1, 0}},
+  {340, {&Dxf_leader_entity::m_associated_annotation_reference, 1, 0}},
+  {210, {&Dxf_leader_entity::m_normal, 3, 0}},
+  {220, {&Dxf_leader_entity::m_normal, 3, 1}},
+  {230, {&Dxf_leader_entity::m_normal, 3, 2}},
+  {211, {&Dxf_leader_entity::m_right, 3, 0}},
+  {221, {&Dxf_leader_entity::m_right, 3, 1}},
+  {231, {&Dxf_leader_entity::m_right, 3, 2}},
+  {212, {&Dxf_leader_entity::m_block_offset, 3, 0}},
+  {222, {&Dxf_leader_entity::m_block_offset, 3, 1}},
+  {232, {&Dxf_leader_entity::m_block_offset, 3, 2}},
+  {213, {&Dxf_leader_entity::m_annotation_offset, 3, 0}},
+  {223, {&Dxf_leader_entity::m_annotation_offset, 3, 1}},
+  {233, {&Dxf_leader_entity::m_annotation_offset, 3, 2}}
 };
 
 SGAL_END_NAMESPACE

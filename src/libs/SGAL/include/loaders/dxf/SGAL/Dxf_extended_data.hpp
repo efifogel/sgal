@@ -37,6 +37,31 @@ struct Dxf_extended_data {
                         // real value, it is converted to a long integer; if it
                         // is invalid (for example, a string), it is converted
                         // to a long zero (0L).
+  String m_binary_data; // Binary data organized into variable-length chunks,
+                        // which can be handled in ObjectARX and Managed .NET
+                        // with the ads_binary structure.
+                        // The maximum length of each chunk is 127 bytes.
+                        // Note: AutoLISP cannot directly handle binary chunks,
+                        // so the same precautions that apply to long (1071)
+                        // group codes apply to binary group codes as well.
+  double m_worldspace_position[3]; // Unlike a simple 3D point, the WCS
+                        // coordinates are moved, scaled, rotated, and mirrored
+                        // along with the parent entity to which the extended
+                        // data belongs. The WCS position is also stretched when
+                        // the AutoCAD STRETCH command is applied to the parent
+                        // entity and when this point lies within the select
+                        // window.
+  double m_worldspace_displacement[3]; // A 3D point that is scaled, rotated, or
+                        // mirrored along with the parent, but not stretched or
+                        // moved.
+  double m_world_direction[3]; // A 3D point that is rotated or mirrored along
+                        // with the parent, but not scaled, stretched, or moved.
+                        // The WCS direction is a normalized displacement that
+                        // always has a unit length.
+  double m_distance;    // A real value that is scaled along with the parent
+                        // entity.
+  double m_scale_factor; // Also a real value that is scaled along with the
+                        // parent.
 };
 
 SGAL_END_NAMESPACE

@@ -742,6 +742,15 @@ private:
     }
   }
 
+  /*! Parse record. */
+  template <typename Record>
+  void parse_record(Record& record)
+  {
+    parse_record(record,
+                 Dxf_simple_record_wrapper<typename Record::Base>::
+                 s_record_members);
+  }
+
   //! The text input stream to parse.
   std::istream& m_is;
 
@@ -1111,7 +1120,6 @@ private:
   template <typename Record>
   void read_extended_data(int code, Record& record)
   {
-    std::cout << "read_extended_data" << std::endl;
     if (1001 == code) {
       String app_name;
       import_string_value(app_name);
@@ -1128,13 +1136,11 @@ private:
     auto ct = code_type(code);
     auto& members = Dxf_record_wrapper<Dxf_extended_data>::s_record_members;
     auto it = members.find(code);
-    if (it != members.end()) {
-      auto handle = it->second.m_handle;
-      auto size = it->second.m_size;
-      auto index = it->second.m_index;
-
-      read_record_value(ct, size, handle, *m_extended_data, index);
-    }
+    SGAL_assertion(it != members.end());
+    auto handle = it->second.m_handle;
+    auto size = it->second.m_size;
+    auto index = it->second.m_index;
+    read_record_value(ct, size, handle, *m_extended_data, index);
   }
 
   /*! Parse common table section, which aplies to all table types.
@@ -1303,9 +1309,7 @@ private:
   static const std::map<String, Table_parser> s_tables;
   static const std::map<int, Block_member> s_block_members;
   static const std::map<String, Entity_parser> s_entities;
-  static const std::map<int, Base_entity_type> s_base_entity_members;
   static const std::map<String, Object_parser> s_objects;
-  static const std::map<int, Base_object_type> s_base_object_members;
 };
 
 SGAL_END_NAMESPACE

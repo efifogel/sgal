@@ -32,12 +32,25 @@ Dxf_extended_data_wrapper::s_record_members = {
   {1000, {&Dxf_extended_data::m_name, 1, 0}},
   {1003, {&Dxf_extended_data::m_layer_name, 1, 0}},
   {1005, {&Dxf_extended_data::m_entity_handle, 1, 0}},
-  //{1010, {&Dxf_extended_data::m_point, 3, 0}},
-  //{1020, {&Dxf_extended_data::m_point, 3, 1}},
-  //{1030, {&Dxf_extended_data::m_point, 3, 2}},
+  {1010, {&Dxf_extended_data::m_point, 3, 0}},
+  {1020, {&Dxf_extended_data::m_point, 3, 1}},
+  {1030, {&Dxf_extended_data::m_point, 3, 2}},
   {1040, {&Dxf_extended_data::m_real, 1, 0}},
   {1070, {&Dxf_extended_data::m_integer, 1, 0}},
-  {1071, {&Dxf_extended_data::m_long, 1, 0}}
+  {1071, {&Dxf_extended_data::m_long, 1, 0}},
+  {1004, {&Dxf_extended_data::m_binary_data, 1, 0}},
+  {1011, {&Dxf_extended_data::m_worldspace_position, 3, 0}},
+  {1021, {&Dxf_extended_data::m_worldspace_position, 3, 1}},
+  {1031, {&Dxf_extended_data::m_worldspace_position, 3, 2}},
+  {1012, {&Dxf_extended_data::m_worldspace_displacement, 3, 0}},
+  {1022, {&Dxf_extended_data::m_worldspace_displacement, 3, 1}},
+  {1032, {&Dxf_extended_data::m_worldspace_displacement, 3, 2}},
+  {1013, {&Dxf_extended_data::m_world_direction, 3, 0}},
+  {1023, {&Dxf_extended_data::m_world_direction, 3, 1}},
+  {1033, {&Dxf_extended_data::m_world_direction, 3, 2}},
+  {1041, {&Dxf_extended_data::m_distance, 1, 0}},
+  {1042, {&Dxf_extended_data::m_scale_factor, 1, 0}},
+
 };
 
 SGAL_END_NAMESPACE
