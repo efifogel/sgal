@@ -45,7 +45,7 @@ struct Dxf_hatch_entity : public Dxf_base_entity {
   int32_t m_num_boundary_paths; // Number of boundary paths (loops)
   // varies m_boundary_path data; // Boundary path data. Repeats number of
                         // times specified by code 91. See Boundary Path Data
-  int16_t m_hatch_style;     // Hatch style:
+  int16_t m_hatch_style; // Hatch style:
                         // 0 = Hatch "odd parity" area (Normal style)
                         // 1 = Hatch outermost area only (Outer style)
                         // 2 = Hatch through entire area (Ignore style)
