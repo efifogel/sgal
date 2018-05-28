@@ -47,10 +47,10 @@ Dxf_ltype_table::s_entry_members = {
   {74, {&Dxf_ltype_entry::m_complex_line_type_element_types, 1, 0}},
   {75, {&Dxf_ltype_entry::m_shape_numbers, 1, 0}},
   {340, {&Dxf_ltype_entry::m_style_pointers, 1, 0}},
-  // 46, {&Dxf_ltype_entry::m_scale_values, n, x}},
+  // {46, {&Dxf_ltype_entry::m_scale_values, n, x}},
   {50, {&Dxf_ltype_entry::m_rotation_angles, 1, 0}}
-  // 44, {&Dxf_ltype_entry::m_offsets, n, i, 0}},
-  // 45, {&Dxf_ltype_entry::m_offsets, n, i, 1}},
+  // {44, {&Dxf_ltype_entry::m_offsets, n, i, 0}},
+  // {45, {&Dxf_ltype_entry::m_offsets, n, i, 1}},
   // {9, {&Dxf_ltype_entry::m_text_strings, n, 0}},
 };
 
