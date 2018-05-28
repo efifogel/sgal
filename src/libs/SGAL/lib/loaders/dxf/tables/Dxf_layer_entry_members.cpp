@@ -21,7 +21,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Dxf_layer_entry.hpp"
-#include "SGAL/Dxf_table.hpp"
+#include "SGAL/Dxf_record_wrapper.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -37,11 +37,11 @@ SGAL_BEGIN_NAMESPACE
  * new: 41, 65, 73, 75, 76, 77, 78
  */
 
-typedef Dxf_table<Dxf_layer_entry>            Dxf_layer_table;
+typedef Dxf_record_wrapper<Dxf_layer_entry>             Dxf_layer_wrapper;
 
 template <>
-const std::map<int, Dxf_layer_table::Table_entry_member>
-Dxf_layer_table::s_entry_members = {
+const std::map<int, Dxf_layer_wrapper::Record_member>
+Dxf_layer_wrapper::s_record_members = {
   {2, {&Dxf_layer_entry::m_name, 1, 0}},
   {70, {&Dxf_layer_entry::m_flags, 1, 0}},
   {62, {&Dxf_layer_entry::m_color, 1, 0}},

@@ -21,7 +21,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Dxf_vport_entry.hpp"
-#include "SGAL/Dxf_table.hpp"
+#include "SGAL/Dxf_record_wrapper.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -37,11 +37,11 @@ SGAL_BEGIN_NAMESPACE
  * new: 41, 65, 73, 75, 76, 77, 78
  */
 
-typedef Dxf_table<Dxf_vport_entry>            Dxf_vport_table;
+typedef Dxf_record_wrapper<Dxf_vport_entry>             Dxf_vport_wrapper;
 
 template <>
-const std::map<int, Dxf_vport_table::Table_entry_member>
-Dxf_vport_table::s_entry_members = {
+const std::map<int, Dxf_vport_wrapper::Record_member>
+Dxf_vport_wrapper::s_record_members = {
   {2, {&Dxf_vport_entry::m_name, 1, 0}},
   {70, {&Dxf_vport_entry::m_flags, 1, 0}},
   {10, {&Dxf_vport_entry::m_lower_left, 2, 0}},

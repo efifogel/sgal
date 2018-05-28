@@ -21,7 +21,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Dxf_view_entry.hpp"
-#include "SGAL/Dxf_table.hpp"
+#include "SGAL/Dxf_record_wrapper.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -32,11 +32,11 @@ SGAL_BEGIN_NAMESPACE
  *   http://help.autodesk.com/view/ACD/2017/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
  */
 
-typedef Dxf_table<Dxf_view_entry>            Dxf_view_table;
+typedef Dxf_record_wrapper<Dxf_view_entry>              Dxf_view_wrapper;
 
 template <>
-const std::map<int, Dxf_view_table::Table_entry_member>
-Dxf_view_table::s_entry_members = {
+const std::map<int, Dxf_view_wrapper::Record_member>
+Dxf_view_wrapper::s_record_members = {
   {2, {&Dxf_view_entry::m_name, 1, 0}},
   {70, {&Dxf_view_entry::m_flags, 1, 0}},
   {40, {&Dxf_view_entry::m_view_height, 1, 0}},

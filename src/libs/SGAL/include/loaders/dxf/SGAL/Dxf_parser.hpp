@@ -48,6 +48,7 @@
 #include "SGAL/Dxf_block.hpp"
 #include "SGAL/Dxf_base_entity.hpp"
 #include "SGAL/Dxf_base_object.hpp"
+#include "SGAL/Dxf_simple_record_wrapper.hpp"
 #include "SGAL/Dxf_record_wrapper.hpp"
 #include "SGAL/Dxf_extended_data.hpp"
 
@@ -292,16 +293,6 @@ private:
   //! The type of a table parser member function.
   typedef void(Dxf_parser::*Table_parser)(void);
 
-  typedef String Dxf_table_entry::*             String_base_entry;
-  typedef Uint Dxf_table_entry::*               Uint_base_entry;
-  typedef boost::variant<String_base_entry, Uint_base_entry>
-                                                Base_entry_member_type;
-
-
-  typedef String Dxf_base_table::*             String_base_table;
-  typedef Uint Dxf_base_table::*               Uint_base_table;
-  typedef boost::variant<String_base_table, Uint_base_table>
-                                                Base_table_member_type;
   //@}
 
   /// \name Base entity types
@@ -310,12 +301,12 @@ private:
   //! The type of an entity parser member function.
   typedef void(Dxf_parser::*Entity_parser)(void);
 
-  typedef String Dxf_base_entity::*                  String_base_entity;
-  typedef Uint Dxf_base_entity::*                    Uint_base_entity;
-  typedef int8_t Dxf_base_entity::*                  Int8_base_entity;
-  typedef int16_t Dxf_base_entity::*                 Int16_base_entity;
-  typedef int32_t Dxf_base_entity::*                 Int32_base_entity;
-  typedef double Dxf_base_entity::*                  Double_base_entity;
+  typedef String Dxf_base_entity::*                     String_base_entity;
+  typedef Uint Dxf_base_entity::*                       Uint_base_entity;
+  typedef int8_t Dxf_base_entity::*                     Int8_base_entity;
+  typedef int16_t Dxf_base_entity::*                    Int16_base_entity;
+  typedef int32_t Dxf_base_entity::*                    Int32_base_entity;
+  typedef double Dxf_base_entity::*                     Double_base_entity;
   typedef boost::variant<String_base_entity,
                          Uint_base_entity,
                          Int8_base_entity,
@@ -495,17 +486,17 @@ private:
   //@}
 
   /*! Parse base record. */
-  template <typename Handle, typename BaseRecord>
-  void read_base_record_value(Code_type ct, Handle handle, BaseRecord& record)
+  template <typename Handle, typename Record_>
+  void read_simple_record_value(Code_type ct, Handle handle, Record_& record)
   {
-    typedef BaseRecord                                  Base_record;
+    typedef Record_                             Record;
 
-    typedef String Base_record::*              String_record;
-    typedef Uint Base_record::*                Uint_record;
-    typedef int8_t Base_record::*              Int8_record;
-    typedef int16_t Base_record::*             Int16_record;
-    typedef int32_t Base_record::*             Int32_record;
-    typedef double Base_record::*              Double_record;
+    typedef String Record::*                    String_record;
+    typedef Uint Record::*                      Uint_record;
+    typedef int8_t Record::*                    Int8_record;
+    typedef int16_t Record::*                   Int16_record;
+    typedef int32_t Record::*                   Int32_record;
+    typedef double Record::*                    Double_record;
 
     switch (ct) {
      case STRING: import_string_member<String_record>(handle, record); break;
@@ -706,9 +697,7 @@ private:
   template <typename Record, typename BaseMembers>
   void parse_record(Record& record, BaseMembers& base_members)
   {
-    typedef Dxf_record_wrapper<Record>                  Record_wrapper;
     typedef typename Record::Base                       Base_record;
-    Record_wrapper record_wrapper;
 
     while (true) {
       int code;
@@ -735,17 +724,17 @@ private:
       if (bit != base_members.end()) {
         auto handle = bit->second;
         auto& base_record = static_cast<Base_record&>(record);
-        read_base_record_value(ct, handle, base_record);
+        read_simple_record_value(ct, handle, base_record);
         continue;
       }
 
-      auto& members = record_wrapper.s_record_members;
+      auto& members = Dxf_record_wrapper<Record>::s_record_members;
       auto it = members.find(code);
       if (it != members.end()) {
         auto handle = it->second.m_handle;
         auto size = it->second.m_size;
         auto index = it->second.m_index;
-        read_record_value<Record_wrapper>(ct, size, handle, record, index);
+        read_record_value(ct, size, handle, record, index);
         continue;
       }
 
@@ -892,34 +881,35 @@ private:
 
   /*! Import a datum item.
    */
-  template <typename RecordWrapper, typename MemberType, typename Target>
+  template <typename MemberType, typename Record_>
   void read_record_value(Code_type ct, int size, MemberType handle,
-                         Target& target, int index)
+                         Record_& record, int index)
   {
-    typedef RecordWrapper                               Record_wrapper;
-    typedef typename Record_wrapper::String_record      String_record;
-    typedef typename Record_wrapper::Bool_record        Bool_record;
-    typedef typename Record_wrapper::Int8_record        Int8_record;
-    typedef typename Record_wrapper::Int16_record       Int16_record;
-    typedef typename Record_wrapper::Int32_record       Int32_record;
-    typedef typename Record_wrapper::Double_record      Double_record;
-    typedef typename Record_wrapper::Uint_record        Uint_record;
-    typedef typename Record_wrapper::Double_2d_record   Double_2d_record;
-    typedef typename Record_wrapper::Double_3d_record   Double_3d_record;
+    typedef Record_                             Record;
+
+    typedef String Record::*                    String_record;
+    typedef bool Record::*                      Bool_record;
+    typedef int8_t Record::*                    Int8_record;
+    typedef int16_t Record::*                   Int16_record;
+    typedef int32_t Record::*                   Int32_record;
+    typedef double Record::*                    Double_record;
+    typedef Uint Record::*                      Uint_record;
+    typedef double (Record::*Double_2d_record)[2];
+    typedef double (Record::*Double_3d_record)[3];
 
     switch (ct) {
-     case STRING: import_string_member<String_record>(handle, target); break;
-     case BOOL: import_member<Bool_record>(handle, target); break;
-     case INT8: import_int8_member<Int8_record>(handle, target); break;
-     case INT16: import_member<Int16_record>(handle, target); break;
-     case INT32: import_member<Int32_record>(handle, target); break;
-     case UINT: import_uint_member<Uint_record>(handle, target); break;
+     case STRING: import_string_member<String_record>(handle, record); break;
+     case BOOL: import_member<Bool_record>(handle, record); break;
+     case INT8: import_int8_member<Int8_record>(handle, record); break;
+     case INT16: import_member<Int16_record>(handle, record); break;
+     case INT32: import_member<Int32_record>(handle, record); break;
+     case UINT: import_uint_member<Uint_record>(handle, record); break;
 
      case DOUBLE:
       switch (size) {
-       case 1: import_member<Double_record>(handle, target); break;
-       case 2: import_member<Double_2d_record>(handle, target, index); break;
-       case 3: import_member<Double_3d_record>(handle, target, index); break;
+       case 1: import_member<Double_record>(handle, record); break;
+       case 2: import_member<Double_2d_record>(handle, record, index); break;
+       case 3: import_member<Double_3d_record>(handle, record, index); break;
       }
       break;
 
@@ -1031,11 +1021,6 @@ private:
                     << std::endl;);
   }
 
-  /*! Parse common table section, which aplies to all table types.
-   * \return maximum number of entries in table.
-   */
-  int parse_base_table(Dxf_base_table& table);
-
   /*! Has_xdata is a generic-template-struct service that evaluates as follows:
    * If A has a data member called x_data, then Has_xdata<A>::value == true,
    * else (A doesn't have a data member called x_data)
@@ -1091,6 +1076,36 @@ private:
     }
   }
 
+  /*! Has_xdata is a generic-template-struct service that evaluates as follows:
+   * If A has a data member called x_data, then Has_xdata<A>::value == true,
+   * else (A doesn't have a data member called x_data)
+   * Has_xdata<B>::value == false.
+   */
+  template <typename T, typename = int>
+  struct Has_extended_data : std::false_type {};
+
+  //!
+  template <typename T>
+  struct Has_extended_data<T, decltype((void) T::m_extended_data, 0)> :
+    std::true_type {};
+
+  //!
+  template <bool what, typename Record>
+  Dxf_extended_data* get_extended_data(const String& name, Record& record,
+                                       char (*)[what] = 0)
+  {
+    // We store the extended data at the respcetive record, as the appid
+    // table entry hasn't been read yet.
+    record.m_extended_data.resize(record.m_extended_data.size() + 1);
+    return &(record.m_extended_data.back());
+  }
+
+  //!
+  template <bool what, typename Record>
+  Dxf_extended_data* get_extended_data(const String& name, Record& record,
+                                       char (*)[!what] = 0)
+  { return nullptr; }
+
   /*! Read extended data
    */
   template <typename Record>
@@ -1100,8 +1115,8 @@ private:
     if (1001 == code) {
       String app_name;
       import_string_value(app_name);
-      // Look for the application
-      m_extended_data = m_appid_table.get_extended_data(app_name);
+      m_extended_data =
+        get_extended_data<Has_extended_data<Record>::value>(app_name, record);
       return;
     }
 
@@ -1110,19 +1125,86 @@ private:
       return;
     }
 
-    typedef Dxf_record_wrapper<Dxf_extended_data>       Extended_data_wrapper;
-    Extended_data_wrapper extended_data_wrapper;
-
     auto ct = code_type(code);
-    auto& members = extended_data_wrapper.s_record_members;
+    auto& members = Dxf_record_wrapper<Dxf_extended_data>::s_record_members;
     auto it = members.find(code);
     if (it != members.end()) {
       auto handle = it->second.m_handle;
       auto size = it->second.m_size;
       auto index = it->second.m_index;
 
-      read_record_value<Extended_data_wrapper>(ct, size, handle,
-                                               *m_extended_data, index);
+      read_record_value(ct, size, handle, *m_extended_data, index);
+    }
+  }
+
+  /*! Parse common table section, which aplies to all table types.
+   * We cannot pass (a reference to) just the base table (Dxf_base_table), cause
+   * it turn out that in the sub-section where only common-table codes should
+   * reside, specific-entry codes reside as well; go figures....
+   */
+  template <typename Table>
+  void parse_base_table(Table& table)
+  {
+    SGAL_TRACE_CODE(Trace::DXF,
+                    std::cout << "Dxf_parser::parse_base_table()"
+                    << std::endl;);
+
+    typedef typename Table::Entry               Entry;
+
+    Dxf_base_table& base_table = table;
+    auto& entries = table.m_entries;
+    size_t max_num(0);
+
+    while (true) {
+      int code;
+      import_code(code);
+      SGAL_TRACE_CODE(Trace::DXF,
+                      std::cout << "Dxf_parser::parse_base_table() code: "
+                      << code << std::endl;);
+      if (0 == code) break;
+
+      if (100 == code) {
+        import_string_value(m_marker);
+        continue;
+      }
+
+      if (102 == code) {
+        read_xdata_block(code, base_table);
+        continue;
+      }
+
+      // Code 70 applies to STYLE table records only (pre-R13 field), why?
+      if (70 == code) {
+        m_is >> max_num;
+        entries.resize(max_num);
+        continue;
+      }
+
+      auto ct = code_type(code);
+      auto& base_members =
+        Dxf_simple_record_wrapper<Dxf_base_table>::s_record_members;
+      auto it = base_members.find(code);
+      if (it != base_members.end()) {
+        auto handle = it->second;
+        read_simple_record_value(ct, handle, base_table);
+        continue;
+      }
+
+      // Handle specifc-entry table codes:
+      // At this point we don't try to handle common entry code.
+      SGAL_assertion(! entries.empty());
+      auto& entry = entries.back();
+      auto& members = Dxf_record_wrapper<Entry>::s_record_members;
+      auto eit = members.find(code);
+      if (eit != members.end()) {
+        auto handle = eit->second.m_handle;
+        auto size = eit->second.m_size;
+        auto index = eit->second.m_index;
+        read_record_value(ct, size, handle, entry, index);
+        continue;
+      }
+
+      read_record_special_value(code, entry);
     }
   }
 
@@ -1131,16 +1213,12 @@ private:
   template <typename Table>
   void parse_table(Table& table, const std::string& name)
   {
+    typedef typename Table::Entry               Entry;
+
     bool exceeded(false);
-    auto num = parse_base_table(table);
+    parse_base_table(table);
     auto& entries = table.m_entries;
-    entries.resize(num);
-    /*! EF: it seems that the max number of entries is not really respected.
-     * Instead of simply iterating over the entries and return when either
-     * we run out of entries or the max number is reached, we only look for
-     * the end code (namely 0). If we exceed the promised max number, we resize
-     * the table.
-     */
+
     size_t i(0);
     while (true) {
       std::string str;
@@ -1148,21 +1226,26 @@ private:
       if ("ENDTAB" == str) return;
 
       SGAL_assertion(str == name);
-      if (i == num) {
-        SGAL_warning_msg(exceeded, "Maximum number of entries exceeded!");
-        exceeded = true;
-        ++num;
-        entries.resize(num);
+      if (i == entries.size()) {
+        // It is specifiied that Code 70 applies to STYLE table records only
+        // (pre-R13 field), why? What is special about STYLE, and why not make
+        // things consistent?
+        // Anyhow, Instead of simply iterating over the entries and return when
+        // either we run out of entries or the max number is reached, we only
+        // look for the end code (namely 0). If we exceed the promised max
+        // number, we resize the table.
+        if ("STYLE" == str) {
+          SGAL_warning_msg(exceeded, "Maximum number of entries exceeded!");
+          exceeded = true;
+        }
+        entries.resize(entries.size() + 1);
       }
-      auto& entry = entries[i++];
+      auto& entry = entries.back();
 
       bool done(false);
       while (!done) {
         int code;
         import_code(code);
-        SGAL_TRACE_CODE(Trace::DXF,
-                        std::cout << "Dxf_parser::parse_table() code: "
-                        << code << std::endl;);
         if (0 == code) {
           done = true;
           break;
@@ -1179,28 +1262,23 @@ private:
         }
 
         auto ct = code_type(code);
-        auto bit = s_base_entry_members.find(code);
-        if (bit != s_base_entry_members.end()) {
+        auto& base_members =
+          Dxf_simple_record_wrapper<Dxf_table_entry>::s_record_members;
+        auto bit = base_members.find(code);
+        if (bit != base_members.end()) {
           auto handle = bit->second;
           auto& base_entry = static_cast<Dxf_table_entry&>(entry);
-          switch (ct) {
-           case STRING:
-            import_string_member<String_base_entry>(handle, base_entry);
-            break;
-
-           case UINT: import_uint_member<Uint_base_entry>(handle, base_entry);
-            break;
-           default: break;
-          }
+          read_simple_record_value(ct, handle, base_entry);
           continue;
         }
 
-        auto it = table.s_entry_members.find(code);
-        if (it != table.s_entry_members.end()) {
-          auto handle = it->second.m_handle;
-          auto size = it->second.m_size;
-          auto index = it->second.m_index;
-          read_record_value<Table>(ct, size, handle, entry, index);
+        auto& members = Dxf_record_wrapper<Entry>::s_record_members;
+        auto eit = members.find(code);
+        if (eit != members.end()) {
+          auto handle = eit->second.m_handle;
+          auto size = eit->second.m_size;
+          auto index = eit->second.m_index;
+          read_record_value(ct, size, handle, entry, index);
           continue;
         }
 
@@ -1223,8 +1301,6 @@ private:
   static const std::array<String, 8> s_code_type_names;
   static const std::map<int, Class_member_type> s_class_members;
   static const std::map<String, Table_parser> s_tables;
-  static const std::map<int, Base_table_member_type> s_base_table_members;
-  static const std::map<int, Base_entry_member_type> s_base_entry_members;
   static const std::map<int, Block_member> s_block_members;
   static const std::map<String, Entity_parser> s_entities;
   static const std::map<int, Base_entity_type> s_base_entity_members;

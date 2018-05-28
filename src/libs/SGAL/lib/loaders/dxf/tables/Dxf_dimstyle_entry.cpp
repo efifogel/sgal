@@ -17,16 +17,16 @@
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Dxf_table.hpp"
 #include "SGAL/Dxf_dimstyle_entry.hpp"
+#include "SGAL/Dxf_record_wrapper.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-typedef Dxf_table<Dxf_dimstyle_entry>           Dxf_dimstyle_table;
+typedef Dxf_record_wrapper<Dxf_dimstyle_entry>          Dxf_dimstyle_wrapper;
 
 template <>
-const std::map<int, Dxf_dimstyle_table::Table_entry_member>
-Dxf_dimstyle_table::s_entry_members = {
+const std::map<int, Dxf_dimstyle_wrapper::Record_member>
+Dxf_dimstyle_wrapper::s_record_members = {
   {2, {&Dxf_dimstyle_entry::m_name, 1, 0}},
   {70, {&Dxf_dimstyle_entry::m_flags, 1, 0}},
   {3, {&Dxf_dimstyle_entry::m_dimpost, 1, 0}},

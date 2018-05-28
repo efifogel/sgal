@@ -19,10 +19,13 @@
 #ifndef SGAL_DXF_TABLE_ENTRY_HPP
 #define SGAL_DXF_TABLE_ENTRY_HPP
 
-#include <cstdint>
+#include <string>
+#include <vector>
+#include <map>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Dxf_extended_data.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -30,10 +33,12 @@ struct SGAL_SGAL_DECL Dxf_table_entry {
   String m_handle;      // Handle
   Uint m_owner_dict;    // Hard owner ID/handle to owner dictionary (optional)
   Uint m_owner_obj;     // Soft-pointer ID/handle to owner object
-  String m_group;       // "{ACAD_XDICTIONARY" and "}" indicate the start and
-                        // end, respectively, of an extension dictionary group.
+  std::map<String, std::vector<String> > m_xdata; // "{ACAD_XDICTIONARY" and "}"
+                        // indicate the start and end, respectively, of an
+                        // extension dictionary group.
                         // This group exists only if persistent reactors have
                         // been attached to this object (optional)
+  std::vector<Dxf_extended_data> m_extended_data;
 };
 
 SGAL_END_NAMESPACE

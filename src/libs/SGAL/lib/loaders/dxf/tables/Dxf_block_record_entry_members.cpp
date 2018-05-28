@@ -21,7 +21,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Dxf_block_record_entry.hpp"
-#include "SGAL/Dxf_table.hpp"
+#include "SGAL/Dxf_record_wrapper.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -34,11 +34,11 @@ SGAL_BEGIN_NAMESPACE
  * The code 1070 Appears twice in the spec. The second appearance is ignored.
  */
 
-typedef Dxf_table<Dxf_block_record_entry>            Dxf_block_record_table;
+typedef Dxf_record_wrapper<Dxf_block_record_entry>      Dxf_block_record_wrapper;
 
 template <>
-const std::map<int, Dxf_block_record_table::Table_entry_member>
-Dxf_block_record_table::s_entry_members = {
+const std::map<int, Dxf_block_record_wrapper::Record_member>
+Dxf_block_record_wrapper::s_record_members = {
   {2, {&Dxf_block_record_entry::m_name, 1, 0}},
   {340, {&Dxf_block_record_entry::m_layout_handle, 1, 0}},
   {70, {&Dxf_block_record_entry::m_insertion_units, 1, 0}},

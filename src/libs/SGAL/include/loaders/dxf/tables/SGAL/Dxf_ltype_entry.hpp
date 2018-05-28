@@ -19,6 +19,9 @@
 #ifndef SGAL_DXF_LTYPE_ENTRY_HPP
 #define SGAL_DXF_LTYPE_ENTRY_HPP
 
+#include <array>
+#include <vector>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Dxf_table_entry.hpp"
@@ -64,9 +67,13 @@ struct SGAL_SGAL_DECL Dxf_ltype_entry: public Dxf_table_entry {
   double m_rotation_angles; // R = (relative) or A = (absolute) rotation value
                         // in radians of embedded shape or text; one per element
                         // if code 74 specifies an embedded shape or text string
-  std::vector<double[2]> m_offsets; // offset values (optional)
+  std::vector<std::array<double, 2> > m_offsets; // offset values (optional)
   std::vector<String> m_text_strings; // Text string (one per element if code
                         // 74 = 2)
+
+  /*! Handle a value that requires special handling (as opposed to only storing).
+   */
+  bool handle_value(int code, double value);
 };
 
 SGAL_END_NAMESPACE

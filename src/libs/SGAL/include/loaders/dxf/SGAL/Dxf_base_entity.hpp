@@ -20,11 +20,12 @@
 #define SGAL_DXF_BASE_ENTITY_HPP
 
 #include <string>
-#include <list>
+#include <vector>
 #include <map>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Dxf_extended_data.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -80,7 +81,8 @@ struct Dxf_base_entity {
                         // Note: Starting with AutoCAD 2016-based products, this
                         // property is obsolete but still supported for
                         // backwards compatibility.
-  std::map<String, std::list<String> > m_xdata; // Begin xdata "{", "}" (opt.)
+  std::map<String, std::vector<String> > m_xdata; // Begin xdata "{", "}" (opt.)
+  std::vector<Dxf_extended_data> m_extended_data;
 };
 
 SGAL_END_NAMESPACE

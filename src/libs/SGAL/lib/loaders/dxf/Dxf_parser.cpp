@@ -22,6 +22,8 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Dxf_parser.hpp"
+#include "SGAL/Dxf_simple_record_wrapper.hpp"
+#include "SGAL/Dxf_record_wrapper.hpp"
 #include "SGAL/Trace.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -117,33 +119,38 @@ Dxf_parser::s_tables = {
 };
 
 //!
-typedef Dxf_table<Dxf_appid_entry>              Dxf_appid_table;
+typedef Dxf_record_wrapper<Dxf_appid_entry>     Dxf_appid_wrapper;
 template <>
-const std::map<int, Dxf_appid_table::Table_entry_member>
-Dxf_appid_table::s_entry_members = {
+const std::map<int, Dxf_appid_wrapper::Record_member>
+Dxf_appid_wrapper::s_record_members = {
   {2, {&Dxf_appid_entry::m_name, 1, 0}},
   {70, {&Dxf_appid_entry::m_flags, 1, 0}}
 };
 
 //!
-typedef Dxf_table<Dxf_ucs_entry>                Dxf_ucs_table;
+typedef Dxf_record_wrapper<Dxf_ucs_entry>               Dxf_ucs_wrapper;
 template <>
-const std::map<int, Dxf_ucs_table::Table_entry_member>
-Dxf_ucs_table::s_entry_members = {
+const std::map<int, Dxf_ucs_wrapper::Record_member>
+Dxf_ucs_wrapper::s_record_members = {
 };
 
 //!
-const std::map<int, Dxf_parser::Base_table_member_type>
-Dxf_parser::s_base_table_members = {
+typedef Dxf_simple_record_wrapper<Dxf_base_table>       Dxf_base_table_wrapper;
+template <>
+const std::map<int, Dxf_base_table_wrapper::Record_member_type>
+Dxf_base_table_wrapper::s_record_members = {
   {5, &Dxf_base_table::m_handle},
   {360, &Dxf_base_table::m_owner_dict},
   {330, &Dxf_base_table::m_owner_obj}
 };
 
 //!
-const std::map<int, Dxf_parser::Base_entry_member_type>
-Dxf_parser::s_base_entry_members = {
+typedef Dxf_simple_record_wrapper<Dxf_table_entry>      Dxf_entry_wrapper;
+template <>
+const std::map<int, Dxf_entry_wrapper::Record_member_type>
+Dxf_entry_wrapper::s_record_members = {
   {5, &Dxf_table_entry::m_handle},
+  {105, &Dxf_table_entry::m_handle}, // DYMSTYLE only, probably due to old vers.
   {360, &Dxf_table_entry::m_owner_dict},
   {330, &Dxf_table_entry::m_owner_obj}
 };
@@ -413,59 +420,6 @@ void Dxf_parser::parse_classes()
   } while (true);
 }
 
-//! \brief parses common table section, which aplies to all table types.
-int Dxf_parser::parse_base_table(Dxf_base_table& table)
-{
-  SGAL_TRACE_CODE(Trace::DXF,
-                  std::cout << "Dxf_parser::parse_base_table()"
-                  << std::endl;);
-
-  size_t max_num(0);
-  bool start(true);
-
-  bool done(false);
-  while (!done) {
-    int code;
-    import_code(code);
-    SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout << "Dxf_parser::parse_base_table() code: "
-                    << code << std::endl;);
-    if (0 == code) {
-      done = true;
-      break;
-    }
-    if (102 == code) {
-      String tmp;
-      if (start) m_is >> table.m_group;
-      else m_is >> tmp;
-      start = ! start;
-      continue;
-    }
-    if (100 == code) {
-      String tmp;
-      m_is >> tmp; /* What is a subclass marker for? */
-      continue;
-    }
-    if (70 == code) {
-      m_is >> max_num;
-      continue;
-    }
-
-    auto it = s_base_table_members.find(code);
-    SGAL_assertion(it != s_base_table_members.end());
-    auto handle = it->second;
-    switch (code_type(code)) {
-      case STRING:
-       import_string_member<String_base_table>(handle, table); break;
-     case UINT: import_member<Uint_base_table>(handle, table); break;
-     default: SGAL_error();
-    }
-  }
-  SGAL_assertion(start);
-
-  return max_num;
-}
-
 //! \brief parses a table of type APPID.
 void Dxf_parser::parse_appid_table()
 {
@@ -604,17 +558,7 @@ void Dxf_parser::parse_block()
     }
 
     if (102 == code) {
-      //! \todo store the values in the entry.
-      char c;
-      m_is >> c;
-      SGAL_assertion('{' == c);
-      String name;
-      import_string_value(name);
-      String str;
-      import_string_value(str);
-      while ("}" != str) {
-        import_string_value(str);
-      }
+      read_xdata_block(code, block);
       continue;
     }
 

@@ -21,7 +21,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Dxf_ltype_entry.hpp"
-#include "SGAL/Dxf_table.hpp"
+#include "SGAL/Dxf_record_wrapper.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -32,11 +32,11 @@ SGAL_BEGIN_NAMESPACE
  *   http://help.autodesk.com/view/ACD/2017/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
  */
 
-typedef Dxf_table<Dxf_ltype_entry>            Dxf_ltype_table;
+typedef Dxf_record_wrapper<Dxf_ltype_entry>             Dxf_ltype_wrapper;
 
 template <>
-const std::map<int, Dxf_ltype_table::Table_entry_member>
-Dxf_ltype_table::s_entry_members = {
+const std::map<int, Dxf_ltype_wrapper::Record_member>
+Dxf_ltype_wrapper::s_record_members = {
   {2, {&Dxf_ltype_entry::m_name, 1, 0}},
   {70, {&Dxf_ltype_entry::m_flags, 1, 0}},
   {3, {&Dxf_ltype_entry::m_description, 1, 0}},
@@ -53,5 +53,25 @@ Dxf_ltype_table::s_entry_members = {
   // {45, {&Dxf_ltype_entry::m_offsets, n, i, 1}},
   // {9, {&Dxf_ltype_entry::m_text_strings, n, 0}},
 };
+
+//! \brief handles a value that requires special handling.
+bool Dxf_ltype_entry::handle_value(int code, double value)
+{
+  //! What to do with the values?
+  switch (code) {
+   case 44:
+    m_offsets.resize(m_offsets.size() + 1);
+    m_offsets.back()[0] = value;
+    return true;
+
+   case 45:
+    SGAL_assertion(! m_offsets.empty());
+    m_offsets.back()[1] = value;
+    return true;
+
+   case 46: m_scale_values.push_back(value); return true;
+  }
+  return false;
+}
 
 SGAL_END_NAMESPACE
