@@ -463,28 +463,32 @@ set(SGAL_LOADERS_DXF_OBJECTS_SRC_FILES ${SGAL_LOADERS_DXF_OBJECTS_SRC_FILES} lib
 set(SGAL_SRC_FILES ${SGAL_SRC_FILES} ${SGAL_LOADERS_DXF_OBJECTS_SRC_FILES} ${SGAL_LOADERS_DXF_OBJECTS_HEADER_FILES})
 source_group(src\\loaders\\dxf\\objects FILES ${SGAL_LOADERS_DXF_OBJECTS_SRC_FILES} ${SGAL_LOADERS_DXF_OBJECTS_HEADER_FILES})
 
+# dxf tables
+set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_dimstyle_entry.cpp)
+set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_block_record_entry_members.cpp)
+set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_layer_entry_members.cpp)
+set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_ltype_entry_members.cpp)
+set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_style_entry_members.cpp)
+set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_view_entry_members.cpp)
+set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_vport_entry_members.cpp)
+set(SGAL_SRC_FILES ${SGAL_SRC_FILES} ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} ${SGAL_LOADERS_DXF_TABLES_HEADER_FILES})
+source_group(src\\loaders\\dxf\\tables FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} ${SGAL_LOADERS_DXF_TABLES_HEADER_FILES})
+
 # dxf loader
 set(SGAL_LOADERS_DXF_SRC_FILES ${SGAL_LOADERS_DXF_SRC_FILES} lib/loaders/dxf/Dxf_extended_data.cpp)
-set(SGAL_LOADERS_DXF_SRC_FILES ${SGAL_LOADERS_DXF_SRC_FILES} lib/loaders/dxf/Dxf_dimstyle_entry.cpp)
+set(SGAL_LOADERS_DXF_SRC_FILES ${SGAL_LOADERS_DXF_SRC_FILES} lib/loaders/dxf/Dxf_header_members.cpp)
+set(SGAL_LOADERS_DXF_SRC_FILES ${SGAL_LOADERS_DXF_SRC_FILES} lib/loaders/dxf/Dxf_parser.cpp)
+set(SGAL_LOADERS_DXF_HEADER_FILES ${SGAL_LOADERS_DXF_HEADER_FILES} include/loaders/dxf/SGAL/Dxf_block.hpp)
+set(SGAL_LOADERS_DXF_HEADER_FILES ${SGAL_LOADERS_DXF_HEADER_FILES} include/loaders/dxf/SGAL/Dxf_class.hpp)
+set(SGAL_LOADERS_DXF_HEADER_FILES ${SGAL_LOADERS_DXF_HEADER_FILES} include/loaders/dxf/SGAL/Dxf_header.hpp)
+set(SGAL_LOADERS_DXF_HEADER_FILES ${SGAL_LOADERS_DXF_HEADER_FILES} include/loaders/dxf/SGAL/Dxf_parser.hpp)
+set(SGAL_LOADERS_DXF_HEADER_FILES ${SGAL_LOADERS_DXF_HEADER_FILES} include/loaders/dxf/SGAL/Dxf_table.hpp)
 set(SGAL_SRC_FILES ${SGAL_SRC_FILES} ${SGAL_LOADERS_DXF_SRC_FILES} ${SGAL_LOADERS_DXF_HEADER_FILES})
 source_group(src\\loaders\\dxf FILES ${SGAL_LOADERS_DXF_SRC_FILES} ${SGAL_LOADERS_DXF_HEADER_FILES})
 
 # Loaders
-set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_block_record_entry_members.cpp)
-set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_header_members.cpp)
-set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_parser.cpp)
-set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_layer_entry_members.cpp)
-set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_ltype_entry_members.cpp)
-set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_style_entry_members.cpp)
-set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_view_entry_members.cpp)
-set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Dxf_vport_entry_members.cpp)
 set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Element.cpp)
 set(SGAL_LOADERS_SRC_FILES ${SGAL_LOADERS_SRC_FILES} lib/loaders/Utilities.cpp)
-set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/dxf/SGAL/Dxf_block.hpp)
-set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/dxf/SGAL/Dxf_class.hpp)
-set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/dxf/SGAL/Dxf_header.hpp)
-set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/SGAL/Dxf_parser.hpp)
-set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/dxf/SGAL/Dxf_table.hpp)
 set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/SGAL/Element.hpp)
 set(SGAL_LOADERS_HEADER_FILES ${SGAL_LOADERS_HEADER_FILES} include/loaders/SGAL/Utilities.hpp)
 set(SGAL_SRC_FILES ${SGAL_SRC_FILES} ${SGAL_LOADERS_SRC_FILES} ${SGAL_LOADERS_HEADER_FILES})
@@ -696,6 +700,7 @@ include_directories(include/loaders)
 include_directories(include/loaders/dxf)
 include_directories(include/loaders/dxf/entities)
 include_directories(include/loaders/dxf/objects)
+include_directories(include/loaders/dxf/tables)
 include_directories(include/primitives)
 include_directories(include/sensors)
 include_directories(include/utilities)
@@ -769,6 +774,7 @@ set(SGAL_SGAL_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}/include/loaders/dxf
   ${CMAKE_CURRENT_SOURCE_DIR}/include/loaders/dxf/entities
   ${CMAKE_CURRENT_SOURCE_DIR}/include/loaders/dxf/objects
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/loaders/dxf/tables
   ${CMAKE_CURRENT_SOURCE_DIR}/include/primitives
   ${CMAKE_CURRENT_SOURCE_DIR}/include/sensors
   ${CMAKE_CURRENT_SOURCE_DIR}/include/utilities
