@@ -75,6 +75,8 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // Note: Starting with AutoCAD 2016-based products,
                         // this variable is obsolete but still supported for
                         // backwards compatibility.
+  String m_customproperty; //
+  String m_custompropertytag; //
   int16_t m_dimadec;    // Number of precision places displayed in angular
                         // dimensions
   int16_t m_dimalt;     // Alternate unit dimensioning performed if nonzero
@@ -376,6 +378,7 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // 1= Round
                         // 2 = Angle
                         // 3 = Flat
+  String m_last_saved_by;
   int16_t m_limcheck;   // Nonzero if limits checking is on
   double m_limmax[2];   // XY drawing limits upper-right corner (in WCS)
   double m_limmin[2];   // XY drawing limits lower-left corner (in WCS)
