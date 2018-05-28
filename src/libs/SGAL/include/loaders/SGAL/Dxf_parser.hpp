@@ -191,7 +191,7 @@ private:
     NUM_SECTIONS
   };
 
-  enum Code_type { STRING, FLOAT, DOUBLE, INT8, INT16, INT32, UINT, BOOL };
+  enum Code_type { STRING, DOUBLE, INT8, INT16, INT32, UINT, BOOL };
 
   struct Code_range {
     Code_range(int min, int max, Code_type type) :
@@ -687,14 +687,6 @@ private:
         return;
       stream << std::hex << uint_val;
       msg += ", unsigned int value: 0x" + stream.str();
-      break;
-
-     case FLOAT:
-      m_is >> float_val;
-      // if (handle_value<has_member_function_handle_value
-      //     <bool (Record::*)(int, float)>::value>(code, int32_val, record))
-      //   return;
-      msg += ", float value: " + std::to_string(float_val);
       break;
 
      case DOUBLE:
@@ -1212,7 +1204,7 @@ private:
           continue;
         }
 
-        read_unrecognized(code);
+        read_record_special_value(code, entry);
       }
     }
   }
