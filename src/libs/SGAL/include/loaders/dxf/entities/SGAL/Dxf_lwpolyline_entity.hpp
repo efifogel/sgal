@@ -27,6 +27,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
+class Dxf_parser;
+
 struct Dxf_lwpolyline_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
 
@@ -51,10 +53,10 @@ struct Dxf_lwpolyline_entity : public Dxf_base_entity {
                         // default = 0, 0, 1)
 
   //! \brief handles a value that requires special handling.
-  bool handle_value(int code, double value);
+  bool handle_value(Dxf_parser& parser, int code, double value);
 
   //! \brief handles a value that requires special handling.
-  bool handle_value(int code, int32_t value);
+  bool handle_value(Dxf_parser& parser, int code, int32_t value);
 };
 
 SGAL_END_NAMESPACE

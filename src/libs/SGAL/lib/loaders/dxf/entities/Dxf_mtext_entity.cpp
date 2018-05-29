@@ -66,7 +66,8 @@ Dxf_mtext_entity_wrapper::s_record_members = {
 };
 
 //! \brief handles a value that requires special handling.
-bool Dxf_mtext_entity::handle_value(int code, double value)
+bool Dxf_mtext_entity::handle_value(Dxf_parser& /* parser */,
+                                    int code, double value)
 {
   switch (code) {
    case 10: m_insertion_point[0] = value; return true;

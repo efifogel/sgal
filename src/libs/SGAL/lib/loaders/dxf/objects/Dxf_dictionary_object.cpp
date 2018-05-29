@@ -37,7 +37,8 @@ Dxf_dictionary_object_wrapper::s_record_members = {
 };
 
 //! \brief handles a value that requires special handling.
-bool Dxf_dictionary_object::handle_value(int code, const String& value)
+bool Dxf_dictionary_object::handle_value(Dxf_parser& /* parser */,
+                                         int code, const String& value)
 {
   if (3 == code) {
     m_entry_name = value;
@@ -47,7 +48,8 @@ bool Dxf_dictionary_object::handle_value(int code, const String& value)
 }
 
 //! \brief handles a value that requires special handling.
-bool Dxf_dictionary_object::handle_value(int code, Uint value)
+bool Dxf_dictionary_object::handle_value(Dxf_parser& /* parser */,
+                                         int code, Uint value)
 {
   if (350 == code) {
     m_value_handles[m_entry_name] = value;

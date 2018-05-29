@@ -47,7 +47,8 @@ Dxf_lwpolyline_entity_wrapper::s_record_members = {
 };
 
 //! \brief handles a value that requires special handling.
-bool Dxf_lwpolyline_entity::handle_value(int code, double value)
+bool Dxf_lwpolyline_entity::handle_value(Dxf_parser& /* parser */,
+                                         int code, double value)
 {
   size_t i;
 
@@ -76,7 +77,8 @@ bool Dxf_lwpolyline_entity::handle_value(int code, double value)
 }
 
 //! \brief handles a value that requires special handling.
-bool Dxf_lwpolyline_entity::handle_value(int code, int32_t value)
+bool Dxf_lwpolyline_entity::handle_value(Dxf_parser& /* parser */,
+                                         int code, int32_t value)
 {
   if (90 == code) {
     m_vertices.reserve(code);

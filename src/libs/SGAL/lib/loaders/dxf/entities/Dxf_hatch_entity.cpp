@@ -21,6 +21,9 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Dxf_record_wrapper.hpp"
 #include "SGAL/Dxf_hatch_entity.hpp"
+#include "SGAL/Dxf_parser.hpp"
+#include "SGAL/Dxf_boundary_path.hpp"
+#include "SGAL/Dxf_polyline_boundary_path.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -68,10 +71,30 @@ Dxf_hatch_entity_wrapper::s_record_members = {
 };
 
 //! \brief handles a value that requires special handling.
-bool Dxf_hatch_entity::handle_value(int code, int32_t value)
+bool Dxf_hatch_entity::handle_value(Dxf_parser& parser,
+                                    int code, int32_t value)
 {
   if (91 == code) {
-    m_boundary_path.resize(value);
+    m_boundary_paths.resize(value);
+    for (auto& boundary_path : m_boundary_paths) {
+      int code;
+      parser.import_code(code);
+      SGAL_assertion(92 == code);
+      auto ct = Dxf_parser::code_type(code);
+
+      int32_t type;
+      parser.import_value(type);
+      if (type == 2) {
+        auto* path = new Dxf_polyline_boundary_path;
+        parser.parse_polyline_boundary_path(*path);
+        boundary_path = path;
+        continue;
+      }
+
+      auto* path = new Dxf_boundary_path;
+      parser.parse_boundary_path(*path);
+      boundary_path = path;
+    }
     return true;
   }
   return false;

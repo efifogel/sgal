@@ -57,7 +57,8 @@ Dxf_spline_entity_wrapper::s_record_members = {
 };
 
 //! \brief handles a value that requires special handling.
-bool Dxf_spline_entity::handle_value(int code, int16_t value)
+bool Dxf_spline_entity::handle_value(Dxf_parser& /* parser */,
+                                     int code, int16_t value)
 {
   switch (code) {
    case 72: m_knot_values.reserve(value); return true;
@@ -68,7 +69,8 @@ bool Dxf_spline_entity::handle_value(int code, int16_t value)
 }
 
 //! \brief handles a value that requires special handling.
-bool Dxf_spline_entity::handle_value(int code, double value)
+bool Dxf_spline_entity::handle_value(Dxf_parser& /* parser */,
+                                     int code, double value)
 {
   size_t i;
 

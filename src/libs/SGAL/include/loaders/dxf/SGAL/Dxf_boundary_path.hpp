@@ -31,29 +31,24 @@ struct Dxf_boundary_path {
                         // 4 = Derived
                         // 8 = Textbox
                         // 16 = Outermost
+  // varies Polyline boundary type data (only if boundary = polyline).
+                        // See Polyline boundary data table below
+  // Number of edges in this boundary path (only if boundary is not a
+                        // polyline)
+  int16_t m_edge_type;  // Edge type (only if boundary is not a polyline):
+                        // 1 = Line
+                        // 2 = Circular arc
+                        // 3 = Elliptic arc
+                        // 4 = Spline
+  // varies Edge type data (only if boundary is not a polyline).
+                        // See appropriate Edge data table below
+  // Number of source boundary objects
+  std::vector<Uint> m_source_boundary_objects; // Reference to source boundary
+                        // objects (multiple entries)
 #if 0
-  varies
-Polyline boundary type data (only if boundary = polyline). See Polyline boundary data table below
-93 Number of edges in this boundary path (only if boundary is not a polyline)
-72 Edge type (only if boundary is not a polyline):
-1 = Line
-2 = Circular arc
-3 = Elliptic arc
-4 = Spline
-varies
-Edge type data (only if boundary is not a polyline). See appropriate Edge data table below
-97 Number of source boundary objects
-330 Reference to source boundary objects (multiple entries)
 Polyline boundary data group codes
 Group code
 Description
-72 Has bulge flag
-73 Is closed flag
-93 Number of polyline vertices
-10 Vertex location (in OCS)
-DXF: X value; APP: 2D point (multiple entries)
-20 DXF: Y value of vertex location (in OCS) (multiple entries)
-42 Bulge (optional, default = 0)
 Line edge data group codes
 Group code
 Description

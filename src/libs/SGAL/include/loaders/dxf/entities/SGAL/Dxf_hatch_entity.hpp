@@ -27,6 +27,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
+class Dxf_parser;
+
 struct Dxf_hatch_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
 
@@ -44,7 +46,7 @@ struct Dxf_hatch_entity : public Dxf_base_entity {
                         // 0 = lacks solid fill;
                         // 1 = has solid fill
   // int32_t Number of boundary paths (loops)
-  std::vector<Dxf_boundary_path> m_boundary_path; // Boundary path data.
+  std::vector<Dxf_boundary_path*> m_boundary_paths; // Boundary path data.
                         // Repeats number of times specified by code 91
   int16_t m_hatch_style; // Hatch style:
                         // 0 = Hatch "odd parity" area (Normal style)
@@ -116,7 +118,7 @@ struct Dxf_hatch_entity : public Dxf_base_entity {
 
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
-  bool handle_value(int code, int32_t value);
+  bool handle_value(Dxf_parser& parser, int code, int32_t value);
 };
 
 SGAL_END_NAMESPACE

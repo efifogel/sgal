@@ -28,6 +28,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
+class Dxf_parser;
+
 struct SGAL_SGAL_DECL Dxf_block {
   String m_handle;      // Handle
   Uint m_owner_handle;  // Soft-pointer ID/handle to owner object
@@ -57,7 +59,7 @@ struct SGAL_SGAL_DECL Dxf_block {
 
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
-  bool handle_value(int code, int16_t value);
+  bool handle_value(Dxf_parser& parser, int code, int16_t value);
 };
 
 SGAL_END_NAMESPACE

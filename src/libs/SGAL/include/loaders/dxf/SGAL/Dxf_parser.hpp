@@ -51,6 +51,8 @@
 #include "SGAL/Dxf_simple_record_wrapper.hpp"
 #include "SGAL/Dxf_record_wrapper.hpp"
 #include "SGAL/Dxf_extended_data.hpp"
+#include "SGAL/Dxf_boundary_path.hpp"
+#include "SGAL/Dxf_polyline_boundary_path.hpp"
 
 // Entities
 #include "SGAL/Dxf_3dface_entity.hpp"
@@ -134,6 +136,10 @@ class Scene_graph;
 
 class SGAL_SGAL_DECL Dxf_parser {
 public:
+
+  friend Dxf_hatch_entity;
+  friend Dxf_polyline_boundary_path;
+
   /*! Construct.
    */
   Dxf_parser(std::istream& is, Scene_graph* sg, const String& filename);
@@ -144,7 +150,7 @@ public:
 
 protected:
 
-  // Sec tion parsers:
+  // Section parsers:
   void parse_header();
   void parse_classes();
   void parse_tables();
@@ -516,7 +522,7 @@ private:
   template <bool what, typename Record>
   bool handle_value(int code, const String& value, Record& record,
                     char (*)[what] = 0)
-  { return record.handle_value(code, value); }
+  { return record.handle_value(*this, code, value); }
 
   //!
   // template <bool what, typename Record>
@@ -526,22 +532,22 @@ private:
   //!
   template <bool what, typename Record>
   bool handle_value(int code, int8_t value, Record& record, char (*)[what] = 0)
-  { return record.handle_value(code, value); }
+  { return record.handle_value(*this, code, value); }
 
   //!
   template <bool what, typename Record>
   bool handle_value(int code, int16_t value, Record& record, char (*)[what] = 0)
-  { return record.handle_value(code, value); }
+  { return record.handle_value(*this, code, value); }
 
   //!
   template <bool what, typename Record>
   bool handle_value(int code, int32_t value, Record& record, char (*)[what] = 0)
-  { return record.handle_value(code, value); }
+  { return record.handle_value(*this, code, value); }
 
   //!
   template <bool what, typename Record>
   bool handle_value(int code, Uint value, Record& record, char (*)[what] = 0)
-  { return record.handle_value(code, value); }
+  { return record.handle_value(*this, code, value); }
 
   //!
   // template <bool what, typename Record>
@@ -551,7 +557,7 @@ private:
   //!
   template <bool what, typename Record>
   bool handle_value(int code, double value, Record& record, char (*)[what] = 0)
-  { return record.handle_value(code, value); }
+  { return record.handle_value(*this, code, value); }
 
   //@}
 
@@ -633,7 +639,7 @@ private:
      case STRING:
       import_string_value(str);
       if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(int, const String&)>::value>(code, str, record))
+          <bool (Record::*)(Dxf_parser&, int, const String&)>::value>(code, str, record))
         return;
       msg += ", string value: " + str;
       break;
@@ -649,7 +655,7 @@ private:
      case INT8:
       import_int8_value(int8_val);
       if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(int, int8_t)>::value>(code, int8_val, record))
+          <bool (Record::*)(Dxf_parser&, int, int8_t)>::value>(code, int8_val, record))
         return;
       msg += ", int8_t value: " + std::to_string((int)int8_val);
       break;
@@ -657,7 +663,7 @@ private:
      case INT16:
       import_value(int16_val);
       if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(int, int16_t)>::value>(code, int16_val, record))
+          <bool (Record::*)(Dxf_parser&, int, int16_t)>::value>(code, int16_val, record))
         return;
       msg += ", int16_t value: " + std::to_string(int16_val);
       break;
@@ -665,7 +671,7 @@ private:
      case INT32:
       import_value(int32_val);
       if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(int, int32_t)>::value>(code, int32_val, record))
+          <bool (Record::*)(Dxf_parser&, int, int32_t)>::value>(code, int32_val, record))
         return;
       msg += ", int32_t value: " + std::to_string(int32_val);
       break;
@@ -673,7 +679,7 @@ private:
      case UINT:
       import_uint_value(uint_val);
       if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(int, Uint)>::value>(code, uint_val, record))
+          <bool (Record::*)(Dxf_parser&, int, Uint)>::value>(code, uint_val, record))
         return;
       stream << std::hex << uint_val;
       msg += ", unsigned int value: 0x" + stream.str();
@@ -682,7 +688,7 @@ private:
      case DOUBLE:
       import_value(double_val);
       if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(int, double)>::value>(code, double_val, record))
+          <bool (Record::*)(Dxf_parser&, int, double)>::value>(code, double_val, record))
         return;
       msg += ", double value: " + std::to_string(double_val);
       break;
@@ -729,14 +735,7 @@ private:
       }
 
       auto& members = Dxf_record_wrapper<Record>::s_record_members;
-      auto it = members.find(code);
-      if (it != members.end()) {
-        auto handle = it->second.m_handle;
-        auto size = it->second.m_size;
-        auto index = it->second.m_index;
-        read_record_value(ct, size, handle, record, index);
-        continue;
-      }
+      if (read_record_value(code, record, members)) continue;
 
       read_record_special_value(code, record);
     }
@@ -759,6 +758,12 @@ private:
 
   //! The current line number
   size_t m_line;
+
+  //! The pending code, in case there is one.
+  int m_pending_code;
+
+  //! Indicates whether there is a code pending.
+  bool m_is_pending;
 
   //! The scene graph.
   Scene_graph* m_scene_graph;
@@ -894,7 +899,24 @@ private:
    */
   Code_type read_verify_code(int code);
 
-  /*! Import a datum item.
+  /*! Read one datum item if listed.
+   * \return true if listed (implies that a value was read) false otherwise.
+   */
+  template <typename Record, typename Members>
+  bool read_record_value(int code, Record& record, Members& members)
+  {
+    auto it = members.find(code);
+    if (it == members.end()) return false;
+
+    auto ct = code_type(code);
+    auto handle = it->second.m_handle;
+    auto size = it->second.m_size;
+    auto index = it->second.m_index;
+    read_record_value(ct, size, handle, record, index);
+    return true;
+  }
+
+  /*! Read one datum item.
    */
   template <typename MemberType, typename Record_>
   void read_record_value(Code_type ct, int size, MemberType handle,
@@ -932,15 +954,29 @@ private:
     }
   }
 
+  /*! Export a code
+   */
+  void export_code(int code)
+  {
+    m_pending_code = code;
+    m_is_pending = true;
+  }
+
   /*! Import a code.
    * \param[code] the code variable.
    */
   template <typename T>
   void import_code(T& code)
   {
-    m_is >> code;
-    ++m_line;
-    m_is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    if (m_is_pending) {
+      code = m_pending_code;
+      m_is_pending = false;
+    }
+    else {
+      m_is >> code;
+      m_is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      ++m_line;
+    }
     SGAL_TRACE_CODE(Trace::DXF,
                     std::cout << "[" << std::to_string(m_line) << "]"
                     << "Dxf_parser::import_code(): "
@@ -1325,6 +1361,19 @@ private:
       }
     }
   }
+
+  /// Boundary path
+  //@{
+
+  /*! Parse a regular boundary path.
+   */
+  void parse_boundary_path(Dxf_boundary_path& path);
+
+  /*! Parse a polyline boundary path.
+   */
+  void parse_polyline_boundary_path(Dxf_polyline_boundary_path& path);
+
+  //@}
 
   /*! Read a comment line.
    */

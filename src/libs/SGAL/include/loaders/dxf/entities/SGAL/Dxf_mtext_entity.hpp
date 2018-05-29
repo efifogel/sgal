@@ -24,6 +24,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
+class Dxf_parser;
+
 struct Dxf_mtext_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
 
@@ -105,7 +107,7 @@ struct Dxf_mtext_entity : public Dxf_base_entity {
 
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
-  bool handle_value(int code, double value);
+  bool handle_value(Dxf_parser& /* parser */, int code, double value);
 };
 
 SGAL_END_NAMESPACE

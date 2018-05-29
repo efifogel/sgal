@@ -27,7 +27,11 @@ typedef Dxf_record_wrapper<Dxf_boundary_path>   Dxf_boundary_path_wrapper;
 template <>
 const std::map<int, Dxf_boundary_path_wrapper::Record_member>
 Dxf_boundary_path_wrapper::s_record_members = {
-  {92, {&Dxf_boundary_path::m_flags, 1, 0}}
+  // {92, Boundary path type flag (bit coded)
+  // {93, Number of edges in this boundary path (only if boundary is not a
+                        // polyline)
+  // {97, Number of source boundary objects
+  // {330, Reference to source boundary objects (multiple entries)
 };
 
 SGAL_END_NAMESPACE

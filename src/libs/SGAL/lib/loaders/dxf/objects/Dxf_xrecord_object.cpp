@@ -46,7 +46,8 @@ Dxf_xrecord_object_wrapper::s_record_members = {
 };
 
 //! \brief handles a value that requires special handling.
-bool Dxf_xrecord_object::handle_value(int code, const String& value)
+bool Dxf_xrecord_object::handle_value(Dxf_parser& /* parser */,
+                                      int code, const String& value)
 {
   //! What to do with the values?
   if ((1 <= code) && (code <= 4)) return true;
@@ -57,7 +58,8 @@ bool Dxf_xrecord_object::handle_value(int code, const String& value)
 }
 
 //! \brief handles a value that requires special handling.
-bool Dxf_xrecord_object::handle_value(int code, int8_t value)
+bool Dxf_xrecord_object::handle_value(Dxf_parser& /* parser */,
+                                      int code, int8_t value)
 {
   //! What to do with the values?
   if ((280 <= code) && (code <= 289)) return true;
@@ -65,7 +67,8 @@ bool Dxf_xrecord_object::handle_value(int code, int8_t value)
 }
 
 //! \brief handles a value that requires special handling.
-bool Dxf_xrecord_object::handle_value(int code, int16_t value)
+bool Dxf_xrecord_object::handle_value(Dxf_parser& /* parser */,
+                                      int code, int16_t value)
 {
   //! What to do with the values?
   if ((60 <= code) && (code <= 79)) return true;
@@ -75,7 +78,8 @@ bool Dxf_xrecord_object::handle_value(int code, int16_t value)
 }
 
 //! \brief handles a value that requires special handling.
-bool Dxf_xrecord_object::handle_value(int code, int32_t value)
+bool Dxf_xrecord_object::handle_value(Dxf_parser& /* parser */,
+                                      int code, int32_t value)
 {
   //! What to do with the values?
   if ((88 <= code) && (code <= 99)) return true;
@@ -83,7 +87,8 @@ bool Dxf_xrecord_object::handle_value(int code, int32_t value)
 }
 
 //! \brief handles a value that requires special handling.
-bool Dxf_xrecord_object::handle_value(int code, double value)
+bool Dxf_xrecord_object::handle_value(Dxf_parser& /* parser */,
+                                      int code, double value)
 {
   //! What to do with the values?
   if ((10 <= code) && (code <= 59)) return true;

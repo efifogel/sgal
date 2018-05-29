@@ -24,6 +24,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
+class Dxf_parser;
+
 struct Dxf_xrecord_object : public Dxf_base_object {
   typedef Dxf_base_object                       Base;
 
@@ -40,23 +42,23 @@ struct Dxf_xrecord_object : public Dxf_base_object {
 
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
-  bool handle_value(int code, const String& value);
+  bool handle_value(Dxf_parser& parser, int code, const String& value);
 
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
-  bool handle_value(int code, int8_t value);
+  bool handle_value(Dxf_parser& parser, int code, int8_t value);
 
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
-  bool handle_value(int code, int16_t value);
+  bool handle_value(Dxf_parser& parser, int code, int16_t value);
 
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
-  bool handle_value(int code, int32_t value);
+  bool handle_value(Dxf_parser& parser, int code, int32_t value);
 
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
-  bool handle_value(int code, double value);
+  bool handle_value(Dxf_parser& parser, int code, double value);
 };
 
 SGAL_END_NAMESPACE

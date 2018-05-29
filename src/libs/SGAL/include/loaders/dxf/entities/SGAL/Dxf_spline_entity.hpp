@@ -24,6 +24,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
+class Dxf_parser;
+
 struct Dxf_spline_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
   typedef std::array<double, 3>                 Double_3;
@@ -63,11 +65,11 @@ struct Dxf_spline_entity : public Dxf_base_entity {
 
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
-  bool handle_value(int code, int16_t value);
+  bool handle_value(Dxf_parser& parser, int code, int16_t value);
 
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
-  bool handle_value(int code, double value);
+  bool handle_value(Dxf_parser& parser, int code, double value);
 };
 
 SGAL_END_NAMESPACE

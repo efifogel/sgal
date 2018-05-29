@@ -24,6 +24,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
+class Dxf_parser;
+
 struct Dxf_dictionary_object : public Dxf_base_object {
   typedef Dxf_base_object                       Base;
 
@@ -50,11 +52,11 @@ struct Dxf_dictionary_object : public Dxf_base_object {
 
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
-  bool handle_value(int code, const String& value);
+  bool handle_value(Dxf_parser& parser, int code, const String& value);
 
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
-  bool handle_value(int code, Uint value);
+  bool handle_value(Dxf_parser& parser, int code, Uint value);
 
   //! The current entry name.
   String m_entry_name;

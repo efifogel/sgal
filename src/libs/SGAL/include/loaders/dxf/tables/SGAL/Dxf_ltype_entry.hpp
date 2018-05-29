@@ -28,6 +28,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
+class Dxf_parser;
+
 struct SGAL_SGAL_DECL Dxf_ltype_entry: public Dxf_table_entry {
   String m_name;        // Viewport name
   int16_t m_flags;      // 16 = If set, table entry is externally dependent on
@@ -73,7 +75,7 @@ struct SGAL_SGAL_DECL Dxf_ltype_entry: public Dxf_table_entry {
 
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
-  bool handle_value(int code, double value);
+  bool handle_value(Dxf_parser& parser, int code, double value);
 };
 
 SGAL_END_NAMESPACE

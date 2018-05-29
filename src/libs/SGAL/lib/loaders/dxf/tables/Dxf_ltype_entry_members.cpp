@@ -55,7 +55,8 @@ Dxf_ltype_wrapper::s_record_members = {
 };
 
 //! \brief handles a value that requires special handling.
-bool Dxf_ltype_entry::handle_value(int code, double value)
+bool Dxf_ltype_entry::handle_value(Dxf_parser& /* parser */,
+                                   int code, double value)
 {
   //! What to do with the values?
   switch (code) {

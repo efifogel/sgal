@@ -287,6 +287,8 @@ Dxf_parser::Dxf_parser(std::istream& is, Scene_graph* sg,
   m_is(is),
   m_filename(filename),
   m_line(0),
+  m_pending_code(0),
+  m_is_pending(false),
   m_scene_graph(sg),
   m_extended_data(nullptr)
 {}
@@ -1077,5 +1079,47 @@ void Dxf_parser::parse_xrecord_object()
 //! \brief parses object.
 void Dxf_parser::parse_dummy_object()
 { parse_record(m_dummy_object); }
+
+//! \brief parses a regular boundary path.
+void Dxf_parser::parse_boundary_path(Dxf_boundary_path& path)
+{
+  while (true) {
+    int code;
+    import_code(code);
+    auto& members = Dxf_record_wrapper<Dxf_boundary_path>::s_record_members;
+    if (read_record_value(code, path, members)) continue;
+
+    break;
+  }
+}
+
+//! \brief parses a polyline boundary path.
+void Dxf_parser::parse_polyline_boundary_path(Dxf_polyline_boundary_path& path)
+{
+  while (true) {
+    int code;
+    import_code(code);
+    auto& members = Dxf_record_wrapper<Dxf_boundary_path>::s_record_members;
+    Dxf_boundary_path& base_path = path;
+    if (read_record_value(code, base_path, members)) continue;
+
+    auto& polyline_members =
+      Dxf_record_wrapper<Dxf_polyline_boundary_path>::s_record_members;
+    if (read_record_value(code, path, polyline_members)) continue;
+
+    auto& handlers =
+      Dxf_polyline_boundary_path::s_polyline_boundary_path_handlers;
+    auto it = handlers.find(code);
+    if (it != handlers.end()) {
+      (path.*(it->second))(*this);
+      continue;
+    }
+
+    // The code hasn't been processed yet, export it.
+    export_code(code);
+    return;
+  }
+}
+
 
 SGAL_END_NAMESPACE
