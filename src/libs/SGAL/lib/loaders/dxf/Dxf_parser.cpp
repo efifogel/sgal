@@ -153,26 +153,6 @@ Dxf_entry_wrapper::s_record_members = {
   {330, &Dxf_table_entry::m_owner_obj}
 };
 
-/* This object contains the description of DXF BLOCK variables.
- * The DXF BLOCK variables listed below are extracted from
- *   http://help.autodesk.com/view/ACD/2017/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
- *
- * EF: Why is block-name mapped twice (s 2 & 3 below)?
- */
-const std::map<int, Dxf_parser::Block_member> Dxf_parser::s_block_members = {
-  {5, {&Dxf_block::m_handle, 1, 0}},
-  {330, {&Dxf_block::m_owner_handle, 1, 0}},
-  {8, {&Dxf_block::m_layer_name, 1, 0}},
-  {2, {&Dxf_block::m_name, 1, 0}},
-  {70, {&Dxf_block::m_flags, 1, 0}},
-  {10, {&Dxf_block::m_base_point, 3, 0}},
-  {20, {&Dxf_block::m_base_point, 3, 1}},
-  {30, {&Dxf_block::m_base_point, 3, 2}},
-  {3, {&Dxf_block::m_name, 1, 0}},
-  {1, {&Dxf_block::m_xref_path_name, 1, 0}},
-  {4, {&Dxf_block::m_description, 1, 0}}
-};
-
 //!
 const std::map<String, Dxf_parser::Entity_parser>
 Dxf_parser::s_entities = {
@@ -302,8 +282,11 @@ Dxf_base_object_wrapper::s_record_members = {
 };
 
 //! \brief constructs.
-Dxf_parser::Dxf_parser(std::istream& is, Scene_graph* sg) :
+Dxf_parser::Dxf_parser(std::istream& is, Scene_graph* sg,
+                       const String& filename) :
   m_is(is),
+  m_filename(filename),
+  m_line(0),
   m_scene_graph(sg),
   m_extended_data(nullptr)
 {}
@@ -368,7 +351,7 @@ void Dxf_parser::parse_header()
     }
   }
   String str;
-  m_is >> str;
+  import_string_value(str);
   SGAL_assertion("ENDSEC" == str);
 }
 
@@ -414,7 +397,7 @@ void Dxf_parser::parse_classes()
 
   do {
     String str;
-    m_is >> str;
+    import_string_value(str);
     if ("ENDSEC" == str) return;
 
     SGAL_assertion("CLASS" == str);
@@ -515,7 +498,7 @@ void Dxf_parser::parse_tables()
 
   do {
     std::string str;
-    m_is >> str;
+    import_string_value(str);
     if ("ENDSEC" == str) return;
 
     SGAL_assertion("TABLE" == str);
@@ -523,7 +506,7 @@ void Dxf_parser::parse_tables()
     int n;
     import_code(n);
     SGAL_assertion(2 == n);
-    m_is >> str;
+    import_string_value(str);
     auto table_it = s_tables.find(str);
     if (table_it == s_tables.end()) {
       SGAL_error_msg("unrecognize table");
@@ -564,27 +547,19 @@ void Dxf_parser::parse_block()
       continue;
     }
 
-    auto bit = s_block_members.find(code);
-    if (bit != s_block_members.end()) {
+    auto ct = code_type(code);
+    // auto& members = s_block_members;
+    auto& members = Dxf_record_wrapper<Dxf_block>::s_record_members;
+    auto bit = members.find(code);
+    if (bit != members.end()) {
       auto handle = bit->second.m_handle;
       auto size = bit->second.m_size;
       auto index = bit->second.m_index;
-      switch (code_type(code)) {
-       case STRING: import_string_member<String_block>(handle, block); break;
-       case UINT: import_uint_member<Uint_block>(handle, block); break;
-       case INT16: import_member<Int16_block>(handle, block); break;
-
-       case DOUBLE:
-        SGAL_assertion(3 == size);
-        import_member<Double_3d_block>(handle, block, index); break;
-        break;
-
-       default: SGAL_error();
-      }
+      read_record_value(ct, size, handle, block, index);
       continue;
     }
 
-    read_unrecognized(code);
+    read_record_special_value(code, block);
   }
 }
 
@@ -625,7 +600,7 @@ void Dxf_parser::parse_blocks()
 
   do {
     String str;
-    m_is >> str;
+    import_string_value(str);
     if ("ENDSEC" == str) return;
 
     if ("BLOCK" == str) parse_block();
@@ -645,7 +620,7 @@ void Dxf_parser::parse_entities()
 
   do {
     String str;
-    m_is >> str;
+    import_string_value(str);
     if ("ENDSEC" == str) return;
 
     auto it = s_entities.find(str);
@@ -669,7 +644,7 @@ void Dxf_parser::parse_objects()
 
   do {
     String str;
-    m_is >> str;
+    import_string_value(str);
     if ("ENDSEC" == str) return;
 
     auto it = s_objects.find(str);
@@ -731,10 +706,10 @@ void Dxf_parser::read_header_member()
     switch (code_type) {
      case STRING: import_string_member<String_header>(handle, m_header); break;
      case DOUBLE: import_member<Double_header>(handle, m_header); break;
-     case INT8: import_member<Int8_header>(handle, m_header); break;
+     case INT8: import_int8_member<Int8_header>(handle, m_header); break;
      case INT16: import_member<Int16_header>(handle, m_header); break;
      case INT32: import_member<Int32_header>(handle, m_header); break;
-     case UINT: import_member<Uint_header>(handle, m_header); break;
+     case UINT: import_uint_member<Uint_header>(handle, m_header); break;
      case BOOL: import_member<Bool_header>(handle, m_header); break;
     }
     return;
@@ -751,6 +726,7 @@ void Dxf_parser::read_header_member()
     if (dim == 2)
       m_is >> (m_header.*(boost::get<Double_2d_header>(handle)))[i++];
     else m_is >> (m_header.*(boost::get<Double_3d_header>(handle)))[i++];
+    ++m_line;
   }
 }
 
@@ -781,30 +757,31 @@ void Dxf_parser::read_unrecognized(int code)
     break;
 
    case BOOL:
-    m_is >> bval;
+    import_value(bval);
     msg += ", Bool value: " + std::to_string(bval);
     break;
 
    case INT8:
    case INT16:
    case INT32:
-    m_is >> ival;
+    import_value(ival);
     msg += ", int value: " + std::to_string(ival);
     break;
 
    case UINT:
-    m_is >> std::hex >> uval >> std::dec;
+    import_uint_value(uval);
     stream << std::hex << uval;
     msg += ", unsigned int value: 0x" + stream.str();
     break;
 
    case DOUBLE:
-    m_is >> dval;
+    import_value(dval);
     msg += ", double value: " + std::to_string(dval);
     break;
 
    default: SGAL_error();
   }
+  msg += ", at line " + std::to_string(m_line);
   SGAL_warning_msg(0, msg.c_str());
 }
 

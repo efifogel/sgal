@@ -54,6 +54,10 @@ struct SGAL_SGAL_DECL Dxf_block {
   String m_xref_path_name; // Xref path name
   String m_description; // Block description (optional)
   std::map<String, std::vector<String> > m_xdata; // Begin xdata "{", "}" (opt.)
+
+  /*! Handle a value that requires special handling (as opposed to only storing).
+   */
+  bool handle_value(int code, int16_t value);
 };
 
 SGAL_END_NAMESPACE

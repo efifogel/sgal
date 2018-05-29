@@ -39,7 +39,7 @@ Dxf_hatch_entity_wrapper::s_record_members = {
   {70, {&Dxf_hatch_entity::m_flags, 1, 0}},
   {63, {&Dxf_hatch_entity::m_pattern_fill_color, 1, 0}},
   {71, {&Dxf_hatch_entity::m_associativity_flags, 1, 0}},
-  {91, {&Dxf_hatch_entity::m_num_boundary_paths, 1, 0}},
+  // {91, // Number of boundary paths (loops)
   // varies m_boundary_path data; // Boundary path data. Repeats number of
   {75, {&Dxf_hatch_entity::m_hatch_style, 1, 0}},
   {76, {&Dxf_hatch_entity::m_hatch_patter_type, 1, 0}},
@@ -66,5 +66,15 @@ Dxf_hatch_entity_wrapper::s_record_members = {
   {463, {&Dxf_hatch_entity::m_reserved2, 1, 0}},
   {470, {&Dxf_hatch_entity::m_string, 1, 0}}
 };
+
+//! \brief handles a value that requires special handling.
+bool Dxf_hatch_entity::handle_value(int code, int32_t value)
+{
+  if (91 == code) {
+    m_boundary_path.resize(value);
+    return true;
+  }
+  return false;
+}
 
 SGAL_END_NAMESPACE

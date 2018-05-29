@@ -23,6 +23,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Dxf_base_entity.hpp"
+#include "SGAL/Dxf_boundary_path.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -42,9 +43,9 @@ struct Dxf_hatch_entity : public Dxf_base_entity {
                         // for MPolygon, solid-fill flag
                         // 0 = lacks solid fill;
                         // 1 = has solid fill
-  int32_t m_num_boundary_paths; // Number of boundary paths (loops)
-  // varies m_boundary_path data; // Boundary path data. Repeats number of
-                        // times specified by code 91. See Boundary Path Data
+  // int32_t Number of boundary paths (loops)
+  std::vector<Dxf_boundary_path> m_boundary_path; // Boundary path data.
+                        // Repeats number of times specified by code 91
   int16_t m_hatch_style; // Hatch style:
                         // 0 = Hatch "odd parity" area (Normal style)
                         // 1 = Hatch outermost area only (Outer style)
@@ -112,6 +113,10 @@ struct Dxf_hatch_entity : public Dxf_base_entity {
                         // 0 = First value
                         // 1 = Second value
   String m_string;      // String (default = LINEAR)
+
+  /*! Handle a value that requires special handling (as opposed to only storing).
+   */
+  bool handle_value(int code, int32_t value);
 };
 
 SGAL_END_NAMESPACE

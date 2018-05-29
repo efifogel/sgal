@@ -94,8 +94,8 @@ Dxf_dimstyle_wrapper::s_record_members = {
   {340, {&Dxf_dimstyle_entry::m_dimension_text_style, 1, 0}},
   {341, {&Dxf_dimstyle_entry::m_dimension_leader_block_name, 1, 0}},
   {342, {&Dxf_dimstyle_entry::m_arrow_block_name, 1, 0}},
-  // 343 DIMBLK1 (handle of referenced BLOCK)
-  // 344 DIMBLK2 (handle of referenced BLOCK)
+  {343, {&Dxf_dimstyle_entry::m_dimblk1, 1, 0}},
+  {344, {&Dxf_dimstyle_entry::m_dimblk2, 1, 0}},
   {371, {&Dxf_dimstyle_entry::m_dimension_line_weight, 1, 0}},
   {372, {&Dxf_dimstyle_entry::m_dimension_extension_line_weight, 1, 0}},
 };

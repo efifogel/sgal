@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2018 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -136,7 +136,7 @@ class SGAL_SGAL_DECL Dxf_parser {
 public:
   /*! Construct.
    */
-  Dxf_parser(std::istream& is, Scene_graph* sg);
+  Dxf_parser(std::istream& is, Scene_graph* sg, const String& filename);
 
   /*! Parse.
    */
@@ -639,7 +639,7 @@ private:
       break;
 
      case BOOL:
-      m_is >> bool_val;
+      import_value(bool_val);
       // if (handle_value<has_member_function_handle_value
       //     <bool (Record::*)(int, bool)>::value>(code, bool_val, record))
       //   return;
@@ -647,8 +647,7 @@ private:
       break;
 
      case INT8:
-      m_is >> int32_val;
-      int8_val = (int8_t) int32_val;
+      import_int8_value(int8_val);
       if (handle_value<has_member_function_handle_value
           <bool (Record::*)(int, int8_t)>::value>(code, int8_val, record))
         return;
@@ -656,7 +655,7 @@ private:
       break;
 
      case INT16:
-      m_is >> int16_val;
+      import_value(int16_val);
       if (handle_value<has_member_function_handle_value
           <bool (Record::*)(int, int16_t)>::value>(code, int16_val, record))
         return;
@@ -664,7 +663,7 @@ private:
       break;
 
      case INT32:
-      m_is >> int32_val;
+      import_value(int32_val);
       if (handle_value<has_member_function_handle_value
           <bool (Record::*)(int, int32_t)>::value>(code, int32_val, record))
         return;
@@ -672,7 +671,7 @@ private:
       break;
 
      case UINT:
-      m_is >> std::hex >> uint_val >> std::dec;
+      import_uint_value(uint_val);
       if (handle_value<has_member_function_handle_value
           <bool (Record::*)(int, Uint)>::value>(code, uint_val, record))
         return;
@@ -681,7 +680,7 @@ private:
       break;
 
      case DOUBLE:
-      m_is >> double_val;
+      import_value(double_val);
       if (handle_value<has_member_function_handle_value
           <bool (Record::*)(int, double)>::value>(code, double_val, record))
         return;
@@ -690,6 +689,7 @@ private:
 
      default: SGAL_error();
     }
+    msg += ", at line " + std::to_string(m_line);
     SGAL_warning_msg(0, msg.c_str());
   }
 
@@ -753,6 +753,12 @@ private:
 
   //! The text input stream to parse.
   std::istream& m_is;
+
+  //! The file name
+  const String& m_filename;
+
+  //! The current line number
+  size_t m_line;
 
   //! The scene graph.
   Scene_graph* m_scene_graph;
@@ -932,11 +938,12 @@ private:
   template <typename T>
   void import_code(T& code)
   {
-    std::string tmp;
     m_is >> code;
+    ++m_line;
     m_is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout << "Dxf_parser::import_code(): "
+                    std::cout << "[" << std::to_string(m_line) << "]"
+                    << "Dxf_parser::import_code(): "
                     << code << std::endl;);
   }
 
@@ -947,8 +954,61 @@ private:
   void import_value(T& variable)
   {
     m_is >> variable;
+    ++m_line;
     SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout << "Dxf_parser::import_value() value: "
+                    std::cout << "[" << std::to_string(m_line) << "]"
+                    << "Dxf_parser::import_value() value: "
+                    << variable << std::endl;);
+  }
+
+  /*! Import an int8_t value.
+   * \param[variable] the target variable.
+   */
+  template <typename T>
+  void import_int8_value(T& variable)
+  {
+    // First read as an integer; then, cast to int8_t.
+    int tmp;
+    m_is >> tmp;
+    ++m_line;
+    variable = (int8_t) tmp;
+    SGAL_TRACE_CODE(Trace::DXF,
+                    std::cout << "[" << std::to_string(m_line) << "]"
+                    << "Dxf_parser::import_int8_value() value: "
+                    << (int)(variable) << std::endl;);
+  }
+
+  /*! Import an Uint value.
+   * \param[variable] the target variable.
+   */
+  template <typename T>
+  void import_uint_value(T& variable)
+  {
+    m_is >> std::hex >> variable >> std::dec;
+    ++m_line;
+    SGAL_TRACE_CODE(Trace::DXF,
+                    std::cout << "[" << std::to_string(m_line) << "]"
+                    << "Dxf_parser::import_uint_value() value: "
+                    << "0x" << std::hex << variable << std::dec << std::endl;);
+  }
+
+  /*! Import a string value.
+   * \param[handle] handle the handle to the string member.
+   * \param[target] target the target struct.
+   */
+  template <typename T>
+  void import_string_value(T& variable)
+  {
+    // use getline() cause the string might be empty.
+    // When used immediately after whitespace-delimited input, getline consumes
+    // the endline character left on the input stream by operator>>, and returns
+    // immediately. Ignore all leftover characters.
+    std::getline(m_is, variable);
+    ++m_line;
+    variable.erase(variable.find_last_not_of(" \t\n\r\f\v") + 1);
+    SGAL_TRACE_CODE(Trace::DXF,
+                    std::cout << "[" << std::to_string(m_line) << "]"
+                    << "Dxf_parser::import_string_member() value: "
                     << variable << std::endl;);
   }
 
@@ -970,25 +1030,6 @@ private:
   void import_member(MemberType handle, Target& target, int index)
   { import_value((target.*(boost::get<T>(handle)))[index]); }
 
-  /*! Import a string value.
-   * \param[handle] handle the handle to the string member.
-   * \param[target] target the target struct.
-   */
-  template <typename T>
-  void import_string_value(T& variable)
-  {
-    // use getline() cause the string might be empty.
-    // When used immediately after whitespace-delimited input, getline consumes
-    // the endline character left on the input stream by operator>>, and returns
-    // immediately. Ignore all leftover characters.
-    std::getline(m_is, variable);
-    variable.erase(variable.find_last_not_of(" \t\n\r\f\v") + 1);
-    SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout
-                    << "Dxf_parser::import_string_member() value: "
-                    << variable << std::endl;);
-  }
-
   /*! Import a string value to a string header member.
    * \param[handle] handle the handle to the string member.
    * \param[target] target the target struct.
@@ -1005,30 +1046,14 @@ private:
    */
   template <typename T, typename MemberType, typename Target>
   void import_int8_member(MemberType handle, Target& target)
-  {
-    // First read as an integer; then, cast to int8_t.
-    int tmp;
-    m_is >> tmp;
-    target.*(boost::get<T>(handle)) = (int8_t) tmp;
-    SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout << "Dxf_parser::import_member() value: "
-                    << (int)(target.*(boost::get<T>(handle)))
-                    << std::endl;);
-  }
+  { import_int8_value(target.*(boost::get<T>(handle))); }
 
   /*! Import a hex value to an unsigned int member.
    * \param[i] handle the handle to the member.
    */
   template <typename T, typename MemberType, typename Target>
   void import_uint_member(MemberType handle, Target& target)
-  {
-    m_is >> std::hex >> target.*(boost::get<T>(handle)) >> std::dec;
-    SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout << "Dxf_parser::import_member() value: "
-                    << std::hex << "0x"
-                    << target.*(boost::get<T>(handle)) << std::dec
-                    << std::endl;);
-  }
+  { import_uint_value(target.*(boost::get<T>(handle))); }
 
   /*! Has_xdata is a generic-template-struct service that evaluates as follows:
    * If A has a data member called x_data, then Has_xdata<A>::value == true,
@@ -1076,7 +1101,10 @@ private:
 
     String name;
     if (102 == code) import_string_value(name);
-    else m_is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    else {
+      m_is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      ++m_line;
+    }
     String str;
     import_string_value(str);
     while ("}" != str) {
@@ -1181,8 +1209,8 @@ private:
 
       // Code 70 applies to STYLE table records only (pre-R13 field), why?
       if (70 == code) {
-        m_is >> max_num;
-        entries.resize(max_num);
+        import_value(max_num);
+        entries.reserve(max_num);
         continue;
       }
 
@@ -1198,7 +1226,7 @@ private:
 
       // Handle specifc-entry table codes:
       // At this point we don't try to handle common entry code.
-      SGAL_assertion(! entries.empty());
+      entries.resize(1);
       auto& entry = entries.back();
       auto& members = Dxf_record_wrapper<Entry>::s_record_members;
       auto eit = members.find(code);
@@ -1225,14 +1253,13 @@ private:
     parse_base_table(table);
     auto& entries = table.m_entries;
 
-    size_t i(0);
     while (true) {
       std::string str;
-      m_is >> str;
+      import_string_value(str);
       if ("ENDTAB" == str) return;
 
       SGAL_assertion(str == name);
-      if (i == entries.size()) {
+      if (entries.size() == entries.capacity()) {
         // It is specifiied that Code 70 applies to STYLE table records only
         // (pre-R13 field), why? What is special about STYLE, and why not make
         // things consistent?
@@ -1244,8 +1271,9 @@ private:
           SGAL_warning_msg(exceeded, "Maximum number of entries exceeded!");
           exceeded = true;
         }
-        entries.resize(entries.size() + 1);
+        entries.reserve(entries.size() + 1);
       }
+      entries.resize(entries.size() + 1);
       auto& entry = entries.back();
 
       bool done(false);
@@ -1264,6 +1292,11 @@ private:
 
         if ((102 == code) || (1002 == code)) {
           read_xdata_block(code, entry);
+          continue;
+        }
+
+        if ((1000 <= code) && (code <= 1071)) {
+          read_extended_data(code, entry);
           continue;
         }
 
@@ -1307,7 +1340,6 @@ private:
   static const std::array<String, 8> s_code_type_names;
   static const std::map<int, Class_member_type> s_class_members;
   static const std::map<String, Table_parser> s_tables;
-  static const std::map<int, Block_member> s_block_members;
   static const std::map<String, Entity_parser> s_entities;
   static const std::map<String, Object_parser> s_objects;
 };

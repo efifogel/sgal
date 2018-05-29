@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2018 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -29,6 +29,25 @@ typedef Dxf_record_wrapper<Dxf_text_entity>  Dxf_text_entity_wrapper;
 template <>
 const std::map<int, Dxf_text_entity_wrapper::Record_member>
 Dxf_text_entity_wrapper::s_record_members = {
+  {39, {&Dxf_text_entity::m_thickness, 1, 0}},
+  {10, {&Dxf_text_entity::m_location, 3, 0}},
+  {20, {&Dxf_text_entity::m_location, 3, 1}},
+  {30, {&Dxf_text_entity::m_location, 3, 2}},
+  {40, {&Dxf_text_entity::m_text_height, 1, 0}},
+  {1, {&Dxf_text_entity::m_value, 1, 0}},
+  {50, {&Dxf_text_entity::m_rotation, 1, 0}},
+  {41, {&Dxf_text_entity::m_relative_x_scale_factor, 1, 0}},
+  {51, {&Dxf_text_entity::m_oblique_angle, 1, 0}},
+  {7, {&Dxf_text_entity::m_text_style_name, 1, 0}},
+  {71, {&Dxf_text_entity::m_text_generation_flags, 1, 0}},
+  {72, {&Dxf_text_entity::m_horizontal_text_justification, 1, 0}},
+  {11, {&Dxf_text_entity::m_second_alignment_point, 3, 0}},
+  {21, {&Dxf_text_entity::m_second_alignment_point, 3, 1}},
+  {31, {&Dxf_text_entity::m_second_alignment_point, 3, 2}},
+  {210, {&Dxf_text_entity::m_normal, 3, 0}},
+  {220, {&Dxf_text_entity::m_normal, 3, 1}},
+  {230, {&Dxf_text_entity::m_normal, 3, 2}},
+  {73, {&Dxf_text_entity::m_vertical_text_justification, 1, 0}}
 };
 
 SGAL_END_NAMESPACE

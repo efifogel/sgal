@@ -168,7 +168,7 @@ Loader_code Loader::load(const char* filename, Scene_graph* sg)
     sg->set_input_format_id(File_format_3d::ID_DXF);
     auto* root = sg->initialize();
 
-    Dxf_parser parser(is, sg);
+    Dxf_parser parser(is, sg, filename);
     auto rc = parser();
     is.close();
     if (static_cast<int>(rc) <= 0) {
