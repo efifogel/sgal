@@ -1113,11 +1113,7 @@ void Dxf_parser::parse_polyline_boundary_path(Dxf_polyline_boundary_path& path)
     auto it = handlers.find(code);
     if (it != handlers.end()) {
       auto handler = it->second;
-      switch (ct) {
-       case INT32: handle_record_value(ct, handler, path); break;
-       case DOUBLE: handle_record_value(ct, handler, path); break;
-       default: SGAL_error();
-      }
+      handle_record_value(ct, handler, path); break;
       continue;
     }
 

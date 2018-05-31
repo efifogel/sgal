@@ -564,11 +564,13 @@ private:
   void handle_record_value(Code_type ct, Handler handler, Record_& record)
   {
     switch (ct) {
-     case INT8: handle_int8_item<int8_t>(handler, record);  break;
+     case STRING: handle_string_item(handler, record);  break;
+     case INT8: handle_int8_item(handler, record);  break;
      case INT16: handle_item<int16_t>(handler, record);  break;
      case INT32: handle_item<int32_t>(handler, record);  break;
+     case UINT: handle_uint_item(handler, record);  break;
      case DOUBLE: handle_item<double>(handler, record);  break;
-     default: break;
+     default: SGAL_error();
     }
   }
 
@@ -683,8 +685,6 @@ private:
     Uint uint_val;
     float float_val;
     double double_val;
-
-    Dxf_importer<String> string_importer(m_is, m_filename);
 
     std::stringstream stream;
     String msg("Unrecognized code ");
@@ -1123,17 +1123,45 @@ private:
     (record.*(boost::get<Handler>(handler)))(value);
   }
 
-  /*! Import an int_8 value and pass it to a handler (that handles an int_8
+  /*! Import a string value and pass it to a handler (that handles a string
    * value).
    * \param[handler] handler the handler struct member-function.
    * \param[target] target the target struct.
    */
-  template <typename T, typename HandlerType, typename Record>
+  template <typename HandlerType, typename Record>
+  void handle_string_item(HandlerType handler, Record& record)
+  {
+    typedef void(Record::*Handler)(const String&);
+    String value;
+    import_string_value(value);
+    (record.*(boost::get<Handler>(handler)))(value);
+  }
+
+  /*! Import an int8_t value and pass it to a handler (that handles an int8_t
+   * value).
+   * \param[handler] handler the handler struct member-function.
+   * \param[target] target the target struct.
+   */
+  template <typename HandlerType, typename Record>
   void handle_int8_item(HandlerType handler, Record& record)
   {
-    typedef void(Record::*Handler)(T);
-    T value;
+    typedef void(Record::*Handler)(int8_t);
+    int8_t value;
     import_int8_value(value);
+    (record.*(boost::get<Handler>(handler)))(value);
+  }
+
+  /*! Import a Uint value and pass it to a handler (that handles a Uint
+   * value).
+   * \param[handler] handler the handler struct member-function.
+   * \param[target] target the target struct.
+   */
+  template <typename HandlerType, typename Record>
+  void handle_uint_item(HandlerType handler, Record& record)
+  {
+    typedef void(Record::*Handler)(Uint);
+    Uint value;
+    import_uint_value(value);
     (record.*(boost::get<Handler>(handler)))(value);
   }
   //@}
