@@ -26,6 +26,22 @@ SGAL_BEGIN_NAMESPACE
 
 struct Dxf_acdbdictionarywdflt_object : public Dxf_base_object {
   typedef Dxf_base_object                       Base;
+
+  int8_t m_duplicate_record_handling; // Duplicate record cloning flag
+                        // (determines how to merge duplicate entries):
+                        // 0 = Not applicable
+                        // 1 = Keep existing
+                        // 2 = Use clone
+                        // 3 = <xref>$0$<name>
+                        // 4 = $0$<name>
+                        // 5 = Unmangle name
+                        // 3 Entry name (one for each entry)
+  String m_entry_name;  // Entry name (one for each entry)
+  Uint m_entry_object;  // Soft-owner ID/handle to entry object (one for each
+                        // entry)
+  Uint m_object_handle; // Hard pointer to default object ID/handle (currently
+                        // only used for plot style dictionary's default entry,
+                        // named "Normal")
 };
 
 SGAL_END_NAMESPACE

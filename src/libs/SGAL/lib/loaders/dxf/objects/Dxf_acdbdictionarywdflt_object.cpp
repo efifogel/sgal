@@ -29,6 +29,10 @@ typedef Dxf_record_wrapper<Dxf_acdbdictionarywdflt_object>  Dxf_acdbdictionarywd
 template <>
 const std::map<int, Dxf_acdbdictionarywdflt_object_wrapper::Record_member>
 Dxf_acdbdictionarywdflt_object_wrapper::s_record_members = {
+  {281, {&Dxf_acdbdictionarywdflt_object::m_duplicate_record_handling, 1, 0}},
+  {3, {&Dxf_acdbdictionarywdflt_object::m_entry_name, 1, 0}},
+  {350, {&Dxf_acdbdictionarywdflt_object::m_entry_object, 1, 0}},
+  {340, {&Dxf_acdbdictionarywdflt_object::m_object_handle, 1, 0}}
 };
 
 SGAL_END_NAMESPACE

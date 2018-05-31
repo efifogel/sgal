@@ -29,6 +29,22 @@ typedef Dxf_record_wrapper<Dxf_insert_entity>  Dxf_insert_entity_wrapper;
 template <>
 const std::map<int, Dxf_insert_entity_wrapper::Record_member>
 Dxf_insert_entity_wrapper::s_record_members = {
+  {66, {&Dxf_insert_entity::m_has_attributes, 1, 0}},
+  {2, {&Dxf_insert_entity::m_name, 1, 0}},
+  {10, {&Dxf_insert_entity::m_location, 3, 0}},
+  {20, {&Dxf_insert_entity::m_location, 3, 1}},
+  {30, {&Dxf_insert_entity::m_location, 3, 2}},
+  {41, {&Dxf_insert_entity::m_x_scale_factor, 1, 0}},
+  {42, {&Dxf_insert_entity::m_y_scale_factor, 1, 0}},
+  {43, {&Dxf_insert_entity::m_z_scale_factor, 1, 0}},
+  {50, {&Dxf_insert_entity::m_rotation, 1, 0}},
+  {70, {&Dxf_insert_entity::m_column_count, 1, 0}},
+  {71, {&Dxf_insert_entity::m_row_count, 1, 0}},
+  {44, {&Dxf_insert_entity::m_column_spacing, 1, 0}},
+  {45, {&Dxf_insert_entity::m_row_spacing, 1, 0}},
+  {210, {&Dxf_insert_entity::m_extrusion_direction, 3, 0}},
+  {220, {&Dxf_insert_entity::m_extrusion_direction, 3, 1}},
+  {230, {&Dxf_insert_entity::m_extrusion_direction, 3, 2}}
 };
 
 SGAL_END_NAMESPACE
