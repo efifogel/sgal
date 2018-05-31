@@ -16,30 +16,36 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_POLYLINE_BOUNDARY_PATH_HPP
-#define SGAL_DXF_POLYLINE_BOUNDARY_PATH_HPP
+#ifndef SGAL_DXF_BASE_PARSER_HPP
+#define SGAL_DXF_BASE_PARSER_HPP
 
-#include <vector>
-#include <array>
-#include <map>
+#include <iostream>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Dxf_boundary_path.hpp"
+#include "SGAL/Types.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-class Dxf_parser;
+//!
+class SGAL_SGAL_DECL Dxf_base_parser {
+  template<typename> friend struct Dxf_importer;
 
-struct Dxf_polyline_boundary_path : Dxf_boundary_path {
-  int16_t m_has_bulge;  // Has bulge flag
-  int16_t m_is_closed;  // Is closed flag
-  std::vector<std::array<double, 3> > m_locations; // Vertex location (in OCS)
-  double m_bulge;       // Bulge (optional, default = 0)
+public:
+  /*! Construct.
+   * \param[i] is the input stream.
+   * \param[i] filename the input filename.
+   */
+  Dxf_base_parser(std::istream& is, const String& filename);
 
-  void number_handler(int32_t size);
-  void m_location_0_handler(double coord);
-  void m_location_1_handler(double coord);
-  void m_location_2_handler(double coord);
+protected:
+   //! The text input stream to parse.
+  std::istream& m_is;
+
+  //! The file name
+  const String& m_filename;
+
+  //! The current line number
+  size_t m_line;
 };
 
 SGAL_END_NAMESPACE

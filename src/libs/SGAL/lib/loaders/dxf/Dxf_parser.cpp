@@ -284,9 +284,7 @@ Dxf_base_object_wrapper::s_record_members = {
 //! \brief constructs.
 Dxf_parser::Dxf_parser(std::istream& is, Scene_graph* sg,
                        const String& filename) :
-  m_is(is),
-  m_filename(filename),
-  m_line(0),
+  Dxf_base_parser(is, filename),
   m_pending_code(0),
   m_is_pending(false),
   m_scene_graph(sg),
@@ -379,9 +377,9 @@ void Dxf_parser::parse_class()
     SGAL_assertion(it != s_class_members.end());
     auto handle = it->second;
     switch (code_type(code)) {
-     case STRING: import_string_member<String_class>(handle, dxf_class); break;
-     case INT8: import_member<Int8_class>(handle, dxf_class); break;
-     case INT32: import_member<Int32_class>(handle, dxf_class); break;
+     case STRING: assign_string_member<String_class>(handle, dxf_class); break;
+     case INT8: assign_member<Int8_class>(handle, dxf_class); break;
+     case INT32: assign_member<Int32_class>(handle, dxf_class); break;
      default: SGAL_error();
     }
   }
@@ -557,11 +555,11 @@ void Dxf_parser::parse_block()
       auto handle = bit->second.m_handle;
       auto size = bit->second.m_size;
       auto index = bit->second.m_index;
-      read_record_value(ct, size, handle, block, index);
+      assign_record_value(ct, size, handle, block, index);
       continue;
     }
 
-    read_record_special_value(code, block);
+    assign_record_special_value(code, block);
   }
 }
 
@@ -706,13 +704,13 @@ void Dxf_parser::read_header_member()
                     std::cout << "Dxf_parser::read_header_member() code type: "
                     << s_code_type_names[code_type] << std::endl;);
     switch (code_type) {
-     case STRING: import_string_member<String_header>(handle, m_header); break;
-     case DOUBLE: import_member<Double_header>(handle, m_header); break;
-     case INT8: import_int8_member<Int8_header>(handle, m_header); break;
-     case INT16: import_member<Int16_header>(handle, m_header); break;
-     case INT32: import_member<Int32_header>(handle, m_header); break;
-     case UINT: import_uint_member<Uint_header>(handle, m_header); break;
-     case BOOL: import_member<Bool_header>(handle, m_header); break;
+     case STRING: assign_string_member<String_header>(handle, m_header); break;
+     case DOUBLE: assign_member<Double_header>(handle, m_header); break;
+     case INT8: assign_int8_member<Int8_header>(handle, m_header); break;
+     case INT16: assign_member<Int16_header>(handle, m_header); break;
+     case INT32: assign_member<Int32_header>(handle, m_header); break;
+     case UINT: assign_uint_member<Uint_header>(handle, m_header); break;
+     case BOOL: assign_member<Bool_header>(handle, m_header); break;
     }
     return;
   }
@@ -1087,7 +1085,7 @@ void Dxf_parser::parse_boundary_path(Dxf_boundary_path& path)
     int code;
     import_code(code);
     auto& members = Dxf_record_wrapper<Dxf_boundary_path>::s_record_members;
-    if (read_record_value(code, path, members)) continue;
+    if (assign_record_value(code, path, members)) continue;
 
     break;
   }
@@ -1101,17 +1099,25 @@ void Dxf_parser::parse_polyline_boundary_path(Dxf_polyline_boundary_path& path)
     import_code(code);
     auto& members = Dxf_record_wrapper<Dxf_boundary_path>::s_record_members;
     Dxf_boundary_path& base_path = path;
-    if (read_record_value(code, base_path, members)) continue;
+    if (assign_record_value(code, base_path, members)) continue;
 
     auto& polyline_members =
       Dxf_record_wrapper<Dxf_polyline_boundary_path>::s_record_members;
-    if (read_record_value(code, path, polyline_members)) continue;
+    if (assign_record_value(code, path, polyline_members)) continue;
 
-    auto& handlers =
-      Dxf_polyline_boundary_path::s_polyline_boundary_path_handlers;
+    typedef Dxf_record_wrapper<Dxf_polyline_boundary_path>
+      Dxf_polyline_boundary_path_wrapper;
+
+    auto ct = code_type(code);
+    auto& handlers = Dxf_polyline_boundary_path_wrapper::s_record_handlers;
     auto it = handlers.find(code);
     if (it != handlers.end()) {
-      (path.*(it->second))(*this);
+      auto handler = it->second;
+      switch (ct) {
+       case INT32: handle_record_value(ct, handler, path); break;
+       case DOUBLE: handle_record_value(ct, handler, path); break;
+       default: SGAL_error();
+      }
       continue;
     }
 

@@ -40,8 +40,9 @@ Dxf_polyline_boundary_path_wrapper::s_record_members = {
   {42 , {&Dxf_polyline_boundary_path::m_bulge, 1, 0}}
 };
 
-const std::map<int, Dxf_polyline_boundary_path::Handler>
-Dxf_polyline_boundary_path::s_polyline_boundary_path_handlers = {
+template <>
+const std::map<int, Dxf_polyline_boundary_path_wrapper::Record_handler_type>
+Dxf_polyline_boundary_path_wrapper::s_record_handlers = {
   {93, &Dxf_polyline_boundary_path::number_handler},
   {10, &Dxf_polyline_boundary_path::m_location_0_handler},
   {20, &Dxf_polyline_boundary_path::m_location_1_handler},
@@ -49,36 +50,36 @@ Dxf_polyline_boundary_path::s_polyline_boundary_path_handlers = {
 };
 
 //!
-void Dxf_polyline_boundary_path::number_handler(Dxf_parser& parser)
+void Dxf_polyline_boundary_path::number_handler(int32_t size)
 {
-  int32_t size;
-  parser.import_value(size);
+  //int32_t size;
+  //parser.import_value(size);
   m_locations.reserve(size);
 }
 
 //!
-void Dxf_polyline_boundary_path::m_location_0_handler(Dxf_parser& parser)
+void Dxf_polyline_boundary_path::m_location_0_handler(double coord)
 {
-  double coord;
-  parser.import_value(coord);
+  //double coord;
+  //parser.import_value(coord);
   m_locations.resize(m_locations.size() + 1);
   m_locations.back()[0] = coord;
 }
 
 //!
-void Dxf_polyline_boundary_path::m_location_1_handler(Dxf_parser& parser)
+void Dxf_polyline_boundary_path::m_location_1_handler(double coord)
 {
-  double coord;
-  parser.import_value(coord);
+  //double coord;
+  //parser.import_value(coord);
   SGAL_assertion(! m_locations.empty());
   m_locations.back()[1] = coord;
 }
 
 //!
-void Dxf_polyline_boundary_path::m_location_2_handler(Dxf_parser& parser)
+void Dxf_polyline_boundary_path::m_location_2_handler(double coord)
 {
-  double coord;
-  parser.import_value(coord);
+  //double coord;
+  //parser.import_value(coord);
   SGAL_assertion(! m_locations.empty());
   m_locations.back()[2] = coord;
 }

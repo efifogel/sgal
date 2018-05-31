@@ -475,6 +475,7 @@ set(SGAL_SRC_FILES ${SGAL_SRC_FILES} ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} ${SGAL
 source_group(src\\loaders\\dxf\\tables FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} ${SGAL_LOADERS_DXF_TABLES_HEADER_FILES})
 
 # dxf loader
+set(SGAL_LOADERS_DXF_SRC_FILES ${SGAL_LOADERS_DXF_SRC_FILES} lib/loaders/dxf/Dxf_base_parser.cpp)
 set(SGAL_LOADERS_DXF_SRC_FILES ${SGAL_LOADERS_DXF_SRC_FILES} lib/loaders/dxf/Dxf_block.cpp)
 set(SGAL_LOADERS_DXF_SRC_FILES ${SGAL_LOADERS_DXF_SRC_FILES} lib/loaders/dxf/Dxf_boundary_path.cpp)
 set(SGAL_LOADERS_DXF_SRC_FILES ${SGAL_LOADERS_DXF_SRC_FILES} lib/loaders/dxf/Dxf_extended_data.cpp)

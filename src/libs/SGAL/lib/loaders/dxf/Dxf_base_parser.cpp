@@ -16,32 +16,16 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_POLYLINE_BOUNDARY_PATH_HPP
-#define SGAL_DXF_POLYLINE_BOUNDARY_PATH_HPP
-
-#include <vector>
-#include <array>
-#include <map>
-
 #include "SGAL/basic.hpp"
-#include "SGAL/Dxf_boundary_path.hpp"
+#include "SGAL/Dxf_base_parser.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-class Dxf_parser;
-
-struct Dxf_polyline_boundary_path : Dxf_boundary_path {
-  int16_t m_has_bulge;  // Has bulge flag
-  int16_t m_is_closed;  // Is closed flag
-  std::vector<std::array<double, 3> > m_locations; // Vertex location (in OCS)
-  double m_bulge;       // Bulge (optional, default = 0)
-
-  void number_handler(int32_t size);
-  void m_location_0_handler(double coord);
-  void m_location_1_handler(double coord);
-  void m_location_2_handler(double coord);
-};
+//! \brief constructs.
+Dxf_base_parser::Dxf_base_parser(std::istream& is, const String& filename) :
+  m_is(is),
+  m_filename(filename),
+  m_line(0)
+{}
 
 SGAL_END_NAMESPACE
-
-#endif

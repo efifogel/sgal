@@ -32,7 +32,9 @@ template <typename Record_>
 struct SGAL_SGAL_DECL Dxf_record_wrapper {
   typedef Record_                               Record;
 
-  // Record types:
+  ///
+  //@{ Types and data of data members.
+
   typedef String Record::*                      String_record;
   typedef bool Record::*                        Bool_record;
   typedef int8_t Record::*                      Int8_record;
@@ -52,7 +54,6 @@ struct SGAL_SGAL_DECL Dxf_record_wrapper {
                          Uint_record,
                          Double_2d_record,
                          Double_3d_record>      Record_member_type;
-
   //!
   struct Record_member {
     Record_member(Record_member_type handle, int size, int index) :
@@ -67,6 +68,28 @@ struct SGAL_SGAL_DECL Dxf_record_wrapper {
   };
 
   static const std::map<int, Record_member> s_record_members;
+  //@}
+
+  ///
+  //@{ Types and data of handler functions.
+  typedef void(Record::*String_handler)(const String&);
+  typedef void(Record::*Bool_handler)(bool);
+  typedef void(Record::*Int8_handler)(int8_t);
+  typedef void(Record::*Int16_handler)(int16_t);
+  typedef void(Record::*Int32_handler)(int32_t);
+  typedef void(Record::*Uint_handler)(Uint);
+  typedef void(Record::*Double_handler)(double);
+
+  typedef boost::variant<String_handler,
+                         Bool_handler,
+                         Int8_handler,
+                         Int16_handler,
+                         Int32_handler,
+                         Uint_handler,
+                         Double_handler>      Record_handler_type;
+
+  static const std::map<int, Record_handler_type> s_record_handlers;
+  //@}
 };
 
 SGAL_END_NAMESPACE

@@ -31,6 +31,8 @@
 #include <boost/tti/has_member_function.hpp>
 
 #include "SGAL/Loader_code.hpp"
+#include "SGAL/Dxf_importer.hpp"
+#include "SGAL/Dxf_base_parser.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/basic.hpp"
 #include "SGAL/Dxf_header.hpp"
@@ -134,7 +136,8 @@ SGAL_BEGIN_NAMESPACE
 
 class Scene_graph;
 
-class SGAL_SGAL_DECL Dxf_parser {
+//!
+class SGAL_SGAL_DECL Dxf_parser : public Dxf_base_parser {
 public:
 
   friend Dxf_hatch_entity;
@@ -491,9 +494,10 @@ private:
   void parse_dummy_object();
   //@}
 
-  /*! Parse base record. */
+  /*! Import a value and assign it to a record member.
+   */
   template <typename Handle, typename Record_>
-  void read_simple_record_value(Code_type ct, Handle handle, Record_& record)
+  void assign_simple_record_value(Code_type ct, Handle handle, Record_& record)
   {
     typedef Record_                             Record;
 
@@ -505,12 +509,65 @@ private:
     typedef double Record::*                    Double_record;
 
     switch (ct) {
-     case STRING: import_string_member<String_record>(handle, record); break;
-     case UINT: import_uint_member<Uint_record>(handle, record);  break;
-     case INT8: import_int8_member<Int8_record>(handle, record);  break;
-     case INT16: import_member<Int16_record>(handle, record);  break;
-     case INT32: import_member<Int32_record>(handle, record);  break;
-     case DOUBLE: import_member<Double_record>(handle, record);  break;
+     case STRING: assign_string_member<String_record>(handle, record); break;
+     case UINT: assign_uint_member<Uint_record>(handle, record);  break;
+     case INT8: assign_int8_member<Int8_record>(handle, record);  break;
+     case INT16: assign_member<Int16_record>(handle, record);  break;
+     case INT32: assign_member<Int32_record>(handle, record);  break;
+     case DOUBLE: assign_member<Double_record>(handle, record);  break;
+     default: break;
+    }
+  }
+
+  /*! Import a value and assign it to a record member.
+   * Also handle arrays of doubles.
+   */
+  template <typename MemberType, typename Record_>
+  void assign_record_value(Code_type ct, int size, MemberType handle,
+                           Record_& record, int index)
+  {
+    typedef Record_                             Record;
+
+    typedef String Record::*                    String_record;
+    typedef bool Record::*                      Bool_record;
+    typedef int8_t Record::*                    Int8_record;
+    typedef int16_t Record::*                   Int16_record;
+    typedef int32_t Record::*                   Int32_record;
+    typedef double Record::*                    Double_record;
+    typedef Uint Record::*                      Uint_record;
+    typedef double (Record::*Double_2d_record)[2];
+    typedef double (Record::*Double_3d_record)[3];
+
+    switch (ct) {
+     case STRING: assign_string_member<String_record>(handle, record); break;
+     case BOOL: assign_member<Bool_record>(handle, record); break;
+     case INT8: assign_int8_member<Int8_record>(handle, record); break;
+     case INT16: assign_member<Int16_record>(handle, record); break;
+     case INT32: assign_member<Int32_record>(handle, record); break;
+     case UINT: assign_uint_member<Uint_record>(handle, record); break;
+
+     case DOUBLE:
+      switch (size) {
+       case 1: assign_member<Double_record>(handle, record); break;
+       case 2: assign_member<Double_2d_record>(handle, record, index); break;
+       case 3: assign_member<Double_3d_record>(handle, record, index); break;
+      }
+      break;
+
+     default: SGAL_error();
+    }
+  }
+
+  /*! Import a value and pass it to a record handler.
+   */
+  template <typename Handler, typename Record_>
+  void handle_record_value(Code_type ct, Handler handler, Record_& record)
+  {
+    switch (ct) {
+     case INT8: handle_int8_item<int8_t>(handler, record);  break;
+     case INT16: handle_item<int16_t>(handler, record);  break;
+     case INT32: handle_item<int32_t>(handler, record);  break;
+     case DOUBLE: handle_item<double>(handler, record);  break;
      default: break;
     }
   }
@@ -614,7 +671,7 @@ private:
   /*! Read a value of a record that requires special handling
    */
   template <typename Record>
-  void read_record_special_value(int code, Record& record)
+  void assign_record_special_value(int code, Record& record)
   {
     auto ct = code_type(code);
 
@@ -626,6 +683,8 @@ private:
     Uint uint_val;
     float float_val;
     double double_val;
+
+    Dxf_importer<String> string_importer(m_is, m_filename);
 
     std::stringstream stream;
     String msg("Unrecognized code ");
@@ -730,14 +789,14 @@ private:
       if (bit != base_members.end()) {
         auto handle = bit->second;
         auto& base_record = static_cast<Base_record&>(record);
-        read_simple_record_value(ct, handle, base_record);
+        assign_simple_record_value(ct, handle, base_record);
         continue;
       }
 
       auto& members = Dxf_record_wrapper<Record>::s_record_members;
-      if (read_record_value(code, record, members)) continue;
+      if (assign_record_value(code, record, members)) continue;
 
-      read_record_special_value(code, record);
+      assign_record_special_value(code, record);
     }
   }
 
@@ -749,12 +808,6 @@ private:
                  Dxf_simple_record_wrapper<typename Record::Base>::
                  s_record_members);
   }
-
-  //! The text input stream to parse.
-  std::istream& m_is;
-
-  //! The file name
-  const String& m_filename;
 
   //! The current line number
   size_t m_line;
@@ -903,7 +956,7 @@ private:
    * \return true if listed (implies that a value was read) false otherwise.
    */
   template <typename Record, typename Members>
-  bool read_record_value(int code, Record& record, Members& members)
+  bool assign_record_value(int code, Record& record, Members& members)
   {
     auto it = members.find(code);
     if (it == members.end()) return false;
@@ -912,46 +965,8 @@ private:
     auto handle = it->second.m_handle;
     auto size = it->second.m_size;
     auto index = it->second.m_index;
-    read_record_value(ct, size, handle, record, index);
+    assign_record_value(ct, size, handle, record, index);
     return true;
-  }
-
-  /*! Read one datum item.
-   */
-  template <typename MemberType, typename Record_>
-  void read_record_value(Code_type ct, int size, MemberType handle,
-                         Record_& record, int index)
-  {
-    typedef Record_                             Record;
-
-    typedef String Record::*                    String_record;
-    typedef bool Record::*                      Bool_record;
-    typedef int8_t Record::*                    Int8_record;
-    typedef int16_t Record::*                   Int16_record;
-    typedef int32_t Record::*                   Int32_record;
-    typedef double Record::*                    Double_record;
-    typedef Uint Record::*                      Uint_record;
-    typedef double (Record::*Double_2d_record)[2];
-    typedef double (Record::*Double_3d_record)[3];
-
-    switch (ct) {
-     case STRING: import_string_member<String_record>(handle, record); break;
-     case BOOL: import_member<Bool_record>(handle, record); break;
-     case INT8: import_int8_member<Int8_record>(handle, record); break;
-     case INT16: import_member<Int16_record>(handle, record); break;
-     case INT32: import_member<Int32_record>(handle, record); break;
-     case UINT: import_uint_member<Uint_record>(handle, record); break;
-
-     case DOUBLE:
-      switch (size) {
-       case 1: import_member<Double_record>(handle, record); break;
-       case 2: import_member<Double_2d_record>(handle, record, index); break;
-       case 3: import_member<Double_3d_record>(handle, record, index); break;
-      }
-      break;
-
-     default: SGAL_error();
-    }
   }
 
   /*! Export a code
@@ -1044,52 +1059,84 @@ private:
     variable.erase(variable.find_last_not_of(" \t\n\r\f\v") + 1);
     SGAL_TRACE_CODE(Trace::DXF,
                     std::cout << "[" << std::to_string(m_line) << "]"
-                    << "Dxf_parser::import_string_member() value: "
+                    << "Dxf_parser::assign_string_member() value: "
                     << variable << std::endl;);
   }
 
-  /*! Import a value to a struct member (of the same type, naturally).
-   * \param[handle] handle the handle to the member.
+  /*! Import a value and assign it to a struct member (of the same type,
+   * naturally).
+   * \param[handle] handle the handle to the struct member.
    * \param[target] target the target struct.
    */
   template <typename T, typename MemberType, typename Target>
-  void import_member(MemberType handle, Target& target)
+  void assign_member(MemberType handle, Target& target)
   { import_value(target.*(boost::get<T>(handle))); }
 
-  /*! Import a value to an item of an array member (of the same type,
-   * naturally).
+  /*! Import a value and assign it to an item of an array struct-member (of the
+   * same type, naturally).
    * \param[handle] handle the handle to the member.
    * \param[target] target the target struct.
    * \param[index] the index of the array item.
    */
   template <typename T, typename MemberType, typename Target>
-  void import_member(MemberType handle, Target& target, int index)
+  void assign_member(MemberType handle, Target& target, int index)
   { import_value((target.*(boost::get<T>(handle)))[index]); }
 
-  /*! Import a string value to a string header member.
+  /*! Import a string value and assign it to a string struct-member.
    * \param[handle] handle the handle to the string member.
    * \param[target] target the target struct.
    */
   template <typename T, typename MemberType, typename Target>
-  void import_string_member(MemberType handle, Target& target)
+  void assign_string_member(MemberType handle, Target& target)
   { import_string_value(target.*(boost::get<T>(handle))); }
 
-  /*! Import an value to ab int8_t member.
+  /*! Import an int_8 value and assign it to to an int8_t struct-member.
    * C/C++ defines int8_t to be 'signed char'; thus, a negative integer cannot
    * be imported directly, since the preceding '-' is interpreted as the (sole)
    * char input.
    * \param[i] handle the handle to the member.
    */
   template <typename T, typename MemberType, typename Target>
-  void import_int8_member(MemberType handle, Target& target)
+  void assign_int8_member(MemberType handle, Target& target)
   { import_int8_value(target.*(boost::get<T>(handle))); }
 
-  /*! Import a hex value to an unsigned int member.
+  /*! Import a hex value to and assign it to an unsigned int struct-member.
    * \param[i] handle the handle to the member.
    */
   template <typename T, typename MemberType, typename Target>
-  void import_uint_member(MemberType handle, Target& target)
+  void assign_uint_member(MemberType handle, Target& target)
   { import_uint_value(target.*(boost::get<T>(handle))); }
+
+  /// Import to handlers
+  //@{
+  /*! Import a value and pass it to a handler (that handles the same type,
+   * naturally).
+   * \param[handler] handler the handler struct member-function.
+   * \param[target] target the target struct.
+   */
+  template <typename T, typename HandlerType, typename Record>
+  void handle_item(HandlerType handler, Record& record)
+  {
+    typedef void(Record::*Handler)(T);
+    T value;
+    import_value(value);
+    (record.*(boost::get<Handler>(handler)))(value);
+  }
+
+  /*! Import an int_8 value and pass it to a handler (that handles an int_8
+   * value).
+   * \param[handler] handler the handler struct member-function.
+   * \param[target] target the target struct.
+   */
+  template <typename T, typename HandlerType, typename Record>
+  void handle_int8_item(HandlerType handler, Record& record)
+  {
+    typedef void(Record::*Handler)(T);
+    T value;
+    import_int8_value(value);
+    (record.*(boost::get<Handler>(handler)))(value);
+  }
+  //@}
 
   /*! Has_xdata is a generic-template-struct service that evaluates as follows:
    * If A has a data member called x_data, then Has_xdata<A>::value == true,
@@ -1204,7 +1251,7 @@ private:
     auto handle = it->second.m_handle;
     auto size = it->second.m_size;
     auto index = it->second.m_index;
-    read_record_value(ct, size, handle, *m_extended_data, index);
+    assign_record_value(ct, size, handle, *m_extended_data, index);
   }
 
   /*! Parse common table section, which aplies to all table types.
@@ -1256,7 +1303,7 @@ private:
       auto it = base_members.find(code);
       if (it != base_members.end()) {
         auto handle = it->second;
-        read_simple_record_value(ct, handle, base_table);
+        assign_simple_record_value(ct, handle, base_table);
         continue;
       }
 
@@ -1270,11 +1317,11 @@ private:
         auto handle = eit->second.m_handle;
         auto size = eit->second.m_size;
         auto index = eit->second.m_index;
-        read_record_value(ct, size, handle, entry, index);
+        assign_record_value(ct, size, handle, entry, index);
         continue;
       }
 
-      read_record_special_value(code, entry);
+      assign_record_special_value(code, entry);
     }
   }
 
@@ -1343,7 +1390,7 @@ private:
         if (bit != base_members.end()) {
           auto handle = bit->second;
           auto& base_entry = static_cast<Dxf_table_entry&>(entry);
-          read_simple_record_value(ct, handle, base_entry);
+          assign_simple_record_value(ct, handle, base_entry);
           continue;
         }
 
@@ -1353,11 +1400,11 @@ private:
           auto handle = eit->second.m_handle;
           auto size = eit->second.m_size;
           auto index = eit->second.m_index;
-          read_record_value(ct, size, handle, entry, index);
+          assign_record_value(ct, size, handle, entry, index);
           continue;
         }
 
-        read_record_special_value(code, entry);
+        assign_record_special_value(code, entry);
       }
     }
   }
