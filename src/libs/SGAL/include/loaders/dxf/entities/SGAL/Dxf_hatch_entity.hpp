@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2018 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -24,6 +24,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Dxf_base_entity.hpp"
 #include "SGAL/Dxf_boundary_path.hpp"
+#include "SGAL/Dxf_pattern_data.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -47,7 +48,7 @@ struct Dxf_hatch_entity : public Dxf_base_entity {
                         // 1 = has solid fill
   // int32_t Number of boundary paths (loops)
   std::vector<Dxf_boundary_path*> m_boundary_paths; // Boundary path data.
-                        // Repeats number of times specified by code 91
+                        // Repeats number of times specified by code 91.
   int16_t m_hatch_style; // Hatch style:
                         // 0 = Hatch "odd parity" area (Normal style)
                         // 1 = Hatch outermost area only (Outer style)
@@ -66,9 +67,9 @@ struct Dxf_hatch_entity : public Dxf_base_entity {
                         // only):
                         // 0 = not double
                         // 1 = double
-  int16_t m_num_pattern_definition_lines; // Number of pattern definition lines
-  // varies // Pattern line data. Repeats number of times specified by code 78.
-                        // See Pattern Data
+  // int16_t Number of pattern definition lines
+  std::vector<Dxf_pattern_data> m_pattern_line; // Pattern line data.
+                        // Repeats number of times specified by code 78.
   double m_pixel_size;  // Pixel size used to determine the density to perform
                         // various intersection and ray casting operations in
                         // hatch pattern computation for associative hatches and
@@ -119,6 +120,14 @@ struct Dxf_hatch_entity : public Dxf_base_entity {
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
   bool handle_value(Dxf_parser& parser, int code, int32_t value);
+
+  /*! Handle a value that requires special handling (as opposed to only storing).
+   */
+  bool handle_value(Dxf_parser& parser, int code, int16_t value);
+
+  /*! Handle boundary paths.
+   */
+  void handle_boundary_paths(Dxf_parser& parser, int32_t value);
 };
 
 SGAL_END_NAMESPACE

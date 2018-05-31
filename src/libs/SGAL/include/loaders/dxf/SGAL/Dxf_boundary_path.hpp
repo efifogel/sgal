@@ -43,12 +43,22 @@ struct Dxf_boundary_path {
   // varies Edge type data (only if boundary is not a polyline).
                         // See appropriate Edge data table below
   // Number of source boundary objects
-  std::vector<Uint> m_source_boundary_objects; // Reference to source boundary
-                        // objects (multiple entries)
+  std::vector<Uint> m_source_objects; // Reference to source boundary objects
+                        // (multiple entries)
+
+  /// Handlers
+  //@{
+  void number_handler(int32_t size);
+  void source_objects_handler(Uint handler);
+  //@}
+
 #if 0
-Polyline boundary data group codes
-Group code
-Description
+  // EF: Probably good to rename Dxf_boundary_path to Dxf_base_boundary_path
+  // and then introduce:
+  // 1. Dxf_line_boundary_path
+  // 2. Dxf_circular_arc_boundary_path
+  // 3. Dxf_elliptic_boundary_path
+  // 4. Dxf_spline_boundary_path
 Line edge data group codes
 Group code
 Description

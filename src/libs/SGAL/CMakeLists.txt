@@ -481,6 +481,7 @@ set(SGAL_LOADERS_DXF_SRC_FILES ${SGAL_LOADERS_DXF_SRC_FILES} lib/loaders/dxf/Dxf
 set(SGAL_LOADERS_DXF_SRC_FILES ${SGAL_LOADERS_DXF_SRC_FILES} lib/loaders/dxf/Dxf_extended_data.cpp)
 set(SGAL_LOADERS_DXF_SRC_FILES ${SGAL_LOADERS_DXF_SRC_FILES} lib/loaders/dxf/Dxf_header_members.cpp)
 set(SGAL_LOADERS_DXF_SRC_FILES ${SGAL_LOADERS_DXF_SRC_FILES} lib/loaders/dxf/Dxf_parser.cpp)
+set(SGAL_LOADERS_DXF_SRC_FILES ${SGAL_LOADERS_DXF_SRC_FILES} lib/loaders/dxf/Dxf_pattern_data.cpp)
 set(SGAL_LOADERS_DXF_SRC_FILES ${SGAL_LOADERS_DXF_SRC_FILES} lib/loaders/dxf/Dxf_polyline_boundary_path.cpp)
 set(SGAL_LOADERS_DXF_HEADER_FILES ${SGAL_LOADERS_DXF_HEADER_FILES} include/loaders/dxf/SGAL/Dxf_block.hpp)
 set(SGAL_LOADERS_DXF_HEADER_FILES ${SGAL_LOADERS_DXF_HEADER_FILES} include/loaders/dxf/SGAL/Dxf_class.hpp)

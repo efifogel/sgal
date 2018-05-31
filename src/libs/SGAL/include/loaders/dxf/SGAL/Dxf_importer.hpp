@@ -26,11 +26,6 @@
 
 SGAL_BEGIN_NAMESPACE
 
-template <typename T>
-struct Dxf_importer {
-};
-
-#if 0
 /*! Import a value.
  */
 template <typename T>
@@ -38,25 +33,32 @@ struct Dxf_importer {
 
   Dxf_base_parser& m_parser;
 
+  Dxf_importer(Dxf_base_parser& parser) : m_parser(parser) {}
+
   void operator()(T& variable)
   {
     m_parser.m_is >> variable;
     ++(m_parser.m_line);
     SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout << "[" << std::to_string(m_line) << "]"
+                    std::cout << "[" << std::to_string(m_parser.m_line) << "] "
                     << "Importering dxf value: "
                     << variable << std::endl;);
   }
 };
 
-/*! Import an int_8 value.
+/*! Import an int8_t value.
+ * C/C++ defines int8_t to be 'signed char'; thus, a negative integer cannot
+ * be imported directly, since the preceding '-' is interpreted as the (sole)
+ * char input.
  */
 template <>
-struct Dxf_importer<int_8> {
+struct Dxf_importer<int8_t> {
 
   Dxf_base_parser& m_parser;
 
-  void operator()(int_8& variable)
+  Dxf_importer(Dxf_base_parser& parser) : m_parser(parser) {}
+
+  void operator()(int8_t& variable)
   {
     // First read as an integer; then, cast to int8_t.
     int tmp;
@@ -64,25 +66,27 @@ struct Dxf_importer<int_8> {
     ++(m_parser.m_line);
     variable = (int8_t) tmp;
     SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout << "[" << std::to_string(m_line) << "]"
+                    std::cout << "[" << std::to_string(m_parser.m_line) << "] "
                     << "Importing dxf int8 value: "
                     << (int)(variable) << std::endl;);
   }
 };
 
-/*! Import a Uint value.
+/*! Import a hex value.
  */
 template <>
 struct Dxf_importer<Uint> {
 
   Dxf_base_parser& m_parser;
 
+  Dxf_importer(Dxf_base_parser& parser) : m_parser(parser) {}
+
   void operator()(Uint& variable)
   {
     m_parser.m_is >> std::hex >> variable >> std::dec;
     ++(m_parser.m_line);
     SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout << "[" << std::to_string(m_line) << "]"
+                    std::cout << "[" << std::to_string(m_parser.m_line) << "] "
                     << "Importing dxf Uint value: "
                     << "0x" << std::hex << variable << std::dec << std::endl;);
   }
@@ -95,6 +99,8 @@ struct Dxf_importer<String> {
 
   Dxf_base_parser& m_parser;
 
+  Dxf_importer(Dxf_base_parser& parser) : m_parser(parser) {}
+
   void operator()(String& variable)
   {
     // use getline() cause the string might be empty.
@@ -105,12 +111,11 @@ struct Dxf_importer<String> {
     ++(m_parser.m_line);
     variable.erase(variable.find_last_not_of(" \t\n\r\f\v") + 1);
     SGAL_TRACE_CODE(Trace::DXF,
-                    std::cout << "[" << std::to_string(m_line) << "]"
+                    std::cout << "[" << std::to_string(m_parser.m_line) << "] "
                     << "Importing dxf string value: "
                     << variable << std::endl;);
   }
 };
-#endif
 
 SGAL_END_NAMESPACE
 

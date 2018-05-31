@@ -21,10 +21,13 @@
 #include <functional>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Trace.hpp"
 #include "SGAL/Dxf_parser.hpp"
 #include "SGAL/Dxf_simple_record_wrapper.hpp"
 #include "SGAL/Dxf_record_wrapper.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Dxf_boundary_path.hpp"
+#include "SGAL/Dxf_polyline_boundary_path.hpp"
+#include "SGAL/Dxf_pattern_data.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -299,13 +302,13 @@ Loader_code Dxf_parser::operator()()
     import_code(n);
     SGAL_assertion(n == 0);
     std::string str;
-    import_string_value(str);
+    import_value(str);
     if (str == "EOF") break;
     SGAL_assertion(str == "SECTION");
     import_code(n);
     SGAL_assertion(n == 2);
     std::string section;
-    import_string_value(section);
+    import_value(section);
     auto sec_it = s_sections.find(section);
     if (sec_it == s_sections.end()) {
       SGAL_error_msg("unrecognize section");
@@ -351,7 +354,7 @@ void Dxf_parser::parse_header()
     }
   }
   String str;
-  import_string_value(str);
+  import_value(str);
   SGAL_assertion("ENDSEC" == str);
 }
 
@@ -377,7 +380,7 @@ void Dxf_parser::parse_class()
     SGAL_assertion(it != s_class_members.end());
     auto handle = it->second;
     switch (code_type(code)) {
-     case STRING: assign_string_member<String_class>(handle, dxf_class); break;
+     case STRING: assign_member<String_class>(handle, dxf_class); break;
      case INT8: assign_member<Int8_class>(handle, dxf_class); break;
      case INT32: assign_member<Int32_class>(handle, dxf_class); break;
      default: SGAL_error();
@@ -397,7 +400,7 @@ void Dxf_parser::parse_classes()
 
   do {
     String str;
-    import_string_value(str);
+    import_value(str);
     if ("ENDSEC" == str) return;
 
     SGAL_assertion("CLASS" == str);
@@ -498,7 +501,7 @@ void Dxf_parser::parse_tables()
 
   do {
     std::string str;
-    import_string_value(str);
+    import_value(str);
     if ("ENDSEC" == str) return;
 
     SGAL_assertion("TABLE" == str);
@@ -506,7 +509,7 @@ void Dxf_parser::parse_tables()
     int n;
     import_code(n);
     SGAL_assertion(2 == n);
-    import_string_value(str);
+    import_value(str);
     auto table_it = s_tables.find(str);
     if (table_it == s_tables.end()) {
       SGAL_error_msg("unrecognize table");
@@ -538,7 +541,7 @@ void Dxf_parser::parse_block()
     }
 
     if (100 == code) {
-      import_string_value(m_marker);
+      import_value(m_marker);
       continue;
     }
 
@@ -579,12 +582,12 @@ void Dxf_parser::parse_endblk()
     }
 
     if (100 == code) {
-      import_string_value(m_marker);
+      import_value(m_marker);
       continue;
     }
 
     String str;
-    import_string_value(str);
+    import_value(str);
   }
 }
 
@@ -600,7 +603,7 @@ void Dxf_parser::parse_blocks()
 
   do {
     String str;
-    import_string_value(str);
+    import_value(str);
     if ("ENDSEC" == str) return;
 
     if ("BLOCK" == str) parse_block();
@@ -620,7 +623,7 @@ void Dxf_parser::parse_entities()
 
   do {
     String str;
-    import_string_value(str);
+    import_value(str);
     if ("ENDSEC" == str) return;
 
     auto it = s_entities.find(str);
@@ -644,7 +647,7 @@ void Dxf_parser::parse_objects()
 
   do {
     String str;
-    import_string_value(str);
+    import_value(str);
     if ("ENDSEC" == str) return;
 
     auto it = s_objects.find(str);
@@ -681,7 +684,7 @@ void Dxf_parser::read_header_member()
   m_is >> c;
   SGAL_assertion(c == '$');
   std::string str;
-  import_string_value(str);
+  import_value(str);
   auto it = s_header_members.find(str);
   if (it == s_header_members.end()) {
     std::string unrecognized_msg("unrecognized header variable ");
@@ -704,12 +707,12 @@ void Dxf_parser::read_header_member()
                     std::cout << "Dxf_parser::read_header_member() code type: "
                     << s_code_type_names[code_type] << std::endl;);
     switch (code_type) {
-     case STRING: assign_string_member<String_header>(handle, m_header); break;
+     case STRING: assign_member<String_header>(handle, m_header); break;
      case DOUBLE: assign_member<Double_header>(handle, m_header); break;
-     case INT8: assign_int8_member<Int8_header>(handle, m_header); break;
+     case INT8: assign_member<Int8_header>(handle, m_header); break;
      case INT16: assign_member<Int16_header>(handle, m_header); break;
      case INT32: assign_member<Int32_header>(handle, m_header); break;
-     case UINT: assign_uint_member<Uint_header>(handle, m_header); break;
+     case UINT: assign_member<Uint_header>(handle, m_header); break;
      case BOOL: assign_member<Bool_header>(handle, m_header); break;
     }
     return;
@@ -752,7 +755,7 @@ void Dxf_parser::read_unrecognized(int code)
 
   switch (code_type(code)) {
    case STRING:
-    import_string_value(str);
+    import_value(str);
     msg += ", string value: " + str;
     break;
 
@@ -769,7 +772,7 @@ void Dxf_parser::read_unrecognized(int code)
     break;
 
    case UINT:
-    import_uint_value(uval);
+    import_value(uval);
     stream << std::hex << uval;
     msg += ", unsigned int value: 0x" + stream.str();
     break;
@@ -1084,10 +1087,15 @@ void Dxf_parser::parse_boundary_path(Dxf_boundary_path& path)
   while (true) {
     int code;
     import_code(code);
-    auto& members = Dxf_record_wrapper<Dxf_boundary_path>::s_record_members;
+    typedef Dxf_record_wrapper<Dxf_boundary_path>       Boundary_path_wrapper;
+    auto& members = Boundary_path_wrapper::s_record_members;
     if (assign_record_value(code, path, members)) continue;
+    auto& handlers = Boundary_path_wrapper::s_record_handlers;
+    if (handle_record_value(code, path, handlers)) continue;
 
-    break;
+    // The code hasn't been processed yet, export it.
+    export_code(code);
+    return;
   }
 }
 
@@ -1097,25 +1105,22 @@ void Dxf_parser::parse_polyline_boundary_path(Dxf_polyline_boundary_path& path)
   while (true) {
     int code;
     import_code(code);
-    auto& members = Dxf_record_wrapper<Dxf_boundary_path>::s_record_members;
+
+    // Handle codes of the base boundary-path record:
+    typedef Dxf_record_wrapper<Dxf_boundary_path>       Boundary_path_wrapper;
+    auto& members = Boundary_path_wrapper ::s_record_members;
     Dxf_boundary_path& base_path = path;
     if (assign_record_value(code, base_path, members)) continue;
+    auto& handlers = Boundary_path_wrapper::s_record_handlers;
+    if (handle_record_value(code, base_path, handlers)) continue;
 
-    auto& polyline_members =
-      Dxf_record_wrapper<Dxf_polyline_boundary_path>::s_record_members;
-    if (assign_record_value(code, path, polyline_members)) continue;
-
+    // Handle codes of the polyline boundary-path record:
     typedef Dxf_record_wrapper<Dxf_polyline_boundary_path>
-      Dxf_polyline_boundary_path_wrapper;
-
-    auto ct = code_type(code);
-    auto& handlers = Dxf_polyline_boundary_path_wrapper::s_record_handlers;
-    auto it = handlers.find(code);
-    if (it != handlers.end()) {
-      auto handler = it->second;
-      handle_record_value(ct, handler, path); break;
-      continue;
-    }
+      Polyline_boundary_path_wrapper;
+    auto& pl_members = Polyline_boundary_path_wrapper::s_record_members;
+    if (assign_record_value(code, path, pl_members)) continue;
+    auto& pl_handlers = Polyline_boundary_path_wrapper::s_record_handlers;
+    if (handle_record_value(code, path, pl_handlers)) continue;
 
     // The code hasn't been processed yet, export it.
     export_code(code);
@@ -1123,5 +1128,28 @@ void Dxf_parser::parse_polyline_boundary_path(Dxf_polyline_boundary_path& path)
   }
 }
 
+//! \brief parses a pattern data.
+void Dxf_parser::parse_pattern_data(Dxf_pattern_data& pattern_data)
+{
+  SGAL_TRACE_CODE(Trace::DXF,
+                  std::cout << "Dxf_parser::parse_pattern_data()"
+                  << std::endl;);
+
+  while (true) {
+    int code;
+    import_code(code);
+
+    // Handle codes of the base boundary-path record:
+    typedef Dxf_record_wrapper<Dxf_pattern_data>       Pattern_data_wrapper;
+    auto& members = Pattern_data_wrapper ::s_record_members;
+    if (assign_record_value(code, pattern_data, members)) continue;
+    auto& handlers = Pattern_data_wrapper::s_record_handlers;
+    if (handle_record_value(code, pattern_data, handlers)) continue;
+
+    // The code hasn't been processed yet, export it.
+    export_code(code);
+    return;
+  }
+}
 
 SGAL_END_NAMESPACE

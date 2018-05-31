@@ -34,4 +34,23 @@ Dxf_boundary_path_wrapper::s_record_members = {
   // {330, Reference to source boundary objects (multiple entries)
 };
 
+//!
+template <>
+const std::map<int, Dxf_boundary_path_wrapper::Record_handler_type>
+Dxf_boundary_path_wrapper::s_record_handlers = {
+  {97, &Dxf_boundary_path::number_handler},
+  {330, &Dxf_boundary_path::source_objects_handler}
+};
+
+//!
+void Dxf_boundary_path::number_handler(int32_t size)
+{ m_source_objects.reserve(size); }
+
+//!
+void Dxf_boundary_path::source_objects_handler(Uint handler)
+{
+  SGAL_assertion(! m_source_objects.empty());
+  m_source_objects.back() = handler;
+}
+
 SGAL_END_NAMESPACE

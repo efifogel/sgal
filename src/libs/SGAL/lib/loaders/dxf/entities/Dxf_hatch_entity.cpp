@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2018 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -50,7 +50,7 @@ Dxf_hatch_entity_wrapper::s_record_members = {
   {41, {&Dxf_hatch_entity::m_hatch_patter_scale, 1, 0}},
   {73, {&Dxf_hatch_entity::m_boundary_annotation_flag, 1, 0}},
   {77, {&Dxf_hatch_entity::m_hatch_patter_double_flag, 1, 0}},
-  {78, {&Dxf_hatch_entity::m_num_pattern_definition_lines, 1, 0}},
+  // {78, {&Dxf_hatch_entity::m_num_pattern_definition_lines, 1, 0}},
   // varies // Pattern line data. Repeats number of times specified by code 78.
   {47, {&Dxf_hatch_entity::m_pixel_size, 1, 0}},
   {98, {&Dxf_hatch_entity::m_num_sed_points, 1, 0}},
@@ -70,31 +70,50 @@ Dxf_hatch_entity_wrapper::s_record_members = {
   {470, {&Dxf_hatch_entity::m_string, 1, 0}}
 };
 
+//! \brief handles boundary paths.
+void Dxf_hatch_entity::handle_boundary_paths(Dxf_parser& parser, int32_t value)
+{
+  m_boundary_paths.resize(value);
+  for (auto& boundary_path : m_boundary_paths) {
+    int code;
+    parser.import_code(code);
+    SGAL_assertion(92 == code);
+    auto ct = Dxf_parser::code_type(code);
+
+    int32_t type;
+    parser.import_value(type);
+    if (type == 2) {
+      auto* path = new Dxf_polyline_boundary_path;
+      parser.parse_polyline_boundary_path(*path);
+      boundary_path = path;
+      continue;
+    }
+
+    auto* path = new Dxf_boundary_path;
+    parser.parse_boundary_path(*path);
+    boundary_path = path;
+  }
+}
+
 //! \brief handles a value that requires special handling.
 bool Dxf_hatch_entity::handle_value(Dxf_parser& parser,
                                     int code, int32_t value)
 {
   if (91 == code) {
-    m_boundary_paths.resize(value);
-    for (auto& boundary_path : m_boundary_paths) {
-      int code;
-      parser.import_code(code);
-      SGAL_assertion(92 == code);
-      auto ct = Dxf_parser::code_type(code);
+    handle_boundary_paths(parser, value);
+    return true;
+  }
+  return false;
+}
 
-      int32_t type;
-      parser.import_value(type);
-      if (type == 2) {
-        auto* path = new Dxf_polyline_boundary_path;
-        parser.parse_polyline_boundary_path(*path);
-        boundary_path = path;
-        continue;
-      }
-
-      auto* path = new Dxf_boundary_path;
-      parser.parse_boundary_path(*path);
-      boundary_path = path;
-    }
+//! \brief handles a value that requires special handling.
+bool Dxf_hatch_entity::handle_value(Dxf_parser& parser,
+                                    int code, int16_t value)
+{
+  if (78 == code) {
+    m_pattern_line.resize(value);
+    for (auto& pattern_data : m_pattern_line)
+      parser.parse_pattern_data(pattern_data);
     return true;
   }
   return false;
