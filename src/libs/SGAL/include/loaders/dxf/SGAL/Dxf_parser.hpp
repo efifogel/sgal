@@ -614,7 +614,7 @@ private:
   template <bool what, typename Record>
   bool handle_value(int code, const String& value, Record& record,
                     char (*)[what] = 0)
-  { return record.handle_value(*this, code, value); }
+  { return record.handle_value(code, value); }
 
   //!
   // template <bool what, typename Record>
@@ -624,22 +624,22 @@ private:
   //!
   template <bool what, typename Record>
   bool handle_value(int code, int8_t value, Record& record, char (*)[what] = 0)
-  { return record.handle_value(*this, code, value); }
+  { return record.handle_value(code, value); }
 
   //!
   template <bool what, typename Record>
   bool handle_value(int code, int16_t value, Record& record, char (*)[what] = 0)
-  { return record.handle_value(*this, code, value); }
+  { return record.handle_value(code, value); }
 
   //!
   template <bool what, typename Record>
   bool handle_value(int code, int32_t value, Record& record, char (*)[what] = 0)
-  { return record.handle_value(*this, code, value); }
+  { return record.handle_value(code, value); }
 
   //!
   template <bool what, typename Record>
   bool handle_value(int code, Uint value, Record& record, char (*)[what] = 0)
-  { return record.handle_value(*this, code, value); }
+  { return record.handle_value(code, value); }
 
   //!
   // template <bool what, typename Record>
@@ -649,7 +649,7 @@ private:
   //!
   template <bool what, typename Record>
   bool handle_value(int code, double value, Record& record, char (*)[what] = 0)
-  { return record.handle_value(*this, code, value); }
+  { return record.handle_value(code, value); }
 
   //@}
 
@@ -731,7 +731,7 @@ private:
      case STRING:
       import_value(str);
       if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(Dxf_parser&, int, const String&)>::value>(code, str, record))
+          <bool (Record::*)(int, const String&)>::value>(code, str, record))
         return;
       msg += ", string value: " + str;
       break;
@@ -747,7 +747,7 @@ private:
      case INT8:
       import_value(int8_val);
       if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(Dxf_parser&, int, int8_t)>::value>(code, int8_val, record))
+          <bool (Record::*)(int, int8_t)>::value>(code, int8_val, record))
         return;
       msg += ", int8_t value: " + std::to_string((int)int8_val);
       break;
@@ -755,7 +755,7 @@ private:
      case INT16:
       import_value(int16_val);
       if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(Dxf_parser&, int, int16_t)>::value>(code, int16_val, record))
+          <bool (Record::*)(int, int16_t)>::value>(code, int16_val, record))
         return;
       msg += ", int16_t value: " + std::to_string(int16_val);
       break;
@@ -763,7 +763,7 @@ private:
      case INT32:
       import_value(int32_val);
       if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(Dxf_parser&, int, int32_t)>::value>(code, int32_val, record))
+          <bool (Record::*)(int, int32_t)>::value>(code, int32_val, record))
         return;
       msg += ", int32_t value: " + std::to_string(int32_val);
       break;
@@ -771,7 +771,7 @@ private:
      case UINT:
       import_value(uint_val);
       if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(Dxf_parser&, int, Uint)>::value>(code, uint_val, record))
+          <bool (Record::*)(int, Uint)>::value>(code, uint_val, record))
         return;
       stream << std::hex << uint_val;
       msg += ", unsigned int value: 0x" + stream.str();
@@ -780,7 +780,7 @@ private:
      case DOUBLE:
       import_value(double_val);
       if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(Dxf_parser&, int, double)>::value>(code, double_val, record))
+          <bool (Record::*)(int, double)>::value>(code, double_val, record))
         return;
       msg += ", double value: " + std::to_string(double_val);
       break;
