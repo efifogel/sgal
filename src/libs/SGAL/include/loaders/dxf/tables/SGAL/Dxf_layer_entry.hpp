@@ -40,6 +40,7 @@ struct SGAL_SGAL_DECL Dxf_layer_entry: public Dxf_table_entry {
                         //      not need to be set by programs that write DXF
                         //      files)
   int16_t m_color;      // Color number (if negative, layer is off)
+  int32_t m_color_rgb;  // EF: not in the psec, but appears in dxf files.
   String m_line_type;   // Linetype name
   bool m_is_layer_plotted; // Plotting flag. If set to 0, do not plot this layer
   int8_t m_line_weight; // Lineweight enum value
