@@ -797,6 +797,8 @@ private:
   {
     typedef typename Record::Base                       Base_record;
 
+    record.set_parser(this);
+
     while (true) {
       int code;
       import_code(code);
@@ -828,6 +830,8 @@ private:
 
       auto& members = Dxf_record_wrapper<Record>::s_record_members;
       if (assign_record_value(code, record, members)) continue;
+      auto& handlers = Dxf_record_wrapper<Record>::s_record_handlers;
+      if (handle_record_value(code, record, handlers)) continue;
 
       assign_record_special_value(code, record);
     }

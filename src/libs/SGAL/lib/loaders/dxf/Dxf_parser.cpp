@@ -269,9 +269,16 @@ Dxf_parser::s_objects = {
 // Dummy object is used to parse unrecognized objects.
 typedef Dxf_record_wrapper<Dxf_parser::Dxf_dummy_object>
                                                 Dxf_dummy_object_wrapper;
+
+//! Record members
 template <>
 const std::map<int, Dxf_dummy_object_wrapper::Record_member>
 Dxf_dummy_object_wrapper::s_record_members = {};
+
+//! Record handlers
+template <>
+const std::map<int, Dxf_dummy_object_wrapper::Record_handler_type>
+Dxf_dummy_object_wrapper::s_record_handlers = {};
 
 //!
 typedef Dxf_simple_record_wrapper<Dxf_base_object>

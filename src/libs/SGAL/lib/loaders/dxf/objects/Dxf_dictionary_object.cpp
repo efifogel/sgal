@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2018 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -26,36 +26,21 @@ SGAL_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_dictionary_object>  Dxf_dictionary_object_wrapper;
 
+//! Record members
 template <>
 const std::map<int, Dxf_dictionary_object_wrapper::Record_member>
 Dxf_dictionary_object_wrapper::s_record_members = {
   {5, {&Dxf_dictionary_object::m_handle, 1, 0}},
   {280, {&Dxf_dictionary_object::m_is_hard_owner, 1, 0}},
   {281, {&Dxf_dictionary_object::m_duplicate_record_handling, 1, 0}},
-  // {3, entry name
-  // {350, entry handle
 };
 
-//! \brief handles a value that requires special handling.
-bool Dxf_dictionary_object::handle_value(Dxf_parser& /* parser */,
-                                         int code, const String& value)
-{
-  if (3 == code) {
-    m_entry_name = value;
-    return true;
-  }
-  return false;
-}
-
-//! \brief handles a value that requires special handling.
-bool Dxf_dictionary_object::handle_value(Dxf_parser& /* parser */,
-                                         int code, Uint value)
-{
-  if (350 == code) {
-    m_value_handles[m_entry_name] = value;
-    return true;
-  }
-  return false;
-}
+//! Record handlers
+template <>
+const std::map<int, Dxf_dictionary_object_wrapper::Record_handler_type>
+Dxf_dictionary_object_wrapper::s_record_handlers = {
+  {3, &Dxf_dictionary_object::handle_entry_name},
+  {350, &Dxf_dictionary_object::handle_entry_value}
+};
 
 SGAL_END_NAMESPACE

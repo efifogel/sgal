@@ -26,6 +26,7 @@ SGAL_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_text_entity>  Dxf_text_entity_wrapper;
 
+//! Record members
 template <>
 const std::map<int, Dxf_text_entity_wrapper::Record_member>
 Dxf_text_entity_wrapper::s_record_members = {
@@ -49,5 +50,10 @@ Dxf_text_entity_wrapper::s_record_members = {
   {230, {&Dxf_text_entity::m_normal, 3, 2}},
   {73, {&Dxf_text_entity::m_vertical_text_justification, 1, 0}}
 };
+
+//! Record handlers
+template <>
+const std::map<int, Dxf_text_entity_wrapper::Record_handler_type>
+Dxf_text_entity_wrapper::s_record_handlers = {};
 
 SGAL_END_NAMESPACE

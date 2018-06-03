@@ -30,6 +30,10 @@ SGAL_BEGIN_NAMESPACE
 class Dxf_parser;
 
 struct Dxf_lwpolyline_entity : public Dxf_base_entity {
+
+  /// Record members
+  //@{
+
   typedef Dxf_base_entity                       Base;
 
   int16_t m_flags;      // Polyline flag (bit-coded); default is 0:
@@ -52,11 +56,47 @@ struct Dxf_lwpolyline_entity : public Dxf_base_entity {
   double m_extrusion_direction[3]; // Extrusion direction (optional;
                         // default = 0, 0, 1)
 
-  //! \brief handles a value that requires special handling.
-  bool handle_value(Dxf_parser& parser, int code, double value);
+  //@}
 
-  //! \brief handles a value that requires special handling.
-  bool handle_value(Dxf_parser& parser, int code, int32_t value);
+  /// Record handlers
+  //@{
+
+  //! Handle the x-coordinate of a vertex.
+  void handle_vertex_x(double x)
+  {
+    m_vertices.resize(m_vertices.size() + 1);
+    m_vertices.back()[0] = x;
+  }
+
+  //! Handle the y-coordinate of a vertex.
+  void handle_vertex_y(double y)
+  {
+    SGAL_assertion(! m_vertices.empty());
+    m_vertices.back()[1] = y;
+  }
+
+  //! Handle the z-coordinate of a vertex.
+  void handle_vertex_z(double z)
+  {
+    SGAL_assertion(! m_vertices.empty());
+    m_vertices.back()[2] = z;
+  }
+
+  //! Handle a bulge.
+  void handle_bulge(double bulge)
+  {
+    m_bulges.resize(m_bulges.size() + 1);
+    m_bulges.back() = bulge;
+  }
+
+  //! Handle the number of vertices.
+  void handle_vertices_num(int32_t size)
+  {
+    m_vertices.reserve(size);
+    m_bulges.reserve(size);
+  }
+
+  //@}
 };
 
 SGAL_END_NAMESPACE

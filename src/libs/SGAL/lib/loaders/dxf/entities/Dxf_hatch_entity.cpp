@@ -29,6 +29,7 @@ SGAL_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_hatch_entity>  Dxf_hatch_entity_wrapper;
 
+//! Record members
 template <>
 const std::map<int, Dxf_hatch_entity_wrapper::Record_member>
 Dxf_hatch_entity_wrapper::s_record_members = {
@@ -70,53 +71,45 @@ Dxf_hatch_entity_wrapper::s_record_members = {
   {470, {&Dxf_hatch_entity::m_string, 1, 0}}
 };
 
+//! Record handlers
+template <>
+const std::map<int, Dxf_hatch_entity_wrapper::Record_handler_type>
+Dxf_hatch_entity_wrapper::s_record_handlers = {
+  {91, &Dxf_hatch_entity::handle_boundary_paths},
+  {78, &Dxf_hatch_entity::handle_pattern_definition_lines_num}
+};
+
 //! \brief handles boundary paths.
-void Dxf_hatch_entity::handle_boundary_paths(Dxf_parser& parser, int32_t value)
+void Dxf_hatch_entity::handle_boundary_paths(int32_t value)
 {
   m_boundary_paths.resize(value);
   for (auto& boundary_path : m_boundary_paths) {
     int code;
-    parser.import_code(code);
+    m_parser->import_code(code);
     SGAL_assertion(92 == code);
     auto ct = Dxf_parser::code_type(code);
 
     int32_t type;
-    parser.import_value(type);
+    m_parser->import_value(type);
     if (type == 2) {
       auto* path = new Dxf_polyline_boundary_path;
-      parser.parse_polyline_boundary_path(*path);
+      m_parser->parse_polyline_boundary_path(*path);
       boundary_path = path;
       continue;
     }
 
     auto* path = new Dxf_boundary_path;
-    parser.parse_boundary_path(*path);
+    m_parser->parse_boundary_path(*path);
     boundary_path = path;
   }
 }
 
 //! \brief handles a value that requires special handling.
-bool Dxf_hatch_entity::handle_value(Dxf_parser& parser,
-                                    int code, int32_t value)
+void Dxf_hatch_entity::handle_pattern_definition_lines_num(int16_t size)
 {
-  if (91 == code) {
-    handle_boundary_paths(parser, value);
-    return true;
-  }
-  return false;
-}
-
-//! \brief handles a value that requires special handling.
-bool Dxf_hatch_entity::handle_value(Dxf_parser& parser,
-                                    int code, int16_t value)
-{
-  if (78 == code) {
-    m_pattern_line.resize(value);
-    for (auto& pattern_data : m_pattern_line)
-      parser.parse_pattern_data(pattern_data);
-    return true;
-  }
-  return false;
+  m_pattern_line.resize(size);
+  for (auto& pattern_data : m_pattern_line)
+    m_parser->parse_pattern_data(pattern_data);
 }
 
 SGAL_END_NAMESPACE

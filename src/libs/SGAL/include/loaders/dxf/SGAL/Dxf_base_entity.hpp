@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2018 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -28,6 +28,8 @@
 #include "SGAL/Dxf_extended_data.hpp"
 
 SGAL_BEGIN_NAMESPACE
+
+class Dxf_parser;
 
 struct Dxf_base_entity {
   String m_handle;      // Handle
@@ -83,6 +85,18 @@ struct Dxf_base_entity {
                         // backwards compatibility.
   std::map<String, std::vector<String> > m_xdata; // Begin xdata "{", "}" (opt.)
   std::vector<Dxf_extended_data> m_extended_data;
+
+  /*! Construct.
+   */
+  Dxf_base_entity() : m_parser(nullptr) {}
+
+  /*! Set the parser.
+   * \param[in] parser the parser.
+   */
+  void set_parser(Dxf_parser* parser) { m_parser = parser; }
+
+  //! The parser.
+  Dxf_parser* m_parser;
 };
 
 SGAL_END_NAMESPACE

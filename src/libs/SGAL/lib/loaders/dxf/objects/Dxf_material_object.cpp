@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2018 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -26,6 +26,7 @@ SGAL_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_material_object>  Dxf_material_object_wrapper;
 
+//! Record members
 template <>
 const std::map<int, Dxf_material_object_wrapper::Record_member>
 Dxf_material_object_wrapper::s_record_members = {
@@ -120,5 +121,10 @@ Dxf_material_object_wrapper::s_record_members = {
   {93, {&Dxf_material_object::m_illumination_model, 1, 0}},
   {94, {&Dxf_material_object::m_channel_flags, 1, 0}}
 };
+
+//! Record handlers
+template <>
+const std::map<int, Dxf_material_object_wrapper::Record_handler_type>
+Dxf_material_object_wrapper::s_record_handlers = {};
 
 SGAL_END_NAMESPACE

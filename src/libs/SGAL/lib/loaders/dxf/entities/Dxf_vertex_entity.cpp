@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2018 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -26,10 +26,10 @@ SGAL_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_vertex_entity>  Dxf_vertex_entity_wrapper;
 
+//! Record members
 template <>
 const std::map<int, Dxf_vertex_entity_wrapper::Record_member>
 Dxf_vertex_entity_wrapper::s_record_members = {
-
   {10, {&Dxf_vertex_entity::m_location, 3, 0}},
   {20, {&Dxf_vertex_entity::m_location, 3, 1}},
   {30, {&Dxf_vertex_entity::m_location, 3, 2}},
@@ -44,5 +44,10 @@ Dxf_vertex_entity_wrapper::s_record_members = {
   {74, {&Dxf_vertex_entity::m_polyface_mesh_vertex_index4, 1, 0}},
   {91, {&Dxf_vertex_entity::m_identifier, 1, 0}},
 };
+
+//! Record handlers
+template <>
+const std::map<int, Dxf_vertex_entity_wrapper::Record_handler_type>
+Dxf_vertex_entity_wrapper::s_record_handlers = {};
 
 SGAL_END_NAMESPACE

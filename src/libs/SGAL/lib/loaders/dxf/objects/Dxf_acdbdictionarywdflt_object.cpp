@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2018 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -24,8 +24,10 @@
 
 SGAL_BEGIN_NAMESPACE
 
-typedef Dxf_record_wrapper<Dxf_acdbdictionarywdflt_object>  Dxf_acdbdictionarywdflt_object_wrapper;
+typedef Dxf_record_wrapper<Dxf_acdbdictionarywdflt_object>
+  Dxf_acdbdictionarywdflt_object_wrapper;
 
+//! Record members
 template <>
 const std::map<int, Dxf_acdbdictionarywdflt_object_wrapper::Record_member>
 Dxf_acdbdictionarywdflt_object_wrapper::s_record_members = {
@@ -34,5 +36,10 @@ Dxf_acdbdictionarywdflt_object_wrapper::s_record_members = {
   {350, {&Dxf_acdbdictionarywdflt_object::m_entry_object, 1, 0}},
   {340, {&Dxf_acdbdictionarywdflt_object::m_object_handle, 1, 0}}
 };
+
+//! Record handlers
+template <>
+const std::map<int, Dxf_acdbdictionarywdflt_object_wrapper::Record_handler_type>
+Dxf_acdbdictionarywdflt_object_wrapper::s_record_handlers = {};
 
 SGAL_END_NAMESPACE

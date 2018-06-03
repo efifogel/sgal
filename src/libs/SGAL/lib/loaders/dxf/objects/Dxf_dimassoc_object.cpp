@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2018 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -26,9 +26,15 @@ SGAL_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_dimassoc_object>  Dxf_dimassoc_object_wrapper;
 
+//! Record members
 template <>
 const std::map<int, Dxf_dimassoc_object_wrapper::Record_member>
 Dxf_dimassoc_object_wrapper::s_record_members = {
 };
+
+//! Record handlers
+template <>
+const std::map<int, Dxf_dimassoc_object_wrapper::Record_handler_type>
+Dxf_dimassoc_object_wrapper::s_record_handlers = {};
 
 SGAL_END_NAMESPACE

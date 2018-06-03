@@ -33,6 +33,9 @@ class Dxf_parser;
 struct Dxf_hatch_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
 
+  /// Member records
+  //@{
+
   double m_elevation_point[3]; // Elevation point (in OCS)
   double m_extrusion_direction[3]; // Extrusion direction
                         // (optional; default = 0, 0, 1)
@@ -117,17 +120,20 @@ struct Dxf_hatch_entity : public Dxf_base_entity {
                         // 1 = Second value
   String m_string;      // String (default = LINEAR)
 
-  /*! Handle a value that requires special handling (as opposed to only storing).
-   */
-  bool handle_value(Dxf_parser& parser, int code, int32_t value);
+  //@}
 
-  /*! Handle a value that requires special handling (as opposed to only storing).
-   */
-  bool handle_value(Dxf_parser& parser, int code, int16_t value);
+  /// Member handlers
+  //@{
 
   /*! Handle boundary paths.
    */
-  void handle_boundary_paths(Dxf_parser& parser, int32_t value);
+  void handle_boundary_paths(int32_t value);
+
+  /*! Handle a value that requires special handling.
+   */
+  void handle_pattern_definition_lines_num(int16_t size);
+
+  //@}
 };
 
 SGAL_END_NAMESPACE

@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2018 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -26,6 +26,7 @@ SGAL_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_leader_entity>  Dxf_leader_entity_wrapper;
 
+//! Record members
 template <>
 const std::map<int, Dxf_leader_entity_wrapper::Record_member>
 Dxf_leader_entity_wrapper::s_record_members = {
@@ -56,5 +57,10 @@ Dxf_leader_entity_wrapper::s_record_members = {
   {223, {&Dxf_leader_entity::m_annotation_offset, 3, 1}},
   {233, {&Dxf_leader_entity::m_annotation_offset, 3, 2}}
 };
+
+//! Record handlers
+template <>
+const std::map<int, Dxf_leader_entity_wrapper::Record_handler_type>
+Dxf_leader_entity_wrapper::s_record_handlers = {};
 
 SGAL_END_NAMESPACE

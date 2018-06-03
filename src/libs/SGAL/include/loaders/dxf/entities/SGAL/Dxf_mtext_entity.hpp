@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2018 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -104,10 +104,6 @@ struct Dxf_mtext_entity : public Dxf_base_entity {
                         // count (Int16), and then the number of column heights
 
   //@}
-
-  /*! Handle a value that requires special handling (as opposed to only storing).
-   */
-  bool handle_value(Dxf_parser& /* parser */, int code, double value);
 };
 
 SGAL_END_NAMESPACE

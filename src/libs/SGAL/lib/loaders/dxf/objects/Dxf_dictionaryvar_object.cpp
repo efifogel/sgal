@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2018 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -24,8 +24,10 @@
 
 SGAL_BEGIN_NAMESPACE
 
-typedef Dxf_record_wrapper<Dxf_dictionaryvar_object>  Dxf_dictionaryvar_object_wrapper;
+typedef Dxf_record_wrapper<Dxf_dictionaryvar_object>
+  Dxf_dictionaryvar_object_wrapper;
 
+//! Record members
 template <>
 const std::map<int, Dxf_dictionaryvar_object_wrapper::Record_member>
 Dxf_dictionaryvar_object_wrapper::s_record_members = {
@@ -33,5 +35,10 @@ Dxf_dictionaryvar_object_wrapper::s_record_members = {
   {280, {&Dxf_dictionaryvar_object::m_object_schema_number, 1, 0}},
   {1, {&Dxf_dictionaryvar_object::m_value, 1, 0}}
 };
+
+//! Record handlers
+template <>
+const std::map<int, Dxf_dictionaryvar_object_wrapper::Record_handler_type>
+Dxf_dictionaryvar_object_wrapper::s_record_handlers = {};
 
 SGAL_END_NAMESPACE

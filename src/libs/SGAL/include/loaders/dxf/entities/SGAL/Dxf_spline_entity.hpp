@@ -63,13 +63,74 @@ struct Dxf_spline_entity : public Dxf_base_entity {
     m_fit_tolerance(0.0000000001)
   {}
 
-  /*! Handle a value that requires special handling (as opposed to only storing).
+  /*! Handle the number of knot values.
    */
-  bool handle_value(Dxf_parser& parser, int code, int16_t value);
+  void handle_knot_values_num(int16_t size) { m_knot_values.reserve(size); }
 
-  /*! Handle a value that requires special handling (as opposed to only storing).
+  /*! Handle the number of control points.
    */
-  bool handle_value(Dxf_parser& parser, int code, double value);
+  void handle_control_points_num(int16_t size)
+  { m_control_points.reserve(size); }
+
+  /*! Handle the number of fit points.
+   */
+  void handle_fit_points_num(int16_t size) { m_fit_points.reserve(size); }
+
+  /*! Handle a knot value.
+   */
+  void handle_knot_value(double value)
+  {
+    m_knot_values.resize(m_knot_values.size() + 1);
+    m_knot_values.back() = value;
+  }
+
+  /*! Handle the x-coordinate of a control point.
+   */
+  void handle_control_point_x(double value)
+  {
+    m_control_points.resize(m_control_points.size() + 1);
+    m_control_points.back()[0] = value;
+  }
+
+  /*! Handle the y-coordinate of a control point.
+   */
+  void handle_control_point_y(double value)
+  {
+    SGAL_assertion(! m_control_points.empty());
+    m_control_points.back()[1] = value;
+  }
+
+  /*! Handle the z-coordinate of a control point.
+   */
+  void handle_control_point_z(double value)
+  {
+    SGAL_assertion(! m_control_points.empty());
+    m_control_points.back()[2] = value;
+  }
+
+  /*! Handle the x-coordinate of a fit point.
+   */
+  void handle_fit_point_x(double value)
+  {
+    m_fit_points.resize(m_fit_points.size() + 1);
+    m_fit_points.back()[0] = value;
+  }
+
+  /*! Handle the y-coordinate of a fit point.
+   */
+  void handle_fit_point_y(double value)
+  {
+    SGAL_assertion(! m_fit_points.empty());
+    m_fit_points.back()[1] = value;
+  }
+
+  /*! Handle the z-coordinate of a fit point.
+   */
+  void handle_fit_point_z(double value)
+  {
+    SGAL_assertion(! m_fit_points.empty());
+    m_fit_points.back()[2] = value;
+  }
 };
 
 SGAL_END_NAMESPACE

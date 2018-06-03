@@ -26,6 +26,7 @@ SGAL_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_xrecord_object>  Dxf_xrecord_object_wrapper;
 
+//! Record members
 template <>
 const std::map<int, Dxf_xrecord_object_wrapper::Record_member>
 Dxf_xrecord_object_wrapper::s_record_members = {
@@ -44,6 +45,11 @@ Dxf_xrecord_object_wrapper::s_record_members = {
   // {280-289, INT8
   // {290-369, except 330, 360
 };
+
+//! Record handlers
+template <>
+const std::map<int, Dxf_xrecord_object_wrapper::Record_handler_type>
+Dxf_xrecord_object_wrapper::s_record_handlers = {};
 
 //! \brief handles a value that requires special handling.
 bool Dxf_xrecord_object::handle_value(Dxf_parser& /* parser */,

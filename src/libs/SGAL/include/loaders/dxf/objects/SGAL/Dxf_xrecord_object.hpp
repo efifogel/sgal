@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2018 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -29,6 +29,9 @@ class Dxf_parser;
 struct Dxf_xrecord_object : public Dxf_base_object {
   typedef Dxf_base_object                       Base;
 
+  /// Record members
+  //@{
+
   int8_t m_flags;       // Duplicate record cloning flag (determines how to
                         // merge duplicate entries):
                         // 0 = Not applicable
@@ -37,6 +40,11 @@ struct Dxf_xrecord_object : public Dxf_base_object {
                         // 3 = <xref>$0$<name>
                         // 4 = $0$<name>
                         // 5 = Unmangle name
+
+  //@}
+
+  /// Record handles
+  //@{
 
   // Application specific; These values can be used by an application in any way
 
@@ -59,6 +67,8 @@ struct Dxf_xrecord_object : public Dxf_base_object {
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
   bool handle_value(Dxf_parser& parser, int code, double value);
+
+  //@}
 };
 
 SGAL_END_NAMESPACE

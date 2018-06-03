@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2018 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -50,16 +50,21 @@ struct Dxf_dictionary_object : public Dxf_base_object {
 
   //@}
 
-  /*! Handle a value that requires special handling (as opposed to only storing).
-   */
-  bool handle_value(Dxf_parser& parser, int code, const String& value);
+  /// \name Data handlers
+  //@{
 
-  /*! Handle a value that requires special handling (as opposed to only storing).
+  /*! Handle an entry name.
    */
-  bool handle_value(Dxf_parser& parser, int code, Uint value);
+  void handle_entry_name(const String& value) { m_entry_name = value; }
+
+  /*! Handle an entry value.
+   */
+  void handle_entry_value(Uint value) { m_value_handles[m_entry_name] = value; }
 
   //! The current entry name.
   String m_entry_name;
+
+  //@}
 };
 
 SGAL_END_NAMESPACE

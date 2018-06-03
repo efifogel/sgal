@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2018 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -26,6 +26,7 @@ SGAL_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_layout_object>  Dxf_layout_object_wrapper;
 
+//! Record members
 template <>
 const std::map<int, Dxf_layout_object_wrapper::Record_member>
 Dxf_layout_object_wrapper::s_record_members = {
@@ -60,5 +61,10 @@ Dxf_layout_object_wrapper::s_record_members = {
   {346, {&Dxf_layout_object::m_table_record_base, 1, 0}},
   {333, {&Dxf_layout_object::m_shade_plot, 1, 0}}
 };
+
+//! Record handlers
+template <>
+const std::map<int, Dxf_layout_object_wrapper::Record_handler_type>
+Dxf_layout_object_wrapper::s_record_handlers = {};
 
 SGAL_END_NAMESPACE

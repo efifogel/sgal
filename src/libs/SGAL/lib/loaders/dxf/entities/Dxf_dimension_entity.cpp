@@ -26,6 +26,7 @@ SGAL_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_dimension_entity>  Dxf_dimension_entity_wrapper;
 
+//! Record members
 template <>
 const std::map<int, Dxf_dimension_entity_wrapper::Record_member>
 Dxf_dimension_entity_wrapper::s_record_members = {
@@ -50,5 +51,10 @@ Dxf_dimension_entity_wrapper::s_record_members = {
   {230, {&Dxf_dimension_entity::m_normal, 3, 2}},
   {3, {&Dxf_dimension_entity::m_dimension_style_name, 1, 0}}
 };
+
+//! Record handlers
+template <>
+const std::map<int, Dxf_dimension_entity_wrapper::Record_handler_type>
+Dxf_dimension_entity_wrapper::s_record_handlers = {};
 
 SGAL_END_NAMESPACE

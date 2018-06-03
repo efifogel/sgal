@@ -1,4 +1,4 @@
-// Copyright (c) 2004,2018 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -26,12 +26,13 @@ SGAL_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_mtext_entity>  Dxf_mtext_entity_wrapper;
 
+//! Record members
 template <>
 const std::map<int, Dxf_mtext_entity_wrapper::Record_member>
 Dxf_mtext_entity_wrapper::s_record_members = {
-  // {10, {&Dxf_mtext_entity::m_insertion_point, 1, 0}},
-  // {20, {&Dxf_mtext_entity::m_insertion_point, 1, 0}},
-  // {30, {&Dxf_mtext_entity::m_insertion_point, 1, 0}},
+  {10, {&Dxf_mtext_entity::m_insertion_point, 3, 0}},
+  {20, {&Dxf_mtext_entity::m_insertion_point, 3, 1}},
+  {30, {&Dxf_mtext_entity::m_insertion_point, 3, 2}},
   {40, {&Dxf_mtext_entity::m_initial_text_height, 1, 0}},
   {41, {&Dxf_mtext_entity::m_reference_rectangle_width, 1, 0}},
   {71, {&Dxf_mtext_entity::m_attachment_point, 1, 0}},
@@ -39,12 +40,12 @@ Dxf_mtext_entity_wrapper::s_record_members = {
   {1, {&Dxf_mtext_entity::m_test, 1, 0}},
   {3, {&Dxf_mtext_entity::m_extended_text, 1, 0}},
   {7, {&Dxf_mtext_entity::m_text_style_name, 1, 0}},
-  // {210, {&Dxf_mtext_entity::m_extrusion_direction, 1, 0}},
-  // {220, {&Dxf_mtext_entity::m_extrusion_direction, 1, 0}},
-  // {230, {&Dxf_mtext_entity::m_extrusion_direction, 1, 0}},
-  // {11, {&Dxf_mtext_entity::m_x_axis_direction, 1, 0}},
-  // {21, {&Dxf_mtext_entity::m_x_axis_direction, 1, 0}},
-  // {31, {&Dxf_mtext_entity::m_x_axis_direction, 1, 0}},
+  {210, {&Dxf_mtext_entity::m_extrusion_direction, 3, 0}},
+  {220, {&Dxf_mtext_entity::m_extrusion_direction, 3, 1}},
+  {230, {&Dxf_mtext_entity::m_extrusion_direction, 3, 2}},
+  {11, {&Dxf_mtext_entity::m_x_axis_direction, 3, 0}},
+  {21, {&Dxf_mtext_entity::m_x_axis_direction, 3, 1}},
+  {31, {&Dxf_mtext_entity::m_x_axis_direction, 3, 2}},
   {42, {&Dxf_mtext_entity::m_horizontal_width, 1, 0}},
   {43, {&Dxf_mtext_entity::m_vertical_height, 1, 0}},
   {50, {&Dxf_mtext_entity::m_rotation_angle, 1, 0}},
@@ -65,22 +66,9 @@ Dxf_mtext_entity_wrapper::s_record_members = {
   {50, {&Dxf_mtext_entity::m_column_heights, 1, 0}}
 };
 
-//! \brief handles a value that requires special handling.
-bool Dxf_mtext_entity::handle_value(Dxf_parser& /* parser */,
-                                    int code, double value)
-{
-  switch (code) {
-   case 10: m_insertion_point[0] = value; return true;
-   case 20: m_insertion_point[1] = value; return true;
-   case 30: m_insertion_point[2] = value; return true;
-   case 210: m_extrusion_direction[0] = value; return true;
-   case 220: m_extrusion_direction[1] = value; return true;
-   case 230: m_extrusion_direction[2] = value; return true;
-   case 11: m_x_axis_direction[0] = value; return true;
-   case 21: m_x_axis_direction[1] = value; return true;
-   case 31: m_x_axis_direction[2] = value; return true;
-  }
-  return false;
-}
+//! Record handlers
+template <>
+const std::map<int, Dxf_mtext_entity_wrapper::Record_handler_type>
+Dxf_mtext_entity_wrapper::s_record_handlers = {};
 
 SGAL_END_NAMESPACE
