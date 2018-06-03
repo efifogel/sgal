@@ -62,9 +62,9 @@ struct Dxf_mlinestyle_object : public Dxf_base_object {
    */
   void handle_elements_num(int16_t size)
   {
-    m_element_offsets.reserve(size);
-    m_element_color.reserve(size);
-    m_element_line_style.reserve(size);
+    m_element_offsets.resize(size);
+    m_element_color.resize(size);
+    m_element_line_style.resize(size);
   }
 
   /*! Handle element offset.
