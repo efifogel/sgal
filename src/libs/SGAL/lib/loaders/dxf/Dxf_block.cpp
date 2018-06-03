@@ -49,7 +49,7 @@ Dxf_block_wrapper::s_record_members = {
 };
 
 //! \brief handles a value that requires special handling.
-bool Dxf_block::handle_value(Dxf_parser& /* parser */, int code, int16_t value)
+bool Dxf_block::handle_value(int code, int16_t value)
 {
   //! What to do with the value?
   if (code == 67) return true;
