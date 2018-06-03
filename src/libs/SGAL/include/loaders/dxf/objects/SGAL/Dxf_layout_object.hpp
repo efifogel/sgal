@@ -27,6 +27,7 @@ SGAL_BEGIN_NAMESPACE
 struct Dxf_layout_object : public Dxf_base_object {
   typedef Dxf_base_object                       Base;
 
+  String m_layout_name; // Layout name
   int16_t m_layout_flags; // Flag (bit-coded) to control the following:
                         // 1 = Indicates the PSLTSCALE value for this layout
                         //     when this layout is current
@@ -65,6 +66,10 @@ struct Dxf_layout_object : public Dxf_base_object {
                         // present and 76 code is non-zero, then base UCS is
                         // taken to be WORLD
   Uint m_shade_plot;    // Shade plot ID
+
+  /*! Handle a marker.
+   */
+  bool handle_marker(const String& marker);
 };
 
 SGAL_END_NAMESPACE

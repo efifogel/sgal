@@ -29,11 +29,23 @@ typedef Dxf_record_wrapper<Dxf_mlinestyle_object>  Dxf_mlinestyle_object_wrapper
 //! Record members
 template <>
 const std::map<int, Dxf_mlinestyle_object_wrapper::Record_member>
-Dxf_mlinestyle_object_wrapper::s_record_members = {};
+Dxf_mlinestyle_object_wrapper::s_record_members = {
+  {2, {&Dxf_mlinestyle_object::m_style_name, 1, 0}},
+  {70, {&Dxf_mlinestyle_object::m_flags, 1, 0}},
+  {3, {&Dxf_mlinestyle_object::m_style_description, 1, 0}},
+  {62, {&Dxf_mlinestyle_object::m_fill_color, 1, 0}},
+  {51, {&Dxf_mlinestyle_object::m_start_angle, 1, 0}},
+  {52, {&Dxf_mlinestyle_object::m_end_angle, 1, 0}},
+};
 
 //! Record handlers
 template <>
 const std::map<int, Dxf_mlinestyle_object_wrapper::Record_handler_type>
-Dxf_mlinestyle_object_wrapper::s_record_handlers = {};
+Dxf_mlinestyle_object_wrapper::s_record_handlers = {
+  {71, &Dxf_mlinestyle_object::handle_elements_num},
+  {49, &Dxf_mlinestyle_object::handle_element_offset},
+  {62, &Dxf_mlinestyle_object::handle_element_color},
+  {6, &Dxf_mlinestyle_object::handle_element_line_style}
+};
 
 SGAL_END_NAMESPACE

@@ -21,6 +21,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Dxf_record_wrapper.hpp"
 #include "SGAL/Dxf_layout_object.hpp"
+#include "SGAL/Dxf_parser.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -30,6 +31,7 @@ typedef Dxf_record_wrapper<Dxf_layout_object>  Dxf_layout_object_wrapper;
 template <>
 const std::map<int, Dxf_layout_object_wrapper::Record_member>
 Dxf_layout_object_wrapper::s_record_members = {
+  {1, {&Dxf_layout_object::m_layout_name, 1, 0}},
   {70, {&Dxf_layout_object::m_layout_flags, 1, 0}},
   {71, {&Dxf_layout_object::m_tab_order, 1, 0}},
   {10, {&Dxf_layout_object::m_minimum_limits, 2, 0}},
@@ -66,5 +68,17 @@ Dxf_layout_object_wrapper::s_record_members = {
 template <>
 const std::map<int, Dxf_layout_object_wrapper::Record_handler_type>
 Dxf_layout_object_wrapper::s_record_handlers = {};
+
+//! \brief handles a marker.
+// We call the parse_plotsettings_object() funcetion member of the parser, which
+// stores the record data in a record member of the parser.
+// EF: it's possible that we should instead pass a plotsettings object record
+// that is a data member of this layout object record (in case several
+// plotsettings records are expected in a single dcf file.
+bool Dxf_layout_object::handle_marker(const String& marker)
+{
+  if ("AcDbPlotSettings" == marker) m_parser->parse_plotsettings_object();
+  return true;
+}
 
 SGAL_END_NAMESPACE

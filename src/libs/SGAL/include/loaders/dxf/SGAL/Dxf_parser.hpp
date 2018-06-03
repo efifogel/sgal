@@ -144,6 +144,7 @@ public:
   friend Dxf_hatch_entity;
   friend Dxf_polyline_boundary_path;
   friend Dxf_pattern_data;
+  friend Dxf_layout_object;
 
   /*! Construct.
    */
@@ -607,6 +608,24 @@ private:
     return true;
   }
 
+  /// Handle marker.
+  //@{
+
+  //! Handle a marker in case record.handle_marker() is defined.
+  template <bool what, typename Record>
+  bool handle_marker(const String& marker, Record& record, char (*)[what] = 0)
+  { return record.handle_marker(marker); }
+
+  //! Handle a marker in case record.handle_marker() is not defined.
+  template <bool what, typename Record>
+  bool handle_marker(const String& marker, Record& record, char (*)[!what] = 0)
+  { return true; }
+
+  // Define a helper class that detects the deinition of the member function
+  // handle_marker()
+  BOOST_TTI_HAS_MEMBER_FUNCTION(handle_marker);
+  //@}
+
   /// Handle special codes.
   //@{
 
@@ -699,7 +718,7 @@ private:
 
   //@}
 
-  // Define a helper class that detects the presence of the member function
+  // Define a helper class that detects the definition of the member function
   // handle_value()
   BOOST_TTI_HAS_MEMBER_FUNCTION(handle_value);
 
@@ -806,6 +825,13 @@ private:
 
       if (100 == code) {
         import_value(m_marker);
+        // The return value of the marker handler indicates whether the marker
+        // is expected for tthis record. If it's not, we silently return.
+        // Apparently, some markers (e.g., in plotsettings object inficate the
+        // end of the object.
+        if (! handle_marker<has_member_function_handle_marker
+            <bool (Record::*)(const String&)>::value>(m_marker, record))
+          break;
         continue;
       }
 
@@ -1351,8 +1377,9 @@ private:
     }
   }
 
-  /// Boundary path
+  /// Various record parsers.
   //@{
+
   /*! Parse a regular boundary path.
    */
   void parse_boundary_path(Dxf_boundary_path& path);
@@ -1360,13 +1387,11 @@ private:
   /*! Parse a polyline boundary path.
    */
   void parse_polyline_boundary_path(Dxf_polyline_boundary_path& path);
-  //@}
 
-  /// Pattern data
-  //@{
   /*! Parse a pattern data.
    */
   void parse_pattern_data(Dxf_pattern_data& pattern_data);
+
   //@}
 
   /*! Read a comment line.
