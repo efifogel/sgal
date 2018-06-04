@@ -27,6 +27,7 @@ SGAL_BEGIN_NAMESPACE
 typedef Dxf_record_wrapper<Dxf_material_object>  Dxf_material_object_wrapper;
 
 //! Record members
+// \todo code 43 is used twice!!!
 template <>
 const std::map<int, Dxf_material_object_wrapper::Record_member>
 Dxf_material_object_wrapper::s_record_members = {
@@ -44,7 +45,6 @@ Dxf_material_object_wrapper::s_record_members = {
   {73, {&Dxf_material_object::m_diffuse_map_projection_method, 1, 0}},
   {74, {&Dxf_material_object::m_diffuse_map_tiling_method, 1, 0}},
   {75, {&Dxf_material_object::m_diffuse_map_auto_transform_method, 1, 0}},
-  {43, {&Dxf_material_object::m_diffuse_map_transformation_matrix, 1, 0}},
   {44, {&Dxf_material_object::m_specular_gloss_factor, 1, 0}},
   {76, {&Dxf_material_object::m_override_specular_color, 1, 0}},
   {45, {&Dxf_material_object::m_specular_color_factor, 1, 0}},
@@ -55,14 +55,12 @@ Dxf_material_object_wrapper::s_record_members = {
   {78, {&Dxf_material_object::m_specular_map_projection_method, 1, 0}},
   {79, {&Dxf_material_object::m_specular_map_tiling_method, 1, 0}},
   {170, {&Dxf_material_object::m_specular_map_auto_transform_method, 1, 0}},
-  {47, {&Dxf_material_object::m_specular_map_transformation_matrix, 1, 0}},
   {48, {&Dxf_material_object::m_reflection_map_blend_factor, 1, 0}},
   {171, {&Dxf_material_object::m_reflection_map_source, 1, 0}},
   {6, {&Dxf_material_object::m_reflection_map_file_name, 1, 0}},
   {172, {&Dxf_material_object::m_reflection_map_projection_method, 1, 0}},
   {173, {&Dxf_material_object::m_reflection_map_tiling_method, 1, 0}},
   {174, {&Dxf_material_object::m_reflection_map_auto_transform_method, 1, 0}},
-  {49, {&Dxf_material_object::m_reflection_map_transformation_matrix, 1, 0}},
   {140, {&Dxf_material_object::m_opacity_factor, 1, 0}},
   {141, {&Dxf_material_object::m_opacity_map_blend_factor, 1, 0}},
   {175, {&Dxf_material_object::m_opacity_map_source, 1, 0}},
@@ -70,14 +68,12 @@ Dxf_material_object_wrapper::s_record_members = {
   {176, {&Dxf_material_object::m_opacity_map_projection_method, 1, 0}},
   {177, {&Dxf_material_object::m_opacity_map_tiling_method, 1, 0}},
   {178, {&Dxf_material_object::m_opacity_map_auto_transform_method, 1, 0}},
-  {142, {&Dxf_material_object::m_opacity_map_transformation_matrix, 1, 0}},
   {143, {&Dxf_material_object::m_bump_map_blend_factor, 1, 0}},
   {179, {&Dxf_material_object::m_bump_map_source, 1, 0}},
   {8, {&Dxf_material_object::m_bump_map_file_name, 1, 0}},
   {270, {&Dxf_material_object::m_bump_map_projection_method, 1, 0}},
   {271, {&Dxf_material_object::m_bump_map_tiling_method, 1, 0}},
   {272, {&Dxf_material_object::m_bump_map_auto_transform_method, 1, 0}},
-  {144, {&Dxf_material_object::m_bump_map_transformation_matrix, 1, 0}},
   {145, {&Dxf_material_object::m_refraction_index, 1, 0}},
   {146, {&Dxf_material_object::m_refraction_map_blend_factor, 1, 0}},
   {273, {&Dxf_material_object::m_refraction_map_source, 1, 0}},
@@ -85,7 +81,6 @@ Dxf_material_object_wrapper::s_record_members = {
   {274, {&Dxf_material_object::m_refraction_map_projection_method, 1, 0}},
   {275, {&Dxf_material_object::m_refraction_map_tiling_method, 1, 0}},
   {276, {&Dxf_material_object::m_refraction_map_auto_transform_method, 1, 0}},
-  {147, {&Dxf_material_object::m_refraction_map_transformation_matrix, 1, 0}},
   {460, {&Dxf_material_object::m_color_bleed_scale, 1, 0}},
   {461, {&Dxf_material_object::m_indirect_dump_scale, 1, 0}},
   {462, {&Dxf_material_object::m_reflectance_scale, 1, 0}},
@@ -101,7 +96,6 @@ Dxf_material_object_wrapper::s_record_members = {
   {73, {&Dxf_material_object::m_normal_map_projection_method, 1, 0}},
   {74, {&Dxf_material_object::m_normal_map_tiling_method, 1, 0}},
   {75, {&Dxf_material_object::m_normal_map_auto_transform_method, 1, 0}},
-  {43, {&Dxf_material_object::m_normal_map_transformation_matrix, 1, 0}},
   {293, {&Dxf_material_object::m_is_anonymous, 1, 0}},
   {272, {&Dxf_material_object::m_global_illumination_mode, 1, 0}},
   {273, {&Dxf_material_object::m_final_gather_mode, 1, 0}},
@@ -125,6 +119,15 @@ Dxf_material_object_wrapper::s_record_members = {
 //! Record handlers
 template <>
 const std::map<int, Dxf_material_object_wrapper::Record_handler_type>
-Dxf_material_object_wrapper::s_record_handlers = {};
+Dxf_material_object_wrapper::s_record_handlers = {
+  // {43, &Dxf_material_object::handle_normal_map_transformation_matrix},
+  // {43, &Dxf_material_object::handle_diffuse_map_transformation_matrix},
+  {43, &Dxf_material_object::handle_normal_diffuse_map_transformation_matrix},
+  {47, &Dxf_material_object::handle_specular_map_transformation_matrix},
+  {49, &Dxf_material_object::handle_reflection_map_transformation_matrix},
+  {142, &Dxf_material_object::handle_opacity_map_transformation_matrix},
+  {144, &Dxf_material_object::handle_bump_map_transformation_matrix},
+  {147, &Dxf_material_object::handle_refraction_map_transformation_matrix}
+};
 
 SGAL_END_NAMESPACE

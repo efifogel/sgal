@@ -69,9 +69,9 @@ struct Dxf_material_object : public Dxf_base_object {
                         //     mapper to entity origin
                         // 4 = Include current block transform in mapper
                         //     transform
-  double m_diffuse_map_transformation_matrix; // Transform matrix of diffuse
-                        // map mapper (16 reals; row major format;
-                        // default = identity matrix)
+  std::array<double, 16> m_diffuse_map_transformation_matrix; // Transform
+                        // matrix of diffuse map mapper (16 reals; row major
+                        // format; default = identity matrix)
   double m_specular_gloss_factor; // Specular gloss factor (real, default = 0.5)
   int16_t m_override_specular_color; // Specular color method (default = 0):
                         // 0 = Use current color
@@ -106,9 +106,9 @@ struct Dxf_material_object : public Dxf_base_object {
                         //     mapper to entity origin
                         // 4 = Include current block transform in mapper
                         //     transform
-  double m_specular_map_transformation_matrix; // Transform matrix of specular
-                        // map mapper (16 reals; row major format;
-                        // default = identity matrix)
+  std::array<double, 16> m_specular_map_transformation_matrix; // Transform
+                        // matrix of specular map mapper (16 reals; row major
+                        // format; default = identity matrix)
   double m_reflection_map_blend_factor; // Blend factor of reflection map
                         // (real, default = 1.0)
   int16_t m_reflection_map_source; // Reflection map source (default = 1):
@@ -135,9 +135,9 @@ struct Dxf_material_object : public Dxf_base_object {
                         // translate mapper to entity origin
                         // 4 = Include current block transform in mapper
                         //     transform
-  String m_reflection_map_transformation_matrix; // Transform matrix of
-                        // reflection map mapper (16 reals; row major format;
-                        // default = identity matrix)
+  std::array<double, 16>m_reflection_map_transformation_matrix; // Transform
+                        // matrix of reflection map mapper (16 reals; row major
+                        // format; default = identity matrix)
   double m_opacity_factor; // Opacity percent (real; default = 1.0)
   double m_opacity_map_blend_factor; // Blend factor of opacity map (real;
                         // default = 1.0)
@@ -165,9 +165,9 @@ struct Dxf_material_object : public Dxf_base_object {
                         //     mapper to entity origin
                         // 4 = Include current block transform in mapper
                         //     transform
-  double m_opacity_map_transformation_matrix; // Transform matrix of opacity map
-                        // mapper (16 reals; row major format;
-                        // default = identity matrix)
+  std::array<double, 16> m_opacity_map_transformation_matrix; // Transform
+                        // matrix of opacity map mapper (16 reals; row major
+                        // format; default = identity matrix)
   double m_bump_map_blend_factor; // Blend factor of bump map (real;
                         // default = 1.0)
   int16_t m_bump_map_source; // Bump map source (default = 1):
@@ -194,8 +194,8 @@ struct Dxf_material_object : public Dxf_base_object {
                         //     mapper to entity origin
                         // 4 = Include current block transform in mapper
                         //     transform
-  double m_bump_map_transformation_matrix; // Transform matrix of bump map
-                        // mapper (16 reals; row major format;
+  std::array<double, 16> m_bump_map_transformation_matrix; // Transform matrix
+                        // of bump map mapper (16 reals; row major format;
                         // default = identity matrix)
   double m_refraction_index; // Refraction index (real; default = 1.0)
   double m_refraction_map_blend_factor; // Blend factor of refraction map (real;
@@ -224,9 +224,9 @@ struct Dxf_material_object : public Dxf_base_object {
                         //     mapper to entity origin
                         // 4 = Include current block transform in mapper
                         //     transform
-  double m_refraction_map_transformation_matrix; // Transform matrix of
-                        // refraction map mapper (16 reals; row major format;
-                        // default = identity matrix)
+  std::array<double, 16> m_refraction_map_transformation_matrix; // Transform
+                        // matrix of refraction map mapper (16 reals; row major
+                        // format; default = identity matrix)
   double m_color_bleed_scale; // Color Bleed Scale
   double m_indirect_dump_scale; // Indirect Dump Scale
   double m_reflectance_scale; // Reflectance Scale
@@ -242,7 +242,8 @@ struct Dxf_material_object : public Dxf_base_object {
   int16_t m_normal_map_projection_method; // Normal Mapper Projection
   int16_t m_normal_map_tiling_method; // Normal Mapper Tiling
   int16_t m_normal_map_auto_transform_method; // Normal Mapper Auto Transform
-  double m_normal_map_transformation_matrix; // Normal Mapper Transform
+  std::array<double, 16> m_normal_map_transformation_matrix; // Normal Mapper
+                        // Transform
   bool m_is_anonymous;  // Material is Anonymous
   int16_t m_global_illumination_mode; // Global Illumination Mode
   int16_t m_final_gather_mode; // Final Gather Mode
@@ -261,6 +262,77 @@ struct Dxf_material_object : public Dxf_base_object {
   double m_reflectivity; // Reflectivity
   int32_t m_illumination_model; // Illumination Model
   int32_t m_channel_flags; // Channel Flags
+
+  //! Indicates whether we are parsing the normal transformation matrix
+  bool m_is_normal;
+
+  size_t m_normal_diffuse_id;
+  size_t m_specular_id;
+  size_t m_reflection_id;
+  size_t m_opacity_id;
+  size_t m_bump_id;
+  size_t m_refraction_id;
+
+  /*! Construct
+   */
+  Dxf_material_object() :
+    m_is_normal(false),
+    m_normal_diffuse_id(0),
+    m_specular_id(0),
+    m_reflection_id(0),
+    m_opacity_id(0),
+    m_bump_id(0),
+    m_refraction_id(0)
+  {}
+
+  //!
+  void handle_normal_diffuse_map_transformation_matrix(double value)
+  {
+    if (m_is_normal)
+      m_normal_map_transformation_matrix[m_normal_diffuse_id++] = value;
+    else {
+      m_diffuse_map_transformation_matrix[m_normal_diffuse_id++] = value;
+    }
+    if (16 == m_normal_diffuse_id) {
+      m_is_normal = ! m_is_normal;
+      m_normal_diffuse_id = 0;
+    }
+  }
+
+  //!
+  void handle_specular_map_transformation_matrix(double value)
+  {
+    SGAL_assertion(m_specular_id < 16);
+    m_specular_map_transformation_matrix[m_specular_id++] = value;
+  }
+
+  //!
+  void handle_reflection_map_transformation_matrix(double value)
+  {
+    SGAL_assertion(m_reflection_id < 16);
+    m_reflection_map_transformation_matrix[m_reflection_id++] = value;
+  }
+
+  //!
+  void handle_opacity_map_transformation_matrix(double value)
+  {
+    SGAL_assertion(m_opacity_id < 16);
+    m_opacity_map_transformation_matrix[m_opacity_id++] = value;
+  }
+
+  //!
+  void handle_bump_map_transformation_matrix(double value)
+  {
+    SGAL_assertion(m_bump_id < 16);
+    m_bump_map_transformation_matrix[m_bump_id++] = value;
+  }
+
+  //!
+  void handle_refraction_map_transformation_matrix(double value)
+  {
+    SGAL_assertion(m_refraction_id < 16);
+    m_refraction_map_transformation_matrix[m_refraction_id++] = value;
+  }
 };
 
 SGAL_END_NAMESPACE
