@@ -38,12 +38,12 @@ Dxf_spline_entity_wrapper::s_record_members = {
   {42, {&Dxf_spline_entity::m_knot_tolerance, 1, 0}},
   {43, {&Dxf_spline_entity::m_control_point_tolerance, 1, 0}},
   {44, {&Dxf_spline_entity::m_fit_tolerance, 1, 0}},
-  {12, {&Dxf_spline_entity::m_start_tangent, 1, 0}},
-  {22, {&Dxf_spline_entity::m_start_tangent, 1, 0}},
-  {32, {&Dxf_spline_entity::m_start_tangent, 1, 0}},
-  {13, {&Dxf_spline_entity::m_end_tangent, 1, 0}},
-  {23, {&Dxf_spline_entity::m_end_tangent, 1, 0}},
-  {33, {&Dxf_spline_entity::m_end_tangent, 1, 0}},
+  {12, {&Dxf_spline_entity::m_start_tangent, 3, 0}},
+  {22, {&Dxf_spline_entity::m_start_tangent, 3, 1}},
+  {32, {&Dxf_spline_entity::m_start_tangent, 3, 2}},
+  {13, {&Dxf_spline_entity::m_end_tangent, 3, 0}},
+  {23, {&Dxf_spline_entity::m_end_tangent, 3, 1}},
+  {33, {&Dxf_spline_entity::m_end_tangent, 3, 2}},
   {41, {&Dxf_spline_entity::m_weight, 1, 0}}
 };
 
