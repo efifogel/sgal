@@ -261,28 +261,14 @@ Dxf_parser::s_objects = {
   {"VBA_PROJECT", &Dxf_parser::parse_vba_project_object},
   {"VISUALSTYLE", &Dxf_parser::parse_visualstyle_object},
   {"WIPEOUTVARIABLES", &Dxf_parser::parse_wipeoutvariables_object},
-  {"XRECORD", &Dxf_parser::parse_xrecord_object},
-
-  {"SCALE", &Dxf_parser::parse_dummy_object}
+  {"XRECORD", &Dxf_parser::parse_xrecord_object}
 };
-
-// Dummy object is used to parse unrecognized objects.
-typedef Dxf_record_wrapper<Dxf_parser::Dxf_dummy_object>
-                                                Dxf_dummy_object_wrapper;
-
-//! Record members
-template <>
-const std::map<int, Dxf_dummy_object_wrapper::Record_member>
-Dxf_dummy_object_wrapper::s_record_members = {};
-
-//! Record handlers
-template <>
-const std::map<int, Dxf_dummy_object_wrapper::Record_handler_type>
-Dxf_dummy_object_wrapper::s_record_handlers = {};
 
 //!
 typedef Dxf_simple_record_wrapper<Dxf_base_object>
                                                 Dxf_base_object_wrapper;
+
+//!
 template <>
 const std::map<int, Dxf_base_object_wrapper::Record_member_type>
 Dxf_base_object_wrapper::s_record_members = {
@@ -557,19 +543,10 @@ void Dxf_parser::parse_block()
       continue;
     }
 
-    auto ct = code_type(code);
-    // auto& members = s_block_members;
     auto& members = Dxf_record_wrapper<Dxf_block>::s_record_members;
-    auto bit = members.find(code);
-    if (bit != members.end()) {
-      auto handle = bit->second.m_handle;
-      auto size = bit->second.m_size;
-      auto index = bit->second.m_index;
-      assign_record_value(ct, size, handle, block, index);
-      continue;
-    }
+    if (assign_record_value(code, block, members)) continue;
 
-    assign_record_special_value(code, block);
+    handle_record_special_value(code, block);
   }
 }
 
@@ -658,14 +635,33 @@ void Dxf_parser::parse_objects()
     if ("ENDSEC" == str) return;
 
     auto it = s_objects.find(str);
-    if (it == s_objects.end()) {
-      SGAL_error_msg("unrecognize object");
+    if (it != s_objects.end()) {
+      (this->*(it->second))();
+      continue;
     }
-    (this->*(it->second))();
+
+    // Look for user defined objects that are defined in a CLASS block
+    auto cit = std::find_if(m_classes.begin(), m_classes.end(),
+                            [&](const Dxf_class& my_class)
+                            {
+                              return ((my_class.m_record_name == str) &&
+                                      ! my_class.m_is_entity);
+                            });
+    if (cit != m_classes.end()) {
+      m_user_objects.resize(m_user_objects.size() + 1);
+      auto& user_object = m_user_objects.back();
+      parse_record(user_object);
+      continue;
+    }
+
+    String msg("Unrecognize object \"");
+    msg += str + "\", at line " + std::to_string(m_line);
+    SGAL_error_msg(msg.c_str());
 
   } while (true);
 }
 
+//! \brief parses the thumbnail image section.
 void Dxf_parser::parse_thumbnailimage()
 {
   SGAL_TRACE_CODE(Trace::DXF,
@@ -673,7 +669,7 @@ void Dxf_parser::parse_thumbnailimage()
                   << std::endl;);
 }
 
-/*! \brief reads a value from the input string and verify that it matches a
+/*! \brief reads a value from the input string and verifies that it matches a
  * given code.
  */
 Dxf_parser::Code_type Dxf_parser::read_verify_code(int expected)
@@ -795,298 +791,294 @@ void Dxf_parser::read_unrecognized(int code)
   SGAL_warning_msg(0, msg.c_str());
 }
 
-//! \brief parses entity.
+//! \brief parses a 3dface entity.
 void Dxf_parser::parse_3dface_entity()
 { parse_record(m_3dface_entity); }
 
-//! \brief parses entity.
+//! \brief parses a 3dsolid entity.
 void Dxf_parser::parse_3dsolid_entity()
 { parse_record(m_3dsolid_entity); }
 
-//! \brief parses entity.
+//! \brief parses an acad_proxy entity.
 void Dxf_parser::parse_acad_proxy_entity()
 { parse_record(m_acad_proxy_entity); }
 
-//! \brief parses entity.
+//! \brief parses an arc entity.
 void Dxf_parser::parse_arc_entity()
 { parse_record(m_arc_entity); }
 
-//! \brief parses entity.
+//! \brief parses an arcalignedtext entity.
 void Dxf_parser::parse_arcalignedtext_entity()
 { parse_record(m_arcalignedtext_entity); }
 
-//! \brief parses entity.
+//! \brief parses an attdef entity.
 void Dxf_parser::parse_attdef_entity()
 { parse_record(m_attdef_entity); }
 
-//! \brief parses entity.
+//! \brief parses an attrib entity.
 void Dxf_parser::parse_attrib_entity()
 { parse_record(m_attrib_entity); }
 
-//! \brief parses entity.
+//! \brief parses a body entity.
 void Dxf_parser::parse_body_entity()
 { parse_record(m_body_entity); }
 
-//! \brief parses entity.
+//! \brief parses a circle entity.
 void Dxf_parser::parse_circle_entity()
 { parse_record(m_circle_entity); }
 
-//! \brief parses entity.
+//! \brief parses a dimension entity.
 void Dxf_parser::parse_dimension_entity()
 { parse_record(m_dimension_entity); }
 
-//! \brief parses entity.
+//! \brief parses an ellipse entity.
 void Dxf_parser::parse_ellipse_entity()
 { parse_record(m_ellipse_entity); }
 
-//! \brief parses entity.
+//! \brief parses a hatch entity.
 void Dxf_parser::parse_hatch_entity()
 { parse_record(m_hatch_entity); }
 
-//! \brief parses entity.
+//! \brief parses an image entity.
 void Dxf_parser::parse_image_entity()
 { parse_record(m_image_entity); }
 
-//! \brief parses entity.
+//! \brief parses an insert entity.
 void Dxf_parser::parse_insert_entity()
 { parse_record(m_insert_entity); }
 
-//! \brief parses entity.
+//! \brief parses a leader entity.
 void Dxf_parser::parse_leader_entity()
 { parse_record(m_leader_entity); }
 
-//! \brief parses entity.
+//! \brief parses a line entity.
 void Dxf_parser::parse_line_entity()
 { parse_record(m_line_entity); }
 
-//! \brief parses entity.
+//! \brief parses a lwpolyline entity.
 void Dxf_parser::parse_lwpolyline_entity()
 { parse_record(m_lwpolyline_entity); }
 
-//! \brief parses entity.
+//! \brief parses am mline entity.
 void Dxf_parser::parse_mline_entity()
 { parse_record(m_mline_entity); }
 
-//! \brief parses entity.
+//! \brief parses an mtext entity.
 void Dxf_parser::parse_mtext_entity()
 { parse_record(m_mtext_entity); }
 
-//! \brief parses entity.
+//! \brief parses an oleframe entity.
 void Dxf_parser::parse_oleframe_entity()
 { parse_record(m_oleframe_entity); }
 
-//! \brief parses entity.
+//! \brief parses an ole2frame entity.
 void Dxf_parser::parse_ole2frame_entity()
 { parse_record(m_ole2frame_entity); }
 
-//! \brief parses entity.
+//! \brief parses a point entity.
 void Dxf_parser::parse_point_entity()
 { parse_record(m_point_entity); }
 
-//! \brief parses entity.
+//! \brief parses a polyline entity.
 void Dxf_parser::parse_polyline_entity()
 { parse_record(m_polyline_entity); }
 
-//! \brief parses entity.
+//! \brief parses a ray entity.
 void Dxf_parser::parse_ray_entity()
 { parse_record(m_ray_entity); }
 
-//! \brief parses entity.
+//! \brief parses a region entity.
 void Dxf_parser::parse_region_entity()
 { parse_record(m_region_entity); }
 
-//! \brief parses entity.
+//! \brief parses an rtext entity.
 void Dxf_parser::parse_rtext_entity()
 { parse_record(m_rtext_entity); }
 
-//! \brief parses entity.
+//! \brief parses a seqend entity.
 void Dxf_parser::parse_seqend_entity()
 { parse_record(m_seqend_entity); }
 
-//! \brief parses entity.
+//! \brief parses a shape entity.
 void Dxf_parser::parse_shape_entity()
 { parse_record(m_shape_entity); }
 
-//! \brief parses entity.
+//! \brief parses a solid entity.
 void Dxf_parser::parse_solid_entity()
 { parse_record(m_solid_entity); }
 
-//! \brief parses entity.
+//! \brief parses a spline entity.
 void Dxf_parser::parse_spline_entity()
 { parse_record(m_spline_entity); }
 
-//! \brief parses entity.
+//! \brief parses a text entity.
 void Dxf_parser::parse_text_entity()
 { parse_record(m_text_entity); }
 
-//! \brief parses entity.
+//! \brief parses a tolerance entity.
 void Dxf_parser::parse_tolerance_entity()
 { parse_record(m_tolerance_entity); }
 
-//! \brief parses entity.
+//! \brief parses a trace entity.
 void Dxf_parser::parse_trace_entity()
 { parse_record(m_trace_entity); }
 
-//! \brief parses entity.
+//! \brief parses a vertex entity.
 void Dxf_parser::parse_vertex_entity()
 { parse_record(m_vertex_entity); }
 
-//! \brief parses entity.
+//! \brief parses a viewport entity.
 void Dxf_parser::parse_viewport_entity()
 { parse_record(m_viewport_entity); }
 
-//! \brief parses entity.
+//! \brief parses a wipeout entity.
 void Dxf_parser::parse_wipeout_entity()
 { parse_record(m_wipeout_entity); }
 
-//! \brief parses entity.
+//! \brief parses an xline entity.
 void Dxf_parser::parse_xline_entity()
 { parse_record(m_xline_entity); }
 
 // Object parsers
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_acad_proxy_object()
 { parse_record(m_acad_proxy_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_acdbdictionarywdflt_object()
 { parse_record(m_acdbdictionarywdflt_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_acdbplaceholder_object()
 { parse_record(m_acdbplaceholder_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_acdbnavisworksmodeldef_object()
 { parse_record(m_acdbnavisworksmodeldef_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_datatable_object()
 { parse_record(m_datatable_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_dictionary_object()
 { parse_record(m_dictionary_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_dictionaryvar_object()
 { parse_record(m_dictionaryvar_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_dimassoc_object()
 { parse_record(m_dimassoc_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_field_object()
 { parse_record(m_field_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_geodata_object()
 { parse_record(m_geodata_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_group_object()
 { parse_record(m_group_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_idbuffer_object()
 { parse_record(m_idbuffer_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_imagedef_object()
 { parse_record(m_imagedef_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_imagedef_reactor_object()
 { parse_record(m_imagedef_reactor_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_layer_index_object()
 { parse_record(m_layer_index_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_layer_filter_object()
 { parse_record(m_layer_filter_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_layout_object()
 { parse_record(m_layout_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_lightlist_object()
 { parse_record(m_lightlist_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_material_object()
 { parse_record(m_material_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_mlinestyle_object()
 { parse_record(m_mlinestyle_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_object_ptr_object()
 { parse_record(m_object_ptr_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_plotsettings_object()
 { parse_record(m_plotsettings_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_rastervariables_object()
 { parse_record(m_rastervariables_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_render_object()
 { parse_record(m_render_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_section_object()
 { parse_record(m_section_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_spatial_index_object()
 { parse_record(m_spatial_index_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_spatial_filter_object()
 { parse_record(m_spatial_filter_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_sortentstable_object()
 { parse_record(m_sortentstable_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_sunstudy_object()
 { parse_record(m_sunstudy_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_tablestyle_object()
 { parse_record(m_tablestyle_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_underlaydefinition_object()
 { parse_record(m_underlaydefinition_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_visualstyle_object()
 { parse_record(m_visualstyle_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_vba_project_object()
 { parse_record(m_vba_project_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_wipeoutvariables_object()
 { parse_record(m_wipeoutvariables_object); }
 
-//! \brief parses object.
+//! \brief parses a object.
 void Dxf_parser::parse_xrecord_object()
 { parse_record(m_xrecord_object); }
-
-//! \brief parses object.
-void Dxf_parser::parse_dummy_object()
-{ parse_record(m_dummy_object); }
 
 //! \brief parses a regular boundary path.
 void Dxf_parser::parse_boundary_path(Dxf_boundary_path& path)

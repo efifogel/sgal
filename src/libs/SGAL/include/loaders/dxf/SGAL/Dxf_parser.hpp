@@ -29,6 +29,7 @@
 #include <boost/variant.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/tti/has_member_function.hpp>
+#include <boost/tti/has_type.hpp>
 
 #include "SGAL/Loader_code.hpp"
 #include "SGAL/Dxf_importer.hpp"
@@ -129,6 +130,7 @@
 #include "SGAL/Dxf_visualstyle_object.hpp"
 #include "SGAL/Dxf_wipeoutvariables_object.hpp"
 #include "SGAL/Dxf_xrecord_object.hpp"
+#include "SGAL/Dxf_user_object.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -313,128 +315,115 @@ private:
   //! The type of an entity parser member function.
   typedef void(Dxf_parser::*Entity_parser)(void);
 
-  typedef String Dxf_base_entity::*                     String_base_entity;
-  typedef Uint Dxf_base_entity::*                       Uint_base_entity;
-  typedef int8_t Dxf_base_entity::*                     Int8_base_entity;
-  typedef int16_t Dxf_base_entity::*                    Int16_base_entity;
-  typedef int32_t Dxf_base_entity::*                    Int32_base_entity;
-  typedef double Dxf_base_entity::*                     Double_base_entity;
-  typedef boost::variant<String_base_entity,
-                         Uint_base_entity,
-                         Int8_base_entity,
-                         Int16_base_entity,
-                         Int32_base_entity,
-                         Double_base_entity>         Base_entity_type;
-
-  /*! Parse 3dface entity. */
+  /*! Parse a 3dface entity. */
   void parse_3dface_entity();
 
-  /*! Parse 3dsolid entity. */
+  /*! Parse a 3dsolid entity. */
   void parse_3dsolid_entity();
 
-  /*! Parse acad_proxy entity. */
+  /*! Parse an acad_proxy entity. */
   void parse_acad_proxy_entity();
 
-  /*! Parse arc entity. */
+  /*! Parse an arc entity. */
   void parse_arc_entity();
 
-  /*! Parse arcalignedtext entity. */
+  /*! Parse an arcalignedtext entity. */
   void parse_arcalignedtext_entity();
 
-  /*! Parse attdef entity. */
+  /*! Parse an attdef entity. */
   void parse_attdef_entity();
 
-  /*! Parse attrib entity. */
+  /*! Parse an attrib entity. */
   void parse_attrib_entity();
 
-  /*! Parse body entity. */
+  /*! Parse a body entity. */
   void parse_body_entity();
 
-  /*! Parse circle entity. */
+  /*! Parse a circle entity. */
   void parse_circle_entity();
 
-  /*! Parse dimension entity. */
+  /*! Parse a dimension entity. */
   void parse_dimension_entity();
 
-  /*! Parse ellipse entity. */
+  /*! Parse an ellipse entity. */
   void parse_ellipse_entity();
 
-  /*! Parse hatch entity. */
+  /*! Parse a hatch entity. */
   void parse_hatch_entity();
 
-  /*! Parse image entity. */
+  /*! Parse an image entity. */
   void parse_image_entity();
 
-  /*! Parse insert entity. */
+  /*! Parse an insert entity. */
   void parse_insert_entity();
 
-  /*! Parse leader entity. */
+  /*! Parse a leader entity. */
   void parse_leader_entity();
 
-  /*! Parse line entity. */
+  /*! Parse a line entity. */
   void parse_line_entity();
 
-  /*! Parse lwpolyline entity. */
+  /*! Parse a lwpolyline entity. */
   void parse_lwpolyline_entity();
 
-  /*! Parse mline entity. */
+  /*! Parse an mline entity. */
   void parse_mline_entity();
 
-  /*! Parse mtext entity. */
+  /*! Parse an mtext entity. */
   void parse_mtext_entity();
 
-  /*! Parse oleframe entity. */
+  /*! Parse an oleframe entity. */
   void parse_oleframe_entity();
 
-  /*! Parse ole2frame entity. */
+  /*! Parse an ole2frame entity. */
   void parse_ole2frame_entity();
 
-  /*! Parse point entity. */
+  /*! Parse a point entity. */
   void parse_point_entity();
 
-  /*! Parse polyline entity. */
+  /*! Parse a polyline entity. */
   void parse_polyline_entity();
 
-  /*! Parse ray entity. */
+  /*! Parse a ray entity. */
   void parse_ray_entity();
 
-  /*! Parse region entity. */
+  /*! Parse a region entity. */
   void parse_region_entity();
 
-  /*! Parse rtext entity. */
+  /*! Parse a rtext entity. */
   void parse_rtext_entity();
 
-  /*! Parse seqend entity. */
+  /*! Parse a seqend entity. */
   void parse_seqend_entity();
 
-  /*! Parse shape entity. */
+  /*! Parse a shape entity. */
   void parse_shape_entity();
 
-  /*! Parse solid entity. */
+  /*! Parse a solid entity. */
   void parse_solid_entity();
 
-  /*! Parse spline entity. */
+  /*! Parse a spline entity. */
   void parse_spline_entity();
 
-  /*! Parse text entity. */
+  /*! Parse a text entity. */
   void parse_text_entity();
 
-  /*! Parse tolerance entity. */
+  /*! Parse a tolerance entity. */
   void parse_tolerance_entity();
 
-  /*! Parse trace entity. */
+  /*! Parse a trace entity. */
   void parse_trace_entity();
 
-  /*! Parse vertex entity. */
+  /*! Parse a vertex entity. */
   void parse_vertex_entity();
 
-  /*! Parse viewport entity. */
+  /*! Parse a viewport entity. */
   void parse_viewport_entity();
 
-  /*! Parse wipeout entity. */
+  /*! Parse a wipeout entity. */
   void parse_wipeout_entity();
 
-  /*! Parse xline entity. */
+  /*! Parse an xline entity. */
   void parse_xline_entity();
 
   //@}
@@ -444,19 +433,6 @@ private:
 
   //! The type of an object parser member function.
   typedef void(Dxf_parser::*Object_parser)(void);
-
-  typedef String Dxf_base_object::*                  String_base_object;
-  typedef Uint Dxf_base_object::*                    Uint_base_object;
-  typedef int8_t Dxf_base_object::*                  Int8_base_object;
-  typedef int16_t Dxf_base_object::*                 Int16_base_object;
-  typedef int32_t Dxf_base_object::*                 Int32_base_object;
-  typedef double Dxf_base_object::*                  Double_base_object;
-  typedef boost::variant<String_base_object,
-                         Uint_base_object,
-                         Int8_base_object,
-                         Int16_base_object,
-                         Int32_base_object,
-                         Double_base_object>         Base_object_type;
 
   void parse_acad_proxy_object();
   void parse_acdbdictionarywdflt_object();
@@ -493,8 +469,6 @@ private:
   void parse_vba_project_object();
   void parse_wipeoutvariables_object();
   void parse_xrecord_object();
-
-  void parse_dummy_object();
   //@}
 
   /*! Import a value and assign it to a record member.
@@ -520,6 +494,21 @@ private:
      case DOUBLE: assign_member<Double_record>(handle, record);  break;
      default: break;
     }
+  }
+
+  /*! Assign a simple record value if listed.
+   * \return true if listed (implies that a value was read) false otherwise.
+   */
+  template <typename Record, typename Members>
+  bool assign_simple_record_value(int code, Record& record, Members& members)
+  {
+    auto bit = members.find(code);
+    if (bit == members.end()) return false;
+
+    auto ct = code_type(code);
+    auto handle = bit->second;
+    assign_simple_record_value(ct, handle, record);
+    return true;
   }
 
   /*! Import a value and assign it to a record member.
@@ -621,7 +610,7 @@ private:
   bool handle_marker(const String& marker, Record& record, char (*)[!what] = 0)
   { return true; }
 
-  // Define a helper class that detects the deinition of the member function
+  // Define a helper class that detects the presence of the member function
   // handle_marker()
   BOOST_TTI_HAS_MEMBER_FUNCTION(handle_marker);
   //@}
@@ -725,7 +714,7 @@ private:
   /*! Read a value of a record that requires special handling
    */
   template <typename Record>
-  void assign_record_special_value(int code, Record& record)
+  void handle_record_special_value(int code, Record& record)
   {
     auto ct = code_type(code);
 
@@ -810,12 +799,48 @@ private:
     SGAL_warning_msg(0, msg.c_str());
   }
 
-  /*! Parse record. */
-  template <typename Record, typename BaseMembers>
-  void parse_record(Record& record, BaseMembers& base_members)
+  /// Handle base type.
+  //@{
+
+  /*! Read a value of a base record.
+   * This implementation is invoked only if Record::Base is defined.
+   * \return true if a value was read and false otherwise.
+   */
+  template <bool what, typename Record>
+  bool read_base_record(int code, Record& record, char (*)[what] = 0)
   {
     typedef typename Record::Base                       Base_record;
+    auto& base_members =
+      Dxf_simple_record_wrapper<Base_record>::s_record_members;
+    auto& base_record = static_cast<Base_record&>(record);
+    if (assign_simple_record_value(code, base_record, base_members)) return true;
+    return false;
+  }
 
+  /*! Read a value of a base record.
+   * This implementation is invoked only if Record::Base is not defined.
+   * \return false always.
+   */
+  template <bool what, typename Record>
+  bool read_base_record(int code, Record& record, char (*)[!what] = 0)
+  { return false; }
+
+  // Define a helper class that detects the presence of the nested type Base
+  BOOST_TTI_HAS_TYPE(Base);
+
+  /*! Read a value of a base record.
+   * \return true if a value was read and false otherwise.
+   */
+  template <typename Record>
+  bool read_base_record(int code, Record& record)
+  { return read_base_record<has_type_Base<Record>::value>(code, record); }
+
+  //@}
+
+  /*! Parse a record. */
+  template <typename Record>
+  void parse_record(Record& record)
+  {
     record.set_parser(this);
 
     while (true) {
@@ -845,31 +870,15 @@ private:
         continue;
       }
 
-      auto ct = code_type(code);
-      auto bit = base_members.find(code);
-      if (bit != base_members.end()) {
-        auto handle = bit->second;
-        auto& base_record = static_cast<Base_record&>(record);
-        assign_simple_record_value(ct, handle, base_record);
-        continue;
-      }
+      if (read_base_record(code, record)) continue;
 
       auto& members = Dxf_record_wrapper<Record>::s_record_members;
       if (assign_record_value(code, record, members)) continue;
       auto& handlers = Dxf_record_wrapper<Record>::s_record_handlers;
       if (handle_record_value(code, record, handlers)) continue;
 
-      assign_record_special_value(code, record);
+      handle_record_special_value(code, record);
     }
-  }
-
-  /*! Parse record. */
-  template <typename Record>
-  void parse_record(Record& record)
-  {
-    parse_record(record,
-                 Dxf_simple_record_wrapper<typename Record::Base>::
-                 s_record_members);
   }
 
   //! The pending code, in case there is one.
@@ -989,13 +998,7 @@ private:
   Dxf_wipeoutvariables_object m_wipeoutvariables_object;
   Dxf_xrecord_object m_xrecord_object;
 
-public:
-  // Dummy object is used to parse unrecognized objects.
-  struct Dxf_dummy_object : public Dxf_base_object {
-    static constexpr bool has_read_value = false;
-    typedef Dxf_base_object                     Base;
-  };
-  Dxf_dummy_object m_dummy_object;
+  std::list<Dxf_user_object> m_user_objects;
 
 private:
   //! Marker
@@ -1222,7 +1225,7 @@ private:
     assign_record_value(ct, size, handle, *m_extended_data, index);
   }
 
-  /*! Parse common table section, which aplies to all table types.
+  /*! Parse a common table section, which aplies to all table types.
    * We cannot pass (a reference to) just the base table (Dxf_base_table), cause
    * it turn out that in the sub-section where only common-table codes should
    * reside, specific-entry codes reside as well; go figures....
@@ -1289,7 +1292,7 @@ private:
         continue;
       }
 
-      assign_record_special_value(code, entry);
+      handle_record_special_value(code, entry);
     }
   }
 
@@ -1327,14 +1330,10 @@ private:
       entries.resize(entries.size() + 1);
       auto& entry = entries.back();
 
-      bool done(false);
-      while (!done) {
+      while (true) {
         int code;
         import_code(code);
-        if (0 == code) {
-          done = true;
-          break;
-        }
+        if (0 == code) break;
 
         if (100 == code) {
           import_value(m_marker);
@@ -1351,28 +1350,15 @@ private:
           continue;
         }
 
-        auto ct = code_type(code);
         auto& base_members =
           Dxf_simple_record_wrapper<Dxf_table_entry>::s_record_members;
-        auto bit = base_members.find(code);
-        if (bit != base_members.end()) {
-          auto handle = bit->second;
-          auto& base_entry = static_cast<Dxf_table_entry&>(entry);
-          assign_simple_record_value(ct, handle, base_entry);
-          continue;
-        }
+        auto& base_entry = static_cast<Dxf_table_entry&>(entry);
+        if (assign_simple_record_value(code, base_entry, base_members)) continue;
 
         auto& members = Dxf_record_wrapper<Entry>::s_record_members;
-        auto eit = members.find(code);
-        if (eit != members.end()) {
-          auto handle = eit->second.m_handle;
-          auto size = eit->second.m_size;
-          auto index = eit->second.m_index;
-          assign_record_value(ct, size, handle, entry, index);
-          continue;
-        }
+        if (assign_record_value(code, entry, members)) continue;
 
-        assign_record_special_value(code, entry);
+        handle_record_special_value(code, entry);
       }
     }
   }

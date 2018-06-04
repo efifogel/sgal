@@ -32,6 +32,9 @@ template <typename Record_>
 struct SGAL_SGAL_DECL Dxf_simple_record_wrapper {
   typedef Record_                               Record;
 
+  ///
+  //@{ Types and data of data members.
+
   // Record types:
   typedef String Record::*                      String_record;
   typedef bool Record::*                        Bool_record;
@@ -51,6 +54,7 @@ struct SGAL_SGAL_DECL Dxf_simple_record_wrapper {
 
   //!
   static const std::map<int, Record_member_type> s_record_members;
+  //@}
 };
 
 SGAL_END_NAMESPACE

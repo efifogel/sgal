@@ -35,6 +35,7 @@ struct SGAL_SGAL_DECL Dxf_record_wrapper {
   ///
   //@{ Types and data of data members.
 
+  // Record types:
   typedef String Record::*                      String_record;
   typedef bool Record::*                        Bool_record;
   typedef int8_t Record::*                      Int8_record;
