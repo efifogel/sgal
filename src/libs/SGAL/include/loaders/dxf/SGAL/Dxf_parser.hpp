@@ -135,6 +135,7 @@
 SGAL_BEGIN_NAMESPACE
 
 class Scene_graph;
+class Group;
 class Dxf_boundary_path;
 class Dxf_polyline_boundary_path;
 class Dxf_pattern_data;
@@ -938,7 +939,7 @@ private:
   Dxf_circle_entity m_circle_entity;
   Dxf_dimension_entity m_dimension_entity;
   Dxf_ellipse_entity m_ellipse_entity;
-  Dxf_hatch_entity m_hatch_entity;
+  std::vector<Dxf_hatch_entity> m_hatch_entities;
   Dxf_image_entity m_image_entity;
   Dxf_insert_entity m_insert_entity;
   Dxf_leader_entity m_leader_entity;
@@ -1390,6 +1391,10 @@ private:
   static const std::map<String, Table_parser> s_tables;
   static const std::map<String, Entity_parser> s_entities;
   static const std::map<String, Object_parser> s_objects;
+
+  /*! Add polylines provided in hatch entities.
+   */
+  void add_polylines(const Dxf_hatch_entity& hatch_entity, Group* root);
 };
 
 SGAL_END_NAMESPACE
