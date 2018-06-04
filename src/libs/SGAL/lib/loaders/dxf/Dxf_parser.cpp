@@ -1056,7 +1056,11 @@ void Dxf_parser::parse_lightlist_object()
 
 //! \brief parses a object.
 void Dxf_parser::parse_material_object()
-{ parse_record(m_material_object); }
+{
+  m_material_objects.resize(m_material_objects.size() + 1);
+  auto& material_object = m_material_objects.back();
+  parse_record(material_object);
+}
 
 //! \brief parses a object.
 void Dxf_parser::parse_mlinestyle_object()
