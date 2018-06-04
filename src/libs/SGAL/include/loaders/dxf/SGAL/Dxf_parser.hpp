@@ -985,7 +985,7 @@ private:
   Dxf_layer_filter_object m_layer_filter_object;
   Dxf_layout_object m_layout_object;
   Dxf_lightlist_object m_lightlist_object;
-  Dxf_material_object m_material_object;
+  std::vector<Dxf_material_object> m_material_objects;
   Dxf_mlinestyle_object m_mlinestyle_object;
   Dxf_object_ptr_object m_object_ptr_object;
   Dxf_plotsettings_object m_plotsettings_object;
