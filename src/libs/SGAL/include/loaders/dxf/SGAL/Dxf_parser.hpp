@@ -150,7 +150,8 @@ public:
 
   /*! Construct.
    */
-  Dxf_parser(std::istream& is, Scene_graph* sg, const String& filename);
+  Dxf_parser(std::istream& is, Scene_graph* sg, const String& filename,
+             bool report_unrecognized_code = false);
 
   /*! Parse.
    */
@@ -795,8 +796,11 @@ private:
 
      default: SGAL_error();
     }
-    msg += ", at line " + std::to_string(m_line);
-    SGAL_warning_msg(0, msg.c_str());
+
+    if (m_report_unrecognized_code) {
+      msg += ", at line " + std::to_string(m_line);
+      SGAL_warning_msg(0, msg.c_str());
+    }
   }
 
   /// Handle base type.
@@ -1001,6 +1005,9 @@ private:
   std::list<Dxf_user_object> m_user_objects;
 
 private:
+  //! Indicates whether to report unrecognized codes.
+  bool m_report_unrecognized_code;
+
   //! Marker
   String m_marker;
 

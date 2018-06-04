@@ -279,12 +279,14 @@ Dxf_base_object_wrapper::s_record_members = {
 
 //! \brief constructs.
 Dxf_parser::Dxf_parser(std::istream& is, Scene_graph* sg,
-                       const String& filename) :
+                       const String& filename,
+                       bool report_unrecognized_code) :
   Dxf_base_parser(is, filename),
   m_pending_code(0),
   m_is_pending(false),
   m_scene_graph(sg),
-  m_extended_data(nullptr)
+  m_extended_data(nullptr),
+  m_report_unrecognized_code(report_unrecognized_code)
 {}
 
 //! \brief parses.
@@ -787,8 +789,11 @@ void Dxf_parser::read_unrecognized(int code)
 
    default: SGAL_error();
   }
-  msg += ", at line " + std::to_string(m_line);
-  SGAL_warning_msg(0, msg.c_str());
+
+  if (m_report_unrecognized_code) {
+    msg += ", at line " + std::to_string(m_line);
+    SGAL_warning_msg(0, msg.c_str());
+  }
 }
 
 //! \brief parses a 3dface entity.
