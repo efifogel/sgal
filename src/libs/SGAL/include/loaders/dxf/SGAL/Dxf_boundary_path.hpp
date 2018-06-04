@@ -24,6 +24,15 @@
 SGAL_BEGIN_NAMESPACE
 
 struct Dxf_boundary_path {
+  enum Path_type {
+    DEFAULT = 0x0,
+    EXTERNAL = 0x1,
+    POLYLINE = 0x2,
+    DERIVED = 0x4,
+    TEXTBOX = 0x8,
+    OUTERMOST = 0x10
+  };
+
   /*! Desctruct.
    * This vrtual destructor is necessary to make this struct polymorphic.
    * Note, that it is used as a base class for several boundary-path types
