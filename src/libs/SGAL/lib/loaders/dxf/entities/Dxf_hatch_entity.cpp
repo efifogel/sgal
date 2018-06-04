@@ -91,7 +91,7 @@ void Dxf_hatch_entity::handle_boundary_paths(int32_t value)
 
     int32_t type;
     m_parser->import_value(type);
-    if (type == 2) {
+    if (type & Dxf_boundary_path::POLYLINE) {
       auto* path = new Dxf_polyline_boundary_path;
       m_parser->parse_polyline_boundary_path(*path);
       boundary_path = path;
