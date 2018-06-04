@@ -684,17 +684,6 @@ void Dxf_parser::parse_thumbnailimage()
                   << std::endl;);
 }
 
-/*! \brief reads a value from the input string and verifies that it matches a
- * given code.
- */
-Dxf_parser::Code_type Dxf_parser::read_verify_code(int expected)
-{
-  int code;
-  import_code(code);
-  SGAL_assertion(code == expected);
-  return code_type(code);
-}
-
 //! \brief reads a HEADER veriable.
 void Dxf_parser::read_header_member()
 {
@@ -705,9 +694,26 @@ void Dxf_parser::read_header_member()
   import_value(str);
   auto it = s_header_members.find(str);
   if (it == s_header_members.end()) {
-    std::string unrecognized_msg("unrecognized header variable ");
-    unrecognized_msg += str + "!";
-    SGAL_error_msg(unrecognized_msg.c_str());
+    if (m_report_unrecognized_code) {
+      std::string unrecognized_msg("Unrecognized header variable ");
+      unrecognized_msg += str + ", at line " + std::to_string(m_line) + "!";
+      SGAL_warning_msg(0, unrecognized_msg.c_str());
+    }
+
+    // Error recovery.
+    // Consume the values until one of the following codes is read:
+    //  (i) '0', which implies the end of the HEADER section, or,
+    // (ii) '9', which implies the beginning if a new header variable.
+    while (true) {
+      int code;
+      import_code(code);
+      if ((0 == code) || (9 == code)) {
+        export_code(code);
+        break;
+      }
+      read_unrecognized(code);
+    }
+    return;
   }
 
   const auto& header_var = it->second;
@@ -719,12 +725,19 @@ void Dxf_parser::read_header_member()
                   std::cout << "Dxf_parser::read_header_member() dimension: "
                   << dim << std::endl;);
   if (1 == dim) {
-    auto code = codes.front();
-    auto code_type = read_verify_code(code);
+    auto expected_code = codes.front();
+    int code;
+    import_code(code);
+    if (code != expected_code) {
+      // Error recovery
+      read_unrecognized(code);
+      return;
+    }
+    auto ct = code_type(code);
     SGAL_TRACE_CODE(Trace::DXF,
                     std::cout << "Dxf_parser::read_header_member() code type: "
-                    << s_code_type_names[code_type] << std::endl;);
-    switch (code_type) {
+                    << s_code_type_names[ct] << std::endl;);
+    switch (ct) {
      case STRING: assign_member<String_header>(handle, m_header); break;
      case DOUBLE: assign_member<Double_header>(handle, m_header); break;
      case INT8: assign_member<Int8_header>(handle, m_header); break;
@@ -738,12 +751,19 @@ void Dxf_parser::read_header_member()
 
   SGAL_assertion((dim == 2) || (dim == 3));
   size_t i(0);
-  for (auto code : codes) {
-    auto code_type = read_verify_code(code);
+  for (auto expected_code : codes) {
+    int code;
+    import_code(code);
+    if (code != expected_code) {
+      // Error recovery
+      read_unrecognized(code);
+      continue;
+    }
+    auto ct = code_type(code);
     SGAL_TRACE_CODE(Trace::DXF,
                     std::cout << "Dxf_parser::read_header_member() code type: "
-                    << s_code_type_names[code_type] << std::endl;);
-    SGAL_assertion(DOUBLE == code_type);
+                    << s_code_type_names[ct] << std::endl;);
+    SGAL_assertion(DOUBLE == ct);
     if (dim == 2)
       m_is >> (m_header.*(boost::get<Double_2d_header>(handle)))[i++];
     else m_is >> (m_header.*(boost::get<Double_3d_header>(handle)))[i++];

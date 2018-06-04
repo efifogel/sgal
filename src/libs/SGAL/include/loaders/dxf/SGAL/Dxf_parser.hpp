@@ -1017,12 +1017,6 @@ private:
    */
   static Code_type code_type(int code);
 
-  /*! Read a value from the input string and verify that it matches a given
-   * code.
-   * \return the type of the code.
-   */
-  Code_type read_verify_code(int code);
-
   /*! Export a code
    */
   void export_code(int code)
