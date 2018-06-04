@@ -21,6 +21,7 @@
 #include <functional>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Scene_graph.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Dxf_parser.hpp"
 #include "SGAL/Dxf_simple_record_wrapper.hpp"
@@ -310,6 +311,18 @@ Loader_code Dxf_parser::operator()()
     }
     (this->*(sec_it->second))();
   }
+
+  //! \todo Instead of storing the data in the parser records and then copy it
+  // over to the right place, intersept the parsing and store the data at the
+  // right place immediately after read from the imput stream.
+
+  //
+  m_scene_graph->set_input_format_id(File_format_3d::ID_DXF);
+  auto* root = m_scene_graph->initialize();
+
+  // Create indexed line sets, one for each hatch entity.
+  for (const auto& hatch_entity : m_hatch_entities)
+    add_polylines(hatch_entity, root);
 
   return Loader_code::SUCCESS;
 }
@@ -842,7 +855,11 @@ void Dxf_parser::parse_ellipse_entity()
 
 //! \brief parses a hatch entity.
 void Dxf_parser::parse_hatch_entity()
-{ parse_record(m_hatch_entity); }
+{
+  m_hatch_entities.resize(m_hatch_entities.size() + 1);
+  auto& hatch_entity = m_hatch_entities.back();
+  parse_record(hatch_entity);
+}
 
 //! \brief parses an image entity.
 void Dxf_parser::parse_image_entity()
