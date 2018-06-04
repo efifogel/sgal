@@ -71,7 +71,7 @@ static void _standard_warning_handler(const char*, const char* expr,
             << "File: " << file << std::endl
             << "Line: " << line << std::endl;
   if (msg != 0)
-    std::cerr << "Explanation:" << msg << std::endl;
+    std::cerr << "Explanation: " << msg << std::endl;
 }
 
 // default handler settings
