@@ -24,6 +24,16 @@
 SGAL_BEGIN_NAMESPACE
 
 struct Dxf_boundary_path {
+  /*! Desctruct.
+   * This vrtual destructor is necessary to make this struct polymorphic.
+   * Note, that it is used as a base class for several boundary-path types
+   * dynamically allocated.
+   */
+  virtual ~Dxf_boundary_path() = default;
+
+  /// Record members
+  //@{
+
   int32_t m_flags;      // Boundary path type flag (bit coded):
                         // 0 = Default
                         // 1 = External
@@ -46,7 +56,9 @@ struct Dxf_boundary_path {
   std::vector<Uint> m_source_objects; // Reference to source boundary objects
                         // (multiple entries)
 
-  /// Handlers
+  //@}
+
+  /// Record handlers
   //@{
   void number_handler(int32_t size);
   void source_objects_handler(Uint handler);
