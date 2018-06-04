@@ -1,0 +1,102 @@
+// Copyright (c) 2018 Israel.
+// All rights reserved.
+//
+// This file is part of SGAL; you can redistribute it and/or modify it
+// under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the
+// License. See the file LICENSE.LGPL distributed with SGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the
+// software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING
+// THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
+// PARTICULAR PURPOSE.
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
+
+#include <numeric>
+
+#include <boost/shared_ptr.hpp>
+
+#include "SGAL/basic.hpp"
+#include "SGAL/Scene_graph.hpp"
+#include "SGAL/Group.hpp"
+#include "SGAL/Shape.hpp"
+#include "SGAL/Appearance.hpp"
+#include "SGAL/Indexed_line_set.hpp"
+#include "SGAL/Coord_array_3d.hpp"
+#include "SGAL/Dxf_parser.hpp"
+#include "SGAL/Dxf_hatch_entity.hpp"
+#include "SGAL/Dxf_polyline_boundary_path.hpp"
+
+SGAL_BEGIN_NAMESPACE
+
+void Dxf_parser::add_polylines(const Dxf_hatch_entity& hatch_entity, Group* root)
+{
+  typedef boost::shared_ptr<Shape>                  Shared_shape;
+  typedef boost::shared_ptr<Appearance>             Shared_appearance;
+  typedef boost::shared_ptr<Indexed_line_set>       Shared_indexed_line_set;
+  typedef boost::shared_ptr<Coord_array_3d>         Shared_coord_array_3d;
+
+  // Add Shape
+  Shared_shape shape(new Shape);
+  SGAL_assertion(shape);
+  shape->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(shape);
+  root->add_child(shape);
+
+  // Add Appearance
+  Shared_appearance app(new Appearance);
+  SGAL_assertion(app);
+  shape->set_appearance(app);
+
+  // Add IndexedLineSet
+  Shared_indexed_line_set ils(new Indexed_line_set);
+  SGAL_assertion(ils);
+  ils->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(ils);
+  shape->set_geometry(ils);
+
+  // Count number of vertices:
+  size_t size(0);
+  for (Dxf_boundary_path* path : hatch_entity.m_boundary_paths) {
+    auto* polyline = dynamic_cast<Dxf_polyline_boundary_path*>(path);
+    if (! polyline) continue;
+    size += polyline->m_locations.size();
+  }
+
+  // Allocate vertices:
+  auto* coords = new Coord_array_3d(size);
+  Shared_coord_array_3d shared_coords(coords);
+  coords->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(shared_coords);
+
+  // Allocate indices:
+  auto& indices = ils->get_coord_indices();
+  indices.resize(size + hatch_entity.m_boundary_paths.size());
+
+  // Assign the vertices & indices:
+  size_t i(0);
+  auto it = indices.begin();
+  auto cit = coords->begin();
+  for (auto* path : hatch_entity.m_boundary_paths) {
+    auto* polyline = dynamic_cast<Dxf_polyline_boundary_path*>(path);
+    if (! polyline) continue;
+    cit = std::transform(polyline->m_locations.begin(),
+                         polyline->m_locations.end(), cit,
+                         [&](const std::array<double, 3>& p)
+                         { return Vector3f(p[0], p[1], p[2]); });
+    auto it_end = it;
+    std::advance(it_end, polyline->m_locations.size());
+    std::iota(it, it_end, 0);
+    it = it_end;
+    *it++ = -1;
+  }
+
+  ils->set_coord_array(shared_coords);
+  ils->set_num_primitives(hatch_entity.m_boundary_paths.size());
+}
+
+SGAL_END_NAMESPACE
