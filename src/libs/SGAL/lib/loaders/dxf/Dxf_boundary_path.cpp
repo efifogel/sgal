@@ -49,7 +49,7 @@ void Dxf_boundary_path::number_handler(int32_t size)
 //!
 void Dxf_boundary_path::source_objects_handler(Uint handler)
 {
-  SGAL_assertion(! m_source_objects.empty());
+  m_source_objects.resize(m_source_objects.size() + 1);
   m_source_objects.back() = handler;
 }
 
