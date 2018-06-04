@@ -625,9 +625,9 @@ private:
   { return record.handle_value(code, value); }
 
   //!
-  // template <bool what, typename Record>
-  // bool handle_value(int code, bool value, Record& record, char (*)[what] = 0)
-  // { return record.handle_value(code, value); }
+  template <bool what, typename Record>
+  bool handle_value(int code, bool value, Record& record, char (*)[what] = 0)
+  { return record.handle_value(code, value); }
 
   //!
   template <bool what, typename Record>
@@ -650,9 +650,9 @@ private:
   { return record.handle_value(code, value); }
 
   //!
-  // template <bool what, typename Record>
-  // bool handle_value(int code, float value, Record& record, char (*)[what] = 0)
-  // { return record.handle_value(code, value); }
+  template <bool what, typename Record>
+  bool handle_value(int code, float value, Record& record, char (*)[what] = 0)
+  { return record.handle_value(code, value); }
 
   //!
   template <bool what, typename Record>
@@ -671,9 +671,9 @@ private:
   { return false; }
 
   //!
-  // template <bool what, typename Record>
-  // bool handle_value(int code, bool value, Record& record, char (*)[!what] = 0)
-  // { return false; }
+  template <bool what, typename Record>
+  bool handle_value(int code, bool value, Record& record, char (*)[!what] = 0)
+  { return false; }
 
   //!
   template <bool what, typename Record>
@@ -696,9 +696,9 @@ private:
   { return false; }
 
   //!
-  // template <bool what, typename Record>
-  // bool handle_value(int code, float value, Record& record, char (*)[!what] = 0)
-  // { return false; }
+  template <bool what, typename Record>
+  bool handle_value(int code, float value, Record& record, char (*)[!what] = 0)
+  { return false; }
 
   //!
   template <bool what, typename Record>
@@ -746,10 +746,10 @@ private:
 
      case BOOL:
       import_value(bool_val);
-      // if (handle_value<has_member_function_handle_value
-      //     <bool (Record::*)(int, bool)>::value>(code, bool_val, record))
-      //   return;
-      msg += ", Bool value: " + std::to_string(bool_val);
+      if (handle_value<has_member_function_handle_value
+          <bool (Record::*)(int, bool)>::value>(code, bool_val, record))
+        return;
+      msg += ", bool value: " + std::to_string(bool_val);
       break;
 
      case INT8:
@@ -1268,29 +1268,16 @@ private:
         continue;
       }
 
-      auto ct = code_type(code);
       auto& base_members =
         Dxf_simple_record_wrapper<Dxf_base_table>::s_record_members;
-      auto it = base_members.find(code);
-      if (it != base_members.end()) {
-        auto handle = it->second;
-        assign_simple_record_value(ct, handle, base_table);
-        continue;
-      }
+      if (assign_simple_record_value(code, base_table, base_members)) continue;
 
       // Handle specifc-entry table codes:
       // At this point we don't try to handle common entry code.
       entries.resize(1);
       auto& entry = entries.back();
       auto& members = Dxf_record_wrapper<Entry>::s_record_members;
-      auto eit = members.find(code);
-      if (eit != members.end()) {
-        auto handle = eit->second.m_handle;
-        auto size = eit->second.m_size;
-        auto index = eit->second.m_index;
-        assign_record_value(ct, size, handle, entry, index);
-        continue;
-      }
+      if (assign_record_value(code, entry, members)) continue;
 
       handle_record_special_value(code, entry);
     }
