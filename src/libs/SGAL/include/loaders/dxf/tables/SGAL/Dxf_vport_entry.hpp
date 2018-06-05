@@ -25,7 +25,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-struct SGAL_SGAL_DECL Dxf_vport_entry: public Dxf_table_entry {
+struct SGAL_SGAL_DECL Dxf_vport_entry : Dxf_table_entry {
   String m_name;        // Viewport name
   int16_t m_flags;      // 16 = If set, table entry is externally dependent on
                         //      an xref
@@ -55,9 +55,9 @@ struct SGAL_SGAL_DECL Dxf_vport_entry: public Dxf_table_entry {
   double m_aspect_ratio; // Viewport aspect ratio
   double m_snap_rotation_angle; // Snap rotation angle
   double m_view_twist_angle; // View twist angle
-  Uint m_soft_frozen_layer; // Soft-pointer ID/handle to frozen layer objects;
+  String m_soft_frozen_layer; // Soft-pointer ID/handle to frozen layer objects;
                         // repeats for each frozen layers
-  Uint m_hard_frozen_layer; // Hard-pointer ID/handle to frozen layer objects;
+  String m_hard_frozen_layer; // Hard-pointer ID/handle to frozen layer objects;
                         // repeats for each frozen layers
   String m_plot_style_sheet; // Plot style sheet
 
@@ -90,9 +90,9 @@ struct SGAL_SGAL_DECL Dxf_vport_entry: public Dxf_table_entry {
   double m_ucs_origin[3]; // UCS origin 110, 120, 130
   double m_ucs_x_axis[3]; // UCS X-axis 111, 121, 131
   double m_ucs_y_axis[3]; // UCS X-axis 112, 122, 132
-  Uint m_ucs_handle;    // ID/handle of AcDbUCSTableRecord if UCS is a named UCS.
-                        // If not present, then UCS is unnamed 345
-  Uint m_base_ucs_handle; // ID/handle of AcDbUCSTableRecord of base UCS if
+  String m_ucs_handle;    // ID/handle of AcDbUCSTableRecord if UCS is a named .
+                        // UCS If not present, then UCS is unnamed 345
+  String m_base_ucs_handle; // ID/handle of AcDbUCSTableRecord of base UCS if
                         // UCS is orthographic (79 code is non-zero). If not
                         // present and 79 code is non-zero, then base UCS is
                         // taken to be WORLD 346
@@ -107,11 +107,11 @@ struct SGAL_SGAL_DECL Dxf_vport_entry: public Dxf_table_entry {
   double m_elevation;   // Elevation
   int16_t m_shade_plot_setting; // Shade plot setting
   int16_t m_major_grid_lines; // Major grid lines
-  Uint m_background_object_pointer; // Soft-pointer ID/handle to background
+  String m_background_object_pointer; // Soft-pointer ID/handle to background
                         // object (optional)
-  Uint m_shade_plot_object_pointer; // Soft-pointer ID/handle to shade plot
+  String m_shade_plot_object_pointer; // Soft-pointer ID/handle to shade plot
                         // object (optional)
-  Uint m_visual_style_object_pointer; // Hard-pointer ID/handle to visual
+  String m_visual_style_object_pointer; // Hard-pointer ID/handle to visual
                         // style object (optional)
   bool m_is_default_lighting_on; // Default Lighting On flag
   int8_t m_default_lighting_type; // Default Lighting type
