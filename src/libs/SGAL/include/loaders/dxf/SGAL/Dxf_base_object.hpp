@@ -33,8 +33,8 @@ class Dxf_parser;
 
 struct Dxf_base_object {
   String m_handle;      // Handle
-  Uint m_owner_object;  // Soft pointer ID/handle to owner dictionary (optional)
-  Uint m_owner_dict;    // Hard owner ID/handle to owner dictionary (optional)
+  String m_owner_object; // Soft pointer ID/handle to owner dictionary (optional)
+  String m_owner_dict;    // Hard owner ID/handle to owner dictionary (optional)
   // Uint m_owner_handle;  // Soft-pointer ID/handle to owner BLOCK_RECORD object
   std::map<String, std::vector<String> > m_xdata;
   std::vector<Dxf_extended_data> m_extended_data;
@@ -47,6 +47,9 @@ struct Dxf_base_object {
    * \param[in] parser the parser.
    */
   void set_parser(Dxf_parser* parser) { m_parser = parser; }
+
+  /*! Initialize */
+  void init() {}
 
   //! The parser.
   Dxf_parser* m_parser;

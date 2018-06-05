@@ -33,9 +33,9 @@ class Dxf_parser;
 
 struct Dxf_base_entity {
   String m_handle;      // Handle
-  Uint m_owner_handle;  // Soft pointer ID/handle to owner dictionary (optional)
-  Uint m_owner_dict;    // Hard owner ID/handle to owner dictionary (optional)
-  // Uint m_owner_handle;  // Soft-pointer ID/handle to owner BLOCK_RECORD object
+  String m_owner_handle; // Soft pointer ID/handle to owner dictionary (optional)
+  String m_owner_dict;  // Hard owner ID/handle to owner dictionary (optional)
+  // String m_owner_handle; // Soft-pointer ID/handle to owner BLOCK_RECORD object
   int16_t m_is_in_paper_space;  // Absent/0 = entity is in model space.
                         // 1 = entity is in paper space (optional). 0
   String m_layer;       // Layer name
@@ -94,6 +94,9 @@ struct Dxf_base_entity {
    * \param[in] parser the parser.
    */
   void set_parser(Dxf_parser* parser) { m_parser = parser; }
+
+  /*! Initialize */
+  void init() {}
 
   //! The parser.
   Dxf_parser* m_parser;
