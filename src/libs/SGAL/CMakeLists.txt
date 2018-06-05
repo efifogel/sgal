@@ -466,12 +466,12 @@ source_group(src\\loaders\\dxf\\objects FILES ${SGAL_LOADERS_DXF_OBJECTS_SRC_FIL
 
 # dxf tables
 set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_dimstyle_entry.cpp)
-set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_block_record_entry_members.cpp)
-set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_layer_entry_members.cpp)
-set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_ltype_entry_members.cpp)
-set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_style_entry_members.cpp)
-set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_view_entry_members.cpp)
-set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_vport_entry_members.cpp)
+set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_block_record_entry.cpp)
+set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_layer_entry.cpp)
+set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_ltype_entry.cpp)
+set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_style_entry.cpp)
+set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_view_entry.cpp)
+set(SGAL_LOADERS_DXF_TABLES_SRC_FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} lib/loaders/dxf/tables/Dxf_vport_entry.cpp)
 set(SGAL_SRC_FILES ${SGAL_SRC_FILES} ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} ${SGAL_LOADERS_DXF_TABLES_HEADER_FILES})
 source_group(src\\loaders\\dxf\\tables FILES ${SGAL_LOADERS_DXF_TABLES_SRC_FILES} ${SGAL_LOADERS_DXF_TABLES_HEADER_FILES})
 
