@@ -28,7 +28,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-struct SGAL_SGAL_DECL Dxf_dimstyle_entry: public Dxf_table_entry {
+struct SGAL_SGAL_DECL Dxf_dimstyle_entry : Dxf_table_entry {
   String m_name;        // Dimension style name
   int16_t m_flags;      // Standard flag values (bit-coded values):
                         // 16 = If set, table entry is externally dependent on

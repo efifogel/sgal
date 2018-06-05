@@ -25,7 +25,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-struct SGAL_SGAL_DECL Dxf_ucs_entry: public Dxf_table_entry {
+struct SGAL_SGAL_DECL Dxf_ucs_entry : Dxf_table_entry {
 };
 
 SGAL_END_NAMESPACE
