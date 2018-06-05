@@ -62,7 +62,7 @@ struct Dxf_boundary_path {
   // varies Edge type data (only if boundary is not a polyline).
                         // See appropriate Edge data table below
   // Number of source boundary objects
-  std::vector<Uint> m_source_objects; // Reference to source boundary objects
+  std::vector<String> m_source_objects; // Reference to source boundary objects
                         // (multiple entries)
 
   //@}
