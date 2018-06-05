@@ -54,6 +54,7 @@ const std::vector<Dxf_parser::Code_range> Dxf_parser::s_code_ranges = {
   {120, 122, DOUBLE},   // y-value of UCS
   {130, 132, DOUBLE},   // z-value of UCS
   {140, 149, DOUBLE},   // Double precision scalar floating-point value
+  {160, 169, DOUBLE},   // Double precision floating-point value
   {170, 179, INT16},    // 16-bit integer value
   {210, 239, DOUBLE},   // x-value of extrusion direction
   {270, 279, INT16},    // 16-bit integer value
@@ -65,7 +66,7 @@ const std::vector<Dxf_parser::Code_range> Dxf_parser::s_code_ranges = {
   {330, 369, STRING},   // String representing hex object IDs
   {370, 379, INT8},     // 8-bit integer value
   {380, 389, INT8},     // 8-bit integer value
-  {390, 399, UINT},     // String representing hex handle value
+  {390, 399, STRING},   // String representing hex handle value
   {400, 409, INT16},    // 16-bit integer value
   {410, 419, STRING},   // String
   {420, 429, INT32},    // 32-bit integer value
@@ -642,10 +643,28 @@ void Dxf_parser::parse_entities()
     if ("ENDSEC" == str) return;
 
     auto it = s_entities.find(str);
-    if (it == s_entities.end()) {
-      SGAL_error_msg("unrecognize entity");
+    if (it != s_entities.end()) {
+      (this->*(it->second))();
+      continue;
     }
-    (this->*(it->second))();
+
+    // Look for user defined entities that are defined in a CLASS block
+    auto cit = std::find_if(m_classes.begin(), m_classes.end(),
+                            [&](const Dxf_class& my_class)
+                            {
+                              return ((my_class.m_record_name == str) &&
+                                      my_class.m_is_entity);
+                            });
+    if (cit != m_classes.end()) {
+      m_user_entities.resize(m_user_entities.size() + 1);
+      auto& user_entity = m_user_entities.back();
+      parse_record(user_entity);
+      continue;
+    }
+
+    String msg("Unrecognize entity \"");
+    msg += str + "\", at line " + std::to_string(m_line);
+    SGAL_error_msg(msg.c_str());
 
   } while (true);
 }
