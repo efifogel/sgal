@@ -60,9 +60,9 @@ const std::vector<Dxf_parser::Code_range> Dxf_parser::s_code_ranges = {
   {280, 289, INT8},     // 8-bit integer value
   {290, 299, BOOL},     // Boolean flag value
   {300, 309, STRING},   // Arbitrary text string
-  {310, 319, UINT},     // String representing hex value of binary chunk
+  {310, 319, STRING},   // String representing hex value of binary chunk
   {320, 329, UINT},     // String representing hex handle value
-  {330, 369, UINT},     // String representing hex object IDs
+  {330, 369, STRING},   // String representing hex object IDs
   {370, 379, INT8},     // 8-bit integer value
   {380, 389, INT8},     // 8-bit integer value
   {390, 399, UINT},     // String representing hex handle value
@@ -120,8 +120,11 @@ Dxf_parser::s_tables = {
   { "VPORT", &Dxf_parser::parse_vport_table }
 };
 
-//!
+/// Appid table
+//@{
 typedef Dxf_record_wrapper<Dxf_appid_entry>     Dxf_appid_wrapper;
+
+//!
 template <>
 const std::map<int, Dxf_appid_wrapper::Record_member>
 Dxf_appid_wrapper::s_record_members = {
@@ -130,11 +133,24 @@ Dxf_appid_wrapper::s_record_members = {
 };
 
 //!
+template <>
+const std::map<int, Dxf_appid_wrapper::Record_handler_type>
+Dxf_appid_wrapper::s_record_handlers = {};
+//@}
+
+/// Ucs table
 typedef Dxf_record_wrapper<Dxf_ucs_entry>               Dxf_ucs_wrapper;
+
+//!
 template <>
 const std::map<int, Dxf_ucs_wrapper::Record_member>
-Dxf_ucs_wrapper::s_record_members = {
-};
+Dxf_ucs_wrapper::s_record_members = {};
+
+//!
+template <>
+const std::map<int, Dxf_ucs_wrapper::Record_handler_type>
+Dxf_ucs_wrapper::s_record_handlers = {};
+//@}
 
 //!
 typedef Dxf_simple_record_wrapper<Dxf_base_table>       Dxf_base_table_wrapper;
