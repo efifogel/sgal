@@ -24,6 +24,7 @@ SGAL_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_dimstyle_entry>          Dxf_dimstyle_wrapper;
 
+//!
 template <>
 const std::map<int, Dxf_dimstyle_wrapper::Record_member>
 Dxf_dimstyle_wrapper::s_record_members = {
@@ -99,5 +100,10 @@ Dxf_dimstyle_wrapper::s_record_members = {
   {371, {&Dxf_dimstyle_entry::m_dimension_line_weight, 1, 0}},
   {372, {&Dxf_dimstyle_entry::m_dimension_extension_line_weight, 1, 0}},
 };
+
+//!
+template <>
+const std::map<int, Dxf_dimstyle_wrapper::Record_handler_type>
+Dxf_dimstyle_wrapper::s_record_handlers = {};
 
 SGAL_END_NAMESPACE

@@ -39,6 +39,7 @@ SGAL_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_layer_entry>             Dxf_layer_wrapper;
 
+//!
 template <>
 const std::map<int, Dxf_layer_wrapper::Record_member>
 Dxf_layer_wrapper::s_record_members = {
@@ -52,5 +53,10 @@ Dxf_layer_wrapper::s_record_members = {
   {390, {&Dxf_layer_entry::m_plot_style_pointer, 1, 0}},
   {347, {&Dxf_layer_entry::m_material_handle, 1, 0}}
 };
+
+//!
+template <>
+const std::map<int, Dxf_layer_wrapper::Record_handler_type>
+Dxf_layer_wrapper::s_record_handlers = {};
 
 SGAL_END_NAMESPACE

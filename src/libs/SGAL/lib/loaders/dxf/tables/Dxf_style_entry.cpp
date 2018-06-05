@@ -34,6 +34,7 @@ SGAL_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_style_entry>             Dxf_style_wrapper;
 
+//!
 template <>
 const std::map<int, Dxf_style_wrapper::Record_member>
 Dxf_style_wrapper::s_record_members = {
@@ -48,5 +49,10 @@ Dxf_style_wrapper::s_record_members = {
   {4, {&Dxf_style_entry::m_big_font_file_name, 1, 0}},
   {1071, {&Dxf_style_entry::m_font_flags, 1, 0}}
 };
+
+//!
+template <>
+const std::map<int, Dxf_style_wrapper::Record_handler_type>
+Dxf_style_wrapper::s_record_handlers = {};
 
 SGAL_END_NAMESPACE

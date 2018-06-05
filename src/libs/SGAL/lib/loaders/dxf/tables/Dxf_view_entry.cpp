@@ -34,6 +34,7 @@ SGAL_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_view_entry>              Dxf_view_wrapper;
 
+//!
 template <>
 const std::map<int, Dxf_view_wrapper::Record_member>
 Dxf_view_wrapper::s_record_members = {
@@ -75,5 +76,10 @@ Dxf_view_wrapper::s_record_members = {
   {345, {&Dxf_view_entry::m_ucs_handle, 1, 0}},
   {346, {&Dxf_view_entry::m_base_ucs_handle, 1, 0}}
 };
+
+//!
+template <>
+const std::map<int, Dxf_view_wrapper::Record_handler_type>
+Dxf_view_wrapper::s_record_handlers = {};
 
 SGAL_END_NAMESPACE

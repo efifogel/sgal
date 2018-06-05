@@ -39,6 +39,7 @@ SGAL_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_vport_entry>             Dxf_vport_wrapper;
 
+//!
 template <>
 const std::map<int, Dxf_vport_wrapper::Record_member>
 Dxf_vport_wrapper::s_record_members = {
@@ -109,5 +110,10 @@ Dxf_vport_wrapper::s_record_members = {
   {421, {&Dxf_vport_entry::m_ambient_color_i32, 1, 0}},
   {31, {&Dxf_vport_entry::m_ambient_color_name, 1, 0}}
 };
+
+//!
+template <>
+const std::map<int, Dxf_vport_wrapper::Record_handler_type>
+Dxf_vport_wrapper::s_record_handlers = {};
 
 SGAL_END_NAMESPACE

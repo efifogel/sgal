@@ -34,6 +34,7 @@ SGAL_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_ltype_entry>             Dxf_ltype_wrapper;
 
+//!
 template <>
 const std::map<int, Dxf_ltype_wrapper::Record_member>
 Dxf_ltype_wrapper::s_record_members = {
@@ -73,5 +74,10 @@ bool Dxf_ltype_entry::handle_value(int code, double value)
   }
   return false;
 }
+
+//!
+template <>
+const std::map<int, Dxf_ltype_wrapper::Record_handler_type>
+Dxf_ltype_wrapper::s_record_handlers = {};
 
 SGAL_END_NAMESPACE
