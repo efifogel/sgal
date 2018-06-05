@@ -846,6 +846,7 @@ private:
   template <typename Record>
   void parse_record(Record& record)
   {
+    record.init();
     record.set_parser(this);
 
     while (true) {
@@ -1318,6 +1319,7 @@ private:
       }
       entries.resize(entries.size() + 1);
       auto& entry = entries.back();
+      entry.init();
 
       while (true) {
         int code;
@@ -1346,6 +1348,8 @@ private:
 
         auto& members = Dxf_record_wrapper<Entry>::s_record_members;
         if (assign_record_value(code, entry, members)) continue;
+        auto& handlers = Dxf_record_wrapper<Entry>::s_record_handlers;
+        if (handle_record_value(code, entry, handlers)) continue;
 
         handle_record_special_value(code, entry);
       }
