@@ -74,7 +74,7 @@ struct Dxf_base_entity {
                         // group code is reserved for AcDbEntity, class-level
                         // color data and AcDbEntity, class-level transparency
                         // data
-  Uint m_plot_style;    // Hard-pointer ID/handle to the plot style object
+  String m_plot_style;    // Hard-pointer ID/handle to the plot style object
   int8_t m_shadow_mode; // Shadow mode
                         // 0 = Casts and receives shadows
                         // 1 = Casts shadows
