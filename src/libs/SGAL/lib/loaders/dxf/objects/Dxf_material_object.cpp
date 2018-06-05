@@ -130,4 +130,17 @@ Dxf_material_object_wrapper::s_record_handlers = {
   {147, &Dxf_material_object::handle_refraction_map_transformation_matrix}
 };
 
+//! \brief initializes.
+void Dxf_material_object::init()
+{
+  m_is_normal = false;
+
+  m_normal_diffuse_id = 0;
+  m_specular_id = 0;
+  m_reflection_id = 0;
+  m_opacity_id = 0;
+  m_bump_id = 0;
+  m_refraction_id = 0;
+}
+
 SGAL_END_NAMESPACE
