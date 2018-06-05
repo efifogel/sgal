@@ -57,15 +57,15 @@ struct Dxf_layout_object : public Dxf_base_object {
                         // 1 = Top; 2 = Bottom
                         // 3 = Front; 4 = Back
                         // 5 = Left; 6 = Right
-  Uint m_viewport;      // ID/handle to the viewport that was last active in this
+  String m_viewport;    // ID/handle to the viewport that was last active in this
                         // layout when the layout was current
-  Uint m_table_record;  // ID/handle of AcDbUCSTableRecord if UCS is a named
+  String m_table_record; // ID/handle of AcDbUCSTableRecord if UCS is a named
                         // UCS. If not present, then UCS is unnamed
-  Uint m_table_record_base; // ID/handle of AcDbUCSTableRecord of base UCS if
+  String m_table_record_base; // ID/handle of AcDbUCSTableRecord of base UCS if
                         // UCS is orthographic (76 code is non-zero). If not
                         // present and 76 code is non-zero, then base UCS is
                         // taken to be WORLD
-  Uint m_shade_plot;    // Shade plot ID
+  String m_shade_plot;  // Shade plot ID
 
   /*! Handle a marker.
    */
