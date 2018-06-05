@@ -285,6 +285,9 @@ struct Dxf_material_object : public Dxf_base_object {
     m_refraction_id(0)
   {}
 
+  /*! Initialize */
+  void init();
+
   //!
   void handle_normal_diffuse_map_transformation_matrix(double value)
   {
