@@ -104,11 +104,11 @@ struct SGAL_SGAL_DECL Dxf_dimstyle_entry : Dxf_table_entry {
   // int8_t DIMFIT (obsolete; now use DIMATFIT and DIMTMOVE)
   int8_t m_dimension_cursor_controls_text_position; // DIMUPT
   int8_t m_dimension_text_and_arrow_placement; // DIMATFIT
-  Uint m_dimension_text_style; // DIMTXSTY (handle of referenced STYLE)
-  Uint m_dimension_leader_block_name; // DIMLDRBLK (handle of referenced BLOCK)
-  Uint m_arrow_block_name; // DIMBLK (handle of referenced BLOCK)
-  Uint m_dimblk1;       // DIMBLK1 (handle of referenced BLOCK)
-  Uint m_dimblk2;       // DIMBLK2 (handle of referenced BLOCK)
+  String m_dimension_text_style; // DIMTXSTY (handle of referenced STYLE)
+  String m_dimension_leader_block_name; // DIMLDRBLK (handle of referenced BLOCK)
+  String m_arrow_block_name; // DIMBLK (handle of referenced BLOCK)
+  String m_dimblk1;     // DIMBLK1 (handle of referenced BLOCK)
+  String m_dimblk2;     // DIMBLK2 (handle of referenced BLOCK)
   int8_t m_dimension_line_weight; // DIMLWD (lineweight enum value)
   int8_t m_dimension_extension_line_weight; // DIMLWE (lineweight enum value)
 

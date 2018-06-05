@@ -19,6 +19,8 @@
 #ifndef SGAL_DXF_DICTIONARY_OBJECT_HPP
 #define SGAL_DXF_DICTIONARY_OBJECT_HPP
 
+#include <map>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Dxf_base_object.hpp"
 
@@ -44,7 +46,7 @@ struct Dxf_dictionary_object : public Dxf_base_object {
                         // 3 = <xref>$0$<name>
                         // 4 = $0$<name>
                         // 5 = Unmangle name
-  std::map<String, Uint> m_value_handles; // A mapping from soft-owner
+  std::map<String, String> m_value_handles; // A mapping from soft-owner
                         // ID/handles to entry objects (one for each entry)
                         // (optional)
 
@@ -59,7 +61,8 @@ struct Dxf_dictionary_object : public Dxf_base_object {
 
   /*! Handle an entry value.
    */
-  void handle_entry_value(Uint value) { m_value_handles[m_entry_name] = value; }
+  void handle_entry_value(const String& value)
+  { m_value_handles[m_entry_name] = value; }
 
   //! The current entry name.
   String m_entry_name;

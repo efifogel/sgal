@@ -45,7 +45,7 @@ struct SGAL_SGAL_DECL Dxf_layer_entry : Dxf_table_entry {
   bool m_is_layer_plotted; // Plotting flag. If set to 0, do not plot this layer
   int8_t m_line_weight; // Lineweight enum value
   Uint m_plot_style_pointer; // Hard pointer ID/handle of PlotStyleName object
-  Uint m_material_handle; // Hard-pointer ID/handle to Material object
+  String m_material_handle; // Hard-pointer ID/handle to Material object
 };
 
 SGAL_END_NAMESPACE

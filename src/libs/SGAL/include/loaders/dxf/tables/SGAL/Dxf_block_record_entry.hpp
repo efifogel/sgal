@@ -34,7 +34,7 @@ struct SGAL_SGAL_DECL Dxf_block_record_entry : Dxf_table_entry {
   //@{
 
   String m_name;        // Block name
-  Uint m_layout_handle; // Hard-pointer ID/handle to associated LAYOUT object
+  String m_layout_handle; // Hard-pointer ID/handle to associated LAYOUT object
   int16_t m_insertion_units; // Block insertion units.
   int8_t m_explodability; // Block explodability
   int8_t m_scalability; // Block scalability

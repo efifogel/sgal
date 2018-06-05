@@ -357,10 +357,10 @@ struct SGAL_SGAL_DECL Dxf_header {
   int16_t m_interferecolor; // Represents the ACI color index of the
                         // "interference objects" created during the INTERFERE
                         // command. Default value is 1
-  Uint m_interfereobjvs; // Hard-pointer ID to the visual style for
+  String m_interfereobjvs; // Hard-pointer ID to the visual style for
                         // interference objects. Default visual style is
                         // Conceptual.
-  Uint m_interferevpvs; // Hard-pointer ID to the visual style for the
+  String m_interferevpvs; // Hard-pointer ID to the visual style for the
                         // viewport during interference checking. Default visual
                         // style is 3d Wireframe.
   int16_t m_intersectioncolor; // Specifies the entity color of intersection

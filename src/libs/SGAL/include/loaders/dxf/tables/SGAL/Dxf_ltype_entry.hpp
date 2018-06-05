@@ -63,7 +63,7 @@ struct SGAL_SGAL_DECL Dxf_ltype_entry : Dxf_table_entry {
                         // If code 74 specifies an embedded text string, this
                         // value is set to 0
                         // If code 74 is set to 0, code 75 is omitted
-  Uint m_style_pointers; // Pointer to STYLE object (one per element if code
+  String m_style_pointers; // Pointer to STYLE object (one per element if code
                         // 74 > 0)
   std::vector<double> m_scale_values; // S = Scale value (optional)
   double m_rotation_angles; // R = (relative) or A = (absolute) rotation value

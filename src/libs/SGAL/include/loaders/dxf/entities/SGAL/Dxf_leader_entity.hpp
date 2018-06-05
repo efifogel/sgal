@@ -52,7 +52,7 @@ struct Dxf_leader_entity : public Dxf_base_entity {
   std::vector<std::array<double, 3> > m_vertices; // Vertex coordinates (one
                         // entry for each vertex)
   int16_t m_override_color; // Color to use if leader's DIMCLRD = BYBLOCK
-  Uint m_associated_annotation_reference; // Hard reference to associated
+  String m_associated_annotation_reference; // Hard reference to associated
                         // annotation (mtext, tolerance, or insert entity)
   double m_normal[3];   // Normal vector
   double m_right[3];    // "Horizontal" direction for leader

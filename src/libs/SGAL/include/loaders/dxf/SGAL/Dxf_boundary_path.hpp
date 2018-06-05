@@ -70,7 +70,7 @@ struct Dxf_boundary_path {
   /// Record handlers
   //@{
   void number_handler(int32_t size);
-  void source_objects_handler(Uint handler);
+  void source_objects_handler(const String& handler);
   //@}
 
 #if 0

@@ -37,9 +37,9 @@ struct Dxf_acdbdictionarywdflt_object : public Dxf_base_object {
                         // 5 = Unmangle name
                         // 3 Entry name (one for each entry)
   String m_entry_name;  // Entry name (one for each entry)
-  Uint m_entry_object;  // Soft-owner ID/handle to entry object (one for each
+  String m_entry_object; // Soft-owner ID/handle to entry object (one for each
                         // entry)
-  Uint m_object_handle; // Hard pointer to default object ID/handle (currently
+  String m_object_handle; // Hard pointer to default object ID/handle (currently
                         // only used for plot style dictionary's default entry,
                         // named "Normal")
 };

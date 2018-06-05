@@ -47,7 +47,7 @@ void Dxf_boundary_path::number_handler(int32_t size)
 { m_source_objects.reserve(size); }
 
 //!
-void Dxf_boundary_path::source_objects_handler(Uint handler)
+void Dxf_boundary_path::source_objects_handler(const String& handler)
 {
   m_source_objects.resize(m_source_objects.size() + 1);
   m_source_objects.back() = handler;
