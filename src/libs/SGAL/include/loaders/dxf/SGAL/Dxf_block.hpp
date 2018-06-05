@@ -32,7 +32,7 @@ class Dxf_parser;
 
 struct SGAL_SGAL_DECL Dxf_block {
   String m_handle;      // Handle
-  Uint m_owner_handle;  // Soft-pointer ID/handle to owner object
+  String m_owner_handle; // Soft-pointer ID/handle to owner object
   String m_layer_name;  // Layer name
   String m_name;        // Block name
   int16_t m_flags;      // Block-type flags (bit-coded values, may be combined):
