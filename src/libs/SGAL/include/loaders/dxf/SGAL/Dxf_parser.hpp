@@ -93,6 +93,7 @@
 #include "SGAL/Dxf_viewport_entity.hpp"
 #include "SGAL/Dxf_wipeout_entity.hpp"
 #include "SGAL/Dxf_xline_entity.hpp"
+#include "SGAL/Dxf_user_entity.hpp"
 
 // Objects
 #include "SGAL/Dxf_acad_proxy_object.hpp"
@@ -966,6 +967,8 @@ private:
   Dxf_viewport_entity m_viewport_entity;
   Dxf_wipeout_entity m_wipeout_entity;
   Dxf_xline_entity m_xline_entity;
+
+  std::list<Dxf_user_entity> m_user_entities;
 
   // Objects
   Dxf_acad_proxy_object m_acad_proxy_object;
