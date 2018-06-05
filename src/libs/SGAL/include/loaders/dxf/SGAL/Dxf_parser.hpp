@@ -54,6 +54,10 @@
 #include "SGAL/Dxf_simple_record_wrapper.hpp"
 #include "SGAL/Dxf_record_wrapper.hpp"
 #include "SGAL/Dxf_extended_data.hpp"
+#include "SGAL/Dxf_line_edge.hpp"
+#include "SGAL/Dxf_circle_edge.hpp"
+#include "SGAL/Dxf_ellipse_edge.hpp"
+#include "SGAL/Dxf_spline_edge.hpp"
 
 // Entities
 #include "SGAL/Dxf_3dface_entity.hpp"
@@ -146,6 +150,7 @@ class SGAL_SGAL_DECL Dxf_parser : public Dxf_base_parser {
 public:
 
   friend Dxf_hatch_entity;
+  friend Dxf_boundary_path;
   friend Dxf_polyline_boundary_path;
   friend Dxf_pattern_data;
   friend Dxf_layout_object;
@@ -1019,7 +1024,7 @@ private:
   /*! Obtain the type of a code
    * \param code the given code.
    */
-  static Code_type code_type(int code);
+  Code_type code_type(int code);
 
   /*! Export a code
    */
@@ -1373,6 +1378,22 @@ private:
   /*! Parse a pattern data.
    */
   void parse_pattern_data(Dxf_pattern_data& pattern_data);
+
+  /*! Parse a line edge
+   */
+  void parse_line_edge(Dxf_line_edge& edge);
+
+  /*! Parse a circle edge
+   */
+  void parse_circle_edge(Dxf_circle_edge& edge);
+
+  /*! Parse an ellipse edge
+   */
+  void parse_ellipse_edge(Dxf_ellipse_edge& edge);
+
+  /*! Parse a spline edge
+   */
+  void parse_spline_edge(Dxf_spline_edge& edge);
 
   //@}
 

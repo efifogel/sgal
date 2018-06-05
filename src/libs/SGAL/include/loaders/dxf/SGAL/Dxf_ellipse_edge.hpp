@@ -16,45 +16,24 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_BOUNDARY_PATH_HPP
-#define SGAL_DXF_BOUNDARY_PATH_HPP
+#ifndef SGAL_DXF_ELLIPSE_EDGE_HPP
+#define SGAL_DXF_ELLIPSE_EDGE_HPP
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Dxf_base_boundary_path.hpp"
 #include "SGAL/Dxf_edge.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-class Dxf_parser;
-
-//!
-struct Dxf_boundary_path : Dxf_base_boundary_path {
+struct Dxf_ellipse_edge : Dxf_edge {
   /// Record members
   //@{
-
-  // Number of edges in this boundary path (only if boundary is not a
-                        // polyline)
-  std::vector<Dxf_edge*> m_edges;
-  // varies Edge type data (only if boundary is not a polyline).
-                        // See appropriate Edge data table below
 
   //@}
 
   /// Record handlers
   //@{
-  void handle_edges_num(int32_t size);
+
   //@}
-
-  /*! Initialize */
-  void init();
-
-  /*! Set the parser.
-   * \param[in] parser the parser.
-   */
-  void set_parser(Dxf_parser* parser) { m_parser = parser; }
-
-  //! The parser
-  Dxf_parser* m_parser;
 };
 
 SGAL_END_NAMESPACE

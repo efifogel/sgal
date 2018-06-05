@@ -26,6 +26,7 @@
 #include "SGAL/Dxf_parser.hpp"
 #include "SGAL/Dxf_simple_record_wrapper.hpp"
 #include "SGAL/Dxf_record_wrapper.hpp"
+#include "SGAL/Dxf_base_boundary_path.hpp"
 #include "SGAL/Dxf_boundary_path.hpp"
 #include "SGAL/Dxf_polyline_boundary_path.hpp"
 #include "SGAL/Dxf_pattern_data.hpp"
@@ -324,7 +325,7 @@ Loader_code Dxf_parser::operator()()
     import_value(section);
     auto sec_it = s_sections.find(section);
     if (sec_it == s_sections.end()) {
-      SGAL_error_msg("unrecognize section");
+      SGAL_error_msg("Unrecognize section");
     }
     (this->*(sec_it->second))();
   }
@@ -355,8 +356,9 @@ Dxf_parser::Code_type Dxf_parser::code_type(int code)
                          });
 
   if (it == s_code_ranges.end()) {
-    std::string unrecognized_msg("unrecognized code range ");
-    unrecognized_msg += std::to_string(code) + "!";
+    std::string unrecognized_msg("Unrecognized code (in range) ");
+    unrecognized_msg +=
+      std::to_string(code) + "\", at line " + std::to_string(m_line) + "!";
     SGAL_error_msg(unrecognized_msg.c_str());
   }
   return it->m_type;
@@ -1167,6 +1169,17 @@ void Dxf_parser::parse_boundary_path(Dxf_boundary_path& path)
   while (true) {
     int code;
     import_code(code);
+
+    // Handle codes of the base boundary-path record:
+    typedef Dxf_record_wrapper<Dxf_base_boundary_path>
+      Base_boundary_path_wrapper;
+    auto& base_members = Base_boundary_path_wrapper ::s_record_members;
+    Dxf_base_boundary_path& base_path = path;
+    if (assign_record_value(code, base_path, base_members)) continue;
+    auto& base_handlers = Base_boundary_path_wrapper::s_record_handlers;
+    if (handle_record_value(code, base_path, base_handlers)) continue;
+
+    // Handle codes of the (non-polyline) boundary-path record:
     typedef Dxf_record_wrapper<Dxf_boundary_path>       Boundary_path_wrapper;
     auto& members = Boundary_path_wrapper::s_record_members;
     if (assign_record_value(code, path, members)) continue;
@@ -1187,20 +1200,21 @@ void Dxf_parser::parse_polyline_boundary_path(Dxf_polyline_boundary_path& path)
     import_code(code);
 
     // Handle codes of the base boundary-path record:
-    typedef Dxf_record_wrapper<Dxf_boundary_path>       Boundary_path_wrapper;
-    auto& members = Boundary_path_wrapper ::s_record_members;
-    Dxf_boundary_path& base_path = path;
-    if (assign_record_value(code, base_path, members)) continue;
-    auto& handlers = Boundary_path_wrapper::s_record_handlers;
-    if (handle_record_value(code, base_path, handlers)) continue;
+    typedef Dxf_record_wrapper<Dxf_base_boundary_path>
+      Base_boundary_path_wrapper;
+    auto& base_members = Base_boundary_path_wrapper ::s_record_members;
+    Dxf_base_boundary_path& base_path = path;
+    if (assign_record_value(code, base_path, base_members)) continue;
+    auto& base_handlers = Base_boundary_path_wrapper::s_record_handlers;
+    if (handle_record_value(code, base_path, base_handlers)) continue;
 
     // Handle codes of the polyline boundary-path record:
     typedef Dxf_record_wrapper<Dxf_polyline_boundary_path>
       Polyline_boundary_path_wrapper;
-    auto& pl_members = Polyline_boundary_path_wrapper::s_record_members;
-    if (assign_record_value(code, path, pl_members)) continue;
-    auto& pl_handlers = Polyline_boundary_path_wrapper::s_record_handlers;
-    if (handle_record_value(code, path, pl_handlers)) continue;
+    auto& members = Polyline_boundary_path_wrapper::s_record_members;
+    if (assign_record_value(code, path, members)) continue;
+    auto& handlers = Polyline_boundary_path_wrapper::s_record_handlers;
+    if (handle_record_value(code, path, handlers)) continue;
 
     // The code hasn't been processed yet, export it.
     export_code(code);
@@ -1225,6 +1239,86 @@ void Dxf_parser::parse_pattern_data(Dxf_pattern_data& pattern_data)
     if (assign_record_value(code, pattern_data, members)) continue;
     auto& handlers = Pattern_data_wrapper::s_record_handlers;
     if (handle_record_value(code, pattern_data, handlers)) continue;
+
+    // The code hasn't been processed yet, export it.
+    export_code(code);
+    return;
+  }
+}
+
+//! \brief parses a line edge
+void Dxf_parser::parse_line_edge(Dxf_line_edge& edge)
+{
+  while (true) {
+    int code;
+    import_code(code);
+
+    // Handle codes of the base boundary-path record:
+    typedef Dxf_record_wrapper<Dxf_line_edge>   Line_edge_wrapper;
+    auto& members = Line_edge_wrapper ::s_record_members;
+    if (assign_record_value(code, edge, members)) continue;
+    auto& handlers = Line_edge_wrapper::s_record_handlers;
+    if (handle_record_value(code, edge, handlers)) continue;
+
+    // The code hasn't been processed yet, export it.
+    export_code(code);
+    return;
+  }
+}
+
+//! \brief parses a circle edge
+void Dxf_parser::parse_circle_edge(Dxf_circle_edge& edge)
+{
+  while (true) {
+    int code;
+    import_code(code);
+
+    // Handle codes of the base boundary-path record:
+    typedef Dxf_record_wrapper<Dxf_circle_edge>   Circle_edge_wrapper;
+    auto& members = Circle_edge_wrapper ::s_record_members;
+    if (assign_record_value(code, edge, members)) continue;
+    auto& handlers = Circle_edge_wrapper::s_record_handlers;
+    if (handle_record_value(code, edge, handlers)) continue;
+
+    // The code hasn't been processed yet, export it.
+    export_code(code);
+    return;
+  }
+}
+
+//! \brief parses an ellipse edge
+void Dxf_parser::parse_ellipse_edge(Dxf_ellipse_edge& edge)
+{
+  while (true) {
+    int code;
+    import_code(code);
+
+    // Handle codes of the base boundary-path record:
+    typedef Dxf_record_wrapper<Dxf_ellipse_edge>   Ellipse_edge_wrapper;
+    auto& members = Ellipse_edge_wrapper ::s_record_members;
+    if (assign_record_value(code, edge, members)) continue;
+    auto& handlers = Ellipse_edge_wrapper::s_record_handlers;
+    if (handle_record_value(code, edge, handlers)) continue;
+
+    // The code hasn't been processed yet, export it.
+    export_code(code);
+    return;
+  }
+}
+
+//! \brief parses a spellipse edge
+void Dxf_parser::parse_spline_edge(Dxf_spline_edge& edge)
+{
+  while (true) {
+    int code;
+    import_code(code);
+
+    // Handle codes of the base boundary-path record:
+    typedef Dxf_record_wrapper<Dxf_spline_edge>   Spline_edge_wrapper;
+    auto& members = Spline_edge_wrapper ::s_record_members;
+    if (assign_record_value(code, edge, members)) continue;
+    auto& handlers = Spline_edge_wrapper::s_record_handlers;
+    if (handle_record_value(code, edge, handlers)) continue;
 
     // The code hasn't been processed yet, export it.
     export_code(code);

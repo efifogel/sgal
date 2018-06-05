@@ -80,14 +80,14 @@ Dxf_hatch_entity_wrapper::s_record_handlers = {
 };
 
 //! \brief handles boundary paths.
-void Dxf_hatch_entity::handle_boundary_paths(int32_t value)
+void Dxf_hatch_entity::handle_boundary_paths(int32_t size)
 {
-  m_boundary_paths.resize(value);
+  m_boundary_paths.resize(size);
   for (auto& boundary_path : m_boundary_paths) {
     int code;
     m_parser->import_code(code);
     SGAL_assertion(92 == code);
-    auto ct = Dxf_parser::code_type(code);
+    auto ct = m_parser->code_type(code);
 
     int32_t type;
     m_parser->import_value(type);
