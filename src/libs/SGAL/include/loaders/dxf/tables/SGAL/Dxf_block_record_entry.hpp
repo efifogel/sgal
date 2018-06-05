@@ -29,13 +29,18 @@
 
 SGAL_BEGIN_NAMESPACE
 
-struct SGAL_SGAL_DECL Dxf_block_record_entry: public Dxf_table_entry {
-  String m_name;        // Style name
+struct SGAL_SGAL_DECL Dxf_block_record_entry : Dxf_table_entry {
+  /// Record members
+  //@{
+
+  String m_name;        // Block name
   Uint m_layout_handle; // Hard-pointer ID/handle to associated LAYOUT object
   int16_t m_insertion_units; // Block insertion units.
   int8_t m_explodability; // Block explodability
   int8_t m_scalability; // Block scalability
-  Uint m_bitmap_preview_data; // DXF: Binary data for bitmap preview (optional)
+  String m_bitmap_preview_data; // Binary data for bitmap preview (optional)
+  int16_t m_design_center_version_number; // Autodesk Design Center version
+                        // number
   int16_t m_insert_units; // Insert units:
                         // 0 = Unitless
                         // 1 = Inches
@@ -62,10 +67,29 @@ struct SGAL_SGAL_DECL Dxf_block_record_entry: public Dxf_table_entry {
                         // 22 = US Survey Inch
                         // 23 = US Survey Yard
                         // 24 = US Survey Mile
-  // int16_t m_design_center_version_number; // Autodesk Design Center version number
   String m_application_name; // Xdata application name "ACAD" (optional)
   String m_string_data; // Xdata string data "DesignCenter Data" (optional)
   std::map<String, std::list<String> > m_xdata; // Begin xdata "{", "}" (opt.)
+
+  //@}
+
+  /// Record handles
+  //@{
+
+  /*! Handle code 1070.
+   */
+  void handle_1070(int16_t value);
+
+  //@}
+
+  //! The number of times code 1070 was read.
+  size_t m_1070_num;
+
+  /*! Construct */
+  Dxf_block_record_entry() : m_1070_num(0) {}
+
+  /*! Initialize. */
+  void init();
 };
 
 SGAL_END_NAMESPACE
