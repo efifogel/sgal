@@ -122,7 +122,7 @@ struct Dxf_plotsettings_object : public Dxf_base_object {
                         // 75
   double m_paper_image_origin_x; // Paper image origin: X value
   double m_paper_image_origin_y; // Paper image origin: Y value
-  Uint m_shade_plot_object; // ShadePlot ID/Handle (optional)
+  String m_shade_plot_object; // ShadePlot ID/Handle (optional)
 
   /*! Handle a marker.
    */
