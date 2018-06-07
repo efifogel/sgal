@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_OPTION_PARSER_HPP
 #define SGAL_OPTION_PARSER_HPP
@@ -55,25 +55,23 @@ public:
   typedef std::vector<std::string>              Plugin;
   typedef Plugin::const_iterator                Plugin_const_iterator;
 
-  /*! Trace id */
+  /*! Trace id used by the parser.
+   * This is needed to customize the conversion of strings to trace codes, which
+   * are of a standard type, namely type size_t. Using this struct it is
+   * possible to overload the validate function and convert strings to objects
+   * of type Trace_id (such that each holds a code of type size_t).
+   */
   struct Trace_id {
-    Trace_id(Uint id) : m_id(id) {}
-    Uint m_id;
-  };
-
-  typedef std::vector<Trace_id>         Vector_trace_id;
-  typedef Vector_trace_id::iterator     Vector_trace_id_iter;
-
-  struct Input_file_missing_error : public po::error {
-    Input_file_missing_error(std::string& str) : error(str) {}
+    Trace_id(size_t id) : m_id(id) {}
+    size_t m_id;
   };
 
   /*! Construct default. */
   Option_parser();
 
   /*! Parse the options.
-   * \param argc (in)
-   * \param argv (in)
+   * \param[in] argc
+   * \param[in] argv
    */
   void operator()(Int32 argc, Char* argv[]);
 
@@ -112,12 +110,6 @@ public:
   /*! Obtain the verbose level */
   Uint get_verbosity_level() const { return m_verbose; }
 
-  /*! Obtain number of trace options */
-  static Uint number_trace_opts();
-
-  /*! Compare the i-th option to a given option */
-  static Boolean compare_trace_opt(Uint i, const Char* opt);
-
   /*! Obtain the variable map */
   virtual const po::variables_map& get_variable_map() const;
 
@@ -135,28 +127,28 @@ public:
   UnaryFunction for_each_plugin(UnaryFunction func);
 
 protected:
-  /*! Command line options */
+  //! Command line options.
   po::options_description m_cmd_line_opts;
 
-  /*! Config file options */
+  //! Config file options.
   po::options_description m_config_file_opts;
 
-  /*! Environment variable options */
+  //! Environment variable options.
   po::options_description m_environment_opts;
 
-  /*! Visible options */
+  //! Visible options.
   po::options_description m_visible_opts;
 
-  /*! The configuration option description */
+  //! The configuration option description.
   po::options_description m_config_opts;
 
-  /*! The hidden option description */
+  //! The hidden option description.
   po::options_description m_hidden_opts;
 
-  /*! Positional option description */
+  //! Positional option description.
   po::positional_options_description m_positional_opts;
 
-  /*! The variable map */
+  //! The variable map.
   po::variables_map m_variable_map;
 
 #if 0
@@ -165,13 +157,12 @@ protected:
   const std::string& name_mapper<std::string, std::string>(std::string& src) { }
 #endif
 
+  /*! Obtain the visible options.
+   */
   virtual const po::options_description& get_visible_opts() const
   { return m_visible_opts; }
 
 private:
-  /*! Trace options */
-  static const char* s_trace_opts[];
-
   /*! Indicates whether to run in quite mode */
   Boolean m_quite;
 
@@ -197,10 +188,6 @@ void Option_parser::add_environment_options(po::options_description& options)
 //! \brief adds options to visible options.
 inline void Option_parser::add_visible_options(po::options_description& options)
 { m_visible_opts.add(options); }
-
-//! \brief compares the i-th option to a given option.
-inline Boolean Option_parser::compare_trace_opt(Uint i, const Char* opt)
-{ return strcmp(s_trace_opts[i], opt) == 0; }
 
 //! \brief obtains the variable map.
 inline const po::variables_map& Option_parser::get_variable_map() const

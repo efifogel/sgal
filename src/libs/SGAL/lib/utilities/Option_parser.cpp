@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_MSC_VER)
 #pragma warning ( disable : 4512 )
@@ -39,55 +39,31 @@ SGAL_BEGIN_NAMESPACE
 
 namespace po = boost::program_options;
 
-const Char* Option_parser::s_trace_opts[] = {
-  "graphics",
-  "vrml-parsing",
-  "window-manager",
-  "event",
-  "script",
-  "ifs",
-  "ils",
-  "polyhedron",
-  "cgm",
-  "destructor",
-  "snapshot",
-  "export",
-  "font",
-  "proto",
-  "dxf"
-};
-
-//! \brief obtains number of trace options.
-Uint Option_parser::number_trace_opts()
-{ return sizeof(s_trace_opts) / sizeof(char*); }
-
 //! \brief overloads the 'validate' function for the user-defined class.
 void validate(boost::any& v, const std::vector<std::string>& values,
-              Option_parser::Vector_trace_id* /* target_type */, int)
+              std::vector<Option_parser::Trace_id>* /* target_type */, int)
 {
   typedef Option_parser::Trace_id               Trace_id;
-  typedef Option_parser::Vector_trace_id        Vector_trace_id;
+  typedef std::vector<Trace_id>                 Vector_trace_id;
 
-  for (Uint i = 0; i < Option_parser::number_trace_opts(); ++i) {
-    if (Option_parser::compare_trace_opt(i, values[0].c_str())) {
-      if (v.empty()) {
-        Vector_trace_id vec;
-        vec.push_back(Trace_id(i));
-        v = boost::any(vec);
-      }
-      else {
-        Vector_trace_id vec = boost::any_cast<Vector_trace_id>(v);
-        vec.push_back(Trace_id(i));
-        v = boost::any(vec);
-      }
-      return;
-    }
+  auto* trace = Trace::get_instance();
+  auto code = trace->find_trace_code(values[0]);
+  std::cout << "code: " << code << std::endl;
+  std::cout << "size: " << values.size() << std::endl;
+  if (code == Trace::INVALID) {
+    throw po::validation_error(po::validation_error::invalid_option_value);
+    return;
   }
-#if BOOST_VERSION >= 104200
-  throw po::validation_error(po::validation_error::invalid_option_value);
-#else
-  throw po::validation_error("invalid value");
-#endif
+  if (v.empty()) {
+    Vector_trace_id vec;
+    vec.push_back(Trace_id(code));
+    v = boost::any(vec);
+  }
+  else {
+    Vector_trace_id vec = boost::any_cast<Vector_trace_id>(v);
+    vec.push_back(Trace_id(code));
+    v = boost::any(vec);
+  }
 }
 
 //! \brief constructs.
@@ -173,11 +149,6 @@ void Option_parser::operator()(Int32 argc, Char* argv[])
     po::store(po::parse_config_file(ifs, m_config_file_opts), m_variable_map);
   }
   po::notify(m_variable_map);
-
-  // std::pair<Char*,Char*> Option_parser::s_env_var_option_names[] = {
-  // {"SGAL_QUITE", "quite"},
-  // {"SGAL_VERBOSE", "verbose"}
-  // };
 }
 
 //! \brief applies the options.
@@ -189,10 +160,12 @@ void Option_parser::apply()
   IO_option_parser::apply();
   Bench_option_parser::apply();
 
+  typedef std::vector<Trace_id>                   Vector_trace_id;
   if (m_variable_map.count("trace")) {
-    Vector_trace_id traces = m_variable_map["trace"].as<Vector_trace_id>();
+    auto& traces = m_variable_map["trace"].as<Vector_trace_id>();
     for (auto it = traces.begin(); it != traces.end(); ++it) {
-      Trace::get_instance()->enable(static_cast<Trace::Code>((*it).m_id));
+      std::cout << "Enabling: " << it->m_id << std::endl;
+      Trace::get_instance()->enable(it->m_id);
     }
   }
 }

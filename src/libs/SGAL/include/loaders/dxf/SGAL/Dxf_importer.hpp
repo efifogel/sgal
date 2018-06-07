@@ -39,7 +39,7 @@ struct Dxf_importer {
   {
     m_parser.m_is >> variable;
     ++(m_parser.m_line);
-    SGAL_TRACE_CODE(Trace::DXF,
+    SGAL_TRACE_CODE(Trace::DXF_PARSING,
                     std::cout << "[" << std::to_string(m_parser.m_line) << "] "
                     << "Importering dxf value: "
                     << variable << std::endl;);
@@ -65,7 +65,7 @@ struct Dxf_importer<int8_t> {
     m_parser.m_is >> tmp;
     ++(m_parser.m_line);
     variable = (int8_t) tmp;
-    SGAL_TRACE_CODE(Trace::DXF,
+    SGAL_TRACE_CODE(Trace::DXF_PARSING,
                     std::cout << "[" << std::to_string(m_parser.m_line) << "] "
                     << "Importing dxf int8 value: "
                     << (int)(variable) << std::endl;);
@@ -85,7 +85,7 @@ struct Dxf_importer<Uint> {
   {
     m_parser.m_is >> std::hex >> variable >> std::dec;
     ++(m_parser.m_line);
-    SGAL_TRACE_CODE(Trace::DXF,
+    SGAL_TRACE_CODE(Trace::DXF_PARSING,
                     std::cout << "[" << std::to_string(m_parser.m_line) << "] "
                     << "Importing dxf Uint value: "
                     << "0x" << std::hex << variable << std::dec << std::endl;);
@@ -110,7 +110,7 @@ struct Dxf_importer<String> {
     std::getline(m_parser.m_is, variable);
     ++(m_parser.m_line);
     variable.erase(variable.find_last_not_of(" \t\n\r\f\v") + 1);
-    SGAL_TRACE_CODE(Trace::DXF,
+    SGAL_TRACE_CODE(Trace::DXF_PARSING,
                     std::cout << "[" << std::to_string(m_parser.m_line) << "] "
                     << "Importing dxf string value: "
                     << variable << std::endl;);
