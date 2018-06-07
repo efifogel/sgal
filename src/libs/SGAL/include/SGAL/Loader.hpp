@@ -126,12 +126,6 @@ public:
    */
   bool multiple_shapes() const;
 
-  // /*! Load a scene graph represented in the dxf file format from a stream.
-  //  * \param[in] is the stream to load.
-  //  * \param[in] sg the scene graph
-  //  */
-  // Loader_code load_dxf(std::istream& is, Scene_graph* sg);
-
 protected:
   class Triangle {
   public:
@@ -233,53 +227,6 @@ private:
                          Polygon_indices& coord_indices,
                          Polygon_indices& normal_indices,
                          Polygon_indices& tex_coord_indices);
-
-  // /// \name DXF format handling
-  // //! @{
-  // /*! Read a HEADER variable.
-  //  */
-  // void read_header_variable(std::istream& is);
-
-  // /*! Skip the HEADER section.
-  //  */
-  // void skip_header(std::istream& is);
-
-  // /*! Read all sections except for the HEADER section and skipp all read
-  //  * SECTIONS except for the ENTITIES section.
-  //  */
-  // void read_sections(std::istream& is);
-
-  // /*! Skip a TABLES section.
-  //  */
-  // void skip_tables(std::istream& is);
-
-  // /*! Skip a BLOCKS section.
-  //  */
-  // void skip_blocks(std::istream& is);
-
-  // /*! Read a polygon.
-  //  */
-  // void read_polygon();
-
-  // /*! Read an ENTITIES section.
-  //  */
-  // void read_entities(std::istream& is);
-
-  // /*! Read a comment line.
-  //  */
-  // void read_comment(std::istream& is);
-
-  // /*! Read a circle.
-  //  */
-  // //void read_circle();
-  // //void read_circle();
-  // //void read_circle();
-
-  // /*! Read a circle defined by its center and radius.
-  //  */
-  // //void read_center_and_radius();
-
-  // //@}
 };
 
 /*! \brief sets the flag that indicates whether to construct multiple shapes when
