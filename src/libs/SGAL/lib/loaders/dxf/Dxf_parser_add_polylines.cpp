@@ -40,6 +40,18 @@ void Dxf_parser::add_polylines(const Dxf_hatch_entity& hatch_entity, Group* root
   typedef boost::shared_ptr<Indexed_line_set>       Shared_indexed_line_set;
   typedef boost::shared_ptr<Coord_array_3d>         Shared_coord_array_3d;
 
+  // Count number of vertices:
+  size_t size(0);
+  size_t num_primitives(0);
+  for (Dxf_boundary_path* path : hatch_entity.m_boundary_paths) {
+    auto* polyline = dynamic_cast<Dxf_polyline_boundary_path*>(path);
+    if (! polyline || polyline->m_has_bulge) continue;
+    size += polyline->m_locations.size();
+    ++num_primitives;
+  }
+
+  if (0 == num_primitives) return;
+
   // Add Shape
   Shared_shape shape(new Shape);
   SGAL_assertion(shape);
@@ -54,18 +66,11 @@ void Dxf_parser::add_polylines(const Dxf_hatch_entity& hatch_entity, Group* root
 
   // Add IndexedLineSet
   Shared_indexed_line_set ils(new Indexed_line_set);
+
   SGAL_assertion(ils);
   ils->add_to_scene(m_scene_graph);
   m_scene_graph->add_container(ils);
   shape->set_geometry(ils);
-
-  // Count number of vertices:
-  size_t size(0);
-  for (Dxf_boundary_path* path : hatch_entity.m_boundary_paths) {
-    auto* polyline = dynamic_cast<Dxf_polyline_boundary_path*>(path);
-    if (! polyline) continue;
-    size += polyline->m_locations.size();
-  }
 
   // Allocate vertices:
   auto* coords = new Coord_array_3d(size);
@@ -75,7 +80,7 @@ void Dxf_parser::add_polylines(const Dxf_hatch_entity& hatch_entity, Group* root
 
   // Allocate indices:
   auto& indices = ils->get_coord_indices();
-  indices.resize(size + hatch_entity.m_boundary_paths.size());
+  indices.resize(size + num_primitives);
 
   // Assign the vertices & indices:
   size_t i(0);
@@ -83,7 +88,7 @@ void Dxf_parser::add_polylines(const Dxf_hatch_entity& hatch_entity, Group* root
   auto cit = coords->begin();
   for (auto* path : hatch_entity.m_boundary_paths) {
     auto* polyline = dynamic_cast<Dxf_polyline_boundary_path*>(path);
-    if (! polyline) continue;
+    if (! polyline || polyline->m_has_bulge) continue;
     cit = std::transform(polyline->m_locations.begin(),
                          polyline->m_locations.end(), cit,
                          [&](const std::array<double, 3>& p)
@@ -95,8 +100,9 @@ void Dxf_parser::add_polylines(const Dxf_hatch_entity& hatch_entity, Group* root
     *it++ = -1;
   }
 
+  ils->set_primitive_type(Geo_set::PT_LINE_LOOPS);
   ils->set_coord_array(shared_coords);
-  ils->set_num_primitives(hatch_entity.m_boundary_paths.size());
+  ils->set_num_primitives(num_primitives);
 }
 
 SGAL_END_NAMESPACE
