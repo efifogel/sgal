@@ -46,6 +46,11 @@ protected:
 
   //! The current line number
   size_t m_line;
+
+
+public: //! \todo temporary
+  //! The trace code.
+  static size_t m_trace_code;
 };
 
 SGAL_END_NAMESPACE

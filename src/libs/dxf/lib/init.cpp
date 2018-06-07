@@ -22,6 +22,7 @@
 #include <boost/extension/extension.hpp>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Trace.hpp"
 
 #include "dxf/basic.hpp"
 
@@ -29,6 +30,8 @@ SGAL_BEGIN_NAMESPACE
 
 extern "C" void BOOST_EXTENSION_EXPORT_DECL dxf_init()
 {
+  // auto* trace = Trace::get_instance();
+  // trace->add_trace_opt("dxf-parsing");
 }
 
 SGAL_END_NAMESPACE

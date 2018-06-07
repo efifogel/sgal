@@ -18,8 +18,12 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Dxf_base_parser.hpp"
+#include "SGAL/Trace.hpp"
 
 SGAL_BEGIN_NAMESPACE
+
+//! \todo The trace code.
+size_t Dxf_base_parser::m_trace_code(static_cast<size_t>(Trace::INVALID));
 
 //! \brief constructs.
 Dxf_base_parser::Dxf_base_parser(std::istream& is, const String& filename) :

@@ -154,6 +154,7 @@ void Option_parser::operator()(Int32 argc, Char* argv[])
 //! \brief applies the options.
 void Option_parser::apply()
 {
+  std::cout << "apply" << std::endl;
   Generic_option_parser::apply();
   Conf_option_parser::apply();
   Modeling_option_parser::apply();
@@ -173,6 +174,7 @@ void Option_parser::apply()
 //! \brief configures the scene graph.
 void Option_parser::configure(Scene_graph* scene_graph)
 {
+  std::cout << "configure" << std::endl;
   if (!scene_graph) return;
   auto* conf = scene_graph->get_configuration();
   if (conf) {

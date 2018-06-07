@@ -37,6 +37,8 @@
 #endif
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Trace.hpp"
+#include "SGAL/Dxf_base_parser.hpp"
 // #include "SGAL/Container_factory.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -68,6 +70,11 @@ SGAL_SGAL_DECL void initialize(int /* argc */, char* argv[])
    * Container_factory* factory = Container_factory::get_instance();
    * factory->initialize();
    */
+
+  // Temporarily register the dxf tracing from here, and temporarily define
+  // the trace-code holder to be static.
+  auto* trace = Trace::get_instance();
+  Dxf_base_parser::m_trace_code = trace->add_trace_opt("dxf-parsing");
 }
 
 SGAL_END_NAMESPACE

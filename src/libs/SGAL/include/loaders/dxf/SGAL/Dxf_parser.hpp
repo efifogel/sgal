@@ -1049,7 +1049,7 @@ private:
       m_is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
       ++m_line;
     }
-    SGAL_TRACE_CODE(Trace::DXF_PARSING,
+    SGAL_TRACE_CODE(m_trace_code,
                     std::cout << "[" << std::to_string(m_line) << "] "
                     << "Dxf_parser::import_code(): "
                     << code << std::endl;);
@@ -1244,7 +1244,7 @@ private:
   template <typename Table>
   void parse_base_table(Table& table)
   {
-    SGAL_TRACE_CODE(Trace::DXF_PARSING,
+    SGAL_TRACE_CODE(m_trace_code,
                     std::cout << "Dxf_parser::parse_base_table()"
                     << std::endl;);
 
@@ -1257,7 +1257,7 @@ private:
     while (true) {
       int code;
       import_code(code);
-      SGAL_TRACE_CODE(Trace::DXF_PARSING,
+      SGAL_TRACE_CODE(m_trace_code,
                       std::cout << "Dxf_parser::parse_base_table() code: "
                       << code << std::endl;);
       if (0 == code) break;
