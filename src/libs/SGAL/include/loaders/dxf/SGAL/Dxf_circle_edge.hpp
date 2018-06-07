@@ -27,12 +27,11 @@ SGAL_BEGIN_NAMESPACE
 struct Dxf_circle_edge : Dxf_edge {
   /// Record members
   //@{
-
-  //@}
-
-  /// Record handlers
-  //@{
-
+  double m_center[2];   // Center point (in OCS)
+  double m_radius;      // Radius
+  double m_start_angle; // Start angle
+  double m_end_angle;   // End angle
+  int16_t m_is_counterclockwise; // Is counterclockwise flag
   //@}
 };
 

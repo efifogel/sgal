@@ -27,12 +27,14 @@ SGAL_BEGIN_NAMESPACE
 struct Dxf_ellipse_edge : Dxf_edge {
   /// Record members
   //@{
-
-  //@}
-
-  /// Record handlers
-  //@{
-
+  double m_center[2];   // Center point (in OCS)
+  double m_end_major_axis[2]; // Endpoint of major axis relative to center
+                        // point (in OCS)
+  double m_length_minor_axis; // Length of minor axis (percentage of major axis
+                        // length)
+  double m_start_angle; // Start angle
+  double m_end_angle;   // End angle
+  int16_t m_is_counterclockwise; // Is counterclockwise flag
   //@}
 };
 

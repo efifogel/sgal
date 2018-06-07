@@ -27,7 +27,17 @@ SGAL_BEGIN_NAMESPACE
 struct Dxf_spline_edge : Dxf_edge {
   /// Record members
   //@{
-
+#if 0
+  94 m_degree; // Degree
+  73 m_rational; // Rational
+  74 m_periodic; // Periodic
+  95 m_knots_num; // Number of knots
+  96 m_control_points_num; // Number of control points
+  40 m_knot_values; // Knot values (multiple entries)
+  10 m_control_points; // Control point (in OCS)
+  20 m_control_points; // Control point (in OCS)
+  42 m_weights; // Weights (optional, default = 1)
+#endif
   //@}
 
   /// Record handlers

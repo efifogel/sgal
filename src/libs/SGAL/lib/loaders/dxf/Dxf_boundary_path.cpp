@@ -56,7 +56,7 @@ void Dxf_boundary_path::handle_edges_num(int32_t size)
 
     int16_t type;
     m_parser->import_value(type);
-    if (type & Dxf_edge::LINE) {
+    if (type == Dxf_edge::LINE) {
       auto* line_edge = new Dxf_line_edge;
       line_edge->set_parser(m_parser);
       m_parser->parse_line_edge(*line_edge);
@@ -64,7 +64,7 @@ void Dxf_boundary_path::handle_edges_num(int32_t size)
       continue;
     }
 
-    if (type & Dxf_edge::CIRCULAR_ARC) {
+    if (type == Dxf_edge::CIRCULAR_ARC) {
       auto* circle_edge = new Dxf_circle_edge;
       circle_edge->set_parser(m_parser);
       m_parser->parse_circle_edge(*circle_edge);
@@ -72,7 +72,7 @@ void Dxf_boundary_path::handle_edges_num(int32_t size)
       continue;
     }
 
-    if (type & Dxf_edge::ELLIPTIC_ARC) {
+    if (type == Dxf_edge::ELLIPTIC_ARC) {
       auto* ellipse_edge = new Dxf_ellipse_edge;
       ellipse_edge->set_parser(m_parser);
       m_parser->parse_ellipse_edge(*ellipse_edge);
@@ -80,7 +80,7 @@ void Dxf_boundary_path::handle_edges_num(int32_t size)
       continue;
     }
 
-    if (type & Dxf_edge::SPLINE) {
+    if (type == Dxf_edge::SPLINE) {
       auto* spline_edge = new Dxf_spline_edge;
       spline_edge->set_parser(m_parser);
       m_parser->parse_spline_edge(*spline_edge);

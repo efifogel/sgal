@@ -1166,6 +1166,10 @@ void Dxf_parser::parse_xrecord_object()
 //! \brief parses a regular boundary path.
 void Dxf_parser::parse_boundary_path(Dxf_boundary_path& path)
 {
+  SGAL_TRACE_CODE(Trace::DXF,
+                  std::cout << "Dxf_parser::parse_boundary_path()"
+                  << std::endl;);
+
   while (true) {
     int code;
     import_code(code);
@@ -1195,6 +1199,10 @@ void Dxf_parser::parse_boundary_path(Dxf_boundary_path& path)
 //! \brief parses a polyline boundary path.
 void Dxf_parser::parse_polyline_boundary_path(Dxf_polyline_boundary_path& path)
 {
+  SGAL_TRACE_CODE(Trace::DXF,
+                  std::cout << "Dxf_parser::parse_polyline_boundary_path()"
+                  << std::endl;);
+
   while (true) {
     int code;
     import_code(code);
@@ -1249,6 +1257,10 @@ void Dxf_parser::parse_pattern_data(Dxf_pattern_data& pattern_data)
 //! \brief parses a line edge
 void Dxf_parser::parse_line_edge(Dxf_line_edge& edge)
 {
+  SGAL_TRACE_CODE(Trace::DXF,
+                  std::cout << "Dxf_parser::parse_line_edge()"
+                  << std::endl;);
+
   while (true) {
     int code;
     import_code(code);
@@ -1269,6 +1281,10 @@ void Dxf_parser::parse_line_edge(Dxf_line_edge& edge)
 //! \brief parses a circle edge
 void Dxf_parser::parse_circle_edge(Dxf_circle_edge& edge)
 {
+  SGAL_TRACE_CODE(Trace::DXF,
+                  std::cout << "Dxf_parser::parse_circle_edge()"
+                  << std::endl;);
+
   while (true) {
     int code;
     import_code(code);
@@ -1289,6 +1305,10 @@ void Dxf_parser::parse_circle_edge(Dxf_circle_edge& edge)
 //! \brief parses an ellipse edge
 void Dxf_parser::parse_ellipse_edge(Dxf_ellipse_edge& edge)
 {
+  SGAL_TRACE_CODE(Trace::DXF,
+                  std::cout << "Dxf_parser::parse_ellipse_edge()"
+                  << std::endl;);
+
   while (true) {
     int code;
     import_code(code);
@@ -1309,6 +1329,10 @@ void Dxf_parser::parse_ellipse_edge(Dxf_ellipse_edge& edge)
 //! \brief parses a spellipse edge
 void Dxf_parser::parse_spline_edge(Dxf_spline_edge& edge)
 {
+  SGAL_TRACE_CODE(Trace::DXF,
+                  std::cout << "Dxf_parser::parse_spline_edge()"
+                  << std::endl;);
+
   while (true) {
     int code;
     import_code(code);

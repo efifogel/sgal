@@ -27,7 +27,16 @@ typedef Dxf_record_wrapper<Dxf_ellipse_edge>  Dxf_ellipse_edge_wrapper;
 //! Record members
 template <>
 const std::map<int, Dxf_ellipse_edge_wrapper::Record_member>
-Dxf_ellipse_edge_wrapper::s_record_members = {};
+Dxf_ellipse_edge_wrapper::s_record_members = {
+  {10, {&Dxf_ellipse_edge::m_center, 2, 0}},
+  {20, {&Dxf_ellipse_edge::m_center, 2, 1}},
+  {11, {&Dxf_ellipse_edge::m_end_major_axis, 2, 0}},
+  {21, {&Dxf_ellipse_edge::m_end_major_axis, 2, 1}},
+  {40, {&Dxf_ellipse_edge::m_length_minor_axis, 1, 0}},
+  {50, {&Dxf_ellipse_edge::m_start_angle, 1, 0}},
+  {51, {&Dxf_ellipse_edge::m_end_angle, 1, 0}},
+  {73, {&Dxf_ellipse_edge::m_is_counterclockwise, 1, 0}}
+};
 
 //! Record handlers
 template <>
