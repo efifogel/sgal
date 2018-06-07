@@ -59,7 +59,6 @@ public:
     EXPORT,
     FONT,
     PROTO,
-    DXF_PARSING,
     NUM_CODES,
     MAX_NUM_CODES = 32          // must be larger than NUM_CODES
   };

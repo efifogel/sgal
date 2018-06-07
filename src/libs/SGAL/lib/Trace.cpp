@@ -39,8 +39,7 @@ std::map<String, size_t> Trace::s_trace_opts = {
   {"snapshot", Trace::SNAPSHOT},
   {"export", Trace::EXPORT},
   {"font", Trace::FONT},
-  {"proto", Trace::PROTO},
-  {"dxf-parsing", Trace::DXF_PARSING}
+  {"proto", Trace::PROTO}
 };
 
 //! The trace singleton.
@@ -79,6 +78,7 @@ size_t Trace::add_trace_opt(const String& opt)
 
   auto it = m_free_codes.begin();
   size_t code = it->lower();
+  std::cout << "add_trace_opt: " << code << std::endl;
   m_free_codes.erase(ival::closed(code, code+1));
 
   s_trace_opts[opt] = code;
