@@ -115,10 +115,10 @@ add_subdirectory(cmds)
 
 # Add all targets to the build-tree export set
 if (SGAL_USE_SCGAL)
-  export(TARGETS SGAL SCGAL player-bin
+  export(TARGETS SGAL DXF SCGAL player-bin
     FILE "${PROJECT_BINARY_DIR}/SGALTargets.cmake")
 else()
-  export(TARGETS SGAL player-bin
+  export(TARGETS SGAL DXF player-bin
     FILE "${PROJECT_BINARY_DIR}/SGALTargets.cmake")
 endif()
 
