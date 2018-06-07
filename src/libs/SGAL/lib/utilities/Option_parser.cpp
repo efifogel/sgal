@@ -39,33 +39,6 @@ SGAL_BEGIN_NAMESPACE
 
 namespace po = boost::program_options;
 
-//! \brief overloads the 'validate' function for the user-defined class.
-void validate(boost::any& v, const std::vector<std::string>& values,
-              std::vector<Option_parser::Trace_id>* /* target_type */, int)
-{
-  typedef Option_parser::Trace_id               Trace_id;
-  typedef std::vector<Trace_id>                 Vector_trace_id;
-
-  auto* trace = Trace::get_instance();
-  auto code = trace->find_trace_code(values[0]);
-  std::cout << "code: " << code << std::endl;
-  std::cout << "size: " << values.size() << std::endl;
-  if (code == Trace::INVALID) {
-    throw po::validation_error(po::validation_error::invalid_option_value);
-    return;
-  }
-  if (v.empty()) {
-    Vector_trace_id vec;
-    vec.push_back(Trace_id(code));
-    v = boost::any(vec);
-  }
-  else {
-    Vector_trace_id vec = boost::any_cast<Vector_trace_id>(v);
-    vec.push_back(Trace_id(code));
-    v = boost::any(vec);
-  }
-}
-
 //! \brief constructs.
 Option_parser::Option_parser() :
   m_config_opts("SGAL configuration options"),
@@ -76,12 +49,17 @@ Option_parser::Option_parser() :
   typedef std::vector<std::string> vs;
 
   // Options allowed on the command line, config file, or env. variables
+  // We must keep the trace-options as strings, and NOT convert them on the fly,
+  // using, e.g., a validator, to trace codes, because at the time that the
+  // program options are parsed, we do not know all trace codes yet. Some trace
+  // codes might be registered by a dynamically loaded library, which is loaded
+  // after the program options are parsed.
   m_config_opts.add_options()
     ("quite,q", po::value<Boolean>(&m_quite)->default_value(true),
      "quite mode")
     ("verbose,v", po::value<Uint>(&m_verbose)->default_value(0),
      "verbose level")
-    ("trace,T", po::value<std::vector<Trace_id> >()->composing(),
+    ("trace,T", po::value<vs>()->composing(),
      "trace options\n"
      "  graphics\n"
      "  vrml_parsing\n"
@@ -154,27 +132,30 @@ void Option_parser::operator()(Int32 argc, Char* argv[])
 //! \brief applies the options.
 void Option_parser::apply()
 {
-  std::cout << "apply" << std::endl;
   Generic_option_parser::apply();
   Conf_option_parser::apply();
   Modeling_option_parser::apply();
   IO_option_parser::apply();
   Bench_option_parser::apply();
-
-  typedef std::vector<Trace_id>                   Vector_trace_id;
-  if (m_variable_map.count("trace")) {
-    auto& traces = m_variable_map["trace"].as<Vector_trace_id>();
-    for (auto it = traces.begin(); it != traces.end(); ++it) {
-      std::cout << "Enabling: " << it->m_id << std::endl;
-      Trace::get_instance()->enable(it->m_id);
-    }
-  }
 }
 
 //! \brief configures the scene graph.
 void Option_parser::configure(Scene_graph* scene_graph)
 {
-  std::cout << "configure" << std::endl;
+  typedef std::vector<std::string> vs;
+  if (m_variable_map.count("trace")) {
+    auto& traces = m_variable_map["trace"].as<vs>();
+    for (auto it = traces.begin(); it != traces.end(); ++it) {
+      auto code = Trace::get_instance()->find_trace_code(*it);
+      if (code == Trace::INVALID) {
+        throw po::validation_error(po::validation_error::invalid_option_value,
+                                   "--trace", *it);
+        continue;
+      }
+      Trace::get_instance()->enable(code);
+    }
+  }
+
   if (!scene_graph) return;
   auto* conf = scene_graph->get_configuration();
   if (conf) {

@@ -25,13 +25,14 @@
 #include "SGAL/Trace.hpp"
 
 #include "dxf/basic.hpp"
+// #include "dxf/Base_parser.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 extern "C" void BOOST_EXTENSION_EXPORT_DECL dxf_init()
 {
   // auto* trace = Trace::get_instance();
-  // trace->add_trace_opt("dxf-parsing");
+  // Base_parser::m_trace_code = trace->add_trace_opt("dxf-parsing");
 }
 
 SGAL_END_NAMESPACE

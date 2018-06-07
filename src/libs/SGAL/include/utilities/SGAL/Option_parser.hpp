@@ -55,17 +55,6 @@ public:
   typedef std::vector<std::string>              Plugin;
   typedef Plugin::const_iterator                Plugin_const_iterator;
 
-  /*! Trace id used by the parser.
-   * This is needed to customize the conversion of strings to trace codes, which
-   * are of a standard type, namely type size_t. Using this struct it is
-   * possible to overload the validate function and convert strings to objects
-   * of type Trace_id (such that each holds a code of type size_t).
-   */
-  struct Trace_id {
-    Trace_id(size_t id) : m_id(id) {}
-    size_t m_id;
-  };
-
   /*! Construct default. */
   Option_parser();
 
