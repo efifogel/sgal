@@ -21,6 +21,8 @@
  * Converts an image to a height map
  */
 
+#include <stdexcept>
+
 #include <boost/lexical_cast.hpp>
 
 #include "SGAL/basic.hpp"
@@ -180,12 +182,43 @@ void Image_to_height_map::execute()
   // std::cout << "Width: " << width << std::endl;
   // std::cout << "Height: " << height << std::endl;
   // std::cout << "Format: " << format << std::endl;
+  // std::cout << "Name: " << m_image->get_format_name(format) << std::endl;
+  // std::cout << "# components: " << m_image->get_component_count() << std::endl;
+
+  // Convert to height map:
   size_t j(0);
   Float factor = 16.0f/256.0f;
-  for (size_t i = 0; i < size; ++i) {
-    heights[i] = static_cast<Float>(pixels[j]) * factor;
-    j += 4;
+  switch (format) {
+   case Image::kLuminance8:
+    for (size_t i = 0; i < size; ++i) {
+      heights[i] = static_cast<Float>(pixels[j]) * factor;
+      ++j;
+    }
+    break;
+
+   case Image::kRGB8_8_8:
+    for (size_t i = 0; i < size; ++i) {
+      float val(0);
+      for (auto k = 0; k < 3; ++k) val += static_cast<Float>(pixels[j+k]);
+      val /= 3.0;
+      heights[i] = val * factor;
+      j += 3;
+    }
+    break;
+
+   case Image::kRGBA8_8_8_8:
+    for (size_t i = 0; i < size; ++i) {
+      float val(0);
+      for (auto k = 0; k < 3; ++k) val += static_cast<Float>(pixels[j+k]);
+      val /= 3.0;
+      heights[i] = val * factor;
+      j += 4;
+    }
+    break;
+
+   default: throw(std::runtime_error("Error: unrecognized format!"));
   }
+
   auto* height_map_field = get_field(HEIGHT_MAP);
   if (height_map_field != nullptr) height_map_field->cascade();
 
