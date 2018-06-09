@@ -24,6 +24,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Loader_code.hpp"
+#include "SGAL/Trace.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

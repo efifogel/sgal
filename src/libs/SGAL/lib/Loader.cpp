@@ -22,6 +22,7 @@
 #include <sstream>
 #include <vector>
 #include <list>
+
 #include <boost/regex.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -42,7 +43,7 @@
 #include "SGAL/Normal_array.hpp"
 #include "SGAL/Tex_coord_array_2d.hpp"
 #include "SGAL/find_file.hpp"
-#include "SGAL/Dxf_parser.hpp"
+#include "SGAL/Base_loader.hpp"
 
 #include "Vrml_scanner.hpp"
 
@@ -171,22 +172,22 @@ Loader_code Loader::load(const char* filename, Scene_graph* sg)
     }
   }
 
-  // If the extension is .dxf, assume that the file is in the dxf format.
-  // If the return code of the loader is positive, the file might be in a
-  // different format. In this case, continue trying matching.
-  else if (boost::iequals(file_extension, ".dxf")) {
-    sg->set_input_format_id(File_format_3d::ID_DXF);
-    auto* root = sg->initialize();
+  // // If the extension is .dxf, assume that the file is in the dxf format.
+  // // If the return code of the loader is positive, the file might be in a
+  // // different format. In this case, continue trying matching.
+  // else if (boost::iequals(file_extension, ".dxf")) {
+  //   sg->set_input_format_id(File_format_3d::ID_DXF);
+  //   auto* root = sg->initialize();
 
-    Dxf_parser parser(sg);
-    auto rc = parser(is, filename);
-    is.close();
-    if (rc == Loader_code::SUCCESS) return rc;
-    if (rc == Loader_code::FAILURE) {
-      throw Parse_error(m_filename);
-      return rc;
-    }
-  }
+  //   Dxf_parser parser(sg);
+  //   auto rc = parser(is, filename);
+  //   is.close();
+  //   if (rc == Loader_code::SUCCESS) return rc;
+  //   if (rc == Loader_code::FAILURE) {
+  //     throw Parse_error(m_filename);
+  //     return rc;
+  //   }
+  // }
 
   // Try registered loaders
   else {
