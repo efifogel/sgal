@@ -55,9 +55,7 @@ Trace* Trace::get_instance()
 //! \brief constructs.
 Trace::Trace() :
   m_signature(0x0)
-{
-  m_free_codes.insert(ival::closed(NUM_CODES, MAX_NUM_CODES));
-}
+{ m_free_codes.insert(ival::closed(NUM_CODES, MAX_NUM_CODES)); }
 
 //! \brief obtains the number of trace options.
 size_t Trace::trace_opts_size() const { return s_trace_opts.size(); }
@@ -69,8 +67,8 @@ size_t Trace::find_trace_code(const String& opt) const
   return (it == s_trace_opts.end()) ? INVALID : it->second;
 }
 
-//! \brief adds a trace option.
-size_t Trace::add_trace_opt(const String& opt)
+//! \brief registers a trace option.
+size_t Trace::doregister_trace_opt(const String& opt)
 {
   SGAL_assertion_msg(! m_free_codes.empty(), "Increase MAX_NUM_CODES!");
   auto tit = s_trace_opts.find(opt);
@@ -85,8 +83,8 @@ size_t Trace::add_trace_opt(const String& opt)
   return code;
 }
 
-//! \brief removes a trace option.
-void Trace::remove_trace_opt(const String& opt)
+//! \brief unregisters a trace option.
+void Trace::unregister_trace_opt(const String& opt)
 {
   auto it = s_trace_opts.find(opt);
   if (it == s_trace_opts.end()) return;

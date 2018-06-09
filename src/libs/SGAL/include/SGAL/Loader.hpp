@@ -19,6 +19,8 @@
 #ifndef SGAL_LOADER_HPP
 #define SGAL_LOADER_HPP
 
+#include <map>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/regex.hpp>
 
@@ -40,11 +42,14 @@ class Normal_array;
 class Tex_coord_array_2d;
 class Appearance;
 class Material;
+class Base_loader;
 
 class SGAL_SGAL_DECL Loader {
 public:
-  /*! Construct */
-  Loader();
+  /*! Obtain the trace singleton.
+   * \return the trace singleton.
+   */
+  static Loader* get_instance();
 
   /*! Load a scene graph from a file.
    * \param[in] filename the name of the file to load.
@@ -126,6 +131,11 @@ public:
    */
   bool multiple_shapes() const;
 
+  /*! Register a loader.
+   * \param[in] the new loader.
+   */
+  void doregister_loader(const String& extension, Base_loader* loader);
+
 protected:
   class Triangle {
   public:
@@ -156,6 +166,10 @@ private:
   typedef boost::shared_ptr<Tex_coord_array_2d>     Shared_tex_coord_array_2d;
   typedef boost::shared_ptr<Appearance>             Shared_appearance;
   typedef boost::shared_ptr<Material>               Shared_material;
+
+  /*! Construct.
+   */
+  Loader();
 
   /*! Indicates whether multiple shape nodes should represent the entire mesh
    * when colors are present. When colors are not present this flag has no
@@ -227,6 +241,12 @@ private:
                          Polygon_indices& coord_indices,
                          Polygon_indices& normal_indices,
                          Polygon_indices& tex_coord_indices);
+
+  //! Loaders.
+  std::map<String, Base_loader*> m_loaders;
+
+  //! The singleton.
+  static Loader* s_instance;
 };
 
 /*! \brief sets the flag that indicates whether to construct multiple shapes when

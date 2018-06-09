@@ -246,15 +246,15 @@ void Player_scene::create_scene(char* data, int size)
     return;
   }
 
-  SGAL::Loader loader;
-  loader.set_multiple_shapes(m_option_parser->multiple_shapes());
+  auto* loader = SGAL::Loader::get_instance();
+  loader->set_multiple_shapes(m_option_parser->multiple_shapes());
   if (0 < m_option_parser->get_num_input_files()) {
     const auto& filename = m_option_parser->get_input_file(0);
-    auto rc = loader.load(data, size, filename.c_str(), m_scene_graph);
+    auto rc = loader->load(data, size, filename.c_str(), m_scene_graph);
     if (rc == SGAL::Loader_code::FAILURE) return;
   }
   else {
-    auto rc = loader.load(data, size, m_scene_graph);
+    auto rc = loader->load(data, size, m_scene_graph);
     if (rc == SGAL::Loader_code::FAILURE) return;
   }
   print_stat();
@@ -310,9 +310,9 @@ void Player_scene::create_scene()
   }
 
   // Load the input file.
-  SGAL::Loader loader;
-  loader.set_multiple_shapes(m_option_parser->multiple_shapes());
-  auto rc = loader.load(m_fullname.c_str(), m_scene_graph);
+  auto* loader = SGAL::Loader::get_instance();
+  loader->set_multiple_shapes(m_option_parser->multiple_shapes());
+  auto rc = loader->load(m_fullname.c_str(), m_scene_graph);
   if (rc == SGAL::Loader_code::FAILURE) return;
   print_stat();
 

@@ -48,6 +48,16 @@
 
 SGAL_BEGIN_NAMESPACE
 
+//! The Loader singleton.
+Loader* Loader::s_instance = nullptr;
+
+//! \brief obtains a trace singleton.
+Loader* Loader::get_instance()
+{
+  if (!s_instance) s_instance = new Loader();
+  return s_instance;
+}
+
 //! \brief constructs.
 Loader::Loader() : m_multiple_shapes(false) {}
 
@@ -164,16 +174,32 @@ Loader_code Loader::load(const char* filename, Scene_graph* sg)
   // If the extension is .dxf, assume that the file is in the dxf format.
   // If the return code of the loader is positive, the file might be in a
   // different format. In this case, continue trying matching.
-  if (boost::iequals(file_extension, ".dxf")) {
+  else if (boost::iequals(file_extension, ".dxf")) {
     sg->set_input_format_id(File_format_3d::ID_DXF);
     auto* root = sg->initialize();
 
-    Dxf_parser parser(is, sg, filename);
-    auto rc = parser();
+    Dxf_parser parser(sg);
+    auto rc = parser(is, filename);
     is.close();
-    if (static_cast<int>(rc) <= 0) {
-      if (static_cast<int>(rc) < 0) throw Parse_error(m_filename);
+    if (rc == Loader_code::SUCCESS) return rc;
+    if (rc == Loader_code::FAILURE) {
+      throw Parse_error(m_filename);
       return rc;
+    }
+  }
+
+  // Try registered loaders
+  else {
+    auto it = m_loaders.find(file_extension);
+    if (it != m_loaders.end()) {
+      auto& loader = *(it->second);
+      auto rc = loader(is, m_filename);
+      is.close();
+      if (rc == Loader_code::SUCCESS) return rc;
+      if (rc == Loader_code::FAILURE) {
+        throw Parse_error(m_filename);
+        return rc;
+      }
     }
   }
 
@@ -1318,5 +1344,9 @@ Loader_code Loader::parse_obj(std::istream& is, Scene_graph* sg)
   scanner.pop_state();
   return Loader_code::SUCCESS;
 }
+
+//! \brief registers a loader.
+void Loader::doregister_loader(const String& extension, Base_loader* loader)
+{ m_loaders[extension] = loader; }
 
 SGAL_END_NAMESPACE

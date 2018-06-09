@@ -297,20 +297,22 @@ Dxf_base_object_wrapper::s_record_members = {
 };
 
 //! \brief constructs.
-Dxf_parser::Dxf_parser(std::istream& is, Scene_graph* sg,
-                       const String& filename,
-                       bool report_unrecognized_code) :
-  Dxf_base_parser(is, filename),
+Dxf_parser::Dxf_parser(Scene_graph* sg) :
+  Base_loader(sg),
   m_pending_code(0),
   m_is_pending(false),
-  m_scene_graph(sg),
   m_extended_data(nullptr),
-  m_report_unrecognized_code(report_unrecognized_code)
+  m_report_unrecognized_code(false)
 {}
 
 //! \brief parses.
-Loader_code Dxf_parser::operator()()
+Loader_code Dxf_parser::operator()(std::istream& is, const String& filename)
 {
+  Base_loader::operator()(is, filename);
+  m_pending_code = 0;
+  m_is_pending = false;
+  m_extended_data = nullptr;
+
   while (true) {
     int n;
     import_code(n);
@@ -725,7 +727,7 @@ void Dxf_parser::parse_thumbnailimage()
 void Dxf_parser::read_header_member()
 {
   char c;
-  m_is >> c;
+  (*m_is) >> c;
   SGAL_assertion(c == '$');
   std::string str;
   import_value(str);
@@ -802,8 +804,8 @@ void Dxf_parser::read_header_member()
                     << s_code_type_names[ct] << std::endl;);
     SGAL_assertion(DOUBLE == ct);
     if (dim == 2)
-      m_is >> (m_header.*(boost::get<Double_2d_header>(handle)))[i++];
-    else m_is >> (m_header.*(boost::get<Double_3d_header>(handle)))[i++];
+      (*m_is) >> (m_header.*(boost::get<Double_2d_header>(handle)))[i++];
+    else (*m_is) >> (m_header.*(boost::get<Double_3d_header>(handle)))[i++];
     ++m_line;
   }
 }
@@ -812,7 +814,7 @@ void Dxf_parser::read_header_member()
 void Dxf_parser::read_comment()
 {
   std::string str;
-  std::getline(m_is, str);
+  std::getline(*m_is, str);
 }
 
 //! \brief handles an unrecognized code.

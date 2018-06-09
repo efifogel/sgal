@@ -33,7 +33,7 @@
 
 #include "SGAL/Loader_code.hpp"
 #include "SGAL/Dxf_importer.hpp"
-#include "SGAL/Dxf_base_parser.hpp"
+#include "SGAL/Base_loader.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/basic.hpp"
 #include "SGAL/Dxf_header.hpp"
@@ -139,14 +139,13 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Scene_graph;
 class Group;
 class Dxf_boundary_path;
 class Dxf_polyline_boundary_path;
 class Dxf_pattern_data;
 
 //!
-class SGAL_SGAL_DECL Dxf_parser : public Dxf_base_parser {
+class SGAL_SGAL_DECL Dxf_parser : public Base_loader {
 public:
 
   friend Dxf_hatch_entity;
@@ -157,15 +156,17 @@ public:
 
   /*! Construct.
    */
-  Dxf_parser(std::istream& is, Scene_graph* sg, const String& filename,
-             bool report_unrecognized_code = false);
+  Dxf_parser(Scene_graph* sg);
 
   /*! Parse.
    */
-  Loader_code operator()();
+  virtual Loader_code operator()(std::istream& is, const String& filename);
+
+  /*! Set the flag that determines whether to report unrecognized code.
+   */
+  void set_report_unrecognized_code(bool flag);
 
 protected:
-
   // Section parsers:
   void parse_header();
   void parse_classes();
@@ -899,9 +900,6 @@ private:
   //! Indicates whether there is a code pending.
   bool m_is_pending;
 
-  //! The scene graph.
-  Scene_graph* m_scene_graph;
-
   //! Header data
   Dxf_header m_header;
 
@@ -1045,8 +1043,8 @@ private:
       m_is_pending = false;
     }
     else {
-      m_is >> code;
-      m_is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      (*m_is) >> code;
+      m_is->ignore(std::numeric_limits<std::streamsize>::max(), '\n');
       ++m_line;
     }
     SGAL_TRACE_CODE(m_trace_code,
@@ -1156,7 +1154,7 @@ private:
   void read_xdata_block(int code, Record& record)
   {
     char c;
-    m_is >> c;
+    (*m_is) >> c;
     if ('{' != c) {
       //! \todo when is this valid and what should we do here?
       String str;
@@ -1167,7 +1165,7 @@ private:
     String name;
     if (102 == code) import_value(name);
     else {
-      m_is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      m_is->ignore(std::numeric_limits<std::streamsize>::max(), '\n');
       ++m_line;
     }
     String str;
@@ -1418,6 +1416,10 @@ private:
    */
   void add_polylines(const Dxf_hatch_entity& hatch_entity, Group* root);
 };
+
+//! \brief sets the flag that determines whether to report unrecognized code.
+inline void Dxf_parser::set_report_unrecognized_code(bool flag)
+{ m_report_unrecognized_code = flag; }
 
 SGAL_END_NAMESPACE
 

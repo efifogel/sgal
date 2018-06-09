@@ -105,16 +105,16 @@ public:
    */
   size_t find_trace_code(const String& opt) const;
 
-  /*! Add a trace option.
+  /*! Register a trace option.
    * \param[in] the new option.
    * \return the code allocated for the external option.
    */
-  size_t add_trace_opt(const String& opt);
+  size_t doregister_trace_opt(const String& opt);
 
-  /*! Remove a trace option.
+  /*! Unregister a trace option.
    * \param[in] the option to remove.
    */
-  void remove_trace_opt(const String& opt);
+  void unregister_trace_opt(const String& opt);
 
 private:
   typedef boost::icl::interval_set<size_t>      set_t;
