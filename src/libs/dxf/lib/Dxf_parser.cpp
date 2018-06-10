@@ -351,6 +351,8 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
   for (const auto& hatch_entity : m_hatch_entities)
     add_polylines(hatch_entity, root);
 
+  clear();
+
   return SGAL::Loader_code::SUCCESS;
 }
 
@@ -1357,6 +1359,46 @@ void Dxf_parser::parse_spline_edge(Dxf_spline_edge& edge)
     export_code(code);
     return;
   }
+}
+
+//! \brief clears the parser. Deallocate data structure and prepare for reuse.
+// At this point only the hatch entity and the material objects are stored in
+// containers, which must be cleared.
+void Dxf_parser::clear()
+{
+  // Clear tables
+  m_appid_table.clear();
+  m_block_record_table.clear();
+  m_dimstyle_table.clear();
+  m_layer_table.clear();
+  m_ltype_table.clear();
+  m_style_table.clear();
+  m_ucs_table.clear();
+  m_view_table.clear();
+  m_vport_table.clear();
+
+  // Clear classes
+  m_classes.clear();
+
+  // Clear blocks
+  m_blocks.clear();
+
+  // Clear entities
+  for (auto& hatch : m_hatch_entities) {
+    for (auto* path : hatch.m_boundary_paths) {
+      auto* boundary_path = dynamic_cast<Dxf_boundary_path*>(path);
+      if (boundary_path) {
+        for (auto* edge : boundary_path->m_edges) delete edge;
+        boundary_path->m_edges.clear();
+      }
+      delete path;
+    }
+    hatch.m_boundary_paths.clear();
+  }
+  m_hatch_entities.clear();
+
+  // Clear objects
+  m_material_objects.clear();
 }
 
 DXF_END_NAMESPACE

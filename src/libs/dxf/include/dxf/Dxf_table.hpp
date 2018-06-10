@@ -38,6 +38,8 @@ struct SGAL_SGAL_DECL Dxf_table : Dxf_base_table {
 
   Dxf_record_wrapper<Entry> m_entry_wrapper;
   std::vector<Entry> m_entries;
+
+  void clear() { m_entries.clear(); }
 };
 
 DXF_END_NAMESPACE

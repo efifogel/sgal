@@ -1033,6 +1033,10 @@ private:
   //! Marker
   SGAL::String m_marker;
 
+  /*! Clear the parser. Deallocate data structure and prepare for reuse.
+   */
+  void clear();
+
   /*! Obtain the type of a code
    * \param code the given code.
    */
