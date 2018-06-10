@@ -24,7 +24,7 @@
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_dictionaryvar_object.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_dictionaryvar_object>
   Dxf_dictionaryvar_object_wrapper;
@@ -43,4 +43,4 @@ template <>
 const std::map<int, Dxf_dictionaryvar_object_wrapper::Record_handler_type>
 Dxf_dictionaryvar_object_wrapper::s_record_handlers = {};
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

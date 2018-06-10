@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_HEADER_HPP
-#define SGAL_DXF_HEADER_HPP
+#ifndef DXF_HEADER_HPP
+#define DXF_HEADER_HPP
 
 #include <cstdint>
 
@@ -26,11 +26,11 @@
 
 #include "dxf/basic.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct SGAL_SGAL_DECL Dxf_header {
   int16_t m_acadmaintver; // Maintenance version number (should be ignored)
-  String m_acadver;     // The AutoCAD drawing database version number:
+  SGAL::String m_acadver; // The AutoCAD drawing database version number:
                         // AC1006 = R10
                         // AC1009 = R11 and R12
                         // AC1012 = R13
@@ -51,9 +51,9 @@ struct SGAL_SGAL_DECL Dxf_header {
   int16_t m_cecolor;    // Current entity color number:
                         // 0 = BYBLOCK; 256 = BYLAYER
   double m_celtscale;   // Current entity linetype scale
-  String m_celtype;     // Entity linetype name, or BYBLOCK or BYLAYER
+  SGAL::String m_celtype; // Entity linetype name, or BYBLOCK or BYLAYER
   int8_t m_celweight;   // Lineweight of new objects
-  String m_cepsnid;     // Plotstyle handle of new objects; if CEPSNTYPE is 3,
+  SGAL::String m_cepsnid; // Plotstyle handle of new objects; if CEPSNTYPE is 3,
                         // then this value indicates the handle
   int8_t m_cepsntype;   // Plot style type of new objects:
                         // 0 = Plot style by layer
@@ -64,11 +64,11 @@ struct SGAL_SGAL_DECL Dxf_header {
   double m_chamferb;    // Second chamfer distance
   double m_chamferc;    // Chamfer length
   double m_chamferd;    // Chamfer angle
-  String m_clayer;      // Current layer name
+  SGAL::String m_clayer; // Current layer name
   int16_t m_cmljust;    // Current multiline justification:
                         // 0 = Top; 1 = Middle; 2 = Bottom
   double m_cmlscale;    // Current multiline scale
-  String m_cmlstyle;    // Current multiline style name
+  SGAL::String m_cmlstyle; // Current multiline style name
   int8_t m_cshadow;     // Shadow mode for a 3D object:
                         // 0 = Casts and receives shadows
                         // 1 = Casts shadows
@@ -77,8 +77,8 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // Note: Starting with AutoCAD 2016-based products,
                         // this variable is obsolete but still supported for
                         // backwards compatibility.
-  String m_customproperty; //
-  String m_custompropertytag; //
+  SGAL::String m_customproperty; //
+  SGAL::String m_custompropertytag; //
   int16_t m_dimadec;    // Number of precision places displayed in angular
                         // dimensions
   int16_t m_dimalt;     // Alternate unit dimensioning performed if nonzero
@@ -117,7 +117,7 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // 4 = Suppresses leading zeros in decimal dimensions
                         // 8 = Suppresses trailing zeros in decimal dimensions
                         // 12 = Suppresses both leading and trailing zeros
-  String m_dimapost;    // Alternate dimensioning suffix
+  SGAL::String m_dimapost; // Alternate dimensioning suffix
   int16_t m_dimaso;     // 1 = Create associative dimensioning
                         // 0 = Draw individual entities
                         // Note: Obsolete; see
@@ -158,9 +158,9 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // 1 = Suppresses leading zeros in decimal dimensions
                         // 2 = Suppresses trailing zeros in decimal dimensions
                         // 3 = Suppresses leading and trailing zeros
-  String m_dimblk;      // Arrow block name
-  String m_dimblk1;     // First arrow block name
-  String m_dimblk2;     // Second arrow block name
+  SGAL::String m_dimblk; // Arrow block name
+  SGAL::String m_dimblk1; // First arrow block name
+  SGAL::String m_dimblk2; // Second arrow block name
   double m_dimcen;      // Size of center mark/lines
   int16_t m_dimclrd;    // Dimension line color:
                         // range is 0 = BYBLOCK; 256 = BYLAYER
@@ -193,7 +193,7 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // 3 = Above and center-justified to first extension line
                         // 4 = Above and center-justified to second extension
                         //     line
-  String m_dimldrblk;   // Arrow block name for leaders
+  SGAL::String m_dimldrblk; // Arrow block name for leaders
   double m_dimlfac;     // Linear measurements scale factor
   int16_t m_dimlim;     // Dimension limits generated if nonzero
   int16_t m_dimlunit;   // Sets units for all dimension types except Angular:
@@ -213,7 +213,7 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // -2 = ByLayer
                         // -1 = ByBlock
                         // 0-211 = an integer representing 100th of mm
-  String m_dimpost;     // General dimensioning suffix
+  SGAL::String m_dimpost; // General dimensioning suffix
   double m_dimrnd;      // Rounding value for dimension distances
   int16_t m_dimsah;     // Use separate arrow blocks if nonzero
   double m_dimscale;    // Overall dimensioning scale factor
@@ -229,7 +229,7 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // 0 = Drag original image
   int16_t m_dimsoxd;    // Suppress outside-extensions dimension lines if
                         // nonzero
-  String m_dimstyle;    // Dimension style name
+  SGAL::String m_dimstyle; // Dimension style name
   int16_t m_dimtad;     // Text above dimension line if nonzero
   int16_t m_dimtdec;    // Number of decimal places to display the tolerance
                         // values
@@ -255,7 +255,7 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // 0 = Draws arrowheads
                         // >0 = Draws oblique strokes instead of arrowheads
   double m_dimtvp;      // Text vertical position
-  String m_dimtxsty;    // Dimension text style
+  SGAL::String m_dimtxsty; // Dimension text style
   double m_dimtxt;      // Dimensioning text height
   int16_t m_dimtzin;    // Controls suppression of zeros for tolerance values:
                         // 0 = Suppresses zero feet and precisely zero inches
@@ -281,10 +281,10 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // objects in Wireframe mode:
                         // 0 = Off
                         // 1 = On
-  String m_dragvs;      // Hard-pointer ID to visual style while creating 3D
+  SGAL::String m_dragvs; // Hard-pointer ID to visual style while creating 3D
                         // solid primitives. The default value is NULL
-  String m_dwgcodepage; // Drawing code page; set to the system code page when
-                        // a new drawing is created, but not otherwise
+  SGAL::String m_dwgcodepage; // Drawing code page; set to the system code page
+                        //  when a new drawing is created, but not otherwise
                         // maintained by AutoCAD
   double m_elevation;   // Current elevation set by ELEV command
   int8_t m_endcaps;     // Lineweight endcaps setting for new objects:
@@ -308,7 +308,7 @@ struct SGAL_SGAL_DECL Dxf_header {
                         //     Microsoft Windows and AutoCAD
   double m_filletrad;   // Fillet radius
   int16_t m_fillmode;   // Fill mode on if nonzero
-  String m_fingerprintguid; // Set at creation time, uniquely identifies a
+  SGAL::String m_fingerprintguid; // Set at creation time, uniquely identifies a
                         // particular drawing
   int8_t m_halogap;     // Specifies a gap to be displayed where an object is
                         // hidden by another object; the value is specified as
@@ -316,13 +316,13 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // level. A haloed line is shortened at the point where
                         // it is hidden when HIDE or the Hidden option of
                         // SHADEMODE is used
-  String m_handseed;    // Next available handle
+  SGAL::String m_handseed;    // Next available handle
   int8_t m_hidetext;    // Specifies HIDETEXT system variable:
                         // 0 = HIDE ignores text objects when producing the
                         //     hidden view
                         // 1 = HIDE does not ignore text objects
-  String m_hyperlinkbase; // Path for all relative hyperlinks in the drawing.
-                        // If null, the drawing path is used
+  SGAL::String m_hyperlinkbase; // Path for all relative hyperlinks in the
+                        // drawing. If null, the drawing path is used
  int8_t m_indexctl;     // Controls whether layer and spatial indexes are
                         // created and saved in drawing files:
                         // 0 = No indexes are created
@@ -359,10 +359,10 @@ struct SGAL_SGAL_DECL Dxf_header {
   int16_t m_interferecolor; // Represents the ACI color index of the
                         // "interference objects" created during the INTERFERE
                         // command. Default value is 1
-  String m_interfereobjvs; // Hard-pointer ID to the visual style for
+  SGAL::String m_interfereobjvs; // Hard-pointer ID to the visual style for
                         // interference objects. Default visual style is
                         // Conceptual.
-  String m_interferevpvs; // Hard-pointer ID to the visual style for the
+  SGAL::String m_interferevpvs; // Hard-pointer ID to the visual style for the
                         // viewport during interference checking. Default visual
                         // style is 3d Wireframe.
   int16_t m_intersectioncolor; // Specifies the entity color of intersection
@@ -380,7 +380,7 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // 1= Round
                         // 2 = Angle
                         // 3 = Flat
-  String m_last_saved_by;
+  SGAL::String m_last_saved_by;
   int16_t m_limcheck;   // Nonzero if limits checking is on
   double m_limmax[2];   // XY drawing limits upper-right corner (in WCS)
   double m_limmin[2];   // XY drawing limits lower-left corner (in WCS)
@@ -395,7 +395,7 @@ struct SGAL_SGAL_DECL Dxf_header {
   int16_t m_measurement; // Sets drawing units:
                         // 0 = English
                         // 1 = Metric
-  String m_menu;        // Name of menu file
+  SGAL::String m_menu;  // Name of menu file
   int16_t m_mirrtext;   // Mirror text if nonzero
   int16_t m_obscolor;   // Specifies the color of obscured lines. An obscured
                         // line is a hidden line made visible by changing its
@@ -441,9 +441,9 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // 0 = Each segment of the polyline starts and ends
                         // with a dash
   double m_plinewid;    // Default polyline width
-  String m_projectname; // Assigns a project name to the current drawing. Used
-                        // when an external reference or image is not found on
-                        // its original path. The project name points to a
+  SGAL::String m_projectname; // Assigns a project name to the current drawing.
+                        // Used when an external reference or image is not found
+                        // on its original path. The project name points to a
                         // section in the registry that can contain one or more
                         // search paths for each project name defined. Project
                         // names and their search directories are created from
@@ -461,10 +461,10 @@ struct SGAL_SGAL_DECL Dxf_header {
   double m_psvpscale;   // View scale factor for new viewports:
                         // 0 = Scaled to fit
                         // >0 = Scale factor (a positive real value)
-  String m_pucsbase;    // Name of the UCS that defines the origin and
+  SGAL::String m_pucsbase; // Name of the UCS that defines the origin and
                         // orientation of orthographic UCS settings (paper
                         // space only)
-  String m_pucsname;    // Current paper space UCS name
+  SGAL::String m_pucsname; // Current paper space UCS name
   double m_pucsorg[3];  // Current paper space UCS origin
   double m_pucsorgback[3]; // Point which becomes the new UCS origin after
                         // changing paper space UCS to BACK when PUCSBASE is
@@ -484,10 +484,10 @@ struct SGAL_SGAL_DECL Dxf_header {
   double m_pucsorgtop[3]; // Point which becomes the new UCS origin after
                         // changing paper space UCS to TOP when PUCSBASE is set
                         // to WORLD
-  String m_pucsorthoref; // If paper space UCS is orthographic (PUCSORTHOVIEW
-                        // not equal to 0), this is the name of the UCS that
-                        // the orthographic UCS is relative to. If blank, UCS
-                        // is relative to WORLD
+  SGAL::String m_pucsorthoref; // If paper space UCS is orthographic
+                        // (PUCSORTHOVIEW not equal to 0), this is the name of
+                        // tthe UCS that he orthographic UCS is relative to. If
+                        // blank, UCS is relative to WORLD
   int16_t m_pucsorthoview; // Orthographic view type of paper space UCS:
                         // 0 = UCS is not orthographic
                         // 1 = Top
@@ -528,7 +528,7 @@ struct SGAL_SGAL_DECL Dxf_header {
   int16_t m_splframe;   // Spline control polygon display: 1 = On, 0 = Off
   int16_t m_splinesegs; // Number of line segments per spline patch
   int16_t m_splinetype; // Spline curve type for PEDIT Spline
-  String m_stylesheet;  // Path to the stylesheet for the drawing
+  SGAL::String m_stylesheet; // Path to the stylesheet for the drawing
   int16_t m_surftab1;   // Number of mesh tabulations in first direction
   int16_t m_surftab2;   // Number of mesh tabulations in second direction
   int16_t m_surftype;   // Surface type for PEDIT Smooth
@@ -546,15 +546,15 @@ struct SGAL_SGAL_DECL Dxf_header {
   double m_tduupdate;   // Universal date/time of the last update/save (see
                         // Special Handling of Date/Time Variables)
   double m_textsize;    // Default text height
-  String m_textstyle;   // Current text style name
+  SGAL::String m_textstyle; // Current text style name
   double m_thickness;   // Current thickness set by ELEV command
   int16_t m_tilemode;   // 1 for previous release compatibility mode;
                         // 0 otherwise
   double m_tracewid;    // Default trace width
   int16_t m_treedepth;  // Specifies the maximum depth of the spatial index
-  String m_ucsbase;     // Name of the UCS that defines the origin and
+  SGAL::String m_ucsbase; // Name of the UCS that defines the origin and
                         // orientation of orthographic UCS settings
-  String m_ucsname;     // Name of current UCS
+  SGAL::String m_ucsname; // Name of current UCS
   double m_ucsorg[3];   // Origin of current UCS (in WCS)
   double m_ucsorgback[3]; // Point which becomes the new UCS origin after
                         // changing model space UCS to BACK when UCSBASE is set
@@ -574,10 +574,10 @@ struct SGAL_SGAL_DECL Dxf_header {
   double m_ucsorgtop[3]; // Point which becomes the new UCS origin after
                         // changing model space UCS to TOP when UCSBASE is set
                         // to WORLD
-  String m_ucsorthoref; // If model space UCS is orthographic (UCSORTHOVIEW not
-                        // equal to 0), this is the name of the UCS that the
-                        // orthographic UCS is relative to. If blank, UCS is
-                        // relative to WORLD
+  SGAL::String m_ucsorthoref; // If model space UCS is orthographic
+                        // (UCSORTHOVIEW not equal to 0), this is the name of
+                        // the UCS that the orthographic UCS is relative to. If
+                        // blank, UCS is relative to WORLD
   int16_t m_ucsorthoview; // Orthographic view type of model space UCS:
                         // 0 = UCS is not orthographic
                         // 1 = Top
@@ -603,7 +603,7 @@ struct SGAL_SGAL_DECL Dxf_header {
   int16_t m_usrtimer;   // Controls the user timer for the drawing:
                         // 0 = Timer off
                         // 1 = Timer on
-  String m_versionguid; // Uniquely identifies a particular version of a
+  SGAL::String m_versionguid; // Uniquely identifies a particular version of a
                         // drawing. Updated when the drawing is modified
   int16_t m_visretain;  // Controls the properties of xref-dependent layers:
                         // 0 = Don't retain xref-dependent visibility settings
@@ -622,6 +622,6 @@ struct SGAL_SGAL_DECL Dxf_header {
                         // 1 = Can use in-place reference editing
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

@@ -24,7 +24,7 @@
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_mlinestyle_object.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_mlinestyle_object>  Dxf_mlinestyle_object_wrapper;
 
@@ -50,4 +50,4 @@ Dxf_mlinestyle_object_wrapper::s_record_handlers = {
   {6, &Dxf_mlinestyle_object::handle_element_line_style}
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

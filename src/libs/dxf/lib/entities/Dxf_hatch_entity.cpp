@@ -27,7 +27,7 @@
 #include "dxf/Dxf_boundary_path.hpp"
 #include "dxf/Dxf_polyline_boundary_path.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_hatch_entity>  Dxf_hatch_entity_wrapper;
 
@@ -116,4 +116,4 @@ void Dxf_hatch_entity::handle_pattern_definition_lines_num(int16_t size)
     m_parser->parse_pattern_data(pattern_data);
 }
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

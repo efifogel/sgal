@@ -25,7 +25,7 @@
 #include "dxf/Dxf_polyline_boundary_path.hpp"
 #include "dxf/Dxf_parser.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_polyline_boundary_path>
   Dxf_polyline_boundary_path_wrapper;
@@ -77,4 +77,4 @@ void Dxf_polyline_boundary_path::m_location_2_handler(double coord)
   m_locations.back()[2] = coord;
 }
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

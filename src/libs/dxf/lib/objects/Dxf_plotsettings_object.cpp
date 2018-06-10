@@ -19,12 +19,13 @@
 #include <map>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_plotsettings_object.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_plotsettings_object>
   Dxf_plotsettings_object_wrapper;
@@ -74,7 +75,7 @@ const std::map<int, Dxf_plotsettings_object_wrapper::Record_handler_type>
 Dxf_plotsettings_object_wrapper::s_record_handlers = {};
 
 //! Handles a marker.
-bool Dxf_plotsettings_object::handle_marker(const String& marker)
+bool Dxf_plotsettings_object::handle_marker(const SGAL::String& marker)
 { return ("AcDbPlotSettings" == marker); }
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

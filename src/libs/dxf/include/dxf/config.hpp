@@ -23,6 +23,9 @@
 
 // #include "dxf/version.hpp"
 
+#define DXF_BEGIN_NAMESPACE namespace dxf {
+#define DXF_END_NAMESPACE }
+
 ///////////////////////////////////////////////////////////////////////////////
 // Windows DLL suport
 #ifdef BOOST_HAS_DECLSPEC

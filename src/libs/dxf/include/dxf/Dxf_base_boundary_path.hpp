@@ -16,14 +16,15 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_BASE_BOUNDARY_PATH_HPP
-#define SGAL_DXF_BASE_BOUNDARY_PATH_HPP
+#ifndef DXF_BASE_BOUNDARY_PATH_HPP
+#define DXF_BASE_BOUNDARY_PATH_HPP
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct Dxf_base_boundary_path {
   enum Path_type {
@@ -55,18 +56,18 @@ struct Dxf_base_boundary_path {
   // varies Polyline boundary type data (only if boundary = polyline).
                         // See Polyline boundary data table below
   // Number of source boundary objects
-  std::vector<String> m_source_objects; // Reference to source boundary objects
-                        // (multiple entries)
+  std::vector<SGAL::String> m_source_objects; // Reference to source boundary
+                        // objects (multiple entries)
 
   //@}
 
   /// Record handlers
   //@{
   void handle_source_objects_num(int32_t size);
-  void handle_source_object(const String& handler);
+  void handle_source_object(const SGAL::String& handler);
   //@}
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

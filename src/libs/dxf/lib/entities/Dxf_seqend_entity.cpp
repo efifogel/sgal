@@ -24,7 +24,7 @@
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_seqend_entity.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_seqend_entity>  Dxf_seqend_entity_wrapper;
 
@@ -38,4 +38,4 @@ template <>
 const std::map<int, Dxf_seqend_entity_wrapper::Record_handler_type>
 Dxf_seqend_entity_wrapper::s_record_handlers = {};
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

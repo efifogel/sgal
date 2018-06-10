@@ -19,12 +19,13 @@
 #include <map>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_xrecord_object.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_xrecord_object>  Dxf_xrecord_object_wrapper;
 
@@ -54,7 +55,7 @@ const std::map<int, Dxf_xrecord_object_wrapper::Record_handler_type>
 Dxf_xrecord_object_wrapper::s_record_handlers = {};
 
 //! \brief handles a value that requires special handling.
-bool Dxf_xrecord_object::handle_value(int code, const String& value)
+bool Dxf_xrecord_object::handle_value(int code, const SGAL::String& value)
 {
   //! What to do with the values?
   if ((1 <= code) && (code <= 4)) return true;
@@ -99,4 +100,4 @@ bool Dxf_xrecord_object::handle_value(int code, double value)
   return false;
 }
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

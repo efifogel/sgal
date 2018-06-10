@@ -24,7 +24,7 @@
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_material_object.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_material_object>  Dxf_material_object_wrapper;
 
@@ -145,4 +145,4 @@ void Dxf_material_object::init()
   m_refraction_id = 0;
 }
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

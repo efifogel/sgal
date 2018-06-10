@@ -24,7 +24,7 @@
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_user_entity.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_user_entity>  Dxf_user_entity_wrapper;
 
@@ -39,7 +39,7 @@ const std::map<int, Dxf_user_entity_wrapper::Record_handler_type>
 Dxf_user_entity_wrapper::s_record_handlers = {};
 
 //! \brief handles a string value;
-bool Dxf_user_entity::handle_value(int code, const String& value)
+bool Dxf_user_entity::handle_value(int code, const SGAL::String& value)
 {
   //! \todo Implement
   return true;
@@ -66,7 +66,7 @@ bool Dxf_user_entity::handle_value(int code, int32_t value)
   return true;
 }
 
-//! \brief handles a Uint value;
+//! \brief handles a SGAL::Uint value;
 bool Dxf_user_entity::handle_value(int code, uint value)
 {
   //! \todo Implement
@@ -87,4 +87,4 @@ bool Dxf_user_entity::handle_value(int code, double value)
   return true;
 }
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

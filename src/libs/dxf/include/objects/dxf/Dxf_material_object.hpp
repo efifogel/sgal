@@ -16,21 +16,22 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_MATERIAL_OBJECT_HPP
-#define SGAL_DXF_MATERIAL_OBJECT_HPP
+#ifndef DXF_MATERIAL_OBJECT_HPP
+#define DXF_MATERIAL_OBJECT_HPP
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_object.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct Dxf_material_object : public Dxf_base_object {
   typedef Dxf_base_object                       Base;
 
-  String m_name;        // Material name (string)
-  String m_description; // m_Description (string, default null string)
+  SGAL::String m_name;  // Material name (string)
+  SGAL::String m_description; // m_Description (string, default null string)
   int16_t m_override_ambient_color; // Ambient color method (default = 0):
                         // 0 = Use current color
                         // 1 = Override current color
@@ -51,7 +52,7 @@ struct Dxf_material_object : public Dxf_base_object {
                         // 0 = Use current scene
                         // 1 = Use image file (specified by file name; null
                         //     file name specifies no map)
-  String m_diffuse_map_file_name; // Diffuse map file name (string,
+  SGAL::String m_diffuse_map_file_name; // Diffuse map file name (string,
                         // default = null string)
   int16_t m_diffuse_map_projection_method; // Projection method of diffuse
                         // map mapper (default = 1):
@@ -88,7 +89,7 @@ struct Dxf_material_object : public Dxf_base_object {
                         // 0 = Use current scene
                         // 1 = Use image file (specified by file name; null
                         // file name specifies no map)
-  String m_specular_map_file_name; // Specular map file name (string;
+  SGAL::String m_specular_map_file_name; // Specular map file name (string;
                         // default = null string)
   int16_t m_specular_map_projection_method; // Projection method of specular map
                         // mapper (default = 1):
@@ -117,7 +118,7 @@ struct Dxf_material_object : public Dxf_base_object {
                         // 0 = Use current scene
                         // 1 = Use image file (specified by file name; null
                         //     file name specifies no map)
-  String m_reflection_map_file_name; // Reflection map file name
+  SGAL::String m_reflection_map_file_name; // Reflection map file name
                         // (string; default = null string)
   int16_t m_reflection_map_projection_method; // Projection method of reflection
                         // map mapper (default = 1):
@@ -147,7 +148,7 @@ struct Dxf_material_object : public Dxf_base_object {
                         // 0 = Use current scene
                         // 1 = Use image file (specified by file name; null
                         //     file name specifies no map)
-  String m_opacity_map_file_name; // Opacity map file name (string;
+  SGAL::String m_opacity_map_file_name; // Opacity map file name (string;
                         // default = null string)
   int16_t m_opacity_map_projection_method; // Projection method of opacity map
                         // mapper (default = 1):
@@ -176,8 +177,8 @@ struct Dxf_material_object : public Dxf_base_object {
                         // 0 = Use current scene
                         // 1 = Use image file (specified by file name; null file
                         //     name specifies no map)
-  String m_bump_map_file_name; // Bump map file name (string; default = null
-                        // string)
+  SGAL::String m_bump_map_file_name; // Bump map file name (string;
+                        // default = null string)
   int16_t m_bump_map_projection_method; // Projection method of bump map mapper
                         // (default = 1):
                         // 1 = Planar
@@ -206,7 +207,7 @@ struct Dxf_material_object : public Dxf_base_object {
                         // 0 = Use current scene
                         // 1 = Use image file (specified by file name; null file
                         //     name specifies no map)
-  String m_refraction_map_file_name; // Refraction map file name
+  SGAL::String m_refraction_map_file_name; // Refraction map file name
                         // (string; default = null string)
   int16_t m_refraction_map_projection_method; // Projection method of refraction
                         // map mapper (default = 1):
@@ -240,7 +241,7 @@ struct Dxf_material_object : public Dxf_base_object {
   double m_normal_map_strength; // Normal Map Strength
   double m_normal_map_blend_factor; // Normal Map Blend Factor
   int16_t m_normal_map_source; // Normal Map Source
-  String m_normal_map_file_name; // Normal Map Source File Name
+  SGAL::String m_normal_map_file_name; // Normal Map Source File Name
   int16_t m_normal_map_projection_method; // Normal Mapper Projection
   int16_t m_normal_map_tiling_method; // Normal Mapper Tiling
   int16_t m_normal_map_auto_transform_method; // Normal Mapper Auto Transform
@@ -249,15 +250,15 @@ struct Dxf_material_object : public Dxf_base_object {
   bool m_is_anonymous;  // Material is Anonymous
   int16_t m_global_illumination_mode; // Global Illumination Mode
   int16_t m_final_gather_mode; // Final Gather Mode
-  String m_gen_proc_name; // GenProcName
+  SGAL::String m_gen_proc_name; // GenProcName
   bool m_gen_proc_boolean_value; // GenProcValBool
   int16_t m_gen_proc_integer_value; // GenProcValInt
   double m_gen_proc_real_value; // GenProcValReal
-  String m_gen_proc_text_value; // GenProcValText
+  SGAL::String m_gen_proc_text_value; // GenProcValText
   bool m_gen_proc_table_end; // GenProcTableEnd
   int16_t m_gen_proc_color_index_value; // GenProcValColorIndex
   int32_t m_gen_proc_color_rgb_value; // GenProcValColorRGB
-  String m_gen_proc_color_name; // GenProcValColorName
+  SGAL::String m_gen_proc_color_name; // GenProcValColorName
   int16_t m_map_u_tile; // Map UTile
   double m_translucence; // Translucence
   int32_t m_self_illumination; // Self-Illuminaton
@@ -340,6 +341,6 @@ struct Dxf_material_object : public Dxf_base_object {
   }
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

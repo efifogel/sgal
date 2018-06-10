@@ -24,7 +24,7 @@
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_spline_entity.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_spline_entity>  Dxf_spline_entity_wrapper;
 
@@ -65,4 +65,4 @@ Dxf_spline_entity_wrapper::s_record_handlers = {
   {31, &Dxf_spline_entity::handle_fit_point_z}
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

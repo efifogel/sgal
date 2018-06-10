@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_UCS_ENTRY_HPP
-#define SGAL_DXF_UCS_ENTRY_HPP
+#ifndef DXF_UCS_ENTRY_HPP
+#define DXF_UCS_ENTRY_HPP
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -25,11 +25,11 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_table_entry.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct SGAL_SGAL_DECL Dxf_ucs_entry : Dxf_table_entry {
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

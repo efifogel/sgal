@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_IMPORTER_HPP
-#define SGAL_DXF_IMPORTER_HPP
+#ifndef DXF_IMPORTER_HPP
+#define DXF_IMPORTER_HPP
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -26,16 +26,16 @@
 
 #include "dxf/basic.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 /*! Import a value.
  */
 template <typename T>
 struct Dxf_importer {
 
-  Base_loader& m_parser;
+  SGAL::Base_loader& m_parser;
 
-  Dxf_importer(Base_loader& parser) : m_parser(parser) {}
+  Dxf_importer(SGAL::Base_loader& parser) : m_parser(parser) {}
 
   void operator()(T& variable)
   {
@@ -56,9 +56,9 @@ struct Dxf_importer {
 template <>
 struct Dxf_importer<int8_t> {
 
-  Base_loader& m_parser;
+  SGAL::Base_loader& m_parser;
 
-  Dxf_importer(Base_loader& parser) : m_parser(parser) {}
+  Dxf_importer(SGAL::Base_loader& parser) : m_parser(parser) {}
 
   void operator()(int8_t& variable)
   {
@@ -77,33 +77,33 @@ struct Dxf_importer<int8_t> {
 /*! Import a hex value.
  */
 template <>
-struct Dxf_importer<Uint> {
+struct Dxf_importer<SGAL::Uint> {
 
-  Base_loader& m_parser;
+  SGAL::Base_loader& m_parser;
 
-  Dxf_importer(Base_loader& parser) : m_parser(parser) {}
+  Dxf_importer(SGAL::Base_loader& parser) : m_parser(parser) {}
 
-  void operator()(Uint& variable)
+  void operator()(SGAL::Uint& variable)
   {
     m_parser.input_stream() >> std::hex >> variable >> std::dec;
     m_parser.inc_line();
     SGAL_TRACE_CODE(m_parser.m_trace_code,
                     std::cout << "[" << std::to_string(m_parser.line()) << "] "
-                    << "Importing dxf Uint value: "
+                    << "Importing dxf SGAL::Uint value: "
                     << "0x" << std::hex << variable << std::dec << std::endl;);
   }
 };
 
-/*! Import a String value.
+/*! Import a SGAL::String value.
  */
 template <>
-struct Dxf_importer<String> {
+struct Dxf_importer<SGAL::String> {
 
-  Base_loader& m_parser;
+  SGAL::Base_loader& m_parser;
 
-  Dxf_importer(Base_loader& parser) : m_parser(parser) {}
+  Dxf_importer(SGAL::Base_loader& parser) : m_parser(parser) {}
 
-  void operator()(String& variable)
+  void operator()(SGAL::String& variable)
   {
     // use getline() cause the string might be empty.
     // When used immediately after whitespace-delimited input, getline
@@ -119,6 +119,6 @@ struct Dxf_importer<String> {
   }
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

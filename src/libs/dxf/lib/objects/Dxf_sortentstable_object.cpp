@@ -24,7 +24,7 @@
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_sortentstable_object.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_sortentstable_object>
   Dxf_sortentstable_object_wrapper;
@@ -39,4 +39,4 @@ template <>
 const std::map<int, Dxf_sortentstable_object_wrapper::Record_handler_type>
 Dxf_sortentstable_object_wrapper::s_record_handlers = {};
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

@@ -25,7 +25,7 @@
 #include "dxf/Dxf_style_entry.hpp"
 #include "dxf/Dxf_record_wrapper.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 /*! This file contains the description of DXF VPORT table variables. In
  * particular, it consists of the initialization of a mapping from variable
@@ -57,4 +57,4 @@ template <>
 const std::map<int, Dxf_style_wrapper::Record_handler_type>
 Dxf_style_wrapper::s_record_handlers = {};
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

@@ -22,7 +22,7 @@
 #include "dxf/Dxf_line_edge.hpp"
 #include "dxf/Dxf_record_wrapper.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_line_edge>  Dxf_line_edge_wrapper;
 
@@ -41,4 +41,4 @@ template <>
 const std::map<int, Dxf_line_edge_wrapper::Record_handler_type>
 Dxf_line_edge_wrapper::s_record_handlers = {};
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

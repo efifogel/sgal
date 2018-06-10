@@ -16,22 +16,24 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_PLOTSETTINGS_OBJECT_HPP
-#define SGAL_DXF_PLOTSETTINGS_OBJECT_HPP
+#ifndef DXF_PLOTSETTINGS_OBJECT_HPP
+#define DXF_PLOTSETTINGS_OBJECT_HPP
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_object.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct Dxf_plotsettings_object : public Dxf_base_object {
   typedef Dxf_base_object                       Base;
-  String m_page_setup_name; // Page Setup name
-  String m_printer_name; // Name of system printer or plot configuration file
-  String m_paper_size;  // Paper size
-  String m_plot_view_name; // Plot view name
+  SGAL::String m_page_setup_name; // Page Setup name
+  SGAL::String m_printer_name; // Name of system printer or plot configuration
+                        // file
+  SGAL::String m_paper_size; // Paper size
+  SGAL::String m_plot_view_name; // Plot view name
   double m_unprintable_left_margin_size; // Size, in millimeters, of
                         // unprintable margin on left side of paper
   double m_unprintable_bottom_margin_size; // Size, in millimeters, of
@@ -90,7 +92,7 @@ struct Dxf_plotsettings_object : public Dxf_base_object {
                         // 3 = View specified by code 6
                         // 4 = Window specified by codes 48, 49, 140, and 141
                         // 5 = Layout information
-  String m_current_style_sheet; // Current style sheet
+  SGAL::String m_current_style_sheet; // Current style sheet
   int16_t m_standard_scale; // Standard scale type:
                         // 0 = Scaled to Fit
                         // 1 = 1/128"=1'; 2 = 1/64"=1'; 3 = 1/32"=1'
@@ -124,13 +126,13 @@ struct Dxf_plotsettings_object : public Dxf_base_object {
                         // 75
   double m_paper_image_origin_x; // Paper image origin: X value
   double m_paper_image_origin_y; // Paper image origin: Y value
-  String m_shade_plot_object; // ShadePlot ID/Handle (optional)
+  SGAL::String m_shade_plot_object; // ShadePlot ID/Handle (optional)
 
   /*! Handle a marker.
    */
-  bool handle_marker(const String& marker);
+  bool handle_marker(const SGAL::String& marker);
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

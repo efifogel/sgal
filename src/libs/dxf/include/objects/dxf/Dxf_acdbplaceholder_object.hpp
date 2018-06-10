@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_ACDBPLACEHOLDER_OBJECT_HPP
-#define SGAL_DXF_ACDBPLACEHOLDER_OBJECT_HPP
+#ifndef DXF_ACDBPLACEHOLDER_OBJECT_HPP
+#define DXF_ACDBPLACEHOLDER_OBJECT_HPP
 
 #include <map>
 #include <vector>
@@ -28,14 +28,14 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_object.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct Dxf_acdbplaceholder_object : public Dxf_base_object {
   typedef Dxf_base_object                       Base;
 
-  std::map<String, std::vector<String> > m_xdata;
+  std::map<SGAL::String, std::vector<SGAL::String> > m_xdata;
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

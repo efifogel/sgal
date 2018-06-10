@@ -18,8 +18,8 @@
 
 #include <vector>
 
-#ifndef SGAL_DXF_DIMSTYLE_ENTRY_HPP
-#define SGAL_DXF_DIMSTYLE_ENTRY_HPP
+#ifndef DXF_DIMSTYLE_ENTRY_HPP
+#define DXF_DIMSTYLE_ENTRY_HPP
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -28,10 +28,10 @@
 #include "dxf/Dxf_table_entry.hpp"
 #include "dxf/Dxf_extended_data.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct SGAL_SGAL_DECL Dxf_dimstyle_entry : Dxf_table_entry {
-  String m_name;        // Dimension style name
+  SGAL::String m_name;  // Dimension style name
   int16_t m_flags;      // Standard flag values (bit-coded values):
                         // 16 = If set, table entry is externally dependent on
                         //      an xref
@@ -44,11 +44,11 @@ struct SGAL_SGAL_DECL Dxf_dimstyle_entry : Dxf_table_entry {
                         //      benefit of AutoCAD commands. It can be ignored
                         //      by most programs that read DXF files and need
                         //      not be set by programs that write DXF files)
-  String m_dimpost;     // DIMPOST
-  String m_dimapost;    // DIMAPOST
-  String m_object_id;   //  DIMBLK (obsolete, now object ID)
-  String m_object_id1;  //  DIMBLK1 (obsolete, now object ID)
-  String m_object_id2;  //  DIMBLK2 (obsolete, now object ID)
+  SGAL::String m_dimpost; // DIMPOST
+  SGAL::String m_dimapost; // DIMAPOST
+  SGAL::String m_object_id; //  DIMBLK (obsolete, now object ID)
+  SGAL::String m_object_id1; //  DIMBLK1 (obsolete, now object ID)
+  SGAL::String m_object_id2; //  DIMBLK2 (obsolete, now object ID)
   double m_dimensioning_scale_factor; // DIMSCALE
   double m_dimensioning_arrow_size; // DIMASZ
   double m_dimension_extension_line_offset; // DIMEXO
@@ -106,17 +106,18 @@ struct SGAL_SGAL_DECL Dxf_dimstyle_entry : Dxf_table_entry {
   // int8_t DIMFIT (obsolete; now use DIMATFIT and DIMTMOVE)
   int8_t m_dimension_cursor_controls_text_position; // DIMUPT
   int8_t m_dimension_text_and_arrow_placement; // DIMATFIT
-  String m_dimension_text_style; // DIMTXSTY (handle of referenced STYLE)
-  String m_dimension_leader_block_name; // DIMLDRBLK (handle of referenced BLOCK)
-  String m_arrow_block_name; // DIMBLK (handle of referenced BLOCK)
-  String m_dimblk1;     // DIMBLK1 (handle of referenced BLOCK)
-  String m_dimblk2;     // DIMBLK2 (handle of referenced BLOCK)
+  SGAL::String m_dimension_text_style; // DIMTXSTY (handle of referenced STYLE)
+  SGAL::String m_dimension_leader_block_name; // DIMLDRBLK (handle of referenced
+                        // BLOCK)
+  SGAL::String m_arrow_block_name; // DIMBLK (handle of referenced BLOCK)
+  SGAL::String m_dimblk1; // DIMBLK1 (handle of referenced BLOCK)
+  SGAL::String m_dimblk2; // DIMBLK2 (handle of referenced BLOCK)
   int8_t m_dimension_line_weight; // DIMLWD (lineweight enum value)
   int8_t m_dimension_extension_line_weight; // DIMLWE (lineweight enum value)
 
   std::vector<Dxf_extended_data> m_extended_data;
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

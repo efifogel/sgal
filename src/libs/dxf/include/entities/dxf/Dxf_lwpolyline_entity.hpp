@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_LWPOLYLINE_ENTITY_HPP
-#define SGAL_DXF_LWPOLYLINE_ENTITY_HPP
+#ifndef DXF_LWPOLYLINE_ENTITY_HPP
+#define DXF_LWPOLYLINE_ENTITY_HPP
 
 #include <vector>
 #include <array>
@@ -27,7 +27,7 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_entity.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 class Dxf_parser;
 
@@ -101,6 +101,6 @@ struct Dxf_lwpolyline_entity : public Dxf_base_entity {
   //@}
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

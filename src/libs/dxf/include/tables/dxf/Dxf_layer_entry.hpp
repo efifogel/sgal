@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_LAYER_ENTRY_HPP
-#define SGAL_DXF_LAYER_ENTRY_HPP
+#ifndef DXF_LAYER_ENTRY_HPP
+#define DXF_LAYER_ENTRY_HPP
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -25,10 +25,10 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_table_entry.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct SGAL_SGAL_DECL Dxf_layer_entry : Dxf_table_entry {
-  String m_name;        // Viewport name
+  SGAL::String m_name;  // Viewport name
   int16_t m_flags;      // 16 = If set, table entry is externally dependent on
                         //      an xref
                         // 32 = If both this bit and bit 16 are set, the
@@ -43,13 +43,14 @@ struct SGAL_SGAL_DECL Dxf_layer_entry : Dxf_table_entry {
                         //      files)
   int16_t m_color;      // Color number (if negative, layer is off)
   int32_t m_color_rgb;  // EF: not in the psec, but appears in dxf files.
-  String m_line_type;   // Linetype name
+  SGAL::String m_line_type;   // Linetype name
   bool m_is_layer_plotted; // Plotting flag. If set to 0, do not plot this layer
   int8_t m_line_weight; // Lineweight enum value
-  String m_plot_style_pointer; // Hard pointer ID/handle of PlotStyleName object
-  String m_material_handle; // Hard-pointer ID/handle to Material object
+  SGAL::String m_plot_style_pointer; // Hard pointer ID/handle of PlotStyleName
+                        // object
+  SGAL::String m_material_handle; // Hard-pointer ID/handle to Material object
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

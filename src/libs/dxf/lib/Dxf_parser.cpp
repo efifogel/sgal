@@ -21,6 +21,7 @@
 #include <functional>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Scene_graph.hpp"
 
@@ -33,26 +34,27 @@
 #include "dxf/Dxf_polyline_boundary_path.hpp"
 #include "dxf/Dxf_pattern_data.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
-const std::array<String, 8> Dxf_parser::s_code_type_names = {
+const std::array<SGAL::String, 8> Dxf_parser::s_code_type_names = {
   "STRING", "DOUBLE", "INT8", "INT16", "INT32", "UINT", "BOOL"
 };
 
 const std::vector<Dxf_parser::Code_range> Dxf_parser::s_code_ranges = {
-  {0, 9, STRING},       // String (With the introduction of extended symbol
-                        // names in AutoCAD 2000, the 255 character limit has
-                        // been lifted. There is no explicit limit to the
+  {0, 9, STRING},       // SGAL::String (With the introduction of extended
+                        // symbol names in AutoCAD 2000, the 255 character limit
+                        // has been lifted. There is no explicit limit to the
                         // number of bytes per line, although most lines should
                         // fall within 2049 bytes.)
   {10, 59, DOUBLE},     // Double precision 3D point
   {60, 79, INT16},      // 16-bit integer value
   {90, 99, INT32},      // 32-bit integer value
-  {100, 100, STRING},   // String (255-character maximum; less for Unicode
+  {100, 100, STRING},   // SGAL::String (255-character maximum; less for Unicode
                         // strings)
-  {102, 102, STRING},   // String (255-character maximum; less for Unicode
+  {102, 102, STRING},   // SGAL::String (255-character maximum; less for Unicode
                         // strings)
-  {105, 105, STRING},   // String representing hexadecimal (hex) handle value
+  {105, 105, STRING},   // SGAL::String representing hexadecimal (hex) handle
+                        // value
   {110, 112, DOUBLE},   // x-value of UCS
   {120, 122, DOUBLE},   // y-value of UCS
   {130, 132, DOUBLE},   // z-value of UCS
@@ -64,23 +66,23 @@ const std::vector<Dxf_parser::Code_range> Dxf_parser::s_code_ranges = {
   {280, 289, INT8},     // 8-bit integer value
   {290, 299, BOOL},     // Boolean flag value
   {300, 309, STRING},   // Arbitrary text string
-  {310, 319, STRING},   // String representing hex value of binary chunk
-  {320, 329, UINT},     // String representing hex handle value
-  {330, 369, STRING},   // String representing hex object IDs
+  {310, 319, STRING},   // SGAL::String representing hex value of binary chunk
+  {320, 329, UINT},     // SGAL::String representing hex handle value
+  {330, 369, STRING},   // SGAL::String representing hex object IDs
   {370, 379, INT8},     // 8-bit integer value
   {380, 389, INT8},     // 8-bit integer value
-  {390, 399, STRING},   // String representing hex handle value
+  {390, 399, STRING},   // SGAL::String representing hex handle value
   {400, 409, INT16},    // 16-bit integer value
-  {410, 419, STRING},   // String
+  {410, 419, STRING},   // SGAL::String
   {420, 429, INT32},    // 32-bit integer value
-  {430, 439, STRING},   // String
+  {430, 439, STRING},   // SGAL::String
   {440, 449, INT32},    // 32-bit integer value
   {450, 459, INT32},    // Long ???
   {460, 469, DOUBLE},   // Double-precision floating-point value
-  {470, 479, STRING},   // String
-  {480, 481, UINT},     // String representing hex handle value
+  {470, 479, STRING},   // SGAL::String
+  {480, 481, UINT},     // SGAL::String representing hex handle value
   {999, 999, STRING},   // Comment (string)
-  {1000, 1009, STRING}, // String. (Same limits as indicated with 0-9 code
+  {1000, 1009, STRING}, // SGAL::String. (Same limits as indicated with 0-9 code
                         // range.)
   {1010, 1059, DOUBLE}, // Double-precision floating-point value
   {1060, 1070, INT16},  // 16-bit integer value
@@ -88,7 +90,8 @@ const std::vector<Dxf_parser::Code_range> Dxf_parser::s_code_ranges = {
 };
 
 //!
-const std::map<String, Dxf_parser::Section_parser> Dxf_parser::s_sections = {
+const std::map<SGAL::String, Dxf_parser::Section_parser>
+Dxf_parser::s_sections = {
   {"HEADER", &Dxf_parser::parse_header},
   {"CLASSES", &Dxf_parser::parse_classes},
   {"TABLES", &Dxf_parser::parse_tables},
@@ -111,7 +114,7 @@ Dxf_parser::s_class_members = {
 };
 
 //!
-const std::map<String, Dxf_parser::Table_parser>
+const std::map<SGAL::String, Dxf_parser::Table_parser>
 Dxf_parser::s_tables = {
   { "APPID", &Dxf_parser::parse_appid_table },
   { "BLOCK_RECORD", &Dxf_parser::parse_block_record_table },
@@ -178,7 +181,7 @@ Dxf_entry_wrapper::s_record_members = {
 };
 
 //!
-const std::map<String, Dxf_parser::Entity_parser>
+const std::map<SGAL::String, Dxf_parser::Entity_parser>
 Dxf_parser::s_entities = {
   { "3DFACE", &Dxf_parser::parse_3dface_entity },
   { "3DSOLID", &Dxf_parser::parse_3dsolid_entity },
@@ -246,7 +249,7 @@ Base_entity_wrapper::s_record_members = {
 };
 
 //! Object parsers
-const std::map<String, Dxf_parser::Object_parser>
+const std::map<SGAL::String, Dxf_parser::Object_parser>
 Dxf_parser::s_objects = {
   {"ACAD_PROXY_OBJECT", &Dxf_parser::parse_acad_proxy_object},
   {"ACDBDICTIONARYWDFLT", &Dxf_parser::parse_acdbdictionarywdflt_object},
@@ -308,8 +311,9 @@ Dxf_parser::Dxf_parser() :
 {}
 
 //! \brief parses.
-Loader_code Dxf_parser::operator()(std::istream& is, Scene_graph* sg,
-                                   const String& filename)
+SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
+                                         SGAL::Scene_graph* sg,
+                                         const SGAL::String& filename)
 {
   Base_loader::operator()(is, sg, filename);
   m_pending_code = 0;
@@ -340,14 +344,14 @@ Loader_code Dxf_parser::operator()(std::istream& is, Scene_graph* sg,
   // right place immediately after read from the imput stream.
 
   //
-  m_scene_graph->set_input_format_id(File_format_3d::ID_DXF);
+  m_scene_graph->set_input_format_id(SGAL::File_format_3d::ID_DXF);
   auto* root = m_scene_graph->initialize();
 
   // Create indexed line sets, one for each hatch entity.
   for (const auto& hatch_entity : m_hatch_entities)
     add_polylines(hatch_entity, root);
 
-  return Loader_code::SUCCESS;
+  return SGAL::Loader_code::SUCCESS;
 }
 
 //! \brief obtains the type of a code
@@ -385,7 +389,7 @@ void Dxf_parser::parse_header()
      case 999: read_comment(); break;
     }
   }
-  String str;
+  SGAL::String str;
   import_value(str);
   SGAL_assertion("ENDSEC" == str);
 }
@@ -431,7 +435,7 @@ void Dxf_parser::parse_classes()
   SGAL_assertion(0 == n);
 
   do {
-    String str;
+    SGAL::String str;
     import_value(str);
     if ("ENDSEC" == str) return;
 
@@ -609,7 +613,7 @@ void Dxf_parser::parse_endblk()
       continue;
     }
 
-    String str;
+    SGAL::String str;
     import_value(str);
   }
 }
@@ -625,7 +629,7 @@ void Dxf_parser::parse_blocks()
   SGAL_assertion(0 == n);
 
   do {
-    String str;
+    SGAL::String str;
     import_value(str);
     if ("ENDSEC" == str) return;
 
@@ -645,7 +649,7 @@ void Dxf_parser::parse_entities()
   SGAL_assertion(0 == n);
 
   do {
-    String str;
+    SGAL::String str;
     import_value(str);
     if ("ENDSEC" == str) return;
 
@@ -669,7 +673,7 @@ void Dxf_parser::parse_entities()
       continue;
     }
 
-    String msg("Unrecognize entity \"");
+    SGAL::String msg("Unrecognize entity \"");
     msg += str + "\", at line " + std::to_string(m_line);
     SGAL_error_msg(msg.c_str());
 
@@ -687,7 +691,7 @@ void Dxf_parser::parse_objects()
   SGAL_assertion(0 == n);
 
   do {
-    String str;
+    SGAL::String str;
     import_value(str);
     if ("ENDSEC" == str) return;
 
@@ -711,7 +715,7 @@ void Dxf_parser::parse_objects()
       continue;
     }
 
-    String msg("Unrecognize object \"");
+    SGAL::String msg("Unrecognize object \"");
     msg += str + "\", at line " + std::to_string(m_line);
     SGAL_error_msg(msg.c_str());
 
@@ -823,12 +827,12 @@ void Dxf_parser::read_comment()
 //! \brief handles an unrecognized code.
 void Dxf_parser::read_unrecognized(int code)
 {
-  String str;
+  SGAL::String str;
   bool bval;
   int ival;
-  Uint uval;
+  SGAL::Uint uval;
   double dval;
-  String msg("Unrecognized code ");
+  SGAL::String msg("Unrecognized code ");
   msg += std::to_string(code);
 
   std::stringstream stream;
@@ -1355,4 +1359,4 @@ void Dxf_parser::parse_spline_edge(Dxf_spline_edge& edge)
   }
 }
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

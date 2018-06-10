@@ -24,7 +24,7 @@
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_lwpolyline_entity.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_lwpolyline_entity>
   Dxf_lwpolyline_entity_wrapper;
@@ -57,4 +57,4 @@ Dxf_lwpolyline_entity_wrapper::s_record_handlers = {
   {90, &Dxf_lwpolyline_entity::handle_vertices_num}
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

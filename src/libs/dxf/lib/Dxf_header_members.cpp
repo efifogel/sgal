@@ -24,7 +24,7 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_parser.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 /*! This file contains the description of DXF header variables. In
  * particular, it consists of the initialization of a mapping from variable
@@ -42,7 +42,7 @@ SGAL_BEGIN_NAMESPACE
  * HIDETEXT, INTERSECTIONDISPLAY).
  */
 
-const std::map<String, Dxf_parser::Header_member>
+const std::map<SGAL::String, Dxf_parser::Header_member>
 Dxf_parser::s_header_members = {
   {"ACADMAINTVER",    {&Dxf_header::m_acadmaintver, {70}}},
   {"ACADVER",         {&Dxf_header::m_acadver, {1}}},
@@ -267,4 +267,4 @@ Dxf_parser::s_header_members = {
   {"XEDIT",           {&Dxf_header::m_xedit, {290}}}
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

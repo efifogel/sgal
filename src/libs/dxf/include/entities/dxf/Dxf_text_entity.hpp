@@ -16,15 +16,16 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_TEXT_ENTITY_HPP
-#define SGAL_DXF_TEXT_ENTITY_HPP
+#ifndef DXF_TEXT_ENTITY_HPP
+#define DXF_TEXT_ENTITY_HPP
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_entity.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct Dxf_text_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
@@ -32,13 +33,15 @@ struct Dxf_text_entity : public Dxf_base_entity {
   double m_thickness;   // Thickness (optional; default = 0)
   double m_location[3]; // First alignment point (in OCS)
   double m_text_height; // Text height
-  String m_value;       // Default value (the string itself)
+  SGAL::String m_value; // Default value (the string itself)
   double m_rotation;    // Text rotation (optional; default = 0)
   double m_relative_x_scale_factor; // Relative X scale factor—width (optional;
                         // default = 1)
-                        // This value is also adjusted when fit-type text is used
+                        // This value is also adjusted when fit-type text is
+                        // used
   double m_oblique_angle; // Oblique angle (optional; default = 0)
-  String m_text_style_name; // Text style name (optional, default = STANDARD)
+  SGAL::String m_text_style_name; // Text style name (optional,
+                        // default = STANDARD)
   int16_t m_text_generation_flags; // Text generation flags (optional,
                         // default = 0):
                         // 2 = Text is backward (mirrored in X)
@@ -67,6 +70,6 @@ struct Dxf_text_entity : public Dxf_base_entity {
                         // clarification
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

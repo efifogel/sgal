@@ -18,17 +18,18 @@
 //
 // EF: Codes 10 & 20 are duplicated???
 
-#ifndef SGAL_DXF_HATCH_ENTITY_HPP
-#define SGAL_DXF_HATCH_ENTITY_HPP
+#ifndef DXF_HATCH_ENTITY_HPP
+#define DXF_HATCH_ENTITY_HPP
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_entity.hpp"
 #include "dxf/Dxf_boundary_path.hpp"
 #include "dxf/Dxf_pattern_data.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 class Dxf_parser;
 
@@ -41,7 +42,7 @@ struct Dxf_hatch_entity : public Dxf_base_entity {
   double m_elevation_point[3]; // Elevation point (in OCS)
   double m_extrusion_direction[3]; // Extrusion direction
                         // (optional; default = 0, 0, 1)
-  String m_hatch_pattern_name; // Hatch pattern name
+  SGAL::String m_hatch_pattern_name; // Hatch pattern name
   int16_t m_flags;      // Solid fill flag (0 = pattern fill; 1 = solid fill);
                         // for MPolygon, the version of MPolygon
   int16_t m_pattern_fill_color; // For MPolygon, pattern fill color as the ACI
@@ -120,7 +121,7 @@ struct Dxf_hatch_entity : public Dxf_base_entity {
   double m_reserved2;   // Reserved for future use:
                         // 0 = First value
                         // 1 = Second value
-  String m_string;      // String (default = LINEAR)
+  SGAL::String m_string; // SGAL::String (default = LINEAR)
 
   //@}
 
@@ -138,6 +139,6 @@ struct Dxf_hatch_entity : public Dxf_base_entity {
   //@}
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

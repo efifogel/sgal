@@ -24,7 +24,7 @@
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_dictionary_object.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_dictionary_object>  Dxf_dictionary_object_wrapper;
 
@@ -45,4 +45,4 @@ Dxf_dictionary_object_wrapper::s_record_handlers = {
   {350, &Dxf_dictionary_object::handle_entry_value}
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

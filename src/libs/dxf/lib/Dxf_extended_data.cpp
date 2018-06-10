@@ -24,7 +24,7 @@
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_extended_data.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_extended_data>  Dxf_extended_data_wrapper;
 
@@ -55,4 +55,4 @@ Dxf_extended_data_wrapper::s_record_members = {
 
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_BLOCK_RECORD_ENTRY_HPP
-#define SGAL_DXF_BLOCK_RECORD_ENTRY_HPP
+#ifndef DXF_BLOCK_RECORD_ENTRY_HPP
+#define DXF_BLOCK_RECORD_ENTRY_HPP
 
 #include <string>
 #include <list>
@@ -29,18 +29,20 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_table_entry.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct SGAL_SGAL_DECL Dxf_block_record_entry : Dxf_table_entry {
   /// Record members
   //@{
 
-  String m_name;        // Block name
-  String m_layout_handle; // Hard-pointer ID/handle to associated LAYOUT object
+  SGAL::String m_name;  // Block name
+  SGAL::String m_layout_handle; // Hard-pointer ID/handle to associated LAYOUT
+                        // object
   int16_t m_insertion_units; // Block insertion units.
   int8_t m_explodability; // Block explodability
   int8_t m_scalability; // Block scalability
-  String m_bitmap_preview_data; // Binary data for bitmap preview (optional)
+  SGAL::String m_bitmap_preview_data; // Binary data for bitmap preview
+                        // (optional)
   int16_t m_design_center_version_number; // Autodesk Design Center version
                         // number
   int16_t m_insert_units; // Insert units:
@@ -69,9 +71,10 @@ struct SGAL_SGAL_DECL Dxf_block_record_entry : Dxf_table_entry {
                         // 22 = US Survey Inch
                         // 23 = US Survey Yard
                         // 24 = US Survey Mile
-  String m_application_name; // Xdata application name "ACAD" (optional)
-  String m_string_data; // Xdata string data "DesignCenter Data" (optional)
-  std::map<String, std::list<String> > m_xdata; // Begin xdata "{", "}" (opt.)
+  SGAL::String m_application_name; // Xdata application name "ACAD" (optional)
+  SGAL::String m_string_data; // Xdata string data "DesignCenter Data" (optional)
+  std::map<SGAL::String, std::list<SGAL::String> > m_xdata; // Begin xdata
+                        // "{", "}" (opt.)
 
   //@}
 
@@ -94,6 +97,6 @@ struct SGAL_SGAL_DECL Dxf_block_record_entry : Dxf_table_entry {
   void init();
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

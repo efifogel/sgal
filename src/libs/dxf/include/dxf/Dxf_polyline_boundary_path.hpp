@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_POLYLINE_BOUNDARY_PATH_HPP
-#define SGAL_DXF_POLYLINE_BOUNDARY_PATH_HPP
+#ifndef DXF_POLYLINE_BOUNDARY_PATH_HPP
+#define DXF_POLYLINE_BOUNDARY_PATH_HPP
 
 #include <vector>
 #include <array>
@@ -28,7 +28,7 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_boundary_path.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 class Dxf_parser;
 
@@ -47,6 +47,6 @@ struct Dxf_polyline_boundary_path : Dxf_boundary_path {
   //@}
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

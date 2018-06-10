@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_PATTERN_DATA_HPP
-#define SGAL_DXF_PATTERN_DATA_HPP
+#ifndef DXF_PATTERN_DATA_HPP
+#define DXF_PATTERN_DATA_HPP
 
 #include <vector>
 
@@ -25,7 +25,7 @@
 
 #include "dxf/basic.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct Dxf_pattern_data {
   double m_angle;        // Pattern line angle
@@ -40,6 +40,6 @@ struct Dxf_pattern_data {
   //@{
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

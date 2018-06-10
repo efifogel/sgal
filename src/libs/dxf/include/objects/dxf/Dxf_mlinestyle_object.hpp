@@ -16,15 +16,15 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_MLINESTYLE_OBJECT_HPP
-#define SGAL_DXF_MLINESTYLE_OBJECT_HPP
+#ifndef DXF_MLINESTYLE_OBJECT_HPP
+#define DXF_MLINESTYLE_OBJECT_HPP
 
 #include "SGAL/basic.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_object.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct Dxf_mlinestyle_object : public Dxf_base_object {
   typedef Dxf_base_object                       Base;
@@ -32,7 +32,7 @@ struct Dxf_mlinestyle_object : public Dxf_base_object {
   /// Record members
   //@{
 
-  String m_style_name;  // Mline style name
+  SGAL::String m_style_name; // Mline style name
   int16_t m_flags;      // Flags (bit-coded):
                         // 1 = Fill on
                         // 2 = Display miters
@@ -42,7 +42,8 @@ struct Dxf_mlinestyle_object : public Dxf_base_object {
                         // 256 = End square (line) cap
                         // 512 = End inner arcs cap
                         // 1024 = End round (outer arcs) cap
-  String m_style_description; // Style description (string, 255 characters max)
+  SGAL::String m_style_description; // Style description (string, 255 characters
+                        // max)
   int16_t m_fill_color; //  Fill color (integer, default = 256)
   double m_start_angle; // Start angle (real, default is 90 degrees)
   double m_end_angle;   // End angle (real, default is 90 degrees)
@@ -51,7 +52,7 @@ struct Dxf_mlinestyle_object : public Dxf_base_object {
                         // Multiple entries can exist; one entry for each
   std::vector<int16_t> m_element_color; // Element color (integer, default = 0).
                         // Multiple entries can exist; one entry for each
-  std::vector<String> m_element_line_style; // Element linetype (string,
+  std::vector<SGAL::String> m_element_line_style; // Element linetype (string,
                         // default = BYLAYER). Multiple entries can exist;
                         // one entry for each element
 
@@ -87,7 +88,7 @@ struct Dxf_mlinestyle_object : public Dxf_base_object {
 
   /*! Handle element line-style.
    */
-  void handle_element_line_style(const String& style)
+  void handle_element_line_style(const SGAL::String& style)
   {
     SGAL_assertion(! m_element_line_style.empty());
     m_element_line_style.back() = style;
@@ -96,6 +97,6 @@ struct Dxf_mlinestyle_object : public Dxf_base_object {
   //@}
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

@@ -16,20 +16,20 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_3DSOLID_ENTITY_HPP
-#define SGAL_DXF_3DSOLID_ENTITY_HPP
+#ifndef DXF_3DSOLID_ENTITY_HPP
+#define DXF_3DSOLID_ENTITY_HPP
 
 #include "SGAL/basic.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_entity.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct Dxf_3dsolid_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

@@ -16,15 +16,16 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_INSERT_ENTITY_HPP
-#define SGAL_DXF_INSERT_ENTITY_HPP
+#ifndef DXF_INSERT_ENTITY_HPP
+#define DXF_INSERT_ENTITY_HPP
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_entity.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct Dxf_insert_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
@@ -33,7 +34,7 @@ struct Dxf_insert_entity : public Dxf_base_entity {
                         // default = 0); if the value of attributes-follow flag
                         // is 1, a series of attribute entities is expected to
                         // follow the insert, terminated by a seqend entity
-  String m_name;        // Block name
+  SGAL::String m_name;  // Block name
   double m_location[3]; //  Insertion point (in OCS)
   double m_x_scale_factor; // X scale factor (optional; default = 1)
   double m_y_scale_factor; // Y scale factor (optional; default = 1)
@@ -47,6 +48,6 @@ struct Dxf_insert_entity : public Dxf_base_entity {
                         // default = 0, 0, 1)
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

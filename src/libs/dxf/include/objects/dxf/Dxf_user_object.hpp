@@ -16,20 +16,21 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_USER_OBJECT_HPP
-#define SGAL_DXF_USER_OBJECT_HPP
+#ifndef DXF_USER_OBJECT_HPP
+#define DXF_USER_OBJECT_HPP
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_object.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct Dxf_user_object : public Dxf_base_object {
   typedef Dxf_base_object             Base;
 
-  bool handle_value(int code, const String& value);
+  bool handle_value(int code, const SGAL::String& value);
   bool handle_value(int code, int8_t value);
   bool handle_value(int code, int16_t value);
   bool handle_value(int code, int32_t value);
@@ -38,6 +39,6 @@ struct Dxf_user_object : public Dxf_base_object {
   bool handle_value(int code, double value);
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

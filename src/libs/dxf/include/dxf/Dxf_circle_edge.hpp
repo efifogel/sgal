@@ -16,15 +16,15 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_CIRCLE_EDGE_HPP
-#define SGAL_DXF_CIRCLE_EDGE_HPP
+#ifndef DXF_CIRCLE_EDGE_HPP
+#define DXF_CIRCLE_EDGE_HPP
 
 #include "SGAL/basic.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_edge.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct Dxf_circle_edge : Dxf_edge {
   /// Record members
@@ -37,6 +37,6 @@ struct Dxf_circle_edge : Dxf_edge {
   //@}
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

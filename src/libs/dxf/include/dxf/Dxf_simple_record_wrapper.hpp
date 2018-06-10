@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_SIMPLE_RECORD_WRAPPER_HPP
-#define SGAL_DXF_SIMPLE_RECORD_WRAPPER_HPP
+#ifndef DXF_SIMPLE_RECORD_WRAPPER_HPP
+#define DXF_SIMPLE_RECORD_WRAPPER_HPP
 
 #include <map>
 
@@ -28,7 +28,7 @@
 
 #include "dxf/basic.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 template <typename Record_>
 struct SGAL_SGAL_DECL Dxf_simple_record_wrapper {
@@ -38,13 +38,13 @@ struct SGAL_SGAL_DECL Dxf_simple_record_wrapper {
   //@{ Types and data of data members.
 
   // Record types:
-  typedef String Record::*                      String_record;
+  typedef SGAL::String Record::*                String_record;
   typedef bool Record::*                        Bool_record;
   typedef int8_t Record::*                      Int8_record;
   typedef int16_t Record::*                     Int16_record;
   typedef int32_t Record::*                     Int32_record;
   typedef double Record::*                      Double_record;
-  typedef Uint Record::*                        Uint_record;
+  typedef SGAL::Uint Record::*                  Uint_record;
 
   typedef boost::variant<String_record,
                          Bool_record,
@@ -59,6 +59,6 @@ struct SGAL_SGAL_DECL Dxf_simple_record_wrapper {
   //@}
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

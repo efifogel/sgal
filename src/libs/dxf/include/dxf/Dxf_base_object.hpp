@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_BASE_OBJECT_HPP
-#define SGAL_DXF_BASE_OBJECT_HPP
+#ifndef DXF_BASE_OBJECT_HPP
+#define DXF_BASE_OBJECT_HPP
 
 #include <string>
 #include <vector>
@@ -29,16 +29,19 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_extended_data.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 class Dxf_parser;
 
 struct Dxf_base_object {
-  String m_handle;      // Handle
-  String m_owner_object; // Soft pointer ID/handle to owner dictionary (optional)
-  String m_owner_dict;    // Hard owner ID/handle to owner dictionary (optional)
-  // String m_owner_handle;  // Soft-pointer ID/handle to owner BLOCK_RECORD object
-  std::map<String, std::vector<String> > m_xdata;
+  SGAL::String m_handle; // Handle
+  SGAL::String m_owner_object; // Soft pointer ID/handle to owner dictionary
+                        // (optional)
+  SGAL::String m_owner_dict; // Hard owner ID/handle to owner dictionary
+                        // (optional)
+  // SGAL::String m_owner_handle; // Soft-pointer ID/handle to owner
+                        // BLOCK_RECORD object
+  std::map<SGAL::String, std::vector<SGAL::String> > m_xdata;
   std::vector<Dxf_extended_data> m_extended_data;
 
   /*! Construct.
@@ -57,6 +60,6 @@ struct Dxf_base_object {
   Dxf_parser* m_parser;
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

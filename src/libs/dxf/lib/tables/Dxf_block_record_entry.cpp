@@ -25,7 +25,7 @@
 #include "dxf/Dxf_block_record_entry.hpp"
 #include "dxf/Dxf_record_wrapper.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 /*! This file contains the description of DXF VPORT table variables. In
  * particular, it consists of the initialization of a mapping from variable
@@ -74,4 +74,4 @@ void Dxf_block_record_entry::handle_1070(int16_t value)
 //! \brief initializes.
 void Dxf_block_record_entry::init() { m_1070_num = 0; }
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

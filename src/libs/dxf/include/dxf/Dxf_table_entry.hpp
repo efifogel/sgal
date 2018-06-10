@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_TABLE_ENTRY_HPP
-#define SGAL_DXF_TABLE_ENTRY_HPP
+#ifndef DXF_TABLE_ENTRY_HPP
+#define DXF_TABLE_ENTRY_HPP
 
 #include <string>
 #include <vector>
@@ -29,13 +29,15 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_extended_data.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct SGAL_SGAL_DECL Dxf_table_entry {
-  String m_handle;      // Handle
-  String m_owner_dict;  // Hard owner ID/handle to owner dictionary (optional)
-  String m_owner_obj;   // Soft-pointer ID/handle to owner object
-  std::map<String, std::vector<String> > m_xdata; // "{ACAD_XDICTIONARY" and "}"
+  SGAL::String m_handle; // Handle
+  SGAL::String m_owner_dict; // Hard owner ID/handle to owner dictionary
+                        // (optional)
+  SGAL::String m_owner_obj; // Soft-pointer ID/handle to owner object
+  std::map<SGAL::String, std::vector<SGAL::String> > m_xdata; //
+                        // "{ACAD_XDICTIONARY" and "}"
                         // indicate the start and end, respectively, of an
                         // extension dictionary group.
                         // This group exists only if persistent reactors have
@@ -46,6 +48,6 @@ struct SGAL_SGAL_DECL Dxf_table_entry {
   void init() {}
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_DICTIONARY_OBJECT_HPP
-#define SGAL_DXF_DICTIONARY_OBJECT_HPP
+#ifndef DXF_DICTIONARY_OBJECT_HPP
+#define DXF_DICTIONARY_OBJECT_HPP
 
 #include <map>
 
@@ -26,7 +26,7 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_object.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 class Dxf_parser;
 
@@ -36,7 +36,7 @@ struct Dxf_dictionary_object : public Dxf_base_object {
   /// \name Data members
   //@{
 
-  String m_handle;      // Handle
+  SGAL::String m_handle; // Handle
   int8_t m_is_hard_owner; // Hard-owner flag. If set to 1, indicates that
                         // elements of the dictionary are to be treated as
                         // hard-owned
@@ -48,9 +48,9 @@ struct Dxf_dictionary_object : public Dxf_base_object {
                         // 3 = <xref>$0$<name>
                         // 4 = $0$<name>
                         // 5 = Unmangle name
-  std::map<String, String> m_value_handles; // A mapping from soft-owner
-                        // ID/handles to entry objects (one for each entry)
-                        // (optional)
+  std::map<SGAL::String, SGAL::String> m_value_handles; // A mapping from
+                        // soft-owner ID/handles to entry objects (one for each
+                        // entry) (optional)
 
   //@}
 
@@ -59,19 +59,19 @@ struct Dxf_dictionary_object : public Dxf_base_object {
 
   /*! Handle an entry name.
    */
-  void handle_entry_name(const String& value) { m_entry_name = value; }
+  void handle_entry_name(const SGAL::String& value) { m_entry_name = value; }
 
   /*! Handle an entry value.
    */
-  void handle_entry_value(const String& value)
+  void handle_entry_value(const SGAL::String& value)
   { m_value_handles[m_entry_name] = value; }
 
   //! The current entry name.
-  String m_entry_name;
+  SGAL::String m_entry_name;
 
   //@}
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

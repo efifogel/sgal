@@ -16,14 +16,14 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_EDGE_HPP
-#define SGAL_DXF_EDGE_HPP
+#ifndef DXF_EDGE_HPP
+#define DXF_EDGE_HPP
 
 #include "SGAL/basic.hpp"
 
 #include "dxf/basic.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 class Dxf_parser;
 
@@ -51,6 +51,6 @@ struct Dxf_edge {
   Dxf_parser* m_parser;
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

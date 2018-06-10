@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_PARSER_HPP
-#define SGAL_DXF_PARSER_HPP
+#ifndef DXF_PARSER_HPP
+#define DXF_PARSER_HPP
 
 #include <iostream>
 #include <map>
@@ -32,6 +32,7 @@
 #include <boost/tti/has_type.hpp>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 #include "SGAL/Loader_code.hpp"
 #include "SGAL/Base_loader.hpp"
 #include "SGAL/Trace.hpp"
@@ -141,13 +142,19 @@
 
 SGAL_BEGIN_NAMESPACE
 
+class Scene_graph;
 class Group;
+
+SGAL_END_NAMESPACE
+
+DXF_BEGIN_NAMESPACE
+
 class Dxf_boundary_path;
 class Dxf_polyline_boundary_path;
 class Dxf_pattern_data;
 
 //!
-class SGAL_SGAL_DECL Dxf_parser : public Base_loader {
+class SGAL_SGAL_DECL Dxf_parser : public SGAL::Base_loader {
 public:
 
   friend Dxf_hatch_entity;
@@ -162,8 +169,8 @@ public:
 
   /*! Parse.
    */
-  virtual Loader_code operator()(std::istream& is, Scene_graph* sg,
-                                 const String& filename);
+  virtual SGAL::Loader_code operator()(std::istream& is, SGAL::Scene_graph* sg,
+                                       const SGAL::String& filename);
 
   /*! Set the flag that determines whether to report unrecognized code.
    */
@@ -237,7 +244,7 @@ private:
   //@{
 
   // Header data member types.
-  typedef String Dxf_header::*          String_header;
+  typedef SGAL::String Dxf_header::*    String_header;
   typedef float Dxf_header::*           Float_header;
   typedef double Dxf_header::*          Double_header;
   typedef double (Dxf_header::*Double_2d_header)[2];
@@ -245,7 +252,7 @@ private:
   typedef int8_t Dxf_header::*          Int8_header;
   typedef int16_t Dxf_header::*         Int16_header;
   typedef int32_t Dxf_header::*         Int32_header;
-  typedef unsigned int Dxf_header::*    Uint_header;
+  typedef SGAL::Uint Dxf_header::*      Uint_header;
   typedef bool Dxf_header::*            Bool_header;
 
   //! The variant type of handle to all types of HEADER data members.
@@ -275,7 +282,7 @@ private:
   //@{
 
   //! Class data member types.
-  typedef String Dxf_class::*           String_class;
+  typedef SGAL::String Dxf_class::*     String_class;
   typedef int32_t Dxf_class::*          Int32_class;
   typedef int8_t Dxf_class::*           Int8_class;
 
@@ -289,8 +296,8 @@ private:
   //@{
 
   //! Class data member types.
-  typedef String Dxf_block::*           String_block;
-  typedef Uint Dxf_block::*             Uint_block;
+  typedef SGAL::String Dxf_block::*     String_block;
+  typedef SGAL::Uint Dxf_block::*       Uint_block;
   typedef int16_t Dxf_block::*          Int16_block;
   typedef double (Dxf_block::*Double_3d_block)[3];
 
@@ -490,8 +497,8 @@ private:
   {
     typedef Record_                             Record;
 
-    typedef String Record::*                    String_record;
-    typedef Uint Record::*                      Uint_record;
+    typedef SGAL::String Record::*              String_record;
+    typedef SGAL::Uint Record::*                Uint_record;
     typedef int8_t Record::*                    Int8_record;
     typedef int16_t Record::*                   Int16_record;
     typedef int32_t Record::*                   Int32_record;
@@ -532,13 +539,13 @@ private:
   {
     typedef Record_                             Record;
 
-    typedef String Record::*                    String_record;
+    typedef SGAL::String Record::*              String_record;
     typedef bool Record::*                      Bool_record;
     typedef int8_t Record::*                    Int8_record;
     typedef int16_t Record::*                   Int16_record;
     typedef int32_t Record::*                   Int32_record;
     typedef double Record::*                    Double_record;
-    typedef Uint Record::*                      Uint_record;
+    typedef SGAL::Uint Record::*                Uint_record;
     typedef double (Record::*Double_2d_record)[2];
     typedef double (Record::*Double_3d_record)[3];
 
@@ -589,7 +596,7 @@ private:
      case INT8: handle_item<int8_t>(handler, record);  break;
      case INT16: handle_item<int16_t>(handler, record);  break;
      case INT32: handle_item<int32_t>(handler, record);  break;
-     case UINT: handle_item<Uint>(handler, record);  break;
+     case UINT: handle_item<SGAL::Uint>(handler, record);  break;
      case DOUBLE: handle_item<double>(handler, record);  break;
      default: SGAL_error();
     }
@@ -614,12 +621,14 @@ private:
 
   //! Handle a marker in case record.handle_marker() is defined.
   template <bool what, typename Record>
-  bool handle_marker(const String& marker, Record& record, char (*)[what] = 0)
+  bool handle_marker(const SGAL::String& marker, Record& record,
+                     char (*)[what] = 0)
   { return record.handle_marker(marker); }
 
   //! Handle a marker in case record.handle_marker() is not defined.
   template <bool what, typename Record>
-  bool handle_marker(const String& marker, Record& record, char (*)[!what] = 0)
+  bool handle_marker(const SGAL::String& marker, Record& record,
+                     char (*)[!what] = 0)
   { return true; }
 
   // Define a helper class that detects the presence of the member function
@@ -632,7 +641,7 @@ private:
 
   //!
   template <bool what, typename Record>
-  bool handle_value(int code, const String& value, Record& record,
+  bool handle_value(int code, const SGAL::String& value, Record& record,
                     char (*)[what] = 0)
   { return record.handle_value(code, value); }
 
@@ -658,7 +667,7 @@ private:
 
   //!
   template <bool what, typename Record>
-  bool handle_value(int code, Uint value, Record& record, char (*)[what] = 0)
+  bool handle_value(int code, SGAL::Uint value, Record& record, char (*)[what] = 0)
   { return record.handle_value(code, value); }
 
   //!
@@ -678,7 +687,7 @@ private:
 
   //!
   template <bool what, typename Record>
-  bool handle_value(int code, const String& value, Record& record,
+  bool handle_value(int code, const SGAL::String& value, Record& record,
                     char (*)[!what] = 0)
   { return false; }
 
@@ -704,7 +713,8 @@ private:
 
   //!
   template <bool what, typename Record>
-  bool handle_value(int code, Uint value, Record& record, char (*)[!what] = 0)
+  bool handle_value(int code, SGAL::Uint value, Record& record,
+                    char (*)[!what] = 0)
   { return false; }
 
   //!
@@ -730,28 +740,29 @@ private:
   {
     auto ct = code_type(code);
 
-    String str;
+    SGAL::String str;
     bool bool_val;
     int8_t int8_val;
     int16_t int16_val;
     int32_t int32_val;
-    Uint uint_val;
+    SGAL::Uint uint_val;
     float float_val;
     double double_val;
 
     std::stringstream stream;
-    String msg("Unrecognized code ");
+    SGAL::String msg("Unrecognized code ");
     msg += std::to_string(code);
 
     // Below, we call the handle_value() member function only if Record has a
     // member function called "handle_value" with the signature that matches
-    // the type of the value, e.g., for a String value, we require:
-    //    bool (Record::*)(int, const String&)
+    // the type of the value, e.g., for a SGAL::String value, we require:
+    //    bool (Record::*)(int, const SGAL::String&)
     switch (ct) {
      case STRING:
       import_value(str);
       if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(int, const String&)>::value>(code, str, record))
+          <bool (Record::*)(int, const SGAL::String&)>::value>(code, str,
+                                                               record))
         return;
       msg += ", string value: " + str;
       break;
@@ -791,7 +802,7 @@ private:
      case UINT:
       import_value(uint_val);
       if (handle_value<has_member_function_handle_value
-          <bool (Record::*)(int, Uint)>::value>(code, uint_val, record))
+          <bool (Record::*)(int, SGAL::Uint)>::value>(code, uint_val, record))
         return;
       stream << std::hex << uint_val;
       msg += ", unsigned int value: 0x" + stream.str();
@@ -871,7 +882,7 @@ private:
         // Apparently, some markers (e.g., in plotsettings object inficate the
         // end of the object.
         if (! handle_marker<has_member_function_handle_marker
-            <bool (Record::*)(const String&)>::value>(m_marker, record))
+            <bool (Record::*)(const SGAL::String&)>::value>(m_marker, record))
           break;
         continue;
       }
@@ -1020,7 +1031,7 @@ private:
   bool m_report_unrecognized_code;
 
   //! Marker
-  String m_marker;
+  SGAL::String m_marker;
 
   /*! Obtain the type of a code
    * \param code the given code.
@@ -1106,16 +1117,17 @@ private:
   /*! Import a string value and pass it to a handler (that handles a string
    * value).
    * We need a dedicated template function because the type of the formal
-   * argument of the handle, namely 'const String&' is different than the type
-   * of the local variable, namely 'String', used to temporary store the value.
+   * argument of the handle, namely 'const SGAL::String&' is different than the
+   * type of the local variable, namely 'SGAL::String', used to temporary store
+   * the value.
    * \param[handler] handler the handler struct member-function.
    * \param[target] target the target struct.
    */
   template <typename HandrelVariant, typename Record>
   void handle_string_item(HandrelVariant handler, Record& record)
   {
-    typedef void(Record::*Handler)(const String&);
-    String value;
+    typedef void(Record::*Handler)(const SGAL::String&);
+    SGAL::String value;
     import_value(value);
     (record.*(boost::get<Handler>(handler)))(value);
   }
@@ -1140,15 +1152,15 @@ private:
    *
    */
   template <bool what, typename Record>
-  void store_xdata(Record& record, const String& name,
-                   const String& value, char (*)[what] = 0)
+  void store_xdata(Record& record, const SGAL::String& name,
+                   const SGAL::String& value, char (*)[what] = 0)
   { record.m_xdata[name].push_back(value); }
 
   /*! Store extended data.
    */
   template <bool what, typename Record>
-  void store_xdata(Record& record, const String& name,
-                   const String& value, char (*)[!what] = 0)
+  void store_xdata(Record& record, const SGAL::String& name,
+                   const SGAL::String& value, char (*)[!what] = 0)
   {}
 
   /*! Read x data
@@ -1160,18 +1172,18 @@ private:
     (*m_is) >> c;
     if ('{' != c) {
       //! \todo when is this valid and what should we do here?
-      String str;
+      SGAL::String str;
       import_value(str);
       return;
     }
 
-    String name;
+    SGAL::String name;
     if (102 == code) import_value(name);
     else {
       m_is->ignore(std::numeric_limits<std::streamsize>::max(), '\n');
       ++m_line;
     }
-    String str;
+    SGAL::String str;
     import_value(str);
     while ("}" != str) {
       import_value(str);
@@ -1194,7 +1206,7 @@ private:
 
   //!
   template <bool what, typename Record>
-  Dxf_extended_data* get_extended_data(const String& name, Record& record,
+  Dxf_extended_data* get_extended_data(const SGAL::String& name, Record& record,
                                        char (*)[what] = 0)
   {
     // We store the extended data at the respcetive record, as the appid
@@ -1205,7 +1217,7 @@ private:
 
   //!
   template <bool what, typename Record>
-  Dxf_extended_data* get_extended_data(const String& name, Record& record,
+  Dxf_extended_data* get_extended_data(const SGAL::String& name, Record& record,
                                        char (*)[!what] = 0)
   { return nullptr; }
 
@@ -1215,7 +1227,7 @@ private:
   void read_extended_data(int code, Record& record)
   {
     if (1001 == code) {
-      String app_name;
+      SGAL::String app_name;
       import_value(app_name);
       m_extended_data =
         get_extended_data<Has_extended_data<Record>::value>(app_name, record);
@@ -1406,24 +1418,24 @@ private:
    */
   void read_unrecognized(int code);
 
-  static const std::map<String, Section_parser> s_sections;
-  static const std::map<String, Header_member> s_header_members;
+  static const std::map<SGAL::String, Section_parser> s_sections;
+  static const std::map<SGAL::String, Header_member> s_header_members;
   static const std::vector<Code_range> s_code_ranges;
-  static const std::array<String, 8> s_code_type_names;
+  static const std::array<SGAL::String, 8> s_code_type_names;
   static const std::map<int, Class_member_type> s_class_members;
-  static const std::map<String, Table_parser> s_tables;
-  static const std::map<String, Entity_parser> s_entities;
-  static const std::map<String, Object_parser> s_objects;
+  static const std::map<SGAL::String, Table_parser> s_tables;
+  static const std::map<SGAL::String, Entity_parser> s_entities;
+  static const std::map<SGAL::String, Object_parser> s_objects;
 
   /*! Add polylines provided in hatch entities.
    */
-  void add_polylines(const Dxf_hatch_entity& hatch_entity, Group* root);
+  void add_polylines(const Dxf_hatch_entity& hatch_entity, SGAL::Group* root);
 };
 
 //! \brief sets the flag that determines whether to report unrecognized code.
 inline void Dxf_parser::set_report_unrecognized_code(bool flag)
 { m_report_unrecognized_code = flag; }
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

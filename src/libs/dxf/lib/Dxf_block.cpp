@@ -24,7 +24,7 @@
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_block.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 /* This object contains the description of DXF BLOCK variables.
  * The DXF BLOCK variables listed below are extracted from
@@ -58,4 +58,4 @@ bool Dxf_block::handle_value(int code, int16_t value)
   return false;
 }
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

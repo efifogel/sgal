@@ -27,7 +27,7 @@
 #include "dxf/Dxf_ellipse_edge.hpp"
 #include "dxf/Dxf_spline_edge.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_boundary_path>   Dxf_boundary_path_wrapper;
 
@@ -99,4 +99,4 @@ void Dxf_boundary_path::init()
   m_edges.clear();
 }
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

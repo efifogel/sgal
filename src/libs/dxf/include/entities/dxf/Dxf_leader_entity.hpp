@@ -16,20 +16,21 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_LEADER_ENTITY_HPP
-#define SGAL_DXF_LEADER_ENTITY_HPP
+#ifndef DXF_LEADER_ENTITY_HPP
+#define DXF_LEADER_ENTITY_HPP
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_entity.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct Dxf_leader_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
 
-  String m_dimension_style_name; // Dimension style name
+  SGAL::String m_dimension_style_name; // Dimension style name
   int16_t m_use_arrowheads; // Arrowhead flag: 0 = Disabled; 1 = Enabled
   int16_t m_path_type;  // Leader path type: 0 = Straight line segments;
                         // 1 = Spline
@@ -54,8 +55,9 @@ struct Dxf_leader_entity : public Dxf_base_entity {
   std::vector<std::array<double, 3> > m_vertices; // Vertex coordinates (one
                         // entry for each vertex)
   int16_t m_override_color; // Color to use if leader's DIMCLRD = BYBLOCK
-  String m_associated_annotation_reference; // Hard reference to associated
-                        // annotation (mtext, tolerance, or insert entity)
+  SGAL::String m_associated_annotation_reference; // Hard reference to
+                        // associated annotation (mtext, tolerance, or insert
+                        // entity)
   double m_normal[3];   // Normal vector
   double m_right[3];    // "Horizontal" direction for leader
   double m_block_offset[3]; // Offset of last leader vertex from block reference
@@ -64,6 +66,6 @@ struct Dxf_leader_entity : public Dxf_base_entity {
                         // annotation placement point
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

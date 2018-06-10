@@ -16,20 +16,20 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_LAYER_INDEX_OBJECT_HPP
-#define SGAL_DXF_LAYER_INDEX_OBJECT_HPP
+#ifndef DXF_LAYER_INDEX_OBJECT_HPP
+#define DXF_LAYER_INDEX_OBJECT_HPP
 
 #include "SGAL/basic.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_object.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct Dxf_layer_index_object : public Dxf_base_object {
   typedef Dxf_base_object                       Base;
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

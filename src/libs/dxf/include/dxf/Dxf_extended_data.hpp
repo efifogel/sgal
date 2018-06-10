@@ -16,21 +16,22 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_EXTENDED_DATA_HPP
-#define SGAL_DXF_EXTENDED_DATA_HPP
+#ifndef DXF_EXTENDED_DATA_HPP
+#define DXF_EXTENDED_DATA_HPP
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct Dxf_extended_data {
-  String m_name;        // Strings in extended data can be up to 255 bytes long
-                        // (with the 256th byte reserved for the null character).
-  String m_layer_name;  // Name of a layer associated with the xdata.
-  String m_entity_handle; //  Handle of an entity in the drawing database.
+  SGAL::String m_name;  // SGAL::Strings in extended data can be up to 255 bytes
+                        // long (with the 256th byte reserved for the null
+                        // character).
+  SGAL::String m_layer_name; // Name of a layer associated with the xdata.
+  SGAL::String m_entity_handle; //  Handle of an entity in the drawing database.
   double m_point[3];    // A point
   double m_real;        // A real value.
   int16_t m_integer;    // A 16-bit integer (signed or unsigned)
@@ -39,9 +40,9 @@ struct Dxf_extended_data {
                         // real value, it is converted to a long integer; if it
                         // is invalid (for example, a string), it is converted
                         // to a long zero (0L).
-  String m_binary_data; // Binary data organized into variable-length chunks,
-                        // which can be handled in ObjectARX and Managed .NET
-                        // with the ads_binary structure.
+  SGAL::String m_binary_data; // Binary data organized into variable-length
+                        // chunks, which can be handled in ObjectARX and Managed
+                        // .NET with the ads_binary structure.
                         // The maximum length of each chunk is 127 bytes.
                         // Note: AutoLISP cannot directly handle binary chunks,
                         // so the same precautions that apply to long (1071)
@@ -66,6 +67,6 @@ struct Dxf_extended_data {
                         // parent.
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

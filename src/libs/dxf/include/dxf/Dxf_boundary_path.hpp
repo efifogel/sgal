@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_BOUNDARY_PATH_HPP
-#define SGAL_DXF_BOUNDARY_PATH_HPP
+#ifndef DXF_BOUNDARY_PATH_HPP
+#define DXF_BOUNDARY_PATH_HPP
 
 #include "SGAL/basic.hpp"
 
@@ -25,7 +25,7 @@
 #include "dxf/Dxf_base_boundary_path.hpp"
 #include "dxf/Dxf_edge.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 class Dxf_parser;
 
@@ -59,6 +59,6 @@ struct Dxf_boundary_path : Dxf_base_boundary_path {
   Dxf_parser* m_parser;
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

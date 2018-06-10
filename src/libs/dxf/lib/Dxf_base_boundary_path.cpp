@@ -17,12 +17,13 @@
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_base_boundary_path.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_base_boundary_path>
   Dxf_base_boundary_path_wrapper;
@@ -47,10 +48,11 @@ void Dxf_base_boundary_path::handle_source_objects_num(int32_t size)
 { m_source_objects.reserve(size); }
 
 //! \brief handles a source-object item.
-void Dxf_base_boundary_path::handle_source_object(const String& source_object)
+void
+Dxf_base_boundary_path::handle_source_object(const SGAL::String& source_object)
 {
   m_source_objects.resize(m_source_objects.size() + 1);
   m_source_objects.back() = source_object;
 }
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

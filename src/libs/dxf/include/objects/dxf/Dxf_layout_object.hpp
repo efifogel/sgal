@@ -16,20 +16,21 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_LAYOUT_OBJECT_HPP
-#define SGAL_DXF_LAYOUT_OBJECT_HPP
+#ifndef DXF_LAYOUT_OBJECT_HPP
+#define DXF_LAYOUT_OBJECT_HPP
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_object.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct Dxf_layout_object : public Dxf_base_object {
   typedef Dxf_base_object                       Base;
 
-  String m_layout_name; // Layout name
+  SGAL::String m_layout_name; // Layout name
   int16_t m_layout_flags; // Flag (bit-coded) to control the following:
                         // 1 = Indicates the PSLTSCALE value for this layout
                         //     when this layout is current
@@ -59,21 +60,21 @@ struct Dxf_layout_object : public Dxf_base_object {
                         // 1 = Top; 2 = Bottom
                         // 3 = Front; 4 = Back
                         // 5 = Left; 6 = Right
-  String m_viewport;    // ID/handle to the viewport that was last active in this
-                        // layout when the layout was current
-  String m_table_record; // ID/handle of AcDbUCSTableRecord if UCS is a named
-                        // UCS. If not present, then UCS is unnamed
-  String m_table_record_base; // ID/handle of AcDbUCSTableRecord of base UCS if
-                        // UCS is orthographic (76 code is non-zero). If not
-                        // present and 76 code is non-zero, then base UCS is
+  SGAL::String m_viewport; // ID/handle to the viewport that was last active in
+                        // this layout when the layout was current
+  SGAL::String m_table_record; // ID/handle of AcDbUCSTableRecord if UCS is a
+                        // named UCS. If not present, then UCS is unnamed
+  SGAL::String m_table_record_base; // ID/handle of AcDbUCSTableRecord of base
+                        // UCS if UCS is orthographic (76 code is non-zero). If
+                        // not present and 76 code is non-zero, then base UCS is
                         // taken to be WORLD
-  String m_shade_plot;  // Shade plot ID
+  SGAL::String m_shade_plot; // Shade plot ID
 
   /*! Handle a marker.
    */
-  bool handle_marker(const String& marker);
+  bool handle_marker(const SGAL::String& marker);
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

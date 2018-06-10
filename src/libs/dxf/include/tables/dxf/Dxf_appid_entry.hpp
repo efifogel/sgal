@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_APPID_ENTRY_HPP
-#define SGAL_DXF_APPID_ENTRY_HPP
+#ifndef DXF_APPID_ENTRY_HPP
+#define DXF_APPID_ENTRY_HPP
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -25,10 +25,10 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_table_entry.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct SGAL_SGAL_DECL Dxf_appid_entry : Dxf_table_entry {
-  String m_name;        // User-supplied (or application-supplied) application
+  SGAL::String m_name;  // User-supplied (or application-supplied) application
                         // name (for extended data).
   int16_t m_flags;      // 16 = If set, table entry is externally dependent on
                         //      an xref
@@ -43,6 +43,6 @@ struct SGAL_SGAL_DECL Dxf_appid_entry : Dxf_table_entry {
                         //      not be set by programs that write DXF files)
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

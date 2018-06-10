@@ -16,23 +16,24 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_DIMENSION_ENTITY_HPP
-#define SGAL_DXF_DIMENSION_ENTITY_HPP
+#ifndef DXF_DIMENSION_ENTITY_HPP
+#define DXF_DIMENSION_ENTITY_HPP
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_entity.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct Dxf_dimension_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
 
   int8_t m_version;     // Version number:
                         // 0 = 2010
-  String m_block_name;  // Name of the block that contains the entities that
-                        // make up the dimension picture
+  SGAL::String m_block_name;  // Name of the block that contains the entities
+                        // that make up the dimension picture
   double m_definition_point_1[3]; // Definition point (in WCS)
   double m_text_mid_point[3]; // Middle point of dimension text (in OCS)
   int16_t m_dimension_type; // Dimension type:
@@ -76,7 +77,7 @@ struct Dxf_dimension_entity : public Dxf_base_entity {
                         // Percentage of default (3-on-5) line spacing to be
                         // applied. Valid values range from 0.25 to 4.00
   double m_actual_measurement; // Actual measurement (optional; read-only value)
-  String m_text;        // Dimension text explicitly entered by the user.
+  SGAL::String m_text;        // Dimension text explicitly entered by the user.
                         // Optional; default is the measurement.
                         // If null or "<>", the dimension measurement is drawn
                         // as the text, if "" (one blank space), the text is
@@ -95,9 +96,9 @@ struct Dxf_dimension_entity : public Dxf_base_entity {
                         // the OCS X axis and the UCS X axis. It is always in
                         // the XY plane of the OCS
   double m_normal[3];   // Extrusion direction (optional; default = 0, 0, 1)
-  String m_dimension_style_name; // Dimension style name
+  SGAL::String m_dimension_style_name; // Dimension style name
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

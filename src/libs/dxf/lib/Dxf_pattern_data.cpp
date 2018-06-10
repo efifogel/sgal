@@ -24,7 +24,7 @@
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_pattern_data.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_pattern_data>  Dxf_pattern_data_wrapper;
 
@@ -55,4 +55,4 @@ void Dxf_pattern_data::handle_size(int16_t size)
 void Dxf_pattern_data::handle_dash_length(double dash_length)
 { m_dash_lengths.push_back(dash_length); }
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

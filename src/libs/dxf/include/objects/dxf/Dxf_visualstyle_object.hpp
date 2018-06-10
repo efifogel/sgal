@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_VISUALSTYLE_OBJECT_HPP
-#define SGAL_DXF_VISUALSTYLE_OBJECT_HPP
+#ifndef DXF_VISUALSTYLE_OBJECT_HPP
+#define DXF_VISUALSTYLE_OBJECT_HPP
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -25,7 +25,7 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_object.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct Dxf_visualstyle_object : public Dxf_base_object {
   typedef Dxf_base_object                       Base;
@@ -33,7 +33,7 @@ struct Dxf_visualstyle_object : public Dxf_base_object {
   /// \name Data members
   //@{
 
-  String m_description;         // Description
+  SGAL::String m_description;   // Description
   int16_t m_type;               // Type
   int16_t m_face_lighting_model; // Face lighting model
                                 // 0 =Invisible
@@ -92,6 +92,6 @@ struct Dxf_visualstyle_object : public Dxf_base_object {
   //@}
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

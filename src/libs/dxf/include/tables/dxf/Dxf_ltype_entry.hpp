@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_LTYPE_ENTRY_HPP
-#define SGAL_DXF_LTYPE_ENTRY_HPP
+#ifndef DXF_LTYPE_ENTRY_HPP
+#define DXF_LTYPE_ENTRY_HPP
 
 #include <array>
 #include <vector>
@@ -28,12 +28,12 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_table_entry.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 class Dxf_parser;
 
 struct SGAL_SGAL_DECL Dxf_ltype_entry : Dxf_table_entry {
-  String m_name;        // Viewport name
+  SGAL::String m_name;  // Viewport name
   int16_t m_flags;      // 16 = If set, table entry is externally dependent on
                         //      an xref
                         // 32 = If both this bit and bit 16 are set, the
@@ -46,7 +46,7 @@ struct SGAL_SGAL_DECL Dxf_ltype_entry : Dxf_table_entry {
                         //      by most programs that read DXF files and does
                         //      not need to be set by programs that write DXF
                         //      files)
-  String m_description; // Descriptive text for linetype
+  SGAL::String m_description; // Descriptive text for linetype
   int16_t m_alignment_code; // Alignment code; value is always 65, the ASCII
                         // code for A
   int16_t m_element_count; // The number of linetype elements
@@ -65,21 +65,21 @@ struct SGAL_SGAL_DECL Dxf_ltype_entry : Dxf_table_entry {
                         // If code 74 specifies an embedded text string, this
                         // value is set to 0
                         // If code 74 is set to 0, code 75 is omitted
-  String m_style_pointers; // Pointer to STYLE object (one per element if code
-                        // 74 > 0)
+  SGAL::String m_style_pointers; // Pointer to STYLE object (one per element if
+                        // code 74 > 0)
   std::vector<double> m_scale_values; // S = Scale value (optional)
   double m_rotation_angles; // R = (relative) or A = (absolute) rotation value
                         // in radians of embedded shape or text; one per element
                         // if code 74 specifies an embedded shape or text string
   std::vector<std::array<double, 2> > m_offsets; // offset values (optional)
-  std::vector<String> m_text_strings; // Text string (one per element if code
-                        // 74 = 2)
+  std::vector<SGAL::String> m_text_strings; // Text string (one per element if
+                        // code 74 = 2)
 
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
   bool handle_value(int code, double value);
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

@@ -16,15 +16,16 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_ACDBDICTIONARYWDFLT_OBJECT_HPP
-#define SGAL_DXF_ACDBDICTIONARYWDFLT_OBJECT_HPP
+#ifndef DXF_ACDBDICTIONARYWDFLT_OBJECT_HPP
+#define DXF_ACDBDICTIONARYWDFLT_OBJECT_HPP
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_object.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct Dxf_acdbdictionarywdflt_object : public Dxf_base_object {
   typedef Dxf_base_object                       Base;
@@ -38,14 +39,14 @@ struct Dxf_acdbdictionarywdflt_object : public Dxf_base_object {
                         // 4 = $0$<name>
                         // 5 = Unmangle name
                         // 3 Entry name (one for each entry)
-  String m_entry_name;  // Entry name (one for each entry)
-  String m_entry_object; // Soft-owner ID/handle to entry object (one for each
-                        // entry)
-  String m_object_handle; // Hard pointer to default object ID/handle (currently
-                        // only used for plot style dictionary's default entry,
-                        // named "Normal")
+  SGAL::String m_entry_name;  // Entry name (one for each entry)
+  SGAL::String m_entry_object; // Soft-owner ID/handle to entry object (one for
+                        // each // entry)
+  SGAL::String m_object_handle; // Hard pointer to default object ID/handle
+                        // (currently only used for plot style dictionary's
+                        // default entry, named "Normal")
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

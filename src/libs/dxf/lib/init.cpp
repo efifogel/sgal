@@ -25,17 +25,17 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_parser.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 extern "C" void BOOST_EXTENSION_EXPORT_DECL dxf_init()
 {
-  auto* trace = Trace::get_instance();
+  auto* trace = SGAL::Trace::get_instance();
   auto code = trace->doregister_trace_opt("dxf-parsing");
 
-  auto* loader = Loader::get_instance();
+  auto* loader = SGAL::Loader::get_instance();
   auto* parser = new Dxf_parser();
   parser->set_trace_code(code);
   loader->doregister_loader(".dxf", parser);
 }
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

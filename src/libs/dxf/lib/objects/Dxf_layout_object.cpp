@@ -19,13 +19,14 @@
 #include <map>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_layout_object.hpp"
 #include "dxf/Dxf_parser.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_layout_object>  Dxf_layout_object_wrapper;
 
@@ -77,10 +78,10 @@ Dxf_layout_object_wrapper::s_record_handlers = {};
 // EF: it's possible that we should instead pass a plotsettings object record
 // that is a data member of this layout object record (in case several
 // plotsettings records are expected in a single dcf file.
-bool Dxf_layout_object::handle_marker(const String& marker)
+bool Dxf_layout_object::handle_marker(const SGAL::String& marker)
 {
   if ("AcDbPlotSettings" == marker) m_parser->parse_plotsettings_object();
   return true;
 }
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE

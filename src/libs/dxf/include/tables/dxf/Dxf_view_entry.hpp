@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_VIEW_ENTRY_HPP
-#define SGAL_DXF_VIEW_ENTRY_HPP
+#ifndef DXF_VIEW_ENTRY_HPP
+#define DXF_VIEW_ENTRY_HPP
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -25,10 +25,10 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_table_entry.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct SGAL_SGAL_DECL Dxf_view_entry : Dxf_table_entry {
-  String m_name;        // Style name
+  SGAL::String m_name;  // Style name
   int16_t m_flags;      // 16 = If set, table entry is externally dependent on
                         //      an xref
                         // 32 = If both this bit and bit 16 are set, the
@@ -68,13 +68,13 @@ struct SGAL_SGAL_DECL Dxf_view_entry : Dxf_table_entry {
   int16_t m_is_associated_ucs_present; // 1 if there is a UCS associated to
                         // this view; 0 otherwise
   int16_t m_is_camera_plottable; // 1 if the camera is plottable
-  String m_background_object_pointer; // Soft-pointer ID/handle to background
-                        // object (optional)
-  String m_section_object_pointer; // Soft-pointer ID/handle to live section
-                        // object (optional)
-  String m_visual_style_object_pointer; // Hard-pointer ID/handle to visual style
-                        // object (optional)
-  String m_sun_ownership_pointer; // Sun hard ownership ID
+  SGAL::String m_background_object_pointer; // Soft-pointer ID/handle to
+                        // background object (optional)
+  SGAL::String m_section_object_pointer; // Soft-pointer ID/handle to live
+                        // section object (optional)
+  SGAL::String m_visual_style_object_pointer; // Hard-pointer ID/handle to  style
+                        // visual object (optional)
+  SGAL::String m_sun_ownership_pointer; // Sun hard ownership ID
   double m_ucs_origin[3]; // UCS origin (appears only if code 72 is set to 1)
   double m_ucs_x_axis[3]; // UCS X-axis (appears only if code 72 is set to 1)
   double m_ucs_y_axis[3]; // UCS Y-axis (appears only if code 72 is set to 1)
@@ -85,16 +85,16 @@ struct SGAL_SGAL_DECL Dxf_view_entry : Dxf_table_entry {
                         // 3 = Front; 4 = Back;
                         // 5 = Left; 6 = Right
   double m_ucs_elevation; // UCS Elevation (appears only if code 72 is set to 1)
-  String m_ucs_handle;    // ID/handle of AcDbUCSTableRecord if UCS is a named
-                        // UCS.  If not present, then UCS is unnamed. (appears
-                        // only if code 72 is set to 1)
-  String m_base_ucs_handle; // ID/handle of AcDbUCSTableRecord of base UCS if
-                        // UCS is orthographic (79 code is non-zero).  If not
+  SGAL::String m_ucs_handle;    // ID/handle of AcDbUCSTableRecord if UCS is a
+                        // named UCS.  If not present, then UCS is unnamed.
+                        // (appears only if code 72 is set to 1)
+  SGAL::String m_base_ucs_handle; // ID/handle of AcDbUCSTableRecord of base UCS
+                        // if UCS is orthographic (79 code is non-zero).  If not
                         // present and 79 code is non-zero, then base UCS is
                         // taken to be WORLD. (appears only if code 72 is set to
                         // 1)
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

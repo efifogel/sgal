@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_TABLE_HPP
-#define SGAL_DXF_TABLE_HPP
+#ifndef DXF_TABLE_HPP
+#define DXF_TABLE_HPP
 
 #include <map>
 
@@ -30,7 +30,7 @@
 #include "dxf/Dxf_base_table.hpp"
 #include "dxf/Dxf_record_wrapper.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 template <typename Entry_>
 struct SGAL_SGAL_DECL Dxf_table : Dxf_base_table {
@@ -40,6 +40,6 @@ struct SGAL_SGAL_DECL Dxf_table : Dxf_base_table {
   std::vector<Entry> m_entries;
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

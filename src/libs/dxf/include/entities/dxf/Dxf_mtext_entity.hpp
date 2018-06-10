@@ -16,15 +16,16 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_MTEXT_ENTITY_HPP
-#define SGAL_DXF_MTEXT_ENTITY_HPP
+#ifndef DXF_MTEXT_ENTITY_HPP
+#define DXF_MTEXT_ENTITY_HPP
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_entity.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 class Dxf_parser;
 
@@ -52,16 +53,16 @@ struct Dxf_mtext_entity : public Dxf_base_entity {
                         // 3 = Top to bottom
                         // 5 = By style (the flow direction is inherited
                         // from the associated text style)
-  String m_test;        // Text string. If the text string is less than 250
+  SGAL::String m_test;  // Text string. If the text string is less than 250
                         // characters, all characters appear in group 1. If the
                         // text string is greater than 250 characters, the
                         // string is divided into 250-character chunks, which
                         // appear in one or more group 3 codes. If group 3 codes
                         // are used, the last group is a group 1 and has fewer
                         // than 250 characters
-  String m_extended_text; // Additional text (always in 250-character chunks)
+  SGAL::String m_extended_text; // Additional text (always in 250-character chunks)
                         // (optional)
-  String m_text_style_name; // Text style name (STANDARD if not provided)
+  SGAL::String m_text_style_name; // Text style name (STANDARD if not provided)
                         // (optional)
   double m_extrusion_direction[3]; // Extrusion direction (optional;
                         // default = 0, 0, 1)
@@ -89,7 +90,7 @@ struct Dxf_mtext_entity : public Dxf_base_entity {
                         // 1 = Use background fill color
                         // 2 = Use drawing window color as background fill color
   int32_t m_background_color_rgb; // Background color (if RGB color)
-  String m_background_color_name; // Background color (if color name)
+  SGAL::String m_background_color_name; // Background color (if color name)
   double m_fill_box_scale; // Fill box scale (optional):
                         // Determines how much border there is around the text.
   int16_t m_background_fill_color; // Background fill color (optional): Color
@@ -108,6 +109,6 @@ struct Dxf_mtext_entity : public Dxf_base_entity {
   //@}
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

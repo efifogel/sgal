@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_CLASS_HPP
-#define SGAL_DXF_CLASS_HPP
+#ifndef DXF_CLASS_HPP
+#define DXF_CLASS_HPP
 
 #include <cstdint>
 
@@ -26,13 +26,13 @@
 
 #include "dxf/basic.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct SGAL_SGAL_DECL Dxf_class {
-  String m_record_name;      // Class DXF record name; always unique
-  String m_class_name;       // C++ class name. Used to bind with software that
+  SGAL::String m_record_name; // Class DXF record name; always unique
+  SGAL::String m_class_name; // C++ class name. Used to bind with software that
                              // defines object class behavior. Always unique
-  String m_application_name; // Application name. Posted in Alert box when a
+  SGAL::String m_application_name; // Application name. Posted in Alert box when a
                              // class definition listed in this section is not
                              // currently loaded
   int m_version_number;
@@ -47,6 +47,6 @@ struct SGAL_SGAL_DECL Dxf_class {
                              // appear only in the OBJECTS section
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif

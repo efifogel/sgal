@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_DXF_VPORT_ENTRY_HPP
-#define SGAL_DXF_VPORT_ENTRY_HPP
+#ifndef DXF_VPORT_ENTRY_HPP
+#define DXF_VPORT_ENTRY_HPP
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -25,10 +25,10 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_table_entry.hpp"
 
-SGAL_BEGIN_NAMESPACE
+DXF_BEGIN_NAMESPACE
 
 struct SGAL_SGAL_DECL Dxf_vport_entry : Dxf_table_entry {
-  String m_name;        // Viewport name
+  SGAL::String m_name;  // Viewport name
   int16_t m_flags;      // 16 = If set, table entry is externally dependent on
                         //      an xref
                         // 32 = If both this bit and bit 16 are set, the
@@ -57,12 +57,11 @@ struct SGAL_SGAL_DECL Dxf_vport_entry : Dxf_table_entry {
   double m_aspect_ratio; // Viewport aspect ratio
   double m_snap_rotation_angle; // Snap rotation angle
   double m_view_twist_angle; // View twist angle
-  String m_soft_frozen_layer; // Soft-pointer ID/handle to frozen layer objects;
-                        // repeats for each frozen layers
-  String m_hard_frozen_layer; // Hard-pointer ID/handle to frozen layer objects;
-                        // repeats for each frozen layers
-  String m_plot_style_sheet; // Plot style sheet
-
+  SGAL::String m_soft_frozen_layer; // Soft-pointer ID/handle to frozen layer
+                        // objects; repeats for each frozen layers
+  SGAL::String m_hard_frozen_layer; // Hard-pointer ID/handle to frozen layer
+                        // objects; repeats for each frozen layers
+  SGAL::String m_plot_style_sheet; // Plot style sheet
   int16_t m_view_mode;  // View mode (see VIEWMODE system variable)
   int16_t m_circle_sides; // Circle sides
   int16_t m_fast_zoom;  // Fast zoom setting
@@ -92,10 +91,10 @@ struct SGAL_SGAL_DECL Dxf_vport_entry : Dxf_table_entry {
   double m_ucs_origin[3]; // UCS origin 110, 120, 130
   double m_ucs_x_axis[3]; // UCS X-axis 111, 121, 131
   double m_ucs_y_axis[3]; // UCS X-axis 112, 122, 132
-  String m_ucs_handle;    // ID/handle of AcDbUCSTableRecord if UCS is a named .
-                        // UCS If not present, then UCS is unnamed 345
-  String m_base_ucs_handle; // ID/handle of AcDbUCSTableRecord of base UCS if
-                        // UCS is orthographic (79 code is non-zero). If not
+  SGAL::String m_ucs_handle; // ID/handle of AcDbUCSTableRecord if UCS is a
+                        // named. UCS If not present, then UCS is unnamed 345
+  SGAL::String m_base_ucs_handle; // ID/handle of AcDbUCSTableRecord of base UCS
+                        // if UCS is orthographic (79 code is non-zero). If not
                         // present and 79 code is non-zero, then base UCS is
                         // taken to be WORLD 346
   int16_t m_orthographic_type; // Orthographic type of UCS
@@ -109,12 +108,12 @@ struct SGAL_SGAL_DECL Dxf_vport_entry : Dxf_table_entry {
   double m_elevation;   // Elevation
   int16_t m_shade_plot_setting; // Shade plot setting
   int16_t m_major_grid_lines; // Major grid lines
-  String m_background_object_pointer; // Soft-pointer ID/handle to background
-                        // object (optional)
-  String m_shade_plot_object_pointer; // Soft-pointer ID/handle to shade plot
-                        // object (optional)
-  String m_visual_style_object_pointer; // Hard-pointer ID/handle to visual
-                        // style object (optional)
+  SGAL::String m_background_object_pointer; // Soft-pointer ID/handle to
+                        // background object (optional)
+  SGAL::String m_shade_plot_object_pointer; // Soft-pointer ID/handle to shade
+                        // oplot bject (optional)
+  SGAL::String m_visual_style_object_pointer; // Hard-pointer ID/handle to
+                        // visual style object (optional)
   bool m_is_default_lighting_on; // Default Lighting On flag
   int8_t m_default_lighting_type; // Default Lighting type
                         // 0 = One distant light
@@ -123,9 +122,9 @@ struct SGAL_SGAL_DECL Dxf_vport_entry : Dxf_table_entry {
   double m_contrast;    // Contrast
   int16_t m_ambient_color; // Ambient color (only output when non-black) 63
   int32_t m_ambient_color_i32; // Ambient color
-  String m_ambient_color_name; // Ambient color
+  SGAL::String m_ambient_color_name; // Ambient color
 };
 
-SGAL_END_NAMESPACE
+DXF_END_NAMESPACE
 
 #endif
