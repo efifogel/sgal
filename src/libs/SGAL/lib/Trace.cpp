@@ -76,7 +76,6 @@ size_t Trace::doregister_trace_opt(const String& opt)
 
   auto it = m_free_codes.begin();
   size_t code = it->lower();
-  std::cout << "add_trace_opt: " << code << std::endl;
   m_free_codes.erase(ival::closed(code, code+1));
 
   s_trace_opts[opt] = code;
