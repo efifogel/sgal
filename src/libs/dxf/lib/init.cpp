@@ -16,23 +16,26 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-// extern "C" void BOOST_EXTENSION_EXPORT_DECL scgal_init()
-// void scgal_init()
-
 #include <boost/extension/extension.hpp>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Loader.hpp"
 #include "SGAL/Trace.hpp"
 
 #include "dxf/basic.hpp"
-// #include "dxf/Base_parser.hpp"
+#include "dxf/Dxf_parser.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 extern "C" void BOOST_EXTENSION_EXPORT_DECL dxf_init()
 {
-  // auto* trace = Trace::get_instance();
-  // Base_parser::m_trace_code = trace->add_trace_opt("dxf-parsing");
+  auto* trace = Trace::get_instance();
+  auto code = trace->doregister_trace_opt("dxf-parsing");
+
+  auto* loader = Loader::get_instance();
+  auto* parser = new Dxf_parser();
+  parser->set_trace_code(code);
+  loader->doregister_loader(".dxf", parser);
 }
 
 SGAL_END_NAMESPACE

@@ -158,11 +158,12 @@ public:
 
   /*! Construct.
    */
-  Dxf_parser(Scene_graph* sg);
+  Dxf_parser();
 
   /*! Parse.
    */
-  virtual Loader_code operator()(std::istream& is, const String& filename);
+  virtual Loader_code operator()(std::istream& is, Scene_graph* sg,
+                                 const String& filename);
 
   /*! Set the flag that determines whether to report unrecognized code.
    */

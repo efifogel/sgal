@@ -299,8 +299,8 @@ Dxf_base_object_wrapper::s_record_members = {
 };
 
 //! \brief constructs.
-Dxf_parser::Dxf_parser(Scene_graph* sg) :
-  Base_loader(sg),
+Dxf_parser::Dxf_parser() :
+  Base_loader(),
   m_pending_code(0),
   m_is_pending(false),
   m_extended_data(nullptr),
@@ -308,9 +308,10 @@ Dxf_parser::Dxf_parser(Scene_graph* sg) :
 {}
 
 //! \brief parses.
-Loader_code Dxf_parser::operator()(std::istream& is, const String& filename)
+Loader_code Dxf_parser::operator()(std::istream& is, Scene_graph* sg,
+                                   const String& filename)
 {
-  Base_loader::operator()(is, filename);
+  Base_loader::operator()(is, sg, filename);
   m_pending_code = 0;
   m_is_pending = false;
   m_extended_data = nullptr;

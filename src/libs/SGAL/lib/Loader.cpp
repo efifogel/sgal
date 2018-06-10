@@ -172,29 +172,13 @@ Loader_code Loader::load(const char* filename, Scene_graph* sg)
     }
   }
 
-  // // If the extension is .dxf, assume that the file is in the dxf format.
-  // // If the return code of the loader is positive, the file might be in a
-  // // different format. In this case, continue trying matching.
-  // else if (boost::iequals(file_extension, ".dxf")) {
-  //   sg->set_input_format_id(File_format_3d::ID_DXF);
-  //   auto* root = sg->initialize();
-
-  //   Dxf_parser parser(sg);
-  //   auto rc = parser(is, filename);
-  //   is.close();
-  //   if (rc == Loader_code::SUCCESS) return rc;
-  //   if (rc == Loader_code::FAILURE) {
-  //     throw Parse_error(m_filename);
-  //     return rc;
-  //   }
-  // }
-
   // Try registered loaders
   else {
+    // If the extension matches the extension of the registered loader, use it.
     auto it = m_loaders.find(file_extension);
     if (it != m_loaders.end()) {
       auto& loader = *(it->second);
-      auto rc = loader(is, m_filename);
+      auto rc = loader(is, sg, m_filename);
       is.close();
       if (rc == Loader_code::SUCCESS) return rc;
       if (rc == Loader_code::FAILURE) {

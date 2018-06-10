@@ -34,14 +34,16 @@ class Scene_graph;
 class SGAL_SGAL_DECL Base_loader {
 public:
   /*! Construct.
-   * \param[i] is the input stream.
-   * \param[i] filename the input filename.
    */
-  Base_loader(Scene_graph* m_scene_graph);
+  Base_loader();
 
   /*! Parse.
+   * \param[i] is the input stream.
+   * \param[i] sg the scene graph.
+   * \param[i] filename the input filename.
    */
-  virtual Loader_code operator()(std::istream& is, const String& filename);
+  virtual Loader_code operator()(std::istream& is, Scene_graph* sg,
+                                 const String& filename);
 
   /*! Obtain the input stream.
    */
@@ -63,6 +65,10 @@ public:
    */
   void inc_line();
 
+  /*! Set the trace code.
+   */
+  void set_trace_code(size_t code);
+
 protected:
   //! The text input stream to parse.
   std::istream* m_is;
@@ -76,23 +82,24 @@ protected:
   //! The current line number
   size_t m_line;
 
-public: //! \todo temporary
+public:
   //! The trace code.
   size_t m_trace_code;
 };
 
 //! \brief parses.
-inline Loader_code Base_loader::operator()(std::istream& is,
+inline Loader_code Base_loader::operator()(std::istream& is, Scene_graph* sg,
                                            const String& filename)
 {
   m_is = &is;
+  m_scene_graph = sg;
   m_filename = &filename;
   m_line = 0;
 }
 
 //! \brief constructs.
-inline Base_loader::Base_loader(Scene_graph* sg) :
-  m_scene_graph(sg),
+inline Base_loader::Base_loader() :
+  m_scene_graph(nullptr),
   m_line(0),
   m_trace_code(static_cast<size_t>(Trace::INVALID))
 {}
@@ -111,6 +118,9 @@ inline void Base_loader::set_line(size_t line) { m_line = line; }
 
 //! \brief increments the line number.
 inline void Base_loader::inc_line() { ++m_line; }
+
+//! \brief sets the trace code.
+inline void Base_loader::set_trace_code(size_t code) { m_trace_code = code; }
 
 SGAL_END_NAMESPACE
 
