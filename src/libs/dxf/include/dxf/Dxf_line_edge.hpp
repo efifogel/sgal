@@ -29,8 +29,8 @@ DXF_BEGIN_NAMESPACE
 struct Dxf_line_edge : Dxf_edge {
   /// Record members
   //@{
-  double m_start_point[2];
-  double m_end_point[2];
+  double m_start_point[2];      // Start point (in OCS
+  double m_end_point[2];        // Endpoint (in OCS
   //@}
 
   /// Record handlers
