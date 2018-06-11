@@ -1726,11 +1726,16 @@ def print_set_field_from_string(config, out, field):
 
   print_line(out, 'std::stringstream ss(value);')
   single_type = get_single_type(type)
-  size = s_field_size[single_type]
-  statement = '''std::transform(multi_istream_iterator<{}>(ss),
+  if lexical_cast[1]:
+    size = s_field_size[get_single_type(type_name)]
+    statement = '''std::transform(multi_istream_iterator<{}>(ss),
                      multi_istream_iterator<{}>(),
                      std::back_inserter(m_{}),
                      &boost::lexical_cast<{}>);'''.format(size, size, name, single_type)
+  else:
+    statement = '''std::copy(std::istream_iterator<{}>(ss),
+                std::istream_iterator<{}>(),
+                std::back_inserter(m_{}));'''.format(single_type, single_type, name)
   print_call(out, statement)
 
 #! Print the code that handles a multi-string attribute.
