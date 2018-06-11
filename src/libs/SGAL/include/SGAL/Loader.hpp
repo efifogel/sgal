@@ -20,15 +20,19 @@
 #define SGAL_LOADER_HPP
 
 #include <map>
+#include <functional>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/regex.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Loader_code.hpp"
 #include "SGAL/Loader_errors.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Indices_types.hpp"
+
+namespace ba = boost::algorithm;
 
 SGAL_BEGIN_NAMESPACE
 
@@ -242,8 +246,15 @@ private:
                          Polygon_indices& normal_indices,
                          Polygon_indices& tex_coord_indices);
 
+  //! case-independent (ci) compare-less binary function
+  struct ci_less : std::binary_function<std::string, std::string, bool> {
+    bool operator() (const String& s1, const String& s2) const {
+      return ba::lexicographical_compare(s1, s2, boost::is_iless());
+    }
+  };
+
   //! Loaders.
-  std::map<String, Base_loader*> m_loaders;
+  std::map<String, Base_loader*, ci_less> m_loaders;
 
   //! The singleton.
   static Loader* s_instance;
