@@ -105,6 +105,10 @@ public:
    */
   size_t find_trace_code(const String& opt) const;
 
+  /*! Obtain the trace options container.
+   */
+  static const std::map<String, size_t>& get_trace_opts();
+
   /*! Register a trace option.
    * \param[in] the new option.
    * \return the code allocated for the external option.

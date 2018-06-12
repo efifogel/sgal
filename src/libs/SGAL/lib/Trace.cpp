@@ -91,4 +91,7 @@ void Trace::unregister_trace_opt(const String& opt)
   m_free_codes.insert(ival::closed(code, code));
 }
 
+//! \brief obtains the trace options container.
+const std::map<String, size_t>& Trace::get_trace_opts() { return s_trace_opts; }
+
 SGAL_END_NAMESPACE
