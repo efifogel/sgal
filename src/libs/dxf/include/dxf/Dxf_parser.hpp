@@ -1434,6 +1434,30 @@ private:
   /*! Add polylines provided in hatch entities.
    */
   void add_polylines(const Dxf_hatch_entity& hatch_entity, SGAL::Group* root);
+
+  /*! Add polylines (without bulge).
+   * \param[in] polylines
+   * \param[in] root
+   * \param[in] closed
+   */
+  void add_polylines(const std::list<Dxf_polyline_boundary_path*>& polylines,
+                     SGAL::Group* root, bool closed);
+
+  /*! Add polylines with bulge.
+   * \param[in] polylines
+   * \param[in] root
+   * \param[in] closed
+   */
+  void add_polylines_with_bulge(const std::list<Dxf_polyline_boundary_path*>&
+                                polylines,
+                                SGAL::Group* root, bool closed);
+
+
+  /*! Compute the number of segsments that approximates a circular arc.
+   */
+  size_t num_segments_of_circular_arc(const std::array<double, 2>& v1,
+                                      const std::array<double, 2>& v2,
+                                      double b);
 };
 
 //! \brief sets the flag that determines whether to report unrecognized code.
