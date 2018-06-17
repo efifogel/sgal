@@ -1137,17 +1137,29 @@ def print_field_data_members(out, fields):
     print_line(out, "%s m_%s;" % (type, name))
     print_empty_line(out)
 
-def print_protected_data_members(config, out):
-  protected_data = {}
-  if config.has_option('class', 'protected-data'):
-    protected_data = ast.literal_eval(config.get('class', 'protected-data'))
-  for datum in protected_data:
+def print_protected_data_members_from_set(out, members, static=False):
+  for datum in members:
     desc = config.get(datum, 'desc')
     type = config.get(datum, 'type')
     name = config.get(datum, 'name')
     print_line(out, '//! {}'.format(desc))
-    print_line(out, '{} {};'.format(type, name))
+    if static:
+      print_line(out, 'static {} {};'.format(type, name))
+    else:
+      print_line(out, '{} {};'.format(type, name))
     print_empty_line(out)
+
+def print_protected_data_members(config, out):
+  if not config.has_option('class', 'protected-data'):
+    return
+  members = ast.literal_eval(config.get('class', 'protected-data'))
+  print_protected_data_members_from_set(out, members)
+
+def print_static_protected_data_members_declarations(config, out):
+  if not config.has_option('class', 'static-protected-data'):
+    return
+  members = ast.literal_eval(config.get('class', 'static-protected-data'))
+  print_protected_data_members_from_set(out, members, True)
 
 def print_get_tag_declaration(out, library):
   print_line(out, '/*! Obtain the tag (type) of the container. */')
@@ -1170,7 +1182,7 @@ def print_static_member_declarations(out, fields):
     print_line(out, "static const %s s_def_%s;" % (type, name))
 
 def print_tag_data_member(out, library):
-  print_line(out, "/*! The tag that identifies this container type. */")
+  print_line(out, "//! The tag that identifies this container type.")
   if 'SGAL' == library:
     print_line(out, "static const String s_tag;")
   else:
@@ -1178,7 +1190,7 @@ def print_tag_data_member(out, library):
   print_empty_line(out)
 
 def print_prototype_data_member(out, library):
-  print_line(out, "/*! The container prototype. */")
+  print_line(out, "//! The container prototype.")
   if 'SGAL' == library:
     print_line(out, "static Container_proto* s_prototype;");
   else:
@@ -1399,12 +1411,14 @@ def generate_hpp(library, config, fields, out):
   print_line(out, "protected:")
   increase_indent()
 
-  print_protected_data_members(config, out)
-  print_field_data_members(out, fields)
+  # Print protected member function declarations
   print_get_tag_declaration(out, library)
-
-  # Print additional protected functions:
   print_protected_function_declarations(config, out)
+
+  # Print protceted data members
+  print_field_data_members(out, fields)
+  print_protected_data_members(config, out)
+  print_static_protected_data_members_declarations(config, out)
 
   decrease_indent()
   print_line(out, "private:")
@@ -1505,6 +1519,7 @@ def print_cpp_include_directives(out, fields):
           print_line(out, '#include \"{}\"'.format(item))
       print_empty_line(out)
 
+#! Print default values of fields. These values are static data members.
 def print_static_member_definitions(out, class_name):
   print_line(out, "// Default values:")
   for field in fields[:]:
@@ -1519,6 +1534,20 @@ def print_static_member_definitions(out, class_name):
     else:
       print_line(out, 'const {} {}::s_def_{};'.format(type, class_name, name))
   print_empty_line(out)
+
+#! Print definitions of static data members.
+def print_static_protected_data_members_definitions(config, out, class_name):
+  if not config.has_option('class', 'static-protected-data'):
+    return
+  members = ast.literal_eval(config.get('class', 'static-protected-data'))
+  for datum in members:
+    desc = config.get(datum, 'desc')
+    type = config.get(datum, 'type')
+    name = config.get(datum, 'name')
+    value = config.get(datum, 'value')
+    print_line(out, '//! {}'.format(desc))
+    print_line(out, '{} {}::{}({});'.format(type, class_name, name, value))
+    print_empty_line(out)
 
 #! Print constructor definition.
 def print_constructor_definition(config, out, class_name, derived_class, fields, library):
@@ -1947,6 +1976,7 @@ def generate_cpp(library, config, fields, out):
   print_empty_line(out)
 
   print_static_member_definitions(out, class_name)
+  print_static_protected_data_members_definitions(config, out, class_name)
   print_constructor_definition(config, out, class_name, derived_class, fields, library)
   print_destructor_definition(out, class_name, fields)
   print_prototype_handling_definitions(config, out, class_name, derived_class, fields, library)
