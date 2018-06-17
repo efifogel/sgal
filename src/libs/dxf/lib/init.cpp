@@ -36,6 +36,15 @@ extern "C" void BOOST_EXTENSION_EXPORT_DECL dxf_init()
   auto* parser = new Dxf_parser();
   parser->set_trace_code(code);
   loader->doregister_loader(".dxf", parser);
+
+  //! \todo Need a method (API) to add stuff to the command-line options by a
+  // Dynamically Loaded Library (DLL).
+  // In particular, add the "dxf-parsing" trace option.
+  // Observe, that in the current flow, the DLLs are loaded only after the
+  // command-line options are processed. If the '--help' option is entered by
+  // the user, an exception is thrown and the DLLs are not loaded at all. This
+  // need to change to enable loading first, then adding the command-line
+  // options of the DLLs, and only then print the help message and exit.
 }
 
 DXF_END_NAMESPACE
