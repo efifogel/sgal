@@ -35,15 +35,15 @@ class Dxf_parser;
 struct Dxf_polyline_boundary_path : Dxf_boundary_path {
   int16_t m_has_bulge;  // Has bulge flag
   int16_t m_is_closed;  // Is closed flag
-  std::vector<std::array<double, 3> > m_locations; // Vertex location (in OCS)
-  double m_bulge;       // Bulge (optional, default = 0)
+  std::vector<std::array<double, 2> > m_locations; // Vertex location (in OCS)
+  std::vector<double> m_bulges; // Bulge (optional, default = 0)
 
   /// Handlers
   //@{
   void number_handler(int32_t size);
-  void m_location_0_handler(double coord);
-  void m_location_1_handler(double coord);
-  void m_location_2_handler(double coord);
+  void location_0_handler(double coord);
+  void location_1_handler(double coord);
+  void bulge_handler(double bulge);
   //@}
 };
 

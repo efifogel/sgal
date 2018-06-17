@@ -38,8 +38,7 @@ Dxf_polyline_boundary_path_wrapper::s_record_members = {
   // {93,  Number of polyline vertices
   // {10, {{&Dxf_polyline_boundary_path::m_location, n, i, 0}},
   // {20, {{&Dxf_polyline_boundary_path::m_location, n, i, 1}},
-  // {30, {{&Dxf_polyline_boundary_path::m_location, n, i, 2}},
-  {42 , {&Dxf_polyline_boundary_path::m_bulge, 1, 0}}
+  // {42 , {&Dxf_polyline_boundary_path::m_bulge, 1, 0}}
 };
 
 //!
@@ -47,34 +46,40 @@ template <>
 const std::map<int, Dxf_polyline_boundary_path_wrapper::Record_handler_type>
 Dxf_polyline_boundary_path_wrapper::s_record_handlers = {
   {93, &Dxf_polyline_boundary_path::number_handler},
-  {10, &Dxf_polyline_boundary_path::m_location_0_handler},
-  {20, &Dxf_polyline_boundary_path::m_location_1_handler},
-  {30, &Dxf_polyline_boundary_path::m_location_2_handler}
+  {10, &Dxf_polyline_boundary_path::location_0_handler},
+  {20, &Dxf_polyline_boundary_path::location_1_handler},
+  {42, &Dxf_polyline_boundary_path::bulge_handler}
 };
 
-//!
+//! Handle the number of vertices
 void Dxf_polyline_boundary_path::number_handler(int32_t size)
-{ m_locations.reserve(size); }
-
-//!
-void Dxf_polyline_boundary_path::m_location_0_handler(double coord)
 {
-  m_locations.resize(m_locations.size() + 1);
-  m_locations.back()[0] = coord;
+  m_locations.reserve(size);
+  if (m_has_bulge) m_bulges.reserve(size);
 }
 
 //!
-void Dxf_polyline_boundary_path::m_location_1_handler(double coord)
+void Dxf_polyline_boundary_path::location_0_handler(double coord)
+{
+  auto size = m_locations.size() + 1;
+  m_locations.resize(size);
+  m_bulges.resize(size);
+  m_locations.back()[0] = coord;
+  m_bulges.back() = 0;
+}
+
+//!
+void Dxf_polyline_boundary_path::location_1_handler(double coord)
 {
   SGAL_assertion(! m_locations.empty());
   m_locations.back()[1] = coord;
 }
 
 //!
-void Dxf_polyline_boundary_path::m_location_2_handler(double coord)
+void Dxf_polyline_boundary_path::bulge_handler(double bulge)
 {
-  SGAL_assertion(! m_locations.empty());
-  m_locations.back()[2] = coord;
+  SGAL_assertion(! m_bulges.empty());
+  m_bulges.back() = bulge;
 }
 
 DXF_END_NAMESPACE
