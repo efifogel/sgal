@@ -48,6 +48,12 @@ Option_parser::Option_parser() :
 {
   typedef std::vector<std::string> vs;
 
+  // Extract trace options:
+  auto* trace = Trace::get_instance();
+  std::string trace_msg("trace options:\n");
+  for (auto& trace_opt : trace->get_trace_opts())
+    trace_msg += "  " + trace_opt.first + "\n";
+
   // Options allowed on the command line, config file, or env. variables
   // We must keep the trace-options as strings, and NOT convert them on the fly,
   // using, e.g., a validator, to trace codes, because at the time that the
@@ -59,24 +65,7 @@ Option_parser::Option_parser() :
      "quite mode")
     ("verbose,v", po::value<Uint>(&m_verbose)->default_value(0),
      "verbose level")
-    ("trace,T", po::value<vs>()->composing(),
-     "trace options\n"
-     "  graphics\n"
-     "  vrml_parsing\n"
-     "  window-manager\n"
-     "  event\n"
-     "  script\n"
-     "  ifs\n"
-     "  ils\n"
-     "  polyhedron\n"
-     "  cgm\n"
-     "  destructor\n"
-     "  snapshot\n"
-     "  export\n"
-     "  font\n"
-     "  proto\n"
-     "  dxf\n"
-     )
+    ("trace,T", po::value<vs>()->composing(), trace_msg.c_str())
     ("load,L", po::value<vs>()->composing(), "load a library")
     ;
 
