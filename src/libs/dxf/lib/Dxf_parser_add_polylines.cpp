@@ -27,6 +27,8 @@
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Indexed_line_set.hpp"
 #include "SGAL/Coord_array_3d.hpp"
+#include "SGAL/approximate_circular_arc.hpp"
+#include "SGAL/Vector2f.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_parser.hpp"
@@ -70,44 +72,15 @@ void Dxf_parser::
 add_polylines_with_bulge(const std::list<Dxf_polyline_boundary_path*>& polylines,
                          SGAL::Group* root, bool closed)
 {
+  static const double min_bulge(0.1);
+
   size_t num_primitives(polylines.size());
   if (0 == num_primitives) return;
-
-  std::cout << "add_polylines_with_bulge " << std::endl;
 
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
   typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
   typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
   typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
-
-  // Count number of vertices:
-  size_t size(0);
-  for (auto* polyline : polylines) {
-    auto bit = polyline->m_bulges.begin();
-    auto vit_first = polyline->m_locations.begin();
-    auto vit = vit_first;
-    auto v = vit;
-    auto b = *bit;
-    size_t polyline_size(1);
-    for (++vit, ++bit; vit != polyline->m_locations.end(); ++vit, ++bit) {
-      size_t segs_size(1);
-      // segs_size += num_segments_of_circular_arc(*v, *vit, b);
-      std::cout << "    segs size: " << segs_size << std::endl;
-      polyline_size += segs_size;
-      v = vit;
-      b = *bit;
-    }
-
-    if (closed) {
-      size_t segs_size = num_segments_of_circular_arc(*v, *vit_first, b);
-      std::cout << "    segs size: " << segs_size << std::endl;
-      // polyline_size += segs_size;
-    }
-
-    std::cout << "  polyline size: " << polyline_size << std::endl;
-    size += polyline_size;
-  }
-  std::cout << "hatch size: " << size << std::endl;
 
   // Add Shape
   Shared_shape shape(new SGAL::Shape);
@@ -130,27 +103,64 @@ add_polylines_with_bulge(const std::list<Dxf_polyline_boundary_path*>& polylines
   shape->set_geometry(ils);
 
   // Allocate vertices:
-  auto* coords = new SGAL::Coord_array_3d(size);
+  auto* coords = new SGAL::Coord_array_3d();
   Shared_coord_array_3d shared_coords(coords);
   coords->add_to_scene(m_scene_graph);
   m_scene_graph->add_container(shared_coords);
 
-  // Allocate indices:
+  // Compute the circular arc approximation.
+  std::vector<std::list<SGAL::Vector2f> > polylines_segs(num_primitives);
+  auto sit = polylines_segs.begin();
+  for (auto* polyline : polylines) {
+    auto& segs = *sit++;
+
+    auto bit = polyline->m_bulges.begin();
+    auto vit_first = polyline->m_locations.begin();
+    auto vit = vit_first;
+    auto v = vit;
+    auto b = *bit;
+
+    const auto& p = *v;
+    segs.push_back(SGAL::Vector2f(p[0], p[1]));
+
+    for (++vit, ++bit; vit != polyline->m_locations.end(); ++vit, ++bit) {
+      SGAL::Vector2f v1((*v)[0], (*v)[1]);
+      SGAL::Vector2f v2((*vit)[0], (*vit)[1]);
+      SGAL::approximate_circular_arc(v1, v2, b, min_bulge,
+                                     std::back_inserter(segs));
+      segs.push_back(v2);
+
+      v = vit;
+      b = *bit;
+    }
+
+    if (closed) {
+      SGAL::Vector2f v1((*v)[0], (*v)[1]);
+      SGAL::Vector2f v2((*vit_first)[0], (*vit_first)[1]);
+      SGAL::approximate_circular_arc(v1, v2, b, min_bulge,
+                                     std::back_inserter(segs));
+    }
+  }
+
+  // Count the number of segments and allocate the vertices and indices
+  size_t size(0);
+  for (const auto& segs : polylines_segs) size += segs.size();
+  coords->resize(size);
   auto& indices = ils->get_coord_indices();
   indices.resize(size + num_primitives);
 
   // Assign the vertices & indices:
-  size_t i(0);
   auto it = indices.begin();
   auto cit = coords->begin();
-  for (auto* polyline : polylines) {
-    cit = std::transform(polyline->m_locations.begin(),
-                         polyline->m_locations.end(), cit,
-                         [&](const std::array<double, 2>& p)
+  size_t i(0);
+  for (const auto& segs : polylines_segs) {
+    cit = std::transform(segs.begin(), segs.end(), cit,
+                         [&](const SGAL::Vector2f& p)
                          { return SGAL::Vector3f(p[0], p[1], 0); });
     auto it_end = it;
-    std::advance(it_end, polyline->m_locations.size());
-    std::iota(it, it_end, 0);
+    std::advance(it_end, segs.size());
+    std::iota(it, it_end, i);
+    i += segs.size();
     it = it_end;
     *it++ = -1;
   }
@@ -210,9 +220,9 @@ add_polylines(const std::list<Dxf_polyline_boundary_path*>& polylines,
   indices.resize(size + num_primitives);
 
   // Assign the vertices & indices:
-  size_t i(0);
   auto it = indices.begin();
   auto cit = coords->begin();
+  size_t i(0);
   for (auto* polyline : polylines) {
     cit = std::transform(polyline->m_locations.begin(),
                          polyline->m_locations.end(), cit,
@@ -220,7 +230,8 @@ add_polylines(const std::list<Dxf_polyline_boundary_path*>& polylines,
                          { return SGAL::Vector3f(p[0], p[1], 0); });
     auto it_end = it;
     std::advance(it_end, polyline->m_locations.size());
-    std::iota(it, it_end, 0);
+    std::iota(it, it_end, i);
+    i += polyline->m_locations.size();
     it = it_end;
     *it++ = -1;
   }
@@ -236,10 +247,12 @@ add_polylines(const std::list<Dxf_polyline_boundary_path*>& polylines,
 void Dxf_parser::add_polylines(const Dxf_hatch_entity& hatch_entity,
                                SGAL::Group* root)
 {
-  std::list<Dxf_polyline_boundary_path*>  open_polylines;
-  std::list<Dxf_polyline_boundary_path*>  closed_polylines;
-  std::list<Dxf_polyline_boundary_path*>  open_polylines_with_bulge;
-  std::list<Dxf_polyline_boundary_path*>  closed_polylines_with_bulge;
+  static size_t i(0);
+
+  std::list<Dxf_polyline_boundary_path*> open_polylines;
+  std::list<Dxf_polyline_boundary_path*> closed_polylines;
+  std::list<Dxf_polyline_boundary_path*> open_polylines_with_bulge;
+  std::list<Dxf_polyline_boundary_path*> closed_polylines_with_bulge;
   for (Dxf_boundary_path* path : hatch_entity.m_boundary_paths) {
     auto* polyline = dynamic_cast<Dxf_polyline_boundary_path*>(path);
     if (! polyline) continue;
@@ -252,10 +265,15 @@ void Dxf_parser::add_polylines(const Dxf_hatch_entity& hatch_entity,
       else open_polylines.push_back(polyline);
     }
   }
-  //add_polylines(closed_polylines, root, true);
-  //add_polylines(open_polylines, root, false);
+
+  if (i > 33) {
+  // add_polylines(closed_polylines, root, true);
+  // add_polylines(open_polylines, root, false);
   add_polylines_with_bulge(closed_polylines_with_bulge, root, true);
-  add_polylines_with_bulge(open_polylines_with_bulge, root, false);
+  // add_polylines_with_bulge(open_polylines_with_bulge, root, false);
+  }
+
+  std::cout << i++ << std::endl;
 }
 
 DXF_END_NAMESPACE
