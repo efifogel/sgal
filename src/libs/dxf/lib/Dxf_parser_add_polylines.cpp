@@ -247,8 +247,6 @@ add_polylines(const std::list<Dxf_polyline_boundary_path*>& polylines,
 void Dxf_parser::add_polylines(const Dxf_hatch_entity& hatch_entity,
                                SGAL::Group* root)
 {
-  static size_t i(0);
-
   std::list<Dxf_polyline_boundary_path*> open_polylines;
   std::list<Dxf_polyline_boundary_path*> closed_polylines;
   std::list<Dxf_polyline_boundary_path*> open_polylines_with_bulge;
@@ -266,14 +264,10 @@ void Dxf_parser::add_polylines(const Dxf_hatch_entity& hatch_entity,
     }
   }
 
-  if (i > 33) {
-  // add_polylines(closed_polylines, root, true);
-  // add_polylines(open_polylines, root, false);
+  add_polylines(closed_polylines, root, true);
+  add_polylines(open_polylines, root, false);
   add_polylines_with_bulge(closed_polylines_with_bulge, root, true);
-  // add_polylines_with_bulge(open_polylines_with_bulge, root, false);
-  }
-
-  std::cout << i++ << std::endl;
+  add_polylines_with_bulge(open_polylines_with_bulge, root, false);
 }
 
 DXF_END_NAMESPACE
