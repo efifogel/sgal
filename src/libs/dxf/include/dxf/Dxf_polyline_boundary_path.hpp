@@ -45,7 +45,16 @@ struct Dxf_polyline_boundary_path : Dxf_boundary_path {
   void location_1_handler(double coord);
   void bulge_handler(double bulge);
   //@}
+
+  //! Construct default
+  Dxf_polyline_boundary_path();
 };
+
+//! \brief constructs
+inline Dxf_polyline_boundary_path::Dxf_polyline_boundary_path() :
+  m_has_bulge(false),
+  m_is_closed(false)
+{}
 
 DXF_END_NAMESPACE
 
