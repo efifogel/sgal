@@ -89,7 +89,6 @@ void Dxf_hatch_entity::handle_boundary_paths(int32_t size)
     int code;
     m_parser->import_code(code);
     SGAL_assertion(92 == code);
-    auto ct = m_parser->code_type(code);
 
     int32_t type;
     m_parser->import_value(type);
