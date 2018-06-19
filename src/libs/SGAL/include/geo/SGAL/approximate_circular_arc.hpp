@@ -59,13 +59,9 @@ OutputIterator approximate_circular_arc(const Vector2f& v1, const Vector2f& v2,
                                         float bulge, float min_bulge,
                                         float radius, OutputIterator oi)
 {
-  // std::cout << "  v1: " << v1 << std::endl;
-  // std::cout << "  v2: " << v2 << std::endl;
-  // std::cout << "  bulge: " << bulge << std::endl;
-
   auto bulge_abs = fabs(bulge);
   if (min_bulge >= bulge_abs) return oi;
-  if (bulge_abs > 1) return oi;
+  // if (bulge_abs > 1) return oi;
 
   Vector2f d;
   d.sub(v2, v1);
@@ -85,7 +81,9 @@ OutputIterator approximate_circular_arc(const Vector2f& v1, const Vector2f& v2,
   auto d2_next =  0.25f * dist * squarerootf(bulge * bulge + 1);
   auto h_next = d2_next / bulge;
   auto d1_next = radius - h_next;
-  bulge = d1_next / d2_next;
+  auto bulge_next = d1_next / d2_next;
+  if (bulge_abs < fabs(bulge_next)) return oi;
+  bulge = bulge_next;
 
   // approximate the arc:
   oi = approximate_circular_arc(v1, p, bulge, min_bulge, radius, oi);
