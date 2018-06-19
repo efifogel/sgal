@@ -55,7 +55,11 @@ Dxf_polyline_boundary_path_wrapper::s_record_handlers = {
 void Dxf_polyline_boundary_path::number_handler(int32_t size)
 {
   m_locations.reserve(size);
-  if (m_has_bulge) m_bulges.reserve(size);
+  m_locations.resize(0);
+  if (m_has_bulge) {
+    m_bulges.reserve(size);
+    m_bulges.resize(0);
+  }
 }
 
 //!
@@ -63,9 +67,11 @@ void Dxf_polyline_boundary_path::location_0_handler(double coord)
 {
   auto size = m_locations.size() + 1;
   m_locations.resize(size);
-  m_bulges.resize(size);
   m_locations.back()[0] = coord;
-  m_bulges.back() = 0;
+  if (m_has_bulge) {
+    m_bulges.resize(size);
+    m_bulges.back() = 0;
+  }
 }
 
 //!
