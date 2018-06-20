@@ -1451,13 +1451,6 @@ private:
   void add_polylines_with_bulge(const std::list<Dxf_polyline_boundary_path*>&
                                 polylines,
                                 SGAL::Group* root, bool closed);
-
-
-  /*! Compute the number of segsments that approximates a circular arc.
-   */
-  size_t num_segments_of_circular_arc(const std::array<double, 2>& v1,
-                                      const std::array<double, 2>& v2,
-                                      double b);
 };
 
 //! \brief sets the flag that determines whether to report unrecognized code.
