@@ -61,7 +61,6 @@ OutputIterator approximate_circular_arc(const Vector2f& v1, const Vector2f& v2,
 {
   auto bulge_abs = fabs(bulge);
   if (min_bulge >= bulge_abs) return oi;
-  // if (bulge_abs > 1) return oi;
 
   Vector2f d;
   d.sub(v2, v1);
