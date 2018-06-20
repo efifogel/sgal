@@ -24,6 +24,7 @@
 #include <map>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Vector2f.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_boundary_path.hpp"
@@ -35,7 +36,7 @@ class Dxf_parser;
 struct Dxf_polyline_boundary_path : Dxf_boundary_path {
   int16_t m_has_bulge;  // Has bulge flag
   int16_t m_is_closed;  // Is closed flag
-  std::vector<std::array<double, 2> > m_locations; // Vertex location (in OCS)
+  std::vector<SGAL::Vector2f> m_locations; // Vertex location (in OCS)
   std::vector<double> m_bulges; // Bulge (optional, default = 0)
 
   /// Handlers

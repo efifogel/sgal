@@ -37,37 +37,7 @@
 
 DXF_BEGIN_NAMESPACE
 
-//! \brief computes the number of segsments that approximates a circular arc.
-size_t Dxf_parser::num_segments_of_circular_arc(const std::array<double, 2>& v1,
-                                                const std::array<double, 2>& v2,
-                                                double b)
-{
-  static const double min_b(0.1);
-
-  if (0 == b) return 0;
-
-  size_t segs_size(0);
-
-  auto dx = v2[0] - v1[0];
-  auto dy = v2[1] - v1[1];
-  auto d2 = 0.5f * sqrt(dx * dx + dy * dy);
-  auto d1 = b * d2;
-  auto r = d2 * (1 + b*b) / (4.0 * b);
-
-  while (b > min_b) {
-    ++segs_size;
-
-    auto d2_next = 0.5f * sqrt(d1 * d1 + d2 * d2);
-    auto h_next = d2_next / b;
-    auto d1_next = r - h_next;
-    b = d1_next / d2_next;
-    d1 = d1_next;
-    d2 = d2_next;
-  }
-  return segs_size;
-}
-
-//! \brief add polylines.
+//! \brief add polylines that have bulge factors.
 void Dxf_parser::
 add_polylines_with_bulge(const std::list<Dxf_polyline_boundary_path*>& polylines,
                          SGAL::Group* root, bool closed)
@@ -96,7 +66,6 @@ add_polylines_with_bulge(const std::list<Dxf_polyline_boundary_path*>& polylines
 
   // Add IndexedLineSet
   Shared_indexed_line_set ils(new SGAL::Indexed_line_set);
-
   SGAL_assertion(ils);
   ils->add_to_scene(m_scene_graph);
   m_scene_graph->add_container(ils);
@@ -109,7 +78,8 @@ add_polylines_with_bulge(const std::list<Dxf_polyline_boundary_path*>& polylines
   m_scene_graph->add_container(shared_coords);
 
   // Compute the circular arc approximation.
-  std::vector<std::list<SGAL::Vector2f> > polylines_segs(num_primitives);
+  typedef std::list<SGAL::Vector2f>             Polyline;
+  std::vector<Polyline> polylines_segs(num_primitives);
   auto sit = polylines_segs.begin();
   for (auto* polyline : polylines) {
     auto& segs = *sit++;
@@ -203,7 +173,6 @@ add_polylines(const std::list<Dxf_polyline_boundary_path*>& polylines,
 
   // Add IndexedLineSet
   Shared_indexed_line_set ils(new SGAL::Indexed_line_set);
-
   SGAL_assertion(ils);
   ils->add_to_scene(m_scene_graph);
   m_scene_graph->add_container(ils);
@@ -226,7 +195,7 @@ add_polylines(const std::list<Dxf_polyline_boundary_path*>& polylines,
   for (auto* polyline : polylines) {
     cit = std::transform(polyline->m_locations.begin(),
                          polyline->m_locations.end(), cit,
-                         [&](const std::array<double, 2>& p)
+                         [&](const SGAL::Vector2f& p)
                          { return SGAL::Vector3f(p[0], p[1], 0); });
     auto it_end = it;
     std::advance(it_end, polyline->m_locations.size());
