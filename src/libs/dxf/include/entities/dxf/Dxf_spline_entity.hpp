@@ -20,6 +20,7 @@
 #define DXF_SPLINE_ENTITY_HPP
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Vector3f.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_entity.hpp"
@@ -31,6 +32,14 @@ class Dxf_parser;
 struct Dxf_spline_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
   typedef std::array<double, 3>                 Double_3;
+
+  enum Type {
+    CLOSED = 0x1,
+    PERIODIC = 0x2,
+    RATIONAL = 0x4,
+    PLANAR = 0x8,
+    LINEAR = 0x10
+  };
 
   /// \name Data members
   //@{
@@ -46,19 +55,20 @@ struct Dxf_spline_entity : public Dxf_base_entity {
   double m_knot_tolerance; // Knot tolerance (default = 0.0000001)
   double m_control_point_tolerance; // Control-point tolerance (def = 0.0000001)
   double m_fit_tolerance; // Fit tolerance (default = 0.0000000001)
-  double m_start_tangent[3]; // Start tangent—may be omitted (in WCS)
-  double m_end_tangent[3]; // End tangent—may be omitted (in WCS)
+  double m_start_tangent[3]; // Start tangent; may be omitted (in WCS)
+  double m_end_tangent[3]; // End tangent; may be omitted (in WCS)
   std::vector<double> m_knot_values; // Knot value (one entry per knot)
-  double m_weight;      // Weight (if not 1); with multiple group pairs,
+  std::vector<SGAL::Vector3f> m_control_points; // Control points (in WCS); one
+                        // entry per control point
+  std::vector<double> m_weights; // Weight (if not 1); with multiple group pairs,
                         // they are present if all are not 1
-  std::vector<Double_3> m_control_points; // Control points (in WCS); one entry
-                        // per control point
-  std::vector<Double_3> m_fit_points; // Fit points (in WCS); one entry per
-                        // fit point
+  std::vector<SGAL::Vector3f> m_fit_points; // Fit points (in WCS); one entry
+                        // per fit point
 
   //@}
 
-  // Construct (set default values).
+  /*! Construct (set default values).
+   */
   Dxf_spline_entity() :
     m_knot_tolerance(0.0000001),
     m_control_point_tolerance(0.0000001),
@@ -72,7 +82,10 @@ struct Dxf_spline_entity : public Dxf_base_entity {
   /*! Handle the number of control points.
    */
   void handle_control_points_num(int16_t size)
-  { m_control_points.reserve(size); }
+  {
+    m_control_points.reserve(size);
+    m_weights.reserve(size);
+  }
 
   /*! Handle the number of fit points.
    */
@@ -92,6 +105,8 @@ struct Dxf_spline_entity : public Dxf_base_entity {
   {
     m_control_points.resize(m_control_points.size() + 1);
     m_control_points.back()[0] = value;
+    m_weights.resize(m_weights.size() + 1);
+    m_weights.back() = 1;
   }
 
   /*! Handle the y-coordinate of a control point.
@@ -108,6 +123,14 @@ struct Dxf_spline_entity : public Dxf_base_entity {
   {
     SGAL_assertion(! m_control_points.empty());
     m_control_points.back()[2] = value;
+  }
+
+  /*! Handle the weight of a control point.
+   */
+  void handle_weight(double value)
+  {
+    SGAL_assertion(! m_weights.empty());
+    m_weights.back() = value;
   }
 
   /*! Handle the x-coordinate of a fit point.

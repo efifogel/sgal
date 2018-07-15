@@ -45,8 +45,7 @@ Dxf_spline_entity_wrapper::s_record_members = {
   {32, {&Dxf_spline_entity::m_start_tangent, 3, 2}},
   {13, {&Dxf_spline_entity::m_end_tangent, 3, 0}},
   {23, {&Dxf_spline_entity::m_end_tangent, 3, 1}},
-  {33, {&Dxf_spline_entity::m_end_tangent, 3, 2}},
-  {41, {&Dxf_spline_entity::m_weight, 1, 0}}
+  {33, {&Dxf_spline_entity::m_end_tangent, 3, 2}}
 };
 
 //! Record handlers
@@ -62,7 +61,8 @@ Dxf_spline_entity_wrapper::s_record_handlers = {
   {30, &Dxf_spline_entity::handle_control_point_z},
   {11, &Dxf_spline_entity::handle_fit_point_x},
   {21, &Dxf_spline_entity::handle_fit_point_y},
-  {31, &Dxf_spline_entity::handle_fit_point_z}
+  {31, &Dxf_spline_entity::handle_fit_point_z},
+  {41, &Dxf_spline_entity::handle_weight}
 };
 
 DXF_END_NAMESPACE

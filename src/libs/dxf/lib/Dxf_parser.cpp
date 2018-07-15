@@ -340,7 +340,7 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
   }
 
   //! \todo Instead of storing the data in the parser records and then copy it
-  // over to the right place, intersept the parsing and store the data at the
+  // over to the right place, intercept the parsing and store the data at the
   // right place immediately after read from the imput stream.
 
   //
@@ -350,6 +350,10 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
   // Create indexed line sets, one for each hatch entity.
   for (const auto& hatch_entity : m_hatch_entities)
     add_polylines(hatch_entity, root);
+
+  // Create indexed line sets, one for each spline entity.
+  for (const auto& spline_entity : m_spline_entities)
+    add_polylines(spline_entity, root);
 
   clear();
 
@@ -999,7 +1003,11 @@ void Dxf_parser::parse_solid_entity()
 
 //! \brief parses a spline entity.
 void Dxf_parser::parse_spline_entity()
-{ parse_record(m_spline_entity); }
+{
+  m_spline_entities.resize(m_spline_entities.size() + 1);
+  auto& spline_entity = m_spline_entities.back();
+  parse_record(spline_entity);
+}
 
 //! \brief parses a text entity.
 void Dxf_parser::parse_text_entity()
@@ -1396,6 +1404,7 @@ void Dxf_parser::clear()
     hatch.m_boundary_paths.clear();
   }
   m_hatch_entities.clear();
+  m_spline_entities.clear();
 
   // Clear objects
   m_material_objects.clear();
