@@ -48,11 +48,11 @@ Dxf_hatch_entity_wrapper::s_record_members = {
   // {91, // Number of boundary paths (loops)
   // varies m_boundary_path data; // Boundary path data. Repeats number of
   {75, {&Dxf_hatch_entity::m_hatch_style, 1, 0}},
-  {76, {&Dxf_hatch_entity::m_hatch_patter_type, 1, 0}},
-  {52, {&Dxf_hatch_entity::m_hatch_patter_angle, 1, 0}},
-  {41, {&Dxf_hatch_entity::m_hatch_patter_scale, 1, 0}},
+  {76, {&Dxf_hatch_entity::m_hatch_pattern_type, 1, 0}},
+  {52, {&Dxf_hatch_entity::m_hatch_pattern_angle, 1, 0}},
+  {41, {&Dxf_hatch_entity::m_hatch_pattern_scale, 1, 0}},
   {73, {&Dxf_hatch_entity::m_boundary_annotation_flag, 1, 0}},
-  {77, {&Dxf_hatch_entity::m_hatch_patter_double_flag, 1, 0}},
+  {77, {&Dxf_hatch_entity::m_hatch_pattern_double_flag, 1, 0}},
   // {78, {&Dxf_hatch_entity::m_num_pattern_definition_lines, 1, 0}},
   // varies // Pattern line data. Repeats number of times specified by code 78.
   {47, {&Dxf_hatch_entity::m_pixel_size, 1, 0}},

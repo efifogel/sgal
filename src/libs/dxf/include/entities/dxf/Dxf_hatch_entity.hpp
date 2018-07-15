@@ -59,17 +59,17 @@ struct Dxf_hatch_entity : public Dxf_base_entity {
                         // 0 = Hatch "odd parity" area (Normal style)
                         // 1 = Hatch outermost area only (Outer style)
                         // 2 = Hatch through entire area (Ignore style)
-  int16_t m_hatch_patter_type; // Hatch pattern type:
+  int16_t m_hatch_pattern_type; // Hatch pattern type:
                         // 0 = User-defined
                         // 1 = Predefined
                         // 2 = Custom
-  double m_hatch_patter_angle; // Hatch pattern angle (pattern fill only)
-  double m_hatch_patter_scale; // Hatch pattern scale or spacing (pattern fill
+  double m_hatch_pattern_angle; // Hatch pattern angle (pattern fill only)
+  double m_hatch_pattern_scale; // Hatch pattern scale or spacing (pattern fill
                         // only)
   int16_t m_boundary_annotation_flag; // For MPolygon, boundary annotation flag:
                         // 0 = boundary is not an annotated boundary
                         // 1 = boundary is an annotated boundary
-  int16_t m_hatch_patter_double_flag;// Hatch pattern double flag (pattern fill
+  int16_t m_hatch_pattern_double_flag;// Hatch pattern double flag (pattern fill
                         // only):
                         // 0 = not double
                         // 1 = double
@@ -124,6 +124,15 @@ struct Dxf_hatch_entity : public Dxf_base_entity {
   SGAL::String m_string; // SGAL::String (default = LINEAR)
 
   //@}
+
+  /*! Construct (set default values).
+   */
+  Dxf_hatch_entity() :
+    m_extrusion_direction{0.0, 0.0, 1.0},
+    m_rotation_angle(0.0),
+    m_color_tint_value(0.0),
+    m_string("LINEAR")
+  {}
 
   /// Member handlers
   //@{
