@@ -976,7 +976,7 @@ private:
   Dxf_seqend_entity m_seqend_entity;
   Dxf_shape_entity m_shape_entity;
   Dxf_solid_entity m_solid_entity;
-  Dxf_spline_entity m_spline_entity;
+  std::vector<Dxf_spline_entity> m_spline_entities;
   Dxf_text_entity m_text_entity;
   Dxf_tolerance_entity m_tolerance_entity;
   Dxf_trace_entity m_trace_entity;
@@ -1440,7 +1440,8 @@ private:
    * \param[in] root
    * \param[in] closed
    */
-  void add_polylines(const std::list<Dxf_polyline_boundary_path*>& polylines,
+  void add_polylines(const Dxf_hatch_entity& hatch_entity,
+                     const std::list<Dxf_polyline_boundary_path*>& polylines,
                      SGAL::Group* root, bool closed);
 
   /*! Add polylines with bulge.
@@ -1448,9 +1449,14 @@ private:
    * \param[in] root
    * \param[in] closed
    */
-  void add_polylines_with_bulge(const std::list<Dxf_polyline_boundary_path*>&
+  void add_polylines_with_bulge(const Dxf_hatch_entity& hatch_entity,
+                                const std::list<Dxf_polyline_boundary_path*>&
                                 polylines,
                                 SGAL::Group* root, bool closed);
+
+  /*! Add polylines provided in spline entities.
+   */
+  void add_polylines(const Dxf_spline_entity& spline_entity, SGAL::Group* root);
 };
 
 //! \brief sets the flag that determines whether to report unrecognized code.
