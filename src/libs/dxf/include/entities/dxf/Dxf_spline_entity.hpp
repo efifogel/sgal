@@ -51,13 +51,13 @@ struct Dxf_spline_entity : public Dxf_base_entity {
                         // 4 = Rational spline
                         // 8 = Planar
                         // 16 = Linear (planar bit is also set)
-  int16_t m_degree_of_curve; // Degree of the spline curve
+  int16_t m_degree;     // Degree of the spline curve
   double m_knot_tolerance; // Knot tolerance (default = 0.0000001)
   double m_control_point_tolerance; // Control-point tolerance (def = 0.0000001)
   double m_fit_tolerance; // Fit tolerance (default = 0.0000000001)
   double m_start_tangent[3]; // Start tangent; may be omitted (in WCS)
   double m_end_tangent[3]; // End tangent; may be omitted (in WCS)
-  std::vector<double> m_knot_values; // Knot value (one entry per knot)
+  std::vector<double> m_knots; // Knot values (one entry per knot)
   std::vector<SGAL::Vector3f> m_control_points; // Control points (in WCS); one
                         // entry per control point
   std::vector<double> m_weights; // Weight (if not 1); with multiple group pairs,
@@ -75,9 +75,21 @@ struct Dxf_spline_entity : public Dxf_base_entity {
     m_fit_tolerance(0.0000000001)
   {}
 
+  /// \name Accessors
+  //@{
+
+  /*! Determine whether the spline curve is periodic.
+   */
+  bool is_periodic() const { return (m_flags & PERIODIC); }
+
+  //@}
+
+  /// \name Handlers
+  //@{
+
   /*! Handle the number of knot values.
    */
-  void handle_knot_values_num(int16_t size) { m_knot_values.reserve(size); }
+  void handle_knots_num(int16_t size) { m_knots.reserve(size); }
 
   /*! Handle the number of control points.
    */
@@ -95,8 +107,8 @@ struct Dxf_spline_entity : public Dxf_base_entity {
    */
   void handle_knot_value(double value)
   {
-    m_knot_values.resize(m_knot_values.size() + 1);
-    m_knot_values.back() = value;
+    m_knots.resize(m_knots.size() + 1);
+    m_knots.back() = value;
   }
 
   /*! Handle the x-coordinate of a control point.
@@ -156,6 +168,8 @@ struct Dxf_spline_entity : public Dxf_base_entity {
     SGAL_assertion(! m_fit_points.empty());
     m_fit_points.back()[2] = value;
   }
+
+  //@}
 };
 
 DXF_END_NAMESPACE

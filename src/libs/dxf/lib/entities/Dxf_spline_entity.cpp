@@ -36,7 +36,7 @@ Dxf_spline_entity_wrapper::s_record_members = {
   {220, {&Dxf_spline_entity::m_normal, 3, 1}},
   {230, {&Dxf_spline_entity::m_normal, 3, 2}},
   {70, {&Dxf_spline_entity::m_flags, 1, 0}},
-  {71, {&Dxf_spline_entity::m_degree_of_curve, 1, 0}},
+  {71, {&Dxf_spline_entity::m_degree, 1, 0}},
   {42, {&Dxf_spline_entity::m_knot_tolerance, 1, 0}},
   {43, {&Dxf_spline_entity::m_control_point_tolerance, 1, 0}},
   {44, {&Dxf_spline_entity::m_fit_tolerance, 1, 0}},
@@ -52,7 +52,7 @@ Dxf_spline_entity_wrapper::s_record_members = {
 template <>
 const std::map<int, Dxf_spline_entity_wrapper::Record_handler_type>
 Dxf_spline_entity_wrapper::s_record_handlers = {
-  {72, &Dxf_spline_entity::handle_knot_values_num},
+  {72, &Dxf_spline_entity::handle_knots_num},
   {73, &Dxf_spline_entity::handle_control_points_num},
   {74, &Dxf_spline_entity::handle_fit_points_num},
   {40, &Dxf_spline_entity::handle_knot_value},

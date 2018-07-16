@@ -17,6 +17,7 @@
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <numeric>
+#include <limits>
 
 #include <boost/shared_ptr.hpp>
 
@@ -30,6 +31,7 @@
 #include "SGAL/approximate_circular_arc.hpp"
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Vector3f.hpp"
+#include "SGAL/Loader_errors.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_parser.hpp"
@@ -263,7 +265,47 @@ void Dxf_parser::add_polylines(const Dxf_hatch_entity& hatch, SGAL::Group* root)
 void Dxf_parser::add_polylines(const Dxf_spline_entity& spline_entity,
                                SGAL::Group* root)
 {
-  return;
+  size_t number_of_poles(spline_entity.m_control_points.size());
+  size_t degree(spline_entity.m_degree);
+  if (number_of_poles < 2)
+    throw SGAL::Parse_error(filename(), "less than 2 control points!");
+
+  size_t number_of_knots(0);
+  std::vector<size_t> mults;
+  std::vector<double> knots;
+  if (!spline_entity.m_knots.empty()) {
+    double current_knot;
+    size_t mult(0);
+    for (auto knot : spline_entity.m_knots) {
+      if (mult == 0) {
+        mult = 1;
+        current_knot = knot;
+        continue;
+      }
+      if (current_knot == knot) {
+        ++mult;
+        continue;
+      }
+      knots.push_back(current_knot);
+      mults.push_back(mult);
+      mult = 1;
+      current_knot = knot;
+    }
+    knots.push_back(current_knot);
+    mults.push_back(mult);
+
+    number_of_knots = knots.size();
+  }
+  else {
+    if (spline_entity.is_periodic()) {
+      if (number_of_poles < degree) degree = number_of_poles + 1;
+      number_of_knots = number_of_poles + 1;
+    }
+    else {
+      if (number_of_poles <= degree) degree = number_of_poles - 1;
+      number_of_knots = number_of_poles - degree + 1;
+    }
+  }
 
   std::cout << "Normal: " << spline_entity.m_normal << std::endl;
   std::cout << "Flags: " << spline_entity.m_flags << std::endl;
@@ -277,7 +319,7 @@ void Dxf_parser::add_polylines(const Dxf_spline_entity& spline_entity,
     std::cout << "  PLANAR" << std::endl;
   if (spline_entity.m_flags & Dxf_spline_entity::LINEAR)
     std::cout << "  LINEAR" << std::endl;
-  std::cout << "Degree: " << spline_entity.m_degree_of_curve << std::endl;
+  std::cout << "Degree: " << degree << std::endl;
   std::cout << "Knot tolerance: " << spline_entity.m_knot_tolerance << std::endl;
   std::cout << "Control Point tolerance: "
             << spline_entity.m_control_point_tolerance << std::endl;
@@ -287,13 +329,19 @@ void Dxf_parser::add_polylines(const Dxf_spline_entity& spline_entity,
             << spline_entity.m_start_tangent[2] << std::endl;
   std::cout << "End tangent: " << spline_entity.m_end_tangent << std::endl;
 
-  std::cout << "Knots: " << spline_entity.m_knot_values.size() << std::endl;
-  for (const auto& knot : spline_entity.m_knot_values)
+  std::cout << "Knots: " << spline_entity.m_knots.size() << std::endl;
+  for (const auto& knot : spline_entity.m_knots)
     std::cout << "  " << knot << std::endl;
+  std::cout << "Knots: " << knots.size() << std::endl;
+  for (const auto& knot : knots)
+    std::cout << "  " << knot << std::endl;
+  std::cout << "Mults: " << mults.size() << std::endl;
+  for (const auto& mult : mults)
+    std::cout << "  " << mult << std::endl;
 
-  std::cout << "Control points: " << spline_entity.m_control_points.size()
+  std::cout << "Control points: " << number_of_poles
             << std::endl;
-  for (size_t i = 0; i < spline_entity.m_control_points.size(); ++i)
+  for (size_t i = 0; i < number_of_poles; ++i)
     std::cout << "  " << spline_entity.m_control_points[i] << ", "
               << spline_entity.m_weights[i] << std::endl;
 
