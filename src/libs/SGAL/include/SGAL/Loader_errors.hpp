@@ -51,6 +51,8 @@ class SGAL_SGAL_DECL Parse_error : public Loader_error {
 public:
   Parse_error(const std::string& filename) :
     Loader_error(std::string("Error: Failed to parse"), filename) {}
+  Parse_error(const std::string& filename, const std::string& reason) :
+    Loader_error(std::string("Error: Failed to parse; ")+reason, filename) {}
   ~Parse_error() SGAL_NOTHROW {}
 };
 
