@@ -82,6 +82,10 @@ struct Dxf_spline_entity : public Dxf_base_entity {
    */
   bool is_periodic() const { return (m_flags & PERIODIC); }
 
+  /*! Determine whether the spline curve is planar.
+   */
+  bool is_planar() const { return (m_flags & PLANAR); }
+
   //@}
 
   /// \name Handlers
