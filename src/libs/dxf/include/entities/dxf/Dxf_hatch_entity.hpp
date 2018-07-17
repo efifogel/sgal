@@ -53,7 +53,7 @@ struct Dxf_hatch_entity : public Dxf_base_entity {
                         // 0 = lacks solid fill;
                         // 1 = has solid fill
   // int32_t Number of boundary paths (loops)
-  std::vector<Dxf_boundary_path*> m_boundary_paths; // Boundary path data.
+  std::vector<Dxf_base_boundary_path*> m_boundary_paths; // Boundary path data.
                         // Repeats number of times specified by code 91.
   int16_t m_hatch_style; // Hatch style:
                         // 0 = Hatch "odd parity" area (Normal style)
