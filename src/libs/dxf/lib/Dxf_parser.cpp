@@ -348,12 +348,22 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
   auto* root = m_scene_graph->initialize();
 
   // Create indexed line sets, one for each hatch entity.
+  std::cout << "processing " << m_hatch_entities.size() << " hatch entities"
+            << std::endl;
   for (const auto& hatch_entity : m_hatch_entities)
     add_polylines(hatch_entity, root);
 
   // Create indexed line sets, one for each spline entity.
+  std::cout << "processing " << m_spline_entities.size() << " spline entities"
+            << std::endl;
   for (const auto& spline_entity : m_spline_entities)
     add_polylines(spline_entity, root);
+
+  // Create indexed line sets, one for each spline entity.
+  std::cout << "processing " << m_line_entities.size() << " line entities"
+            << std::endl;
+  for (const auto& line_entity : m_line_entities)
+    add_polylines(line_entity, root);
 
   clear();
 
@@ -947,7 +957,11 @@ void Dxf_parser::parse_leader_entity()
 
 //! \brief parses a line entity.
 void Dxf_parser::parse_line_entity()
-{ parse_record(m_line_entity); }
+{
+  m_line_entities.resize(m_line_entities.size() + 1);
+  auto& line_entity = m_line_entities.back();
+  parse_record(line_entity);
+}
 
 //! \brief parses a lwpolyline entity.
 void Dxf_parser::parse_lwpolyline_entity()

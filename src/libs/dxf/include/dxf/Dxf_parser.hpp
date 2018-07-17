@@ -962,7 +962,7 @@ private:
   Dxf_image_entity m_image_entity;
   Dxf_insert_entity m_insert_entity;
   Dxf_leader_entity m_leader_entity;
-  Dxf_line_entity m_line_entity;
+  std::vector<Dxf_line_entity> m_line_entities;
   Dxf_lwpolyline_entity m_lwpolyline_entity;
   Dxf_mline_entity m_mline_entity;
   Dxf_mtext_entity m_mtext_entity;
@@ -1453,6 +1453,10 @@ private:
                                 const std::list<Dxf_polyline_boundary_path*>&
                                 polylines,
                                 SGAL::Group* root, bool closed);
+
+  /*! Add lines provided in line entities.
+   */
+  void add_polylines(const Dxf_line_entity& line_entity, SGAL::Group* root);
 
   /*! Add polylines provided in spline entities.
    */

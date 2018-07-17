@@ -242,9 +242,12 @@ void Dxf_parser::add_polylines(const Dxf_hatch_entity& hatch, SGAL::Group* root)
   std::list<Dxf_polyline_boundary_path*> closed_polylines;
   std::list<Dxf_polyline_boundary_path*> open_polylines_with_bulge;
   std::list<Dxf_polyline_boundary_path*> closed_polylines_with_bulge;
-  for (Dxf_boundary_path* path : hatch.m_boundary_paths) {
+  for (Dxf_base_boundary_path* path : hatch.m_boundary_paths) {
     auto* polyline = dynamic_cast<Dxf_polyline_boundary_path*>(path);
-    if (! polyline) continue;
+    if (! polyline) {
+      SGAL_warning_msg(true, "Unsupported boundary path!");
+      continue;
+    }
     if (polyline->m_has_bulge) {
       if (polyline->m_is_closed) closed_polylines_with_bulge.push_back(polyline);
       else open_polylines_with_bulge.push_back(polyline);
@@ -261,16 +264,111 @@ void Dxf_parser::add_polylines(const Dxf_hatch_entity& hatch, SGAL::Group* root)
   add_polylines_with_bulge(hatch, open_polylines_with_bulge, root, false);
 }
 
+//! \brief adds lines provided in line entities.
+void Dxf_parser::add_polylines(const Dxf_line_entity& line, SGAL::Group* root)
+{
+  // std::cout << "Line" << std::endl;
+
+  typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
+  typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
+  typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
+  typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
+
+  // Add Shape
+  Shared_shape shape(new SGAL::Shape);
+  SGAL_assertion(shape);
+  shape->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(shape);
+  root->add_child(shape);
+
+  // Add Appearance
+  Shared_appearance app(new SGAL::Appearance);
+  SGAL_assertion(app);
+  shape->set_appearance(app);
+
+  // Add IndexedLineSet
+  Shared_indexed_line_set ils(new SGAL::Indexed_line_set);
+  SGAL_assertion(ils);
+  ils->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(ils);
+  shape->set_geometry(ils);
+
+  // Allocate vertices:
+  size_t size(2);
+  auto* coords = new SGAL::Coord_array_3d(size);
+  Shared_coord_array_3d shared_coords(coords);
+  coords->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(shared_coords);
+
+  // Allocate indices:
+  auto& indices = ils->get_coord_indices();
+  indices.resize(size);
+
+  // Assign the vertices & indices:
+  auto cit = coords->begin();
+  *cit++ = SGAL::Vector3f(line.m_start[0], line.m_start[1], line.m_start[2]);
+  *cit++ = SGAL::Vector3f(line.m_end[0], line.m_end[1], line.m_end[2]);
+
+  auto it = indices.begin();
+  *it++ = 0;
+  *it++ = 1;
+
+  ils->set_primitive_type(SGAL::Geo_set::PT_LINES);
+  ils->set_coord_array(shared_coords);
+  ils->set_num_primitives(1);
+}
+
 //! \brief adds polylines provided in spline entities.
 void Dxf_parser::add_polylines(const Dxf_spline_entity& spline_entity,
                                SGAL::Group* root)
 {
+  return;
+
   size_t number_of_poles(spline_entity.m_control_points.size());
   size_t degree(spline_entity.m_degree);
+  bool periodic(spline_entity.is_periodic());
+  bool planar(spline_entity.is_planar());
+
+  std::cout << "Normal: " << spline_entity.m_normal << std::endl;
+  std::cout << "Flags: " << spline_entity.m_flags << std::endl;
+  if (spline_entity.m_flags & Dxf_spline_entity::CLOSED)
+    std::cout << "  CLOSED" << std::endl;
+  if (spline_entity.m_flags & Dxf_spline_entity::PERIODIC)
+    std::cout << "  PERIODIC" << std::endl;
+  if (spline_entity.m_flags & Dxf_spline_entity::RATIONAL)
+    std::cout << "  RATIONAL" << std::endl;
+  if (spline_entity.m_flags & Dxf_spline_entity::PLANAR)
+    std::cout << "  PLANAR" << std::endl;
+  if (spline_entity.m_flags & Dxf_spline_entity::LINEAR)
+    std::cout << "  LINEAR" << std::endl;
+  std::cout << "Degree: " << spline_entity.m_degree << std::endl;
+  std::cout << "Knot tolerance: " << spline_entity.m_knot_tolerance << std::endl;
+  std::cout << "Control Point tolerance: "
+            << spline_entity.m_control_point_tolerance << std::endl;
+  std::cout << "Fit tolerance: " << spline_entity.m_fit_tolerance << std::endl;
+  std::cout << "Start tangent: " << spline_entity.m_start_tangent[0] << ", "
+            << spline_entity.m_start_tangent[1] << ", "
+            << spline_entity.m_start_tangent[2] << std::endl;
+  std::cout << "End tangent: " << spline_entity.m_end_tangent << std::endl;
+
+  std::cout << "Knots: " << spline_entity.m_knots.size() << std::endl;
+  for (const auto& knot : spline_entity.m_knots)
+    std::cout << "  " << knot << std::endl;
+
+  std::cout << "Control points: " << number_of_poles << std::endl;
+  for (size_t i = 0; i < number_of_poles; ++i)
+    std::cout << "  " << spline_entity.m_control_points[i] << ", "
+              << spline_entity.m_weights[i] << std::endl;
+
+  std::cout << "Fit points: " << spline_entity.m_fit_points.size() << std::endl;
+  for (const auto& point : spline_entity.m_fit_points)
+    std::cout << "  " << point << std::endl;
+
   if (number_of_poles < 2)
     throw SGAL::Parse_error(filename(), "less than 2 control points!");
 
   size_t number_of_knots(0);
+  size_t sum_of_mults(0);
   std::vector<size_t> mults;
   std::vector<double> knots;
   if (!spline_entity.m_knots.empty()) {
@@ -288,16 +386,18 @@ void Dxf_parser::add_polylines(const Dxf_spline_entity& spline_entity,
       }
       knots.push_back(current_knot);
       mults.push_back(mult);
+      sum_of_mults += mult;
       mult = 1;
       current_knot = knot;
     }
     knots.push_back(current_knot);
     mults.push_back(mult);
+    if (! periodic) sum_of_mults += mult;
 
     number_of_knots = knots.size();
   }
   else {
-    if (spline_entity.is_periodic()) {
+    if (periodic) {
       if (number_of_poles < degree) degree = number_of_poles + 1;
       number_of_knots = number_of_poles + 1;
     }
@@ -305,49 +405,39 @@ void Dxf_parser::add_polylines(const Dxf_spline_entity& spline_entity,
       if (number_of_poles <= degree) degree = number_of_poles - 1;
       number_of_knots = number_of_poles - degree + 1;
     }
+    // Uniformly distribute knots between 0..1 if not given
+    knots.resize(number_of_knots);
+    mults.resize(number_of_knots);
+    for (int i = 0; i < number_of_knots; ++i) {
+      knots[i] = i / (number_of_knots-1);
+      mults[i] = 1;
+    }
+    if (periodic) sum_of_mults = number_of_knots - 1;
+    else {
+      mults.front() = mults.back() = degree + 1;
+      sum_of_mults = number_of_knots + degree + degree;
+    }
   }
+  std::cout << "degree: " << degree << std::endl;
+  std::cout << "sum_of_mults: " << sum_of_mults << std::endl;
 
-  std::cout << "Normal: " << spline_entity.m_normal << std::endl;
-  std::cout << "Flags: " << spline_entity.m_flags << std::endl;
-  if (spline_entity.m_flags & Dxf_spline_entity::CLOSED)
-    std::cout << "  CLOSED" << std::endl;
-  if (spline_entity.m_flags & Dxf_spline_entity::PERIODIC)
-    std::cout << "  PERIODIC" << std::endl;
-  if (spline_entity.m_flags & Dxf_spline_entity::RATIONAL)
-    std::cout << "  RATIONAL" << std::endl;
-  if (spline_entity.m_flags & Dxf_spline_entity::PLANAR)
-    std::cout << "  PLANAR" << std::endl;
-  if (spline_entity.m_flags & Dxf_spline_entity::LINEAR)
-    std::cout << "  LINEAR" << std::endl;
-  std::cout << "Degree: " << degree << std::endl;
-  std::cout << "Knot tolerance: " << spline_entity.m_knot_tolerance << std::endl;
-  std::cout << "Control Point tolerance: "
-            << spline_entity.m_control_point_tolerance << std::endl;
-  std::cout << "Fit tolerance: " << spline_entity.m_fit_tolerance << std::endl;
-  std::cout << "Start tangent: " << spline_entity.m_start_tangent[0] << ", "
-            << spline_entity.m_start_tangent[1] << ", "
-            << spline_entity.m_start_tangent[2] << std::endl;
-  std::cout << "End tangent: " << spline_entity.m_end_tangent << std::endl;
+  // The folowing check is redundant, given the current handling of weights.
+  if (spline_entity.m_weights.size() != number_of_poles)
+    throw SGAL::Parse_error(filename(),
+                            "number of poles and weights mismatch!");
 
-  std::cout << "Knots: " << spline_entity.m_knots.size() << std::endl;
-  for (const auto& knot : spline_entity.m_knots)
-    std::cout << "  " << knot << std::endl;
+  // Check whether the number of poles matches the sum of mults
+  if ((periodic && (sum_of_mults != number_of_poles)) ||
+      (! periodic && ((sum_of_mults - degree - 1) != number_of_poles)))
+    throw SGAL::Parse_error(filename(),
+                            "number of poles and sum of mults mismatch");
+
   std::cout << "Knots: " << knots.size() << std::endl;
   for (const auto& knot : knots)
     std::cout << "  " << knot << std::endl;
   std::cout << "Mults: " << mults.size() << std::endl;
   for (const auto& mult : mults)
     std::cout << "  " << mult << std::endl;
-
-  std::cout << "Control points: " << number_of_poles
-            << std::endl;
-  for (size_t i = 0; i < number_of_poles; ++i)
-    std::cout << "  " << spline_entity.m_control_points[i] << ", "
-              << spline_entity.m_weights[i] << std::endl;
-
-  std::cout << "Fit points: " << spline_entity.m_fit_points.size() << std::endl;
-  for (const auto& point : spline_entity.m_fit_points)
-    std::cout << "  " << point << std::endl;
 }
 
 DXF_END_NAMESPACE
