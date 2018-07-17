@@ -31,7 +31,18 @@ typedef Dxf_record_wrapper<Dxf_line_entity>  Dxf_line_entity_wrapper;
 //! Record members
 template <>
 const std::map<int, Dxf_line_entity_wrapper::Record_member>
-Dxf_line_entity_wrapper::s_record_members = {};
+Dxf_line_entity_wrapper::s_record_members = {
+  {39, {&Dxf_line_entity::m_thickness, 1, 0}},
+  {10, {&Dxf_line_entity::m_start, 3, 0}},
+  {20, {&Dxf_line_entity::m_start, 3, 1}},
+  {30, {&Dxf_line_entity::m_start, 3, 2}},
+  {11, {&Dxf_line_entity::m_end, 3, 0}},
+  {21, {&Dxf_line_entity::m_end, 3, 1}},
+  {31, {&Dxf_line_entity::m_end, 3, 2}},
+  {210, {&Dxf_line_entity::m_estension_direction, 3, 0}},
+  {220, {&Dxf_line_entity::m_estension_direction, 3, 1}},
+  {230, {&Dxf_line_entity::m_estension_direction, 3, 2}},
+};
 
 //! Record handlers
 template <>

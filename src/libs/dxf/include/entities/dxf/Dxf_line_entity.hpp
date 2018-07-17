@@ -28,6 +28,12 @@ DXF_BEGIN_NAMESPACE
 
 struct Dxf_line_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
+
+  double m_thickness;   // Thickness (optional; default = 0)
+  double m_start[3];    // Start point
+  double m_end[3];      // Start point
+  double m_estension_direction[3]; // Extrusion direction (optional;
+                        // default = 0, 0, 1)
 };
 
 DXF_END_NAMESPACE
