@@ -36,6 +36,8 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_parser.hpp"
 #include "dxf/Dxf_hatch_entity.hpp"
+#include "dxf/Dxf_polyline_entity.hpp"
+#include "dxf/Dxf_line_entity.hpp"
 #include "dxf/Dxf_polyline_boundary_path.hpp"
 
 DXF_BEGIN_NAMESPACE
@@ -258,6 +260,9 @@ void Dxf_parser::add_polylines(const Dxf_hatch_entity& hatch, SGAL::Group* root)
     }
   }
 
+  m_polylines_num += closed_polylines.size() + open_polylines.size() +
+    closed_polylines_with_bulge.size() + open_polylines_with_bulge.size();
+
   add_polylines(hatch, closed_polylines, root, true);
   add_polylines(hatch, open_polylines, root, false);
   add_polylines_with_bulge(hatch, closed_polylines_with_bulge, root, true);
@@ -438,6 +443,14 @@ void Dxf_parser::add_polylines(const Dxf_spline_entity& spline_entity,
   std::cout << "Mults: " << mults.size() << std::endl;
   for (const auto& mult : mults)
     std::cout << "  " << mult << std::endl;
+}
+
+//! \brief adds polylines provided in polyline entities.
+void Dxf_parser::add_polylines(const Dxf_polyline_entity& polyline_entity,
+                               SGAL::Group* root)
+{
+  std::cout << "Polyline" << std::endl;
+  ++m_polylines_num;
 }
 
 DXF_END_NAMESPACE

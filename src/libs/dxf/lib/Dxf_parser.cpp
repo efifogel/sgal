@@ -307,7 +307,8 @@ Dxf_parser::Dxf_parser() :
   m_pending_code(0),
   m_is_pending(false),
   m_extended_data(nullptr),
-  m_report_unrecognized_code(false)
+  m_report_unrecognized_code(false),
+  m_polylines_num(0)
 {}
 
 //! \brief parses.
@@ -352,6 +353,13 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
             << std::endl;
   for (const auto& hatch_entity : m_hatch_entities)
     add_polylines(hatch_entity, root);
+  std::cout << "processing "  << m_polylines_num << " polylines" << std::endl;
+
+  // Create indexed line sets, one for each polyline entity.
+  std::cout << "processing " << m_polyline_entities.size()
+            << " polyline entities" << std::endl;
+  for (const auto& polyline_entity : m_polyline_entities)
+    add_polylines(polyline_entity, root);
 
   // Create indexed line sets, one for each spline entity.
   std::cout << "processing " << m_spline_entities.size() << " spline entities"
@@ -359,11 +367,13 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
   for (const auto& spline_entity : m_spline_entities)
     add_polylines(spline_entity, root);
 
-  // Create indexed line sets, one for each spline entity.
+  // Create indexed line sets, one for each line entity.
   std::cout << "processing " << m_line_entities.size() << " line entities"
             << std::endl;
   for (const auto& line_entity : m_line_entities)
     add_polylines(line_entity, root);
+
+  std::cout << "processing "  << m_polylines_num << " polylines" << std::endl;
 
   clear();
 
@@ -989,7 +999,11 @@ void Dxf_parser::parse_point_entity()
 
 //! \brief parses a polyline entity.
 void Dxf_parser::parse_polyline_entity()
-{ parse_record(m_polyline_entity); }
+{
+  m_polyline_entities.resize(m_polyline_entities.size() + 1);
+  auto& polyline_entity = m_polyline_entities.back();
+  parse_record(polyline_entity);
+}
 
 //! \brief parses a ray entity.
 void Dxf_parser::parse_ray_entity()
@@ -1419,6 +1433,8 @@ void Dxf_parser::clear()
   }
   m_hatch_entities.clear();
   m_spline_entities.clear();
+  m_line_entities.clear();
+  m_polyline_entities.clear();
 
   // Clear objects
   m_material_objects.clear();

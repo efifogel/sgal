@@ -31,11 +31,29 @@ typedef Dxf_record_wrapper<Dxf_polyline_entity>  Dxf_polyline_entity_wrapper;
 //! Record members
 template <>
 const std::map<int, Dxf_polyline_entity_wrapper::Record_member>
-Dxf_polyline_entity_wrapper::s_record_members = {};
+Dxf_polyline_entity_wrapper::s_record_members = {
+  {10, {&Dxf_polyline_entity::m_elevation, 3, 0}},
+  {20, {&Dxf_polyline_entity::m_elevation, 3, 1}},
+  {30, {&Dxf_polyline_entity::m_elevation, 3, 2}},
+  {39, {&Dxf_polyline_entity::m_thickness, 1, 0}},
+  {70, {&Dxf_polyline_entity::m_flag, 1, 0}},
+  {40, {&Dxf_polyline_entity::m_start_width, 1, 0}},
+  {41, {&Dxf_polyline_entity::m_end_width, 1, 0}},
+  {71, {&Dxf_polyline_entity::m_m_count, 1, 0}},
+  {72, {&Dxf_polyline_entity::m_n_count, 1, 0}},
+  {73, {&Dxf_polyline_entity::m_m_density, 1, 0}},
+  {74, {&Dxf_polyline_entity::m_n_density, 1, 0}},
+  {75, {&Dxf_polyline_entity::m_type, 1, 0}},
+  {210, {&Dxf_polyline_entity::m_extrusion_direction, 3, 0}},
+  {220, {&Dxf_polyline_entity::m_extrusion_direction, 3, 1}},
+  {230, {&Dxf_polyline_entity::m_extrusion_direction, 3, 2}}
+};
 
 //! Record handlers
 template <>
 const std::map<int, Dxf_polyline_entity_wrapper::Record_handler_type>
-Dxf_polyline_entity_wrapper::s_record_handlers = {};
+Dxf_polyline_entity_wrapper::s_record_handlers = {
+  {66, &Dxf_polyline_entity::handle_obsolete}
+};
 
 DXF_END_NAMESPACE

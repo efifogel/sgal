@@ -969,7 +969,7 @@ private:
   Dxf_oleframe_entity m_oleframe_entity;
   Dxf_ole2frame_entity m_ole2frame_entity;
   Dxf_point_entity m_point_entity;
-  Dxf_polyline_entity m_polyline_entity;
+  std::vector<Dxf_polyline_entity> m_polyline_entities;
   Dxf_ray_entity m_ray_entity;
   Dxf_region_entity m_region_entity;
   Dxf_rtext_entity m_rtext_entity;
@@ -1029,6 +1029,9 @@ private:
 private:
   //! Indicates whether to report unrecognized codes.
   bool m_report_unrecognized_code;
+
+  //! Number of polylines.
+  size_t m_polylines_num;
 
   //! Marker
   SGAL::String m_marker;
@@ -1433,7 +1436,19 @@ private:
 
   /*! Add polylines provided in hatch entities.
    */
-  void add_polylines(const Dxf_hatch_entity& hatch_entity, SGAL::Group* root);
+  void add_polylines(const Dxf_hatch_entity& hatch, SGAL::Group* root);
+
+  /*! Add lines provided in line entities.
+   */
+  void add_polylines(const Dxf_line_entity& line, SGAL::Group* root);
+
+  /*! Add polylines provided in spline entities.
+   */
+  void add_polylines(const Dxf_spline_entity& spline, SGAL::Group* root);
+
+  /*! Add polylines provided in polyline entities.
+   */
+  void add_polylines(const Dxf_polyline_entity& polyline, SGAL::Group* root);
 
   /*! Add polylines (without bulge).
    * \param[in] polylines
@@ -1453,14 +1468,6 @@ private:
                                 const std::list<Dxf_polyline_boundary_path*>&
                                 polylines,
                                 SGAL::Group* root, bool closed);
-
-  /*! Add lines provided in line entities.
-   */
-  void add_polylines(const Dxf_line_entity& line_entity, SGAL::Group* root);
-
-  /*! Add polylines provided in spline entities.
-   */
-  void add_polylines(const Dxf_spline_entity& spline_entity, SGAL::Group* root);
 };
 
 //! \brief sets the flag that determines whether to report unrecognized code.
