@@ -28,6 +28,24 @@ DXF_BEGIN_NAMESPACE
 
 struct Dxf_circle_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
+
+  /// Member records
+  //@{
+
+  double m_thickness;   // Thickness (optional; default = 0)
+  double m_center[3];   // Center point (in OCS)
+  double m_radius;      // Radius
+  double m_extrusion_direction[3]; // Extrusion direction. (optional;
+                        // default = 0, 0, 1)
+
+  //@}
+
+  /*! Construct (set default values).
+   */
+  Dxf_circle_entity() :
+    m_thickness(0),
+    m_extrusion_direction{0, 0, 1}
+  {}
 };
 
 DXF_END_NAMESPACE

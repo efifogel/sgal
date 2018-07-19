@@ -380,6 +380,12 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
   for (const auto& arc_entity : m_arc_entities)
     add_polylines(arc_entity, root);
 
+  // Create indexed line sets, one for each circle entity.
+  std::cout << "processing " << m_circle_entities.size() << " circle entities"
+            << std::endl;
+  for (const auto& circle_entity : m_circle_entities)
+    add_polylines(circle_entity, root);
+
   std::cout << "processing "  << m_polylines_num << " polylines" << std::endl;
 
   clear();
@@ -954,7 +960,16 @@ void Dxf_parser::parse_body_entity()
 
 //! \brief parses a circle entity.
 void Dxf_parser::parse_circle_entity()
-{ parse_record(m_circle_entity); }
+{
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Dxf_parser::parse_circle_entity()"
+                              << std::endl;);
+
+  m_circle_entities.resize(m_circle_entities.size() + 1);
+  auto& circle_entity = m_circle_entities.back();
+  parse_record(circle_entity);
+}
 
 //! \brief parses a dimension entity.
 void Dxf_parser::parse_dimension_entity()

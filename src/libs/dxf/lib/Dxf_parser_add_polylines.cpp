@@ -516,6 +516,76 @@ void Dxf_parser::add_polylines(const Dxf_polyline_entity& polyline,
   ils->set_num_primitives(num_primitives);
 }
 
+//! \brief adds polylines provided in circle entities.
+void Dxf_parser::add_polylines(const Dxf_circle_entity& circle,
+                               SGAL::Group* root)
+{
+  size_t num_primitives(1);
+
+  typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
+  typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
+  typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
+  typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
+
+  // Add Shape
+  Shared_shape shape(new SGAL::Shape);
+  SGAL_assertion(shape);
+  shape->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(shape);
+  root->add_child(shape);
+
+  // Add Appearance
+  Shared_appearance app(new SGAL::Appearance);
+  SGAL_assertion(app);
+  shape->set_appearance(app);
+
+  // Add IndexedLineSet
+  Shared_indexed_line_set ils(new SGAL::Indexed_line_set);
+  SGAL_assertion(ils);
+  ils->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(ils);
+  shape->set_geometry(ils);
+
+  // Count number of vertices:
+  const double pi = std::acos(-1);
+  size_t num = m_arcs_num;
+  auto delta_angle = 360.0 / num;
+  size_t size(num);
+
+  // Allocate vertices:
+  auto* coords = new SGAL::Coord_array_3d(size);
+  Shared_coord_array_3d shared_coords(coords);
+  coords->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(shared_coords);
+
+  // Allocate indices:
+  auto& indices = ils->get_coord_indices();
+  indices.resize(size + num_primitives);
+
+  // Assign the vertices & indices:
+  auto it = indices.begin();
+  auto cit = coords->begin();
+  size_t i(0);
+  std::generate(coords->begin(), coords->end(),
+                [&] () mutable
+                {
+                  auto angle = (delta_angle * i++) * pi / 180;
+                  auto x = circle.m_center[0] + circle.m_radius * std::cos(angle);
+                  auto y = circle.m_center[1] + circle.m_radius * std::sin(angle);
+                  return SGAL::Vector3f(x, y, 0);
+                });
+  auto it_end = it;
+  std::advance(it_end, size);
+  std::iota(it, it_end, 0);
+  it = it_end;
+  *it++ = -1;
+
+  auto type = SGAL::Geo_set::PT_LINE_LOOPS;
+  ils->set_primitive_type(type);
+  ils->set_coord_array(shared_coords);
+  ils->set_num_primitives(num_primitives);
+}
+
 //! \brief adds polylines provided in arc entities.
 void Dxf_parser::add_polylines(const Dxf_arc_entity& arc, SGAL::Group* root)
 {
@@ -548,7 +618,8 @@ void Dxf_parser::add_polylines(const Dxf_arc_entity& arc, SGAL::Group* root)
   // Count number of vertices:
   const double pi = std::acos(-1);
   auto diff_angle = arc.m_end_angle - arc.m_start_angle;
-  size_t num = m_arcs_num * std::abs(diff_angle) / 360.0;
+  if (diff_angle < 0.0) diff_angle += 360.0;
+  size_t num = m_arcs_num * diff_angle / 360.0;
   auto delta_angle = diff_angle / num;
   size_t size(num+1);
 

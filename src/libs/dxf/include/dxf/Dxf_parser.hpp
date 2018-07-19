@@ -955,7 +955,7 @@ private:
   Dxf_attdef_entity m_attdef_entity;
   Dxf_attrib_entity m_attrib_entity;
   Dxf_body_entity m_body_entity;
-  Dxf_circle_entity m_circle_entity;
+  std::vector<Dxf_circle_entity> m_circle_entities;
   Dxf_dimension_entity m_dimension_entity;
   Dxf_ellipse_entity m_ellipse_entity;
   std::vector<Dxf_hatch_entity> m_hatch_entities;
@@ -1444,13 +1444,17 @@ private:
    */
   void add_polylines(const Dxf_hatch_entity& hatch, SGAL::Group* root);
 
-  /*! Add lines provided in line entities.
+  /*! Add polylines provided in line entities.
    */
   void add_polylines(const Dxf_line_entity& line, SGAL::Group* root);
 
-  /*! Add lines provided in arc entities.
+  /*! Add polylines provided in arc entities.
    */
   void add_polylines(const Dxf_arc_entity& arc, SGAL::Group* root);
+
+  /*! Add polylines provided in circle entities.
+   */
+  void add_polylines(const Dxf_circle_entity& circle, SGAL::Group* root);
 
   /*! Add polylines provided in spline entities.
    */
