@@ -31,7 +31,18 @@ typedef Dxf_record_wrapper<Dxf_arc_entity>  Dxf_arc_entity_wrapper;
 //! Record members
 template <>
 const std::map<int, Dxf_arc_entity_wrapper::Record_member>
-Dxf_arc_entity_wrapper::s_record_members = {};
+Dxf_arc_entity_wrapper::s_record_members = {
+  {39, {&Dxf_arc_entity::m_thickness, 1, 0}},
+  {10, {&Dxf_arc_entity::m_center, 3, 0}},
+  {20, {&Dxf_arc_entity::m_center, 3, 1}},
+  {30, {&Dxf_arc_entity::m_center, 3, 2}},
+  {40, {&Dxf_arc_entity::m_radius, 1, 0}},
+  {50, {&Dxf_arc_entity::m_start_angle, 1, 0}},
+  {51, {&Dxf_arc_entity::m_end_angle, 1, 0}},
+  {210, {&Dxf_arc_entity::m_extrusion_direction, 3, 0}},
+  {220, {&Dxf_arc_entity::m_extrusion_direction, 3, 1}},
+  {230, {&Dxf_arc_entity::m_extrusion_direction, 3, 2}}
+};
 
 //! Record handlers
 template <>

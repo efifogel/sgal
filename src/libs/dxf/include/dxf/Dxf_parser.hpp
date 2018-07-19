@@ -950,7 +950,7 @@ private:
   Dxf_3dface_entity m_3dface_entity;
   Dxf_3dsolid_entity m_3dsolid_entity;
   Dxf_acad_proxy_entity m_acad_proxy_entity;
-  Dxf_arc_entity m_arc_entity;
+  std::vector<Dxf_arc_entity> m_arc_entities;
   Dxf_arcalignedtext_entity m_arcalignedtext_entity;
   Dxf_attdef_entity m_attdef_entity;
   Dxf_attrib_entity m_attrib_entity;
@@ -1035,8 +1035,11 @@ private:
   //! Number of polylines.
   size_t m_polylines_num;
 
-  //! Indicates whether a polyline is active
+  //! Indicates whether a polyline is active.
   bool m_polyline_active;
+
+  //! The number of arcs used to represent a circle or an ellipsoid.
+  size_t m_arcs_num;
 
   /*! Clear the parser. Deallocate data structure and prepare for reuse.
    */
@@ -1444,6 +1447,10 @@ private:
   /*! Add lines provided in line entities.
    */
   void add_polylines(const Dxf_line_entity& line, SGAL::Group* root);
+
+  /*! Add lines provided in arc entities.
+   */
+  void add_polylines(const Dxf_arc_entity& arc, SGAL::Group* root);
 
   /*! Add polylines provided in spline entities.
    */

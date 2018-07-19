@@ -309,7 +309,8 @@ Dxf_parser::Dxf_parser() :
   m_extended_data(nullptr),
   m_report_unrecognized_code(false),
   m_polylines_num(0),
-  m_polyline_active(false)
+  m_polyline_active(false),
+  m_arcs_num(16)
 {}
 
 //! \brief parses.
@@ -372,6 +373,12 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
             << std::endl;
   for (const auto& line_entity : m_line_entities)
     add_polylines(line_entity, root);
+
+  // Create indexed line sets, one for each arc entity.
+  std::cout << "processing " << m_arc_entities.size() << " arc entities"
+            << std::endl;
+  for (const auto& arc_entity : m_arc_entities)
+    add_polylines(arc_entity, root);
 
   std::cout << "processing "  << m_polylines_num << " polylines" << std::endl;
 
@@ -918,7 +925,16 @@ void Dxf_parser::parse_acad_proxy_entity()
 
 //! \brief parses an arc entity.
 void Dxf_parser::parse_arc_entity()
-{ parse_record(m_arc_entity); }
+{
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Dxf_parser::parse_arc_entity()"
+                              << std::endl;);
+
+  m_arc_entities.resize(m_arc_entities.size() + 1);
+  auto& arc_entity = m_arc_entities.back();
+  parse_record(arc_entity);
+}
 
 //! \brief parses an arcalignedtext entity.
 void Dxf_parser::parse_arcalignedtext_entity()
