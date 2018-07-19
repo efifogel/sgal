@@ -24,6 +24,8 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Loader_code.hpp"
+#include "SGAL/Scene_graph.hpp"
+#include "SGAL/Configuration.hpp"
 #include "SGAL/Trace.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -69,6 +71,14 @@ public:
    */
   void set_trace_code(size_t code);
 
+  /*! Obtain the trace code.
+   */
+  size_t get_trace_code() const;
+
+  /*! Obtain the verbose level.
+   */
+  size_t get_verbose_level() const;
+
 protected:
   //! The text input stream to parse.
   std::istream* m_is;
@@ -82,7 +92,6 @@ protected:
   //! The current line number
   size_t m_line;
 
-public:
   //! The trace code.
   size_t m_trace_code;
 };
@@ -121,6 +130,16 @@ inline void Base_loader::inc_line() { ++m_line; }
 
 //! \brief sets the trace code.
 inline void Base_loader::set_trace_code(size_t code) { m_trace_code = code; }
+
+//! \brief obtains the trace code.
+inline size_t Base_loader::get_trace_code() const { return m_trace_code; }
+
+//! \brief obtains the verbose level.
+inline size_t Base_loader::get_verbose_level() const
+{
+  const auto* conf = m_scene_graph->get_configuration();
+  return conf->get_verbose_level();
+}
 
 SGAL_END_NAMESPACE
 

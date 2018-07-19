@@ -63,7 +63,8 @@ Option_parser::Option_parser() :
   m_config_opts.add_options()
     ("quite,q", po::value<Boolean>(&m_quite)->default_value(true),
      "quite mode")
-    ("verbose,v", po::value<Uint>(&m_verbose)->default_value(0),
+    ("verbose,v", po::value<Uint>(&m_verbose)->
+     default_value(Configuration::s_def_verbose_level),
      "verbose level")
     ("trace,T", po::value<vs>()->composing(), trace_msg.c_str())
     ("load,L", po::value<vs>()->composing(), "load a library")
@@ -148,6 +149,8 @@ void Option_parser::configure(Scene_graph* scene_graph)
   if (!scene_graph) return;
   auto* conf = scene_graph->get_configuration();
   if (conf) {
+    conf->set_verbose_level(m_variable_map["verbose"].as<Uint>());
+
     Conf_option_parser::configure(conf);
     Modeling_option_parser::configure(conf);
     IO_option_parser::configure(conf);

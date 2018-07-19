@@ -49,6 +49,7 @@ class Bindable_stack;
 #endif
 
 class SGAL_SGAL_DECL Configuration : public Bindable_node {
+  friend class Option_parser;
   friend class Boundary_set;
   friend class Indexed_face_set;
   friend class Shape;
@@ -142,7 +143,7 @@ public:
   { return &m_min_zoom_distance; }
   Float* speed_factor_handle(const Field_info*) { return &m_speed_factor; }
   Boolean* texture_map_handle(const Field_info*) { return &m_texture_map; }
-  Uint* verbosity_level_handle(const Field_info*) { return &m_verbosity_level; }
+  Uint* verbose_level_handle(const Field_info*) { return &m_verbose_level; }
   Boolean* seamless_cube_map_handle(const Field_info*)
   { return &m_seamless_cube_map; }
   Uint* export_scene_root_handle(const Field_info*)
@@ -276,10 +277,10 @@ public:
   Shared_modeling get_modeling() const;
 
   /*! Set the verbosity level. */
-  void set_verbosity_level(Uint level);
+  void set_verbose_level(Uint level);
 
   /*! Obtain the verbosity level. */
-  Uint get_verbosity_level() const;
+  Uint get_verbose_level() const;
 
   /*! Set the flag that indicates whether to apply filtering across faces of
    * the cubemap resulting in a seamless transition.
@@ -422,7 +423,7 @@ private:
   Float m_speed_factor;
 
   /*! The verbosity level. */
-  Uint m_verbosity_level;
+  Uint m_verbose_level;
 
   /*! Detemines whether to apply filtering across faces of the cubemap
    * resulting in a seamless transition. This was a hardware limitation in
@@ -683,8 +684,8 @@ inline Configuration::Shared_modeling Configuration::get_modeling() const
 { return m_modeling; }
 
 //! \brief obtains the verbosity level.
-inline Uint Configuration::get_verbosity_level() const
-{ return m_verbosity_level; }
+inline Uint Configuration::get_verbose_level() const
+{ return m_verbose_level; }
 
 /*! \brief sets the flag that indicates whether to apply filtering across
  * faces of the cubemap resulting in a seamless transition.

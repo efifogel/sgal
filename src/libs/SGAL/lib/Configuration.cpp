@@ -56,7 +56,7 @@ const Gfx::Poly_mode Configuration::s_def_poly_mode(Gfx::FILL_PMODE);
 const Boolean Configuration::s_def_display_fps(false);
 const Float Configuration::s_def_min_zoom_distance(0);
 const Float Configuration::s_def_speed_factor(100);
-const Uint Configuration::s_def_verbose_level(0);
+const Uint Configuration::s_def_verbose_level(1);
 const Boolean Configuration::s_def_seamless_cube_map(true);
 const Boolean Configuration::s_def_override_material(true);
 const Boolean Configuration::s_def_override_tex_enable(true);
@@ -94,7 +94,7 @@ Configuration::Configuration(Boolean proto) :
   m_display_fps(s_def_display_fps),
   m_min_zoom_distance(s_def_min_zoom_distance),
   m_speed_factor(s_def_speed_factor),
-  m_verbosity_level(s_def_verbose_level),
+  m_verbose_level(s_def_verbose_level),
   m_seamless_cube_map(s_def_seamless_cube_map),
   m_override_material(Configuration::s_def_override_material),
   m_override_tex_enable(Configuration::s_def_override_tex_enable),
@@ -228,11 +228,11 @@ void Configuration::init_prototype()
                                           s_def_texture_map));
 
   // verbosityLevel
-  Uint_handle_function verbosity_level_func =
-    static_cast<Uint_handle_function>(&Configuration::verbosity_level_handle);
+  Uint_handle_function verbose_level_func =
+    static_cast<Uint_handle_function>(&Configuration::verbose_level_handle);
   s_prototype->add_field_info(new SF_uint(VERBOSITY_LEVEL, "verbosityLevel",
                                           Field_rule::RULE_EXPOSED_FIELD,
-                                          verbosity_level_func,
+                                          verbose_level_func,
                                           s_def_verbose_level));
 
   // seamlessCubeMap
@@ -380,7 +380,7 @@ void Configuration::set_attributes(Element* elem)
       continue;
     }
     if (name == "verbosityLevel") {
-      set_verbosity_level(boost::lexical_cast<Uint>(value));
+      set_verbose_level(boost::lexical_cast<Uint>(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -475,9 +475,9 @@ void Configuration::add_to_scene(Scene_graph* sg)
 }
 
 //! \brief sets the verbosity level.
-void Configuration::set_verbosity_level(Uint level)
+void Configuration::set_verbose_level(Uint level)
 {
-  m_verbosity_level = level;
+  m_verbose_level = level;
   SGAL::Field* field = get_field(VERBOSITY_LEVEL);
   if (field) field->cascade();
 }
@@ -527,8 +527,8 @@ void Configuration::merge(const Configuration* other)
     m_min_zoom_distance = other->m_min_zoom_distance;
   if (other->m_speed_factor != s_def_speed_factor)
     m_speed_factor = other->m_speed_factor;
-  if (other->m_verbosity_level != s_def_verbose_level)
-    m_verbosity_level = other->m_verbosity_level;
+  if (other->m_verbose_level != s_def_verbose_level)
+    m_verbose_level = other->m_verbose_level;
   if (other->m_seamless_cube_map != s_def_seamless_cube_map)
     m_seamless_cube_map = other->m_seamless_cube_map;
   if (other->m_override_material != s_def_override_material)
