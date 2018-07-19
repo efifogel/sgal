@@ -980,7 +980,6 @@ private:
   Dxf_text_entity m_text_entity;
   Dxf_tolerance_entity m_tolerance_entity;
   Dxf_trace_entity m_trace_entity;
-  Dxf_vertex_entity m_vertex_entity;
   Dxf_viewport_entity m_viewport_entity;
   Dxf_wipeout_entity m_wipeout_entity;
   Dxf_xline_entity m_xline_entity;
@@ -1027,14 +1026,17 @@ private:
   std::list<Dxf_user_object> m_user_objects;
 
 private:
+  //! Marker
+  SGAL::String m_marker;
+
   //! Indicates whether to report unrecognized codes.
   bool m_report_unrecognized_code;
 
   //! Number of polylines.
   size_t m_polylines_num;
 
-  //! Marker
-  SGAL::String m_marker;
+  //! Indicates whether a polyline is active
+  bool m_polyline_active;
 
   /*! Clear the parser. Deallocate data structure and prepare for reuse.
    */
@@ -1069,9 +1071,10 @@ private:
       ++m_line;
     }
     SGAL_TRACE_CODE(m_trace_code,
-                    std::cout << "[" << std::to_string(m_line) << "] "
-                    << "Dxf_parser::import_code(): "
-                    << code << std::endl;);
+                    if (get_verbose_level() >= 2)
+                      std::cout << "[" << std::to_string(m_line) << "] "
+                                << "Dxf_parser::import_code(): "
+                                << code << std::endl;);
   }
 
   /*! Import a value.

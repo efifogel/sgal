@@ -308,7 +308,8 @@ Dxf_parser::Dxf_parser() :
   m_is_pending(false),
   m_extended_data(nullptr),
   m_report_unrecognized_code(false),
-  m_polylines_num(0)
+  m_polylines_num(0),
+  m_polyline_active(false)
 {}
 
 //! \brief parses.
@@ -353,7 +354,6 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
             << std::endl;
   for (const auto& hatch_entity : m_hatch_entities)
     add_polylines(hatch_entity, root);
-  std::cout << "processing "  << m_polylines_num << " polylines" << std::endl;
 
   // Create indexed line sets, one for each polyline entity.
   std::cout << "processing " << m_polyline_entities.size()
@@ -794,8 +794,9 @@ void Dxf_parser::read_header_member()
 
   auto dim = codes.size();
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::read_header_member() dimension: "
-                  << dim << std::endl;);
+                  if (get_verbose_level() >= 2)
+                    std::cout << "Dxf_parser::read_header_member() dimension: "
+                              << dim << std::endl;);
   if (1 == dim) {
     auto expected_code = codes.front();
     int code;
@@ -807,8 +808,9 @@ void Dxf_parser::read_header_member()
     }
     auto ct = code_type(code);
     SGAL_TRACE_CODE(m_trace_code,
-                    std::cout << "Dxf_parser::read_header_member() code type: "
-                    << s_code_type_names[ct] << std::endl;);
+                    if (get_verbose_level() >= 2)
+                      std::cout << "Dxf_parser::read_header_member() code type: "
+                                << s_code_type_names[ct] << std::endl;);
     switch (ct) {
      case STRING: assign_member<String_header>(handle, m_header); break;
      case DOUBLE: assign_member<Double_header>(handle, m_header); break;
@@ -833,8 +835,9 @@ void Dxf_parser::read_header_member()
     }
     auto ct = code_type(code);
     SGAL_TRACE_CODE(m_trace_code,
-                    std::cout << "Dxf_parser::read_header_member() code type: "
-                    << s_code_type_names[ct] << std::endl;);
+                    if (get_verbose_level() >= 2)
+                      std::cout << "Dxf_parser::read_header_member() code type: "
+                                << s_code_type_names[ct] << std::endl;);
     SGAL_assertion(DOUBLE == ct);
     if (dim == 2)
       (*m_is) >> (m_header.*(boost::get<Double_2d_header>(handle)))[i++];
@@ -948,6 +951,11 @@ void Dxf_parser::parse_ellipse_entity()
 //! \brief parses a hatch entity.
 void Dxf_parser::parse_hatch_entity()
 {
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Dxf_parser::parse_hatch_entity()"
+                              << std::endl;);
+
   m_hatch_entities.resize(m_hatch_entities.size() + 1);
   auto& hatch_entity = m_hatch_entities.back();
   parse_record(hatch_entity);
@@ -968,6 +976,11 @@ void Dxf_parser::parse_leader_entity()
 //! \brief parses a line entity.
 void Dxf_parser::parse_line_entity()
 {
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Dxf_parser::parse_line_entity()"
+                              << std::endl;);
+
   m_line_entities.resize(m_line_entities.size() + 1);
   auto& line_entity = m_line_entities.back();
   parse_record(line_entity);
@@ -1000,9 +1013,15 @@ void Dxf_parser::parse_point_entity()
 //! \brief parses a polyline entity.
 void Dxf_parser::parse_polyline_entity()
 {
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Dxf_parser::parse_polyline_entity()"
+                              << std::endl;);
+
   m_polyline_entities.resize(m_polyline_entities.size() + 1);
   auto& polyline_entity = m_polyline_entities.back();
   parse_record(polyline_entity);
+  m_polyline_active = true;
 }
 
 //! \brief parses a ray entity.
@@ -1019,7 +1038,10 @@ void Dxf_parser::parse_rtext_entity()
 
 //! \brief parses a seqend entity.
 void Dxf_parser::parse_seqend_entity()
-{ parse_record(m_seqend_entity); }
+{
+  parse_record(m_seqend_entity);
+  m_polyline_active = false;
+}
 
 //! \brief parses a shape entity.
 void Dxf_parser::parse_shape_entity()
@@ -1032,6 +1054,11 @@ void Dxf_parser::parse_solid_entity()
 //! \brief parses a spline entity.
 void Dxf_parser::parse_spline_entity()
 {
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Dxf_parser::parse_spline_entity()"
+                              << std::endl;);
+
   m_spline_entities.resize(m_spline_entities.size() + 1);
   auto& spline_entity = m_spline_entities.back();
   parse_record(spline_entity);
@@ -1051,7 +1078,20 @@ void Dxf_parser::parse_trace_entity()
 
 //! \brief parses a vertex entity.
 void Dxf_parser::parse_vertex_entity()
-{ parse_record(m_vertex_entity); }
+{
+  SGAL_assertion(m_polyline_active);
+
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Dxf_parser::parse_vertex_entity()"
+                              << std::endl;);
+
+  auto& polyline_entity = m_polyline_entities.back();
+  auto& vertices = polyline_entity.m_vertex_entities;
+  vertices.resize(vertices.size() + 1);
+  auto& vertex = vertices.back();
+  parse_record(vertex);
+}
 
 //! \brief parses a viewport entity.
 void Dxf_parser::parse_viewport_entity()
@@ -1224,7 +1264,7 @@ void Dxf_parser::parse_boundary_path(Dxf_boundary_path& path)
     // Handle codes of the base boundary-path record:
     typedef Dxf_record_wrapper<Dxf_base_boundary_path>
       Base_boundary_path_wrapper;
-    auto& base_members = Base_boundary_path_wrapper ::s_record_members;
+    auto& base_members = Base_boundary_path_wrapper::s_record_members;
     Dxf_base_boundary_path& base_path = path;
     if (assign_record_value(code, base_path, base_members)) continue;
     auto& base_handlers = Base_boundary_path_wrapper::s_record_handlers;
@@ -1257,7 +1297,7 @@ void Dxf_parser::parse_polyline_boundary_path(Dxf_polyline_boundary_path& path)
     // Handle codes of the base boundary-path record:
     typedef Dxf_record_wrapper<Dxf_base_boundary_path>
       Base_boundary_path_wrapper;
-    auto& base_members = Base_boundary_path_wrapper ::s_record_members;
+    auto& base_members = Base_boundary_path_wrapper::s_record_members;
     Dxf_base_boundary_path& base_path = path;
     if (assign_record_value(code, base_path, base_members)) continue;
     auto& base_handlers = Base_boundary_path_wrapper::s_record_handlers;
@@ -1281,8 +1321,9 @@ void Dxf_parser::parse_polyline_boundary_path(Dxf_polyline_boundary_path& path)
 void Dxf_parser::parse_pattern_data(Dxf_pattern_data& pattern_data)
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_pattern_data()"
-                  << std::endl;);
+                  if (get_verbose_level() >= 2)
+                    std::cout << "Dxf_parser::parse_pattern_data()"
+                              << std::endl;);
 
   while (true) {
     int code;
@@ -1290,7 +1331,7 @@ void Dxf_parser::parse_pattern_data(Dxf_pattern_data& pattern_data)
 
     // Handle codes of the base boundary-path record:
     typedef Dxf_record_wrapper<Dxf_pattern_data>       Pattern_data_wrapper;
-    auto& members = Pattern_data_wrapper ::s_record_members;
+    auto& members = Pattern_data_wrapper::s_record_members;
     if (assign_record_value(code, pattern_data, members)) continue;
     auto& handlers = Pattern_data_wrapper::s_record_handlers;
     if (handle_record_value(code, pattern_data, handlers)) continue;
@@ -1314,7 +1355,7 @@ void Dxf_parser::parse_line_edge(Dxf_line_edge& edge)
 
     // Handle codes of the base boundary-path record:
     typedef Dxf_record_wrapper<Dxf_line_edge>   Line_edge_wrapper;
-    auto& members = Line_edge_wrapper ::s_record_members;
+    auto& members = Line_edge_wrapper::s_record_members;
     if (assign_record_value(code, edge, members)) continue;
     auto& handlers = Line_edge_wrapper::s_record_handlers;
     if (handle_record_value(code, edge, handlers)) continue;
@@ -1338,7 +1379,7 @@ void Dxf_parser::parse_circle_edge(Dxf_circle_edge& edge)
 
     // Handle codes of the base boundary-path record:
     typedef Dxf_record_wrapper<Dxf_circle_edge>   Circle_edge_wrapper;
-    auto& members = Circle_edge_wrapper ::s_record_members;
+    auto& members = Circle_edge_wrapper::s_record_members;
     if (assign_record_value(code, edge, members)) continue;
     auto& handlers = Circle_edge_wrapper::s_record_handlers;
     if (handle_record_value(code, edge, handlers)) continue;
@@ -1362,7 +1403,7 @@ void Dxf_parser::parse_ellipse_edge(Dxf_ellipse_edge& edge)
 
     // Handle codes of the base boundary-path record:
     typedef Dxf_record_wrapper<Dxf_ellipse_edge>   Ellipse_edge_wrapper;
-    auto& members = Ellipse_edge_wrapper ::s_record_members;
+    auto& members = Ellipse_edge_wrapper::s_record_members;
     if (assign_record_value(code, edge, members)) continue;
     auto& handlers = Ellipse_edge_wrapper::s_record_handlers;
     if (handle_record_value(code, edge, handlers)) continue;
@@ -1386,7 +1427,7 @@ void Dxf_parser::parse_spline_edge(Dxf_spline_edge& edge)
 
     // Handle codes of the base boundary-path record:
     typedef Dxf_record_wrapper<Dxf_spline_edge>   Spline_edge_wrapper;
-    auto& members = Spline_edge_wrapper ::s_record_members;
+    auto& members = Spline_edge_wrapper::s_record_members;
     if (assign_record_value(code, edge, members)) continue;
     auto& handlers = Spline_edge_wrapper::s_record_handlers;
     if (handle_record_value(code, edge, handlers)) continue;

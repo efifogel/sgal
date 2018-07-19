@@ -170,10 +170,6 @@ add_polylines(const Dxf_hatch_entity& hatch,
   typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
   typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
 
-  // Count number of vertices:
-  size_t size(0);
-  for (auto* polyline : polylines) size += polyline->m_locations.size();
-
   // Add Shape
   Shared_shape shape(new SGAL::Shape);
   SGAL_assertion(shape);
@@ -192,6 +188,10 @@ add_polylines(const Dxf_hatch_entity& hatch,
   ils->add_to_scene(m_scene_graph);
   m_scene_graph->add_container(ils);
   shape->set_geometry(ils);
+
+  // Count number of vertices:
+  size_t size(0);
+  for (auto* polyline : polylines) size += polyline->m_locations.size();
 
   // Allocate vertices:
   auto* coords = new SGAL::Coord_array_3d(size);
@@ -446,11 +446,74 @@ void Dxf_parser::add_polylines(const Dxf_spline_entity& spline_entity,
 }
 
 //! \brief adds polylines provided in polyline entities.
-void Dxf_parser::add_polylines(const Dxf_polyline_entity& polyline_entity,
+void Dxf_parser::add_polylines(const Dxf_polyline_entity& polyline,
                                SGAL::Group* root)
 {
-  std::cout << "Polyline" << std::endl;
+  // std::cout << "Polyline" << std::endl;
   ++m_polylines_num;
+
+  size_t num_primitives(1);
+
+  typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
+  typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
+  typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
+  typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
+
+  // Add Shape
+  Shared_shape shape(new SGAL::Shape);
+  SGAL_assertion(shape);
+  shape->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(shape);
+  root->add_child(shape);
+
+  // Add Appearance
+  Shared_appearance app(new SGAL::Appearance);
+  SGAL_assertion(app);
+  shape->set_appearance(app);
+
+  // Add IndexedLineSet
+  Shared_indexed_line_set ils(new SGAL::Indexed_line_set);
+  SGAL_assertion(ils);
+  ils->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(ils);
+  shape->set_geometry(ils);
+
+  // Count number of vertices:
+  size_t size(polyline.m_vertex_entities.size());
+
+  // Allocate vertices:
+  auto* coords = new SGAL::Coord_array_3d(size);
+  Shared_coord_array_3d shared_coords(coords);
+  coords->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(shared_coords);
+
+  // Allocate indices:
+  auto& indices = ils->get_coord_indices();
+  indices.resize(size + num_primitives);
+
+  // Assign the vertices & indices:
+  auto it = indices.begin();
+  auto cit = coords->begin();
+  size_t i(0);
+  cit = std::transform(polyline.m_vertex_entities.begin(),
+                       polyline.m_vertex_entities.end(), cit,
+                       [&](const Dxf_vertex_entity& vertex)
+                       {
+                         auto& p = vertex.m_location;
+                         return SGAL::Vector3f(p[0], p[1], 0);
+                       });
+  auto it_end = it;
+  std::advance(it_end, polyline.m_vertex_entities.size());
+  std::iota(it, it_end, i);
+  i += polyline.m_vertex_entities.size();
+  it = it_end;
+  *it++ = -1;
+
+  auto type = polyline.is_closed() ?
+    SGAL::Geo_set::PT_LINE_LOOPS : SGAL::Geo_set::PT_LINE_STRIPS;
+  ils->set_primitive_type(type);
+  ils->set_coord_array(shared_coords);
+  ils->set_num_primitives(num_primitives);
 }
 
 DXF_END_NAMESPACE

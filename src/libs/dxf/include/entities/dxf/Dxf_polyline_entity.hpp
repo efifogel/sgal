@@ -19,10 +19,13 @@
 #ifndef DXF_POLYLINE_ENTITY_HPP
 #define DXF_POLYLINE_ENTITY_HPP
 
+#include <vector>
+
 #include "SGAL/basic.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_entity.hpp"
+#include "dxf/Dxf_vertex_entity.hpp"
 
 DXF_BEGIN_NAMESPACE
 
@@ -31,6 +34,17 @@ struct Dxf_polyline_entity : public Dxf_base_entity {
 
   /// Member records
   //@{
+
+  enum {
+    CLOSED = 1,
+    INCLUDES_CURVE_FIT_VERTICES = 2,
+    INCLUDES_SPLINE_FIT_VERTICES = 4,
+    IS_3D_POLYLINE = 8,
+    IS_3D_POLYGON_MESH = 16,
+    IS_3D_POLYGON_MESH_CLOSED = 32,
+    IS_POLY_FACE_MESH = 64,
+    HAS_CONTINUOUS_LINE_TYPE_PATTERN = 128
+  };
 
   double m_elevation[3];// APP: a "dummy" point; the X and Y values are always
                         // 0, and the Z value is the polyline's elevation (in
@@ -62,7 +76,12 @@ struct Dxf_polyline_entity : public Dxf_base_entity {
   double m_extrusion_direction[3]; // Extrusion direction (optional;
                         // default = 0, 0, 1)
 
+  std::vector<Dxf_vertex_entity> m_vertex_entities;
   //@}
+
+  /*! Determine whether the polyline is closed.
+   */
+  bool is_closed() const { return m_flag & CLOSED; }
 
   /*! Construct (set default values).
    */
