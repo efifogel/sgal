@@ -77,6 +77,7 @@ struct Dxf_polyline_entity : public Dxf_base_entity {
                         // default = 0, 0, 1)
 
   std::vector<Dxf_vertex_entity> m_vertex_entities;
+
   //@}
 
   /*! Determine whether the polyline is closed.
