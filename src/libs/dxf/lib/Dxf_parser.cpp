@@ -19,11 +19,15 @@
 #include <string>
 #include <iostream>
 #include <functional>
+#include <streambuf>
+#include <fstream>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Scene_graph.hpp"
+#include "SGAL/Configuration.hpp"
+#include "SGAL/Dxf_configuration.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_parser.hpp"
@@ -36,6 +40,27 @@
 
 DXF_BEGIN_NAMESPACE
 
+//! Default color palette
+std::vector<SGAL::Vector3f> Dxf_parser::s_palette = {
+  {0, 0, 0},            // 0
+  {1, 0, 0},            // 1
+  {1, 1, 0},            // 2
+  {0, 1, 0},            // 3
+  {0, 1, 1},            // 4
+  {0, 0, 1},            // 5
+  {1, 0, 1},            // 6
+  {1, 1, 1},            // 7
+  {0.5, 0.5, 0.5},      // 8
+  {0.5, 0, 0},          // 9
+  {0.5, 0.5, 0},        // 10
+  {0, 0.5, 0},          // 11
+  {0, 0.5, 0.5},        // 12
+  {0, 0, 0.5},          // 13
+  {0.5, 0, 0.5},        // 14
+  {0.75, 0.75, 0.75}    // 15
+};
+
+//! Name of code types
 const std::array<SGAL::String, 8> Dxf_parser::s_code_type_names = {
   "STRING", "DOUBLE", "INT8", "INT16", "INT32", "UINT", "BOOL"
 };
@@ -287,6 +312,23 @@ Dxf_parser::Dxf_parser() :
   m_arcs_num(16)
 {}
 
+//! \brief initializes the pallete.
+void Dxf_parser::init_palette(const SGAL::String& file_name)
+{
+  std::ifstream t(file_name);
+  std::string line;
+  s_palette.clear();
+  while (t) {
+    unsigned int x;
+    t >> std::hex >> x;
+    auto r = ((x >> 16) & 0xFF) / 255.0;
+    auto g = ((x >> 8) & 0xFF) / 255.0;
+    auto b = ((x) & 0xFF) / 255.0;
+    s_palette.push_back(SGAL::Vector3f(r, g, b));
+  }
+  t.close();
+}
+
 //! \brief parses.
 SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
                                          SGAL::Scene_graph* sg,
@@ -296,6 +338,17 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
   m_pending_code = 0;
   m_is_pending = false;
   m_extended_data = nullptr;
+
+  //! \todo Make the Configuration a singleton and remove it from the
+  // scene-graph. Then, move the following code exerpt to dxf_init().
+  auto* conf = sg->get_configuration();
+  if (conf) {
+    auto dxf_conf = conf->get_dxf_configuration();
+    if (dxf_conf) {
+      auto& palette_file_name = dxf_conf->get_palette_file_name();
+      init_palette(palette_file_name);
+    }
+  }
 
   while (true) {
     int n;
@@ -1484,6 +1537,8 @@ void Dxf_parser::clear()
 
   // Clear objects
   m_material_objects.clear();
+
+  m_color_arrays.clear();
 }
 
 DXF_END_NAMESPACE

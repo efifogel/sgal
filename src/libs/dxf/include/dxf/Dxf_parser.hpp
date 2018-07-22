@@ -144,6 +144,8 @@ SGAL_BEGIN_NAMESPACE
 
 class Scene_graph;
 class Group;
+class Appearance;
+class Color_array;
 
 SGAL_END_NAMESPACE
 
@@ -162,6 +164,9 @@ public:
   friend Dxf_polyline_boundary_path;
   friend Dxf_pattern_data;
   friend Dxf_layout_object;
+
+  typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
+  typedef boost::shared_ptr<SGAL::Color_array>        Shared_color_array;
 
   /*! Construct.
    */
@@ -1041,6 +1046,12 @@ private:
   //! The number of arcs used to represent a circle or an ellipsoid.
   size_t m_arcs_num;
 
+  //! A lighting-disabled appearance;
+  Shared_appearance m_appearance;
+
+  //! Color arrays that match the default color palette
+  std::map<size_t, Shared_color_array> m_color_arrays;
+
   /*! Clear the parser. Deallocate data structure and prepare for reuse.
    */
   void clear();
@@ -1431,6 +1442,9 @@ private:
    */
   void read_unrecognized(int code);
 
+  //! Default color palette
+  static std::vector<SGAL::Vector3f> s_palette;
+
   static const std::map<SGAL::String, Section_parser> s_sections;
   static const std::map<SGAL::String, Header_member> s_header_members;
   static const std::vector<Code_range> s_code_ranges;
@@ -1482,6 +1496,10 @@ private:
                                 const std::list<Dxf_polyline_boundary_path*>&
                                 polylines,
                                 SGAL::Group* root, bool closed);
+
+  /*! Initialize the pallete.
+   */
+  static void init_palette(const SGAL::String& file_name);
 };
 
 //! \brief sets the flag that determines whether to report unrecognized code.

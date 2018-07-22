@@ -29,6 +29,7 @@
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Indexed_line_set.hpp"
 #include "SGAL/Coord_array_3d.hpp"
+#include "SGAL/Color_array.hpp"
 #include "SGAL/approximate_circular_arc.hpp"
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Vector3f.hpp"
@@ -273,7 +274,7 @@ void Dxf_parser::add_polylines(const Dxf_hatch_entity& hatch, SGAL::Group* root)
 //! \brief adds lines provided in line entities.
 void Dxf_parser::add_polylines(const Dxf_line_entity& line, SGAL::Group* root)
 {
-  // std::cout << "Line" << std::endl;
+  auto* parser = line.m_parser;
 
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
   typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
@@ -299,6 +300,26 @@ void Dxf_parser::add_polylines(const Dxf_line_entity& line, SGAL::Group* root)
   m_scene_graph->add_container(ils);
   shape->set_geometry(ils);
 
+  // Allocate colors:
+  auto color = line.m_color;
+  if (color == static_cast<int16_t>(By::BYLAYER)) {
+    auto it = parser->m_layer_table.find(line.m_layer);
+    color = it->m_color;
+  }
+
+  auto ait = parser->m_color_arrays.find(color);
+  if (ait == parser->m_color_arrays.end()) {
+    auto* colors = new SGAL::Color_array(size_t(1));
+    Shared_color_array shared_colors(colors);
+    colors->add_to_scene(m_scene_graph);
+    m_scene_graph->add_container(shared_colors);
+    if (color >= s_palette.size()) color = 0;
+    (*colors)[0] = s_palette[color];
+    auto rc = parser->m_color_arrays.insert(std::make_pair(color, shared_colors));
+    ait = rc.first;
+  }
+  auto shared_colors = ait->second;
+
   // Allocate vertices:
   size_t size(2);
   auto* coords = new SGAL::Coord_array_3d(size);
@@ -321,7 +342,9 @@ void Dxf_parser::add_polylines(const Dxf_line_entity& line, SGAL::Group* root)
 
   ils->set_primitive_type(SGAL::Geo_set::PT_LINES);
   ils->set_coord_array(shared_coords);
+  ils->set_color_array(shared_colors);
   ils->set_num_primitives(1);
+  ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
 //! \brief adds polylines provided in spline entities.
@@ -520,10 +543,11 @@ void Dxf_parser::add_polylines(const Dxf_polyline_entity& polyline,
 void Dxf_parser::add_polylines(const Dxf_circle_entity& circle,
                                SGAL::Group* root)
 {
+  auto* parser = circle.m_parser;
+
   size_t num_primitives(1);
 
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
-  typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
   typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
   typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
 
@@ -535,7 +559,11 @@ void Dxf_parser::add_polylines(const Dxf_circle_entity& circle,
   root->add_child(shape);
 
   // Add Appearance
-  Shared_appearance app(new SGAL::Appearance);
+  if (! parser->m_appearance) {
+    parser->m_appearance.reset(new SGAL::Appearance);
+    parser->m_appearance->set_light_enable(false);
+  }
+  auto app = parser->m_appearance;
   SGAL_assertion(app);
   shape->set_appearance(app);
 
@@ -545,6 +573,26 @@ void Dxf_parser::add_polylines(const Dxf_circle_entity& circle,
   ils->add_to_scene(m_scene_graph);
   m_scene_graph->add_container(ils);
   shape->set_geometry(ils);
+
+  // Allocate colors:
+  auto color = circle.m_color;
+  if (color == static_cast<int16_t>(By::BYLAYER)) {
+    auto it = parser->m_layer_table.find(circle.m_layer);
+    color = it->m_color;
+  }
+
+  auto ait = parser->m_color_arrays.find(color);
+  if (ait == parser->m_color_arrays.end()) {
+    auto* colors = new SGAL::Color_array(size_t(1));
+    Shared_color_array shared_colors(colors);
+    colors->add_to_scene(m_scene_graph);
+    m_scene_graph->add_container(shared_colors);
+    if (color >= s_palette.size()) color = 0;
+    (*colors)[0] = s_palette[color];
+    auto rc = parser->m_color_arrays.insert(std::make_pair(color, shared_colors));
+    ait = rc.first;
+  }
+  auto shared_colors = ait->second;
 
   // Count number of vertices:
   const double pi = std::acos(-1);
@@ -583,12 +631,16 @@ void Dxf_parser::add_polylines(const Dxf_circle_entity& circle,
   auto type = SGAL::Geo_set::PT_LINE_LOOPS;
   ils->set_primitive_type(type);
   ils->set_coord_array(shared_coords);
+  ils->set_color_array(shared_colors);
   ils->set_num_primitives(num_primitives);
+  ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
 //! \brief adds polylines provided in arc entities.
 void Dxf_parser::add_polylines(const Dxf_arc_entity& arc, SGAL::Group* root)
 {
+  auto* parser = arc.m_parser;
+
   size_t num_primitives(1);
 
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
@@ -615,11 +667,32 @@ void Dxf_parser::add_polylines(const Dxf_arc_entity& arc, SGAL::Group* root)
   m_scene_graph->add_container(ils);
   shape->set_geometry(ils);
 
+  // Allocate colors:
+  auto color = arc.m_color;
+  if (color == static_cast<int16_t>(By::BYLAYER)) {
+    auto it = parser->m_layer_table.find(arc.m_layer);
+    color = it->m_color;
+  }
+
+  auto ait = parser->m_color_arrays.find(color);
+  if (ait == parser->m_color_arrays.end()) {
+    auto* colors = new SGAL::Color_array(size_t(1));
+    Shared_color_array shared_colors(colors);
+    colors->add_to_scene(m_scene_graph);
+    m_scene_graph->add_container(shared_colors);
+    if (color >= s_palette.size()) color = 0;
+    (*colors)[0] = s_palette[color];
+    auto rc = parser->m_color_arrays.insert(std::make_pair(color, shared_colors));
+    ait = rc.first;
+  }
+  auto shared_colors = ait->second;
+
   // Count number of vertices:
   const double pi = std::acos(-1);
   auto diff_angle = arc.m_end_angle - arc.m_start_angle;
   if (diff_angle < 0.0) diff_angle += 360.0;
   size_t num = m_arcs_num * diff_angle / 360.0;
+  if (num == 0) num = 1;
   auto delta_angle = diff_angle / num;
   size_t size(num+1);
 
@@ -654,7 +727,9 @@ void Dxf_parser::add_polylines(const Dxf_arc_entity& arc, SGAL::Group* root)
   auto type = SGAL::Geo_set::PT_LINE_STRIPS;
   ils->set_primitive_type(type);
   ils->set_coord_array(shared_coords);
+  ils->set_color_array(shared_colors);
   ils->set_num_primitives(num_primitives);
+  ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
 DXF_END_NAMESPACE
