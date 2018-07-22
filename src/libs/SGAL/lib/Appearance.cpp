@@ -120,7 +120,7 @@ void Appearance::init()
   m_tex_env                   = Gfx::MODULATE_TENV;
   m_tex_gen_enable            = false;
   m_material_mode_enable      = Gfx::NO_COLOR_MATERIAL;
-  m_light_enable              = 0;
+  m_light_enable              = false;
   m_shade_model               = Gfx::SMOOTH_SHADE;
   m_transp_enable             = false;
   m_transp_mode               = Gfx::BLEND_TRANSP;
