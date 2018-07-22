@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_CONFIGURATION_HPP
 #define SGAL_CONFIGURATION_HPP
@@ -41,6 +41,7 @@ class Scene_graph;
 class Accumulation;
 class Multisample;
 class Modeling;
+class Dxf_configuration;
 class Bindable_stack;
 
 #if (defined _MSC_VER)
@@ -61,6 +62,7 @@ public:
     FIRST = Bindable_node::LAST - 1,
     ACCUMULATION,
     MODELING,
+    DXF_CONFIGURATION,
     POLY_MODE,
     DISPLAY_FPS,
     FIXED_HEADLIGHT,
@@ -99,9 +101,10 @@ public:
     GDM_VERTEX_ARRAY
   };
 
-  typedef boost::shared_ptr<Accumulation>               Shared_accumulation;
-  typedef boost::shared_ptr<Multisample>                Shared_multisample;
-  typedef boost::shared_ptr<Modeling>                   Shared_modeling;
+  typedef boost::shared_ptr<Accumulation>             Shared_accumulation;
+  typedef boost::shared_ptr<Multisample>              Shared_multisample;
+  typedef boost::shared_ptr<Modeling>                 Shared_modeling;
+  typedef boost::shared_ptr<Dxf_configuration>        Shared_dxf_configuration;
 
   /*! Construct. */
   Configuration(Boolean proto = false);
@@ -132,6 +135,8 @@ public:
   { return &m_accumulation; }
   Shared_modeling* modeling_handle(const Field_info*)
   { return &m_modeling; }
+  Shared_dxf_configuration* dxf_configuration_handle(const Field_info*)
+  { return &m_dxf_configuration; }
   Gfx::Poly_mode* poly_mode_handle(const Field_info*) { return &m_poly_mode; }
   Boolean* display_fps_handle(const Field_info*) { return &m_display_fps; }
   Boolean* is_fixed_head_light_handle(const Field_info*)
@@ -276,6 +281,12 @@ public:
   /*! Obtain the modeling object. */
   Shared_modeling get_modeling() const;
 
+  /*! Set the dxf-configuration object. */
+  void set_dxf_configuration(Shared_dxf_configuration dxf);
+
+  /*! Obtain the dxf-configuration object. */
+  Shared_dxf_configuration get_dxf_configuration() const;
+
   /*! Set the verbosity level. */
   void set_verbose_level(Uint level);
 
@@ -380,6 +391,9 @@ private:
 
   /*! Modeling object. */
   Shared_modeling m_modeling;
+
+  /*! Dxf-configuration object. */
+  Shared_dxf_configuration m_dxf_configuration;
 
   /*! The viewpoint mode. */
   Viewpoint_mode m_viewpoint_mode;
@@ -682,6 +696,15 @@ inline void Configuration::set_modeling(Shared_modeling modeling)
 //! \brief obtains the modeling object.
 inline Configuration::Shared_modeling Configuration::get_modeling() const
 { return m_modeling; }
+
+//! \brief sets the dxf-configuration object.
+inline void Configuration::set_dxf_configuration(Shared_dxf_configuration dxf)
+{ m_dxf_configuration = dxf; }
+
+//! \brief obtains the dxf-configuration object.
+inline Configuration::Shared_dxf_configuration
+Configuration::get_dxf_configuration() const
+{ return m_dxf_configuration; }
 
 //! \brief obtains the verbosity level.
 inline Uint Configuration::get_verbose_level() const

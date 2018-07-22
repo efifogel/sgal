@@ -1,0 +1,68 @@
+// Copyright (c) 2015 Israel.
+// All rights reserved.
+//
+// This file is part of SGAL; you can redistribute it and/or modify it
+// under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the
+// License. See the file LICENSE.LGPL distributed with SGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the
+// software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING
+// THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
+// PARTICULAR PURPOSE.
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
+
+#if defined(_MSC_VER)
+#pragma warning ( disable : 4512 )
+#endif
+
+#include <vector>
+#include <string>
+
+#include "SGAL/basic.hpp"
+#include "SGAL/Dxf_option_parser.hpp"
+#include "SGAL/Configuration.hpp"
+#include "SGAL/Dxf_configuration.hpp"
+
+SGAL_BEGIN_NAMESPACE
+
+//! \brief constructs default.
+Dxf_option_parser::Dxf_option_parser() :
+  m_dxf_opts("Dxf options")
+{
+  m_dxf_opts.add_options()
+    ("dxf-palette-file",
+     po::value<String>()->
+     default_value(Dxf_configuration::s_def_palette_file_name),
+     "DXF color palette file name")
+    ;
+}
+
+//! \brief destructs.
+Dxf_option_parser::~Dxf_option_parser() {}
+
+//! \brief applies the options.
+void Dxf_option_parser::apply() {}
+
+//! \brief sets the Configuration node.
+void Dxf_option_parser::configure(Configuration* conf)
+{
+  if (!conf) return;
+
+  const auto& var_map = get_variable_map();
+
+  auto dxf = conf->get_dxf_configuration();
+  if (!dxf) {
+    dxf.reset(new Dxf_configuration);
+    SGAL_assertion(dxf);
+    conf->set_dxf_configuration(dxf);
+  }
+
+  dxf->set_palette_file_name(var_map["dxf-palette-file"].as<String>());
+}
+
+SGAL_END_NAMESPACE

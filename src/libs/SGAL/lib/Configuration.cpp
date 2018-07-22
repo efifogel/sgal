@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <boost/lexical_cast.hpp>
 
@@ -31,6 +31,7 @@
 #include "SGAL/Accumulation.hpp"
 #include "SGAL/Multisample.hpp"
 #include "SGAL/Modeling.hpp"
+#include "SGAL/Dxf_configuration.hpp"
 #include "SGAL/Window_item.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/to_boolean.hpp"
@@ -125,6 +126,7 @@ void Configuration::reset(Viewpoint_mode viewpoint_mode,
 {
   if (m_accumulation) m_accumulation->reset();
   if (m_modeling) m_modeling->reset();
+  if (m_dxf_configuration) m_dxf_configuration->reset();
 
   m_viewpoint_mode = viewpoint_mode;
   m_geometry_drawing_mode = def_geometry_drawing_mode;
@@ -262,6 +264,16 @@ void Configuration::init_prototype()
                                                       "modeling",
                                                       Field_rule::RULE_EXPOSED_FIELD,
                                                       modeling_func,
+                                                      exec_func));
+
+  // Dxf-configuration
+  Shared_container_handle_function dxf_configuration_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Configuration::dxf_configuration_handle);
+  s_prototype->add_field_info(new SF_shared_container(DXF_CONFIGURATION,
+                                                      "dxfConfiguration",
+                                                      Field_rule::RULE_EXPOSED_FIELD,
+                                                      dxf_configuration_func,
                                                       exec_func));
 
   // exportScene
@@ -459,6 +471,12 @@ void Configuration::set_attributes(Element* elem)
       elem->mark_delete(cai);
       continue;
     }
+    if (name == "dxfConfiguration") {
+      auto dxf_conf = boost::dynamic_pointer_cast<Dxf_configuration>(cont);
+      set_dxf_configuration(dxf_conf);
+      elem->mark_delete(cai);
+      continue;
+    }
   }
 
   // Remove all the marked attributes:
@@ -501,6 +519,8 @@ void Configuration::merge(const Configuration* other)
 {
   if (other->m_accumulation) m_accumulation = other->m_accumulation;
   if (other->m_modeling) m_modeling = other->m_modeling;
+  if (other->m_dxf_configuration)
+    m_dxf_configuration = other->m_dxf_configuration;
   if (other->m_viewpoint_mode != s_def_viewpoint_mode)
     m_viewpoint_mode = other->m_viewpoint_mode;
   if (other->m_geometry_drawing_mode != s_def_geometry_drawing_mode)

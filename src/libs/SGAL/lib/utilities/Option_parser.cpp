@@ -76,7 +76,7 @@ Option_parser::Option_parser() :
     ;
 
   // m_visible_opts.set_name("Allowed options");
-  m_config_opts.add(m_conf_opts).add(m_modeling_opts);
+  m_config_opts.add(m_conf_opts).add(m_modeling_opts).add(m_dxf_opts);
   m_visible_opts.add(m_generic_opts).add(m_config_opts).add(m_io_opts).add(m_bench_opts);
   m_cmd_line_opts.add(m_visible_opts).add(m_hidden_opts);
   m_config_file_opts.add(m_config_opts).add(m_io_opts).add(m_bench_opts);
@@ -125,6 +125,7 @@ void Option_parser::apply()
   Generic_option_parser::apply();
   Conf_option_parser::apply();
   Modeling_option_parser::apply();
+  Dxf_option_parser::apply();
   IO_option_parser::apply();
   Bench_option_parser::apply();
 }
@@ -153,6 +154,7 @@ void Option_parser::configure(Scene_graph* scene_graph)
 
     Conf_option_parser::configure(conf);
     Modeling_option_parser::configure(conf);
+    Dxf_option_parser::configure(conf);
     IO_option_parser::configure(conf);
   }
 }
