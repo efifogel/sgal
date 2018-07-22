@@ -27,6 +27,7 @@
 #include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
+#include "dxf/By.hpp"
 #include "dxf/Dxf_extended_data.hpp"
 
 DXF_BEGIN_NAMESPACE
@@ -95,7 +96,12 @@ struct Dxf_base_entity {
 
   /*! Construct.
    */
-  Dxf_base_entity() : m_parser(nullptr) {}
+  Dxf_base_entity() :
+    m_is_in_paper_space(0),
+    m_color(static_cast<int16_t>(By::BYLAYER)),
+    m_line_type_scale(1.0),
+    m_parser(nullptr)
+  {}
 
   /*! Set the parser.
    * \param[in] parser the parser.
