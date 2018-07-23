@@ -1454,6 +1454,19 @@ private:
   static const std::map<SGAL::String, Entity_parser> s_entities;
   static const std::map<SGAL::String, Object_parser> s_objects;
 
+  /*! Process all layers. Create a color array for each.
+   */
+  void process_layers();
+
+  /*! Obtain the color array of an entity.
+   */
+  Shared_color_array get_color_array(int32_t color, int16_t color_index,
+                                     const SGAL::String& layer);
+
+  /*! Obtain the lighting-disabled appearance.
+   */
+  Shared_appearance get_light_disabled_appearance();
+
   /*! Add a default background color.
    */
   void add_background(SGAL::Group* root);

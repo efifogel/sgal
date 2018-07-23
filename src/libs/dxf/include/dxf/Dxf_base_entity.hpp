@@ -35,6 +35,10 @@ DXF_BEGIN_NAMESPACE
 class Dxf_parser;
 
 struct Dxf_base_entity {
+
+  /// Member records
+  //@{
+
   SGAL::String m_handle; // Handle
   SGAL::String m_owner_handle; // Soft pointer ID/handle to owner dictionary
                         // (optional)
@@ -48,7 +52,7 @@ struct Dxf_base_entity {
   SGAL::String m_line_type_name; // Linetype name (present if not BYLAYER).
                         // The special name BYBLOCK indicates a floating
                         // linetype (optional). BYLAYER
-  int16_t m_color;      // Color number (present if not BYLAYER);
+  int16_t m_color_index;// Color number (present if not BYLAYER);
                         // 0 = the BYBLOCK (floating) color;
                         // 256 = BYLAYER;
                         // a negative value indicates that the layer is turned
@@ -64,7 +68,7 @@ struct Dxf_base_entity {
   std::vector<SGAL::String> m_preview_image_data; // Preview image data
                         // (multiple lines; 256 charaters max. per line)
                         // (optional)
-  int32_t m_color_24_bit; // A 24-bit color value that should be dealt with in
+  int32_t m_color;      // A 24-bit color value that should be dealt with in
                         // terms of bytes with values of 0 to 255. The lowest
                         // byte is the blue value, the middle byte is the green
                         // value, and the third byte is the red value. The top
@@ -72,7 +76,7 @@ struct Dxf_base_entity {
                         // custom entities for their own data because the group
                         // code is reserved for AcDbEntity, class-level color
                         // data and AcDbEntity, class-level transparency data
-  SGAL::String m_color_name;  // Color name. The group code cannot be used by
+  SGAL::String m_color_name; // Color name. The group code cannot be used by
                         // custom entities for their own data because the group
                         // code is reserved for AcDbEntity, class-level color
                         // ata data and AcDbEntity, class-level transparency data
@@ -94,12 +98,16 @@ struct Dxf_base_entity {
                         // "{", "}" (opt.)
   std::vector<Dxf_extended_data> m_extended_data;
 
+  //@}
+
   /*! Construct.
+   * Initialize the color with -1 to indicate that it hasn't been set.
    */
   Dxf_base_entity() :
     m_is_in_paper_space(0),
-    m_color(static_cast<int16_t>(By::BYLAYER)),
+    m_color_index(static_cast<int16_t>(By::BYLAYER)),
     m_line_type_scale(1.0),
+    m_color(static_cast<int32_t>(-1)),
     m_parser(nullptr)
   {}
 

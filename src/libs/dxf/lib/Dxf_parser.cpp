@@ -319,7 +319,7 @@ void Dxf_parser::init_palette(const SGAL::String& file_name)
   std::string line;
   s_palette.clear();
   while (t) {
-    unsigned int x;
+    size_t x;
     t >> std::hex >> x;
     auto r = ((x >> 16) & 0xFF) / 255.0;
     auto g = ((x >> 8) & 0xFF) / 255.0;
@@ -375,6 +375,7 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
 
   //
   m_scene_graph->set_input_format_id(SGAL::File_format_3d::ID_DXF);
+  process_layers();
   auto* root = m_scene_graph->initialize();
 
   add_background(root);

@@ -47,8 +47,8 @@ const std::map<int, Dxf_layer_wrapper::Record_member>
 Dxf_layer_wrapper::s_record_members = {
   {2, {&Dxf_layer_entry::m_name, 1, 0}},
   {70, {&Dxf_layer_entry::m_flags, 1, 0}},
-  {62, {&Dxf_layer_entry::m_color, 1, 0}},
-  {420, {&Dxf_layer_entry::m_color_rgb, 1, 0}},
+  {62, {&Dxf_layer_entry::m_color_index, 1, 0}},
+  {420, {&Dxf_layer_entry::m_color, 1, 0}},
   {6, {&Dxf_layer_entry::m_line_type, 1, 0}},
   {290, {&Dxf_layer_entry::m_is_layer_plotted, 1, 0}},
   {370, {&Dxf_layer_entry::m_line_weight, 1, 0}},

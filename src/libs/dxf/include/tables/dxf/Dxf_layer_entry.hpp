@@ -19,15 +19,29 @@
 #ifndef DXF_LAYER_ENTRY_HPP
 #define DXF_LAYER_ENTRY_HPP
 
+#include <boost/shared_ptr.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_table_entry.hpp"
 
+SGAL_BEGIN_NAMESPACE
+
+class Color_array;
+
+SGAL_END_NAMESPACE
+
 DXF_BEGIN_NAMESPACE
 
 struct SGAL_SGAL_DECL Dxf_layer_entry : Dxf_table_entry {
+
+  typedef boost::shared_ptr<SGAL::Color_array>        Shared_color_array;
+
+  /// Member records
+  //@{
+
   SGAL::String m_name;  // Viewport name
   int16_t m_flags;      // 16 = If set, table entry is externally dependent on
                         //      an xref
@@ -41,14 +55,26 @@ struct SGAL_SGAL_DECL Dxf_layer_entry : Dxf_table_entry {
                         //      by most programs that read DXF files and does
                         //      not need to be set by programs that write DXF
                         //      files)
-  int16_t m_color;      // Color number (if negative, layer is off)
-  int32_t m_color_rgb;  // EF: not in the psec, but appears in dxf files.
-  SGAL::String m_line_type;   // Linetype name
+  int16_t m_color_index;// Color number (if negative, layer is off)
+  int32_t m_color;      // A 24-bit color value.
+  SGAL::String m_line_type; // Linetype name
   bool m_is_layer_plotted; // Plotting flag. If set to 0, do not plot this layer
   int8_t m_line_weight; // Lineweight enum value
   SGAL::String m_plot_style_pointer; // Hard pointer ID/handle of PlotStyleName
                         // object
   SGAL::String m_material_handle; // Hard-pointer ID/handle to Material object
+
+  //@}
+
+  /*! Construct.
+   * Initialize the color with -1 to indicate that it hasn't been set.
+   */
+  Dxf_layer_entry() :
+    m_color(static_cast<int32_t>(-1))
+  {}
+
+  //! The color array for this layer, which consists of one color.
+  Shared_color_array m_color_array;
 };
 
 DXF_END_NAMESPACE

@@ -46,6 +46,95 @@
 
 DXF_BEGIN_NAMESPACE
 
+//! \brief processes all layers. Create a color array for each.
+void Dxf_parser::process_layers()
+{
+  for (auto& layer : m_layer_table.m_entries) {
+    Shared_color_array shared_colors;
+    size_t color = layer.m_color;
+    if (color != static_cast<size_t>(-1)) {
+      auto* colors = new SGAL::Color_array(size_t(1));
+      colors->add_to_scene(m_scene_graph);
+      auto r = ((color >> 16) & 0xFF) / 255.0;
+      auto g = ((color >> 8) & 0xFF) / 255.0;
+      auto b = ((color) & 0xFF) / 255.0;
+      (*colors)[0] = SGAL::Vector3f(r, g, b);
+      shared_colors.reset(colors);
+      m_scene_graph->add_container(shared_colors);
+    }
+    else {
+      auto color_index = layer.m_color_index;
+      if (color_index >= 0) {
+        auto ait = m_color_arrays.find(color_index);
+        if (ait == m_color_arrays.end()) {
+          auto* colors = new SGAL::Color_array(size_t(1));
+          colors->add_to_scene(m_scene_graph);
+          if (color_index >= s_palette.size()) color_index = 0;
+          (*colors)[0] = s_palette[color_index];
+          shared_colors.reset(colors);
+          m_scene_graph->add_container(shared_colors);
+          m_color_arrays.insert(std::make_pair(color_index, shared_colors));
+        }
+        else shared_colors = ait->second;
+      }
+    }
+
+    layer.m_color_array = shared_colors;
+  }
+}
+
+//! \brief Obtain the color array of an entity.
+Dxf_parser::Shared_color_array
+Dxf_parser::get_color_array(int32_t color, int16_t color_index,
+                            const SGAL::String& layer)
+{
+  Shared_color_array shared_colors;
+  if (color != static_cast<int32_t>(-1)) {
+    auto* colors = new SGAL::Color_array(size_t(1));
+    colors->add_to_scene(m_scene_graph);
+    auto r = ((color >> 16) & 0xFF) / 255.0;
+    auto g = ((color >> 8) & 0xFF) / 255.0;
+    auto b = ((color) & 0xFF) / 255.0;
+    (*colors)[0] = SGAL::Vector3f(r, g, b);
+    shared_colors.reset(colors);
+    m_scene_graph->add_container(shared_colors);
+    return shared_colors;
+  }
+
+  if (color_index == static_cast<int16_t>(By::BYLAYER)) {
+    auto it = m_layer_table.find(layer);
+    return it->m_color_array;
+  }
+
+  if (color_index < 0) return Shared_color_array();
+
+  auto ait = m_color_arrays.find(color_index);
+  if (ait == m_color_arrays.end()) {
+    auto* colors = new SGAL::Color_array(size_t(1));
+    colors->add_to_scene(m_scene_graph);
+    if (color_index >= s_palette.size()) color = 0;
+    (*colors)[0] = s_palette[color_index];
+    shared_colors.reset(colors);
+    m_scene_graph->add_container(shared_colors);
+    m_color_arrays.insert(std::make_pair(color_index, shared_colors));
+    return shared_colors;
+  }
+
+  return ait->second;
+}
+
+//! \brief obtains the lighting-disabled appearance.
+Dxf_parser::Shared_appearance Dxf_parser::get_light_disabled_appearance()
+{
+  if (! m_appearance) {
+    m_appearance.reset(new SGAL::Appearance);
+    m_appearance->add_to_scene(m_scene_graph);
+    m_appearance->set_light_enable(false);
+    m_scene_graph->add_container(m_appearance);
+  }
+  return m_appearance;
+}
+
 //! \brief add a default background color
 void Dxf_parser::add_background(SGAL::Group* root)
 {
@@ -55,7 +144,7 @@ void Dxf_parser::add_background(SGAL::Group* root)
   SGAL_assertion(bg);
   bg->add_to_scene(m_scene_graph);
   m_scene_graph->add_container(bg);
-  bg->set_color(SGAL::Vector4f(1, 1, 1, 0));
+  bg->set_color(SGAL::Vector4f(0.9, 0.9, 0.9, 0));
   root->add_child(bg);
 }
 
@@ -65,7 +154,10 @@ add_polylines_with_bulge(const Dxf_hatch_entity& hatch,
                          const std::list<Dxf_polyline_boundary_path*>& polylines,
                          SGAL::Group* root, bool closed)
 {
-  auto* parser = hatch.m_parser;
+  // Obtain the color array:
+  Shared_color_array shared_colors =
+    get_color_array(hatch.m_color, hatch.m_color_index, hatch.m_layer);
+  if (! shared_colors) return;
 
   static const double min_bulge(0.1);
 
@@ -85,8 +177,7 @@ add_polylines_with_bulge(const Dxf_hatch_entity& hatch,
   root->add_child(shape);
 
   // Add Appearance
-  Shared_appearance app(new SGAL::Appearance);
-  SGAL_assertion(app);
+  auto app = get_light_disabled_appearance();
   shape->set_appearance(app);
 
   // Add IndexedLineSet
@@ -95,26 +186,6 @@ add_polylines_with_bulge(const Dxf_hatch_entity& hatch,
   ils->add_to_scene(m_scene_graph);
   m_scene_graph->add_container(ils);
   shape->set_geometry(ils);
-
-  // Allocate colors:
-  auto color = hatch.m_color;
-  if (color == static_cast<int16_t>(By::BYLAYER)) {
-    auto it = parser->m_layer_table.find(hatch.m_layer);
-    color = it->m_color;
-  }
-
-  auto ait = parser->m_color_arrays.find(color);
-  if (ait == parser->m_color_arrays.end()) {
-    auto* colors = new SGAL::Color_array(size_t(1));
-    Shared_color_array shared_colors(colors);
-    colors->add_to_scene(m_scene_graph);
-    m_scene_graph->add_container(shared_colors);
-    if (color >= s_palette.size()) color = 0;
-    (*colors)[0] = s_palette[color];
-    auto rc = parser->m_color_arrays.insert(std::make_pair(color, shared_colors));
-    ait = rc.first;
-  }
-  auto shared_colors = ait->second;
 
   // Allocate vertices:
   auto* coords = new SGAL::Coord_array_3d();
@@ -203,7 +274,10 @@ add_polylines(const Dxf_hatch_entity& hatch,
               const std::list<Dxf_polyline_boundary_path*>& polylines,
               SGAL::Group* root, bool closed)
 {
-  auto* parser = hatch.m_parser;
+  // Obtain the color array:
+  Shared_color_array shared_colors =
+    get_color_array(hatch.m_color, hatch.m_color_index, hatch.m_layer);
+  if (! shared_colors) return;
 
   size_t num_primitives(polylines.size());
   if (0 == num_primitives) return;
@@ -221,8 +295,7 @@ add_polylines(const Dxf_hatch_entity& hatch,
   root->add_child(shape);
 
   // Add Appearance
-  Shared_appearance app(new SGAL::Appearance);
-  SGAL_assertion(app);
+  auto app = get_light_disabled_appearance();
   shape->set_appearance(app);
 
   // Add IndexedLineSet
@@ -231,26 +304,6 @@ add_polylines(const Dxf_hatch_entity& hatch,
   ils->add_to_scene(m_scene_graph);
   m_scene_graph->add_container(ils);
   shape->set_geometry(ils);
-
-  // Allocate colors:
-  auto color = hatch.m_color;
-  if (color == static_cast<int16_t>(By::BYLAYER)) {
-    auto it = parser->m_layer_table.find(hatch.m_layer);
-    color = it->m_color;
-  }
-
-  auto ait = parser->m_color_arrays.find(color);
-  if (ait == parser->m_color_arrays.end()) {
-    auto* colors = new SGAL::Color_array(size_t(1));
-    Shared_color_array shared_colors(colors);
-    colors->add_to_scene(m_scene_graph);
-    m_scene_graph->add_container(shared_colors);
-    if (color >= s_palette.size()) color = 0;
-    (*colors)[0] = s_palette[color];
-    auto rc = parser->m_color_arrays.insert(std::make_pair(color, shared_colors));
-    ait = rc.first;
-  }
-  auto shared_colors = ait->second;
 
   // Count number of vertices:
   size_t size(0);
@@ -337,7 +390,10 @@ void Dxf_parser::add_polylines(const Dxf_hatch_entity& hatch, SGAL::Group* root)
 //! \brief adds lines provided in line entities.
 void Dxf_parser::add_polylines(const Dxf_line_entity& line, SGAL::Group* root)
 {
-  auto* parser = line.m_parser;
+  // Obtain the color array:
+  Shared_color_array shared_colors =
+    get_color_array(line.m_color, line.m_color_index, line.m_layer);
+  if (! shared_colors) return;
 
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
   typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
@@ -352,8 +408,7 @@ void Dxf_parser::add_polylines(const Dxf_line_entity& line, SGAL::Group* root)
   root->add_child(shape);
 
   // Add Appearance
-  Shared_appearance app(new SGAL::Appearance);
-  SGAL_assertion(app);
+  auto app = get_light_disabled_appearance();
   shape->set_appearance(app);
 
   // Add IndexedLineSet
@@ -362,26 +417,6 @@ void Dxf_parser::add_polylines(const Dxf_line_entity& line, SGAL::Group* root)
   ils->add_to_scene(m_scene_graph);
   m_scene_graph->add_container(ils);
   shape->set_geometry(ils);
-
-  // Allocate colors:
-  auto color = line.m_color;
-  if (color == static_cast<int16_t>(By::BYLAYER)) {
-    auto it = parser->m_layer_table.find(line.m_layer);
-    color = it->m_color;
-  }
-
-  auto ait = parser->m_color_arrays.find(color);
-  if (ait == parser->m_color_arrays.end()) {
-    auto* colors = new SGAL::Color_array(size_t(1));
-    Shared_color_array shared_colors(colors);
-    colors->add_to_scene(m_scene_graph);
-    m_scene_graph->add_container(shared_colors);
-    if (color >= s_palette.size()) color = 0;
-    (*colors)[0] = s_palette[color];
-    auto rc = parser->m_color_arrays.insert(std::make_pair(color, shared_colors));
-    ait = rc.first;
-  }
-  auto shared_colors = ait->second;
 
   // Allocate vertices:
   size_t size(2);
@@ -411,49 +446,54 @@ void Dxf_parser::add_polylines(const Dxf_line_entity& line, SGAL::Group* root)
 }
 
 //! \brief adds polylines provided in spline entities.
-void Dxf_parser::add_polylines(const Dxf_spline_entity& spline_entity,
+void Dxf_parser::add_polylines(const Dxf_spline_entity& spline,
                                SGAL::Group* root)
 {
   return;
 
-  size_t number_of_poles(spline_entity.m_control_points.size());
-  size_t degree(spline_entity.m_degree);
-  bool periodic(spline_entity.is_periodic());
-  bool planar(spline_entity.is_planar());
+  // Obtain the color array:
+  Shared_color_array shared_colors =
+    get_color_array(spline.m_color, spline.m_color_index, spline.m_layer);
+  if (! shared_colors) return;
 
-  std::cout << "Normal: " << spline_entity.m_normal << std::endl;
-  std::cout << "Flags: " << spline_entity.m_flags << std::endl;
-  if (spline_entity.m_flags & Dxf_spline_entity::CLOSED)
+  size_t number_of_poles(spline.m_control_points.size());
+  size_t degree(spline.m_degree);
+  bool periodic(spline.is_periodic());
+  bool planar(spline.is_planar());
+
+  std::cout << "Normal: " << spline.m_normal << std::endl;
+  std::cout << "Flags: " << spline.m_flags << std::endl;
+  if (spline.m_flags & Dxf_spline_entity::CLOSED)
     std::cout << "  CLOSED" << std::endl;
-  if (spline_entity.m_flags & Dxf_spline_entity::PERIODIC)
+  if (spline.m_flags & Dxf_spline_entity::PERIODIC)
     std::cout << "  PERIODIC" << std::endl;
-  if (spline_entity.m_flags & Dxf_spline_entity::RATIONAL)
+  if (spline.m_flags & Dxf_spline_entity::RATIONAL)
     std::cout << "  RATIONAL" << std::endl;
-  if (spline_entity.m_flags & Dxf_spline_entity::PLANAR)
+  if (spline.m_flags & Dxf_spline_entity::PLANAR)
     std::cout << "  PLANAR" << std::endl;
-  if (spline_entity.m_flags & Dxf_spline_entity::LINEAR)
+  if (spline.m_flags & Dxf_spline_entity::LINEAR)
     std::cout << "  LINEAR" << std::endl;
-  std::cout << "Degree: " << spline_entity.m_degree << std::endl;
-  std::cout << "Knot tolerance: " << spline_entity.m_knot_tolerance << std::endl;
+  std::cout << "Degree: " << spline.m_degree << std::endl;
+  std::cout << "Knot tolerance: " << spline.m_knot_tolerance << std::endl;
   std::cout << "Control Point tolerance: "
-            << spline_entity.m_control_point_tolerance << std::endl;
-  std::cout << "Fit tolerance: " << spline_entity.m_fit_tolerance << std::endl;
-  std::cout << "Start tangent: " << spline_entity.m_start_tangent[0] << ", "
-            << spline_entity.m_start_tangent[1] << ", "
-            << spline_entity.m_start_tangent[2] << std::endl;
-  std::cout << "End tangent: " << spline_entity.m_end_tangent << std::endl;
+            << spline.m_control_point_tolerance << std::endl;
+  std::cout << "Fit tolerance: " << spline.m_fit_tolerance << std::endl;
+  std::cout << "Start tangent: " << spline.m_start_tangent[0] << ", "
+            << spline.m_start_tangent[1] << ", "
+            << spline.m_start_tangent[2] << std::endl;
+  std::cout << "End tangent: " << spline.m_end_tangent << std::endl;
 
-  std::cout << "Knots: " << spline_entity.m_knots.size() << std::endl;
-  for (const auto& knot : spline_entity.m_knots)
+  std::cout << "Knots: " << spline.m_knots.size() << std::endl;
+  for (const auto& knot : spline.m_knots)
     std::cout << "  " << knot << std::endl;
 
   std::cout << "Control points: " << number_of_poles << std::endl;
   for (size_t i = 0; i < number_of_poles; ++i)
-    std::cout << "  " << spline_entity.m_control_points[i] << ", "
-              << spline_entity.m_weights[i] << std::endl;
+    std::cout << "  " << spline.m_control_points[i] << ", "
+              << spline.m_weights[i] << std::endl;
 
-  std::cout << "Fit points: " << spline_entity.m_fit_points.size() << std::endl;
-  for (const auto& point : spline_entity.m_fit_points)
+  std::cout << "Fit points: " << spline.m_fit_points.size() << std::endl;
+  for (const auto& point : spline.m_fit_points)
     std::cout << "  " << point << std::endl;
 
   if (number_of_poles < 2)
@@ -463,10 +503,10 @@ void Dxf_parser::add_polylines(const Dxf_spline_entity& spline_entity,
   size_t sum_of_mults(0);
   std::vector<size_t> mults;
   std::vector<double> knots;
-  if (!spline_entity.m_knots.empty()) {
+  if (!spline.m_knots.empty()) {
     double current_knot;
     size_t mult(0);
-    for (auto knot : spline_entity.m_knots) {
+    for (auto knot : spline.m_knots) {
       if (mult == 0) {
         mult = 1;
         current_knot = knot;
@@ -514,7 +554,7 @@ void Dxf_parser::add_polylines(const Dxf_spline_entity& spline_entity,
   std::cout << "sum_of_mults: " << sum_of_mults << std::endl;
 
   // The folowing check is redundant, given the current handling of weights.
-  if (spline_entity.m_weights.size() != number_of_poles)
+  if (spline.m_weights.size() != number_of_poles)
     throw SGAL::Parse_error(filename(),
                             "number of poles and weights mismatch!");
 
@@ -536,7 +576,10 @@ void Dxf_parser::add_polylines(const Dxf_spline_entity& spline_entity,
 void Dxf_parser::add_polylines(const Dxf_polyline_entity& polyline,
                                SGAL::Group* root)
 {
-  auto* parser = polyline.m_parser;
+  // Obtain the color array:
+  Shared_color_array shared_colors =
+    get_color_array(polyline.m_color, polyline.m_color_index, polyline.m_layer);
+  if (! shared_colors) return;
 
   ++m_polylines_num;
 
@@ -555,8 +598,7 @@ void Dxf_parser::add_polylines(const Dxf_polyline_entity& polyline,
   root->add_child(shape);
 
   // Add Appearance
-  Shared_appearance app(new SGAL::Appearance);
-  SGAL_assertion(app);
+  auto app = get_light_disabled_appearance();
   shape->set_appearance(app);
 
   // Add IndexedLineSet
@@ -565,26 +607,6 @@ void Dxf_parser::add_polylines(const Dxf_polyline_entity& polyline,
   ils->add_to_scene(m_scene_graph);
   m_scene_graph->add_container(ils);
   shape->set_geometry(ils);
-
-  // Allocate colors:
-  auto color = polyline.m_color;
-  if (color == static_cast<int16_t>(By::BYLAYER)) {
-    auto it = parser->m_layer_table.find(polyline.m_layer);
-    color = it->m_color;
-  }
-
-  auto ait = parser->m_color_arrays.find(color);
-  if (ait == parser->m_color_arrays.end()) {
-    auto* colors = new SGAL::Color_array(size_t(1));
-    Shared_color_array shared_colors(colors);
-    colors->add_to_scene(m_scene_graph);
-    m_scene_graph->add_container(shared_colors);
-    if (color >= s_palette.size()) color = 0;
-    (*colors)[0] = s_palette[color];
-    auto rc = parser->m_color_arrays.insert(std::make_pair(color, shared_colors));
-    ait = rc.first;
-  }
-  auto shared_colors = ait->second;
 
   // Count number of vertices:
   size_t size(polyline.m_vertex_entities.size());
@@ -630,7 +652,10 @@ void Dxf_parser::add_polylines(const Dxf_polyline_entity& polyline,
 void Dxf_parser::add_polylines(const Dxf_circle_entity& circle,
                                SGAL::Group* root)
 {
-  auto* parser = circle.m_parser;
+  // Obtain the color array:
+  Shared_color_array shared_colors =
+    get_color_array(circle.m_color, circle.m_color_index, circle.m_layer);
+  if (! shared_colors) return;
 
   size_t num_primitives(1);
 
@@ -646,12 +671,7 @@ void Dxf_parser::add_polylines(const Dxf_circle_entity& circle,
   root->add_child(shape);
 
   // Add Appearance
-  if (! parser->m_appearance) {
-    parser->m_appearance.reset(new SGAL::Appearance);
-    parser->m_appearance->set_light_enable(false);
-  }
-  auto app = parser->m_appearance;
-  SGAL_assertion(app);
+  auto app = get_light_disabled_appearance();
   shape->set_appearance(app);
 
   // Add IndexedLineSet
@@ -660,26 +680,6 @@ void Dxf_parser::add_polylines(const Dxf_circle_entity& circle,
   ils->add_to_scene(m_scene_graph);
   m_scene_graph->add_container(ils);
   shape->set_geometry(ils);
-
-  // Allocate colors:
-  auto color = circle.m_color;
-  if (color == static_cast<int16_t>(By::BYLAYER)) {
-    auto it = parser->m_layer_table.find(circle.m_layer);
-    color = it->m_color;
-  }
-
-  auto ait = parser->m_color_arrays.find(color);
-  if (ait == parser->m_color_arrays.end()) {
-    auto* colors = new SGAL::Color_array(size_t(1));
-    Shared_color_array shared_colors(colors);
-    colors->add_to_scene(m_scene_graph);
-    m_scene_graph->add_container(shared_colors);
-    if (color >= s_palette.size()) color = 0;
-    (*colors)[0] = s_palette[color];
-    auto rc = parser->m_color_arrays.insert(std::make_pair(color, shared_colors));
-    ait = rc.first;
-  }
-  auto shared_colors = ait->second;
 
   // Count number of vertices:
   const double pi = std::acos(-1);
@@ -726,7 +726,10 @@ void Dxf_parser::add_polylines(const Dxf_circle_entity& circle,
 //! \brief adds polylines provided in arc entities.
 void Dxf_parser::add_polylines(const Dxf_arc_entity& arc, SGAL::Group* root)
 {
-  auto* parser = arc.m_parser;
+  // Obtain the color array:
+  Shared_color_array shared_colors =
+    get_color_array(arc.m_color, arc.m_color_index, arc.m_layer);
+  if (! shared_colors) return;
 
   size_t num_primitives(1);
 
@@ -743,8 +746,7 @@ void Dxf_parser::add_polylines(const Dxf_arc_entity& arc, SGAL::Group* root)
   root->add_child(shape);
 
   // Add Appearance
-  Shared_appearance app(new SGAL::Appearance);
-  SGAL_assertion(app);
+  auto app = get_light_disabled_appearance();
   shape->set_appearance(app);
 
   // Add IndexedLineSet
@@ -753,26 +755,6 @@ void Dxf_parser::add_polylines(const Dxf_arc_entity& arc, SGAL::Group* root)
   ils->add_to_scene(m_scene_graph);
   m_scene_graph->add_container(ils);
   shape->set_geometry(ils);
-
-  // Allocate colors:
-  auto color = arc.m_color;
-  if (color == static_cast<int16_t>(By::BYLAYER)) {
-    auto it = parser->m_layer_table.find(arc.m_layer);
-    color = it->m_color;
-  }
-
-  auto ait = parser->m_color_arrays.find(color);
-  if (ait == parser->m_color_arrays.end()) {
-    auto* colors = new SGAL::Color_array(size_t(1));
-    Shared_color_array shared_colors(colors);
-    colors->add_to_scene(m_scene_graph);
-    m_scene_graph->add_container(shared_colors);
-    if (color >= s_palette.size()) color = 0;
-    (*colors)[0] = s_palette[color];
-    auto rc = parser->m_color_arrays.insert(std::make_pair(color, shared_colors));
-    ait = rc.first;
-  }
-  auto shared_colors = ait->second;
 
   // Count number of vertices:
   const double pi = std::acos(-1);
