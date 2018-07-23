@@ -23,16 +23,30 @@
 #include <string>
 #include <map>
 
+#include <boost/shared_ptr.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
+
+SGAL_BEGIN_NAMESPACE
+
+class Transform;
+
+SGAL_END_NAMESPACE
 
 DXF_BEGIN_NAMESPACE
 
 class Dxf_parser;
 
 struct SGAL_SGAL_DECL Dxf_block {
+
+  typedef boost::shared_ptr<SGAL::Transform>            Shared_transform;
+
+  /// Member records
+  //@{
+
   SGAL::String m_handle; // Handle
   SGAL::String m_owner_handle; // Soft-pointer ID/handle to owner object
   SGAL::String m_layer_name; // Layer name
@@ -60,9 +74,14 @@ struct SGAL_SGAL_DECL Dxf_block {
   std::map<SGAL::String, std::vector<SGAL::String> > m_xdata; // Begin xdata
                         // "{", "}" (opt.)
 
+  //@}
+
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
   bool handle_value(int code, int16_t value);
+
+  //! The transform sub-graph represenetd by the block.
+  Shared_transform m_transform;
 };
 
 DXF_END_NAMESPACE

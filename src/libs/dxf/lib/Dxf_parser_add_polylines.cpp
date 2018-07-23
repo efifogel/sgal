@@ -801,4 +801,11 @@ void Dxf_parser::add_polylines(const Dxf_arc_entity& arc, SGAL::Group* root)
   ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
+//! \brief processes all insert entities.
+void Dxf_parser::process_insert_entities(SGAL::Group* root)
+{
+  for (auto& insert : m_insert_entities) {
+  }
+}
+
 DXF_END_NAMESPACE

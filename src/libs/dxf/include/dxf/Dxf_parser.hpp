@@ -965,7 +965,7 @@ private:
   Dxf_ellipse_entity m_ellipse_entity;
   std::vector<Dxf_hatch_entity> m_hatch_entities;
   Dxf_image_entity m_image_entity;
-  Dxf_insert_entity m_insert_entity;
+  std::vector<Dxf_insert_entity> m_insert_entities;
   Dxf_leader_entity m_leader_entity;
   std::vector<Dxf_line_entity> m_line_entities;
   Dxf_lwpolyline_entity m_lwpolyline_entity;
@@ -1513,6 +1513,10 @@ private:
                                 const std::list<Dxf_polyline_boundary_path*>&
                                 polylines,
                                 SGAL::Group* root, bool closed);
+
+  /*! Process all insert entities.
+   */
+  void process_insert_entities(SGAL::Group* root);
 
   /*! Initialize the pallete.
    */

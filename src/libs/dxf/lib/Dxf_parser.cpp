@@ -42,16 +42,16 @@ DXF_BEGIN_NAMESPACE
 
 //! Default color palette
 std::vector<SGAL::Vector3f> Dxf_parser::s_palette = {
-  {0, 0, 0},            // 0
-  {1, 0, 0},            // 1
-  {1, 1, 0},            // 2
-  {0, 1, 0},            // 3
-  {0, 1, 1},            // 4
-  {0, 0, 1},            // 5
-  {1, 0, 1},            // 6
-  {1, 1, 1},            // 7
-  {0.5, 0.5, 0.5},      // 8
-  {0.5, 0, 0},          // 9
+  {1, 1, 1},            //  0, White,     1,  1,  1, #ffffff
+  {1, 0, 0},            //  1, Red,     255,  0,  0, #ff0000
+  {1, 1, 0},            //  2, Yellow,  255,255,  0, #ffff00
+  {0, 1, 0},            //  3, Green,     0,255,  0, #00ff00
+  {0, 1, 1},            //  4, Cyan,      0,255,255, #00ffff
+  {0, 0, 1},            //  5, Blue,      0,  0,  1, #0000ff
+  {1, 0, 1},            //  6, Magenta, 255,  0,255, #ff00ff
+  {1, 1, 1},            //  7, White,     1,  1,  1, #ffffff
+  {0.5, 0.5, 0.5},      //  8
+  {0.5, 0, 0},          //  9
   {0.5, 0.5, 0},        // 10
   {0, 0.5, 0},          // 11
   {0, 0.5, 0.5},        // 12
@@ -415,6 +415,10 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
             << std::endl;
   for (const auto& circle_entity : m_circle_entities)
     add_polylines(circle_entity, root);
+
+  std::cout << "processing " << m_insert_entities.size() << " insert entities"
+            << std::endl;
+  process_insert_entities(root);
 
   std::cout << "processing "  << m_polylines_num << " polylines" << std::endl;
 
@@ -1028,7 +1032,16 @@ void Dxf_parser::parse_image_entity()
 
 //! \brief parses an insert entity.
 void Dxf_parser::parse_insert_entity()
-{ parse_record(m_insert_entity); }
+{
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Dxf_parser::parse_insert_entity()"
+                              << std::endl;);
+
+  m_insert_entities.resize(m_insert_entities.size() + 1);
+  auto& insert_entity = m_insert_entities.back();
+  parse_record(insert_entity);
+}
 
 //! \brief parses a leader entity.
 void Dxf_parser::parse_leader_entity()
@@ -1537,6 +1550,7 @@ void Dxf_parser::clear()
   m_spline_entities.clear();
   m_line_entities.clear();
   m_polyline_entities.clear();
+  m_insert_entities.clear();
 
   // Clear objects
   m_material_objects.clear();
