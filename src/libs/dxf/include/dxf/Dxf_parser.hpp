@@ -1454,6 +1454,10 @@ private:
   static const std::map<SGAL::String, Entity_parser> s_entities;
   static const std::map<SGAL::String, Object_parser> s_objects;
 
+  /*! Add a default background color.
+   */
+  void add_background(SGAL::Group* root);
+
   /*! Add polylines provided in hatch entities.
    */
   void add_polylines(const Dxf_hatch_entity& hatch, SGAL::Group* root);

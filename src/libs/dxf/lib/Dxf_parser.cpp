@@ -377,6 +377,8 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
   m_scene_graph->set_input_format_id(SGAL::File_format_3d::ID_DXF);
   auto* root = m_scene_graph->initialize();
 
+  add_background(root);
+
   // Create indexed line sets, one for each hatch entity.
   std::cout << "processing " << m_hatch_entities.size() << " hatch entities"
             << std::endl;
