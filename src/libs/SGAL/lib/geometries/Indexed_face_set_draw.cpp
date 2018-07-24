@@ -216,7 +216,19 @@ void Boundary_set::draw_FSCO_FIYE_FAPT_TENO_MOPO_VANO()
 void Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOPO_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOPO_VANO\n");
-  SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  glColor3fv(get(m_color_array, 0));
+  const auto& coords = polygon_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_POLYGON);
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
+    }
+    glEnd();
+  }
 }
 
 // void draw_FSNO_FIYE_FAPM_TENO_MOPO_VANO(); invalid
