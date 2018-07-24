@@ -20,7 +20,7 @@
 #define DXF_BLOCK_HPP
 
 #include <string>
-#include <string>
+#include <vector>
 #include <map>
 
 #include <boost/shared_ptr.hpp>
@@ -32,23 +32,25 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Transform;
+class Group;
 
 SGAL_END_NAMESPACE
 
 DXF_BEGIN_NAMESPACE
 
-class Dxf_parser;
+class Dxf_base_entity;
 
 struct SGAL_SGAL_DECL Dxf_block {
 
-  typedef boost::shared_ptr<SGAL::Transform>            Shared_transform;
+  typedef boost::shared_ptr<SGAL::Group>                Shared_group;
 
   /// Member records
   //@{
 
   SGAL::String m_handle; // Handle
   SGAL::String m_owner_handle; // Soft-pointer ID/handle to owner object
+  int16_t m_paper_space; // Absent or zero indicates entity is in model space.
+                        // 1 indicates entity is in paper space (optional).
   SGAL::String m_layer_name; // Layer name
   SGAL::String m_name;  // Block name
   int16_t m_flags;      // Block-type flags (bit-coded values, may be combined):
@@ -76,12 +78,19 @@ struct SGAL_SGAL_DECL Dxf_block {
 
   //@}
 
-  /*! Handle a value that requires special handling (as opposed to only storing).
+  /*! Construct
    */
-  bool handle_value(int code, int16_t value);
+  Dxf_block() : m_paper_space(0) {}
 
-  //! The transform sub-graph represenetd by the block.
-  Shared_transform m_transform;
+  /*! Destruct.
+   */
+  ~Dxf_block();
+
+  //! The entities
+  std::vector<Dxf_base_entity*> m_entities;
+
+  //! The Group sub-graph represenetd by the block.
+  Shared_group m_group;
 };
 
 DXF_END_NAMESPACE

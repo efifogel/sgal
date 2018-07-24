@@ -42,7 +42,7 @@ DXF_BEGIN_NAMESPACE
 
 //! Default color palette
 std::vector<SGAL::Vector3f> Dxf_parser::s_palette = {
-  {1, 1, 1},            //  0, White,     1,  1,  1, #ffffff
+  {0, 0, 0},            //  0, Black,     0,  0,  0, #000000
   {1, 0, 0},            //  1, Red,     255,  0,  0, #ff0000
   {1, 1, 0},            //  2, Yellow,  255,255,  0, #ffff00
   {0, 1, 0},            //  3, Green,     0,255,  0, #00ff00
@@ -308,7 +308,7 @@ Dxf_parser::Dxf_parser() :
   m_extended_data(nullptr),
   m_report_unrecognized_code(false),
   m_polylines_num(0),
-  m_polyline_active(false),
+  m_active_polyline_entity(nullptr),
   m_arcs_num(16)
 {}
 
@@ -379,7 +379,9 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
   auto* root = m_scene_graph->initialize();
 
   add_background(root);
+  process_entities(m_entities, root);
 
+#if 0
   // Create indexed line sets, one for each hatch entity.
   std::cout << "processing " << m_hatch_entities.size() << " hatch entities"
             << std::endl;
@@ -421,6 +423,7 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
   process_insert_entities(root);
 
   std::cout << "processing "  << m_polylines_num << " polylines" << std::endl;
+#endif
 
   clear();
 
@@ -632,22 +635,14 @@ void Dxf_parser::parse_tables()
 }
 
 //! \brief parses one block.
-void Dxf_parser::parse_block()
+void Dxf_parser::parse_block(Dxf_block& block)
 {
-  SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_block()" << std::endl;);
+  SGAL_TRACE_CODE(m_trace_code, std::cout << "Parsing block" << std::endl;);
 
-  m_blocks.push_back(Dxf_block());
-  auto& block = m_blocks.back();
-
-  bool done(false);
-  while (!done) {
+  while (true) {
     int code;
     import_code(code);
-    if (0 == code) {
-      done = true;
-      break;
-    }
+    if (0 == code) return;
 
     if (100 == code) {
       import_value(m_marker);
@@ -670,16 +665,12 @@ void Dxf_parser::parse_block()
 void Dxf_parser::parse_endblk()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_endblk()" << std::endl;);
+                  std::cout << "Parsing endblk" << std::endl;);
 
-  bool done(false);
-  while (!done) {
+  while (true) {
     int code;
     import_code(code);
-    if (0 == code) {
-      done = true;
-      break;
-    }
+    if (0 == code) break;
 
     if (100 == code) {
       import_value(m_marker);
@@ -701,13 +692,41 @@ void Dxf_parser::parse_blocks()
   import_code(n);
   SGAL_assertion(0 == n);
 
+  Dxf_block* block(nullptr);
   do {
     SGAL::String str;
     import_value(str);
+    if ("BLOCK" == str) {
+      SGAL_assertion(! block);
+      m_blocks.push_back(Dxf_block());
+      block = &(m_blocks.back());
+      parse_block(*block);
+      continue;
+    }
+
+    if ("ENDBLK" == str) {
+      SGAL_assertion(block);
+      parse_endblk();
+      block = nullptr;
+      continue;
+    }
+
     if ("ENDSEC" == str) return;
 
-    if ("BLOCK" == str) parse_block();
-    else if ("ENDBLK" == str) parse_endblk();
+    SGAL_assertion(block);
+    auto it = s_entities.find(str);
+    if (it != s_entities.end()) {
+      auto* entity = (this->*(it->second))();
+      if (entity) block->m_entities.push_back(entity);
+      continue;
+    }
+
+    //! EF: Do we need to check for user entities here?
+
+    SGAL::String msg("Unrecognize entity inside block \"");
+    msg += str + "\", at line " + std::to_string(m_line);
+    SGAL_error_msg(msg.c_str());
+
   } while (true);
 }
 
@@ -728,7 +747,8 @@ void Dxf_parser::parse_entities()
 
     auto it = s_entities.find(str);
     if (it != s_entities.end()) {
-      (this->*(it->second))();
+      auto* entity = (this->*(it->second))();
+      if (entity) m_entities.push_back(entity);
       continue;
     }
 
@@ -740,9 +760,9 @@ void Dxf_parser::parse_entities()
                                       my_class.m_is_entity);
                             });
     if (cit != m_classes.end()) {
-      m_user_entities.resize(m_user_entities.size() + 1);
-      auto& user_entity = m_user_entities.back();
-      parse_record(user_entity);
+      auto* user_entity = new Dxf_user_entity;
+      m_entities.push_back(user_entity);
+      parse_record(*user_entity);
       continue;
     }
 
@@ -952,232 +972,178 @@ void Dxf_parser::read_unrecognized(int code)
 }
 
 //! \brief parses a 3dface entity.
-void Dxf_parser::parse_3dface_entity()
-{ parse_record(m_3dface_entity); }
+Dxf_base_entity* Dxf_parser::parse_3dface_entity()
+{ return parse_entity("3dface", new Dxf_3dface_entity); }
 
 //! \brief parses a 3dsolid entity.
-void Dxf_parser::parse_3dsolid_entity()
-{ parse_record(m_3dsolid_entity); }
+Dxf_base_entity* Dxf_parser::parse_3dsolid_entity()
+{ return parse_entity("3dsolid", new Dxf_3dsolid_entity); }
 
 //! \brief parses an acad_proxy entity.
-void Dxf_parser::parse_acad_proxy_entity()
-{ parse_record(m_acad_proxy_entity); }
+Dxf_base_entity* Dxf_parser::parse_acad_proxy_entity()
+{ return parse_entity("acad_proxy", new Dxf_acad_proxy_entity); }
 
 //! \brief parses an arc entity.
-void Dxf_parser::parse_arc_entity()
-{
-  SGAL_TRACE_CODE(m_trace_code,
-                  if (true)
-                    std::cout << "Dxf_parser::parse_arc_entity()"
-                              << std::endl;);
-
-  m_arc_entities.resize(m_arc_entities.size() + 1);
-  auto& arc_entity = m_arc_entities.back();
-  parse_record(arc_entity);
-}
+Dxf_base_entity* Dxf_parser::parse_arc_entity()
+{ return parse_entity("arc", new Dxf_arc_entity); }
 
 //! \brief parses an arcalignedtext entity.
-void Dxf_parser::parse_arcalignedtext_entity()
-{ parse_record(m_arcalignedtext_entity); }
+Dxf_base_entity* Dxf_parser::parse_arcalignedtext_entity()
+{ return parse_entity("arcalignedtext", new Dxf_arcalignedtext_entity); }
 
 //! \brief parses an attdef entity.
-void Dxf_parser::parse_attdef_entity()
-{ parse_record(m_attdef_entity); }
+Dxf_base_entity* Dxf_parser::parse_attdef_entity()
+{ return parse_entity("attdef", new Dxf_attdef_entity); }
 
 //! \brief parses an attrib entity.
-void Dxf_parser::parse_attrib_entity()
-{ parse_record(m_attrib_entity); }
+Dxf_base_entity* Dxf_parser::parse_attrib_entity()
+{ return parse_entity("attrib", new Dxf_attrib_entity); }
 
 //! \brief parses a body entity.
-void Dxf_parser::parse_body_entity()
-{ parse_record(m_body_entity); }
+Dxf_base_entity* Dxf_parser::parse_body_entity()
+{ return parse_entity("body", new Dxf_body_entity); }
 
 //! \brief parses a circle entity.
-void Dxf_parser::parse_circle_entity()
-{
-  SGAL_TRACE_CODE(m_trace_code,
-                  if (true)
-                    std::cout << "Dxf_parser::parse_circle_entity()"
-                              << std::endl;);
-
-  m_circle_entities.resize(m_circle_entities.size() + 1);
-  auto& circle_entity = m_circle_entities.back();
-  parse_record(circle_entity);
-}
+Dxf_base_entity* Dxf_parser::parse_circle_entity()
+{ return parse_entity("circle", new Dxf_circle_entity); }
 
 //! \brief parses a dimension entity.
-void Dxf_parser::parse_dimension_entity()
-{ parse_record(m_dimension_entity); }
+Dxf_base_entity* Dxf_parser::parse_dimension_entity()
+{ return parse_entity("dimension", new Dxf_dimension_entity); }
 
 //! \brief parses an ellipse entity.
-void Dxf_parser::parse_ellipse_entity()
-{ parse_record(m_ellipse_entity); }
+Dxf_base_entity* Dxf_parser::parse_ellipse_entity()
+{ return parse_entity("ellipse", new Dxf_ellipse_entity); }
 
 //! \brief parses a hatch entity.
-void Dxf_parser::parse_hatch_entity()
-{
-  SGAL_TRACE_CODE(m_trace_code,
-                  if (true)
-                    std::cout << "Dxf_parser::parse_hatch_entity()"
-                              << std::endl;);
-
-  m_hatch_entities.resize(m_hatch_entities.size() + 1);
-  auto& hatch_entity = m_hatch_entities.back();
-  parse_record(hatch_entity);
-}
+Dxf_base_entity* Dxf_parser::parse_hatch_entity()
+{ return parse_entity("hatch", new Dxf_hatch_entity); }
 
 //! \brief parses an image entity.
-void Dxf_parser::parse_image_entity()
-{ parse_record(m_image_entity); }
+Dxf_base_entity* Dxf_parser::parse_image_entity()
+{ return parse_entity("image", new Dxf_image_entity); }
 
 //! \brief parses an insert entity.
-void Dxf_parser::parse_insert_entity()
-{
-  SGAL_TRACE_CODE(m_trace_code,
-                  if (true)
-                    std::cout << "Dxf_parser::parse_insert_entity()"
-                              << std::endl;);
-
-  m_insert_entities.resize(m_insert_entities.size() + 1);
-  auto& insert_entity = m_insert_entities.back();
-  parse_record(insert_entity);
-}
+Dxf_base_entity* Dxf_parser::parse_insert_entity()
+{ return parse_entity("insert", new Dxf_insert_entity); }
 
 //! \brief parses a leader entity.
-void Dxf_parser::parse_leader_entity()
-{ parse_record(m_leader_entity); }
+Dxf_base_entity* Dxf_parser::parse_leader_entity()
+{ return parse_entity("leader", new Dxf_leader_entity); }
 
 //! \brief parses a line entity.
-void Dxf_parser::parse_line_entity()
-{
-  SGAL_TRACE_CODE(m_trace_code,
-                  if (true)
-                    std::cout << "Dxf_parser::parse_line_entity()"
-                              << std::endl;);
-
-  m_line_entities.resize(m_line_entities.size() + 1);
-  auto& line_entity = m_line_entities.back();
-  parse_record(line_entity);
-}
+Dxf_base_entity* Dxf_parser::parse_line_entity()
+{ return parse_entity("line", new Dxf_line_entity); }
 
 //! \brief parses a lwpolyline entity.
-void Dxf_parser::parse_lwpolyline_entity()
-{ parse_record(m_lwpolyline_entity); }
+Dxf_base_entity* Dxf_parser::parse_lwpolyline_entity()
+{ return parse_entity("lwpolyline", new Dxf_lwpolyline_entity); }
 
 //! \brief parses am mline entity.
-void Dxf_parser::parse_mline_entity()
-{ parse_record(m_mline_entity); }
+Dxf_base_entity* Dxf_parser::parse_mline_entity()
+{ return parse_entity("mline", new Dxf_mline_entity); }
 
 //! \brief parses an mtext entity.
-void Dxf_parser::parse_mtext_entity()
-{ parse_record(m_mtext_entity); }
+Dxf_base_entity* Dxf_parser::parse_mtext_entity()
+{ return parse_entity("mtext", new Dxf_mtext_entity); }
 
 //! \brief parses an oleframe entity.
-void Dxf_parser::parse_oleframe_entity()
-{ parse_record(m_oleframe_entity); }
+Dxf_base_entity* Dxf_parser::parse_oleframe_entity()
+{ return parse_entity("oleframe", new Dxf_oleframe_entity); }
 
 //! \brief parses an ole2frame entity.
-void Dxf_parser::parse_ole2frame_entity()
-{ parse_record(m_ole2frame_entity); }
+Dxf_base_entity* Dxf_parser::parse_ole2frame_entity()
+{ return parse_entity("ole2frame", new Dxf_ole2frame_entity); }
 
 //! \brief parses a point entity.
-void Dxf_parser::parse_point_entity()
-{ parse_record(m_point_entity); }
+Dxf_base_entity* Dxf_parser::parse_point_entity()
+{ return parse_entity("point", new Dxf_point_entity); }
 
 //! \brief parses a polyline entity.
-void Dxf_parser::parse_polyline_entity()
+Dxf_base_entity* Dxf_parser::parse_polyline_entity()
 {
-  SGAL_TRACE_CODE(m_trace_code,
-                  if (true)
-                    std::cout << "Dxf_parser::parse_polyline_entity()"
-                              << std::endl;);
-
-  m_polyline_entities.resize(m_polyline_entities.size() + 1);
-  auto& polyline_entity = m_polyline_entities.back();
-  parse_record(polyline_entity);
-  m_polyline_active = true;
+  auto* polyline = new Dxf_polyline_entity;
+  parse_entity("polyline", polyline);
+  m_active_polyline_entity = polyline;
+  return polyline;
 }
 
 //! \brief parses a ray entity.
-void Dxf_parser::parse_ray_entity()
-{ parse_record(m_ray_entity); }
+Dxf_base_entity* Dxf_parser::parse_ray_entity()
+{ return parse_entity("ray", new Dxf_ray_entity); }
 
 //! \brief parses a region entity.
-void Dxf_parser::parse_region_entity()
-{ parse_record(m_region_entity); }
+Dxf_base_entity* Dxf_parser::parse_region_entity()
+{ return parse_entity("region", new Dxf_region_entity); }
 
 //! \brief parses an rtext entity.
-void Dxf_parser::parse_rtext_entity()
-{ parse_record(m_rtext_entity); }
+Dxf_base_entity* Dxf_parser::parse_rtext_entity()
+{ return parse_entity("rtext", new Dxf_rtext_entity); }
 
 //! \brief parses a seqend entity.
-void Dxf_parser::parse_seqend_entity()
+Dxf_base_entity* Dxf_parser::parse_seqend_entity()
 {
-  parse_record(m_seqend_entity);
-  m_polyline_active = false;
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Parsing seqend entity"
+                              << std::endl;);
+  Dxf_seqend_entity seqend;
+  parse_record(seqend);
+  m_active_polyline_entity = nullptr;
+  return nullptr;
 }
 
 //! \brief parses a shape entity.
-void Dxf_parser::parse_shape_entity()
-{ parse_record(m_shape_entity); }
+Dxf_base_entity* Dxf_parser::parse_shape_entity()
+{ return parse_entity("shape", new Dxf_shape_entity); }
 
 //! \brief parses a solid entity.
-void Dxf_parser::parse_solid_entity()
-{ parse_record(m_solid_entity); }
+Dxf_base_entity* Dxf_parser::parse_solid_entity()
+{ return parse_entity("solid", new Dxf_solid_entity); }
 
 //! \brief parses a spline entity.
-void Dxf_parser::parse_spline_entity()
-{
-  SGAL_TRACE_CODE(m_trace_code,
-                  if (true)
-                    std::cout << "Dxf_parser::parse_spline_entity()"
-                              << std::endl;);
-
-  m_spline_entities.resize(m_spline_entities.size() + 1);
-  auto& spline_entity = m_spline_entities.back();
-  parse_record(spline_entity);
-}
+Dxf_base_entity* Dxf_parser::parse_spline_entity()
+{ return parse_entity("spline", new Dxf_spline_entity); }
 
 //! \brief parses a text entity.
-void Dxf_parser::parse_text_entity()
-{ parse_record(m_text_entity); }
+Dxf_base_entity* Dxf_parser::parse_text_entity()
+{ return parse_entity("text", new Dxf_text_entity); }
 
 //! \brief parses a tolerance entity.
-void Dxf_parser::parse_tolerance_entity()
-{ parse_record(m_tolerance_entity); }
+Dxf_base_entity* Dxf_parser::parse_tolerance_entity()
+{ return parse_entity("tolerance", new Dxf_tolerance_entity); }
 
 //! \brief parses a trace entity.
-void Dxf_parser::parse_trace_entity()
-{ parse_record(m_trace_entity); }
+Dxf_base_entity* Dxf_parser::parse_trace_entity()
+{ return parse_entity("trace", new Dxf_trace_entity); }
 
 //! \brief parses a vertex entity.
-void Dxf_parser::parse_vertex_entity()
+Dxf_base_entity* Dxf_parser::parse_vertex_entity()
 {
-  SGAL_assertion(m_polyline_active);
-
   SGAL_TRACE_CODE(m_trace_code,
                   if (true)
-                    std::cout << "Dxf_parser::parse_vertex_entity()"
+                    std::cout << "Parsing vertex entity"
                               << std::endl;);
 
-  auto& polyline_entity = m_polyline_entities.back();
-  auto& vertices = polyline_entity.m_vertex_entities;
+  SGAL_assertion(m_active_polyline_entity);
+  auto& vertices = m_active_polyline_entity->m_vertex_entities;
   vertices.resize(vertices.size() + 1);
   auto& vertex = vertices.back();
   parse_record(vertex);
+  return nullptr;
 }
 
 //! \brief parses a viewport entity.
-void Dxf_parser::parse_viewport_entity()
-{ parse_record(m_viewport_entity); }
+Dxf_base_entity* Dxf_parser::parse_viewport_entity()
+{ return parse_entity("viewport", new Dxf_viewport_entity); }
 
 //! \brief parses a wipeout entity.
-void Dxf_parser::parse_wipeout_entity()
-{ parse_record(m_wipeout_entity); }
+Dxf_base_entity* Dxf_parser::parse_wipeout_entity()
+{ return parse_entity("wipeout", new Dxf_wipeout_entity); }
 
 //! \brief parses an xline entity.
-void Dxf_parser::parse_xline_entity()
-{ parse_record(m_xline_entity); }
+Dxf_base_entity* Dxf_parser::parse_xline_entity()
+{ return parse_entity("xline", new Dxf_xline_entity); }
 
 // Object parsers
 //! \brief parses a object.
@@ -1535,22 +1501,9 @@ void Dxf_parser::clear()
   m_blocks.clear();
 
   // Clear entities
-  for (auto& hatch : m_hatch_entities) {
-    for (auto* path : hatch.m_boundary_paths) {
-      auto* boundary_path = dynamic_cast<Dxf_boundary_path*>(path);
-      if (boundary_path) {
-        for (auto* edge : boundary_path->m_edges) delete edge;
-        boundary_path->m_edges.clear();
-      }
-      delete path;
-    }
-    hatch.m_boundary_paths.clear();
-  }
-  m_hatch_entities.clear();
-  m_spline_entities.clear();
-  m_line_entities.clear();
-  m_polyline_entities.clear();
-  m_insert_entities.clear();
+
+  for (auto* entity : m_entities) delete entity;
+  m_entities.clear();
 
   // Clear objects
   m_material_objects.clear();

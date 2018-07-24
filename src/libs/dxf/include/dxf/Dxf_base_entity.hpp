@@ -111,6 +111,9 @@ struct Dxf_base_entity {
     m_parser(nullptr)
   {}
 
+  //! Destruct
+  virtual ~Dxf_base_entity() {}
+
   /*! Set the parser.
    * \param[in] parser the parser.
    */

@@ -212,7 +212,7 @@ protected:
 
   /*! Parse one BLOCK.
    */
-  void parse_block();
+  void parse_block(Dxf_block& block);
 
   /*! Parse one ENDBLK.
    */
@@ -336,119 +336,131 @@ private:
   /// \name Base entity types
   //@{
 
+  //! Parse an entity
+  template <typename Entity>
+  Entity* parse_entity(const std::string& type, Entity* entity)
+  {
+    SGAL_TRACE_CODE(m_trace_code,
+                    if (true)
+                      std::cout << "Parsing " << type << " entity"
+                                << std::endl;);
+    parse_record(*entity);
+    return entity;
+  }
+
   //! The type of an entity parser member function.
-  typedef void(Dxf_parser::*Entity_parser)(void);
+  typedef Dxf_base_entity*(Dxf_parser::*Entity_parser)(void);
 
   /*! Parse a 3dface entity. */
-  void parse_3dface_entity();
+  Dxf_base_entity* parse_3dface_entity();
 
   /*! Parse a 3dsolid entity. */
-  void parse_3dsolid_entity();
+  Dxf_base_entity* parse_3dsolid_entity();
 
   /*! Parse an acad_proxy entity. */
-  void parse_acad_proxy_entity();
+  Dxf_base_entity* parse_acad_proxy_entity();
 
   /*! Parse an arc entity. */
-  void parse_arc_entity();
+  Dxf_base_entity* parse_arc_entity();
 
   /*! Parse an arcalignedtext entity. */
-  void parse_arcalignedtext_entity();
+  Dxf_base_entity* parse_arcalignedtext_entity();
 
   /*! Parse an attdef entity. */
-  void parse_attdef_entity();
+  Dxf_base_entity* parse_attdef_entity();
 
   /*! Parse an attrib entity. */
-  void parse_attrib_entity();
+  Dxf_base_entity* parse_attrib_entity();
 
   /*! Parse a body entity. */
-  void parse_body_entity();
+  Dxf_base_entity* parse_body_entity();
 
   /*! Parse a circle entity. */
-  void parse_circle_entity();
+  Dxf_base_entity* parse_circle_entity();
 
   /*! Parse a dimension entity. */
-  void parse_dimension_entity();
+  Dxf_base_entity* parse_dimension_entity();
 
   /*! Parse an ellipse entity. */
-  void parse_ellipse_entity();
+  Dxf_base_entity* parse_ellipse_entity();
 
   /*! Parse a hatch entity. */
-  void parse_hatch_entity();
+  Dxf_base_entity* parse_hatch_entity();
 
   /*! Parse an image entity. */
-  void parse_image_entity();
+  Dxf_base_entity* parse_image_entity();
 
   /*! Parse an insert entity. */
-  void parse_insert_entity();
+  Dxf_base_entity* parse_insert_entity();
 
   /*! Parse a leader entity. */
-  void parse_leader_entity();
+  Dxf_base_entity* parse_leader_entity();
 
   /*! Parse a line entity. */
-  void parse_line_entity();
+  Dxf_base_entity* parse_line_entity();
 
   /*! Parse a lwpolyline entity. */
-  void parse_lwpolyline_entity();
+  Dxf_base_entity* parse_lwpolyline_entity();
 
   /*! Parse an mline entity. */
-  void parse_mline_entity();
+  Dxf_base_entity* parse_mline_entity();
 
   /*! Parse an mtext entity. */
-  void parse_mtext_entity();
+  Dxf_base_entity* parse_mtext_entity();
 
   /*! Parse an oleframe entity. */
-  void parse_oleframe_entity();
+  Dxf_base_entity* parse_oleframe_entity();
 
   /*! Parse an ole2frame entity. */
-  void parse_ole2frame_entity();
+  Dxf_base_entity* parse_ole2frame_entity();
 
   /*! Parse a point entity. */
-  void parse_point_entity();
+  Dxf_base_entity* parse_point_entity();
 
   /*! Parse a polyline entity. */
-  void parse_polyline_entity();
+  Dxf_base_entity* parse_polyline_entity();
 
   /*! Parse a ray entity. */
-  void parse_ray_entity();
+  Dxf_base_entity* parse_ray_entity();
 
   /*! Parse a region entity. */
-  void parse_region_entity();
+  Dxf_base_entity* parse_region_entity();
 
   /*! Parse a rtext entity. */
-  void parse_rtext_entity();
+  Dxf_base_entity* parse_rtext_entity();
 
   /*! Parse a seqend entity. */
-  void parse_seqend_entity();
+  Dxf_base_entity* parse_seqend_entity();
 
   /*! Parse a shape entity. */
-  void parse_shape_entity();
+  Dxf_base_entity* parse_shape_entity();
 
   /*! Parse a solid entity. */
-  void parse_solid_entity();
+  Dxf_base_entity* parse_solid_entity();
 
   /*! Parse a spline entity. */
-  void parse_spline_entity();
+  Dxf_base_entity* parse_spline_entity();
 
   /*! Parse a text entity. */
-  void parse_text_entity();
+  Dxf_base_entity* parse_text_entity();
 
   /*! Parse a tolerance entity. */
-  void parse_tolerance_entity();
+  Dxf_base_entity* parse_tolerance_entity();
 
   /*! Parse a trace entity. */
-  void parse_trace_entity();
+  Dxf_base_entity* parse_trace_entity();
 
   /*! Parse a vertex entity. */
-  void parse_vertex_entity();
+  Dxf_base_entity* parse_vertex_entity();
 
   /*! Parse a viewport entity. */
-  void parse_viewport_entity();
+  Dxf_base_entity* parse_viewport_entity();
 
   /*! Parse a wipeout entity. */
-  void parse_wipeout_entity();
+  Dxf_base_entity* parse_wipeout_entity();
 
   /*! Parse an xline entity. */
-  void parse_xline_entity();
+  Dxf_base_entity* parse_xline_entity();
 
   //@}
 
@@ -952,44 +964,7 @@ private:
   std::list<Dxf_block> m_blocks;
 
   // Entities
-  Dxf_3dface_entity m_3dface_entity;
-  Dxf_3dsolid_entity m_3dsolid_entity;
-  Dxf_acad_proxy_entity m_acad_proxy_entity;
-  std::vector<Dxf_arc_entity> m_arc_entities;
-  Dxf_arcalignedtext_entity m_arcalignedtext_entity;
-  Dxf_attdef_entity m_attdef_entity;
-  Dxf_attrib_entity m_attrib_entity;
-  Dxf_body_entity m_body_entity;
-  std::vector<Dxf_circle_entity> m_circle_entities;
-  Dxf_dimension_entity m_dimension_entity;
-  Dxf_ellipse_entity m_ellipse_entity;
-  std::vector<Dxf_hatch_entity> m_hatch_entities;
-  Dxf_image_entity m_image_entity;
-  std::vector<Dxf_insert_entity> m_insert_entities;
-  Dxf_leader_entity m_leader_entity;
-  std::vector<Dxf_line_entity> m_line_entities;
-  Dxf_lwpolyline_entity m_lwpolyline_entity;
-  Dxf_mline_entity m_mline_entity;
-  Dxf_mtext_entity m_mtext_entity;
-  Dxf_oleframe_entity m_oleframe_entity;
-  Dxf_ole2frame_entity m_ole2frame_entity;
-  Dxf_point_entity m_point_entity;
-  std::vector<Dxf_polyline_entity> m_polyline_entities;
-  Dxf_ray_entity m_ray_entity;
-  Dxf_region_entity m_region_entity;
-  Dxf_rtext_entity m_rtext_entity;
-  Dxf_seqend_entity m_seqend_entity;
-  Dxf_shape_entity m_shape_entity;
-  Dxf_solid_entity m_solid_entity;
-  std::vector<Dxf_spline_entity> m_spline_entities;
-  Dxf_text_entity m_text_entity;
-  Dxf_tolerance_entity m_tolerance_entity;
-  Dxf_trace_entity m_trace_entity;
-  Dxf_viewport_entity m_viewport_entity;
-  Dxf_wipeout_entity m_wipeout_entity;
-  Dxf_xline_entity m_xline_entity;
-
-  std::list<Dxf_user_entity> m_user_entities;
+  std::vector<Dxf_base_entity*> m_entities;
 
   // Objects
   Dxf_acad_proxy_object m_acad_proxy_object;
@@ -1041,7 +1016,7 @@ private:
   size_t m_polylines_num;
 
   //! Indicates whether a polyline is active.
-  bool m_polyline_active;
+  Dxf_polyline_entity* m_active_polyline_entity;
 
   //! The number of arcs used to represent a circle or an ellipsoid.
   size_t m_arcs_num;
@@ -1458,6 +1433,45 @@ private:
    */
   void process_layers();
 
+  /*! Dispatch the processing of all entities.
+   */
+  void process_entities(std::vector<Dxf_base_entity*>& entities,
+                        SGAL::Group* root);
+
+  /// Entity processors
+  //@{
+
+  /*! Process a line entity. Construct Indexed_line_set as necessary.
+   */
+  void process_line_entity(const Dxf_line_entity& line, SGAL::Group* root);
+
+  /*! Process a circle entity. Construct Indexed_line_set as necessary.
+   */
+  void process_circle_entity(const Dxf_circle_entity& circle, SGAL::Group* root);
+
+  /*! Process an arc entity. Construct Indexed_line_set as necessary.
+   */
+  void process_arc_entity(const Dxf_arc_entity& arc, SGAL::Group* root);
+
+  /*! Process a hatch entity. Construct Indexed_line_set as necessary.
+   */
+  void process_hatch_entity(const Dxf_hatch_entity& hatch, SGAL::Group* root);
+
+  /*! Process a polyline entity. Construct Indexed_line_set as necessary.
+   */
+  void process_polyline_entity(const Dxf_polyline_entity& polyline,
+                               SGAL::Group* root);
+
+  /*! Process a spline entity. Construct Indexed_line_set as necessary.
+   */
+  void process_spline_entity(const Dxf_spline_entity& spline, SGAL::Group* root);
+
+  /*! Process an insert entity.
+   */
+  void process_insert_entity(const Dxf_insert_entity& insert, SGAL::Group* root);
+
+  //@}
+
   /*! Obtain the color array of an entity.
    */
   Shared_color_array get_color_array(int32_t color, int16_t color_index,
@@ -1470,30 +1484,6 @@ private:
   /*! Add a default background color.
    */
   void add_background(SGAL::Group* root);
-
-  /*! Add polylines provided in hatch entities.
-   */
-  void add_polylines(const Dxf_hatch_entity& hatch, SGAL::Group* root);
-
-  /*! Add polylines provided in line entities.
-   */
-  void add_polylines(const Dxf_line_entity& line, SGAL::Group* root);
-
-  /*! Add polylines provided in arc entities.
-   */
-  void add_polylines(const Dxf_arc_entity& arc, SGAL::Group* root);
-
-  /*! Add polylines provided in circle entities.
-   */
-  void add_polylines(const Dxf_circle_entity& circle, SGAL::Group* root);
-
-  /*! Add polylines provided in spline entities.
-   */
-  void add_polylines(const Dxf_spline_entity& spline, SGAL::Group* root);
-
-  /*! Add polylines provided in polyline entities.
-   */
-  void add_polylines(const Dxf_polyline_entity& polyline, SGAL::Group* root);
 
   /*! Add polylines (without bulge).
    * \param[in] polylines
@@ -1513,10 +1503,6 @@ private:
                                 const std::list<Dxf_polyline_boundary_path*>&
                                 polylines,
                                 SGAL::Group* root, bool closed);
-
-  /*! Process all insert entities.
-   */
-  void process_insert_entities(SGAL::Group* root);
 
   /*! Initialize the pallete.
    */

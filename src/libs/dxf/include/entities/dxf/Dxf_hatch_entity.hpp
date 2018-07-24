@@ -134,6 +134,20 @@ struct Dxf_hatch_entity : public Dxf_base_entity {
     m_string("LINEAR")
   {}
 
+  //! Destruct
+  virtual ~Dxf_hatch_entity()
+  {
+    for (auto* path : m_boundary_paths) {
+      auto* boundary_path = dynamic_cast<Dxf_boundary_path*>(path);
+      if (boundary_path) {
+        for (auto* edge : boundary_path->m_edges) delete edge;
+        boundary_path->m_edges.clear();
+      }
+      delete path;
+    }
+    m_boundary_paths.clear();
+  }
+
   /// Member handlers
   //@{
 

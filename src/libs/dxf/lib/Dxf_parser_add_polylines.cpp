@@ -36,12 +36,19 @@
 #include "SGAL/Vector4f.hpp"
 #include "SGAL/Color_background.hpp"
 #include "SGAL/Loader_errors.hpp"
+#include "SGAL/Transform.hpp"
+#include "SGAL/Math_defs.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_parser.hpp"
-#include "dxf/Dxf_hatch_entity.hpp"
-#include "dxf/Dxf_polyline_entity.hpp"
 #include "dxf/Dxf_line_entity.hpp"
+#include "dxf/Dxf_circle_entity.hpp"
+#include "dxf/Dxf_arc_entity.hpp"
+#include "dxf/Dxf_polyline_entity.hpp"
+#include "dxf/Dxf_hatch_entity.hpp"
+#include "dxf/Dxf_spline_entity.hpp"
+#include "dxf/Dxf_insert_entity.hpp"
+#include "dxf/Dxf_block.hpp"
 #include "dxf/Dxf_polyline_boundary_path.hpp"
 
 DXF_BEGIN_NAMESPACE
@@ -80,6 +87,42 @@ void Dxf_parser::process_layers()
     }
 
     layer.m_color_array = shared_colors;
+  }
+}
+
+//! \brief dispatches the processing of all entities.
+void Dxf_parser::process_entities(std::vector<Dxf_base_entity*>& entities,
+                                  SGAL::Group* root)
+{
+  for (auto* entity : entities) {
+    if (auto* line = dynamic_cast<Dxf_line_entity*>(entity)) {
+      process_line_entity(*line, root);
+      continue;
+    }
+    if (auto* polyline = dynamic_cast<Dxf_polyline_entity*>(entity)) {
+      process_polyline_entity(*polyline, root);
+      continue;
+    }
+    if (auto* circle = dynamic_cast<Dxf_circle_entity*>(entity)) {
+      process_circle_entity(*circle, root);
+      continue;
+    }
+    if (auto* arc = dynamic_cast<Dxf_arc_entity*>(entity)) {
+      process_arc_entity(*arc, root);
+      continue;
+    }
+    if (auto* hatch = dynamic_cast<Dxf_hatch_entity*>(entity)) {
+      process_hatch_entity(*hatch, root);
+      continue;
+    }
+    if (auto* spline = dynamic_cast<Dxf_spline_entity*>(entity)) {
+      process_spline_entity(*spline, root);
+      continue;
+    }
+    if (auto* insert = dynamic_cast<Dxf_insert_entity*>(entity)) {
+      process_insert_entity(*insert, root);
+      continue;
+    }
   }
 }
 
@@ -355,8 +398,9 @@ add_polylines(const Dxf_hatch_entity& hatch,
   ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
-//! \brief add polylines provided in hatch entities.
-void Dxf_parser::add_polylines(const Dxf_hatch_entity& hatch, SGAL::Group* root)
+//! \brief processes a hatch entity. Construct Indexed_line_set as necessary.
+void Dxf_parser::process_hatch_entity(const Dxf_hatch_entity& hatch,
+                                      SGAL::Group* root)
 {
   std::list<Dxf_polyline_boundary_path*> open_polylines;
   std::list<Dxf_polyline_boundary_path*> closed_polylines;
@@ -387,8 +431,9 @@ void Dxf_parser::add_polylines(const Dxf_hatch_entity& hatch, SGAL::Group* root)
   add_polylines_with_bulge(hatch, open_polylines_with_bulge, root, false);
 }
 
-//! \brief adds lines provided in line entities.
-void Dxf_parser::add_polylines(const Dxf_line_entity& line, SGAL::Group* root)
+//! \brief processes a line entity. Construct Indexed_line_set as necessary.
+void Dxf_parser::process_line_entity(const Dxf_line_entity& line,
+                                     SGAL::Group* root)
 {
   // Obtain the color array:
   Shared_color_array shared_colors =
@@ -445,9 +490,9 @@ void Dxf_parser::add_polylines(const Dxf_line_entity& line, SGAL::Group* root)
   ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
-//! \brief adds polylines provided in spline entities.
-void Dxf_parser::add_polylines(const Dxf_spline_entity& spline,
-                               SGAL::Group* root)
+//! \brief processes a spline entity. Construct Indexed_line_set as necessary.
+void Dxf_parser::process_spline_entity(const Dxf_spline_entity& spline,
+                                       SGAL::Group* root)
 {
   return;
 
@@ -572,9 +617,9 @@ void Dxf_parser::add_polylines(const Dxf_spline_entity& spline,
     std::cout << "  " << mult << std::endl;
 }
 
-//! \brief adds polylines provided in polyline entities.
-void Dxf_parser::add_polylines(const Dxf_polyline_entity& polyline,
-                               SGAL::Group* root)
+//! \brief processes a polyline entity. Construct Indexed_line_set as necessary.
+void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
+                                         SGAL::Group* root)
 {
   // Obtain the color array:
   Shared_color_array shared_colors =
@@ -648,9 +693,9 @@ void Dxf_parser::add_polylines(const Dxf_polyline_entity& polyline,
   ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
-//! \brief adds polylines provided in circle entities.
-void Dxf_parser::add_polylines(const Dxf_circle_entity& circle,
-                               SGAL::Group* root)
+//! \brief processes a circle entity. Construct Indexed_line_set as necessary.
+void Dxf_parser::process_circle_entity(const Dxf_circle_entity& circle,
+                                       SGAL::Group* root)
 {
   // Obtain the color array:
   Shared_color_array shared_colors =
@@ -723,8 +768,9 @@ void Dxf_parser::add_polylines(const Dxf_circle_entity& circle,
   ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
-//! \brief adds polylines provided in arc entities.
-void Dxf_parser::add_polylines(const Dxf_arc_entity& arc, SGAL::Group* root)
+//! \brief processes an arc entity. Construct Indexed_line_set as necessary.
+void Dxf_parser::process_arc_entity(const Dxf_arc_entity& arc,
+                                    SGAL::Group* root)
 {
   // Obtain the color array:
   Shared_color_array shared_colors =
@@ -802,10 +848,35 @@ void Dxf_parser::add_polylines(const Dxf_arc_entity& arc, SGAL::Group* root)
 }
 
 //! \brief processes all insert entities.
-void Dxf_parser::process_insert_entities(SGAL::Group* root)
+void Dxf_parser::process_insert_entity(const Dxf_insert_entity& insert,
+                                       SGAL::Group* root)
 {
-  for (auto& insert : m_insert_entities) {
+  auto it = std::find_if(m_blocks.begin(), m_blocks.end(),
+                         [&](Dxf_block& block)
+                         { return insert.m_name == block.m_name; });
+  auto& block = *it;
+  if (! block.m_group) {
+    auto* group = new SGAL::Group;
+    group->add_to_scene(m_scene_graph);
+    process_entities(block.m_entities, group);
+    block.m_group.reset(group);
+    m_scene_graph->add_container(block.m_group);
   }
+
+  typedef boost::shared_ptr<SGAL::Transform>    Shared_transform;
+  Shared_transform transform(new SGAL::Transform);
+  transform->add_to_scene(m_scene_graph);
+  transform->add_child(block.m_group);
+  m_scene_graph->add_container(transform);
+
+  transform->set_translation(insert.m_location[0], insert.m_location[1],
+                             insert.m_location[2]);
+  transform->set_scale(insert.m_x_scale_factor,
+                       insert.m_y_scale_factor,
+                       insert.m_z_scale_factor);
+  transform->set_rotation(0, 0, 1, SGAL::deg2rad(insert.m_rotation));
+
+  root->add_child(transform);
 }
 
 DXF_END_NAMESPACE

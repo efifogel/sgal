@@ -23,6 +23,7 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_block.hpp"
+#include "dxf/Dxf_base_entity.hpp"
 
 DXF_BEGIN_NAMESPACE
 
@@ -38,6 +39,7 @@ const std::map<int, Dxf_block_wrapper::Record_member>
 Dxf_block_wrapper::s_record_members = {
   {5, {&Dxf_block::m_handle, 1, 0}},
   {330, {&Dxf_block::m_owner_handle, 1, 0}},
+  {67, {&Dxf_block::m_paper_space, 1, 0}},
   {8, {&Dxf_block::m_layer_name, 1, 0}},
   {2, {&Dxf_block::m_name, 1, 0}},
   {70, {&Dxf_block::m_flags, 1, 0}},
@@ -47,15 +49,13 @@ Dxf_block_wrapper::s_record_members = {
   {3, {&Dxf_block::m_name, 1, 0}},
   {1, {&Dxf_block::m_xref_path_name, 1, 0}},
   {4, {&Dxf_block::m_description, 1, 0}}
-  // {67, Space, that is, model or paper space
 };
 
-//! \brief handles a value that requires special handling.
-bool Dxf_block::handle_value(int code, int16_t value)
+//! \brief destructs.
+Dxf_block::~Dxf_block()
 {
-  //! What to do with the value?
-  if (code == 67) return true;
-  return false;
+  for (auto* entity : m_entities) delete entity;
+  m_entities.clear();
 }
 
 DXF_END_NAMESPACE

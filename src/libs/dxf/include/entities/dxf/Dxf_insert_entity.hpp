@@ -30,6 +30,9 @@ DXF_BEGIN_NAMESPACE
 struct Dxf_insert_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
 
+  /// Member records
+  //@{
+
   int16_t m_has_attributes; // Variable attributes-follow flag (optional;
                         // default = 0); if the value of attributes-follow flag
                         // is 1, a series of attribute entities is expected to
@@ -46,6 +49,23 @@ struct Dxf_insert_entity : public Dxf_base_entity {
   double m_row_spacing; // Row spacing (optional; default = 0)
   double m_extrusion_direction[3]; // Extrusion direction (optional;
                         // default = 0, 0, 1)
+
+  //@}
+
+  /*! Construct (set default values).
+   */
+  Dxf_insert_entity() :
+    m_location{0, 0, 0},
+    m_x_scale_factor(1),
+    m_y_scale_factor(1),
+    m_z_scale_factor(1),
+    m_rotation(0),
+    m_column_count(1),
+    m_row_count(1),
+    m_column_spacing(0),
+    m_row_spacing(0),
+    m_extrusion_direction{0, 0, 1}
+  {}
 };
 
 DXF_END_NAMESPACE
