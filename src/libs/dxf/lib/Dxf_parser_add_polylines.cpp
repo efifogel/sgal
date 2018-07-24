@@ -27,6 +27,7 @@
 #include "SGAL/Group.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Appearance.hpp"
+#include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Indexed_line_set.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Color_array.hpp"
@@ -167,12 +168,18 @@ Dxf_parser::get_color_array(int32_t color, int16_t color_index,
 }
 
 //! \brief obtains the lighting-disabled appearance.
+// Also, assuming that this appearance is used for paper-space, we also disable
+// the hidden-surface-removal, and draw the entities in the order they appear.
 Dxf_parser::Shared_appearance Dxf_parser::get_light_disabled_appearance()
 {
   if (! m_appearance) {
     m_appearance.reset(new SGAL::Appearance);
     m_appearance->add_to_scene(m_scene_graph);
     m_appearance->set_light_enable(false);
+
+    m_appearance->set_depth_mask(false);
+    m_appearance->set_depth_enable(false);
+
     m_scene_graph->add_container(m_appearance);
   }
   return m_appearance;
@@ -210,6 +217,8 @@ add_polylines_with_bulge(const Dxf_hatch_entity& hatch,
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
   typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
   typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
+  typedef boost::shared_ptr<SGAL::Indexed_face_set>   Shared_indexed_face_set;
+  typedef boost::shared_ptr<SGAL::Geo_set>            Shared_geo_set;
   typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
 
   // Add Shape
@@ -223,12 +232,29 @@ add_polylines_with_bulge(const Dxf_hatch_entity& hatch,
   auto app = get_light_disabled_appearance();
   shape->set_appearance(app);
 
-  // Add IndexedLineSet
-  Shared_indexed_line_set ils(new SGAL::Indexed_line_set);
-  SGAL_assertion(ils);
-  ils->add_to_scene(m_scene_graph);
-  m_scene_graph->add_container(ils);
-  shape->set_geometry(ils);
+  // Add Geometry
+  Shared_geo_set geom;
+
+  if (hatch.m_flags) {
+    Shared_indexed_face_set ifs(new SGAL::Indexed_face_set);
+    SGAL_assertion(ifs);
+    ifs->add_to_scene(m_scene_graph);
+    m_scene_graph->add_container(ifs);
+    SGAL_assertion(closed);
+    ifs->set_primitive_type(SGAL::Geo_set::PT_POLYGONS);
+    geom = ifs;
+  }
+  else {
+    Shared_indexed_line_set ils(new SGAL::Indexed_line_set);
+    SGAL_assertion(ils);
+    ils->add_to_scene(m_scene_graph);
+    m_scene_graph->add_container(ils);
+    auto type = closed ?
+      SGAL::Geo_set::PT_LINE_LOOPS : SGAL::Geo_set::PT_LINE_STRIPS;
+    ils->set_primitive_type(type);
+    geom = ils;
+  }
+  shape->set_geometry(geom);
 
   // Allocate vertices:
   auto* coords = new SGAL::Coord_array_3d();
@@ -283,7 +309,7 @@ add_polylines_with_bulge(const Dxf_hatch_entity& hatch,
   size_t size(0);
   for (const auto& segs : polylines_segs) size += segs.size();
   coords->resize(size);
-  auto& indices = ils->get_coord_indices();
+  auto& indices = geom->get_coord_indices();
   indices.resize(size + num_primitives);
 
   // Assign the vertices & indices:
@@ -302,13 +328,10 @@ add_polylines_with_bulge(const Dxf_hatch_entity& hatch,
     *it++ = -1;
   }
 
-  auto type = closed ?
-    SGAL::Geo_set::PT_LINE_LOOPS : SGAL::Geo_set::PT_LINE_STRIPS;
-  ils->set_primitive_type(type);
-  ils->set_coord_array(shared_coords);
-  ils->set_color_array(shared_colors);
-  ils->set_num_primitives(num_primitives);
-  ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
+  geom->set_coord_array(shared_coords);
+  geom->set_color_array(shared_colors);
+  geom->set_num_primitives(num_primitives);
+  geom->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
 //! \brief add polylines.
@@ -327,7 +350,9 @@ add_polylines(const Dxf_hatch_entity& hatch,
 
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
   typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
+  typedef boost::shared_ptr<SGAL::Geo_set>            Shared_geo_set;
   typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
+  typedef boost::shared_ptr<SGAL::Indexed_face_set>   Shared_indexed_face_set;
   typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
 
   // Add Shape
@@ -341,12 +366,28 @@ add_polylines(const Dxf_hatch_entity& hatch,
   auto app = get_light_disabled_appearance();
   shape->set_appearance(app);
 
-  // Add IndexedLineSet
-  Shared_indexed_line_set ils(new SGAL::Indexed_line_set);
-  SGAL_assertion(ils);
-  ils->add_to_scene(m_scene_graph);
-  m_scene_graph->add_container(ils);
-  shape->set_geometry(ils);
+  // Add geometry
+  Shared_geo_set geom;
+  if (hatch.m_flags) {
+    Shared_indexed_face_set ifs(new SGAL::Indexed_face_set);
+    SGAL_assertion(ifs);
+    ifs->add_to_scene(m_scene_graph);
+    m_scene_graph->add_container(ifs);
+    SGAL_assertion(closed);
+    ifs->set_primitive_type(SGAL::Geo_set::PT_POLYGONS);
+    geom = ifs;
+  }
+  else {
+    Shared_indexed_line_set ils(new SGAL::Indexed_line_set);
+    SGAL_assertion(ils);
+    ils->add_to_scene(m_scene_graph);
+    m_scene_graph->add_container(ils);
+    auto type = closed ?
+      SGAL::Geo_set::PT_LINE_LOOPS : SGAL::Geo_set::PT_LINE_STRIPS;
+    ils->set_primitive_type(type);
+    geom = ils;
+  }
+  shape->set_geometry(geom);
 
   // Count number of vertices:
   size_t size(0);
@@ -359,7 +400,7 @@ add_polylines(const Dxf_hatch_entity& hatch,
   m_scene_graph->add_container(shared_coords);
 
   // Allocate indices:
-  auto& indices = ils->get_coord_indices();
+  auto& indices = geom->get_coord_indices();
   indices.resize(size + num_primitives);
 
   // Check whether mirroring is required
@@ -389,13 +430,10 @@ add_polylines(const Dxf_hatch_entity& hatch,
     *it++ = -1;
   }
 
-  auto type = closed ?
-    SGAL::Geo_set::PT_LINE_LOOPS : SGAL::Geo_set::PT_LINE_STRIPS;
-  ils->set_primitive_type(type);
-  ils->set_coord_array(shared_coords);
-  ils->set_color_array(shared_colors);
-  ils->set_num_primitives(num_primitives);
-  ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
+  geom->set_coord_array(shared_coords);
+  geom->set_color_array(shared_colors);
+  geom->set_num_primitives(num_primitives);
+  geom->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
 //! \brief processes a hatch entity. Construct Indexed_line_set as necessary.
