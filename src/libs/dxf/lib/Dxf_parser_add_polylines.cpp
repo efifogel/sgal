@@ -39,6 +39,8 @@
 #include "SGAL/Loader_errors.hpp"
 #include "SGAL/Transform.hpp"
 #include "SGAL/Math_defs.hpp"
+#include "SGAL/Orientation.hpp"
+#include "SGAL/is_convex.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_parser.hpp"
@@ -415,6 +417,11 @@ add_polylines(const Dxf_hatch_entity& hatch,
   auto cit = coords->begin();
   size_t i(0);
   for (auto* polyline : polylines) {
+    if (! SGAL::is_convex(polyline->m_locations.begin(),
+                          polyline->m_locations.end())) {
+      --num_primitives;
+      continue;
+    }
     cit = std::transform(polyline->m_locations.begin(),
                          polyline->m_locations.end(), cit,
                          [&](const SGAL::Vector2f& p)
@@ -429,6 +436,7 @@ add_polylines(const Dxf_hatch_entity& hatch,
     it = it_end;
     *it++ = -1;
   }
+  indices.resize(i + num_primitives);
 
   geom->set_coord_array(shared_coords);
   geom->set_color_array(shared_colors);
