@@ -20,7 +20,6 @@
 #include <iostream>
 #include <functional>
 #include <streambuf>
-#include <fstream>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -311,23 +310,6 @@ Dxf_parser::Dxf_parser() :
   m_active_polyline_entity(nullptr),
   m_arcs_num(16)
 {}
-
-//! \brief initializes the pallete.
-void Dxf_parser::init_palette(const SGAL::String& file_name)
-{
-  std::ifstream t(file_name);
-  std::string line;
-  s_palette.clear();
-  while (t) {
-    size_t x;
-    t >> std::hex >> x;
-    auto r = ((x >> 16) & 0xFF) / 255.0;
-    auto g = ((x >> 8) & 0xFF) / 255.0;
-    auto b = ((x) & 0xFF) / 255.0;
-    s_palette.push_back(SGAL::Vector3f(r, g, b));
-  }
-  t.close();
-}
 
 //! \brief parses.
 SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
