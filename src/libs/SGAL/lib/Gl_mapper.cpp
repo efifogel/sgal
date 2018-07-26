@@ -1069,10 +1069,6 @@ Gl_mapper::Gl_mapper()
   m_gl_token_names[GL_T4F_C4F_N3F_V4F] = "GL_T4F_C4F_N3F_V4F";
 
   /* Extensions */
-  m_gl_token_names[GL_EXT_vertex_array] = "GL_EXT_vertex_array";
-  m_gl_token_names[GL_EXT_bgra] = "GL_EXT_bgra";
-  m_gl_token_names[GL_EXT_paletted_texture] = "GL_EXT_paletted_texture";
-
 #if defined(GL_WIN_swap_hint)
   m_gl_token_names[GL_WIN_swap_hint] = "GL_WIN_swap_hint";
 #endif
