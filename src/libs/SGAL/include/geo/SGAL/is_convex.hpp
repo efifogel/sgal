@@ -24,6 +24,12 @@
 
 SGAL_BEGIN_NAMESPACE
 
+/*! Determines whether the polygon represented by a sequence of points is
+ * convex.
+ * \param[in] begin the begin iterator of the point sequence.
+ * \param[in] end the past-the-end iterator of the point sequence.
+ * \return true if the polygon is convex and false otherwise.
+ */
 template <typename InputIterator>
 bool is_convex(InputIterator begin, InputIterator end)
 {

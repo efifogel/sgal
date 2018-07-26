@@ -24,12 +24,20 @@
 
 SGAL_BEGIN_NAMESPACE
 
+/*! Enumerations of orientation of three consecutive points.
+ */
 enum class Orientation {
   Right_turn = -1,
   Collinear = 0,
   Left_turn = 1
 };
 
+/*! Determine the orientation of three consecutive points.
+ * \param[in] a the first point.
+ * \param[in] b the second point.
+ * \param[in] c the third point.
+ * \return the orientation of three consecutive points.
+ */
 template <typename Vector>
 inline Orientation orientation(const Vector& a, const Vector& b, const Vector& c)
 {
