@@ -49,4 +49,12 @@ template <>
 const std::map<int, Dxf_line_entity_wrapper::Record_handler_type>
 Dxf_line_entity_wrapper::s_record_handlers = {};
 
+//! \brief constructs (set default values).
+Dxf_line_entity::Dxf_line_entity() :
+  m_thickness(0),
+  m_extrusion_direction{0, 0, 1},
+  m_start{0, 0, 0},
+  m_end{0, 0, 0}
+{}
+
 DXF_END_NAMESPACE
