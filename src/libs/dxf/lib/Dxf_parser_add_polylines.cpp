@@ -23,6 +23,10 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Triangulation_vertex_base_with_info_2.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Group.hpp"
@@ -42,6 +46,9 @@
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Orientation.hpp"
 #include "SGAL/is_convex.hpp"
+#include "SGAL/Inexact_kernel.hpp"
+#include "SGAL/Face_nesting_level.hpp"
+#include "SGAL/construct_triangulation.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_parser.hpp"
@@ -454,11 +461,27 @@ add_polylines(const Dxf_hatch_entity& hatch,
   auto cit = coords->begin();
   size_t i(0);
   for (auto* polyline : polylines) {
-    // if (! SGAL::is_convex(polyline->m_locations.begin(),
-    //                       polyline->m_locations.end())) {
-    //   --num_primitives;
-    //   continue;
-    // }
+    if (! SGAL::is_convex(polyline->m_locations.begin(),
+                          polyline->m_locations.end())) {
+      --num_primitives;
+      // continue;
+
+      // Triangulation.
+      typedef SGAL::Inexact_kernel                                                Kernel;
+      typedef CGAL::Triangulation_vertex_base_with_info_2<SGAL::Uint, Kernel>     VB;
+      typedef CGAL::Triangulation_face_base_with_info_2<SGAL::Face_nesting_level, Kernel>
+                                                                        FBI;
+      typedef CGAL::Constrained_triangulation_face_base_2<Kernel, FBI>      FB;
+      typedef CGAL::Triangulation_data_structure_2<VB, FB>                  TDS;
+      typedef CGAL::No_intersection_tag                                     Itag;
+      // typedef CGAL::Exact_predicates_tag                                    Itag;
+      typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>
+        Triangulation;
+      Triangulation tri;
+
+      SGAL::construct_triangulation(tri, polyline->m_locations.begin(),
+                                    polyline->m_locations.end(), 0);
+    }
     cit = std::transform(polyline->m_locations.begin(),
                          polyline->m_locations.end(), cit,
                          [&](const SGAL::Vector2f& p)
@@ -488,6 +511,9 @@ void Dxf_parser::process_hatch_entity(const Dxf_hatch_entity& hatch,
   std::list<Dxf_polyline_boundary_path*> polylines;
   std::list<Dxf_polyline_boundary_path*> polylines_with_bulge;
   for (Dxf_base_boundary_path* path : hatch.m_boundary_paths) {
+    // Observe that the following statement obtains a non-const polyline.
+    // A non-const struct is required to repair the polyline below.
+    // The repairing, probably, should be taken out of here.
     auto* polyline = dynamic_cast<Dxf_polyline_boundary_path*>(path);
     if (! polyline) {
       SGAL_warning_msg(true, "Unsupported boundary path!");
@@ -496,6 +522,17 @@ void Dxf_parser::process_hatch_entity(const Dxf_hatch_entity& hatch,
 
     // A polyline defined in a hatch entity must be closed!
     SGAL_assertion(polyline->m_is_closed);
+
+    // Remove repeated points.
+    for (auto* polyline : polylines) {
+      std::unique(polyline->m_locations.begin(), polyline->m_locations.end());
+      auto last = std::prev(polyline->m_locations.end());
+      if (polyline->m_locations.front() == *last)
+        polyline->m_locations.erase(last);
+    }
+
+    // Bail out if there insufficient points.
+    if (polyline->m_locations.size() < 3) return;
 
     if (polyline->m_has_bulge) polylines_with_bulge.push_back(polyline);
     else polylines.push_back(polyline);
