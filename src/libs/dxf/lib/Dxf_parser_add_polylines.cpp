@@ -19,6 +19,7 @@
 #include <numeric>
 #include <limits>
 #include <cmath>
+#include <fstream>
 
 #include <boost/shared_ptr.hpp>
 
@@ -55,6 +56,25 @@
 #include "dxf/Dxf_polyline_boundary_path.hpp"
 
 DXF_BEGIN_NAMESPACE
+
+//! \brief initializes the pallete.
+void Dxf_parser::init_palette(const SGAL::String& file_name)
+{
+  std::ifstream t(file_name);
+  //! \todo move the test for file existance out of here
+  if (! t) return;
+  std::string line;
+  s_palette.clear();
+  while (t) {
+    size_t x;
+    t >> std::hex >> x;
+    auto r = ((x >> 16) & 0xFF) / 255.0;
+    auto g = ((x >> 8) & 0xFF) / 255.0;
+    auto b = ((x) & 0xFF) / 255.0;
+    s_palette.push_back(SGAL::Vector3f(r, g, b));
+  }
+  t.close();
+}
 
 //! \brief processes all layers. Create a color array for each.
 void Dxf_parser::process_layers()
@@ -97,28 +117,40 @@ void Dxf_parser::process_layers()
 void Dxf_parser::process_entities(std::vector<Dxf_base_entity*>& entities,
                                   SGAL::Group* root)
 {
+  size_t lines_num(0);
+  size_t polylines_num(0);
+  size_t circles_num(0);
+  size_t arcs_num(0);
+  size_t hatches_num(0);
+  size_t splines_num(0);
   for (auto* entity : entities) {
     if (auto* line = dynamic_cast<Dxf_line_entity*>(entity)) {
+      ++lines_num;
       process_line_entity(*line, root);
       continue;
     }
     if (auto* polyline = dynamic_cast<Dxf_polyline_entity*>(entity)) {
+      ++polylines_num;
       process_polyline_entity(*polyline, root);
       continue;
     }
     if (auto* circle = dynamic_cast<Dxf_circle_entity*>(entity)) {
+      ++circles_num;
       process_circle_entity(*circle, root);
       continue;
     }
     if (auto* arc = dynamic_cast<Dxf_arc_entity*>(entity)) {
+      ++arcs_num;
       process_arc_entity(*arc, root);
       continue;
     }
     if (auto* hatch = dynamic_cast<Dxf_hatch_entity*>(entity)) {
+      ++hatches_num;
       process_hatch_entity(*hatch, root);
       continue;
     }
     if (auto* spline = dynamic_cast<Dxf_spline_entity*>(entity)) {
+      ++splines_num;
       process_spline_entity(*spline, root);
       continue;
     }
@@ -127,6 +159,16 @@ void Dxf_parser::process_entities(std::vector<Dxf_base_entity*>& entities,
       continue;
     }
   }
+
+#if ! defined(NDEBUG) || defined(SGAL_TRACE)
+  if (SGAL::TRACE(m_trace_code)) {
+    std::cout << "Processed " << lines_num << " lines" << std::endl;
+    std::cout << "Processed " << polylines_num << " polylines" << std::endl;
+    std::cout << "Processed " << circles_num << " circles" << std::endl;
+    std::cout << "Processed " << arcs_num << " arcs" << std::endl;
+    std::cout << "Processed " << hatches_num << " hatches" << std::endl;
+  }
+#endif
 }
 
 //! \brief Obtain the color array of an entity.
@@ -149,10 +191,13 @@ Dxf_parser::get_color_array(int32_t color, int16_t color_index,
 
   if (color_index == static_cast<int16_t>(By::BYLAYER)) {
     auto it = m_layer_table.find(layer);
-    return it->m_color_array;
+    SGAL_assertion(it != m_layer_table.m_entries.end());
+    shared_colors = it->m_color_array;
+    SGAL_assertion(shared_colors);
+    return shared_colors;
   }
 
-  if (color_index < 0) return Shared_color_array();
+  if (color_index < 0) return shared_colors;
 
   auto ait = m_color_arrays.find(color_index);
   if (ait == m_color_arrays.end()) {
@@ -204,7 +249,7 @@ void Dxf_parser::add_background(SGAL::Group* root)
 void Dxf_parser::
 add_polylines_with_bulge(const Dxf_hatch_entity& hatch,
                          const std::list<Dxf_polyline_boundary_path*>& polylines,
-                         SGAL::Group* root, bool closed)
+                         SGAL::Group* root)
 {
   // Obtain the color array:
   Shared_color_array shared_colors =
@@ -242,7 +287,6 @@ add_polylines_with_bulge(const Dxf_hatch_entity& hatch,
     SGAL_assertion(ifs);
     ifs->add_to_scene(m_scene_graph);
     m_scene_graph->add_container(ifs);
-    SGAL_assertion(closed);
     ifs->set_primitive_type(SGAL::Geo_set::PT_POLYGONS);
     geom = ifs;
   }
@@ -251,9 +295,7 @@ add_polylines_with_bulge(const Dxf_hatch_entity& hatch,
     SGAL_assertion(ils);
     ils->add_to_scene(m_scene_graph);
     m_scene_graph->add_container(ils);
-    auto type = closed ?
-      SGAL::Geo_set::PT_LINE_LOOPS : SGAL::Geo_set::PT_LINE_STRIPS;
-    ils->set_primitive_type(type);
+    ils->set_primitive_type(SGAL::Geo_set::PT_LINE_LOOPS);
     geom = ils;
   }
   shape->set_geometry(geom);
@@ -299,12 +341,10 @@ add_polylines_with_bulge(const Dxf_hatch_entity& hatch,
       b = *bit;
     }
 
-    if (closed) {
-      SGAL::Vector2f v1((*v)[0], (*v)[1]);
-      SGAL::Vector2f v2((*vit_first)[0], (*vit_first)[1]);
-      SGAL::approximate_circular_arc(v1, v2, b, min_bulge,
-                                     std::back_inserter(segs));
-    }
+    SGAL::Vector2f v1((*v)[0], (*v)[1]);
+    SGAL::Vector2f v2((*vit_first)[0], (*vit_first)[1]);
+    SGAL::approximate_circular_arc(v1, v2, b, min_bulge,
+                                   std::back_inserter(segs));
   }
 
   // Count the number of segments and allocate the vertices and indices
@@ -340,7 +380,7 @@ add_polylines_with_bulge(const Dxf_hatch_entity& hatch,
 void Dxf_parser::
 add_polylines(const Dxf_hatch_entity& hatch,
               const std::list<Dxf_polyline_boundary_path*>& polylines,
-              SGAL::Group* root, bool closed)
+              SGAL::Group* root)
 {
   // Obtain the color array:
   Shared_color_array shared_colors =
@@ -375,7 +415,6 @@ add_polylines(const Dxf_hatch_entity& hatch,
     SGAL_assertion(ifs);
     ifs->add_to_scene(m_scene_graph);
     m_scene_graph->add_container(ifs);
-    SGAL_assertion(closed);
     ifs->set_primitive_type(SGAL::Geo_set::PT_POLYGONS);
     geom = ifs;
   }
@@ -384,9 +423,7 @@ add_polylines(const Dxf_hatch_entity& hatch,
     SGAL_assertion(ils);
     ils->add_to_scene(m_scene_graph);
     m_scene_graph->add_container(ils);
-    auto type = closed ?
-      SGAL::Geo_set::PT_LINE_LOOPS : SGAL::Geo_set::PT_LINE_STRIPS;
-    ils->set_primitive_type(type);
+    ils->set_primitive_type(SGAL::Geo_set::PT_LINE_LOOPS);
     geom = ils;
   }
   shape->set_geometry(geom);
@@ -417,11 +454,11 @@ add_polylines(const Dxf_hatch_entity& hatch,
   auto cit = coords->begin();
   size_t i(0);
   for (auto* polyline : polylines) {
-    if (! SGAL::is_convex(polyline->m_locations.begin(),
-                          polyline->m_locations.end())) {
-      --num_primitives;
-      continue;
-    }
+    // if (! SGAL::is_convex(polyline->m_locations.begin(),
+    //                       polyline->m_locations.end())) {
+    //   --num_primitives;
+    //   continue;
+    // }
     cit = std::transform(polyline->m_locations.begin(),
                          polyline->m_locations.end(), cit,
                          [&](const SGAL::Vector2f& p)
@@ -448,33 +485,26 @@ add_polylines(const Dxf_hatch_entity& hatch,
 void Dxf_parser::process_hatch_entity(const Dxf_hatch_entity& hatch,
                                       SGAL::Group* root)
 {
-  std::list<Dxf_polyline_boundary_path*> open_polylines;
-  std::list<Dxf_polyline_boundary_path*> closed_polylines;
-  std::list<Dxf_polyline_boundary_path*> open_polylines_with_bulge;
-  std::list<Dxf_polyline_boundary_path*> closed_polylines_with_bulge;
+  std::list<Dxf_polyline_boundary_path*> polylines;
+  std::list<Dxf_polyline_boundary_path*> polylines_with_bulge;
   for (Dxf_base_boundary_path* path : hatch.m_boundary_paths) {
     auto* polyline = dynamic_cast<Dxf_polyline_boundary_path*>(path);
     if (! polyline) {
       SGAL_warning_msg(true, "Unsupported boundary path!");
       continue;
     }
-    if (polyline->m_has_bulge) {
-      if (polyline->m_is_closed) closed_polylines_with_bulge.push_back(polyline);
-      else open_polylines_with_bulge.push_back(polyline);
-    }
-    else {
-      if (polyline->m_is_closed) closed_polylines.push_back(polyline);
-      else open_polylines.push_back(polyline);
-    }
+
+    // A polyline defined in a hatch entity must be closed!
+    SGAL_assertion(polyline->m_is_closed);
+
+    if (polyline->m_has_bulge) polylines_with_bulge.push_back(polyline);
+    else polylines.push_back(polyline);
   }
 
-  m_polylines_num += closed_polylines.size() + open_polylines.size() +
-    closed_polylines_with_bulge.size() + open_polylines_with_bulge.size();
+  m_polylines_num += polylines.size() + polylines_with_bulge.size();
 
-  add_polylines(hatch, closed_polylines, root, true);
-  add_polylines(hatch, open_polylines, root, false);
-  add_polylines_with_bulge(hatch, closed_polylines_with_bulge, root, true);
-  add_polylines_with_bulge(hatch, open_polylines_with_bulge, root, false);
+  add_polylines(hatch, polylines, root);
+  add_polylines_with_bulge(hatch, polylines_with_bulge, root);
 }
 
 //! \brief processes a line entity. Construct Indexed_line_set as necessary.

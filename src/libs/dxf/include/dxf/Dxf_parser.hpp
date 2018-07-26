@@ -1492,7 +1492,7 @@ private:
    */
   void add_polylines(const Dxf_hatch_entity& hatch_entity,
                      const std::list<Dxf_polyline_boundary_path*>& polylines,
-                     SGAL::Group* root, bool closed);
+                     SGAL::Group* root);
 
   /*! Add polylines with bulge.
    * \param[in] polylines
@@ -1501,8 +1501,7 @@ private:
    */
   void add_polylines_with_bulge(const Dxf_hatch_entity& hatch_entity,
                                 const std::list<Dxf_polyline_boundary_path*>&
-                                polylines,
-                                SGAL::Group* root, bool closed);
+                                polylines, SGAL::Group* root);
 
   /*! Initialize the pallete.
    */
