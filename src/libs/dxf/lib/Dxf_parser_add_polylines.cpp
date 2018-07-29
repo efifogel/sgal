@@ -467,18 +467,19 @@ add_polylines(const Dxf_hatch_entity& hatch,
       // continue;
 
       // Triangulation.
-      typedef SGAL::Inexact_kernel                                                Kernel;
-      typedef CGAL::Triangulation_vertex_base_with_info_2<SGAL::Uint, Kernel>     VB;
-      typedef CGAL::Triangulation_face_base_with_info_2<SGAL::Face_nesting_level, Kernel>
+      typedef SGAL::Inexact_kernel                                      Kernel;
+      typedef CGAL::Triangulation_vertex_base_with_info_2<size_t, Kernel>
+        VB;
+      typedef CGAL::Triangulation_face_base_with_info_2<SGAL::Face_nesting_level,
+                                                        Kernel>
                                                                         FBI;
-      typedef CGAL::Constrained_triangulation_face_base_2<Kernel, FBI>      FB;
-      typedef CGAL::Triangulation_data_structure_2<VB, FB>                  TDS;
-      typedef CGAL::No_intersection_tag                                     Itag;
-      // typedef CGAL::Exact_predicates_tag                                    Itag;
+      typedef CGAL::Constrained_triangulation_face_base_2<Kernel, FBI>  FB;
+      typedef CGAL::Triangulation_data_structure_2<VB, FB>              TDS;
+      typedef CGAL::No_intersection_tag                              Itag;
+      // typedef CGAL::Exact_predicates_tag                             Itag;
       typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>
         Triangulation;
       Triangulation tri;
-
       SGAL::construct_triangulation(tri, polyline->m_locations.begin(),
                                     polyline->m_locations.end(), 0);
     }
@@ -524,14 +525,14 @@ void Dxf_parser::process_hatch_entity(const Dxf_hatch_entity& hatch,
     SGAL_assertion(polyline->m_is_closed);
 
     // Remove repeated points.
-    for (auto* polyline : polylines) {
+    auto end =
       std::unique(polyline->m_locations.begin(), polyline->m_locations.end());
-      auto last = std::prev(polyline->m_locations.end());
-      if (polyline->m_locations.front() == *last)
-        polyline->m_locations.erase(last);
-    }
+    polyline->m_locations.erase(end, polyline->m_locations.end());
+    auto last = std::prev(polyline->m_locations.end());
+    if (polyline->m_locations.front() == *last)
+      polyline->m_locations.erase(last);
 
-    // Bail out if there insufficient points.
+    // Bail out if there are insufficient points.
     if (polyline->m_locations.size() < 3) return;
 
     if (polyline->m_has_bulge) polylines_with_bulge.push_back(polyline);
