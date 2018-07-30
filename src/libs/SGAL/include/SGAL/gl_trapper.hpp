@@ -163,8 +163,9 @@ inline void glCallLists(GLsizei n, GLenum type, const GLvoid* lists)
 //! glClear wrapper
 inline void glClear(GLbitfield mask)
 {
-  SGAL_TRACE_CODE(SGAL::Trace::GRAPHICS, std::cout << "glClear(" << std::hex
-                  << mask << ");"
+  SGAL_TRACE_CODE(SGAL::Trace::GRAPHICS, std::cout << "glClear("
+                  << std::hex << std::showbase << mask << std::dec
+                  << ");"
                   << std::endl;);
   ::glClear(mask);
   SGAL_CHECK_GL();
