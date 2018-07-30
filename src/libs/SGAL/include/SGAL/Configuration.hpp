@@ -51,6 +51,7 @@ class Bindable_stack;
 
 class SGAL_SGAL_DECL Configuration : public Bindable_node {
   friend class Option_parser;
+  friend class Conf_option_parser;
   friend class Boundary_set;
   friend class Indexed_face_set;
   friend class Shape;
@@ -506,8 +507,7 @@ private:
   //! Indicates whether to export non-visible geometries.
   Boolean m_export_non_visible;
 
-  /*! Indicates whether to override the export non-visible flag.
-   */
+  //! Indicates whether to override the export non-visible flag.
   Boolean m_override_export_non_visible;
 
   // default values
