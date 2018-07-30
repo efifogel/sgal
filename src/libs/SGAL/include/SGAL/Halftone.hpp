@@ -60,53 +60,64 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  /*! Construct. */
   Halftone(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destruct. */
   virtual ~Halftone();
 
-  /*! Construct the prototype */
-  static Halftone* prototype() { return new Halftone(true); }
+  /*! Construct the prototype. */
+  static Halftone* prototype();
 
   /*! Create a new container of this type (virtual copy constructor).
    * \return a new container of this type.
    */
   virtual Container* create();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */
+  /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
 
-  /*! Sets the attributes of this node */
+  /*! Set the attributes of this node.
+   * \param[in] elem contains lists of attribute names and values
+   */
   virtual void set_attributes(Element* elem);
 
-  // virtual Attribute_list get_attributes();
+  /*! Obtain the halftone image.
+   */
+  Image* get_image() const;
 
-  /*! Obtain the halftone image */
-  Image* get_image() const { return m_image; }
+  /*! Set the halftone image.
+   */
+  void set_image(Image* image);
 
-  /*! Set the halftone image */
-  void set_image(Image* image) { m_image = image; }
+  /*! Obtain the halftone format.
+   */
+  Image::Format get_format();
 
-  /*! Obtain the halftone format */
-  Image::Format get_format() { return m_image->get_format(); }
+  /*! Set the halftone pixel-data.
+   */
+  void set_pattern(Ubyte* pattern);
 
-  /*! Obtain the halftone pixel-data */
+  /*! Obtain the halftone pixel-data.
+   */
   Ubyte* get_pattern();
 
-  /*! Draw the halftone */
+  /*! Draw the halftone.
+   */
   virtual void draw(Context* context);
 
-  /*! Determine whether the object is dirty, and thus needs cleaning */
+  /*! Determine whether the object is dirty, and thus needs cleaning.
+   */
   Boolean is_dirty() const { return m_dirty; }
 
-  /*! Clean the object using the new decoded data */
+  /*! Clean the object using the new decoded data.
+   */
   virtual void clean();
 
   virtual Boolean attach_context(Context* context);
@@ -119,8 +130,13 @@ protected:
   //! The halftone pixels.
   Image* m_image;
 
-  /*! Obtain the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container.
+   */
+  virtual const std::string& get_tag() const;
+
+  /*! Clean the pattern.
+   */
+  void clean_pattern();
 
 private:
   //! Halftone stipple pattern for backfacing elements.
@@ -143,8 +159,20 @@ private:
 #pragma warning( pop )
 #endif
 
+//! \brief constructs the prototype.
+inline Halftone* Halftone::prototype() { return new Halftone(true); }
+
 //! \brief creates a new container of this type (virtual copy constructor).
 inline Container* Halftone::create() { return new Halftone(); }
+
+//! \brief obtains the tag (type) of the container.
+inline const std::string& Halftone::get_tag() const { return s_tag; }
+
+//! \brief obtains the halftone image.
+inline Image* Halftone::get_image() const { return m_image; }
+
+//! \brief obtain the halftone format. */
+inline Image::Format Halftone::get_format() { return m_image->get_format(); }
 
 SGAL_END_NAMESPACE
 

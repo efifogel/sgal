@@ -56,23 +56,22 @@ Ubyte Halftone::s_def_pattern[] = {
   0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55
 };
 
-Container_proto* Halftone::s_prototype(NULL);
+Container_proto* Halftone::s_prototype(nullptr);
 const std::string Halftone::s_tag = "Halftone";
 
 /*! Constructor */
 Halftone::Halftone(Boolean proto) :
   Container(proto),
   m_dirty(true),
-  m_image(NULL),
+  m_image(nullptr),
   m_pattern(s_def_pattern),
-  m_dirty_pattern(true)
-{
-}
+  m_dirty_pattern(false)
+{}
 
-/*! Destructor */
+//! \brief destructs.
 Halftone::~Halftone() {}
 
-/*! Draw the halftone */
+//! \brief draws the halftone.
 void Halftone::draw(Context*)
 {
   if (!m_dirty) return;
@@ -86,18 +85,11 @@ void Halftone::clean()
   m_dirty = false;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+//! \brief sets the attributes of the object extracted from an input stream.
 void Halftone::set_attributes(Element* elem)
 {
-  typedef Element::Str_attr_iter        Str_attr_iter;
-
   Container::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ai++) {
     const std::string & name = elem->get_name(ai);
     // const std::string & value = elem->get_value(ai);
     if (name == "image") {
@@ -108,43 +100,41 @@ void Halftone::set_attributes(Element* elem)
       std::cerr << "Not implemented" << std::endl;
       continue;
     }
-
   }
+
   // Remove all the marked attributes:
   elem->delete_marked();
 }
 
-/*! Initializes the node prototype */
+//! \brief initializes the node prototype.
 void Halftone::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto();
 }
 
-/*! */
+//! \brief deletes the node prototype.
 void Halftone::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! */
+//! \brief obtains the node prototype.
 Container_proto* Halftone::get_prototype()
 {
   if (!s_prototype) Halftone::init_prototype();
   return s_prototype;
 }
 
-/*!
- */
+//! \brief
 Boolean Halftone::attach_context(Context* context)
 {
   Boolean result = Container::attach_context(context);
   return result;
 }
 
-/*!
- */
+//! \brief
 Boolean Halftone::detach_context(Context* context)
 {
   Boolean result = Container::detach_context(context);
@@ -153,17 +143,36 @@ Boolean Halftone::detach_context(Context* context)
   return result;
 }
 
-/*! Obtain the halftone pixel-data */
-Ubyte* Halftone::get_pattern()
+//! \brief cleans the pattern.
+void Halftone::clean_pattern()
 {
-  if (m_dirty_pattern) {
-    if (m_image) {
-      if (m_image->is_dirty()) m_image->clean();
-      m_pattern = static_cast<Ubyte*>(m_image->get_pixels());
-    }
+  if (m_image) {
+    if (m_image->is_dirty()) m_image->clean();
+    m_pattern = static_cast<Ubyte*>(m_image->get_pixels());
   }
   m_dirty_pattern = false;
+}
+
+//! \brief sets the halftone pixel-data.
+void Halftone::set_pattern(Ubyte* pattern)
+{
+  m_dirty_pattern = false;
+  m_dirty = true;
+  m_pattern = pattern;
+}
+
+//! \brief obtains the halftone pixel-data.
+Ubyte* Halftone::get_pattern()
+{
+  if (m_dirty_pattern) clean_pattern();
   return m_pattern;
+}
+
+//! \brief sets the halftone image.
+inline void Halftone::set_image(Image* image)
+{
+  m_image = image;
+  m_dirty_pattern = true;
 }
 
 SGAL_END_NAMESPACE
