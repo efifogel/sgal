@@ -28,14 +28,26 @@
 DXF_BEGIN_NAMESPACE
 
 struct Dxf_pattern_data {
-  double m_angle;        // Pattern line angle
-  double m_base_point[2]; // Pattern line base point, X component
+
+  /// Member records
+  //@{
+
+  double m_angle;       // Pattern line angle
+  double m_base_point[2]; // Pattern line base point
   double m_offset[2];   // Pattern line offset
   std::vector<double> m_dash_lengths; // Dash length (multiple entries)
 
+  //@}
+
   /// Handlers
   //@{
+
+  /*! Handle the number of dash lengths.
+   */
   void handle_size(int16_t size);
+
+  /*! Handle a dash length.
+   */
   void handle_dash_length(double dash_length);
   //@{
 };

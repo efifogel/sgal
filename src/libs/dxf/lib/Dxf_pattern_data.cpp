@@ -47,11 +47,11 @@ Dxf_pattern_data_wrapper::s_record_handlers = {
   {49, &Dxf_pattern_data::handle_dash_length}
 };
 
-//!
+//! \brief handles the number of dash lengths.
 void Dxf_pattern_data::handle_size(int16_t size)
 { m_dash_lengths.reserve(size); }
 
-//!
+//! \brief handles a dash length.
 void Dxf_pattern_data::handle_dash_length(double dash_length)
 { m_dash_lengths.push_back(dash_length); }
 

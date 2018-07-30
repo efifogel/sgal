@@ -412,9 +412,29 @@ add_polylines(const Dxf_hatch_entity& hatch,
   auto app = get_light_disabled_appearance();
   shape->set_appearance(app);
 
+  // Handle pattern
+  if (! hatch.m_flags) {
+    std::cout << "style: " << hatch.m_style << std::endl;
+    std::cout << "pattern name: " << hatch.m_pattern_name << std::endl;
+    std::cout << "pattern type: " << hatch.m_pattern_type << std::endl;
+    std::cout << "pattern angle: " << hatch.m_pattern_angle << std::endl;
+    std::cout << "pattern scale: " << hatch.m_pattern_scale << std::endl;
+    std::cout << "pattern double flag: "
+              << hatch.m_pattern_double_flag << std::endl;
+    std::cout << "seeds: " << std::endl;
+    for (auto& p : hatch.m_seed_points) std::cout << "  " << p << std::endl;
+    std::cout << "pattern data: " << std::endl;
+    for (auto& datum : hatch.m_pattern_line) {
+      std::cout << "  Pattern line: " << std::endl;
+      std::cout << "    Angle" << datum.m_angle << std::endl;
+      std::cout << "    Base point: " << datum.m_base_point << std::endl;
+      std::cout << "    Offset: " << datum.m_offset << std::endl;
+      for (auto& length : datum.m_dash_lengths)
+        std::cout << "      " << length << std::endl;
+    }
+  }
+
   // Add geometry
-  // if (hatch.m_flags) { fill }
-  // else { pattern }
   Shared_indexed_face_set geom(new SGAL::Indexed_face_set);
   shape->set_geometry(geom);
 

@@ -35,33 +35,32 @@ typedef Dxf_record_wrapper<Dxf_hatch_entity>  Dxf_hatch_entity_wrapper;
 template <>
 const std::map<int, Dxf_hatch_entity_wrapper::Record_member>
 Dxf_hatch_entity_wrapper::s_record_members = {
-  {10, {&Dxf_hatch_entity::m_elevation_point, 3, 0}},
-  {20, {&Dxf_hatch_entity::m_elevation_point, 3, 1}},
+  // {10, {&Dxf_hatch_entity::m_elevation_point, 3, 0}},
+  // {20, {&Dxf_hatch_entity::m_elevation_point, 3, 1}},
   {30, {&Dxf_hatch_entity::m_elevation_point, 3, 2}},
   {210, {&Dxf_hatch_entity::m_extrusion_direction, 3, 0}},
   {220, {&Dxf_hatch_entity::m_extrusion_direction, 3, 1}},
   {230, {&Dxf_hatch_entity::m_extrusion_direction, 3, 2}},
-  {2, {&Dxf_hatch_entity::m_hatch_pattern_name, 1, 0}},
+  {2, {&Dxf_hatch_entity::m_pattern_name, 1, 0}},
   {70, {&Dxf_hatch_entity::m_flags, 1, 0}},
   {63, {&Dxf_hatch_entity::m_pattern_fill_color, 1, 0}},
   {71, {&Dxf_hatch_entity::m_associativity_flags, 1, 0}},
   // {91, // Number of boundary paths (loops)
   // varies m_boundary_path data; // Boundary path data. Repeats number of
-  {75, {&Dxf_hatch_entity::m_hatch_style, 1, 0}},
-  {76, {&Dxf_hatch_entity::m_hatch_pattern_type, 1, 0}},
-  {52, {&Dxf_hatch_entity::m_hatch_pattern_angle, 1, 0}},
-  {41, {&Dxf_hatch_entity::m_hatch_pattern_scale, 1, 0}},
+  {75, {&Dxf_hatch_entity::m_style, 1, 0}},
+  {76, {&Dxf_hatch_entity::m_pattern_type, 1, 0}},
+  {52, {&Dxf_hatch_entity::m_pattern_angle, 1, 0}},
+  {41, {&Dxf_hatch_entity::m_pattern_scale, 1, 0}},
   {73, {&Dxf_hatch_entity::m_boundary_annotation_flag, 1, 0}},
-  {77, {&Dxf_hatch_entity::m_hatch_pattern_double_flag, 1, 0}},
+  {77, {&Dxf_hatch_entity::m_pattern_double_flag, 1, 0}},
   // {78, {&Dxf_hatch_entity::m_num_pattern_definition_lines, 1, 0}},
   // varies // Pattern line data. Repeats number of times specified by code 78.
   {47, {&Dxf_hatch_entity::m_pixel_size, 1, 0}},
-  {98, {&Dxf_hatch_entity::m_num_sed_points, 1, 0}},
+  // {98, {&Dxf_hatch_entity::m_num_sed_points, 1, 0}},
   {11, {&Dxf_hatch_entity::m_offset_vetor, 1, 0}},
   {99, {&Dxf_hatch_entity::m_num_loops, 1, 0}},
-  {10, {&Dxf_hatch_entity::m_seed_point, 3, 0}},
-  {20, {&Dxf_hatch_entity::m_seed_point, 3, 1}},
-  {30, {&Dxf_hatch_entity::m_seed_point, 3, 2}},
+  // {10, {&Dxf_hatch_entity::m_seed_point, 2, 0}},
+  // {20, {&Dxf_hatch_entity::m_seed_point, 2, 1}},
   {450, {&Dxf_hatch_entity::m_solid_hatch, 1, 0}},
   {451, {&Dxf_hatch_entity::m_reserved1, 1, 0}},
   {452, {&Dxf_hatch_entity::m_color_defined, 1, 0}},
@@ -78,7 +77,10 @@ template <>
 const std::map<int, Dxf_hatch_entity_wrapper::Record_handler_type>
 Dxf_hatch_entity_wrapper::s_record_handlers = {
   {91, &Dxf_hatch_entity::handle_boundary_paths},
-  {78, &Dxf_hatch_entity::handle_pattern_definition_lines_num}
+  {78, &Dxf_hatch_entity::handle_pattern_definition_lines_num},
+  {98, &Dxf_hatch_entity::handle_seed_points_num},
+  {10, &Dxf_hatch_entity::handle_x},
+  {20, &Dxf_hatch_entity::handle_y}
 };
 
 //! \brief handles boundary paths.
@@ -113,6 +115,34 @@ void Dxf_hatch_entity::handle_pattern_definition_lines_num(int16_t size)
   m_pattern_line.resize(size);
   for (auto& pattern_data : m_pattern_line)
     m_parser->parse_pattern_data(pattern_data);
+}
+
+//! \brief handles the number of seed points.
+void Dxf_hatch_entity::handle_seed_points_num(int32_t size)
+{ m_seed_points.reserve(size); }
+
+//! \brief handles a seed point x-coordinate.
+void Dxf_hatch_entity::handle_x(double value)
+{
+  if (! m_x_set) {
+    m_elevation_point[0] = value;
+    m_x_set = true;
+    return;
+  }
+  m_seed_points.resize(m_seed_points.size() + 1);
+  m_seed_points.back()[0] = value;
+}
+
+//! \brief handles a seed point y-coordinate.
+void Dxf_hatch_entity::handle_y(double value)
+{
+  if (! m_y_set) {
+    m_elevation_point[1] = value;
+    m_y_set = true;
+    return;
+  }
+  SGAL_assertion(! m_seed_points.empty());
+  m_seed_points.back()[1] = value;
 }
 
 DXF_END_NAMESPACE

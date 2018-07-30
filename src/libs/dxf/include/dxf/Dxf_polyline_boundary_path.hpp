@@ -34,10 +34,16 @@ DXF_BEGIN_NAMESPACE
 class Dxf_parser;
 
 struct Dxf_polyline_boundary_path : Dxf_boundary_path {
+
+  /// Member records
+  //@{
+
   int16_t m_has_bulge;  // Has bulge flag
   int16_t m_is_closed;  // Is closed flag
   std::vector<SGAL::Vector2f> m_locations; // Vertex location (in OCS)
   std::vector<double> m_bulges; // Bulge (optional, default = 0)
+
+  //@}
 
   /// Handlers
   //@{
