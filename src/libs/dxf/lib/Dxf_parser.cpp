@@ -1489,8 +1489,8 @@ void Dxf_parser::clear()
 
   // Clear objects
   m_material_objects.clear();
-
   m_color_arrays.clear();
+  m_pattern_appearances.clear();
 }
 
 DXF_END_NAMESPACE

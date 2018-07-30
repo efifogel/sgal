@@ -49,6 +49,8 @@
 #include "SGAL/Inexact_kernel.hpp"
 #include "SGAL/Face_nesting_level.hpp"
 #include "SGAL/construct_triangulation.hpp"
+#include "SGAL/Texture_2d.hpp"
+#include "SGAL/Image.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_parser.hpp"
@@ -224,19 +226,41 @@ Dxf_parser::get_color_array(int32_t color, int16_t color_index,
 //! \brief obtains the lighting-disabled appearance.
 // Also, assuming that this appearance is used for paper-space, we also disable
 // the hidden-surface-removal, and draw the entities in the order they appear.
-Dxf_parser::Shared_appearance Dxf_parser::get_light_disabled_appearance()
+Dxf_parser::Shared_appearance Dxf_parser::get_fill_appearance()
 {
-  if (! m_appearance) {
-    m_appearance.reset(new SGAL::Appearance);
-    m_appearance->add_to_scene(m_scene_graph);
-    m_appearance->set_light_enable(false);
+  if (! m_fill_appearance) {
+    m_fill_appearance.reset(new SGAL::Appearance);
+    m_fill_appearance->add_to_scene(m_scene_graph);
+    m_fill_appearance->set_light_enable(false);
 
-    m_appearance->set_depth_mask(false);
-    m_appearance->set_depth_enable(false);
+    m_fill_appearance->set_depth_mask(false);
+    m_fill_appearance->set_depth_enable(false);
 
-    m_scene_graph->add_container(m_appearance);
+    m_scene_graph->add_container(m_fill_appearance);
   }
-  return m_appearance;
+  return m_fill_appearance;
+}
+
+//! \brief obtains the lighting-disabled appearance.
+// Also, assuming that this appearance is used for paper-space, we also disable
+// the hidden-surface-removal, and draw the entities in the order they appear.
+Dxf_parser::Shared_appearance
+Dxf_parser::get_pattern_appearance()
+{
+  Shared_appearance app(new SGAL::Appearance);
+  app->add_to_scene(m_scene_graph);
+  app->set_light_enable(false);
+
+  app->set_depth_mask(false);
+  app->set_depth_enable(false);
+
+  //! \todo add a (vertex) shader that draws the pattern.
+
+  m_scene_graph->add_container(app);
+
+  m_pattern_appearances.push_back(app);
+
+  return app;
 }
 
 //! \brief add a default background color
@@ -283,7 +307,7 @@ add_polylines_with_bulge(const Dxf_hatch_entity& hatch,
   root->add_child(shape);
 
   // Add Appearance
-  auto app = get_light_disabled_appearance();
+  auto app = get_fill_appearance();
   shape->set_appearance(app);
 
   // Add Geometry
@@ -400,6 +424,8 @@ add_polylines(const Dxf_hatch_entity& hatch,
   typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
   typedef boost::shared_ptr<SGAL::Indexed_face_set>   Shared_indexed_face_set;
   typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
+  typedef boost::shared_ptr<SGAL::Texture_2d>         Shared_texture_2d;
+  typedef boost::shared_ptr<SGAL::Image>              Shared_image;
 
   // Add Shape
   Shared_shape shape(new SGAL::Shape);
@@ -409,11 +435,18 @@ add_polylines(const Dxf_hatch_entity& hatch,
   root->add_child(shape);
 
   // Add Appearance
-  auto app = get_light_disabled_appearance();
+  auto app = (hatch.m_flags) ? get_fill_appearance() : get_pattern_appearance();
+
   shape->set_appearance(app);
 
   // Handle pattern
   if (! hatch.m_flags) {
+
+    Shared_image image(new SGAL::Image);
+    image->add_to_scene(m_scene_graph);
+    m_scene_graph->add_container(image);
+
+#if 0
     std::cout << "style: " << hatch.m_style << std::endl;
     std::cout << "pattern name: " << hatch.m_pattern_name << std::endl;
     std::cout << "pattern type: " << hatch.m_pattern_type << std::endl;
@@ -421,17 +454,21 @@ add_polylines(const Dxf_hatch_entity& hatch,
     std::cout << "pattern scale: " << hatch.m_pattern_scale << std::endl;
     std::cout << "pattern double flag: "
               << hatch.m_pattern_double_flag << std::endl;
-    std::cout << "seeds: " << std::endl;
+    std::cout << "seeds: " << hatch.m_seed_points.size() << std::endl;
     for (auto& p : hatch.m_seed_points) std::cout << "  " << p << std::endl;
-    std::cout << "pattern data: " << std::endl;
+    std::cout << "pattern data: " << hatch.m_pattern_line.size() << std::endl;
     for (auto& datum : hatch.m_pattern_line) {
       std::cout << "  Pattern line: " << std::endl;
-      std::cout << "    Angle" << datum.m_angle << std::endl;
-      std::cout << "    Base point: " << datum.m_base_point << std::endl;
-      std::cout << "    Offset: " << datum.m_offset << std::endl;
+      std::cout << "    Angle: " << datum.m_angle << std::endl;
+      std::cout << "    Base point: " << datum.m_base_point[0] << ", "
+                << datum.m_base_point[1] << std::endl;
+      std::cout << "    Offset: " << datum.m_offset[0] << ", "
+                << datum.m_offset[1] << std::endl;
+      std::cout << "    lengths: " << datum.m_dash_lengths.size() << std::endl;
       for (auto& length : datum.m_dash_lengths)
         std::cout << "      " << length << std::endl;
     }
+#endif
   }
 
   // Add geometry
@@ -632,7 +669,7 @@ void Dxf_parser::process_line_entity(const Dxf_line_entity& line,
   root->add_child(shape);
 
   // Add Appearance
-  auto app = get_light_disabled_appearance();
+  auto app = get_fill_appearance();
   shape->set_appearance(app);
 
   // Add IndexedLineSet
@@ -822,7 +859,7 @@ void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
   root->add_child(shape);
 
   // Add Appearance
-  auto app = get_light_disabled_appearance();
+  auto app = get_fill_appearance();
   shape->set_appearance(app);
 
   // Add IndexedLineSet
@@ -895,7 +932,7 @@ void Dxf_parser::process_circle_entity(const Dxf_circle_entity& circle,
   root->add_child(shape);
 
   // Add Appearance
-  auto app = get_light_disabled_appearance();
+  auto app = get_fill_appearance();
   shape->set_appearance(app);
 
   // Add IndexedLineSet
@@ -971,7 +1008,7 @@ void Dxf_parser::process_arc_entity(const Dxf_arc_entity& arc,
   root->add_child(shape);
 
   // Add Appearance
-  auto app = get_light_disabled_appearance();
+  auto app = get_fill_appearance();
   shape->set_appearance(app);
 
   // Add IndexedLineSet

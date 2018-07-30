@@ -1021,8 +1021,11 @@ private:
   //! The number of arcs used to represent a circle or an ellipsoid.
   size_t m_arcs_num;
 
-  //! A lighting-disabled appearance;
-  Shared_appearance m_appearance;
+  //! A light-disabled appearance.
+  Shared_appearance m_fill_appearance;
+
+  //! A light-disabled pattern enabled appearance.
+  std::list<Shared_appearance> m_pattern_appearances;
 
   //! Color arrays that match the default color palette
   std::map<size_t, Shared_color_array> m_color_arrays;
@@ -1477,9 +1480,13 @@ private:
   Shared_color_array get_color_array(int32_t color, int16_t color_index,
                                      const SGAL::String& layer);
 
-  /*! Obtain the lighting-disabled appearance.
+  /*! Obtain the light-disabled appearance.
    */
-  Shared_appearance get_light_disabled_appearance();
+  Shared_appearance get_fill_appearance();
+
+  /*! Obtain a light-disabled pattern appearance.
+   */
+  Shared_appearance get_pattern_appearance();
 
   /*! Add a default background color.
    */
