@@ -93,8 +93,8 @@ struct Dxf_importer<SGAL::Uint> {
                     if (m_parser.get_verbose_level() >= 2)
                       std::cout << "[" << std::to_string(m_parser.line())
                                 << "] " << "Importing dxf SGAL::Uint value: "
-                                << "0x" << std::hex << variable << std::dec
-                                << std::endl;);
+                                << std::hex << std::showbase << variable
+                                << std::noshowbase << std::dec << std::endl;);
   }
 };
 
