@@ -49,8 +49,8 @@
 #include "SGAL/Inexact_kernel.hpp"
 #include "SGAL/Face_nesting_level.hpp"
 #include "SGAL/construct_triangulation.hpp"
-#include "SGAL/Texture_2d.hpp"
-#include "SGAL/Image.hpp"
+#include "SGAL/Configuration.hpp"
+#include "SGAL/Dxf_configuration.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_parser.hpp"
@@ -272,7 +272,14 @@ void Dxf_parser::add_background(SGAL::Group* root)
   SGAL_assertion(bg);
   bg->add_to_scene(m_scene_graph);
   m_scene_graph->add_container(bg);
-  bg->set_color(SGAL::Vector4f(0.9, 0.9, 0.9, 0));
+  auto conf = m_scene_graph->get_configuration();
+  if (conf) {
+    auto dxf_conf = conf->get_dxf_configuration();
+    if (dxf_conf) {
+      std::cout << dxf_conf->get_background_color() << std::endl;
+      bg->set_color(dxf_conf->get_background_color());
+    }
+  }
   root->add_child(bg);
 }
 
@@ -424,8 +431,6 @@ add_polylines(const Dxf_hatch_entity& hatch,
   typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
   typedef boost::shared_ptr<SGAL::Indexed_face_set>   Shared_indexed_face_set;
   typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
-  typedef boost::shared_ptr<SGAL::Texture_2d>         Shared_texture_2d;
-  typedef boost::shared_ptr<SGAL::Image>              Shared_image;
 
   // Add Shape
   Shared_shape shape(new SGAL::Shape);
@@ -436,15 +441,10 @@ add_polylines(const Dxf_hatch_entity& hatch,
 
   // Add Appearance
   auto app = (hatch.m_flags) ? get_fill_appearance() : get_pattern_appearance();
-
   shape->set_appearance(app);
 
   // Handle pattern
   if (! hatch.m_flags) {
-
-    Shared_image image(new SGAL::Image);
-    image->add_to_scene(m_scene_graph);
-    m_scene_graph->add_container(image);
 
 #if 0
     std::cout << "style: " << hatch.m_style << std::endl;
