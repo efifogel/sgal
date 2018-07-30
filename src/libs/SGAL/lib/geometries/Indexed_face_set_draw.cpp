@@ -618,7 +618,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO()
 
 /*!
  * Fragment source  - color
- * Fragment indexed - true
+ * Fragment indexed - false
  * Fragment attach  - per mesh
  * Textute enabled  - true
  * Texture indexed  - true
@@ -628,7 +628,22 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOPO_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPM_TEYE_TIYE_MOPO_VANO\n");
-  SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+  SGAL_assertion(m_tex_coord_array);
+
+  const auto& coords = polygon_coord_indices();
+  const auto& tex_coords = polygon_tex_coord_indices();
+  glColor3fv(get(m_color_array, 0));
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_POLYGON);
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
+    }
+    glEnd();
+  }
 }
 
 // void draw_FSNO_FIYE_FAPM_TEYE_TIYE_MOPO_VANO(); invalid
