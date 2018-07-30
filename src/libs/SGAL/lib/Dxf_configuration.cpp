@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Dxf_configuration.hpp"
@@ -32,11 +32,13 @@ Container_proto* Dxf_configuration::s_prototype(nullptr);
 
 // Default values
 const String Dxf_configuration::s_def_palette_file_name("dxf_palette.txt");
+const Vector4f Dxf_configuration::s_def_background_color{0.9, 0.9, 0.9, 1};
 
 //! \brief constructs.
 Dxf_configuration::Dxf_configuration(Boolean proto) :
   Container(proto),
-  m_palette_file_name(s_def_palette_file_name)
+  m_palette_file_name(s_def_palette_file_name),
+  m_background_color(s_def_background_color)
 {}
 
 //! \brief initializes the node prototype.
@@ -49,14 +51,26 @@ void Dxf_configuration::init_prototype()
   auto exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
 
-  // makeConsistent
+  // paletteFileName
   auto palette_file_name_func =
-    static_cast<String_handle_function>(&Dxf_configuration::palette_file_name_handle);
+    static_cast<String_handle_function>
+    (&Dxf_configuration::palette_file_name_handle);
   s_prototype->add_field_info(new SF_string(PALETTE_FILE_NAME, "paletteFileName",
                                             Field_rule::RULE_EXPOSED_FIELD,
                                             palette_file_name_func,
                                             s_def_palette_file_name,
                                             exec_func));
+
+  // backgroundColor
+  auto background_color_func =
+    static_cast<Vector4f_handle_function>
+    (&Dxf_configuration::background_color_handle);
+  s_prototype->add_field_info(new SF_vector4f(BACKGROUND_COLOR,
+                                              "backgroundColor",
+                                              Field_rule::RULE_EXPOSED_FIELD,
+                                              background_color_func,
+                                              s_def_background_color,
+                                              exec_func));
 }
 
 //! \brief deletes the node prototype.
@@ -87,6 +101,11 @@ void Dxf_configuration::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "backgroundColor") {
+      set_background_color(value);
+      elem->mark_delete(ai);
+      continue;
+    }
   }
 
   // Remove all the marked attributes:
@@ -94,9 +113,11 @@ void Dxf_configuration::set_attributes(Element* elem)
 }
 
 //! \brief sets defualt values.
-void Dxf_configuration::reset(const String& def_palette_file_name)
+void Dxf_configuration::reset(const String& def_palette_file_name,
+                              const Vector4f& def_background_color)
 {
   m_palette_file_name = def_palette_file_name;
+  m_background_color = def_background_color;
 }
 
 SGAL_END_NAMESPACE

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_CONF_OPTION_PARSER_HPP
 #define SGAL_CONF_OPTION_PARSER_HPP
@@ -83,23 +83,23 @@ public:
   Boolean get_display_fps(Boolean& flag);
 
 protected:
-  /*! The conf options. */
+  //! The conf options.
   po::options_description m_conf_opts;
 
 private:
-  /*! Indicates whether to accumulate. */
+  //! Indicates whether to accumulate.
   Boolean m_accumulate;
 
-  /*! Indicates whether to use openGl vertex-array. */
+  //! Indicates whether to use openGl vertex-array.
   Boolean m_use_vertex_array;
 
-  /*! Indicates whether to use openGl vertex-buffer-object. */
+  //! Indicates whether to use openGl vertex-buffer-object.
   Boolean m_use_vertex_buffer_object;
 
-  /*! Indicates whether to apply texture mapping. */
+  //! Indicates whether to apply texture mapping.
   Boolean m_map_texture;
 
-  /*! Indicate whether to display Frames-Per-Seconds (FPS). */
+  //! Indicate whether to display Frames-Per-Seconds (FPS).
   Boolean m_display_fps;
 
   // The assignment operator cannot be generated (because some of the data

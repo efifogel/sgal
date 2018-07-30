@@ -24,6 +24,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Container.hpp"
+#include "SGAL/Vector4f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -37,6 +38,7 @@ public:
   enum {
     FIRST = Container::LAST - 1,
     PALETTE_FILE_NAME,
+    BACKGROUND_COLOR,
     LAST
   };
 
@@ -67,6 +69,8 @@ public:
   //@{
   String* palette_file_name_handle(const Field_info*)
   { return &m_palette_file_name; }
+  Vector4f* background_color_handle(const Field_info*)
+  { return &m_background_color; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -82,8 +86,17 @@ public:
    */
   const String& get_palette_file_name() const;
 
+  /*! Set the background color.
+   */
+  void set_background_color(const Vector4f& color);
+
+  /*! Get the background color.
+   */
+  const Vector4f& get_background_color() const;
+
   /*! Set defualt values. */
-  void reset(const String& def_palette_file_name = s_def_palette_file_name);
+  void reset(const String& def_palette_file_name = s_def_palette_file_name,
+             const Vector4f& def_background_color = s_def_background_color);
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -99,8 +112,12 @@ private:
   //! The palette file-name.
   String m_palette_file_name;
 
+  //! The default background color.
+  Vector4f m_background_color;
+
   // default values
   static const String s_def_palette_file_name;
+  static const Vector4f s_def_background_color;
 };
 
 //! \brief constructs the prototype.
@@ -121,6 +138,14 @@ inline void Dxf_configuration::set_palette_file_name(const String& filename)
 //! \brief obtains the palette file-name.
 inline const String& Dxf_configuration::get_palette_file_name() const
 { return m_palette_file_name; }
+
+//! \brief sets the background color.
+inline void Dxf_configuration::set_background_color(const Vector4f& color)
+{ m_background_color = color; }
+
+//! \brief gets the background color.
+inline const Vector4f& Dxf_configuration::get_background_color() const
+{ return m_background_color; }
 
 SGAL_END_NAMESPACE
 

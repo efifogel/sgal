@@ -27,6 +27,8 @@
 #include "SGAL/Dxf_option_parser.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Dxf_configuration.hpp"
+#include "SGAL/Vector4f.hpp"
+#include "SGAL/io_vector4f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -39,7 +41,10 @@ Dxf_option_parser::Dxf_option_parser() :
      po::value<String>()->
      default_value(Dxf_configuration::s_def_palette_file_name),
      "DXF color palette file name")
-    ;
+     ("dxf-background-color", po::value<Vector4f>()->
+     default_value(Dxf_configuration::s_def_background_color),
+     "Background color")
+   ;
 }
 
 //! \brief destructs.
@@ -63,6 +68,7 @@ void Dxf_option_parser::configure(Configuration* conf)
   }
 
   dxf->set_palette_file_name(var_map["dxf-palette-file"].as<String>());
+  dxf->set_background_color(var_map["dxf-background-color"].as<Vector4f>());
 }
 
 SGAL_END_NAMESPACE
