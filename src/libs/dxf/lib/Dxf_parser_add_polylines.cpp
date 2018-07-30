@@ -275,10 +275,7 @@ void Dxf_parser::add_background(SGAL::Group* root)
   auto conf = m_scene_graph->get_configuration();
   if (conf) {
     auto dxf_conf = conf->get_dxf_configuration();
-    if (dxf_conf) {
-      std::cout << dxf_conf->get_background_color() << std::endl;
-      bg->set_color(dxf_conf->get_background_color());
-    }
+    if (dxf_conf) bg->set_color(dxf_conf->get_background_color());
   }
   root->add_child(bg);
 }
