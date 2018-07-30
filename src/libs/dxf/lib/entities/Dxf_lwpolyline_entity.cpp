@@ -39,7 +39,7 @@ Dxf_lwpolyline_entity_wrapper::s_record_members = {
   {38, {&Dxf_lwpolyline_entity::m_elevation, 1, 0}},
   {39, {&Dxf_lwpolyline_entity::m_thickness, 1, 0}},
   {91, {&Dxf_lwpolyline_entity::m_identifier, 1, 0}},
-  {40, {&Dxf_lwpolyline_entity::m_starting_width, 1, 0}},
+  {40, {&Dxf_lwpolyline_entity::m_start_width, 1, 0}},
   {41, {&Dxf_lwpolyline_entity::m_end_width, 1, 0}},
   {210, {&Dxf_lwpolyline_entity::m_extrusion_direction, 3, 0}},
   {220, {&Dxf_lwpolyline_entity::m_extrusion_direction, 3, 1}},
@@ -52,7 +52,6 @@ const std::map<int, Dxf_lwpolyline_entity_wrapper::Record_handler_type>
 Dxf_lwpolyline_entity_wrapper::s_record_handlers = {
   {10, &Dxf_lwpolyline_entity::handle_vertex_x},
   {20, &Dxf_lwpolyline_entity::handle_vertex_y},
-  {30, &Dxf_lwpolyline_entity::handle_vertex_z},
   {42, &Dxf_lwpolyline_entity::handle_bulge},
   {90, &Dxf_lwpolyline_entity::handle_vertices_num}
 };

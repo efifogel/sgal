@@ -143,6 +143,11 @@ void Dxf_parser::process_entities(std::vector<Dxf_base_entity*>& entities,
       process_polyline_entity(*polyline, root);
       continue;
     }
+    if (auto* lwpolyline = dynamic_cast<Dxf_lwpolyline_entity*>(entity)) {
+      ++polylines_num;
+      process_lwpolyline_entity(*lwpolyline, root);
+      continue;
+    }
     if (auto* circle = dynamic_cast<Dxf_circle_entity*>(entity)) {
       ++circles_num;
       process_circle_entity(*circle, root);
@@ -828,6 +833,79 @@ void Dxf_parser::process_spline_entity(const Dxf_spline_entity& spline,
   std::cout << "Mults: " << mults.size() << std::endl;
   for (const auto& mult : mults)
     std::cout << "  " << mult << std::endl;
+}
+
+//! \brief processes a light weight polyline entity.
+void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline,
+                                           SGAL::Group* root)
+{
+  // Obtain the color array:
+  Shared_color_array shared_colors =
+    get_color_array(polyline.m_color, polyline.m_color_index, polyline.m_layer);
+  if (! shared_colors) return;
+
+  ++m_polylines_num;
+
+  size_t num_primitives(1);
+
+  typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
+  typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
+  typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
+  typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
+
+  // Add Shape
+  Shared_shape shape(new SGAL::Shape);
+  SGAL_assertion(shape);
+  shape->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(shape);
+  root->add_child(shape);
+
+  // Add Appearance
+  auto app = get_fill_appearance();
+  shape->set_appearance(app);
+
+  // Add IndexedLineSet
+  Shared_indexed_line_set ils(new SGAL::Indexed_line_set);
+  SGAL_assertion(ils);
+  ils->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(ils);
+  shape->set_geometry(ils);
+
+  // Count number of vertices:
+  size_t size(polyline.m_vertices.size());
+
+  // Allocate vertices:
+  auto* coords = new SGAL::Coord_array_3d(size);
+  Shared_coord_array_3d shared_coords(coords);
+  coords->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(shared_coords);
+
+  // Allocate indices:
+  auto& indices = ils->get_coord_indices();
+  indices.resize(size + num_primitives);
+
+  // Assign the vertices & indices:
+  auto it = indices.begin();
+  auto cit = coords->begin();
+  size_t i(0);
+  cit = std::transform(polyline.m_vertices.begin(),
+                       polyline.m_vertices.end(), cit,
+                       [&](const SGAL::Vector2f& v)
+                       { return SGAL::Vector3f(v[0], v[1], 0); });
+  auto it_end = it;
+  std::advance(it_end, polyline.m_vertices.size());
+  std::iota(it, it_end, i);
+  i += polyline.m_vertices.size();
+  it = it_end;
+  *it++ = -1;
+
+  auto type = polyline.is_closed() ?
+    SGAL::Geo_set::PT_LINE_LOOPS : SGAL::Geo_set::PT_LINE_STRIPS;
+  ils->set_primitive_type(type);
+  ils->set_coord_array(shared_coords);
+  ils->set_color_array(shared_colors);
+  ils->set_num_primitives(num_primitives);
+  ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
 //! \brief processes a polyline entity. Construct Indexed_line_set as necessary.

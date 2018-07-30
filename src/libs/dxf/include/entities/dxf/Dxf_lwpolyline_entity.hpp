@@ -23,6 +23,7 @@
 #include <array>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Vector2f.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_entity.hpp"
@@ -32,6 +33,11 @@ DXF_BEGIN_NAMESPACE
 class Dxf_parser;
 
 struct Dxf_lwpolyline_entity : public Dxf_base_entity {
+
+  enum {
+    CLOSED = 1,
+    PLINEGEN = 128
+  };
 
   /// Record members
   //@{
@@ -44,10 +50,10 @@ struct Dxf_lwpolyline_entity : public Dxf_base_entity {
                         // used if variable width (codes 40 and/or 41) is set
   double m_elevation;   // Elevation (optional; default = 0)
   double m_thickness;   // Thickness (optional; default = 0)
-  std::vector<std::array<double, 3> >m_vertices; // Vertex coordinates (in OCS),
+  std::vector<SGAL::Vector2f> m_vertices; // Vertex coordinates (in OCS),
                         // multiple entries; one entry for each vertex
   int32_t m_identifier; // Vertex identifier
-  double m_starting_width; // Starting width (multiple entries; one entry for
+  double m_start_width; // Starting width (multiple entries; one entry for
                         // each vertex) (optional; default = 0; multiple
                         // entries). Not used if constant width (code 43) is set
   double m_end_width;   // End width (multiple entries; one entry for each
@@ -60,6 +66,22 @@ struct Dxf_lwpolyline_entity : public Dxf_base_entity {
 
   //@}
 
+  /*! Construct (set default values).
+   */
+  Dxf_lwpolyline_entity() :
+    m_flags(CLOSED),
+    m_constant_width(0),
+    m_elevation(0),
+    m_thickness(0),
+    m_start_width(0),
+    m_end_width(0),
+    m_extrusion_direction{0, 0, 1}
+  {}
+
+  /*! Determine whether the polyline is closed.
+   */
+  bool is_closed() const { return m_flags & CLOSED; }
+
   /// Record handlers
   //@{
 
@@ -68,6 +90,8 @@ struct Dxf_lwpolyline_entity : public Dxf_base_entity {
   {
     m_vertices.resize(m_vertices.size() + 1);
     m_vertices.back()[0] = x;
+    m_bulges.resize(m_bulges.size() + 1);
+    m_bulges.back() = 0;
   }
 
   //! Handle the y-coordinate of a vertex.
@@ -77,17 +101,9 @@ struct Dxf_lwpolyline_entity : public Dxf_base_entity {
     m_vertices.back()[1] = y;
   }
 
-  //! Handle the z-coordinate of a vertex.
-  void handle_vertex_z(double z)
-  {
-    SGAL_assertion(! m_vertices.empty());
-    m_vertices.back()[2] = z;
-  }
-
   //! Handle a bulge.
   void handle_bulge(double bulge)
   {
-    m_bulges.resize(m_bulges.size() + 1);
     m_bulges.back() = bulge;
   }
 

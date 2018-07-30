@@ -1444,28 +1444,33 @@ private:
   /// Entity processors
   //@{
 
-  /*! Process a line entity. Construct Indexed_line_set as necessary.
+  /*! Process a line entity.
    */
   void process_line_entity(const Dxf_line_entity& line, SGAL::Group* root);
 
-  /*! Process a circle entity. Construct Indexed_line_set as necessary.
+  /*! Process a circle entity.
    */
   void process_circle_entity(const Dxf_circle_entity& circle, SGAL::Group* root);
 
-  /*! Process an arc entity. Construct Indexed_line_set as necessary.
+  /*! Process an arc entity.
    */
   void process_arc_entity(const Dxf_arc_entity& arc, SGAL::Group* root);
 
-  /*! Process a hatch entity. Construct Indexed_line_set as necessary.
+  /*! Process a hatch entity.
    */
   void process_hatch_entity(const Dxf_hatch_entity& hatch, SGAL::Group* root);
 
-  /*! Process a polyline entity. Construct Indexed_line_set as necessary.
+  /*! Process a polyline entity.
    */
   void process_polyline_entity(const Dxf_polyline_entity& polyline,
                                SGAL::Group* root);
 
-  /*! Process a spline entity. Construct Indexed_line_set as necessary.
+  /*! Process a light weight polyline entity.
+   */
+  void process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline,
+                                 SGAL::Group* root);
+
+  /*! Process a spline entity.
    */
   void process_spline_entity(const Dxf_spline_entity& spline, SGAL::Group* root);
 
