@@ -14,13 +14,13 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s) : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_IO_VECTOR3F_HPP
-#define SGAL_IO_VECTOR3F_HPP
+#ifndef SGAL_IO_VECTOR4F_HPP
+#define SGAL_IO_VECTOR4F_HPP
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Vector3f.hpp"
+#include "SGAL/Vector4f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -28,18 +28,18 @@ SGAL_BEGIN_NAMESPACE
  */
 
 template <typename OutputStream>
-inline OutputStream& operator<<(OutputStream& os, const Vector3f& vec)
+inline OutputStream& operator<<(OutputStream& os, const Vector4f& vec)
 {
-  os << vec[0] << "," << vec[1] << "," << vec[2];
+  os << vec[0] << "," << vec[1] << "," << vec[2] << "," << vec[3];
   return os;
 }
 
 /*! Import
  */
 template <typename InputStream>
-inline InputStream& operator>>(InputStream& is, Vector3f& vec)
+inline InputStream& operator>>(InputStream& is, Vector4f& vec)
 {
-  Float x, y, z;
+  Float x, y, z, w;
   is >> x;
   // This is used boost::lexical_cast among other.
   // boost::lexical_cast does not ignore whitespaces in the input (it unsets
@@ -54,7 +54,12 @@ inline InputStream& operator>>(InputStream& is, Vector3f& vec)
     is >> whitespace;
   }
   is >> z;
-  vec.set(x, y, z);
+  if ((is.flags() & std::ios_base::skipws) == 0) {
+    char whitespace;
+    is >> whitespace;
+  }
+  is >> w;
+  vec.set(x, y, z, w);
   return is;
 }
 
