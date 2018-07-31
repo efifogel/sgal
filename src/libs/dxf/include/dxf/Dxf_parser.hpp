@@ -1530,6 +1530,10 @@ private:
   /*! Initialize the pallete.
    */
   static void init_palette(const SGAL::String& file_name);
+
+  /*! Print out hatch information.
+   */
+  void print_hatch_information(const Dxf_hatch_entity& hatch);
 };
 
 //! \brief sets the flag that determines whether to report unrecognized code.

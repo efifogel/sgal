@@ -330,6 +330,9 @@ process_polyline_boundaries_with_bulge
 
   // Add Geometry
   Shared_indexed_face_set ifs(new SGAL::Indexed_face_set);
+  SGAL_assertion(ifs);
+  ifs->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(ifs);
   shape->set_geometry(ifs);
 
   // Allocate vertices:
@@ -383,6 +386,32 @@ process_polyline_boundaries_with_bulge
   ifs->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
+//! \brief prints out hatch information.
+void Dxf_parser::print_hatch_information(const Dxf_hatch_entity& hatch)
+{
+  std::cout << "style: " << hatch.m_style << std::endl;
+  std::cout << "pattern name: " << hatch.m_pattern_name << std::endl;
+  std::cout << "pattern type: " << hatch.m_pattern_type << std::endl;
+  std::cout << "pattern angle: " << hatch.m_pattern_angle << std::endl;
+  std::cout << "pattern scale: " << hatch.m_pattern_scale << std::endl;
+  std::cout << "pattern double flag: "
+            << hatch.m_pattern_double_flag << std::endl;
+  std::cout << "seeds: " << hatch.m_seed_points.size() << std::endl;
+  for (auto& p : hatch.m_seed_points) std::cout << "  " << p << std::endl;
+  std::cout << "pattern data: " << hatch.m_pattern_line.size() << std::endl;
+  for (auto& datum : hatch.m_pattern_line) {
+    std::cout << "  Pattern line: " << std::endl;
+    std::cout << "    Angle: " << datum.m_angle << std::endl;
+    std::cout << "    Base point: " << datum.m_base_point[0] << ", "
+              << datum.m_base_point[1] << std::endl;
+    std::cout << "    Offset: " << datum.m_offset[0] << ", "
+              << datum.m_offset[1] << std::endl;
+    std::cout << "    lengths: " << datum.m_dash_lengths.size() << std::endl;
+    for (auto& length : datum.m_dash_lengths)
+      std::cout << "      " << length << std::endl;
+  }
+}
+
 //! \brief add polylines.
 void Dxf_parser::
 process_polyline_boundaries
@@ -413,36 +442,14 @@ process_polyline_boundaries
   shape->set_appearance(app);
 
   // Handle pattern
-  if (! hatch.m_flags) {
-
-#if 0
-    std::cout << "style: " << hatch.m_style << std::endl;
-    std::cout << "pattern name: " << hatch.m_pattern_name << std::endl;
-    std::cout << "pattern type: " << hatch.m_pattern_type << std::endl;
-    std::cout << "pattern angle: " << hatch.m_pattern_angle << std::endl;
-    std::cout << "pattern scale: " << hatch.m_pattern_scale << std::endl;
-    std::cout << "pattern double flag: "
-              << hatch.m_pattern_double_flag << std::endl;
-    std::cout << "seeds: " << hatch.m_seed_points.size() << std::endl;
-    for (auto& p : hatch.m_seed_points) std::cout << "  " << p << std::endl;
-    std::cout << "pattern data: " << hatch.m_pattern_line.size() << std::endl;
-    for (auto& datum : hatch.m_pattern_line) {
-      std::cout << "  Pattern line: " << std::endl;
-      std::cout << "    Angle: " << datum.m_angle << std::endl;
-      std::cout << "    Base point: " << datum.m_base_point[0] << ", "
-                << datum.m_base_point[1] << std::endl;
-      std::cout << "    Offset: " << datum.m_offset[0] << ", "
-                << datum.m_offset[1] << std::endl;
-      std::cout << "    lengths: " << datum.m_dash_lengths.size() << std::endl;
-      for (auto& length : datum.m_dash_lengths)
-        std::cout << "      " << length << std::endl;
-    }
-#endif
-  }
+  /// if (! hatch.m_flags) {...}
 
   // Add geometry
-  Shared_indexed_face_set geom(new SGAL::Indexed_face_set);
-  shape->set_geometry(geom);
+  Shared_indexed_face_set ifs(new SGAL::Indexed_face_set);
+  SGAL_assertion(ifs);
+  ifs->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(ifs);
+  shape->set_geometry(ifs);
 
   // Construct triangulations
   typedef SGAL::Inexact_kernel                                          Kernel;
@@ -498,7 +505,7 @@ process_polyline_boundaries
   m_scene_graph->add_container(shared_coords);
 
   // Allocate indices:
-  auto& indices = geom->get_coord_indices();
+  auto& indices = ifs->get_coord_indices();
   indices.resize(num_indices);
 
   // Check whether mirroring is required
@@ -536,6 +543,7 @@ process_polyline_boundaries
       for (auto it = tit->finite_vertices_begin();
            it != tit->finite_vertices_end(); ++it)
       {
+        // std::cout << polyline->m_locations[it->info()] << std::endl;
         auto x = (mirror) ? -static_cast<SGAL::Float>(it->point().x()) :
           static_cast<SGAL::Float>(it->point().x());
         auto y = static_cast<SGAL::Float>(it->point().y());
@@ -557,10 +565,10 @@ process_polyline_boundaries
   }
   tris.clear();
 
-  geom->set_coord_array(shared_coords);
-  geom->set_color_array(shared_colors);
-  geom->set_num_primitives(num_primitives);
-  geom->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
+  ifs->set_coord_array(shared_coords);
+  ifs->set_color_array(shared_colors);
+  ifs->set_num_primitives(num_primitives);
+  ifs->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
 //! \brief processes a hatch entity. Construct Indexed_line_set as necessary.
