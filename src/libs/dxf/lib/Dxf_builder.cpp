@@ -126,45 +126,32 @@ void Dxf_parser::process_layers()
 void Dxf_parser::process_entities(std::vector<Dxf_base_entity*>& entities,
                                   SGAL::Group* root)
 {
-  size_t lines_num(0);
-  size_t polylines_num(0);
-  size_t circles_num(0);
-  size_t arcs_num(0);
-  size_t hatches_num(0);
-  size_t splines_num(0);
   for (auto* entity : entities) {
     if (auto* line = dynamic_cast<Dxf_line_entity*>(entity)) {
-      ++lines_num;
       process_line_entity(*line, root);
       continue;
     }
     if (auto* polyline = dynamic_cast<Dxf_polyline_entity*>(entity)) {
-      ++polylines_num;
       process_polyline_entity(*polyline, root);
       continue;
     }
     if (auto* lwpolyline = dynamic_cast<Dxf_lwpolyline_entity*>(entity)) {
-      ++polylines_num;
       process_lwpolyline_entity(*lwpolyline, root);
       continue;
     }
     if (auto* circle = dynamic_cast<Dxf_circle_entity*>(entity)) {
-      ++circles_num;
       process_circle_entity(*circle, root);
       continue;
     }
     if (auto* arc = dynamic_cast<Dxf_arc_entity*>(entity)) {
-      ++arcs_num;
       process_arc_entity(*arc, root);
       continue;
     }
     if (auto* hatch = dynamic_cast<Dxf_hatch_entity*>(entity)) {
-      ++hatches_num;
       process_hatch_entity(*hatch, root);
       continue;
     }
     if (auto* spline = dynamic_cast<Dxf_spline_entity*>(entity)) {
-      ++splines_num;
       process_spline_entity(*spline, root);
       continue;
     }
@@ -173,16 +160,6 @@ void Dxf_parser::process_entities(std::vector<Dxf_base_entity*>& entities,
       continue;
     }
   }
-
-#if ! defined(NDEBUG) || defined(SGAL_TRACE)
-  if (SGAL::TRACE(m_trace_code)) {
-    std::cout << "Processed " << lines_num << " lines" << std::endl;
-    std::cout << "Processed " << polylines_num << " polylines" << std::endl;
-    std::cout << "Processed " << circles_num << " circles" << std::endl;
-    std::cout << "Processed " << arcs_num << " arcs" << std::endl;
-    std::cout << "Processed " << hatches_num << " hatches" << std::endl;
-  }
-#endif
 }
 
 //! \brief Obtain the color array of an entity.
@@ -402,11 +379,10 @@ add_polylines_with_bulge(const Dxf_hatch_entity& hatch,
     cit = std::transform(segs.begin(), segs.end(), cit,
                          [&](const SGAL::Vector2f& p)
                          { return SGAL::Vector3f(p[0], p[1], 0); });
-    auto it_end = it;
-    std::advance(it_end, segs.size());
-    std::iota(it, it_end, i);
+    auto it_start = it;
+    std::advance(it, segs.size());
+    std::iota(it_start, it, i);
     i += segs.size();
-    it = it_end;
     *it++ = -1;
   }
 
@@ -603,6 +579,8 @@ add_polylines(const Dxf_hatch_entity& hatch,
 void Dxf_parser::process_hatch_entity(const Dxf_hatch_entity& hatch,
                                       SGAL::Group* root)
 {
+  ++m_hatches_num;
+
   std::list<Dxf_polyline_boundary_path*> polylines;
   std::list<Dxf_polyline_boundary_path*> polylines_with_bulge;
   for (Dxf_base_boundary_path* path : hatch.m_boundary_paths) {
@@ -643,8 +621,6 @@ void Dxf_parser::process_hatch_entity(const Dxf_hatch_entity& hatch,
     else polylines.push_back(polyline);
   }
 
-  m_polylines_num += polylines.size() + polylines_with_bulge.size();
-
   add_polylines(hatch, polylines, root);
   add_polylines_with_bulge(hatch, polylines_with_bulge, root);
 }
@@ -653,6 +629,8 @@ void Dxf_parser::process_hatch_entity(const Dxf_hatch_entity& hatch,
 void Dxf_parser::process_line_entity(const Dxf_line_entity& line,
                                      SGAL::Group* root)
 {
+  ++m_lines_num;
+
   // Obtain the color array:
   Shared_color_array shared_colors =
     get_color_array(line.m_color, line.m_color_index, line.m_layer);
@@ -713,6 +691,8 @@ void Dxf_parser::process_spline_entity(const Dxf_spline_entity& spline,
                                        SGAL::Group* root)
 {
   return;
+
+  ++m_splines_num;
 
   // Obtain the color array:
   Shared_color_array shared_colors =
@@ -839,12 +819,12 @@ void Dxf_parser::process_spline_entity(const Dxf_spline_entity& spline,
 void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline,
                                            SGAL::Group* root)
 {
+  ++m_lwpolylines_num;
+
   // Obtain the color array:
   Shared_color_array shared_colors =
     get_color_array(polyline.m_color, polyline.m_color_index, polyline.m_layer);
   if (! shared_colors) return;
-
-  ++m_polylines_num;
 
   size_t num_primitives(1);
 
@@ -892,11 +872,10 @@ void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline
                        polyline.m_vertices.end(), cit,
                        [&](const SGAL::Vector2f& v)
                        { return SGAL::Vector3f(v[0], v[1], 0); });
-  auto it_end = it;
-  std::advance(it_end, polyline.m_vertices.size());
-  std::iota(it, it_end, i);
+  auto it_start = it;
+  std::advance(it, polyline.m_vertices.size());
+  std::iota(it_start, it, i);
   i += polyline.m_vertices.size();
-  it = it_end;
   *it++ = -1;
 
   auto type = polyline.is_closed() ?
@@ -912,12 +891,12 @@ void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline
 void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
                                          SGAL::Group* root)
 {
+  ++m_polylines_num;
+
   // Obtain the color array:
   Shared_color_array shared_colors =
     get_color_array(polyline.m_color, polyline.m_color_index, polyline.m_layer);
   if (! shared_colors) return;
-
-  ++m_polylines_num;
 
   size_t num_primitives(1);
 
@@ -968,11 +947,10 @@ void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
                          auto& p = vertex.m_location;
                          return SGAL::Vector3f(p[0], p[1], 0);
                        });
-  auto it_end = it;
-  std::advance(it_end, polyline.m_vertex_entities.size());
-  std::iota(it, it_end, i);
+  auto it_start = it;
+  std::advance(it, polyline.m_vertex_entities.size());
+  std::iota(it_start, it, i);
   i += polyline.m_vertex_entities.size();
-  it = it_end;
   *it++ = -1;
 
   auto type = polyline.is_closed() ?
@@ -988,6 +966,8 @@ void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
 void Dxf_parser::process_circle_entity(const Dxf_circle_entity& circle,
                                        SGAL::Group* root)
 {
+  ++m_circles_num;
+
   // Obtain the color array:
   Shared_color_array shared_colors =
     get_color_array(circle.m_color, circle.m_color_index, circle.m_layer);
@@ -1019,7 +999,7 @@ void Dxf_parser::process_circle_entity(const Dxf_circle_entity& circle,
 
   // Count number of vertices:
   const double pi = std::acos(-1);
-  size_t num = m_arcs_num;
+  size_t num = m_arcs_refinement_num;
   auto delta_angle = 360.0 / num;
   size_t size(num);
 
@@ -1045,10 +1025,9 @@ void Dxf_parser::process_circle_entity(const Dxf_circle_entity& circle,
                   auto y = circle.m_center[1] + circle.m_radius * std::sin(angle);
                   return SGAL::Vector3f(x, y, 0);
                 });
-  auto it_end = it;
-  std::advance(it_end, size);
-  std::iota(it, it_end, 0);
-  it = it_end;
+  auto it_start = it;
+  std::advance(it, size);
+  std::iota(it_start, it, 0);
   *it++ = -1;
 
   auto type = SGAL::Geo_set::PT_LINE_LOOPS;
@@ -1063,6 +1042,8 @@ void Dxf_parser::process_circle_entity(const Dxf_circle_entity& circle,
 void Dxf_parser::process_arc_entity(const Dxf_arc_entity& arc,
                                     SGAL::Group* root)
 {
+  ++m_arcs_num;
+
   // Obtain the color array:
   Shared_color_array shared_colors =
     get_color_array(arc.m_color, arc.m_color_index, arc.m_layer);
@@ -1097,7 +1078,7 @@ void Dxf_parser::process_arc_entity(const Dxf_arc_entity& arc,
   const double pi = std::acos(-1);
   auto diff_angle = arc.m_end_angle - arc.m_start_angle;
   if (diff_angle < 0.0) diff_angle += 360.0;
-  size_t num = m_arcs_num * diff_angle / 360.0;
+  size_t num = m_arcs_refinement_num * diff_angle / 360.0;
   if (num == 0) num = 1;
   auto delta_angle = diff_angle / num;
   size_t size(num+1);
@@ -1124,10 +1105,9 @@ void Dxf_parser::process_arc_entity(const Dxf_arc_entity& arc,
                   auto y = arc.m_center[1] + arc.m_radius * std::sin(angle);
                   return SGAL::Vector3f(x, y, 0);
                 });
-  auto it_end = it;
-  std::advance(it_end, size);
-  std::iota(it, it_end, 0);
-  it = it_end;
+  auto it_start = it;
+  std::advance(it, size);
+  std::iota(it_start, it, 0);
   *it++ = -1;
 
   auto type = SGAL::Geo_set::PT_LINE_STRIPS;
@@ -1142,6 +1122,8 @@ void Dxf_parser::process_arc_entity(const Dxf_arc_entity& arc,
 void Dxf_parser::process_insert_entity(const Dxf_insert_entity& insert,
                                        SGAL::Group* root)
 {
+  ++m_inserts_num;
+
   auto it = std::find_if(m_blocks.begin(), m_blocks.end(),
                          [&](Dxf_block& block)
                          { return insert.m_name == block.m_name; });

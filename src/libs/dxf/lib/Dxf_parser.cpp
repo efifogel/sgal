@@ -306,9 +306,16 @@ Dxf_parser::Dxf_parser() :
   m_is_pending(false),
   m_extended_data(nullptr),
   m_report_unrecognized_code(false),
-  m_polylines_num(0),
   m_active_polyline_entity(nullptr),
-  m_arcs_num(16)
+  m_arcs_refinement_num(16),
+  m_lines_num(0),
+  m_polylines_num(0),
+  m_lwpolylines_num(0),
+  m_circles_num(0),
+  m_arcs_num(0),
+  m_hatches_num(0),
+  m_splines_num(0),
+  m_inserts_num(0)
 {}
 
 //! \brief parses.
@@ -363,48 +370,16 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
   add_background(root);
   process_entities(m_entities, root);
 
-#if 0
-  // Create indexed line sets, one for each hatch entity.
-  std::cout << "processing " << m_hatch_entities.size() << " hatch entities"
-            << std::endl;
-  for (const auto& hatch_entity : m_hatch_entities)
-    add_polylines(hatch_entity, root);
-
-  // Create indexed line sets, one for each polyline entity.
-  std::cout << "processing " << m_polyline_entities.size()
-            << " polyline entities" << std::endl;
-  for (const auto& polyline_entity : m_polyline_entities)
-    add_polylines(polyline_entity, root);
-
-  // Create indexed line sets, one for each spline entity.
-  std::cout << "processing " << m_spline_entities.size() << " spline entities"
-            << std::endl;
-  for (const auto& spline_entity : m_spline_entities)
-    add_polylines(spline_entity, root);
-
-  // Create indexed line sets, one for each line entity.
-  std::cout << "processing " << m_line_entities.size() << " line entities"
-            << std::endl;
-  for (const auto& line_entity : m_line_entities)
-    add_polylines(line_entity, root);
-
-  // Create indexed line sets, one for each arc entity.
-  std::cout << "processing " << m_arc_entities.size() << " arc entities"
-            << std::endl;
-  for (const auto& arc_entity : m_arc_entities)
-    add_polylines(arc_entity, root);
-
-  // Create indexed line sets, one for each circle entity.
-  std::cout << "processing " << m_circle_entities.size() << " circle entities"
-            << std::endl;
-  for (const auto& circle_entity : m_circle_entities)
-    add_polylines(circle_entity, root);
-
-  std::cout << "processing " << m_insert_entities.size() << " insert entities"
-            << std::endl;
-  process_insert_entities(root);
-
-  std::cout << "processing "  << m_polylines_num << " polylines" << std::endl;
+#if ! defined(NDEBUG) || defined(SGAL_TRACE)
+  if (SGAL::TRACE(m_trace_code)) {
+    std::cout << "Processed " << m_lines_num << " lines" << std::endl;
+    std::cout << "Processed " << m_polylines_num << " polylines" << std::endl;
+    std::cout << "Processed " << m_lwpolylines_num << " lwpolylines" << std::endl;
+    std::cout << "Processed " << m_circles_num << " circles" << std::endl;
+    std::cout << "Processed " << m_arcs_num << " arcs" << std::endl;
+    std::cout << "Processed " << m_hatches_num << " hatches" << std::endl;
+    std::cout << "Processed " << m_inserts_num << " inserts" << std::endl;
+  }
 #endif
 
   clear();
@@ -435,7 +410,8 @@ Dxf_parser::Code_type Dxf_parser::code_type(int code)
 void Dxf_parser::parse_header()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_header()" << std::endl;);
+                  if (get_verbose_level() >= 2)
+                    std::cout << "Parsing HEADER section" << std::endl;);
 
   bool done(false);
   while (!done) {
@@ -456,7 +432,8 @@ void Dxf_parser::parse_header()
 void Dxf_parser::parse_class()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_class()" << std::endl;);
+                  if (get_verbose_level() >= 4)
+                    std::cout << "Parse class" << std::endl;);
 
   m_classes.push_back(Dxf_class());
   auto& dxf_class = m_classes.back();
@@ -486,7 +463,8 @@ void Dxf_parser::parse_class()
 void Dxf_parser::parse_classes()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_classes()" << std::endl;);
+                  if (get_verbose_level() >= 2)
+                    std::cout << "Parser CLASSES section" << std::endl;);
 
   int n;
   import_code(n);
@@ -506,8 +484,8 @@ void Dxf_parser::parse_classes()
 void Dxf_parser::parse_appid_table()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_appid_table()"
-                  << std::endl;);
+                  if (get_verbose_level() >= 4)
+                    std::cout << "Parse APPID table" << std::endl;);
   parse_table(m_appid_table, "APPID");
 }
 
@@ -515,7 +493,7 @@ void Dxf_parser::parse_appid_table()
 void Dxf_parser::parse_block_record_table()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_block_record_table()"
+                  std::cout << "Parse BLOCK_RECORD table"
                   << std::endl;);
   parse_table(m_block_record_table, "BLOCK_RECORD");
 }
@@ -524,8 +502,8 @@ void Dxf_parser::parse_block_record_table()
 void Dxf_parser::parse_dimstyle_table()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_dimstyle_table()"
-                  << std::endl;);
+                  if (get_verbose_level() >= 4)
+                    std::cout << "Parsing DIMSTYLE table" << std::endl;);
   parse_table(m_dimstyle_table, "DIMSTYLE");
 }
 
@@ -533,8 +511,8 @@ void Dxf_parser::parse_dimstyle_table()
 void Dxf_parser::parse_layer_table()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_layer_table()"
-                  << std::endl;);
+                  if (get_verbose_level() >= 4)
+                    std::cout << "Parsing LAYER table" << std::endl;);
   parse_table(m_layer_table, "LAYER");
 }
 
@@ -542,8 +520,8 @@ void Dxf_parser::parse_layer_table()
 void Dxf_parser::parse_ltype_table()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_ltype_table()"
-                  << std::endl;);
+                  if (get_verbose_level() >= 4)
+                    std::cout << "Parsing LTYPE table" << std::endl;);
   parse_table(m_ltype_table, "LTYPE");
 }
 
@@ -551,8 +529,8 @@ void Dxf_parser::parse_ltype_table()
 void Dxf_parser::parse_style_table()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_style_table()"
-                  << std::endl;);
+                  if (get_verbose_level() >= 4)
+                    std::cout << "Parsing STYLE table" << std::endl;);
   parse_table(m_style_table, "STYLE");
 }
 
@@ -560,8 +538,8 @@ void Dxf_parser::parse_style_table()
 void Dxf_parser::parse_ucs_table()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_ucs_table()"
-                  << std::endl;);
+                  if (get_verbose_level() >= 4)
+                    std::cout << "Parsing UCS table" << std::endl;);
   parse_table(m_ucs_table, "UCS");
 }
 
@@ -569,8 +547,8 @@ void Dxf_parser::parse_ucs_table()
 void Dxf_parser::parse_view_table()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_view_table()"
-                  << std::endl;);
+                  if (get_verbose_level() >= 4)
+                    std::cout << "Parsing VIEW table" << std::endl;);
   parse_table(m_view_table, "VIEW");
 }
 
@@ -578,8 +556,8 @@ void Dxf_parser::parse_view_table()
 void Dxf_parser::parse_vport_table()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_vport_table()"
-                  << std::endl;);
+                  if (get_verbose_level() >= 4)
+                    std::cout << "Parsing VPORT table" << std::endl;);
   parse_table(m_vport_table, "VPORT");
 }
 
@@ -587,7 +565,8 @@ void Dxf_parser::parse_vport_table()
 void Dxf_parser::parse_tables()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_tables()" << std::endl;);
+                  if (get_verbose_level() >= 2)
+                    std::cout << "Parsing TABLES section" << std::endl;);
 
   int n;
   import_code(n);
@@ -619,7 +598,9 @@ void Dxf_parser::parse_tables()
 //! \brief parses one block.
 void Dxf_parser::parse_block(Dxf_block& block)
 {
-  SGAL_TRACE_CODE(m_trace_code, std::cout << "Parsing block" << std::endl;);
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (get_verbose_level() >= 4)
+                    std::cout << "Parsing block" << std::endl;);
 
   while (true) {
     int code;
@@ -647,7 +628,8 @@ void Dxf_parser::parse_block(Dxf_block& block)
 void Dxf_parser::parse_endblk()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Parsing endblk" << std::endl;);
+                  if (get_verbose_level() >= 4)
+                    std::cout << "Parsing endblk" << std::endl;);
 
   while (true) {
     int code;
@@ -668,7 +650,8 @@ void Dxf_parser::parse_endblk()
 void Dxf_parser::parse_blocks()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_blocks()" << std::endl;);
+                  if (get_verbose_level() >= 2)
+                    std::cout << "Parsing BLOCKS section" << std::endl;);
 
   int n;
   import_code(n);
@@ -716,7 +699,8 @@ void Dxf_parser::parse_blocks()
 void Dxf_parser::parse_entities()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_entities()" << std::endl;);
+                  if (get_verbose_level() >= 2)
+                    std::cout << "Parsing ENTITIES section" << std::endl;);
 
   int n;
   import_code(n);
@@ -759,7 +743,8 @@ void Dxf_parser::parse_entities()
 void Dxf_parser::parse_objects()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_objects()" << std::endl;);
+                  if (get_verbose_level() >= 2)
+                    std::cout << "Parsing OBJECTS section" << std::endl;);
 
   int n;
   import_code(n);
@@ -801,8 +786,9 @@ void Dxf_parser::parse_objects()
 void Dxf_parser::parse_thumbnailimage()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_thumbnailimage()"
-                  << std::endl;);
+                  if (get_verbose_level() >= 2)
+                    std::cout << "Parsing THUMBNAILIMAGE section"
+                              << std::endl;);
 }
 
 //! \brief reads a HEADER veriable.
@@ -843,8 +829,8 @@ void Dxf_parser::read_header_member()
 
   auto dim = codes.size();
   SGAL_TRACE_CODE(m_trace_code,
-                  if (get_verbose_level() >= 2)
-                    std::cout << "Dxf_parser::read_header_member() dimension: "
+                  if (get_verbose_level() >= 8)
+                    std::cout << "Parsing header member dimension: "
                               << dim << std::endl;);
   if (1 == dim) {
     auto expected_code = codes.front();
@@ -857,8 +843,8 @@ void Dxf_parser::read_header_member()
     }
     auto ct = code_type(code);
     SGAL_TRACE_CODE(m_trace_code,
-                    if (get_verbose_level() >= 2)
-                      std::cout << "Dxf_parser::read_header_member() code type: "
+                    if (get_verbose_level() >= 8)
+                      std::cout << "Parsing header member code type: "
                                 << s_code_type_names[ct] << std::endl;);
     switch (ct) {
      case STRING: assign_member<String_header>(handle, m_header); break;
@@ -884,8 +870,8 @@ void Dxf_parser::read_header_member()
     }
     auto ct = code_type(code);
     SGAL_TRACE_CODE(m_trace_code,
-                    if (get_verbose_level() >= 2)
-                      std::cout << "Dxf_parser::read_header_member() code type: "
+                    if (get_verbose_level() >= 8)
+                      std::cout << "Parsing header member code type: "
                                 << s_code_type_names[ct] << std::endl;);
     SGAL_assertion(DOUBLE == ct);
     if (dim == 2)
@@ -1066,9 +1052,8 @@ Dxf_base_entity* Dxf_parser::parse_rtext_entity()
 Dxf_base_entity* Dxf_parser::parse_seqend_entity()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  if (true)
-                    std::cout << "Parsing seqend entity"
-                              << std::endl;);
+                  if (get_verbose_level() >= 4)
+                    std::cout << "Parsing SEQEND entity" << std::endl;);
   Dxf_seqend_entity seqend;
   parse_record(seqend);
   m_active_polyline_entity = nullptr;
@@ -1103,9 +1088,8 @@ Dxf_base_entity* Dxf_parser::parse_trace_entity()
 Dxf_base_entity* Dxf_parser::parse_vertex_entity()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  if (true)
-                    std::cout << "Parsing vertex entity"
-                              << std::endl;);
+                  if (get_verbose_level() >= 4)
+                    std::cout << "Parsing VERTEX entity" << std::endl;);
 
   SGAL_assertion(m_active_polyline_entity);
   auto& vertices = m_active_polyline_entity->m_vertex_entities;
@@ -1276,8 +1260,8 @@ void Dxf_parser::parse_xrecord_object()
 void Dxf_parser::parse_boundary_path(Dxf_boundary_path& path)
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_boundary_path()"
-                  << std::endl;);
+                  if (get_verbose_level() >= 5)
+                    std::cout << "Parsing boundary_path" << std::endl;);
 
   while (true) {
     int code;
@@ -1309,8 +1293,8 @@ void Dxf_parser::parse_boundary_path(Dxf_boundary_path& path)
 void Dxf_parser::parse_polyline_boundary_path(Dxf_polyline_boundary_path& path)
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_polyline_boundary_path()"
-                  << std::endl;);
+                  if (get_verbose_level() >= 5)
+                    std::cout << "Parsing polyline_boundary_path" << std::endl;);
 
   while (true) {
     int code;
@@ -1343,9 +1327,8 @@ void Dxf_parser::parse_polyline_boundary_path(Dxf_polyline_boundary_path& path)
 void Dxf_parser::parse_pattern_data(Dxf_pattern_data& pattern_data)
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  if (get_verbose_level() >= 2)
-                    std::cout << "Dxf_parser::parse_pattern_data()"
-                              << std::endl;);
+                  if (get_verbose_level() >= 5)
+                    std::cout << "Parsing pattern_data" << std::endl;);
 
   while (true) {
     int code;
@@ -1368,8 +1351,8 @@ void Dxf_parser::parse_pattern_data(Dxf_pattern_data& pattern_data)
 void Dxf_parser::parse_line_edge(Dxf_line_edge& edge)
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_line_edge()"
-                  << std::endl;);
+                  if (get_verbose_level() >= 5)
+                    std::cout << "Parsing line_edge" << std::endl;);
 
   while (true) {
     int code;
@@ -1392,8 +1375,8 @@ void Dxf_parser::parse_line_edge(Dxf_line_edge& edge)
 void Dxf_parser::parse_circle_edge(Dxf_circle_edge& edge)
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_circle_edge()"
-                  << std::endl;);
+                  if (get_verbose_level() >= 5)
+                    std::cout << "Parsing circle_edge" << std::endl;);
 
   while (true) {
     int code;
@@ -1416,8 +1399,8 @@ void Dxf_parser::parse_circle_edge(Dxf_circle_edge& edge)
 void Dxf_parser::parse_ellipse_edge(Dxf_ellipse_edge& edge)
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_ellipse_edge()"
-                  << std::endl;);
+                  if (get_verbose_level() >= 5)
+                    std::cout << "Parsing ellipse_edge" << std::endl;);
 
   while (true) {
     int code;
@@ -1440,8 +1423,8 @@ void Dxf_parser::parse_ellipse_edge(Dxf_ellipse_edge& edge)
 void Dxf_parser::parse_spline_edge(Dxf_spline_edge& edge)
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Dxf_parser::parse_spline_edge()"
-                  << std::endl;);
+                  if (get_verbose_level() >= 5)
+                    std::cout << "Parsing spline_edge" << std::endl;);
 
   while (true) {
     int code;

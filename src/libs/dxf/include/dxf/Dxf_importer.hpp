@@ -42,7 +42,7 @@ struct Dxf_importer {
     m_parser.input_stream() >> variable;
     m_parser.inc_line();
     SGAL_TRACE_CODE(m_parser.get_trace_code(),
-                    if (m_parser.get_verbose_level() >= 2)
+                    if (m_parser.get_verbose_level() >= 8)
                       std::cout << "[" << std::to_string(m_parser.line())
                                 << "] " << "Importering dxf value: "
                                 << variable << std::endl;);
@@ -69,7 +69,7 @@ struct Dxf_importer<int8_t> {
     m_parser.inc_line();
     variable = (int8_t) tmp;
     SGAL_TRACE_CODE(m_parser.get_trace_code(),
-                    if (m_parser.get_verbose_level() >= 2)
+                    if (m_parser.get_verbose_level() >= 8)
                       std::cout << "[" << std::to_string(m_parser.line()) << "] "
                                 << "Importing dxf int8 value: "
                                 << (int)(variable) << std::endl;);
@@ -90,7 +90,7 @@ struct Dxf_importer<SGAL::Uint> {
     m_parser.input_stream() >> std::hex >> variable >> std::dec;
     m_parser.inc_line();
     SGAL_TRACE_CODE(m_parser.get_trace_code(),
-                    if (m_parser.get_verbose_level() >= 2)
+                    if (m_parser.get_verbose_level() >= 8)
                       std::cout << "[" << std::to_string(m_parser.line())
                                 << "] " << "Importing dxf SGAL::Uint value: "
                                 << std::hex << std::showbase << variable
@@ -117,7 +117,7 @@ struct Dxf_importer<SGAL::String> {
     m_parser.inc_line();
     variable.erase(variable.find_last_not_of(" \t\n\r\f\v") + 1);
     SGAL_TRACE_CODE(m_parser.get_trace_code(),
-                    if (m_parser.get_verbose_level() >= 2)
+                    if (m_parser.get_verbose_level() >= 8)
                       std::cout << "[" << std::to_string(m_parser.line())
                                 << "] " << "Importing dxf string value: "
                                 << variable << std::endl;);

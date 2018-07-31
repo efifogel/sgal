@@ -341,7 +341,7 @@ private:
   Entity* parse_entity(const std::string& type, Entity* entity)
   {
     SGAL_TRACE_CODE(m_trace_code,
-                    if (true)
+                    if (get_verbose_level() >= 4)
                       std::cout << "Parsing " << type << " entity"
                                 << std::endl;);
     parse_record(*entity);
@@ -1012,14 +1012,11 @@ private:
   //! Indicates whether to report unrecognized codes.
   bool m_report_unrecognized_code;
 
-  //! Number of polylines.
-  size_t m_polylines_num;
-
   //! Indicates whether a polyline is active.
   Dxf_polyline_entity* m_active_polyline_entity;
 
   //! The number of arcs used to represent a circle or an ellipsoid.
-  size_t m_arcs_num;
+  size_t m_arcs_refinement_num;
 
   //! A light-disabled appearance.
   Shared_appearance m_fill_appearance;
@@ -1029,6 +1026,18 @@ private:
 
   //! Color arrays that match the default color palette
   std::map<size_t, Shared_color_array> m_color_arrays;
+
+  /// Counters for statistics. \todo Move out with Builder.
+  //@{
+  size_t m_lines_num;
+  size_t m_polylines_num;
+  size_t m_lwpolylines_num;
+  size_t m_circles_num;
+  size_t m_arcs_num;
+  size_t m_hatches_num;
+  size_t m_splines_num;
+  size_t m_inserts_num;
+  //@}
 
   /*! Clear the parser. Deallocate data structure and prepare for reuse.
    */
@@ -1063,9 +1072,9 @@ private:
       ++m_line;
     }
     SGAL_TRACE_CODE(m_trace_code,
-                    if (get_verbose_level() >= 2)
+                    if (get_verbose_level() >= 8)
                       std::cout << "[" << std::to_string(m_line) << "] "
-                                << "Dxf_parser::import_code(): "
+                                << "Parsing code: "
                                 << code << std::endl;);
   }
 
@@ -1260,8 +1269,8 @@ private:
   void parse_base_table(Table& table)
   {
     SGAL_TRACE_CODE(m_trace_code,
-                    std::cout << "Dxf_parser::parse_base_table()"
-                    << std::endl;);
+                    if (get_verbose_level() >= 4)
+                      std::cout << "Parseing base table" << std::endl;);
 
     typedef typename Table::Entry               Entry;
 
@@ -1273,8 +1282,9 @@ private:
       int code;
       import_code(code);
       SGAL_TRACE_CODE(m_trace_code,
-                      std::cout << "Dxf_parser::parse_base_table() code: "
-                      << code << std::endl;);
+                      if (get_verbose_level() >= 8)
+                        std::cout << "Parse base table code: " << code
+                                  << std::endl;);
       if (0 == code) break;
 
       if (100 == code) {
