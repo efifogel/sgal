@@ -262,11 +262,46 @@ void Dxf_parser::add_background(SGAL::Group* root)
   root->add_child(bg);
 }
 
+//! \brief approximates a polyline with buldges
+template <typename VertexInputIterator, typename BulgeInputIterator>
+void approximate(std::list<SGAL::Vector2f>& segs,
+                 VertexInputIterator vertices_begin,
+                 VertexInputIterator vertices_end,
+                 BulgeInputIterator bulges_begin,
+                 bool mirror, double min_bulge)
+{
+  auto bit = bulges_begin;
+  auto vit = vertices_begin;
+  auto v = vit;
+  auto b = *bit;
+
+  const auto& p = *v;
+  auto x = (mirror) ? -p[0] : p[0];
+  segs.push_back(SGAL::Vector2f(x, p[1]));
+
+  for (++vit, ++bit; vit != vertices_end; ++vit, ++bit) {
+    SGAL::Vector2f v1((*v)[0], (*v)[1]);
+    SGAL::Vector2f v2((*vit)[0], (*vit)[1]);
+    SGAL::approximate_circular_arc(v1, v2, b, min_bulge,
+                                   std::back_inserter(segs));
+    segs.push_back(v2);
+
+    v = vit;
+    b = *bit;
+  }
+
+  SGAL::Vector2f v1((*v)[0], (*v)[1]);
+  SGAL::Vector2f v2((*vertices_begin)[0], (*vertices_begin)[1]);
+  SGAL::approximate_circular_arc(v1, v2, b, min_bulge,
+                                 std::back_inserter(segs));
+}
+
 //! \brief add polylines that have bulge factors.
 void Dxf_parser::
-add_polylines_with_bulge(const Dxf_hatch_entity& hatch,
-                         const std::list<Dxf_polyline_boundary_path*>& polylines,
-                         SGAL::Group* root)
+process_polyline_boundaries_with_bulge
+(const Dxf_hatch_entity& hatch,
+ const std::list<Dxf_polyline_boundary_path*>& polylines,
+ SGAL::Group* root)
 {
   // Obtain the color array:
   Shared_color_array shared_colors =
@@ -279,10 +314,7 @@ add_polylines_with_bulge(const Dxf_hatch_entity& hatch,
   if (0 == num_primitives) return;
 
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
-  typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
-  typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
   typedef boost::shared_ptr<SGAL::Indexed_face_set>   Shared_indexed_face_set;
-  typedef boost::shared_ptr<SGAL::Geo_set>            Shared_geo_set;
   typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
 
   // Add Shape
@@ -297,25 +329,8 @@ add_polylines_with_bulge(const Dxf_hatch_entity& hatch,
   shape->set_appearance(app);
 
   // Add Geometry
-  Shared_geo_set geom;
-
-  if (hatch.m_flags) {
-    Shared_indexed_face_set ifs(new SGAL::Indexed_face_set);
-    SGAL_assertion(ifs);
-    ifs->add_to_scene(m_scene_graph);
-    m_scene_graph->add_container(ifs);
-    ifs->set_primitive_type(SGAL::Geo_set::PT_POLYGONS);
-    geom = ifs;
-  }
-  else {
-    Shared_indexed_line_set ils(new SGAL::Indexed_line_set);
-    SGAL_assertion(ils);
-    ils->add_to_scene(m_scene_graph);
-    m_scene_graph->add_container(ils);
-    ils->set_primitive_type(SGAL::Geo_set::PT_LINE_LOOPS);
-    geom = ils;
-  }
-  shape->set_geometry(geom);
+  Shared_indexed_face_set ifs(new SGAL::Indexed_face_set);
+  shape->set_geometry(ifs);
 
   // Allocate vertices:
   auto* coords = new SGAL::Coord_array_3d();
@@ -334,41 +349,17 @@ add_polylines_with_bulge(const Dxf_hatch_entity& hatch,
   typedef std::list<SGAL::Vector2f>             Polyline;
   std::vector<Polyline> polylines_segs(num_primitives);
   auto sit = polylines_segs.begin();
-  for (auto* polyline : polylines) {
-    auto& segs = *sit++;
-
-    auto bit = polyline->m_bulges.begin();
-    auto vit_first = polyline->m_locations.begin();
-    auto vit = vit_first;
-    auto v = vit;
-    auto b = *bit;
-
-    const auto& p = *v;
-    auto x = (mirror) ? -p[0] : p[0];
-    segs.push_back(SGAL::Vector2f(x, p[1]));
-
-    for (++vit, ++bit; vit != polyline->m_locations.end(); ++vit, ++bit) {
-      SGAL::Vector2f v1((*v)[0], (*v)[1]);
-      SGAL::Vector2f v2((*vit)[0], (*vit)[1]);
-      SGAL::approximate_circular_arc(v1, v2, b, min_bulge,
-                                     std::back_inserter(segs));
-      segs.push_back(v2);
-
-      v = vit;
-      b = *bit;
-    }
-
-    SGAL::Vector2f v1((*v)[0], (*v)[1]);
-    SGAL::Vector2f v2((*vit_first)[0], (*vit_first)[1]);
-    SGAL::approximate_circular_arc(v1, v2, b, min_bulge,
-                                   std::back_inserter(segs));
+  for (const auto* polyline : polylines) {
+    approximate(*sit++,
+                polyline->m_locations.begin(), polyline->m_locations.end(),
+                polyline->m_bulges.begin(), mirror, min_bulge);
   }
 
   // Count the number of segments and allocate the vertices and indices
   size_t size(0);
   for (const auto& segs : polylines_segs) size += segs.size();
   coords->resize(size);
-  auto& indices = geom->get_coord_indices();
+  auto& indices = ifs->get_coord_indices();
   indices.resize(size + num_primitives);
 
   // Assign the vertices & indices:
@@ -386,17 +377,18 @@ add_polylines_with_bulge(const Dxf_hatch_entity& hatch,
     *it++ = -1;
   }
 
-  geom->set_coord_array(shared_coords);
-  geom->set_color_array(shared_colors);
-  geom->set_num_primitives(num_primitives);
-  geom->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
+  ifs->set_coord_array(shared_coords);
+  ifs->set_color_array(shared_colors);
+  ifs->set_num_primitives(num_primitives);
+  ifs->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
 //! \brief add polylines.
 void Dxf_parser::
-add_polylines(const Dxf_hatch_entity& hatch,
-              const std::list<Dxf_polyline_boundary_path*>& polylines,
-              SGAL::Group* root)
+process_polyline_boundaries
+(const Dxf_hatch_entity& hatch,
+ const std::list<Dxf_polyline_boundary_path*>& polylines,
+ SGAL::Group* root)
 {
   // Obtain the color array:
   Shared_color_array shared_colors =
@@ -406,7 +398,6 @@ add_polylines(const Dxf_hatch_entity& hatch,
   if (0 == polylines.size()) return;
 
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
-  typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
   typedef boost::shared_ptr<SGAL::Indexed_face_set>   Shared_indexed_face_set;
   typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
 
@@ -475,7 +466,6 @@ add_polylines(const Dxf_hatch_entity& hatch,
       SGAL::mark_domains(*tit);
     }
     ++tit;
-    break;
   }
 
   // Count number of primitives & vertices:
@@ -499,7 +489,6 @@ add_polylines(const Dxf_hatch_entity& hatch,
         }
     }
     ++tit;
-    break;
   }
 
   // Allocate vertices:
@@ -565,7 +554,6 @@ add_polylines(const Dxf_hatch_entity& hatch,
       }
       i += tit->number_of_vertices();
     }
-    break;
   }
   tris.clear();
 
@@ -584,7 +572,6 @@ void Dxf_parser::process_hatch_entity(const Dxf_hatch_entity& hatch,
   std::list<Dxf_polyline_boundary_path*> polylines;
   std::list<Dxf_polyline_boundary_path*> polylines_with_bulge;
   for (Dxf_base_boundary_path* path : hatch.m_boundary_paths) {
-    if (! polylines.empty()) break;
     // Observe that the following statement obtains a non-const polyline.
     // A non-const struct is required to repair the polyline below.
     // The repairing, probably, should be taken out of here.
@@ -597,7 +584,8 @@ void Dxf_parser::process_hatch_entity(const Dxf_hatch_entity& hatch,
     // A polyline defined in a hatch entity must be closed!
     SGAL_assertion(polyline->m_is_closed);
 
-    // // Remove repeated points.
+    // Remove repeated points.
+    // The following is subsumed by the call to simplify() below.
     // auto end =
     //   std::unique(polyline->m_locations.begin(), polyline->m_locations.end());
     // polyline->m_locations.erase(end, polyline->m_locations.end());
@@ -621,75 +609,15 @@ void Dxf_parser::process_hatch_entity(const Dxf_hatch_entity& hatch,
     else polylines.push_back(polyline);
   }
 
-  add_polylines(hatch, polylines, root);
-  add_polylines_with_bulge(hatch, polylines_with_bulge, root);
-}
-
-//! \brief processes a line entity. Construct Indexed_line_set as necessary.
-void Dxf_parser::process_line_entity(const Dxf_line_entity& line,
-                                     SGAL::Group* root)
-{
-  ++m_lines_num;
-
-  // Obtain the color array:
-  Shared_color_array shared_colors =
-    get_color_array(line.m_color, line.m_color_index, line.m_layer);
-  if (! shared_colors) return;
-
-  typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
-  typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
-  typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
-  typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
-
-  // Add Shape
-  Shared_shape shape(new SGAL::Shape);
-  SGAL_assertion(shape);
-  shape->add_to_scene(m_scene_graph);
-  m_scene_graph->add_container(shape);
-  root->add_child(shape);
-
-  // Add Appearance
-  auto app = get_fill_appearance();
-  shape->set_appearance(app);
-
-  // Add IndexedLineSet
-  Shared_indexed_line_set ils(new SGAL::Indexed_line_set);
-  SGAL_assertion(ils);
-  ils->add_to_scene(m_scene_graph);
-  m_scene_graph->add_container(ils);
-  shape->set_geometry(ils);
-
-  // Allocate vertices:
-  size_t size(2);
-  auto* coords = new SGAL::Coord_array_3d(size);
-  Shared_coord_array_3d shared_coords(coords);
-  coords->add_to_scene(m_scene_graph);
-  m_scene_graph->add_container(shared_coords);
-
-  // Allocate indices:
-  auto& indices = ils->get_coord_indices();
-  indices.resize(size);
-
-  // Assign the vertices & indices:
-  auto cit = coords->begin();
-  *cit++ = SGAL::Vector3f(line.m_start[0], line.m_start[1], line.m_start[2]);
-  *cit++ = SGAL::Vector3f(line.m_end[0], line.m_end[1], line.m_end[2]);
-
-  auto it = indices.begin();
-  *it++ = 0;
-  *it++ = 1;
-
-  ils->set_primitive_type(SGAL::Geo_set::PT_LINES);
-  ils->set_coord_array(shared_coords);
-  ils->set_color_array(shared_colors);
-  ils->set_num_primitives(1);
-  ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
+  process_polyline_boundaries(hatch, polylines, root);
+  process_polyline_boundaries_with_bulge(hatch, polylines_with_bulge, root);
 }
 
 //! \brief processes a spline entity. Construct Indexed_line_set as necessary.
 void Dxf_parser::process_spline_entity(const Dxf_spline_entity& spline,
                                        SGAL::Group* root)
 {
+  //! \todo Add support for splines.
   return;
 
   ++m_splines_num;
@@ -815,21 +743,18 @@ void Dxf_parser::process_spline_entity(const Dxf_spline_entity& spline,
     std::cout << "  " << mult << std::endl;
 }
 
-//! \brief processes a light weight polyline entity.
-void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline,
-                                           SGAL::Group* root)
+//! \brief processes a line entity. Construct Indexed_line_set as necessary.
+void Dxf_parser::process_line_entity(const Dxf_line_entity& line,
+                                     SGAL::Group* root)
 {
-  ++m_lwpolylines_num;
+  ++m_lines_num;
 
   // Obtain the color array:
   Shared_color_array shared_colors =
-    get_color_array(polyline.m_color, polyline.m_color_index, polyline.m_layer);
+    get_color_array(line.m_color, line.m_color_index, line.m_layer);
   if (! shared_colors) return;
 
-  size_t num_primitives(1);
-
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
-  typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
   typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
   typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
 
@@ -851,10 +776,8 @@ void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline
   m_scene_graph->add_container(ils);
   shape->set_geometry(ils);
 
-  // Count number of vertices:
-  size_t size(polyline.m_vertices.size());
-
   // Allocate vertices:
+  size_t size(2);
   auto* coords = new SGAL::Coord_array_3d(size);
   Shared_coord_array_3d shared_coords(coords);
   coords->add_to_scene(m_scene_graph);
@@ -862,28 +785,21 @@ void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline
 
   // Allocate indices:
   auto& indices = ils->get_coord_indices();
-  indices.resize(size + num_primitives);
+  indices.resize(size);
 
   // Assign the vertices & indices:
-  auto it = indices.begin();
   auto cit = coords->begin();
-  size_t i(0);
-  cit = std::transform(polyline.m_vertices.begin(),
-                       polyline.m_vertices.end(), cit,
-                       [&](const SGAL::Vector2f& v)
-                       { return SGAL::Vector3f(v[0], v[1], 0); });
-  auto it_start = it;
-  std::advance(it, polyline.m_vertices.size());
-  std::iota(it_start, it, i);
-  i += polyline.m_vertices.size();
-  *it++ = -1;
+  *cit++ = SGAL::Vector3f(line.m_start[0], line.m_start[1], line.m_start[2]);
+  *cit++ = SGAL::Vector3f(line.m_end[0], line.m_end[1], line.m_end[2]);
 
-  auto type = polyline.is_closed() ?
-    SGAL::Geo_set::PT_LINE_LOOPS : SGAL::Geo_set::PT_LINE_STRIPS;
-  ils->set_primitive_type(type);
+  auto it = indices.begin();
+  *it++ = 0;
+  *it++ = 1;
+
+  ils->set_primitive_type(SGAL::Geo_set::PT_LINES);
   ils->set_coord_array(shared_coords);
   ils->set_color_array(shared_colors);
-  ils->set_num_primitives(num_primitives);
+  ils->set_num_primitives(1);
   ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
@@ -901,7 +817,6 @@ void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
   size_t num_primitives(1);
 
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
-  typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
   typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
   typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
 
@@ -951,6 +866,77 @@ void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
   std::advance(it, polyline.m_vertex_entities.size());
   std::iota(it_start, it, i);
   i += polyline.m_vertex_entities.size();
+  *it++ = -1;
+
+  auto type = polyline.is_closed() ?
+    SGAL::Geo_set::PT_LINE_LOOPS : SGAL::Geo_set::PT_LINE_STRIPS;
+  ils->set_primitive_type(type);
+  ils->set_coord_array(shared_coords);
+  ils->set_color_array(shared_colors);
+  ils->set_num_primitives(num_primitives);
+  ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
+}
+
+//! \brief processes a light weight polyline entity.
+void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline,
+                                           SGAL::Group* root)
+{
+  ++m_lwpolylines_num;
+
+  // Obtain the color array:
+  Shared_color_array shared_colors =
+    get_color_array(polyline.m_color, polyline.m_color_index, polyline.m_layer);
+  if (! shared_colors) return;
+
+  size_t num_primitives(1);
+
+  typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
+  typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
+  typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
+
+  // Add Shape
+  Shared_shape shape(new SGAL::Shape);
+  SGAL_assertion(shape);
+  shape->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(shape);
+  root->add_child(shape);
+
+  // Add Appearance
+  auto app = get_fill_appearance();
+  shape->set_appearance(app);
+
+  // Add IndexedLineSet
+  Shared_indexed_line_set ils(new SGAL::Indexed_line_set);
+  SGAL_assertion(ils);
+  ils->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(ils);
+  shape->set_geometry(ils);
+
+  // Count number of vertices:
+  size_t size(polyline.m_vertices.size());
+
+  // Allocate vertices:
+  auto* coords = new SGAL::Coord_array_3d(size);
+  Shared_coord_array_3d shared_coords(coords);
+  coords->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(shared_coords);
+
+  // Allocate indices:
+  auto& indices = ils->get_coord_indices();
+  indices.resize(size + num_primitives);
+
+  // Assign the vertices & indices:
+  auto it = indices.begin();
+  auto cit = coords->begin();
+  size_t i(0);
+  cit = std::transform(polyline.m_vertices.begin(),
+                       polyline.m_vertices.end(), cit,
+                       [&](const SGAL::Vector2f& v)
+                       { return SGAL::Vector3f(v[0], v[1], 0); });
+  auto it_start = it;
+  std::advance(it, polyline.m_vertices.size());
+  std::iota(it_start, it, i);
+  i += polyline.m_vertices.size();
   *it++ = -1;
 
   auto type = polyline.is_closed() ?
@@ -1052,7 +1038,6 @@ void Dxf_parser::process_arc_entity(const Dxf_arc_entity& arc,
   size_t num_primitives(1);
 
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
-  typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
   typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
   typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
 
@@ -1075,7 +1060,6 @@ void Dxf_parser::process_arc_entity(const Dxf_arc_entity& arc,
   shape->set_geometry(ils);
 
   // Count number of vertices:
-  const double pi = std::acos(-1);
   auto diff_angle = arc.m_end_angle - arc.m_start_angle;
   if (diff_angle < 0.0) diff_angle += 360.0;
   size_t num = m_arcs_refinement_num * diff_angle / 360.0;
@@ -1097,6 +1081,7 @@ void Dxf_parser::process_arc_entity(const Dxf_arc_entity& arc,
   auto it = indices.begin();
   auto cit = coords->begin();
   size_t i(0);
+  const double pi = std::acos(-1);
   std::generate(coords->begin(), coords->end(),
                 [&] () mutable
                 {
