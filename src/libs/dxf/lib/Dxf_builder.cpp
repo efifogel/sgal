@@ -46,11 +46,10 @@
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Orientation.hpp"
 #include "SGAL/is_convex.hpp"
-#include "SGAL/Inexact_kernel.hpp"
-#include "SGAL/Face_nesting_level.hpp"
 #include "SGAL/construct_triangulation.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Dxf_configuration.hpp"
+#include "SGAL/Inexact_triangulation.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_parser.hpp"
@@ -296,96 +295,6 @@ void approximate(std::list<SGAL::Vector2f>& segs,
                                  std::back_inserter(segs));
 }
 
-//! \brief add polylines that have bulge factors.
-void Dxf_parser::
-process_polyline_boundaries_with_bulge
-(const Dxf_hatch_entity& hatch,
- const std::list<Dxf_polyline_boundary_path*>& polylines,
- SGAL::Group* root)
-{
-  // Obtain the color array:
-  Shared_color_array shared_colors =
-    get_color_array(hatch.m_color, hatch.m_color_index, hatch.m_layer);
-  if (! shared_colors) return;
-
-  static const double min_bulge(0.1);
-
-  size_t num_primitives(polylines.size());
-  if (0 == num_primitives) return;
-
-  typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
-  typedef boost::shared_ptr<SGAL::Indexed_face_set>   Shared_indexed_face_set;
-  typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
-
-  // Add Shape
-  Shared_shape shape(new SGAL::Shape);
-  SGAL_assertion(shape);
-  shape->add_to_scene(m_scene_graph);
-  m_scene_graph->add_container(shape);
-  root->add_child(shape);
-
-  // Add Appearance
-  auto app = get_fill_appearance();
-  shape->set_appearance(app);
-
-  // Add Geometry
-  Shared_indexed_face_set ifs(new SGAL::Indexed_face_set);
-  SGAL_assertion(ifs);
-  ifs->add_to_scene(m_scene_graph);
-  m_scene_graph->add_container(ifs);
-  shape->set_geometry(ifs);
-
-  // Allocate vertices:
-  auto* coords = new SGAL::Coord_array_3d();
-  Shared_coord_array_3d shared_coords(coords);
-  coords->add_to_scene(m_scene_graph);
-  m_scene_graph->add_container(shared_coords);
-
-  // Check whether mirroring is required
-  bool mirror(false);
-  if ((hatch.m_extrusion_direction[0] == 0) &&
-      (hatch.m_extrusion_direction[1] == 0) &&
-      (hatch.m_extrusion_direction[2] < 0))
-    mirror = true;
-
-  // Compute the circular arc approximation.
-  typedef std::list<SGAL::Vector2f>             Polyline;
-  std::vector<Polyline> polylines_segs(num_primitives);
-  auto sit = polylines_segs.begin();
-  for (const auto* polyline : polylines) {
-    approximate(*sit++,
-                polyline->m_locations.begin(), polyline->m_locations.end(),
-                polyline->m_bulges.begin(), mirror, min_bulge);
-  }
-
-  // Count the number of segments and allocate the vertices and indices
-  size_t size(0);
-  for (const auto& segs : polylines_segs) size += segs.size();
-  coords->resize(size);
-  auto& indices = ifs->get_coord_indices();
-  indices.resize(size + num_primitives);
-
-  // Assign the vertices & indices:
-  auto it = indices.begin();
-  auto cit = coords->begin();
-  size_t i(0);
-  for (const auto& segs : polylines_segs) {
-    cit = std::transform(segs.begin(), segs.end(), cit,
-                         [&](const SGAL::Vector2f& p)
-                         { return SGAL::Vector3f(p[0], p[1], 0); });
-    auto it_start = it;
-    std::advance(it, segs.size());
-    std::iota(it_start, it, i);
-    i += segs.size();
-    *it++ = -1;
-  }
-
-  ifs->set_coord_array(shared_coords);
-  ifs->set_color_array(shared_colors);
-  ifs->set_num_primitives(num_primitives);
-  ifs->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
-}
-
 //! \brief prints out hatch information.
 void Dxf_parser::print_hatch_information(const Dxf_hatch_entity& hatch)
 {
@@ -412,6 +321,178 @@ void Dxf_parser::print_hatch_information(const Dxf_hatch_entity& hatch)
   }
 }
 
+//! \brief add polylines that have bulge factors.
+void Dxf_parser::
+process_polyline_boundaries_with_bulge
+(const Dxf_hatch_entity& hatch,
+ const std::list<Dxf_polyline_boundary_path*>& polylines,
+ SGAL::Group* root)
+{
+  if (0 == polylines.size()) return;
+
+  // Obtain the color array:
+  Shared_color_array shared_colors =
+    get_color_array(hatch.m_color, hatch.m_color_index, hatch.m_layer);
+  if (! shared_colors) return;
+
+  static const double min_bulge(0.1);
+
+  typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
+  typedef boost::shared_ptr<SGAL::Indexed_face_set>   Shared_indexed_face_set;
+  typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
+
+  // Add Shape
+  Shared_shape shape(new SGAL::Shape);
+  SGAL_assertion(shape);
+  shape->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(shape);
+  root->add_child(shape);
+
+  // Add Appearance
+  auto app = get_fill_appearance();
+  shape->set_appearance(app);
+
+  // Add Geometry
+  Shared_indexed_face_set ifs(new SGAL::Indexed_face_set);
+  SGAL_assertion(ifs);
+  ifs->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(ifs);
+  shape->set_geometry(ifs);
+
+  // Check whether mirroring is required
+  bool mirror(false);
+  if ((hatch.m_extrusion_direction[0] == 0) &&
+      (hatch.m_extrusion_direction[1] == 0) &&
+      (hatch.m_extrusion_direction[2] < 0))
+    mirror = true;
+
+  // Compute the circular arc approximation.
+  typedef std::list<SGAL::Vector2f>             Polyline;
+  std::vector<Polyline> polylines_segs(polylines.size());
+  auto sit = polylines_segs.begin();
+  for (const auto* polyline : polylines) {
+    approximate(*sit++,
+                polyline->m_locations.begin(), polyline->m_locations.end(),
+                polyline->m_bulges.begin(), mirror, min_bulge);
+  }
+
+  // Construct triangulations
+  std::vector<SGAL::Inexact_triangulation> tris(polylines_segs.size());
+  auto tit = tris.begin();
+  for (const auto& segs : polylines_segs) {
+    if (! SGAL::is_convex(segs.begin(), segs.end())) {
+      SGAL::construct_triangulation(*tit, segs.begin(), segs.end(), 0);
+      SGAL::mark_domains(*tit);
+    }
+    ++tit;
+  }
+
+  // Count number of primitives & vertices:
+  size_t num_primitives(0);
+  size_t num_indices(0);
+  size_t size(0);
+  tit = tris.begin();
+  for (auto& segs : polylines_segs) {
+    if (0 == tit->number_of_faces()) {
+      size += segs.size();
+      ++num_primitives;
+      num_indices += size + 1;
+    }
+    else {
+      size += tit->number_of_vertices();
+      for (auto fit = tit->finite_faces_begin(); fit != tit->finite_faces_end();
+           ++fit)
+        if (fit->info().in_domain()) {
+          ++num_primitives;
+          num_indices += 4;
+        }
+    }
+    ++tit;
+  }
+
+  // Allocate vertices:
+  auto* coords = new SGAL::Coord_array_3d(size);
+  Shared_coord_array_3d shared_coords(coords);
+  coords->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(shared_coords);
+
+  // Allocate indices:
+  auto& indices = ifs->get_coord_indices();
+  indices.resize(num_indices);
+
+  // Assign the coordinates & indices:
+  tit = tris.begin();
+  auto iit = indices.begin();
+  auto cit = coords->begin();
+  size_t i(0);
+  for (auto* polyline : polylines) {
+    if (0 == tit->number_of_faces()) {
+      // Assign coordinates
+      cit = std::transform(polyline->m_locations.begin(),
+                           polyline->m_locations.end(), cit,
+                           [&](const SGAL::Vector2f& p)
+                           {
+                             auto x = (mirror) ? -p[0] : p[0];
+                             return SGAL::Vector3f(x, p[1], 0);
+                           });
+
+      // Assign indices:
+      auto iit_start = iit;
+      std::advance(iit, polyline->m_locations.size());
+      std::iota(iit_start, iit, i);
+      *iit++ = -1;
+      i += polyline->m_locations.size();
+    }
+    else {
+      // Assign coordinates
+      for (auto it = tit->finite_vertices_begin();
+           it != tit->finite_vertices_end(); ++it)
+      {
+        // std::cout << polyline->m_locations[it->info()] << std::endl;
+        auto x = (mirror) ? -static_cast<SGAL::Float>(it->point().x()) :
+          static_cast<SGAL::Float>(it->point().x());
+        auto y = static_cast<SGAL::Float>(it->point().y());
+        (*cit++).set(x, y, 0);
+      }
+
+      // Assign indices:
+      for (auto fit = tit->finite_faces_begin(); fit != tit->finite_faces_end();
+           ++fit)
+      {
+        if (! fit->info().in_domain()) continue;
+        *iit++ = fit->vertex(0)->info() + i;
+        *iit++ = fit->vertex(1)->info() + i;
+        *iit++ = fit->vertex(2)->info() + i;
+        *iit++ = -1;
+      }
+      i += tit->number_of_vertices();
+    }
+  }
+  tris.clear();
+
+#if 0
+  // Assign the vertices & indices:
+  auto it = indices.begin();
+  auto cit = coords->begin();
+  size_t i(0);
+  for (const auto& segs : polylines_segs) {
+    cit = std::transform(segs.begin(), segs.end(), cit,
+                         [&](const SGAL::Vector2f& p)
+                         { return SGAL::Vector3f(p[0], p[1], 0); });
+    auto it_start = it;
+    std::advance(it, segs.size());
+    std::iota(it_start, it, i);
+    i += segs.size();
+    *it++ = -1;
+  }
+#endif
+
+  ifs->set_coord_array(shared_coords);
+  ifs->set_color_array(shared_colors);
+  ifs->set_num_primitives(num_primitives);
+  ifs->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
+}
+
 //! \brief add polylines.
 void Dxf_parser::
 process_polyline_boundaries
@@ -419,12 +500,12 @@ process_polyline_boundaries
  const std::list<Dxf_polyline_boundary_path*>& polylines,
  SGAL::Group* root)
 {
+  if (0 == polylines.size()) return;
+
   // Obtain the color array:
   Shared_color_array shared_colors =
     get_color_array(hatch.m_color, hatch.m_color_index, hatch.m_layer);
   if (! shared_colors) return;
-
-  if (0 == polylines.size()) return;
 
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
   typedef boost::shared_ptr<SGAL::Indexed_face_set>   Shared_indexed_face_set;
@@ -452,17 +533,7 @@ process_polyline_boundaries
   shape->set_geometry(ifs);
 
   // Construct triangulations
-  typedef SGAL::Inexact_kernel                                          Kernel;
-  typedef CGAL::Triangulation_vertex_base_with_info_2<size_t, Kernel>   VB;
-  typedef CGAL::Triangulation_face_base_with_info_2<SGAL::Face_nesting_level,
-                                                    Kernel>             FBI;
-  typedef CGAL::Constrained_triangulation_face_base_2<Kernel, FBI>      FB;
-  typedef CGAL::Triangulation_data_structure_2<VB, FB>                  TDS;
-  typedef CGAL::No_intersection_tag                                     Itag;
-  // typedef CGAL::Exact_predicates_tag                                 Itag;
-  typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>
-    Triangulation;
-  std::vector<Triangulation> tris(polylines.size());
+  std::vector<SGAL::Inexact_triangulation> tris(polylines.size());
   auto tit = tris.begin();
   for (auto* polyline : polylines) {
     if (! SGAL::is_convex(polyline->m_locations.begin(),
@@ -577,20 +648,57 @@ void Dxf_parser::process_hatch_entity(const Dxf_hatch_entity& hatch,
 {
   ++m_hatches_num;
 
+#if 0
+  // Check whether mirroring is required
+  bool mirror(false);
+  if ((hatch.m_extrusion_direction[0] == 0) &&
+      (hatch.m_extrusion_direction[1] == 0) &&
+      (hatch.m_extrusion_direction[2] < 0))
+    mirror = true;
+
+  struct Polyline {
+    std::list<SGAL::Vector2f> m_vertices;
+    std::list<double> m_bulges;
+  }
+  std::list<Polyline> polylines(polylines.size());
+#endif
+
   std::list<Dxf_polyline_boundary_path*> polylines;
   std::list<Dxf_polyline_boundary_path*> polylines_with_bulge;
   for (Dxf_base_boundary_path* path : hatch.m_boundary_paths) {
     // Observe that the following statement obtains a non-const polyline.
     // A non-const struct is required to repair the polyline below.
     // The repairing, probably, should be taken out of here.
-    auto* polyline = dynamic_cast<Dxf_polyline_boundary_path*>(path);
-    if (! polyline) {
+    auto* dxf_polyline = dynamic_cast<Dxf_polyline_boundary_path*>(path);
+    if (! dxf_polyline) {
       SGAL_warning_msg(true, "Unsupported boundary path!");
       continue;
     }
 
     // A polyline defined in a hatch entity must be closed!
-    SGAL_assertion(polyline->m_is_closed);
+    SGAL_assertion(dxf_polyline->m_is_closed);
+
+#if 0
+    // Prepare
+    Polyline polyline;
+    auto vit = polyline.m_vertices.begin();
+    auto bit = dxf_polyline->m_bulges.begin();
+    auto lit = dxf_polyline->m_locations.begin();
+    for (const auto& loc : dxf_polyline->m_locations) {
+      float x;
+      if (mirror) {
+        x = -loc[0];
+      }
+      else {
+        x = loc[0];
+      }
+      SGAL::Vecotr2f v(x, loc[1]);
+      vit->push_back(v);
+    }
+
+    // Add
+    polylines.push_back(polyline);
+#endif
 
     // Remove repeated points.
     // The following is subsumed by the call to simplify() below.
@@ -602,19 +710,19 @@ void Dxf_parser::process_hatch_entity(const Dxf_hatch_entity& hatch,
     //   polyline->m_locations.erase(last);
 
     // Remove collinear coordinates:
-    SGAL::simplify(polyline->m_locations);
+    SGAL::simplify(dxf_polyline->m_locations);
 
     // Bail out if there are insufficient points.
-    if (polyline->m_locations.size() < 3) return;
+    if (dxf_polyline->m_locations.size() < 3) return;
 
     // Orient counterclockwise
-    auto orient = SGAL::orientation(polyline->m_locations.begin(),
-                                    polyline->m_locations.end());
+    auto orient = SGAL::orientation(dxf_polyline->m_locations.begin(),
+                                    dxf_polyline->m_locations.end());
     if (SGAL::Orientation::Clockwise == orient)
-      std::reverse(polyline->m_locations.begin(), polyline->m_locations.end());
+      std::reverse(dxf_polyline->m_locations.begin(), dxf_polyline->m_locations.end());
 
-    if (polyline->m_has_bulge) polylines_with_bulge.push_back(polyline);
-    else polylines.push_back(polyline);
+    if (dxf_polyline->m_has_bulge) polylines_with_bulge.push_back(dxf_polyline);
+    else polylines.push_back(dxf_polyline);
   }
 
   process_polyline_boundaries(hatch, polylines, root);
@@ -859,6 +967,13 @@ void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
   auto& indices = ils->get_coord_indices();
   indices.resize(size + num_primitives);
 
+  // Check whether mirroring is required
+  bool mirror(false);
+  if ((polyline.m_extrusion_direction[0] == 0) &&
+      (polyline.m_extrusion_direction[1] == 0) &&
+      (polyline.m_extrusion_direction[2] < 0))
+    mirror = true;
+
   // Assign the vertices & indices:
   auto it = indices.begin();
   auto cit = coords->begin();
@@ -868,7 +983,8 @@ void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
                        [&](const Dxf_vertex_entity& vertex)
                        {
                          auto& p = vertex.m_location;
-                         return SGAL::Vector3f(p[0], p[1], 0);
+                         auto x = (mirror) ? -p[0] : p[0];
+                         return SGAL::Vector3f(x, p[1], 0);
                        });
   auto it_start = it;
   std::advance(it, polyline.m_vertex_entities.size());
@@ -933,6 +1049,13 @@ void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline
   auto& indices = ils->get_coord_indices();
   indices.resize(size + num_primitives);
 
+  // Check whether mirroring is required
+  bool mirror(false);
+  if ((polyline.m_extrusion_direction[0] == 0) &&
+      (polyline.m_extrusion_direction[1] == 0) &&
+      (polyline.m_extrusion_direction[2] < 0))
+    mirror = true;
+
   // Assign the vertices & indices:
   auto it = indices.begin();
   auto cit = coords->begin();
@@ -940,7 +1063,10 @@ void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline
   cit = std::transform(polyline.m_vertices.begin(),
                        polyline.m_vertices.end(), cit,
                        [&](const SGAL::Vector2f& v)
-                       { return SGAL::Vector3f(v[0], v[1], 0); });
+                       {
+                         auto x = (mirror) ? -v[0] : v[0];
+                         return SGAL::Vector3f(x, v[1], 0);
+                       });
   auto it_start = it;
   std::advance(it, polyline.m_vertices.size());
   std::iota(it_start, it, i);
@@ -1085,6 +1211,13 @@ void Dxf_parser::process_arc_entity(const Dxf_arc_entity& arc,
   auto& indices = ils->get_coord_indices();
   indices.resize(size + num_primitives);
 
+  // Check whether mirroring is required
+  bool mirror(false);
+  if ((arc.m_extrusion_direction[0] == 0) &&
+      (arc.m_extrusion_direction[1] == 0) &&
+      (arc.m_extrusion_direction[2] < 0))
+    mirror = true;
+
   // Assign the vertices & indices:
   auto it = indices.begin();
   auto cit = coords->begin();
@@ -1096,6 +1229,7 @@ void Dxf_parser::process_arc_entity(const Dxf_arc_entity& arc,
                   auto angle = (arc.m_start_angle + delta_angle * i++) * pi / 180;
                   auto x = arc.m_center[0] + arc.m_radius * std::cos(angle);
                   auto y = arc.m_center[1] + arc.m_radius * std::sin(angle);
+                  if (mirror) x = -x;
                   return SGAL::Vector3f(x, y, 0);
                 });
   auto it_start = it;

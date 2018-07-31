@@ -493,8 +493,8 @@ void Dxf_parser::parse_appid_table()
 void Dxf_parser::parse_block_record_table()
 {
   SGAL_TRACE_CODE(m_trace_code,
-                  std::cout << "Parse BLOCK_RECORD table"
-                  << std::endl;);
+                  if (get_verbose_level() >= 4)
+                    std::cout << "Parse BLOCK_RECORD table" << std::endl;);
   parse_table(m_block_record_table, "BLOCK_RECORD");
 }
 
