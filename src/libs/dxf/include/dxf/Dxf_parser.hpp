@@ -1517,16 +1517,6 @@ private:
      const std::list<Dxf_polyline_boundary_path*>& polylines,
      SGAL::Group* root);
 
-  /*! Add polylines with bulge.
-   * \param[in] polylines
-   * \param[in] root
-   * \param[in] closed
-   */
-  void process_polyline_boundaries_with_bulge
-    (const Dxf_hatch_entity& hatch_entity,
-     const std::list<Dxf_polyline_boundary_path*>&
-     polylines, SGAL::Group* root);
-
   /*! Initialize the pallete.
    */
   static void init_palette(const SGAL::String& file_name);
