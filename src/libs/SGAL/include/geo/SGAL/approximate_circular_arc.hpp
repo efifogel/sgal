@@ -31,11 +31,18 @@ SGAL_BEGIN_NAMESPACE
  * sequence of points.
  * The input circular arc is given by the endpoints of the arc and a bulge
  * factor. The resulting sequence of points do not include the endpoints.
+ * \param[in] v1 the first endpoint.
+ * \param[in] v2 the second endpoint.
+ * \param[in] bulge the bulge.
+ * \param[in] min_bulge the minimum bulge used for termination condition.
+ * \param[in] oi the insert iterator that indicates where newly computed
+ *            sequence of points are to be inserted at.
+ * \return the iterator that points at the last inserted point.
  */
-template <typename OutputIterator>
-OutputIterator approximate_circular_arc(const Vector2f& v1, const Vector2f& v2,
+template <typename InsertIterator>
+InsertIterator approximate_circular_arc(const Vector2f& v1, const Vector2f& v2,
                                         float bulge, float min_bulge,
-                                        OutputIterator oi)
+                                        InsertIterator oi)
 {
   auto bulge_abs = fabs(bulge);
   if (min_bulge >= bulge_abs) return oi;
@@ -53,11 +60,19 @@ OutputIterator approximate_circular_arc(const Vector2f& v1, const Vector2f& v2,
  * sequence of points.
  * The input circular arc is given by the endpoints of the arc and a bulge
  * factor. The resulting sequence of points do not include the endpoints.
+ * \param[in] v1 the first endpoint.
+ * \param[in] v2 the second endpoint.
+ * \param[in] bulge the bulge.
+ * \param[in] min_bulge the minimum bulge used for termination condition.
+ * \param[in] radius the radius of the circular arc.
+ * \param[in] oi the insert iterator that indicates where newly computed
+ *            sequence of points are to be inserted at.
+ * \return the iterator that points at the last inserted point.
  */
-template <typename OutputIterator>
-OutputIterator approximate_circular_arc(const Vector2f& v1, const Vector2f& v2,
+template <typename InsertIterator>
+InsertIterator approximate_circular_arc(const Vector2f& v1, const Vector2f& v2,
                                         float bulge, float min_bulge,
-                                        float radius, OutputIterator oi)
+                                        float radius, InsertIterator oi)
 {
   auto bulge_abs = fabs(bulge);
   if (min_bulge >= bulge_abs) return oi;
@@ -65,7 +80,6 @@ OutputIterator approximate_circular_arc(const Vector2f& v1, const Vector2f& v2,
   Vector2f d;
   d.sub(v2, v1);
   auto dist = d.length();
-  // std::cout << "  dist: " << dist << std::endl;
 
   // Compute the point at the midle of the circular arc:
   Vector2f m;                 // mid point
@@ -84,7 +98,7 @@ OutputIterator approximate_circular_arc(const Vector2f& v1, const Vector2f& v2,
   if (bulge_abs < fabs(bulge_next)) return oi;
   bulge = bulge_next;
 
-  // approximate the arc:
+  // Approximate the arc:
   oi = approximate_circular_arc(v1, p, bulge, min_bulge, radius, oi);
   *oi++ = p;
   oi = approximate_circular_arc(p, v2, bulge, min_bulge, radius, oi);

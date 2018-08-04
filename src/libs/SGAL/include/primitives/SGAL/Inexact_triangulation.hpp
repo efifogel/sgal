@@ -30,7 +30,6 @@
 
 SGAL_BEGIN_NAMESPACE
 
-typedef Inexact_kernel                                          Kernel;
 typedef CGAL::Triangulation_vertex_base_with_info_2<size_t, Inexact_kernel>
   Inexact_vb;
 
@@ -44,10 +43,10 @@ typedef CGAL::Constrained_triangulation_face_base_2<Inexact_kernel, Inexact_fbi>
 typedef CGAL::Triangulation_data_structure_2<Inexact_vb, Inexact_fb>
   Inexact_tds;
 
-typedef CGAL::No_intersection_tag                                     Itag;
-// typedef CGAL::Exact_predicates_tag                                 Itag;
-typedef CGAL::Constrained_Delaunay_triangulation_2<Inexact_kernel,
-                                                   Inexact_tds, Itag>
+typedef CGAL::No_intersection_tag                               Inexact_itag;
+// typedef CGAL::Exact_predicates_tag                           Inexact_itag;
+typedef CGAL::Constrained_Delaunay_triangulation_2<Inexact_kernel, Inexact_tds,
+                                                   Inexact_itag>
   Inexact_triangulation;
 
 SGAL_END_NAMESPACE
