@@ -58,10 +58,6 @@ struct Dxf_polyline_boundary_path : Dxf_boundary_path {
   /*! Construct default
    */
   Dxf_polyline_boundary_path();
-
-  /*! Simplify a simple polygon removing coplannar vertices.
-   */
-  void simplify();
 };
 
 //! \brief constructs
