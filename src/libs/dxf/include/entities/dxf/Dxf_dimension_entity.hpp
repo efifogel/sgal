@@ -77,7 +77,7 @@ struct Dxf_dimension_entity : public Dxf_base_entity {
                         // Percentage of default (3-on-5) line spacing to be
                         // applied. Valid values range from 0.25 to 4.00
   double m_actual_measurement; // Actual measurement (optional; read-only value)
-  SGAL::String m_text;        // Dimension text explicitly entered by the user.
+  SGAL::String m_text;  // Dimension text explicitly entered by the user.
                         // Optional; default is the measurement.
                         // If null or "<>", the dimension measurement is drawn
                         // as the text, if "" (one blank space), the text is
