@@ -86,7 +86,7 @@ struct Dxf_lwpolyline_entity : public Dxf_base_entity {
   /*! Determine whether the polyline has a bulge.
    * \return true if the polyline has a bulge and false otherwise.
    */
-  bool has_bulge()
+  bool has_bulge() const
   {
     for (auto& bulge : m_bulges) if (bulge != 0.0) return true;
     return false;
