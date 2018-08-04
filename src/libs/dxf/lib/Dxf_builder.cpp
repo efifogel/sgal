@@ -391,6 +391,7 @@ process_polyline_boundaries
       if (poly.size() < 3) continue;
 
       approximate(poly, bulges.begin(), min_bulge);
+      bulges.clear();
     }
     else {
       SGAL::remove_collinear_points(polyline->m_locations.begin(),
@@ -402,6 +403,7 @@ process_polyline_boundaries
     auto& tri = tris.back();
     SGAL::construct_triangulation(tri, poly.begin(), poly.end(), 0);
     SGAL::mark_domains(tri);
+    poly.clear();
   }
 
   // Count number of primitives & vertices:
@@ -477,9 +479,6 @@ void Dxf_parser::process_hatch_entity(const Dxf_hatch_entity& hatch,
 
   std::list<Dxf_polyline_boundary_path*> polylines;
   for (Dxf_base_boundary_path* path : hatch.m_boundary_paths) {
-    // Observe that the following statement obtains a non-const polyline.
-    // A non-const struct is required to repair the polyline below.
-    // The repairing, probably, should be taken out of here.
     auto* polyline = dynamic_cast<Dxf_polyline_boundary_path*>(path);
     if (! polyline) {
       SGAL_warning_msg(true, "Unsupported boundary path!");
@@ -787,12 +786,18 @@ void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline
     get_color_array(polyline.m_color, polyline.m_color_index, polyline.m_layer);
   if (! shared_colors) return;
 
+  if (polyline.m_vertices.size() < 3) return;
+
+  static const double min_bulge(0.1);
+
   // Check whether mirroring is required
   bool mirror(false);
   if ((polyline.m_extrusion_direction[0] == 0) &&
       (polyline.m_extrusion_direction[1] == 0) &&
       (polyline.m_extrusion_direction[2] < 0))
     mirror = true;
+
+  auto closed = polyline.is_closed();
 
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
   typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
@@ -817,22 +822,32 @@ void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline
   ils->set_color_array(shared_colors);
   shape->set_geometry(ils);
 
-#if 0
-  // Repair:
-  std::list<SGAL::Vector2f> points;
-  std::transform(polyline.m_vertices.begin(),
-                 polyline.m_vertices.end(), points.begin,
-                 [&](const SGAL::Vector2f& v)
-                 {
-                   auto x = (mirror) ? -v[0] : v[0];
-                   return SGAL::Vector2f(x, v[1], 0);
-                 });
+  std::list<SGAL::Vector2f> poly;
+  if (polyline.has_bulge()) {
+    std::list<double> bulges;
+    // Remove duplicate and collinear points:
+    SGAL::remove_collinear_points(polyline.m_vertices.begin(),
+                                  polyline.m_vertices.end(),
+                                  polyline.m_bulges.begin(),
+                                  polyline.m_bulges.end(), closed,
+                                  std::back_inserter(poly),
+                                  std::back_inserter(bulges));
+    if (poly.size() < 3) return;
 
-  // Approximate:
-#endif
+    // Approximate bulges:
+    approximate(poly, bulges.begin(), min_bulge, closed);
+    bulges.clear();
+  }
+  else {
+    // Remove duplicate and collinear points:
+    SGAL::remove_collinear_points(polyline.m_vertices.begin(),
+                                  polyline.m_vertices.end(), closed,
+                                  std::back_inserter(poly));
+    if (poly.size() < 3) return;
+  }
 
   // Count number of vertices:
-  size_t size(polyline.m_vertices.size());
+  size_t size(poly.size());
   size_t num_primitives(1);
 
   // Allocate vertices:
@@ -846,19 +861,19 @@ void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline
   indices.resize(size + num_primitives);
 
   // Assign the vertices & indices:
-  std::transform(polyline.m_vertices.begin(),
-                 polyline.m_vertices.end(), coords->begin(),
+  std::transform(poly.begin(), poly.end(), coords->begin(),
                  [&](const SGAL::Vector2f& v)
                  {
                    auto x = (mirror) ? -v[0] : v[0];
                    return SGAL::Vector3f(x, v[1], 0);
                  });
+  poly.clear();
   auto it = indices.begin();
-  std::advance(it, polyline.m_vertices.size());
+  std::advance(it, size);
   std::iota(indices.begin(), it, 0);
   *it++ = -1;
 
-  auto type = polyline.is_closed() ?
+  auto type = closed ?
     SGAL::Geo_set::PT_LINE_LOOPS : SGAL::Geo_set::PT_LINE_STRIPS;
   ils->set_primitive_type(type);
   ils->set_coord_array(shared_coords);
