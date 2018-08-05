@@ -31,7 +31,23 @@ typedef Dxf_record_wrapper<Dxf_solid_entity>  Dxf_solid_entity_wrapper;
 //! Record members
 template <>
 const std::map<int, Dxf_solid_entity_wrapper::Record_member>
-Dxf_solid_entity_wrapper::s_record_members = {};
+Dxf_solid_entity_wrapper::s_record_members = {
+  {10, {&Dxf_solid_entity::m_corner1, 3, 0}},
+  {20, {&Dxf_solid_entity::m_corner1, 3, 1}},
+  {30, {&Dxf_solid_entity::m_corner1, 3, 2}},
+  {11, {&Dxf_solid_entity::m_corner2, 3, 0}},
+  {21, {&Dxf_solid_entity::m_corner2, 3, 1}},
+  {31, {&Dxf_solid_entity::m_corner2, 3, 2}},
+  {12, {&Dxf_solid_entity::m_corner3, 3, 0}},
+  {22, {&Dxf_solid_entity::m_corner3, 3, 1}},
+  {32, {&Dxf_solid_entity::m_corner3, 3, 2}},
+  {13, {&Dxf_solid_entity::m_corner4, 3, 0}},
+  {23, {&Dxf_solid_entity::m_corner4, 3, 1}},
+  {33, {&Dxf_solid_entity::m_corner4, 3, 2}},
+  {210, {&Dxf_solid_entity::m_extrusion_direction, 3, 0}},
+  {220, {&Dxf_solid_entity::m_extrusion_direction, 3, 1}},
+  {230, {&Dxf_solid_entity::m_extrusion_direction, 3, 2}}
+};
 
 //! Record handlers
 template <>

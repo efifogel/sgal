@@ -28,6 +28,24 @@ DXF_BEGIN_NAMESPACE
 
 struct Dxf_solid_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
+
+  /// Record members
+  //@{
+  double m_corner1[3];  // First corner
+  double m_corner2[3];  // Second corner
+  double m_corner3[3];  // Third corner
+  double m_corner4[3];  // Fourth corner
+  double m_extrusion_direction[3]; // Extrusion direction (optional;
+                        // default = 0, 0, 1)
+
+  //@}
+
+  /*! Construct (set default values).
+   */
+  Dxf_solid_entity() :
+    m_extrusion_direction{0, 0, 1}
+  {}
+
 };
 
 DXF_END_NAMESPACE
