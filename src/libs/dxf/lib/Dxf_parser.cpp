@@ -315,6 +315,7 @@ Dxf_parser::Dxf_parser() :
   m_arcs_num(0),
   m_hatches_num(0),
   m_splines_num(0),
+  m_solids_num(0),
   m_inserts_num(0)
 {}
 
@@ -378,6 +379,7 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
     std::cout << "Processed " << m_circles_num << " circles" << std::endl;
     std::cout << "Processed " << m_arcs_num << " arcs" << std::endl;
     std::cout << "Processed " << m_hatches_num << " hatches" << std::endl;
+    std::cout << "Processed " << m_solids_num << " solids" << std::endl;
     std::cout << "Processed " << m_inserts_num << " inserts" << std::endl;
   }
 #endif
