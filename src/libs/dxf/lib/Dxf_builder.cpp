@@ -704,11 +704,20 @@ void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
     get_color_array(polyline.m_color, polyline.m_color_index, polyline.m_layer);
   if (! shared_colors) return;
 
-  size_t num_primitives(1);
-
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
   typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
   typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
+
+  auto closed = polyline.is_closed();
+
+  static const double min_bulge(0.1);
+
+  // Check whether mirroring is required
+  bool mirror(false);
+  if ((polyline.m_extrusion_direction[0] == 0) &&
+      (polyline.m_extrusion_direction[1] == 0) &&
+      (polyline.m_extrusion_direction[2] < 0))
+    mirror = true;
 
   // Add Shape
   Shared_shape shape(new SGAL::Shape);
@@ -728,8 +737,35 @@ void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
   m_scene_graph->add_container(ils);
   shape->set_geometry(ils);
 
+#if 0
+  std::list<SGAL::Vector2f> poly;
+  if (polyline.has_bulge()) {
+    std::list<double> bulges;
+    // Remove duplicate and collinear points:
+    SGAL::remove_collinear_points(polyline.points_begin(),
+                                  polyline.points_end(),
+                                  polyline.bulges_begin(),
+                                  polyline.bulges_end(), closed,
+                                  std::back_inserter(poly),
+                                  std::back_inserter(bulges));
+    if (poly.size() < 3) return;
+
+    // Approximate bulges:
+    approximate(poly, bulges.begin(), min_bulge, closed);
+    bulges.clear();
+  }
+  else {
+    // Remove duplicate and collinear points:
+    SGAL::remove_collinear_points(polyline.points_begin(),
+                                  polyline.points_end(), closed,
+                                  std::back_inserter(poly));
+    if (poly.size() < 3) return;
+  }
+#endif
+
   // Count number of vertices:
   size_t size(polyline.m_vertex_entities.size());
+  size_t num_primitives(1);
 
   // Allocate vertices:
   auto* coords = new SGAL::Coord_array_3d(size);
@@ -740,13 +776,6 @@ void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
   // Allocate indices:
   auto& indices = ils->get_coord_indices();
   indices.resize(size + num_primitives);
-
-  // Check whether mirroring is required
-  bool mirror(false);
-  if ((polyline.m_extrusion_direction[0] == 0) &&
-      (polyline.m_extrusion_direction[1] == 0) &&
-      (polyline.m_extrusion_direction[2] < 0))
-    mirror = true;
 
   // Assign the vertices & indices:
   auto it = indices.begin();
@@ -766,7 +795,7 @@ void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
   i += polyline.m_vertex_entities.size();
   *it++ = -1;
 
-  auto type = polyline.is_closed() ?
+  auto type = closed ?
     SGAL::Geo_set::PT_LINE_LOOPS : SGAL::Geo_set::PT_LINE_STRIPS;
   ils->set_primitive_type(type);
   ils->set_coord_array(shared_coords);
