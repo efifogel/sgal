@@ -1036,6 +1036,8 @@ private:
   size_t m_arcs_num;
   size_t m_hatches_num;
   size_t m_splines_num;
+  size_t m_solids_num;
+
   size_t m_inserts_num;
   //@}
 
@@ -1487,6 +1489,10 @@ private:
   /*! Process an insert entity.
    */
   void process_insert_entity(const Dxf_insert_entity& insert, SGAL::Group* root);
+
+  /*! Process a solid entity.
+   */
+  void process_solid_entity(const Dxf_solid_entity& solid, SGAL::Group* root);
 
   //@}
 
