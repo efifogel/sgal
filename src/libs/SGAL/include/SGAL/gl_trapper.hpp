@@ -287,7 +287,8 @@ inline void glColor3f(GLfloat red, GLfloat green, GLfloat blue)
 inline void glColor3fv(const GLfloat* v)
 {
   SGAL_TRACE_CODE(SGAL::Trace::GRAPHICS,
-                  std::cout << "glColor3fv(" << *((SGAL::Vector3f*) v) << ");"
+                  std::cout << "glColor3fv("
+                  << v[0] << "," << v[1] << "," << v[2] << ");"
                   << std::endl;);
   ::glColor3fv(v);
   // Cannot check for errors between glBegin() and glEnd()
@@ -2063,7 +2064,8 @@ inline void glNormal3f(GLfloat nx, GLfloat ny, GLfloat nz)
 inline void glNormal3fv(const GLfloat* v)
 {
   SGAL_TRACE_CODE(SGAL::Trace::GRAPHICS,
-                  std::cout << "glNormal3fv(" << *((SGAL::Vector3f*) v) << ");"
+                  std::cout << "glNormal3fv("
+                  << v[0] << "," << v[1] << "," << v[2] << ");"
                   << std::endl;
              );
   ::glNormal3fv(v);
@@ -2906,8 +2908,7 @@ inline void glTexCoord2f(const GLfloat v1, const GLfloat v2)
 inline void glTexCoord2fv(const GLfloat* v)
 {
   SGAL_TRACE_CODE(SGAL::Trace::GRAPHICS,
-                  std::cout << "glTexCoord2fv(" << *((SGAL::Vector2f*) v)
-                  << ");"
+                  std::cout << "glTexCoord2fv(" << v[0] << "," << v[1] << ");"
                   << std::endl;);
   ::glTexCoord2fv(v);
   // Cannot check for errors between glBegin() and glEnd()
@@ -3483,7 +3484,8 @@ inline void glVertex3f(GLfloat x, GLfloat y, GLfloat z)
 inline void glVertex3fv(const GLfloat* v)
 {
   SGAL_TRACE_CODE(SGAL::Trace::GRAPHICS,
-                  std::cout << "glVertex3fv(" << *((SGAL::Vector3f*) v) << ");"
+                  std::cout << "glVertex3fv("
+                  << v[0] << "," << v[1] << "," << v[2] << ");"
                   << std::endl;);
   ::glVertex3fv(v);
   // Cannot check for errors between glBegin() and glEnd()
