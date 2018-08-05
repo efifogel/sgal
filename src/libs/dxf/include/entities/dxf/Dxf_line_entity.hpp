@@ -29,7 +29,7 @@ DXF_BEGIN_NAMESPACE
 struct Dxf_line_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
 
-  /// Member records
+  /// Record members
   //@{
 
   double m_thickness;   // Thickness (optional; default = 0)
