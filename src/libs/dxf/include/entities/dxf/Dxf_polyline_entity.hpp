@@ -31,8 +31,9 @@ DXF_BEGIN_NAMESPACE
 
 struct Dxf_polyline_entity : public Dxf_base_entity {
   typedef Dxf_base_entity                       Base;
+  typedef std::vector<Dxf_vertex_entity>        Vertices;
 
-  /// Member records
+  /// Record members
   //@{
 
   enum {
@@ -51,14 +52,14 @@ struct Dxf_polyline_entity : public Dxf_base_entity {
                         // OCS when 2D, WCS when 3D)
   double m_thickness;   // Thickness (optional; default = 0)
   int16_t m_flag;       // Polyline flag (bit-coded); default is 0:
-                        // 1 = This is a closed polyline (or a polygon mesh
-                        //     closed in the M direction).
-                        // 2 = Curve-fit vertices have been added.
-                        // 4 = Spline-fit vertices have been added.
-                        // 8 = This is a 3D polyline.
-                        // 16 = This is a 3D polygon mesh.
-                        // 32 = The polygon mesh is closed in the N direction.
-                        // 64 = The polyline is a polyface mesh.
+                        //   1 = This is a closed polyline (or a polygon mesh
+                        //       closed in the M direction).
+                        //   2 = Curve-fit vertices have been added.
+                        //   4 = Spline-fit vertices have been added.
+                        //   8 = This is a 3D polyline.
+                        //  16 = This is a 3D polygon mesh.
+                        //  32 = The polygon mesh is closed in the N direction.
+                        //  64 = The polyline is a polyface mesh.
                         // 128 = The linetype pattern is generated continuously
                         //       around the vertices of this polyline.
   double m_start_width; // Default start width (optional; default = 0)
@@ -83,6 +84,10 @@ struct Dxf_polyline_entity : public Dxf_base_entity {
   /*! Determine whether the polyline is closed.
    */
   bool is_closed() const { return m_flag & CLOSED; }
+
+  /*! Determine whether the polyline is in 3d.
+   */
+  bool is_3d() const { return m_flag & IS_3D_POLYLINE; }
 
   /*! Determine whether the polyline has a bulge.
    * \return true if the polyline has a bulge and false otherwise.
@@ -116,93 +121,77 @@ struct Dxf_polyline_entity : public Dxf_base_entity {
    */
   void handle_obsolete(int16_t value) {}
 
+  //@}
+
   /*! Iterator to a point.
    */
-  class Point_const_iterator {
-  public:
-    Point_const_iterator(std::vector<Dxf_vertex_entity>::const_iterator it) :
-      m_it(it)
-    {}
-
-    typedef const double* difference_type;
-
-    /*! The dereference iterator.
-     */
-    const double* operator*() const { return m_it->m_location; }
-
-    /*! The increment iterator.
-     */
-    Point_const_iterator& operator++()
-    {
-      ++m_it;
-      return *this;
-    }
-
-    /*! The equality operator.
-     */
-    bool operator==(const Point_const_iterator& rhs) const
-    { return (rhs.m_it == m_it); }
-
-    /*! The non-equality operator.
-     */
-    bool operator!=(const Point_const_iterator& rhs) const
-    { return !(rhs == *this); }
-
+  class Point_const_iterator :
+    public std::iterator<std::bidirectional_iterator_tag, const double*>
+  {
   private:
+    typedef Point_const_iterator        iterator;
+
     //! The internal itertor.
     std::vector<Dxf_vertex_entity>::const_iterator m_it;
+
+  public:
+    Point_const_iterator() {}
+    Point_const_iterator(Vertices::const_iterator it) : m_it(it) {}
+    ~Point_const_iterator() {}
+
+    iterator& operator++() /* prefix */ { ++m_it; return *this; }
+    iterator& operator--() /* prefix */ { --m_it; return *this; }
+    const double* operator* () const { return &(m_it->m_location[0]); }
+    // pointer operator->() const { return &(m_it->m_location); }
+    bool operator==(const iterator& rhs) const { return m_it == rhs.m_it; }
+    bool operator!=(const iterator& rhs) const { return m_it != rhs.m_it; }
   };
 
   /*! Iterator to a bulge.
    */
-  class Bulge_const_iterator {
-  public:
-    Bulge_const_iterator(std::vector<Dxf_vertex_entity>::const_iterator it) :
-      m_it(it)
-    {}
-
-    typedef const double& difference_type;
-
-    /*! The dereference iterator.
-     */
-    const double& operator*() const { return m_it->m_bulge; }
-
-    /*! The increment iterator.
-     */
-    Bulge_const_iterator& operator++()
-    {
-      ++m_it;
-      return *this;
-    }
-
-    /*! The equality operator.
-     */
-    bool operator==(const Bulge_const_iterator& rhs) const
-    { return (rhs.m_it == m_it); }
-
-    /*! The non-equality operator.
-     */
-    bool operator!=(const Bulge_const_iterator& rhs) const
-    { return !(rhs == *this); }
-
+  class Bulge_const_iterator :
+    public std::iterator<std::bidirectional_iterator_tag, const double>
+  {
   private:
+    typedef Bulge_const_iterator        iterator;
+
     //! The internal itertor.
     std::vector<Dxf_vertex_entity>::const_iterator m_it;
+
+  public:
+    Bulge_const_iterator() {}
+    Bulge_const_iterator(Vertices::const_iterator it) : m_it(it) {}
+    ~Bulge_const_iterator() {}
+
+    iterator& operator++() /* prefix */ { ++m_it; return *this; }
+    iterator& operator--() /* prefix */ { --m_it; return *this; }
+    reference operator* () const { return m_it->m_bulge; }
+    pointer operator->() const { return &(m_it->m_bulge); }
+    bool operator==(const iterator& rhs) const { return m_it == rhs.m_it; }
+    bool operator!=(const iterator& rhs) const { return m_it != rhs.m_it; }
   };
 
+  /*! Obtain the begin iterator of points.
+   * Note that the value type is a pointer to a double.
+   */
   Point_const_iterator points_begin() const
   { return Point_const_iterator(m_vertex_entities.begin()); }
 
+  /*! Obtain the past-the-end iterator of points.
+   * Note that the value type is a pointer to a double.
+   */
   Point_const_iterator points_end() const
   { return Point_const_iterator(m_vertex_entities.end()); }
 
+  /*! Obtain the begin iterator of bulges.
+   */
   Bulge_const_iterator bulges_begin() const
   { return Bulge_const_iterator(m_vertex_entities.begin()); }
 
+  /*! Obtain the past-the-end iterator of bulges.
+   */
   Bulge_const_iterator bulges_end() const
   { return Bulge_const_iterator(m_vertex_entities.end()); }
-
-  //@}
 };
 
 DXF_END_NAMESPACE

@@ -68,6 +68,26 @@
 
 DXF_BEGIN_NAMESPACE
 
+// The extrusion direction of an entity is the normal vector to the plane
+// containing the entity. The handling of the extrusion direction of an entity
+// is degenerate.
+// We only handle the cases where the extrusion direction is the default, that
+// is (0,0,1), or (0,0,-1), which, essencially, implies that the local
+// coordinate system is scaled by (-1, 1, 1) (or rotated 180 deg. about the
+// y-axis).
+// Theoretically, the extrusion direction can be any vector of length 1, say e.
+// In all cases except for the above two, the entity should be rotated by a
+// rotation that rotates the vector (0,0,1) to e.
+
+// At this point we don't handle the following
+// 1. SPLINE entities.
+// 2. Patterns of HATCH entities.
+//      The hatches are always filled up even if they shouldn't and instead
+//      they should be rendred with a pattern, probably implemented by a vertex
+//      shader.
+// 3. DIMENSION entities.
+// 4. Probably more.
+
 //! \brief initializes the pallete.
 void Dxf_parser::init_palette(const SGAL::String& file_name)
 {
@@ -151,6 +171,10 @@ void Dxf_parser::process_entities(std::vector<Dxf_base_entity*>& entities,
     }
     if (auto* hatch = dynamic_cast<Dxf_hatch_entity*>(entity)) {
       process_hatch_entity(*hatch, root);
+      continue;
+    }
+    if (auto* solid = dynamic_cast<Dxf_solid_entity*>(entity)) {
+      process_solid_entity(*solid, root);
       continue;
     }
     if (auto* spline = dynamic_cast<Dxf_spline_entity*>(entity)) {
@@ -704,11 +728,18 @@ void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
     get_color_array(polyline.m_color, polyline.m_color_index, polyline.m_layer);
   if (! shared_colors) return;
 
+  auto closed = polyline.is_closed();
+  auto has_bulge = polyline.has_bulge();
+
+  if ((polyline.m_vertex_entities.size() < 2) ||
+      (closed && !has_bulge && (polyline.m_vertex_entities.size() < 3))) return;
+
+  //! \todo Add support for 3D.
+  if (polyline.is_3d()) return;
+
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
   typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
   typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
-
-  auto closed = polyline.is_closed();
 
   static const double min_bulge(0.1);
 
@@ -718,6 +749,32 @@ void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
       (polyline.m_extrusion_direction[1] == 0) &&
       (polyline.m_extrusion_direction[2] < 0))
     mirror = true;
+
+  std::list<SGAL::Vector2f> poly;
+  if (has_bulge) {
+    std::list<double> bulges;
+    // Remove duplicate and collinear points:
+    SGAL::remove_collinear_points(polyline.points_begin(),
+                                  polyline.points_end(),
+                                  polyline.bulges_begin(),
+                                  polyline.bulges_end(), closed,
+                                  std::back_inserter(poly),
+                                  std::back_inserter(bulges));
+    if ((poly.size() < 2) || (closed && ! has_bulge && (poly.size() < 3)))
+      return;
+
+    // Approximate bulges:
+    approximate(poly, bulges.begin(), min_bulge, closed);
+    bulges.clear();
+  }
+  else {
+    // Remove duplicate and collinear points:
+    SGAL::remove_collinear_points(polyline.points_begin(),
+                                  polyline.points_end(), closed,
+                                  std::back_inserter(poly));
+    if ((poly.size() < 2) || (closed && (poly.size() < 3))) return;
+  }
+  // for (auto& p : poly) std::cout << p << std::endl;
 
   // Add Shape
   Shared_shape shape(new SGAL::Shape);
@@ -736,144 +793,6 @@ void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
   ils->add_to_scene(m_scene_graph);
   m_scene_graph->add_container(ils);
   shape->set_geometry(ils);
-
-#if 0
-  std::list<SGAL::Vector2f> poly;
-  if (polyline.has_bulge()) {
-    std::list<double> bulges;
-    // Remove duplicate and collinear points:
-    SGAL::remove_collinear_points(polyline.points_begin(),
-                                  polyline.points_end(),
-                                  polyline.bulges_begin(),
-                                  polyline.bulges_end(), closed,
-                                  std::back_inserter(poly),
-                                  std::back_inserter(bulges));
-    if (poly.size() < 3) return;
-
-    // Approximate bulges:
-    approximate(poly, bulges.begin(), min_bulge, closed);
-    bulges.clear();
-  }
-  else {
-    // Remove duplicate and collinear points:
-    SGAL::remove_collinear_points(polyline.points_begin(),
-                                  polyline.points_end(), closed,
-                                  std::back_inserter(poly));
-    if (poly.size() < 3) return;
-  }
-#endif
-
-  // Count number of vertices:
-  size_t size(polyline.m_vertex_entities.size());
-  size_t num_primitives(1);
-
-  // Allocate vertices:
-  auto* coords = new SGAL::Coord_array_3d(size);
-  Shared_coord_array_3d shared_coords(coords);
-  coords->add_to_scene(m_scene_graph);
-  m_scene_graph->add_container(shared_coords);
-
-  // Allocate indices:
-  auto& indices = ils->get_coord_indices();
-  indices.resize(size + num_primitives);
-
-  // Assign the vertices & indices:
-  auto it = indices.begin();
-  auto cit = coords->begin();
-  size_t i(0);
-  cit = std::transform(polyline.m_vertex_entities.begin(),
-                       polyline.m_vertex_entities.end(), cit,
-                       [&](const Dxf_vertex_entity& vertex)
-                       {
-                         auto& p = vertex.m_location;
-                         auto x = (mirror) ? -p[0] : p[0];
-                         return SGAL::Vector3f(x, p[1], 0);
-                       });
-  auto it_start = it;
-  std::advance(it, polyline.m_vertex_entities.size());
-  std::iota(it_start, it, i);
-  i += polyline.m_vertex_entities.size();
-  *it++ = -1;
-
-  auto type = closed ?
-    SGAL::Geo_set::PT_LINE_LOOPS : SGAL::Geo_set::PT_LINE_STRIPS;
-  ils->set_primitive_type(type);
-  ils->set_coord_array(shared_coords);
-  ils->set_color_array(shared_colors);
-  ils->set_num_primitives(num_primitives);
-  ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
-}
-
-//! \brief processes a light weight polyline entity.
-void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline,
-                                           SGAL::Group* root)
-{
-  ++m_lwpolylines_num;
-
-  // Obtain the color array:
-  Shared_color_array shared_colors =
-    get_color_array(polyline.m_color, polyline.m_color_index, polyline.m_layer);
-  if (! shared_colors) return;
-
-  if (polyline.m_vertices.size() < 3) return;
-
-  static const double min_bulge(0.1);
-
-  // Check whether mirroring is required
-  bool mirror(false);
-  if ((polyline.m_extrusion_direction[0] == 0) &&
-      (polyline.m_extrusion_direction[1] == 0) &&
-      (polyline.m_extrusion_direction[2] < 0))
-    mirror = true;
-
-  auto closed = polyline.is_closed();
-
-  typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
-  typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
-  typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
-
-  // Add Shape
-  Shared_shape shape(new SGAL::Shape);
-  SGAL_assertion(shape);
-  shape->add_to_scene(m_scene_graph);
-  m_scene_graph->add_container(shape);
-  root->add_child(shape);
-
-  // Add Appearance
-  auto app = get_fill_appearance();
-  shape->set_appearance(app);
-
-  // Add IndexedLineSet:
-  Shared_indexed_line_set ils(new SGAL::Indexed_line_set);
-  SGAL_assertion(ils);
-  m_scene_graph->add_container(ils);
-  ils->add_to_scene(m_scene_graph);
-  ils->set_color_array(shared_colors);
-  shape->set_geometry(ils);
-
-  std::list<SGAL::Vector2f> poly;
-  if (polyline.has_bulge()) {
-    std::list<double> bulges;
-    // Remove duplicate and collinear points:
-    SGAL::remove_collinear_points(polyline.m_vertices.begin(),
-                                  polyline.m_vertices.end(),
-                                  polyline.m_bulges.begin(),
-                                  polyline.m_bulges.end(), closed,
-                                  std::back_inserter(poly),
-                                  std::back_inserter(bulges));
-    if (poly.size() < 3) return;
-
-    // Approximate bulges:
-    approximate(poly, bulges.begin(), min_bulge, closed);
-    bulges.clear();
-  }
-  else {
-    // Remove duplicate and collinear points:
-    SGAL::remove_collinear_points(polyline.m_vertices.begin(),
-                                  polyline.m_vertices.end(), closed,
-                                  std::back_inserter(poly));
-    if (poly.size() < 3) return;
-  }
 
   // Count number of vertices:
   size_t size(poly.size());
@@ -906,6 +825,115 @@ void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline
     SGAL::Geo_set::PT_LINE_LOOPS : SGAL::Geo_set::PT_LINE_STRIPS;
   ils->set_primitive_type(type);
   ils->set_coord_array(shared_coords);
+  ils->set_color_array(shared_colors);
+  ils->set_num_primitives(num_primitives);
+  ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
+}
+
+//! \brief processes a light weight polyline entity.
+void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline,
+                                           SGAL::Group* root)
+{
+  ++m_lwpolylines_num;
+
+  // Obtain the color array:
+  Shared_color_array shared_colors =
+    get_color_array(polyline.m_color, polyline.m_color_index, polyline.m_layer);
+  if (! shared_colors) return;
+
+  auto closed = polyline.is_closed();
+  auto has_bulge = polyline.has_bulge();
+
+  if ((polyline.m_vertices.size() < 2) ||
+      (closed && ! has_bulge && (polyline.m_vertices.size() < 3))) return;
+
+  static const double min_bulge(0.1);
+
+  // Check whether mirroring is required
+  bool mirror(false);
+  if ((polyline.m_extrusion_direction[0] == 0) &&
+      (polyline.m_extrusion_direction[1] == 0) &&
+      (polyline.m_extrusion_direction[2] < 0))
+    mirror = true;
+
+  typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
+  typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
+  typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
+
+  std::list<SGAL::Vector2f> poly;
+  if (has_bulge) {
+    std::list<double> bulges;
+    // Remove duplicate and collinear points:
+    SGAL::remove_collinear_points(polyline.m_vertices.begin(),
+                                  polyline.m_vertices.end(),
+                                  polyline.m_bulges.begin(),
+                                  polyline.m_bulges.end(), closed,
+                                  std::back_inserter(poly),
+                                  std::back_inserter(bulges));
+    if ((poly.size() < 2) || (closed && !has_bulge && (poly.size() < 3))) return;
+
+    // Approximate bulges:
+    approximate(poly, bulges.begin(), min_bulge, closed);
+    bulges.clear();
+  }
+  else {
+    // Remove duplicate and collinear points:
+    SGAL::remove_collinear_points(polyline.m_vertices.begin(),
+                                  polyline.m_vertices.end(), closed,
+                                  std::back_inserter(poly));
+    if ((poly.size() < 2) || (closed && (poly.size() < 3))) return;
+  }
+
+  // Add Shape
+  Shared_shape shape(new SGAL::Shape);
+  SGAL_assertion(shape);
+  shape->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(shape);
+  root->add_child(shape);
+
+  // Add Appearance
+  auto app = get_fill_appearance();
+  shape->set_appearance(app);
+
+  // Add IndexedLineSet:
+  Shared_indexed_line_set ils(new SGAL::Indexed_line_set);
+  SGAL_assertion(ils);
+  m_scene_graph->add_container(ils);
+  ils->add_to_scene(m_scene_graph);
+  shape->set_geometry(ils);
+
+  // Count number of vertices:
+  size_t size(poly.size());
+  size_t num_primitives(1);
+
+  // Allocate vertices:
+  auto* coords = new SGAL::Coord_array_3d(size);
+  Shared_coord_array_3d shared_coords(coords);
+  coords->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(shared_coords);
+
+  // Allocate indices:
+  auto& indices = ils->get_coord_indices();
+  indices.resize(size + num_primitives);
+
+  // Assign the vertices & indices:
+  std::transform(poly.begin(), poly.end(), coords->begin(),
+                 [&](const SGAL::Vector2f& v)
+                 {
+                   auto x = (mirror) ? -v[0] : v[0];
+                   return SGAL::Vector3f(x, v[1], 0);
+                 });
+  poly.clear();
+  auto it = indices.begin();
+  std::advance(it, size);
+  std::iota(indices.begin(), it, 0);
+  *it++ = -1;
+
+  auto type = closed ?
+    SGAL::Geo_set::PT_LINE_LOOPS : SGAL::Geo_set::PT_LINE_STRIPS;
+  ils->set_primitive_type(type);
+  ils->set_coord_array(shared_coords);
+  ils->set_color_array(shared_colors);
   ils->set_num_primitives(num_primitives);
   ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
@@ -1112,7 +1140,104 @@ void Dxf_parser::process_insert_entity(const Dxf_insert_entity& insert,
                        insert.m_z_scale_factor);
   transform->set_rotation(0, 0, 1, SGAL::deg2rad(insert.m_rotation));
 
+  // Check whether mirroring is required
+  bool mirror(false);
+  if ((insert.m_extrusion_direction[0] == 0) &&
+      (insert.m_extrusion_direction[1] == 0) &&
+      (insert.m_extrusion_direction[2] < 0))
+    mirror = true;
+
+  if (mirror) {
+    const auto& mat = transform->get_matrix();
+    SGAL::Matrix4f extrusion_mat;
+    extrusion_mat.make_scale(-1, 1, 1);
+    // extrusion_mat.make_rot(0, 1, 0, 3.14);
+    extrusion_mat.pre_mult(mat);
+    transform->set_matrix(extrusion_mat);
+  }
+
   root->add_child(transform);
+}
+
+//! \brief processes a solid entity.
+void Dxf_parser::process_solid_entity(const Dxf_solid_entity& solid,
+                                      SGAL::Group* root)
+{
+  ++m_solids_num;
+
+  // Obtain the color array:
+  Shared_color_array shared_colors =
+    get_color_array(solid.m_color, solid.m_color_index, solid.m_layer);
+  if (! shared_colors) return;
+
+  // Check whether mirroring is required
+  bool mirror(false);
+  if ((solid.m_extrusion_direction[0] == 0) &&
+      (solid.m_extrusion_direction[1] == 0) &&
+      (solid.m_extrusion_direction[2] < 0))
+    mirror = true;
+
+  static const double min_bulge(0.1);
+
+  typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
+  typedef boost::shared_ptr<SGAL::Indexed_face_set>   Shared_indexed_face_set;
+  typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
+
+  // Add Shape
+  Shared_shape shape(new SGAL::Shape);
+  SGAL_assertion(shape);
+  shape->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(shape);
+  root->add_child(shape);
+
+  // Add Appearance
+  auto app = get_fill_appearance();
+  shape->set_appearance(app);
+
+  // Add geometry
+  Shared_indexed_face_set ifs(new SGAL::Indexed_face_set);
+  SGAL_assertion(ifs);
+  ifs->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(ifs);
+  shape->set_geometry(ifs);
+
+  // We assume that the solid is convex and the order of points is 1, 2, 4, 3
+  // If this assumption turns out to be erroneous, then compute the convex hull,
+  // the triangulate.
+
+  // Count number of primitives & vertices:
+  size_t num_primitives(1);
+  size_t num_indices(5);
+  size_t size(4);
+
+  // Allocate vertices:
+  auto* coords = new SGAL::Coord_array_3d(size);
+  Shared_coord_array_3d shared_coords(coords);
+  coords->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(shared_coords);
+
+  // Allocate indices:
+  auto& indices = ifs->get_coord_indices();
+  indices.resize(num_indices);
+
+  // Assign the coordinates & indices:
+  auto cit = coords->begin();
+  *cit++ = SGAL::Vector3f(solid.m_corner1[0], solid.m_corner1[1], solid.m_corner1[2]);
+  *cit++ = SGAL::Vector3f(solid.m_corner2[0], solid.m_corner2[1], solid.m_corner2[2]);
+  *cit++ = SGAL::Vector3f(solid.m_corner4[0], solid.m_corner4[1], solid.m_corner4[2]);
+  *cit++ = SGAL::Vector3f(solid.m_corner3[0], solid.m_corner3[1], solid.m_corner3[2]);
+
+  auto it = indices.begin();
+  *it++ = 0;
+  *it++ = 1;
+  *it++ = 2;
+  *it++ = 3;
+  *it++ = -1;
+
+  ifs->set_coord_array(shared_coords);
+  ifs->set_color_array(shared_colors);
+  ifs->set_num_primitives(num_primitives);
+  ifs->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
 DXF_END_NAMESPACE
