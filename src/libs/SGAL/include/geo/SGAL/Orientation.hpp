@@ -43,10 +43,11 @@ enum class Orientation {
 template <typename Vector>
 inline Orientation orientation(const Vector& a, const Vector& b, const Vector& c)
 {
-  Vector v, u;
-  v.sub(b, a);
-  u.sub(c, b);
-  auto x = v[0] * u[1] - v[1] * u[0];
+  auto v0 = b[0] - a[0];
+  auto v1 = b[1] - a[1];
+  auto u0 = c[0] - b[0];
+  auto u1 = c[1] - b[1];
+  auto x = v0 * u1 - v1 * u0;
   return (x < 0) ? Orientation::Right_turn :
     ((x == 0) ? Orientation::Collinear : Orientation::Left_turn);
 }
