@@ -84,6 +84,16 @@ struct Dxf_polyline_entity : public Dxf_base_entity {
    */
   bool is_closed() const { return m_flag & CLOSED; }
 
+  /*! Determine whether the polyline has a bulge.
+   * \return true if the polyline has a bulge and false otherwise.
+   */
+  bool has_bulge() const
+  {
+    for (auto& vertex : m_vertex_entities)
+      if (vertex.m_bulge != 0.0) return true;
+    return false;
+  }
+
   /*! Construct (set default values).
    */
   Dxf_polyline_entity() :
@@ -105,6 +115,92 @@ struct Dxf_polyline_entity : public Dxf_base_entity {
   /*! Handle obsolete.
    */
   void handle_obsolete(int16_t value) {}
+
+  /*! Iterator to a point.
+   */
+  class Point_const_iterator {
+  public:
+    Point_const_iterator(std::vector<Dxf_vertex_entity>::const_iterator it) :
+      m_it(it)
+    {}
+
+    typedef const double* difference_type;
+
+    /*! The dereference iterator.
+     */
+    const double* operator*() const { return m_it->m_location; }
+
+    /*! The increment iterator.
+     */
+    Point_const_iterator& operator++()
+    {
+      ++m_it;
+      return *this;
+    }
+
+    /*! The equality operator.
+     */
+    bool operator==(const Point_const_iterator& rhs) const
+    { return (rhs.m_it == m_it); }
+
+    /*! The non-equality operator.
+     */
+    bool operator!=(const Point_const_iterator& rhs) const
+    { return !(rhs == *this); }
+
+  private:
+    //! The internal itertor.
+    std::vector<Dxf_vertex_entity>::const_iterator m_it;
+  };
+
+  /*! Iterator to a bulge.
+   */
+  class Bulge_const_iterator {
+  public:
+    Bulge_const_iterator(std::vector<Dxf_vertex_entity>::const_iterator it) :
+      m_it(it)
+    {}
+
+    typedef const double& difference_type;
+
+    /*! The dereference iterator.
+     */
+    const double& operator*() const { return m_it->m_bulge; }
+
+    /*! The increment iterator.
+     */
+    Bulge_const_iterator& operator++()
+    {
+      ++m_it;
+      return *this;
+    }
+
+    /*! The equality operator.
+     */
+    bool operator==(const Bulge_const_iterator& rhs) const
+    { return (rhs.m_it == m_it); }
+
+    /*! The non-equality operator.
+     */
+    bool operator!=(const Bulge_const_iterator& rhs) const
+    { return !(rhs == *this); }
+
+  private:
+    //! The internal itertor.
+    std::vector<Dxf_vertex_entity>::const_iterator m_it;
+  };
+
+  Point_const_iterator points_begin() const
+  { return Point_const_iterator(m_vertex_entities.begin()); }
+
+  Point_const_iterator points_end() const
+  { return Point_const_iterator(m_vertex_entities.end()); }
+
+  Bulge_const_iterator bulges_begin() const
+  { return Bulge_const_iterator(m_vertex_entities.begin()); }
+
+  Bulge_const_iterator bulges_end() const
+  { return Bulge_const_iterator(m_vertex_entities.end()); }
 
   //@}
 };
