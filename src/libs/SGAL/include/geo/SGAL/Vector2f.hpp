@@ -37,6 +37,8 @@ public:
   Vector2f();
   Vector2f(Float a, Float b);
   Vector2f(const Vector2f& v);
+  Vector2f(const float v[2]);
+  Vector2f(const double v[2]);
 
   void set(Float a, Float b);
   void get(Float& a, Float& b) const;
@@ -82,6 +84,12 @@ inline Vector2f::Vector2f() { m_vector[0] = m_vector[1] = 0.0f; }
 
 //! \brief constructs.
 inline Vector2f::Vector2f(Float a, Float b) { set(a, b); }
+
+//! \brief constructs.
+inline Vector2f::Vector2f(const float v[2]) { set(v[0], v[1]); }
+
+//! \brief constructs.
+inline Vector2f::Vector2f(const double v[2]) { set(v[0], v[1]); }
 
 //! \brief copy constructs.
 inline Vector2f::Vector2f(const Vector2f& v) { set(v[0], v[1]); }
