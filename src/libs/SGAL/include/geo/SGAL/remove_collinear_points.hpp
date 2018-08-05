@@ -67,14 +67,7 @@ void remove_collinear_points(InputIterator begin, InputIterator end,
     ++it3;
   }
 
-  if (closed) {
-    it3 = begin;
-    if (Orientation::Collinear != orientation(*it1, *it2, *it3))
-      *out++ = *it2;
-  }
-  else {
-    if (*it1 != *it2) *out++ = *it2;
-  }
+  if (*it1 != *it2) *out++ = *it2;
 }
 
 /*! Simplify a polyline removing duplicated and collinear points in-place.
@@ -196,22 +189,9 @@ void remove_collinear_points(PointInputIterator points_begin,
     ++bit2;
   }
 
-  if (closed) {
-    it3 = points_begin;
-    bit2 = bulges_begin;
-    if (((*bit1 == 0.0) || (*bit2 == 0.0) ||
-         (Orientation::Collinear != orientation(*it1, *it2, *it3))) &&
-        (*it1 != *it2))
-    {
-      *points_out++ = *it2;
-      *bulges_out++ = *bit2;
-    }
-  }
-  else {
-    if (*it1 != *it2) {
-      *points_out++ = *it2;
-      *bulges_out++ = *bit2;
-    }
+  if (*it1 != *it2) {
+    *points_out++ = *it2;
+    *bulges_out++ = *bit2;
   }
 }
 
