@@ -52,7 +52,7 @@ SGAL_BEGIN_NAMESPACE
 //! The Loader singleton.
 Loader* Loader::s_instance = nullptr;
 
-//! \brief obtains a trace singleton.
+//! \brief obtains the loader singleton.
 Loader* Loader::get_instance()
 {
   if (!s_instance) s_instance = new Loader();
@@ -63,7 +63,8 @@ Loader* Loader::get_instance()
 Loader::Loader() : m_multiple_shapes(false) {}
 
 //! \brief loads a scene graph from a file.
-Loader_code Loader::load(const char* filename, Scene_graph* sg)
+Loader_code Loader::operator()(const char* filename,
+                               Scene_graph* sg, SGAL::Group* root)
 {
   SGAL_assertion(filename);
 
@@ -117,7 +118,7 @@ Loader_code Loader::load(const char* filename, Scene_graph* sg)
   if (boost::regex_match(magic, what, re)) {
     // If the first line starts with "OFF" and the file extension is off,
     // assume that the file format is OFF.
-    auto rc = load_off(is, sg, what);
+    auto rc = load_off(is, what, sg, root);
     if (static_cast<int>(rc) <= 0) {
       is.close();
       if ((rc == Loader_code::SUCCESS) &&
@@ -135,7 +136,7 @@ Loader_code Loader::load(const char* filename, Scene_graph* sg)
   else if ((0 == magic.compare(0, 5, "solid")) ||
            (0 == magic.compare(0, 5, "#VRML")))
   {
-    auto rc = parse(is, sg);
+    auto rc = parse(is, sg, root);
     if (static_cast<int>(rc) <= 0) {
       is.close();
       return rc;
@@ -146,7 +147,7 @@ Loader_code Loader::load(const char* filename, Scene_graph* sg)
   // If the return code of the loader is positive, the file might be in a
   // different format. In this case, continue trying matching.
   if (boost::iequals(file_extension, ".obj")) {
-    auto rc = parse_obj(is, sg);
+    auto rc = parse_obj(is, sg, root);
     is.close();
     if (static_cast<int>(rc) <= 0) {
       if (static_cast<int>(rc) < 0) throw Parse_error(m_filename);
@@ -158,7 +159,7 @@ Loader_code Loader::load(const char* filename, Scene_graph* sg)
   // If the return code of the loader is positive, the file might be in a
   // different format. In this case, continue trying matching.
   else if (boost::iequals(file_extension, ".stl")) {
-    auto rc = load_stl(is, sg);
+    auto rc = load_stl(is, sg, root);
     is.close();
     if (static_cast<int>(rc) <= 0) {
       if (rc == Loader_code::SUCCESS) {
@@ -178,7 +179,7 @@ Loader_code Loader::load(const char* filename, Scene_graph* sg)
     auto it = m_loaders.find(file_extension);
     if (it != m_loaders.end()) {
       auto& loader = *(it->second);
-      auto rc = loader(is, sg, m_filename);
+      auto rc = loader(is, m_filename, sg, root);
       is.close();
       if (rc == Loader_code::SUCCESS) return rc;
       if (rc == Loader_code::FAILURE) {
@@ -190,7 +191,7 @@ Loader_code Loader::load(const char* filename, Scene_graph* sg)
 
   // Assume that the file is in the binary STL format.
   is.seekg(0, is.beg);
-  auto rc = load_stl(is, sg);
+  auto rc = load_stl(is, sg, root);
   is.close();
   if (rc == Loader_code::SUCCESS) {
     if (!boost::iequals(file_extension, ".stl"))
@@ -205,8 +206,8 @@ Loader_code Loader::load(const char* filename, Scene_graph* sg)
 }
 
 //! \brief loads a scene graph from an input stream.
-Loader_code
-Loader::load_stl(std::istream& is, size_t size, Scene_graph* sg)
+Loader_code Loader::load_stl(std::istream& is, size_t size,
+                             Scene_graph* sg, SGAL::Group* root)
 {
   char str[81];
   is.read(str, 80);
@@ -227,35 +228,36 @@ Loader::load_stl(std::istream& is, size_t size, Scene_graph* sg)
     Float alpha = static_cast<Float>(static_cast<Uchar>(str[pos+3])) / 255.0f;
     color.set(red, green, blue);
   }
-  auto rc = read_stl(is, size, sg, color);
+  auto rc = read_stl(is, size, sg, root, color);
   if (static_cast<int>(rc) < 0) return rc;
   return Loader_code::SUCCESS;
 }
 
 //! \brief loads a scene graph from an stl file.
 Loader_code Loader::load_stl(char* data, size_t size,
-                                     Scene_graph* sg)
+                             Scene_graph* sg, SGAL::Group* root)
 {
   boost::interprocess::bufferstream is(data, size);
   if (!is.good()) {
     throw Overflow_error(m_filename);
     return Loader_code::FAILURE;
   }
-  return load_stl(is, size, sg);
+  return load_stl(is, size, sg, root);
 }
 
 //! \brief loads a scene graph from an stl file.
-Loader_code Loader::load_stl(std::istream& is, Scene_graph* sg)
+Loader_code Loader::load_stl(std::istream& is,
+                             Scene_graph* sg, SGAL::Group* root)
 {
   is.seekg(0, is.end);
   size_t size = is.tellg();
   is.seekg(0, is.beg);
-  auto rc = load_stl(is, size, sg);
+  auto rc = load_stl(is, size, sg, root);
   return rc;
 }
 
-//! \brief parses a scene graph from a stream.
-Loader_code Loader::parse(std::istream& its, Scene_graph* sg)
+//! \brief parses a scene from a stream.
+Loader_code Loader::parse(std::istream& its, Scene_graph* sg, SGAL::Group* root)
 {
   Vrml_scanner scanner(&its);
   scanner.set_filename(m_filename);
@@ -263,7 +265,6 @@ Loader_code Loader::parse(std::istream& its, Scene_graph* sg)
 
   // Parse & export:
   bool maybe_binary_stl(false);
-  auto* root = sg->initialize();
   Vrml_parser parser(scanner, sg, root, maybe_binary_stl);
   auto rc = parser.parse();
   if (0 != rc) {
@@ -274,23 +275,24 @@ Loader_code Loader::parse(std::istream& its, Scene_graph* sg)
   return Loader_code::SUCCESS;
 }
 
-//! \brief loads a scene graph from a buffer.
-Loader_code
-Loader::load(char* data, size_t size, const char* filename, Scene_graph* sg)
+//! \brief loads a scene from a buffer.
+Loader_code Loader::operator()(char* data, size_t size, const char* filename,
+                               Scene_graph* sg, SGAL::Group* root)
 {
   // Try to determine the file type from its extension.
   if (filename) {
     std::string file_extension = boost::filesystem::extension(filename);
     if (boost::iequals(file_extension, ".stl")) {
-      auto rc = load_stl(data, size, sg);
+      auto rc = load_stl(data, size, sg, root);
       if (static_cast<int>(rc) <= 0) return rc;
     }
   }
-  return load(data, size, sg);
+  return operator()(data, size, sg, root);
 }
 
-//! \brief loads a scene graph from a buffer.
-Loader_code Loader::load(char* data, size_t size, Scene_graph* sg)
+//! \brief loads a scene from a buffer.
+Loader_code Loader::operator()(char* data, size_t size,
+                               Scene_graph* sg, SGAL::Group* root)
 {
   boost::interprocess::bufferstream is(data, size);
   if (!is.good()) {
@@ -298,7 +300,7 @@ Loader_code Loader::load(char* data, size_t size, Scene_graph* sg)
     return Loader_code::FAILURE;
   }
 
-  auto rc = parse(is, sg);
+  auto rc = parse(is, sg, root);
   if (static_cast<int>(rc) < 0) {
     is.clear();
     return rc;
@@ -306,7 +308,7 @@ Loader_code Loader::load(char* data, size_t size, Scene_graph* sg)
 
   is.clear();
 
-  if (rc == Loader_code::RETRY) rc = load_stl(data, size, sg);
+  if (rc == Loader_code::RETRY) rc = load_stl(data, size, sg, root);
   return rc;
 }
 
@@ -559,10 +561,10 @@ void Loader::add_colored_shape(Scene_graph* scene_graph, Group* group,
 
 //! \brief reads a scene graph from a stream in the STL binary format.
 Loader_code Loader::read_stl(std::istream& is, size_t size,
-                             Scene_graph* scene_graph, const Vector3f& color)
+                             Scene_graph* scene_graph, SGAL::Group* root,
+                             const Vector3f& color)
 {
   scene_graph->set_input_format_id(File_format_3d::ID_STL);
-  auto* root = scene_graph->initialize();
 
   Int32 total_num_tris;
   is.read((char*)&total_num_tris, sizeof(Int32));
@@ -617,8 +619,8 @@ Loader_code Loader::read_stl(std::istream& is, size_t size,
  *    what[4]---4 components including a final homogeneous component
  *    what[5]---n components
  */
-Loader_code Loader::load_off(std::istream& is, Scene_graph* sg,
-                             const boost::smatch& what)
+Loader_code Loader::load_off(std::istream& is, const boost::smatch& what,
+                             Scene_graph* sg, SGAL::Group* root)
 {
   // Consume the magic string
   std::string line;
@@ -626,9 +628,6 @@ Loader_code Loader::load_off(std::istream& is, Scene_graph* sg,
 
   sg->set_input_format_id(File_format_3d::ID_OFF);
   bool has_colors = what.length(2);
-
-  // Obtain root.
-  auto* root = sg->initialize();
 
   // Add Shape
   Shared_shape shape(new Shape);
@@ -1213,10 +1212,10 @@ Loader::update_ifs(Scene_graph* sg,
 }
 
 // \brief loads a scene graph represented in the obj file format from a stream.
-Loader_code Loader::parse_obj(std::istream& is, Scene_graph* sg)
+Loader_code Loader::parse_obj(std::istream& is,
+                              Scene_graph* sg, SGAL::Group* root)
 {
   sg->set_input_format_id(File_format_3d::ID_OBJ);
-  auto* root = sg->initialize();            // obtain root
 
   // Construct arrays
   Shared_coord_array_3d shared_coords(new Coord_array_3d);

@@ -173,9 +173,15 @@ public:
   Dxf_parser();
 
   /*! Parse.
+   * \param[in] is the stream to parse.
+   * \param[in] filename the name of the file to load.
+   * \param[in] scene_graph the scene graph.
+   * \param[in] root the root of the constructed (sub) graph.
    */
-  virtual SGAL::Loader_code operator()(std::istream& is, SGAL::Scene_graph* sg,
-                                       const SGAL::String& filename);
+  virtual SGAL::Loader_code operator()(std::istream& is,
+                                       const SGAL::String& filename,
+                                       SGAL::Scene_graph* sg,
+                                       SGAL::Group* root);
 
   /*! Set the flag that determines whether to report unrecognized code.
    */

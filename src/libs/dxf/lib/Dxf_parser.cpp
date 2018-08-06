@@ -320,10 +320,11 @@ Dxf_parser::Dxf_parser() :
 
 //! \brief parses.
 SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
+                                         const SGAL::String& filename,
                                          SGAL::Scene_graph* sg,
-                                         const SGAL::String& filename)
+                                         SGAL::Group* root)
 {
-  Base_loader::operator()(is, sg, filename);
+  Base_loader::operator()(is, filename, sg, root);
   m_pending_code = 0;
   m_is_pending = false;
   m_extended_data = nullptr;
@@ -365,7 +366,6 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
   //
   m_scene_graph->set_input_format_id(SGAL::File_format_3d::ID_DXF);
   process_layers();
-  auto* root = m_scene_graph->initialize();
 
   add_background(root);
   process_entities(m_entities, root);

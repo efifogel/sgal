@@ -48,78 +48,115 @@ class Appearance;
 class Material;
 class Base_loader;
 
+/*! \class Loader Loader.hpp
+ * Loader is a function object that loads a scene from a file or an input
+ * stream. It is a singleton that utilizes loaders of sepecific input formats.
+ * Several input formats are supported, i.e., VRML, STL test & binary, OFF, and
+ * OBJ. Also, external libraries can register additional specific loaders; for
+ * example, the SGAL_dxf library, registers a specific loader that supports the
+ * dxf format.
+ *
+ * The loaded scene is represented as a scene graph, which is a directed acyclic
+ * graph of nodes. The root of the constructed graph is provided as a mandatory
+ * argument of the operator(s) of the loader. In addition, the operator(s) of
+ * the loader accept as input the input file name, the input buffer, or the
+ * input stream, or a combination of the above. They also accept an argument,
+ * referred to as Scene_graph, which holds several parameters of the scene graph
+ * including the root of the graph that represents the entire scene.
+ *
+ * The loader is reentrant; that is, it can be invoked several times with
+ * different input values to construct several sub graphs, respectively, that
+ * represent corresponding pieces of one large scene. These sub-graphs can be
+ * combined together to represent one large scene.
+ */
+
 class SGAL_SGAL_DECL Loader {
 public:
-  /*! Obtain the trace singleton.
-   * \return the trace singleton.
+  /*! Obtain the loader singleton.
+   * \return the loader singleton.
    */
   static Loader* get_instance();
 
-  /*! Load a scene graph from a file.
+  /*! Load a scene from a file.
    * \param[in] filename the name of the file to load.
-   * \param[in] sg the scene graph
+   * \param[in] scene_graph the scene graph.
+   * \param[in] root the root of the constructed (sub) graph.
    */
-  Loader_code load(const char* filename, Scene_graph* scene_graph);
+  Loader_code operator()(const char* filename,
+                         Scene_graph* scene_graph, Group* root);
 
-  /*! Parse a scene graph from a text stream.
-   * \param[in] its the text stream to parse.
-   * \param[in] sg the scene graph
-   */
-  Loader_code parse(std::istream& is, Scene_graph* scene_graph);
-
-  /*! Load a scene graph from a buffer.
+  /*! Load a scene from a buffer.
    * \param[in] data the buffer that contains the model description.
    * \param[in] size the size of the buffer.
    * \param[in] filename the name of the source file of the data.
-   * \param[in] sg the scene graph
+   * \param[in] scene_graph the scene graph
+   * \param[in] root the root of the constructed (sub) graph.
    */
-  Loader_code load(char* data, size_t size, const char* filename,
-                   Scene_graph* scene_graph);
+  Loader_code operator()(char* data, size_t size, const char* filename,
+                         Scene_graph* scene_graph, Group* root);
 
-  /*! Load a scene graph from a buffer.
+  /*! Load a scene from a buffer.
    * \param[in] data the buffer that contains the model description.
    * \param[in] size the size of the buffer.
-   * \param[in] sg the scene graph
+   * \param[in] scene_graph the scene graph
+   * \param[in] root the root of the constructed (sub) graph.
    */
-  Loader_code load(char* data, size_t size, Scene_graph* scene_graph);
+  Loader_code operator()(char* data, size_t size,
+                         Scene_graph* scene_graph, Group* root);
 
   /*! Load a scene graph from an stl file.
    * \param[in] is the stream to load.
-   * \param[in] sg the scene graph
+   * \param[in] scene_graph the scene graph.
+   * \param[in] root the root of the constructed (sub) graph.
    */
-  Loader_code load_stl(std::istream& is, Scene_graph* scene_graph);
+  Loader_code load_stl(std::istream& is, Scene_graph* scene_graph, Group* root);
 
   /*! Load a scene graph from an stl stream.
    * \param[in] is the stream to load.
-   * \param[in] sg the scene graph
+   * \param[in] scene_graph the scene graph.
+   * \param[in] root the root of the constructed (sub) graph.
    */
-  Loader_code load_stl(std::istream& is, size_t size, Scene_graph* scene_graph);
+  Loader_code load_stl(std::istream& is, size_t size,
+                       Scene_graph* scene_graph, Group* root);
 
   /*! Load a scene graph from an stl buffer.
    * \param[in] data the buffer that contains a model in the STL format.
    * \param[in] size the size of the buffer.
-   * \param[in] sg the scene graph
+   * \param[in] scene_graph the scene graph
+   * \param[in] root the root of the constructed (sub) graph.
    */
-  Loader_code load_stl(char* data, size_t size, Scene_graph* sg);
+  Loader_code load_stl(char* data, size_t size,
+                       Scene_graph* scene_graph, Group* root);
 
   /*! Read a scene graph from a stream in the STL binary format.
+   * \param[in] root the root of the constructed (sub) graph.
    */
-  Loader_code read_stl(std::istream& is, size_t size, Scene_graph* scene_graph,
+  Loader_code read_stl(std::istream& is, size_t size,
+                       Scene_graph* scene_graph, Group* root,
                        const Vector3f& color);
 
   /*! Load a scene graph represented in the off file format from a stream.
    * Observe that the magic string has been consumed.
    * \param[in] is the stream to load.
-   * \param[in] sg the scene graph
+   * \param[in] scene_graph the scene graph.
+   * \param[in] root the root of the constructed (sub) graph.
    */
-  Loader_code load_off(std::istream& is, Scene_graph* scene_graph,
-                       const boost::smatch& what);
+  Loader_code load_off(std::istream& is, const boost::smatch& what,
+                       Scene_graph* scene_graph, Group* root);
+
+  /*! Parse a scene from a text stream.
+   * \param[in] is the text stream to parse.
+   * \param[in] scene_graph the scene graph.
+   * \param[in] root the root of the constructed sub graph.
+   */
+  Loader_code parse(std::istream& is, Scene_graph* scene_graph, Group* root);
 
   /*! Load a scene graph represented in the obj file format from a stream.
    * \param[in] is the stream to load.
-   * \param[in] sg the scene graph
+   * \param[in] scene_graph the scene graph.
+   * \param[in] root the root of the constructed (sub) graph.
    */
-  Loader_code parse_obj(std::istream& is, Scene_graph* sg);
+  Loader_code parse_obj(std::istream& is, Scene_graph* scene_graph, Group* root);
 
   /*! Prase a material library file, which is part of the obj format.
    */

@@ -31,6 +31,7 @@
 SGAL_BEGIN_NAMESPACE
 
 class Scene_graph;
+class Group;
 
 //! A base parser used as a base class for parsers.
 class SGAL_SGAL_DECL Base_loader {
@@ -40,12 +41,13 @@ public:
   Base_loader();
 
   /*! Parse.
-   * \param[i] is the input stream.
-   * \param[i] sg the scene graph.
-   * \param[i] filename the input filename.
+   * \param[in] is the input stream.
+   * \param[in] filename the input filename.
+   * \param[in] scene_graph the scene graph.
+   * \param[in] root the root of the constructed (sub) graph.
    */
-  virtual Loader_code operator()(std::istream& is, Scene_graph* sg,
-                                 const String& filename);
+  virtual Loader_code operator()(std::istream& is, const String& filename,
+                                 Scene_graph* scene_graph, Group* root);
 
   /*! Obtain the input stream.
    */
@@ -97,13 +99,14 @@ protected:
 };
 
 //! \brief parses.
-inline Loader_code Base_loader::operator()(std::istream& is, Scene_graph* sg,
-                                           const String& filename)
+inline Loader_code Base_loader::operator()(std::istream& is,
+                                           const String& filename,
+                                           Scene_graph* sg, Group* root)
 {
   m_is = &is;
-  m_scene_graph = sg;
   m_filename = &filename;
   m_line = 0;
+  m_scene_graph = sg;
 }
 
 //! \brief constructs.
