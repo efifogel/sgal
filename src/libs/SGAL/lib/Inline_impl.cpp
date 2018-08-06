@@ -21,9 +21,8 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Inline.hpp"
+#include "SGAL/Loader.hpp"
 #include "SGAL/Loader_errors.hpp"
-
-#include "Vrml_scanner.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -47,26 +46,8 @@ void Inline::clean_childs()
 {
   Group::clean_childs();
   const auto& filename = m_url[0];
-
-  // Open source file.
-  std::ifstream is(filename);
-  if (!is.good()) {
-    throw Open_file_error(filename);
-    return;
-  }
-
-  Vrml_scanner scanner(&is);
-  scanner.set_filename(filename);
-  // scanner.set_debug(1);
-  Boolean maybe_stl;
-  Vrml_parser parser(scanner, m_scene_graph, this, maybe_stl);
-  auto rc = parser.parse();
-  if (0 != rc) {
-    throw Parse_error(filename);
-    return;
-  }
-
-  return;
+  auto& loader = *(SGAL::Loader::get_instance());
+  loader(filename.c_str(), m_scene_graph, this);
 }
 
 SGAL_END_NAMESPACE
