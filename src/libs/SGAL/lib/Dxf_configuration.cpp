@@ -16,6 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
+#include <boost/lexical_cast.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Dxf_configuration.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -33,12 +35,15 @@ Container_proto* Dxf_configuration::s_prototype(nullptr);
 // Default values
 const String Dxf_configuration::s_def_palette_file_name("dxf_palette.txt");
 const Vector4f Dxf_configuration::s_def_background_color{0.9, 0.9, 0.9, 1};
+const Float Dxf_configuration::s_def_min_bulge(0.1f);
+const Uint Dxf_configuration::s_def_refinement_arcs_num(16);
 
 //! \brief constructs.
 Dxf_configuration::Dxf_configuration(Boolean proto) :
   Container(proto),
   m_palette_file_name(s_def_palette_file_name),
-  m_background_color(s_def_background_color)
+  m_background_color(s_def_background_color),
+  m_min_bulge(s_def_min_bulge)
 {}
 
 //! \brief initializes the node prototype.
@@ -71,6 +76,27 @@ void Dxf_configuration::init_prototype()
                                               background_color_func,
                                               s_def_background_color,
                                               exec_func));
+
+  // minBulge
+  auto min_bulge_func =
+    static_cast<Float_handle_function>(&Dxf_configuration::min_bulge_handle);
+  s_prototype->add_field_info(new SF_float(MIN_BULGE,
+                                           "minBulge",
+                                           Field_rule::RULE_EXPOSED_FIELD,
+                                           min_bulge_func,
+                                           s_def_min_bulge,
+                                           exec_func));
+
+  // refinementArcsNum
+  auto refinement_arcs_num_func =
+    static_cast<Uint_handle_function>
+    (&Dxf_configuration::refinement_arcs_num_handle);
+  s_prototype->add_field_info(new SF_uint(REFINMENT_ARCS_NUM,
+                                           "refinementArcsNum",
+                                           Field_rule::RULE_EXPOSED_FIELD,
+                                           refinement_arcs_num_func,
+                                           s_def_refinement_arcs_num,
+                                           exec_func));
 }
 
 //! \brief deletes the node prototype.
@@ -106,6 +132,16 @@ void Dxf_configuration::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "minBulge") {
+      set_min_bulge(boost::lexical_cast<Float>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "refinementArcsNum") {
+      set_refinement_arcs_num(boost::lexical_cast<Uint>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
   }
 
   // Remove all the marked attributes:
@@ -114,10 +150,14 @@ void Dxf_configuration::set_attributes(Element* elem)
 
 //! \brief sets defualt values.
 void Dxf_configuration::reset(const String& def_palette_file_name,
-                              const Vector4f& def_background_color)
+                              const Vector4f& def_background_color,
+                              const Float def_min_bulge,
+                              const Uint def_refinement_arcs_num)
 {
   m_palette_file_name = def_palette_file_name;
   m_background_color = def_background_color;
+  m_min_bulge = def_min_bulge;
+  m_refinement_arcs_num = def_refinement_arcs_num;
 }
 
 SGAL_END_NAMESPACE

@@ -307,7 +307,6 @@ Dxf_parser::Dxf_parser() :
   m_extended_data(nullptr),
   m_report_unrecognized_code(false),
   m_active_polyline_entity(nullptr),
-  m_arcs_refinement_num(16),
   m_lines_num(0),
   m_polylines_num(0),
   m_lwpolylines_num(0),

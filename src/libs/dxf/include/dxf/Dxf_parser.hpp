@@ -1015,9 +1015,6 @@ private:
   //! Indicates whether a polyline is active.
   Dxf_polyline_entity* m_active_polyline_entity;
 
-  //! The number of arcs used to represent a circle or an ellipsoid.
-  size_t m_arcs_refinement_num;
-
   //! A light-disabled appearance.
   Shared_appearance m_fill_appearance;
 

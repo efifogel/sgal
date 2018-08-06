@@ -39,6 +39,8 @@ public:
     FIRST = Container::LAST - 1,
     PALETTE_FILE_NAME,
     BACKGROUND_COLOR,
+    MIN_BULGE,
+    REFINMENT_ARCS_NUM,
     LAST
   };
 
@@ -71,6 +73,9 @@ public:
   { return &m_palette_file_name; }
   Vector4f* background_color_handle(const Field_info*)
   { return &m_background_color; }
+  Float* min_bulge_handle(const Field_info*) { return &m_min_bulge; }
+  Uint* refinement_arcs_num_handle(const Field_info*)
+  { return &m_refinement_arcs_num; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -90,13 +95,31 @@ public:
    */
   void set_background_color(const Vector4f& color);
 
-  /*! Get the background color.
+  /*! Obatin the background color.
    */
   const Vector4f& get_background_color() const;
 
+  /*! Set the min-bulge value.
+   */
+  void set_min_bulge(Float min_bulge);
+
+  /*! Obatin the min-bulge value.
+   */
+  Float get_min_bulge() const;
+
+  /*! Set the efinement arcs number.
+   */
+  void set_refinement_arcs_num(Uint num);
+
+  /*! Obatin the efinement arcs number.
+   */
+  Uint get_refinement_arcs_num() const;
+
   /*! Set defualt values. */
   void reset(const String& def_palette_file_name = s_def_palette_file_name,
-             const Vector4f& def_background_color = s_def_background_color);
+             const Vector4f& def_background_color = s_def_background_color,
+             const Float def_min_bulge = s_def_min_bulge,
+             const Uint def_refinement_arcs_num = s_def_refinement_arcs_num);
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -115,9 +138,17 @@ private:
   //! The default background color.
   Vector4f m_background_color;
 
+  //! The minimum bulge value.
+  Float m_min_bulge;
+
+  //! The number of arcs used to represent a circle or an ellipsoid.
+  Uint m_refinement_arcs_num;
+
   // default values
   static const String s_def_palette_file_name;
   static const Vector4f s_def_background_color;
+  static const Float s_def_min_bulge;
+  static const Uint s_def_refinement_arcs_num;
 };
 
 //! \brief constructs the prototype.
@@ -146,6 +177,21 @@ inline void Dxf_configuration::set_background_color(const Vector4f& color)
 //! \brief gets the background color.
 inline const Vector4f& Dxf_configuration::get_background_color() const
 { return m_background_color; }
+
+//! \brief sets the min-bulge value.
+inline void Dxf_configuration::set_min_bulge(Float min_bulge)
+{ m_min_bulge = min_bulge; }
+
+//! \brief obtains the min-bulge value.
+inline Float Dxf_configuration::get_min_bulge() const { return m_min_bulge; }
+
+//! \brief sets the efinement arcs number.
+inline void Dxf_configuration::set_refinement_arcs_num(Uint num)
+{ m_refinement_arcs_num = num; }
+
+//! \brief obtains the efinement arcs number.
+inline Uint Dxf_configuration::get_refinement_arcs_num() const
+{ return m_refinement_arcs_num; }
 
 SGAL_END_NAMESPACE
 

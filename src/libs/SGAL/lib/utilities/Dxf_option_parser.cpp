@@ -41,9 +41,15 @@ Dxf_option_parser::Dxf_option_parser() :
      po::value<String>()->
      default_value(Dxf_configuration::s_def_palette_file_name),
      "DXF color palette file name")
-     ("dxf-background-color", po::value<Vector4f>()->
+    ("dxf-background-color", po::value<Vector4f>()->
      default_value(Dxf_configuration::s_def_background_color),
      "Background color")
+    ("dxf-min-bulge", po::value<Float>()->
+     default_value(Dxf_configuration::s_def_min_bulge),
+     "DXF Minimum bulge value (used for approximating a circular arc)")
+    ("dxf-refinement-arcs-num", po::value<Uint>()->
+     default_value(Dxf_configuration::s_def_refinement_arcs_num),
+     "DXF number of arcs used to represent a circle or an ellipsoid")
    ;
 }
 
@@ -69,6 +75,8 @@ void Dxf_option_parser::configure(Configuration* conf)
 
   dxf->set_palette_file_name(var_map["dxf-palette-file"].as<String>());
   dxf->set_background_color(var_map["dxf-background-color"].as<Vector4f>());
+  dxf->set_min_bulge(var_map["dxf-min-bulge"].as<Float>());
+  dxf->set_refinement_arcs_num(var_map["dxf-refinement-arcs-num"].as<Uint>());
 }
 
 SGAL_END_NAMESPACE

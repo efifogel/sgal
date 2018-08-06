@@ -281,10 +281,10 @@ void Dxf_parser::add_background(SGAL::Group* root)
   bg->add_to_scene(m_scene_graph);
   m_scene_graph->add_container(bg);
   auto conf = m_scene_graph->get_configuration();
-  if (conf) {
-    auto dxf_conf = conf->get_dxf_configuration();
-    if (dxf_conf) bg->set_color(dxf_conf->get_background_color());
-  }
+  SGAL_assertion(conf);
+  auto dxf_conf = conf->get_dxf_configuration();
+  SGAL_assertion(dxf_conf);
+  bg->set_color(dxf_conf->get_background_color());
   root->add_child(bg);
 }
 
@@ -366,7 +366,11 @@ process_polyline_boundaries
       (hatch.m_extrusion_direction[2] < 0))
     mirror = true;
 
-  static const double min_bulge(0.1);
+  auto conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
+  auto dxf_conf = conf->get_dxf_configuration();
+  SGAL_assertion(dxf_conf);
+  auto min_bulge = dxf_conf->get_min_bulge();
 
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
   typedef boost::shared_ptr<SGAL::Indexed_face_set>   Shared_indexed_face_set;
@@ -741,7 +745,11 @@ void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
   typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
   typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
 
-  static const double min_bulge(0.1);
+  auto conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
+  auto dxf_conf = conf->get_dxf_configuration();
+  SGAL_assertion(dxf_conf);
+  auto min_bulge = dxf_conf->get_min_bulge();
 
   // Check whether mirroring is required
   bool mirror(false);
@@ -847,7 +855,11 @@ void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline
   if ((polyline.m_vertices.size() < 2) ||
       (closed && ! has_bulge && (polyline.m_vertices.size() < 3))) return;
 
-  static const double min_bulge(0.1);
+  auto conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
+  auto dxf_conf = conf->get_dxf_configuration();
+  SGAL_assertion(dxf_conf);
+  auto min_bulge = dxf_conf->get_min_bulge();
 
   // Check whether mirroring is required
   bool mirror(false);
@@ -949,6 +961,11 @@ void Dxf_parser::process_circle_entity(const Dxf_circle_entity& circle,
     get_color_array(circle.m_color, circle.m_color_index, circle.m_layer);
   if (! shared_colors) return;
 
+  auto conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
+  auto dxf_conf = conf->get_dxf_configuration();
+  SGAL_assertion(dxf_conf);
+
   size_t num_primitives(1);
 
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
@@ -975,7 +992,7 @@ void Dxf_parser::process_circle_entity(const Dxf_circle_entity& circle,
 
   // Count number of vertices:
   const double pi = std::acos(-1);
-  size_t num = m_arcs_refinement_num;
+  auto num = dxf_conf->get_refinement_arcs_num();
   auto delta_angle = 360.0 / num;
   size_t size(num);
 
@@ -1033,6 +1050,11 @@ void Dxf_parser::process_arc_entity(const Dxf_arc_entity& arc,
     get_color_array(arc.m_color, arc.m_color_index, arc.m_layer);
   if (! shared_colors) return;
 
+  auto conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
+  auto dxf_conf = conf->get_dxf_configuration();
+  SGAL_assertion(dxf_conf);
+
   size_t num_primitives(1);
 
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
@@ -1060,7 +1082,7 @@ void Dxf_parser::process_arc_entity(const Dxf_arc_entity& arc,
   // Count number of vertices:
   auto diff_angle = arc.m_end_angle - arc.m_start_angle;
   if (diff_angle < 0.0) diff_angle += 360.0;
-  size_t num = m_arcs_refinement_num * diff_angle / 360.0;
+  size_t num = dxf_conf->get_refinement_arcs_num() * diff_angle / 360.0;
   if (num == 0) num = 1;
   auto delta_angle = diff_angle / num;
   size_t size(num+1);
@@ -1176,8 +1198,6 @@ void Dxf_parser::process_solid_entity(const Dxf_solid_entity& solid,
       (solid.m_extrusion_direction[1] == 0) &&
       (solid.m_extrusion_direction[2] < 0))
     mirror = true;
-
-  static const double min_bulge(0.1);
 
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
   typedef boost::shared_ptr<SGAL::Indexed_face_set>   Shared_indexed_face_set;
