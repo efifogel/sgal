@@ -41,6 +41,7 @@ public:
     BACKGROUND_COLOR,
     MIN_BULGE,
     REFINMENT_ARCS_NUM,
+    STORE_DATA,
     LAST
   };
 
@@ -76,6 +77,7 @@ public:
   Float* min_bulge_handle(const Field_info*) { return &m_min_bulge; }
   Uint* refinement_arcs_num_handle(const Field_info*)
   { return &m_refinement_arcs_num; }
+  Boolean* store_data_handle(const Field_info*) { return &m_store_data; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -115,11 +117,20 @@ public:
    */
   Uint get_refinement_arcs_num() const;
 
+  /*! Set the flag that indicates whether to store the dxf data.
+   */
+  void set_store_data(Boolean flag);
+
+  /*! Obatin the flag that indicates whether to store the dxf data.
+   */
+  Boolean get_store_data() const;
+
   /*! Set defualt values. */
   void reset(const String& def_palette_file_name = s_def_palette_file_name,
              const Vector4f& def_background_color = s_def_background_color,
              const Float def_min_bulge = s_def_min_bulge,
-             const Uint def_refinement_arcs_num = s_def_refinement_arcs_num);
+             const Uint def_refinement_arcs_num = s_def_refinement_arcs_num,
+             const Boolean def_store_data = s_def_store_data);
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -144,11 +155,15 @@ private:
   //! The number of arcs used to represent a circle or an ellipsoid.
   Uint m_refinement_arcs_num;
 
+  //! Indicates whether to store the dxf data for later use.
+  Boolean m_store_data;
+
   // default values
   static const String s_def_palette_file_name;
   static const Vector4f s_def_background_color;
   static const Float s_def_min_bulge;
   static const Uint s_def_refinement_arcs_num;
+  static const Boolean s_def_store_data;
 };
 
 //! \brief constructs the prototype.
@@ -192,6 +207,14 @@ inline void Dxf_configuration::set_refinement_arcs_num(Uint num)
 //! \brief obtains the efinement arcs number.
 inline Uint Dxf_configuration::get_refinement_arcs_num() const
 { return m_refinement_arcs_num; }
+
+//! \brief sets the flag that indicates whether to store the dxf data.
+inline void Dxf_configuration::set_store_data(Boolean flag)
+{ m_store_data = flag; }
+
+//! \brief obatins the flag that indicates whether to store the dxf data.
+inline Boolean Dxf_configuration::get_store_data() const
+{ return m_store_data; }
 
 SGAL_END_NAMESPACE
 

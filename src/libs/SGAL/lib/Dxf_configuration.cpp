@@ -26,6 +26,7 @@
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
+#include "SGAL/to_boolean.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -37,13 +38,15 @@ const String Dxf_configuration::s_def_palette_file_name("dxf_palette.txt");
 const Vector4f Dxf_configuration::s_def_background_color{0.9, 0.9, 0.9, 1};
 const Float Dxf_configuration::s_def_min_bulge(0.1f);
 const Uint Dxf_configuration::s_def_refinement_arcs_num(16);
+const Boolean Dxf_configuration::s_def_store_data(false);
 
 //! \brief constructs.
 Dxf_configuration::Dxf_configuration(Boolean proto) :
   Container(proto),
   m_palette_file_name(s_def_palette_file_name),
   m_background_color(s_def_background_color),
-  m_min_bulge(s_def_min_bulge)
+  m_min_bulge(s_def_min_bulge),
+  m_store_data(s_def_store_data)
 {}
 
 //! \brief initializes the node prototype.
@@ -97,6 +100,16 @@ void Dxf_configuration::init_prototype()
                                            refinement_arcs_num_func,
                                            s_def_refinement_arcs_num,
                                            exec_func));
+
+  // storeData
+  auto store_data_func =
+    static_cast<Boolean_handle_function>(&Dxf_configuration::store_data_handle);
+  s_prototype->add_field_info(new SF_bool(STORE_DATA,
+                                          "storeData",
+                                          Field_rule::RULE_EXPOSED_FIELD,
+                                          store_data_func,
+                                          s_def_store_data,
+                                          exec_func));
 }
 
 //! \brief deletes the node prototype.
@@ -142,6 +155,11 @@ void Dxf_configuration::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "storeData") {
+      set_store_data(SGAL::to_boolean(value));
+      elem->mark_delete(ai);
+      continue;
+    }
   }
 
   // Remove all the marked attributes:
@@ -152,12 +170,14 @@ void Dxf_configuration::set_attributes(Element* elem)
 void Dxf_configuration::reset(const String& def_palette_file_name,
                               const Vector4f& def_background_color,
                               const Float def_min_bulge,
-                              const Uint def_refinement_arcs_num)
+                              const Uint def_refinement_arcs_num,
+                              const Boolean def_store_data)
 {
   m_palette_file_name = def_palette_file_name;
   m_background_color = def_background_color;
   m_min_bulge = def_min_bulge;
   m_refinement_arcs_num = def_refinement_arcs_num;
+  m_store_data = def_store_data;
 }
 
 SGAL_END_NAMESPACE

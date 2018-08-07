@@ -56,15 +56,18 @@
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_parser.hpp"
+#include "dxf/Dxf_data.hpp"
+#include "dxf/Dxf_block.hpp"
+#include "dxf/Dxf_polyline_boundary_path.hpp"
 #include "dxf/Dxf_line_entity.hpp"
 #include "dxf/Dxf_circle_entity.hpp"
 #include "dxf/Dxf_arc_entity.hpp"
 #include "dxf/Dxf_polyline_entity.hpp"
+#include "dxf/Dxf_lwpolyline_entity.hpp"
 #include "dxf/Dxf_hatch_entity.hpp"
 #include "dxf/Dxf_spline_entity.hpp"
 #include "dxf/Dxf_insert_entity.hpp"
-#include "dxf/Dxf_block.hpp"
-#include "dxf/Dxf_polyline_boundary_path.hpp"
+#include "dxf/Dxf_solid_entity.hpp"
 
 DXF_BEGIN_NAMESPACE
 
@@ -110,7 +113,7 @@ void Dxf_parser::init_palette(const SGAL::String& file_name)
 //! \brief processes all layers. Create a color array for each.
 void Dxf_parser::process_layers()
 {
-  for (auto& layer : m_layer_table.m_entries) {
+  for (auto& layer : m_data->m_layer_table.m_entries) {
     Shared_color_array shared_colors;
     size_t color = layer.m_color;
     if (color != static_cast<size_t>(-1)) {
@@ -207,8 +210,8 @@ Dxf_parser::get_color_array(int32_t color, int16_t color_index,
   }
 
   if (color_index == static_cast<int16_t>(By::BYLAYER)) {
-    auto it = m_layer_table.find(layer);
-    SGAL_assertion(it != m_layer_table.m_entries.end());
+    auto it = m_data->m_layer_table.find(layer);
+    SGAL_assertion(it != m_data->m_layer_table.m_entries.end());
     shared_colors = it->m_color_array;
     SGAL_assertion(shared_colors);
     return shared_colors;
@@ -1137,7 +1140,7 @@ void Dxf_parser::process_insert_entity(const Dxf_insert_entity& insert,
 {
   ++m_inserts_num;
 
-  auto it = std::find_if(m_blocks.begin(), m_blocks.end(),
+  auto it = std::find_if(m_data->m_blocks.begin(), m_data->m_blocks.end(),
                          [&](Dxf_block& block)
                          { return insert.m_name == block.m_name; });
   auto& block = *it;

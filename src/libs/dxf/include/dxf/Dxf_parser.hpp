@@ -41,104 +41,12 @@
 #include "dxf/Dxf_importer.hpp"
 #include "dxf/Dxf_header.hpp"
 #include "dxf/Dxf_class.hpp"
-#include "dxf/Dxf_table.hpp"
-#include "dxf/Dxf_appid_entry.hpp"
-#include "dxf/Dxf_block_record_entry.hpp"
-#include "dxf/Dxf_dimstyle_entry.hpp"
-#include "dxf/Dxf_layer_entry.hpp"
-#include "dxf/Dxf_ltype_entry.hpp"
-#include "dxf/Dxf_style_entry.hpp"
-#include "dxf/Dxf_ucs_entry.hpp"
-#include "dxf/Dxf_view_entry.hpp"
-#include "dxf/Dxf_vport_entry.hpp"
 #include "dxf/Dxf_block.hpp"
-#include "dxf/Dxf_base_entity.hpp"
-#include "dxf/Dxf_base_object.hpp"
+#include "dxf/Dxf_base_table.hpp"
+#include "dxf/Dxf_table_entry.hpp"
 #include "dxf/Dxf_simple_record_wrapper.hpp"
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_extended_data.hpp"
-#include "dxf/Dxf_line_edge.hpp"
-#include "dxf/Dxf_circle_edge.hpp"
-#include "dxf/Dxf_ellipse_edge.hpp"
-#include "dxf/Dxf_spline_edge.hpp"
-
-// Entities
-#include "dxf/Dxf_3dface_entity.hpp"
-#include "dxf/Dxf_3dsolid_entity.hpp"
-#include "dxf/Dxf_acad_proxy_entity.hpp"
-#include "dxf/Dxf_arc_entity.hpp"
-#include "dxf/Dxf_arcalignedtext_entity.hpp"
-#include "dxf/Dxf_attdef_entity.hpp"
-#include "dxf/Dxf_attrib_entity.hpp"
-#include "dxf/Dxf_body_entity.hpp"
-#include "dxf/Dxf_circle_entity.hpp"
-#include "dxf/Dxf_dimension_entity.hpp"
-#include "dxf/Dxf_ellipse_entity.hpp"
-#include "dxf/Dxf_hatch_entity.hpp"
-#include "dxf/Dxf_image_entity.hpp"
-#include "dxf/Dxf_insert_entity.hpp"
-#include "dxf/Dxf_leader_entity.hpp"
-#include "dxf/Dxf_line_entity.hpp"
-#include "dxf/Dxf_lwpolyline_entity.hpp"
-#include "dxf/Dxf_mline_entity.hpp"
-#include "dxf/Dxf_mtext_entity.hpp"
-#include "dxf/Dxf_oleframe_entity.hpp"
-#include "dxf/Dxf_ole2frame_entity.hpp"
-#include "dxf/Dxf_point_entity.hpp"
-#include "dxf/Dxf_polyline_entity.hpp"
-#include "dxf/Dxf_ray_entity.hpp"
-#include "dxf/Dxf_region_entity.hpp"
-#include "dxf/Dxf_rtext_entity.hpp"
-#include "dxf/Dxf_seqend_entity.hpp"
-#include "dxf/Dxf_shape_entity.hpp"
-#include "dxf/Dxf_solid_entity.hpp"
-#include "dxf/Dxf_spline_entity.hpp"
-#include "dxf/Dxf_text_entity.hpp"
-#include "dxf/Dxf_tolerance_entity.hpp"
-#include "dxf/Dxf_trace_entity.hpp"
-#include "dxf/Dxf_vertex_entity.hpp"
-#include "dxf/Dxf_viewport_entity.hpp"
-#include "dxf/Dxf_wipeout_entity.hpp"
-#include "dxf/Dxf_xline_entity.hpp"
-#include "dxf/Dxf_user_entity.hpp"
-
-// Objects
-#include "dxf/Dxf_acad_proxy_object.hpp"
-#include "dxf/Dxf_acdbdictionarywdflt_object.hpp"
-#include "dxf/Dxf_acdbnavisworksmodeldef_object.hpp"
-#include "dxf/Dxf_acdbplaceholder_object.hpp"
-#include "dxf/Dxf_datatable_object.hpp"
-#include "dxf/Dxf_dictionary_object.hpp"
-#include "dxf/Dxf_dictionaryvar_object.hpp"
-#include "dxf/Dxf_dimassoc_object.hpp"
-#include "dxf/Dxf_field_object.hpp"
-#include "dxf/Dxf_geodata_object.hpp"
-#include "dxf/Dxf_group_object.hpp"
-#include "dxf/Dxf_idbuffer_object.hpp"
-#include "dxf/Dxf_imagedef_object.hpp"
-#include "dxf/Dxf_imagedef_reactor_object.hpp"
-#include "dxf/Dxf_layer_filter_object.hpp"
-#include "dxf/Dxf_layer_index_object.hpp"
-#include "dxf/Dxf_layout_object.hpp"
-#include "dxf/Dxf_lightlist_object.hpp"
-#include "dxf/Dxf_material_object.hpp"
-#include "dxf/Dxf_mlinestyle_object.hpp"
-#include "dxf/Dxf_object_ptr_object.hpp"
-#include "dxf/Dxf_plotsettings_object.hpp"
-#include "dxf/Dxf_rastervariables_object.hpp"
-#include "dxf/Dxf_render_object.hpp"
-#include "dxf/Dxf_section_object.hpp"
-#include "dxf/Dxf_sortentstable_object.hpp"
-#include "dxf/Dxf_spatial_filter_object.hpp"
-#include "dxf/Dxf_spatial_index_object.hpp"
-#include "dxf/Dxf_sunstudy_object.hpp"
-#include "dxf/Dxf_tablestyle_object.hpp"
-#include "dxf/Dxf_underlaydefinition_object.hpp"
-#include "dxf/Dxf_vba_project_object.hpp"
-#include "dxf/Dxf_visualstyle_object.hpp"
-#include "dxf/Dxf_wipeoutvariables_object.hpp"
-#include "dxf/Dxf_xrecord_object.hpp"
-#include "dxf/Dxf_user_object.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -151,18 +59,38 @@ SGAL_END_NAMESPACE
 
 DXF_BEGIN_NAMESPACE
 
+struct Dxf_data;
+struct Dxf_block;
 class Dxf_boundary_path;
 class Dxf_polyline_boundary_path;
 class Dxf_pattern_data;
+class Dxf_base_entity;
+class Dxf_base_object;
+struct Dxf_line_edge;
+struct Dxf_circle_edge;
+struct Dxf_ellipse_edge;
+struct Dxf_spline_edge;
+
+struct Dxf_line_entity;
+struct Dxf_polyline_entity;
+struct Dxf_lwpolyline_entity;
+struct Dxf_hatch_entity;
+struct Dxf_circle_entity;
+struct Dxf_arc_entity;
+struct Dxf_solid_entity;
+struct Dxf_spline_entity;
+struct Dxf_insert_entity;
+
+struct Dxf_layout_object;
 
 //!
 class SGAL_SGAL_DECL Dxf_parser : public SGAL::Base_loader {
 public:
 
-  friend Dxf_hatch_entity;
   friend Dxf_boundary_path;
   friend Dxf_polyline_boundary_path;
   friend Dxf_pattern_data;
+  friend Dxf_hatch_entity;
   friend Dxf_layout_object;
 
   typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
@@ -171,6 +99,10 @@ public:
   /*! Construct.
    */
   Dxf_parser();
+
+  /*! Destruct.
+   */
+  ~Dxf_parser();
 
   /*! Parse.
    * \param[in] is the stream to parse.
@@ -943,91 +875,19 @@ private:
     }
   }
 
+  //! The active data storage record.
+  Dxf_data* m_data;
+
   //! The pending code, in case there is one.
   int m_pending_code;
 
   //! Indicates whether there is a code pending.
   bool m_is_pending;
 
-  //! Header data
-  Dxf_header m_header;
-
-  // Classes
-  std::list<Dxf_class> m_classes;
-
-  // Tables
-  typedef Dxf_table<Dxf_appid_entry>            Appid_table;
-  typedef Dxf_table<Dxf_block_record_entry>     Block_record_table;
-  typedef Dxf_table<Dxf_dimstyle_entry>         Dimstyle_table;
-  typedef Dxf_table<Dxf_layer_entry>            Layer_table;
-  typedef Dxf_table<Dxf_ltype_entry>            Ltype_table;
-  typedef Dxf_table<Dxf_style_entry>            Style_table;
-  typedef Dxf_table<Dxf_ucs_entry>              Ucs_table;
-  typedef Dxf_table<Dxf_view_entry>             View_table;
-  typedef Dxf_table<Dxf_vport_entry>            Vport_table;
-
-  Appid_table m_appid_table;
-  Block_record_table m_block_record_table;
-  Dimstyle_table m_dimstyle_table;
-  Layer_table m_layer_table;
-  Ltype_table m_ltype_table;
-  Style_table m_style_table;
-  Ucs_table m_ucs_table;
-  View_table m_view_table;
-  Vport_table m_vport_table;
-
+private:
+  //! Extended data.
   Dxf_extended_data* m_extended_data;
 
-  // Blocks
-  std::list<Dxf_block> m_blocks;
-
-  // Entities
-  std::vector<Dxf_base_entity*> m_entities;
-
-  // Objects
-  std::vector<Dxf_base_object*> m_objects;
-
-#if 0
-  Dxf_acad_proxy_object m_acad_proxy_object;
-  Dxf_acdbdictionarywdflt_object m_acdbdictionarywdflt_object;
-  Dxf_acdbplaceholder_object m_acdbplaceholder_object;
-  Dxf_acdbnavisworksmodeldef_object m_acdbnavisworksmodeldef_object;
-  Dxf_datatable_object m_datatable_object;
-  Dxf_dictionary_object m_dictionary_object;
-  Dxf_dictionaryvar_object m_dictionaryvar_object;
-  Dxf_dimassoc_object m_dimassoc_object;
-  Dxf_field_object m_field_object;
-  Dxf_geodata_object m_geodata_object;
-  Dxf_group_object m_group_object;
-  Dxf_idbuffer_object m_idbuffer_object;
-  Dxf_imagedef_object m_imagedef_object;
-  Dxf_imagedef_reactor_object m_imagedef_reactor_object;
-  Dxf_layer_index_object m_layer_index_object;
-  Dxf_layer_filter_object m_layer_filter_object;
-  Dxf_layout_object m_layout_object;
-  Dxf_lightlist_object m_lightlist_object;
-  std::vector<Dxf_material_object> m_material_objects;
-  Dxf_mlinestyle_object m_mlinestyle_object;
-  Dxf_object_ptr_object m_object_ptr_object;
-  Dxf_plotsettings_object m_plotsettings_object;
-  Dxf_rastervariables_object m_rastervariables_object;
-  Dxf_render_object m_render_object;
-  Dxf_section_object m_section_object;
-  Dxf_spatial_index_object m_spatial_index_object;
-  Dxf_spatial_filter_object m_spatial_filter_object;
-  Dxf_sortentstable_object m_sortentstable_object;
-  Dxf_sunstudy_object m_sunstudy_object;
-  Dxf_tablestyle_object m_tablestyle_object;
-  Dxf_underlaydefinition_object m_underlaydefinition_object;
-  Dxf_visualstyle_object m_visualstyle_object;
-  Dxf_vba_project_object m_vba_project_object;
-  Dxf_wipeoutvariables_object m_wipeoutvariables_object;
-  Dxf_xrecord_object m_xrecord_object;
-
-  std::list<Dxf_user_object> m_user_objects;
-#endif
-
-private:
   //! Marker
   SGAL::String m_marker;
 
@@ -1278,7 +1138,7 @@ private:
     auto handle = it->second.m_handle;
     auto size = it->second.m_size;
     auto index = it->second.m_index;
-    assign_record_value(ct, size, handle, *m_extended_data, index);
+    assign_record_value(ct, size, handle, *(m_extended_data), index);
   }
 
   /*! Parse a common table section, which aplies to all table types.
@@ -1451,17 +1311,8 @@ private:
    */
   void read_unrecognized(int code);
 
-  //! Default color palette
-  static std::vector<SGAL::Vector3f> s_palette;
-
-  static const std::map<SGAL::String, Section_parser> s_sections;
-  static const std::map<SGAL::String, Header_member> s_header_members;
-  static const std::vector<Code_range> s_code_ranges;
-  static const std::array<SGAL::String, 8> s_code_type_names;
-  static const std::map<int, Class_member_type> s_class_members;
-  static const std::map<SGAL::String, Table_parser> s_tables;
-  static const std::map<SGAL::String, Entity_parser> s_entities;
-  static const std::map<SGAL::String, Object_parser> s_objects;
+  /// \name General Processors
+  //@{
 
   /*! Process all layers. Create a color array for each.
    */
@@ -1471,6 +1322,8 @@ private:
    */
   void process_entities(std::vector<Dxf_base_entity*>& entities,
                         SGAL::Group* root);
+
+  //@}
 
   /// Entity processors
   //@{
@@ -1549,6 +1402,21 @@ private:
   /*! Print out hatch information.
    */
   void print_hatch_information(const Dxf_hatch_entity& hatch);
+
+  //! Default color palette
+  static std::vector<SGAL::Vector3f> s_palette;
+
+  static const std::map<SGAL::String, Section_parser> s_sections;
+  static const std::map<SGAL::String, Header_member> s_header_members;
+  static const std::vector<Code_range> s_code_ranges;
+  static const std::array<SGAL::String, 8> s_code_type_names;
+  static const std::map<int, Class_member_type> s_class_members;
+  static const std::map<SGAL::String, Table_parser> s_tables;
+  static const std::map<SGAL::String, Entity_parser> s_entities;
+  static const std::map<SGAL::String, Object_parser> s_objects;
+
+  //! Stores all the dxf data of all parser invocations.
+  static std::map<SGAL::String, Dxf_data*> s_datas;
 };
 
 //! \brief sets the flag that determines whether to report unrecognized code.

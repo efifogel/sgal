@@ -50,6 +50,9 @@ Dxf_option_parser::Dxf_option_parser() :
     ("dxf-refinement-arcs-num", po::value<Uint>()->
      default_value(Dxf_configuration::s_def_refinement_arcs_num),
      "DXF number of arcs used to represent a circle or an ellipsoid")
+    ("dxf-store-data", po::value<Boolean>()->
+     default_value(Dxf_configuration::s_def_store_data),
+     "Store the dxf data for later use")
    ;
 }
 
@@ -77,6 +80,7 @@ void Dxf_option_parser::configure(Configuration* conf)
   dxf->set_background_color(var_map["dxf-background-color"].as<Vector4f>());
   dxf->set_min_bulge(var_map["dxf-min-bulge"].as<Float>());
   dxf->set_refinement_arcs_num(var_map["dxf-refinement-arcs-num"].as<Uint>());
+  dxf->set_store_data(var_map["dxf-store-data"].as<Boolean>());
 }
 
 SGAL_END_NAMESPACE

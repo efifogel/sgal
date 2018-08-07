@@ -101,7 +101,7 @@ protected:
 //! \brief parses.
 inline Loader_code Base_loader::operator()(std::istream& is,
                                            const String& filename,
-                                           Scene_graph* sg, Group* root)
+                                           Scene_graph* sg, Group* /* root */)
 {
   m_is = &is;
   m_filename = &filename;

@@ -30,14 +30,102 @@
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_parser.hpp"
+#include "dxf/Dxf_data.hpp"
 #include "dxf/Dxf_simple_record_wrapper.hpp"
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_base_boundary_path.hpp"
 #include "dxf/Dxf_boundary_path.hpp"
 #include "dxf/Dxf_polyline_boundary_path.hpp"
 #include "dxf/Dxf_pattern_data.hpp"
+#include "dxf/Dxf_line_edge.hpp"
+#include "dxf/Dxf_circle_edge.hpp"
+#include "dxf/Dxf_ellipse_edge.hpp"
+#include "dxf/Dxf_spline_edge.hpp"
+#include "dxf/Dxf_base_entity.hpp"
+#include "dxf/Dxf_base_object.hpp"
+
+// Entities
+#include "dxf/Dxf_3dface_entity.hpp"
+#include "dxf/Dxf_3dsolid_entity.hpp"
+#include "dxf/Dxf_acad_proxy_entity.hpp"
+#include "dxf/Dxf_arc_entity.hpp"
+#include "dxf/Dxf_arcalignedtext_entity.hpp"
+#include "dxf/Dxf_attdef_entity.hpp"
+#include "dxf/Dxf_attrib_entity.hpp"
+#include "dxf/Dxf_body_entity.hpp"
+#include "dxf/Dxf_circle_entity.hpp"
+#include "dxf/Dxf_dimension_entity.hpp"
+#include "dxf/Dxf_ellipse_entity.hpp"
+#include "dxf/Dxf_hatch_entity.hpp"
+#include "dxf/Dxf_image_entity.hpp"
+#include "dxf/Dxf_insert_entity.hpp"
+#include "dxf/Dxf_leader_entity.hpp"
+#include "dxf/Dxf_line_entity.hpp"
+#include "dxf/Dxf_lwpolyline_entity.hpp"
+#include "dxf/Dxf_mline_entity.hpp"
+#include "dxf/Dxf_mtext_entity.hpp"
+#include "dxf/Dxf_oleframe_entity.hpp"
+#include "dxf/Dxf_ole2frame_entity.hpp"
+#include "dxf/Dxf_point_entity.hpp"
+#include "dxf/Dxf_polyline_entity.hpp"
+#include "dxf/Dxf_ray_entity.hpp"
+#include "dxf/Dxf_region_entity.hpp"
+#include "dxf/Dxf_rtext_entity.hpp"
+#include "dxf/Dxf_seqend_entity.hpp"
+#include "dxf/Dxf_shape_entity.hpp"
+#include "dxf/Dxf_solid_entity.hpp"
+#include "dxf/Dxf_spline_entity.hpp"
+#include "dxf/Dxf_text_entity.hpp"
+#include "dxf/Dxf_tolerance_entity.hpp"
+#include "dxf/Dxf_trace_entity.hpp"
+#include "dxf/Dxf_vertex_entity.hpp"
+#include "dxf/Dxf_viewport_entity.hpp"
+#include "dxf/Dxf_wipeout_entity.hpp"
+#include "dxf/Dxf_xline_entity.hpp"
+#include "dxf/Dxf_user_entity.hpp"
+
+// Objects
+#include "dxf/Dxf_acad_proxy_object.hpp"
+#include "dxf/Dxf_acdbdictionarywdflt_object.hpp"
+#include "dxf/Dxf_acdbnavisworksmodeldef_object.hpp"
+#include "dxf/Dxf_acdbplaceholder_object.hpp"
+#include "dxf/Dxf_datatable_object.hpp"
+#include "dxf/Dxf_dictionary_object.hpp"
+#include "dxf/Dxf_dictionaryvar_object.hpp"
+#include "dxf/Dxf_dimassoc_object.hpp"
+#include "dxf/Dxf_field_object.hpp"
+#include "dxf/Dxf_geodata_object.hpp"
+#include "dxf/Dxf_group_object.hpp"
+#include "dxf/Dxf_idbuffer_object.hpp"
+#include "dxf/Dxf_imagedef_object.hpp"
+#include "dxf/Dxf_imagedef_reactor_object.hpp"
+#include "dxf/Dxf_layer_filter_object.hpp"
+#include "dxf/Dxf_layer_index_object.hpp"
+#include "dxf/Dxf_layout_object.hpp"
+#include "dxf/Dxf_lightlist_object.hpp"
+#include "dxf/Dxf_material_object.hpp"
+#include "dxf/Dxf_mlinestyle_object.hpp"
+#include "dxf/Dxf_object_ptr_object.hpp"
+#include "dxf/Dxf_plotsettings_object.hpp"
+#include "dxf/Dxf_rastervariables_object.hpp"
+#include "dxf/Dxf_render_object.hpp"
+#include "dxf/Dxf_section_object.hpp"
+#include "dxf/Dxf_sortentstable_object.hpp"
+#include "dxf/Dxf_spatial_filter_object.hpp"
+#include "dxf/Dxf_spatial_index_object.hpp"
+#include "dxf/Dxf_sunstudy_object.hpp"
+#include "dxf/Dxf_tablestyle_object.hpp"
+#include "dxf/Dxf_underlaydefinition_object.hpp"
+#include "dxf/Dxf_vba_project_object.hpp"
+#include "dxf/Dxf_visualstyle_object.hpp"
+#include "dxf/Dxf_wipeoutvariables_object.hpp"
+#include "dxf/Dxf_xrecord_object.hpp"
+#include "dxf/Dxf_user_object.hpp"
 
 DXF_BEGIN_NAMESPACE
+
+//! Stores all the dxf data of all parser invocations.
+std::map<SGAL::String, Dxf_data*> Dxf_parser::s_datas;
 
 //! Default color palette
 std::vector<SGAL::Vector3f> Dxf_parser::s_palette = {
@@ -302,6 +390,7 @@ Dxf_base_object_wrapper::s_record_members = {
 //! \brief constructs.
 Dxf_parser::Dxf_parser() :
   Base_loader(),
+  m_data(nullptr),
   m_pending_code(0),
   m_is_pending(false),
   m_extended_data(nullptr),
@@ -318,27 +407,34 @@ Dxf_parser::Dxf_parser() :
   m_inserts_num(0)
 {}
 
+//! \brief destructs.
+Dxf_parser::~Dxf_parser()
+{
+  for (auto& data : s_datas) delete data.second;
+  s_datas.clear();
+}
+
 //! \brief parses.
 SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
                                          const SGAL::String& filename,
                                          SGAL::Scene_graph* sg,
                                          SGAL::Group* root)
 {
+  m_data = new Dxf_data;
+
   Base_loader::operator()(is, filename, sg, root);
   m_pending_code = 0;
   m_is_pending = false;
-  m_extended_data = nullptr;
 
   //! \todo Make the Configuration a singleton and remove it from the
   // scene-graph. Then, move the following code exerpt to dxf_init().
   auto* conf = sg->get_configuration();
-  if (conf) {
-    auto dxf_conf = conf->get_dxf_configuration();
-    if (dxf_conf) {
-      auto& palette_file_name = dxf_conf->get_palette_file_name();
-      init_palette(palette_file_name);
-    }
-  }
+  SGAL_assertion(conf);
+  auto dxf_conf = conf->get_dxf_configuration();
+  SGAL_assertion(dxf_conf);
+
+  auto& palette_file_name = dxf_conf->get_palette_file_name();
+  init_palette(palette_file_name);
 
   while (true) {
     int n;
@@ -359,16 +455,12 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
     (this->*(sec_it->second))();
   }
 
-  //! \todo Instead of storing the data in the parser records and then copy it
-  // over to the right place, intercept the parsing and store the data at the
-  // right place immediately after read from the imput stream.
-
-  //
+  // Construct the scene graph rooted at the given root.
   m_scene_graph->set_input_format_id(SGAL::File_format_3d::ID_DXF);
   process_layers();
 
   add_background(root);
-  process_entities(m_entities, root);
+  process_entities(m_data->m_entities, root);
 
 #if ! defined(NDEBUG) || defined(SGAL_TRACE)
   if (SGAL::TRACE(m_trace_code)) {
@@ -384,6 +476,10 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
 #endif
 
   clear();
+
+  // Store the data for future use:
+  if (dxf_conf->get_store_data()) s_datas[filename] = m_data;
+  else delete m_data;
 
   return SGAL::Loader_code::SUCCESS;
 }
@@ -436,8 +532,8 @@ void Dxf_parser::parse_class()
                   if (get_verbose_level() >= 4)
                     std::cout << "Parse class" << std::endl;);
 
-  m_classes.push_back(Dxf_class());
-  auto& dxf_class = m_classes.back();
+  m_data->m_classes.emplace_back();
+  auto& dxf_class = m_data->m_classes.back();
 
   bool done(false);
   while (!done) {
@@ -487,7 +583,7 @@ void Dxf_parser::parse_appid_table()
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 4)
                     std::cout << "Parse APPID table" << std::endl;);
-  parse_table(m_appid_table, "APPID");
+  parse_table(m_data->m_appid_table, "APPID");
 }
 
 //! \brief parses a table of type BLOCK_RECORD.
@@ -496,7 +592,7 @@ void Dxf_parser::parse_block_record_table()
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 4)
                     std::cout << "Parse BLOCK_RECORD table" << std::endl;);
-  parse_table(m_block_record_table, "BLOCK_RECORD");
+  parse_table(m_data->m_block_record_table, "BLOCK_RECORD");
 }
 
 //! \brief parses a table of type DIMSTYLE.
@@ -505,7 +601,7 @@ void Dxf_parser::parse_dimstyle_table()
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing DIMSTYLE table" << std::endl;);
-  parse_table(m_dimstyle_table, "DIMSTYLE");
+  parse_table(m_data->m_dimstyle_table, "DIMSTYLE");
 }
 
 //! \brief parses a table of type LAYER.
@@ -514,7 +610,7 @@ void Dxf_parser::parse_layer_table()
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing LAYER table" << std::endl;);
-  parse_table(m_layer_table, "LAYER");
+  parse_table(m_data->m_layer_table, "LAYER");
 }
 
 //! \brief parses a table of type LTYPE.
@@ -523,7 +619,7 @@ void Dxf_parser::parse_ltype_table()
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing LTYPE table" << std::endl;);
-  parse_table(m_ltype_table, "LTYPE");
+  parse_table(m_data->m_ltype_table, "LTYPE");
 }
 
 //! \brief parses a table of type STYLE.
@@ -532,7 +628,7 @@ void Dxf_parser::parse_style_table()
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing STYLE table" << std::endl;);
-  parse_table(m_style_table, "STYLE");
+  parse_table(m_data->m_style_table, "STYLE");
 }
 
 //! \brief parses a table of type UCS.
@@ -541,7 +637,7 @@ void Dxf_parser::parse_ucs_table()
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing UCS table" << std::endl;);
-  parse_table(m_ucs_table, "UCS");
+  parse_table(m_data->m_ucs_table, "UCS");
 }
 
 //! \brief parses a table of type VIEW.
@@ -550,7 +646,7 @@ void Dxf_parser::parse_view_table()
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing VIEW table" << std::endl;);
-  parse_table(m_view_table, "VIEW");
+  parse_table(m_data->m_view_table, "VIEW");
 }
 
 //! \brief parses a table of type VPORT.
@@ -559,7 +655,7 @@ void Dxf_parser::parse_vport_table()
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing VPORT table" << std::endl;);
-  parse_table(m_vport_table, "VPORT");
+  parse_table(m_data->m_vport_table, "VPORT");
 }
 
 //! \brief parses the TABLES section.
@@ -664,8 +760,8 @@ void Dxf_parser::parse_blocks()
     import_value(str);
     if ("BLOCK" == str) {
       SGAL_assertion(! block);
-      m_blocks.push_back(Dxf_block());
-      block = &(m_blocks.back());
+      m_data->m_blocks.push_back(Dxf_block());
+      block = &(m_data->m_blocks.back());
       parse_block(*block);
       continue;
     }
@@ -715,20 +811,20 @@ void Dxf_parser::parse_entities()
     auto it = s_entities.find(str);
     if (it != s_entities.end()) {
       auto* entity = (this->*(it->second))();
-      if (entity) m_entities.push_back(entity);
+      if (entity) m_data->m_entities.push_back(entity);
       continue;
     }
 
     // Look for user defined entities that are defined in a CLASS block
-    auto cit = std::find_if(m_classes.begin(), m_classes.end(),
+    auto cit = std::find_if(m_data->m_classes.begin(), m_data->m_classes.end(),
                             [&](const Dxf_class& my_class)
                             {
                               return ((my_class.m_record_name == str) &&
                                       my_class.m_is_entity);
                             });
-    if (cit != m_classes.end()) {
+    if (cit != m_data->m_classes.end()) {
       auto* user_entity = new Dxf_user_entity;
-      m_entities.push_back(user_entity);
+      m_data->m_entities.push_back(user_entity);
       parse_record(*user_entity);
       continue;
     }
@@ -763,15 +859,15 @@ void Dxf_parser::parse_objects()
     }
 
     // Look for user defined objects that are defined in a CLASS block
-    auto cit = std::find_if(m_classes.begin(), m_classes.end(),
+    auto cit = std::find_if(m_data->m_classes.begin(), m_data->m_classes.end(),
                             [&](const Dxf_class& my_class)
                             {
                               return ((my_class.m_record_name == str) &&
                                       ! my_class.m_is_entity);
                             });
-    if (cit != m_classes.end()) {
+    if (cit != m_data->m_classes.end()) {
       auto* user_object = new Dxf_user_object;
-      m_objects.push_back(user_object);
+      m_data->m_objects.push_back(user_object);
       parse_record(*user_object);
       continue;
     }
@@ -827,6 +923,7 @@ void Dxf_parser::read_header_member()
   const auto& header_var = it->second;
   const auto& codes = header_var.m_codes;
   auto& handle = header_var.m_handle;
+  auto& header = m_data->m_header;
 
   auto dim = codes.size();
   SGAL_TRACE_CODE(m_trace_code,
@@ -848,13 +945,13 @@ void Dxf_parser::read_header_member()
                       std::cout << "Parsing header member code type: "
                                 << s_code_type_names[ct] << std::endl;);
     switch (ct) {
-     case STRING: assign_member<String_header>(handle, m_header); break;
-     case DOUBLE: assign_member<Double_header>(handle, m_header); break;
-     case INT8: assign_member<Int8_header>(handle, m_header); break;
-     case INT16: assign_member<Int16_header>(handle, m_header); break;
-     case INT32: assign_member<Int32_header>(handle, m_header); break;
-     case UINT: assign_member<Uint_header>(handle, m_header); break;
-     case BOOL: assign_member<Bool_header>(handle, m_header); break;
+     case STRING: assign_member<String_header>(handle, header); break;
+     case DOUBLE: assign_member<Double_header>(handle, header); break;
+     case INT8: assign_member<Int8_header>(handle, header); break;
+     case INT16: assign_member<Int16_header>(handle, header); break;
+     case INT32: assign_member<Int32_header>(handle, header); break;
+     case UINT: assign_member<Uint_header>(handle, header); break;
+     case BOOL: assign_member<Bool_header>(handle, header); break;
     }
     return;
   }
@@ -876,8 +973,8 @@ void Dxf_parser::read_header_member()
                                 << s_code_type_names[ct] << std::endl;);
     SGAL_assertion(DOUBLE == ct);
     if (dim == 2)
-      (*m_is) >> (m_header.*(boost::get<Double_2d_header>(handle)))[i++];
-    else (*m_is) >> (m_header.*(boost::get<Double_3d_header>(handle)))[i++];
+      (*m_is) >> (header.*(boost::get<Double_2d_header>(handle)))[i++];
+    else (*m_is) >> (header.*(boost::get<Double_3d_header>(handle)))[i++];
     ++m_line;
   }
 }
@@ -1447,38 +1544,11 @@ void Dxf_parser::parse_spline_edge(Dxf_spline_edge& edge)
 }
 
 //! \brief clears the parser. Deallocate data structure and prepare for reuse.
-// At this point only the hatch entity and the material objects are stored in
-// containers, which must be cleared.
 void Dxf_parser::clear()
 {
-  // Clear tables
-  m_appid_table.clear();
-  m_block_record_table.clear();
-  m_dimstyle_table.clear();
-  m_layer_table.clear();
-  m_ltype_table.clear();
-  m_style_table.clear();
-  m_ucs_table.clear();
-  m_view_table.clear();
-  m_vport_table.clear();
-
-  // Clear classes
-  m_classes.clear();
-
-  // Clear blocks
-  m_blocks.clear();
-
-  // Clear entities
-
-  for (auto* entity : m_entities) delete entity;
-  m_entities.clear();
-
-  // Clear objects
-  for (auto* object : m_objects) delete object;
-  m_objects.clear();
-
   m_color_arrays.clear();
   m_pattern_appearances.clear();
+  m_data = nullptr;
 }
 
 DXF_END_NAMESPACE
