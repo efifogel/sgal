@@ -20,13 +20,11 @@
 #define SGAL_TRACE_HPP
 
 #include <iostream>
-#include <map>
 #include <bitset>
-
-#include <boost/icl/interval_set.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Option_mapper.hpp"
 
 #if (defined( _MSC_VER) && (_MSC_VER <= 1200))
 #pragma warning ( disable : 4800 )
@@ -39,15 +37,11 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_SGAL_DECL Trace {
-  typedef std::map<String, size_t>                              Map;
-
+class SGAL_SGAL_DECL Trace : public Option_mapper {
 public:
-
   //! Pre-defined codes:
   enum Code {
-    INVALID = 0,
-    GRAPHICS,
+    GRAPHICS = START_CODE,
     VRML_PARSING,
     WINDOW_MANAGER,
     EVENTS,
@@ -99,37 +93,7 @@ public:
    */
   Boolean is_enabled(size_t code) const;
 
-  /*! Obtain the number of trace options.
-   */
-  size_t options_size() const;
-
-  /*! Find the trace code of an option.
-   */
-  size_t find_code(const String& opt) const;
-
-  /*! Find the option of a code.
-   */
-  const String& find_option(size_t code) const;
-
-  /*! Obtain the trace options container.
-   */
-  const Map& get_options();
-
-  /*! Register a trace option.
-   * \param[in] the new option.
-   * \return the code allocated for the external option.
-   */
-  size_t register_option(const String& opt);
-
-  /*! Unregister a trace option.
-   * \param[in] the option to remove.
-   */
-  void unregister_option(const String& opt);
-
 private:
-  typedef boost::icl::interval_set<size_t>      set_t;
-  typedef set_t::interval_type                  ival;
-
   /*! Construct.
    */
   Trace();
@@ -140,12 +104,6 @@ private:
 
   //! The signature.
   Signature m_signature;
-
-  //! trace options.
-  Map m_options;
-
-  //! Free codes arranged in a set of intervals.
-  set_t m_free_codes;
 
   //! The singleton.
   static Trace* s_instance;
