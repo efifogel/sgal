@@ -40,7 +40,7 @@ Option_mapper::~Option_mapper()
   m_options.clear();
 }
 
-//! \brief initializes the map.
+//! \brief sets the map.
 void Option_mapper::set_options(Map&& options)
 {
   SGAL_assertion(m_options.size() == 1);
@@ -54,9 +54,9 @@ void Option_mapper::set_options(Map&& options)
 size_t Option_mapper::options_size() const { return m_options.size(); }
 
 //! \brief finds the trace code of an option.
-size_t Option_mapper::find_code(const String& opt) const
+size_t Option_mapper::find_code(const String& name) const
 {
-  auto it = m_options.find(opt);
+  auto it = m_options.find(name);
   return (it == m_options.end()) ? INVALID : it->second;
 }
 
@@ -69,24 +69,24 @@ const String& Option_mapper::find_option(size_t code) const
 }
 
 //! \brief registers a trace option.
-size_t Option_mapper::register_option(const String& opt)
+size_t Option_mapper::register_option(const String& name)
 {
   SGAL_assertion(! m_free_codes.empty());
-  auto tit = m_options.find(opt);
+  auto tit = m_options.find(name);
   if (tit != m_options.end()) return tit->second;
 
   auto it = m_free_codes.begin();
   size_t code = it->lower();
   m_free_codes.erase(ival::closed(code, code+1));
 
-  m_options[opt] = code;
+  m_options[name] = code;
   return code;
 }
 
 //! \brief unregisters a trace option.
-void Option_mapper::unregister_option(const String& opt)
+void Option_mapper::unregister_option(const String& name)
 {
-  auto it = m_options.find(opt);
+  auto it = m_options.find(name);
   if (it == m_options.end()) return;
   auto code = it->second;
   m_free_codes.insert(ival::closed(code, code));

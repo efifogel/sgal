@@ -25,10 +25,10 @@
 #include <vector>
 #include <string>
 #include <string.h>
+#include <iterator>
+
 #include <boost/any.hpp>
 #include <boost/filesystem.hpp>
-
-#include <iterator>
 
 #include "SGAL/Option_parser.hpp"
 #include "SGAL/Scene_graph.hpp"
@@ -51,8 +51,10 @@ Option_parser::Option_parser() :
   // Extract trace options:
   auto* tracer = Trace::get_instance();
   std::string trace_msg("trace options:\n");
-  for (const auto& trace_opt : tracer->get_options())
-    trace_msg += "  " + trace_opt.first + "\n";
+  // for (const auto& trace_opt : tracer->get_options())
+  //   trace_msg += "  " + trace_opt.first + "\n";
+  for (auto it = tracer->names_begin(); it != tracer->names_end(); ++it)
+    trace_msg += "  " + *it + "\n";
 
   // Options allowed on the command line, config file, or env. variables
   // We must keep the trace-options as strings, and NOT convert them on the fly,
