@@ -49,9 +49,9 @@ Option_parser::Option_parser() :
   typedef std::vector<std::string> vs;
 
   // Extract trace options:
-  auto* trace = Trace::get_instance();
+  auto* tracer = Trace::get_instance();
   std::string trace_msg("trace options:\n");
-  for (auto& trace_opt : trace->get_trace_opts())
+  for (const auto& trace_opt : tracer->get_options())
     trace_msg += "  " + trace_opt.first + "\n";
 
   // Options allowed on the command line, config file, or env. variables
@@ -137,7 +137,7 @@ void Option_parser::configure(Scene_graph* scene_graph)
   if (m_variable_map.count("trace")) {
     auto& traces = m_variable_map["trace"].as<vs>();
     for (auto it = traces.begin(); it != traces.end(); ++it) {
-      auto code = Trace::get_instance()->find_trace_code(*it);
+      auto code = Trace::get_instance()->find_code(*it);
       if (code == Trace::INVALID) {
         throw po::validation_error(po::validation_error::invalid_option_value,
                                    "--trace", *it);

@@ -40,12 +40,14 @@
 SGAL_BEGIN_NAMESPACE
 
 class SGAL_SGAL_DECL Trace {
+  typedef std::map<String, size_t>                              Map;
+
 public:
 
   //! Pre-defined codes:
   enum Code {
-    INVALID = -1,
-    GRAPHICS = 0,
+    INVALID = 0,
+    GRAPHICS,
     VRML_PARSING,
     WINDOW_MANAGER,
     EVENTS,
@@ -99,26 +101,30 @@ public:
 
   /*! Obtain the number of trace options.
    */
-  size_t trace_opts_size() const;
+  size_t options_size() const;
 
   /*! Find the trace code of an option.
    */
-  size_t find_trace_code(const String& opt) const;
+  size_t find_code(const String& opt) const;
+
+  /*! Find the option of a code.
+   */
+  const String& find_option(size_t code) const;
 
   /*! Obtain the trace options container.
    */
-  static const std::map<String, size_t>& get_trace_opts();
+  const Map& get_options();
 
   /*! Register a trace option.
    * \param[in] the new option.
    * \return the code allocated for the external option.
    */
-  size_t doregister_trace_opt(const String& opt);
+  size_t register_option(const String& opt);
 
   /*! Unregister a trace option.
    * \param[in] the option to remove.
    */
-  void unregister_trace_opt(const String& opt);
+  void unregister_option(const String& opt);
 
 private:
   typedef boost::icl::interval_set<size_t>      set_t;
@@ -136,7 +142,7 @@ private:
   Signature m_signature;
 
   //! trace options.
-  static std::map<String, size_t> s_trace_opts;
+  Map m_options;
 
   //! Free codes arranged in a set of intervals.
   set_t m_free_codes;

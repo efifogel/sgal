@@ -29,8 +29,8 @@ DXF_BEGIN_NAMESPACE
 
 extern "C" void BOOST_EXTENSION_EXPORT_DECL dxf_init()
 {
-  auto* trace = SGAL::Trace::get_instance();
-  auto code = trace->doregister_trace_opt("dxf-parsing");
+  auto* tracer = SGAL::Trace::get_instance();
+  auto code = tracer->register_option("dxf-parsing");
 
   auto* loader = SGAL::Loader::get_instance();
   auto* parser = new Dxf_parser();
