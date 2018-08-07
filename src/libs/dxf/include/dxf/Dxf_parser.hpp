@@ -354,6 +354,18 @@ private:
     return entity;
   }
 
+  //! Parse an object
+  template <typename Object>
+  Object* parse_object(const std::string& type, Object* object)
+  {
+    SGAL_TRACE_CODE(m_trace_code,
+                    if (get_verbose_level() >= 4)
+                      std::cout << "Parsing " << type << " object"
+                                << std::endl;);
+    parse_record(*object);
+    return object;
+  }
+
   //! The type of an entity parser member function.
   typedef Dxf_base_entity*(Dxf_parser::*Entity_parser)(void);
 
@@ -474,43 +486,43 @@ private:
   //@{
 
   //! The type of an object parser member function.
-  typedef void(Dxf_parser::*Object_parser)(void);
+  typedef Dxf_base_object*(Dxf_parser::*Object_parser)(void);
 
-  void parse_acad_proxy_object();
-  void parse_acdbdictionarywdflt_object();
-  void parse_acdbplaceholder_object();
-  void parse_acdbnavisworksmodeldef_object();
-  void parse_datatable_object();
-  void parse_dictionary_object();
-  void parse_dictionaryvar_object();
-  void parse_dimassoc_object();
-  void parse_field_object();
-  void parse_geodata_object();
-  void parse_group_object();
-  void parse_idbuffer_object();
-  void parse_imagedef_object();
-  void parse_imagedef_reactor_object();
-  void parse_layer_index_object();
-  void parse_layer_filter_object();
-  void parse_layout_object();
-  void parse_lightlist_object();
-  void parse_material_object();
-  void parse_mlinestyle_object();
-  void parse_object_ptr_object();
-  void parse_plotsettings_object();
-  void parse_rastervariables_object();
-  void parse_render_object();
-  void parse_section_object();
-  void parse_spatial_index_object();
-  void parse_spatial_filter_object();
-  void parse_sortentstable_object();
-  void parse_sunstudy_object();
-  void parse_tablestyle_object();
-  void parse_underlaydefinition_object();
-  void parse_visualstyle_object();
-  void parse_vba_project_object();
-  void parse_wipeoutvariables_object();
-  void parse_xrecord_object();
+  Dxf_base_object* parse_acad_proxy_object();
+  Dxf_base_object* parse_acdbdictionarywdflt_object();
+  Dxf_base_object* parse_acdbplaceholder_object();
+  Dxf_base_object* parse_acdbnavisworksmodeldef_object();
+  Dxf_base_object* parse_datatable_object();
+  Dxf_base_object* parse_dictionary_object();
+  Dxf_base_object* parse_dictionaryvar_object();
+  Dxf_base_object* parse_dimassoc_object();
+  Dxf_base_object* parse_field_object();
+  Dxf_base_object* parse_geodata_object();
+  Dxf_base_object* parse_group_object();
+  Dxf_base_object* parse_idbuffer_object();
+  Dxf_base_object* parse_imagedef_object();
+  Dxf_base_object* parse_imagedef_reactor_object();
+  Dxf_base_object* parse_layer_index_object();
+  Dxf_base_object* parse_layer_filter_object();
+  Dxf_base_object* parse_layout_object();
+  Dxf_base_object* parse_lightlist_object();
+  Dxf_base_object* parse_material_object();
+  Dxf_base_object* parse_mlinestyle_object();
+  Dxf_base_object* parse_object_ptr_object();
+  Dxf_base_object* parse_plotsettings_object();
+  Dxf_base_object* parse_rastervariables_object();
+  Dxf_base_object* parse_render_object();
+  Dxf_base_object* parse_section_object();
+  Dxf_base_object* parse_spatial_index_object();
+  Dxf_base_object* parse_spatial_filter_object();
+  Dxf_base_object* parse_sortentstable_object();
+  Dxf_base_object* parse_sunstudy_object();
+  Dxf_base_object* parse_tablestyle_object();
+  Dxf_base_object* parse_underlaydefinition_object();
+  Dxf_base_object* parse_visualstyle_object();
+  Dxf_base_object* parse_vba_project_object();
+  Dxf_base_object* parse_wipeoutvariables_object();
+  Dxf_base_object* parse_xrecord_object();
   //@}
 
   /*! Import a value and assign it to a record member.
@@ -973,6 +985,9 @@ private:
   std::vector<Dxf_base_entity*> m_entities;
 
   // Objects
+  std::vector<Dxf_base_object*> m_objects;
+
+#if 0
   Dxf_acad_proxy_object m_acad_proxy_object;
   Dxf_acdbdictionarywdflt_object m_acdbdictionarywdflt_object;
   Dxf_acdbplaceholder_object m_acdbplaceholder_object;
@@ -1010,6 +1025,7 @@ private:
   Dxf_xrecord_object m_xrecord_object;
 
   std::list<Dxf_user_object> m_user_objects;
+#endif
 
 private:
   //! Marker

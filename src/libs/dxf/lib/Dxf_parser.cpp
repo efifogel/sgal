@@ -770,9 +770,9 @@ void Dxf_parser::parse_objects()
                                       ! my_class.m_is_entity);
                             });
     if (cit != m_classes.end()) {
-      m_user_objects.resize(m_user_objects.size() + 1);
-      auto& user_object = m_user_objects.back();
-      parse_record(user_object);
+      auto* user_object = new Dxf_user_object;
+      m_objects.push_back(user_object);
+      parse_record(*user_object);
       continue;
     }
 
@@ -1114,148 +1114,150 @@ Dxf_base_entity* Dxf_parser::parse_xline_entity()
 
 // Object parsers
 //! \brief parses a object.
-void Dxf_parser::parse_acad_proxy_object()
-{ parse_record(m_acad_proxy_object); }
+Dxf_base_object* Dxf_parser::parse_acad_proxy_object()
+{ return parse_object("acad_proxy", new Dxf_acad_proxy_object); }
 
 //! \brief parses a object.
-void Dxf_parser::parse_acdbdictionarywdflt_object()
-{ parse_record(m_acdbdictionarywdflt_object); }
-
-//! \brief parses a object.
-void Dxf_parser::parse_acdbplaceholder_object()
-{ parse_record(m_acdbplaceholder_object); }
-
-//! \brief parses a object.
-void Dxf_parser::parse_acdbnavisworksmodeldef_object()
-{ parse_record(m_acdbnavisworksmodeldef_object); }
-
-//! \brief parses a object.
-void Dxf_parser::parse_datatable_object()
-{ parse_record(m_datatable_object); }
-
-//! \brief parses a object.
-void Dxf_parser::parse_dictionary_object()
-{ parse_record(m_dictionary_object); }
-
-//! \brief parses a object.
-void Dxf_parser::parse_dictionaryvar_object()
-{ parse_record(m_dictionaryvar_object); }
-
-//! \brief parses a object.
-void Dxf_parser::parse_dimassoc_object()
-{ parse_record(m_dimassoc_object); }
-
-//! \brief parses a object.
-void Dxf_parser::parse_field_object()
-{ parse_record(m_field_object); }
-
-//! \brief parses a object.
-void Dxf_parser::parse_geodata_object()
-{ parse_record(m_geodata_object); }
-
-//! \brief parses a object.
-void Dxf_parser::parse_group_object()
-{ parse_record(m_group_object); }
-
-//! \brief parses a object.
-void Dxf_parser::parse_idbuffer_object()
-{ parse_record(m_idbuffer_object); }
-
-//! \brief parses a object.
-void Dxf_parser::parse_imagedef_object()
-{ parse_record(m_imagedef_object); }
-
-//! \brief parses a object.
-void Dxf_parser::parse_imagedef_reactor_object()
-{ parse_record(m_imagedef_reactor_object); }
-
-//! \brief parses a object.
-void Dxf_parser::parse_layer_index_object()
-{ parse_record(m_layer_index_object); }
-
-//! \brief parses a object.
-void Dxf_parser::parse_layer_filter_object()
-{ parse_record(m_layer_filter_object); }
-
-//! \brief parses a object.
-void Dxf_parser::parse_layout_object()
-{ parse_record(m_layout_object); }
-
-//! \brief parses a object.
-void Dxf_parser::parse_lightlist_object()
-{ parse_record(m_lightlist_object); }
-
-//! \brief parses a object.
-void Dxf_parser::parse_material_object()
+Dxf_base_object* Dxf_parser::parse_acdbdictionarywdflt_object()
 {
-  m_material_objects.resize(m_material_objects.size() + 1);
-  auto& material_object = m_material_objects.back();
-  parse_record(material_object);
+  return parse_object("acdbdictionarywdflt",
+                      new Dxf_acdbdictionarywdflt_object);
 }
 
 //! \brief parses a object.
-void Dxf_parser::parse_mlinestyle_object()
-{ parse_record(m_mlinestyle_object); }
+Dxf_base_object* Dxf_parser::parse_acdbplaceholder_object()
+{ return parse_object("acdbplaceholder", new Dxf_acdbplaceholder_object); }
 
 //! \brief parses a object.
-void Dxf_parser::parse_object_ptr_object()
-{ parse_record(m_object_ptr_object); }
+Dxf_base_object* Dxf_parser::parse_acdbnavisworksmodeldef_object()
+{
+  return parse_object("acdbnavisworksmodeldef",
+                      new Dxf_acdbnavisworksmodeldef_object);
+}
 
 //! \brief parses a object.
-void Dxf_parser::parse_plotsettings_object()
-{ parse_record(m_plotsettings_object); }
+Dxf_base_object* Dxf_parser::parse_datatable_object()
+{ return parse_object("datatable", new Dxf_datatable_object); }
 
 //! \brief parses a object.
-void Dxf_parser::parse_rastervariables_object()
-{ parse_record(m_rastervariables_object); }
+Dxf_base_object* Dxf_parser::parse_dictionary_object()
+{ return parse_object("dictionary", new Dxf_dictionary_object); }
 
 //! \brief parses a object.
-void Dxf_parser::parse_render_object()
-{ parse_record(m_render_object); }
+Dxf_base_object* Dxf_parser::parse_dictionaryvar_object()
+{ return parse_object("dictionaryvar", new Dxf_dictionaryvar_object); }
 
 //! \brief parses a object.
-void Dxf_parser::parse_section_object()
-{ parse_record(m_section_object); }
+Dxf_base_object* Dxf_parser::parse_dimassoc_object()
+{ return parse_object("dimassoc", new Dxf_dimassoc_object); }
 
 //! \brief parses a object.
-void Dxf_parser::parse_spatial_index_object()
-{ parse_record(m_spatial_index_object); }
+Dxf_base_object* Dxf_parser::parse_field_object()
+{ return parse_object("field", new Dxf_field_object); }
 
 //! \brief parses a object.
-void Dxf_parser::parse_spatial_filter_object()
-{ parse_record(m_spatial_filter_object); }
+Dxf_base_object* Dxf_parser::parse_geodata_object()
+{ return parse_object("geodata", new Dxf_geodata_object); }
 
 //! \brief parses a object.
-void Dxf_parser::parse_sortentstable_object()
-{ parse_record(m_sortentstable_object); }
+Dxf_base_object* Dxf_parser::parse_group_object()
+{ return parse_object("group", new Dxf_group_object); }
 
 //! \brief parses a object.
-void Dxf_parser::parse_sunstudy_object()
-{ parse_record(m_sunstudy_object); }
+Dxf_base_object* Dxf_parser::parse_idbuffer_object()
+{ return parse_object("idbuffer", new Dxf_idbuffer_object); }
 
 //! \brief parses a object.
-void Dxf_parser::parse_tablestyle_object()
-{ parse_record(m_tablestyle_object); }
+Dxf_base_object* Dxf_parser::parse_imagedef_object()
+{ return parse_object("imagedef", new Dxf_imagedef_object); }
 
 //! \brief parses a object.
-void Dxf_parser::parse_underlaydefinition_object()
-{ parse_record(m_underlaydefinition_object); }
+Dxf_base_object* Dxf_parser::parse_imagedef_reactor_object()
+{ return parse_object("imagedef_reactor", new Dxf_imagedef_reactor_object); }
 
 //! \brief parses a object.
-void Dxf_parser::parse_visualstyle_object()
-{ parse_record(m_visualstyle_object); }
+Dxf_base_object* Dxf_parser::parse_layer_index_object()
+{ return parse_object("layer_index", new Dxf_layer_index_object); }
 
 //! \brief parses a object.
-void Dxf_parser::parse_vba_project_object()
-{ parse_record(m_vba_project_object); }
+Dxf_base_object* Dxf_parser::parse_layer_filter_object()
+{ return parse_object("layer_filter", new Dxf_layer_filter_object); }
 
 //! \brief parses a object.
-void Dxf_parser::parse_wipeoutvariables_object()
-{ parse_record(m_wipeoutvariables_object); }
+Dxf_base_object* Dxf_parser::parse_layout_object()
+{ return parse_object("layout", new Dxf_layout_object); }
 
 //! \brief parses a object.
-void Dxf_parser::parse_xrecord_object()
-{ parse_record(m_xrecord_object); }
+Dxf_base_object* Dxf_parser::parse_lightlist_object()
+{ return parse_object("lightlist", new Dxf_lightlist_object); }
+
+//! \brief parses a object.
+Dxf_base_object* Dxf_parser::parse_material_object()
+{ return parse_object("material", new Dxf_material_object); }
+
+//! \brief parses a object.
+Dxf_base_object* Dxf_parser::parse_mlinestyle_object()
+{ return parse_object("mlinestyle", new Dxf_mlinestyle_object); }
+
+//! \brief parses a object.
+Dxf_base_object* Dxf_parser::parse_object_ptr_object()
+{ return parse_object("object_ptr", new Dxf_object_ptr_object); }
+
+//! \brief parses a object.
+Dxf_base_object* Dxf_parser::parse_plotsettings_object()
+{ return parse_object("plotsettings", new Dxf_plotsettings_object); }
+
+//! \brief parses a object.
+Dxf_base_object* Dxf_parser::parse_rastervariables_object()
+{ return parse_object("rastervariables", new Dxf_rastervariables_object); }
+
+//! \brief parses a object.
+Dxf_base_object* Dxf_parser::parse_render_object()
+{ return parse_object("render", new Dxf_render_object); }
+
+//! \brief parses a object.
+Dxf_base_object* Dxf_parser::parse_section_object()
+{ return parse_object("section", new Dxf_section_object); }
+
+//! \brief parses a object.
+Dxf_base_object* Dxf_parser::parse_spatial_index_object()
+{ return parse_object("spatial_index", new Dxf_spatial_index_object); }
+
+//! \brief parses a object.
+Dxf_base_object* Dxf_parser::parse_spatial_filter_object()
+{ return parse_object("spatial_filter", new Dxf_spatial_filter_object); }
+
+//! \brief parses a object.
+Dxf_base_object* Dxf_parser::parse_sortentstable_object()
+{ return parse_object("sortentstable", new Dxf_sortentstable_object); }
+
+//! \brief parses a object.
+Dxf_base_object* Dxf_parser::parse_sunstudy_object()
+{ return parse_object("sunstudy", new Dxf_sunstudy_object); }
+
+//! \brief parses a object.
+Dxf_base_object* Dxf_parser::parse_tablestyle_object()
+{ return parse_object("tablestyle", new Dxf_tablestyle_object); }
+
+//! \brief parses a object.
+Dxf_base_object* Dxf_parser::parse_underlaydefinition_object()
+{ return parse_object("underlaydefinition", new Dxf_underlaydefinition_object); }
+
+//! \brief parses a object.
+Dxf_base_object* Dxf_parser::parse_visualstyle_object()
+{ return parse_object("visualstyle", new Dxf_visualstyle_object); }
+
+//! \brief parses a object.
+Dxf_base_object* Dxf_parser::parse_vba_project_object()
+{ return parse_object("vba_project", new Dxf_vba_project_object); }
+
+//! \brief parses a object.
+Dxf_base_object* Dxf_parser::parse_wipeoutvariables_object()
+{ return parse_object("wipeoutvariables", new Dxf_wipeoutvariables_object); }
+
+//! \brief parses a object.
+Dxf_base_object* Dxf_parser::parse_xrecord_object()
+{ return parse_object("xrecord", new Dxf_xrecord_object); }
 
 //! \brief parses a regular boundary path.
 void Dxf_parser::parse_boundary_path(Dxf_boundary_path& path)
@@ -1472,7 +1474,9 @@ void Dxf_parser::clear()
   m_entities.clear();
 
   // Clear objects
-  m_material_objects.clear();
+  for (auto* object : m_objects) delete object;
+  m_objects.clear();
+
   m_color_arrays.clear();
   m_pattern_appearances.clear();
 }
