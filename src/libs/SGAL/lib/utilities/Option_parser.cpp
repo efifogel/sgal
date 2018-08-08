@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_MSC_VER)
@@ -51,10 +53,8 @@ Option_parser::Option_parser() :
   // Extract trace options:
   auto* tracer = Tracer::get_instance();
   std::string trace_msg("trace options:\n");
-  // for (const auto& trace_opt : tracer->get_options())
-  //   trace_msg += "  " + trace_opt.first + "\n";
   for (auto it = tracer->names_begin(); it != tracer->names_end(); ++it)
-    trace_msg += "  " + *it + "\n";
+    if (! it->empty()) trace_msg += "  " + *it + "\n";
 
   // Options allowed on the command line, config file, or env. variables
   // We must keep the trace-options as strings, and NOT convert them on the fly,

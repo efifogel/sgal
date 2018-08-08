@@ -37,7 +37,7 @@
 #include "SGAL/Group.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Indexed_face_set.hpp"
-#include "SGAL/File_format_3d.hpp"
+#include "SGAL/Geometry_format.hpp"
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Material.hpp"
 #include "SGAL/Coord_array_3d.hpp"
@@ -565,7 +565,7 @@ Loader_code Loader::read_stl(std::istream& is, size_t size,
                              Scene_graph* scene_graph, Group* root,
                              const Vector3f& color)
 {
-  scene_graph->set_input_format_id(File_format_3d::STL);
+  scene_graph->set_input_format(Geometry_format::STL);
 
   Int32 total_num_tris;
   is.read((char*)&total_num_tris, sizeof(Int32));
@@ -627,7 +627,7 @@ Loader_code Loader::load_off(std::istream& is, const boost::smatch& what,
   std::string line;
   std::getline(is, line);
 
-  sg->set_input_format_id(File_format_3d::OFF);
+  sg->set_input_format(Geometry_format::OFF);
   bool has_colors = what.length(2);
 
   // Add Shape
@@ -1215,7 +1215,7 @@ Loader::update_ifs(Scene_graph* sg,
 // \brief loads a scene graph represented in the obj file format from a stream.
 Loader_code Loader::parse_obj(std::istream& is, Scene_graph* sg, Group* root)
 {
-  sg->set_input_format_id(File_format_3d::OBJ);
+  sg->set_input_format(Geometry_format::OBJ);
 
   // Construct arrays
   Shared_coord_array_3d shared_coords(new Coord_array_3d);

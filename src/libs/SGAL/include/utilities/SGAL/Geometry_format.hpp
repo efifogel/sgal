@@ -18,22 +18,22 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_FILE_FORMAT_3D_HPP
-#define SGAL_FILE_FORMAT_3D_HPP
+#ifndef SGAL_GEOMETRY_FORMAT_HPP
+#define SGAL_GEOMETRY_FORMAT_HPP
 
 #include <string>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Option_mapper.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_SGAL_DECL File_format_3d {
+class SGAL_SGAL_DECL Geometry_format : public Option_mapper {
 public:
   //! Format codes
   enum Code {
-    INVALID = 0,
-    WRL,
+    WRL = START_CODE,
     X3D,
     OFF,
     STL,
@@ -43,21 +43,18 @@ public:
     NUM_CODES
   };
 
-  /*! Compare the name of the ith format to a given token.
-   * \param[in] i The index of the format to compare against.
-   * \param[in] token The token string to compare.
+  /*! Obtain the trace singleton.
+   * \return the trace singleton.
    */
-  static Boolean compare_name(Uint i, const std::string& token);
-
-  /*! obtains the ith format name.
-   * \param[in] i The index of the format.
-   * \return the name of the ith format.
-   */
-  static const Char* get_name(Uint i);
+  static Geometry_format* get_instance();
 
 private:
-  //! file format names also used as file extensions.
-  static const Char* s_names[];
+  /*! Construct.
+   */
+  Geometry_format();
+
+  //! The singleton.
+  static Geometry_format* s_instance;
 };
 
 SGAL_END_NAMESPACE

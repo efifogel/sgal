@@ -56,9 +56,9 @@
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 #include "SGAL/Navigation_type.hpp"
 #include "SGAL/Bindable_stack.hpp"
-#include "SGAL/File_format_3d.hpp"
 
 //! \todo #include "Event_filter.h"
 //! \todo #include "Model_stats.h"
@@ -426,32 +426,32 @@ public:
     return oi;
   }
 
-  /*! Obtain the input file format.
-   * \return The input file format.
+  /*! Obtain the input format.
+   * \return The input format.
    */
-  File_format_3d::Code get_input_format_id() const;
+  Uint get_input_format() const;
 
-  /*! Set the input file format.
-   * \param[in] format The input file format.
+  /*! Set the input format.
+   * \param[in] code The code of the input format.
    */
-  void set_input_format_id(File_format_3d::Code format_id);
+  void set_input_format(Uint code);
 
   /// \name Writters
   //@{
   /*! Export the scene to a file in a given format.
    * \param[in] filename The file name.
-   * \param[in] format_id The id of the given format.
+   * \param[in] format The code of the given format.
    */
-  void write(const std::string& filename, File_format_3d::Code format_id,
+  void write(const std::string& filename, Uint format,
              Boolean is_binary = false);
 
   /*! Export the scene to an output stream in a given format.
    * \param[in] filename The file name.
    * \param[in] os (in) The output stream.
-   * \param[in] format_id The id of the given format.
+   * \param[in] format The code of the given format.
    */
   void write(const std::string& filename, std::ostream& os,
-             File_format_3d::Code format_id, Boolean is_binary = false);
+             Uint format, Boolean is_binary = false);
 
   /*! Export the scene to an output stream in VRML format.
    * \param[in] filename The file name.
@@ -517,66 +517,69 @@ public:
   void split_connected_components();
 
 private:
-  /*! Binadable stacks */
+  /// Binadable stacks.
+  //@{
 
-  /*! The viewpoint stack */
+  //! The viewpoint stack.
   Bindable_stack m_viewpoint_stack;
 
-  /*! The navigation info binable stack */
+  //! The navigation info binable stack.
   Bindable_stack m_navigation_info_stack;
 
-  /*! The fog stack */
+  //! The fog stack.
   Bindable_stack m_fog_stack;
 
- /*! The configuration stack */
+  /*! The configuration stack */
   Bindable_stack m_configuration_stack;
 
-  /*! The camera stack */
+  //! The camera stack.
   Bindable_stack m_camera_stack;
 
-  /*! The background stack */
+  //! The background stack.
   Bindable_stack m_background_stack;
 
-  /*! The root of the scene graph */
+  //@}
+
+  //! The root of the scene graph.
   Shared_group m_root;
 
-  /*! the default light. */
+  //! the default light.
   Shared_point_light m_head_light;
 
-  /*! The default configuration */
+  //! The default configuration.
   Configuration* m_configuration;
 
-  /*! The default camera */
+  //! The default camera.
   Camera* m_camera;
 
-  /*! The default navigation info */
+  //! The default navigation info.
   Navigation_info* m_navigation_info;
 
-  /*! The default background */
+  //! The default background.
   Background* m_background;
 
-  /*! A list of objects that are children of the root of the scene */
+  //! A list of objects that are children of the root of the scene.
   Container_vector m_root_objects;
 
-  /*! The navigation transfor (a child of the root) */
+  //! The navigation transfor (a child of the root).
   Shared_transform m_navigation_root;
 
-  /*! The list of all containers. Used mainly for deletion. */
+  //! The list of all containers. Used mainly for deletion.
   Container_list m_containers;
 
-  /*! All containers that may be referenced (have the DEF attribute). */
+  //! All containers that may be referenced (have the DEF attribute).
   Container_map m_instances;
 
-  /*! the current context. */
+  //! the current context.
   Context* m_context;
 
-  /*! indicates whether the scene is ready for rendering. */
+  //! indicates whether the scene is ready for rendering.
   Boolean m_is_scene_done;
 
-  /*! indicates whether there were lights specified in the scene. */
+  //! indicates whether there were lights specified in the scene.
   Boolean m_does_have_lights;
 
-  /*! An index for the last used light. Used to generate unique light ids. */
+  //! An index for the last used light. Used to generate unique light ids.
   // Uint m_current_light_id;
 
   /*! an action used to intersect the scene graph with a given (x,y) point
@@ -584,13 +587,13 @@ private:
    */
   Isect_action* m_isect_action;
 
-  /*! A vector of touch-sensor pointers. */
+  //! A vector of touch-sensor pointers.
   Touch_sensor_list m_touch_sensors;
 
-  /*! The list of intervals of free selection ids. */
+  //! The list of intervals of free selection ids.
   Selection_id_interval_list m_free_selection_ids;
 
-  /*! A list of time sensors */
+  //! A list of time sensors.
   Time_sensor_list m_time_sensors;
 
   /*! an array of snapshot objects to be processed at the end of the rendering
@@ -598,7 +601,7 @@ private:
    */
   Snapshotter_list m_snapshotters;
 
-  /*! A list of Simulation containetrs. */
+  //! A list of Simulation containetrs.
   Simulation_list m_simulations;
 
   /*! the execution coordinator responsible for holding status information
@@ -606,64 +609,62 @@ private:
    */
   Execution_coordinator* m_execution_coordinator;
 
-  /*! an event filter that catches all events that are specific
-   * to the context, such as resize.
+  /*! An event filter that catches all events that are specific to the context,
+   * such as resize.
    */
   Event_filter* m_default_event_filter;
 
-  /*! a pointer to the view sensor object. */
+  //! a pointer to the view sensor object.
   // View_sensor* m_view_sensor;
 
-  /*! The active key sensor. */
+  //! The active key sensor.
   Key_sensor* m_active_key_sensor;
 
-  /*! the rendering frames per second. */
+  //! the rendering frames per second.
   float m_fps;
   short m_fps_counter;
   time_t m_fps_start_time;
 
-  /*! Last rendering time. */
+  //! Last rendering time.
   Uint m_last_render_time;
 
   static Uint s_min_redraw_period;
 
-  /*! a pointer to the statistics object. */
+  //! a pointer to the statistics object.
   //! \todo Model_stats m_statistics;
 
-  /*! an object that is used to display the FPS on the screen. */
+  //! an object that is used to display the FPS on the screen.
   Text_screen* m_text_screen;
 
-  /*! a critical section used in rendering and context creation. */
+  //! a critical section used in rendering and context creation.
   //! \todo static Critical_section s_render_cs;
 
-  /*! used to avoid multiple Isect executions in a single frame. */
+  //! used to avoid multiple Isect executions in a single frame.
   Boolean m_is_isect_required;
 
-  /*! Indicates whether the camera frustum is set to contain the bounding
-   * sphere
-   */
+  //! Indicates whether the camera frustum is set to contain the bounding sphere
   Boolean m_is_camera_in_focus;
 
-  /*! A collection of directories to search files in. */
+  //! A collection of directories to search files in.
   Path_list m_data_dirs;
 
-  /*! An isolated instance of the V8 engine. */
+  //! An isolated instance of the V8 engine.
   v8::Isolate* m_isolate;
 
-  /*! Indicates whether the configuration node is owned. */
+  //! Indicates whether the configuration node is owned.
   Boolean m_owned_configuration;
 
-  /*! Indicates whether the camera node is owned. */
+  //! Indicates whether the camera node is owned.
   Boolean m_owned_camera;
 
-  /*! Indicates whether the navigation info node is owned. */
+  //! Indicates whether the navigation info node is owned.
   Boolean m_owned_navigation_info;
 
-  /*! Indicates whether the background node is owned. */
+  //! Indicates whether the background node is owned.
   Boolean m_owned_background;
 
-  //! The id of the input format.
-  File_format_3d::Code m_input_format_id;
+  //! The code of the input format.
+  Uint m_input_format;
 
   void set_head_light(Configuration* config);
 
@@ -706,13 +707,12 @@ inline Bindable_stack* Scene_graph::get_camera_stack()
 inline Scene_graph::Shared_group Scene_graph::get_root() const
 { return m_root; }
 
-//! \brief obtains the input file format.
-inline File_format_3d::Code Scene_graph::get_input_format_id() const
-{ return m_input_format_id; }
+//! \brief obtains the input format.
+inline Uint Scene_graph::get_input_format() const { return m_input_format; }
 
-//! \brief sets the input file format.
-inline void Scene_graph::set_input_format_id(File_format_3d::Code format_id)
-{ m_input_format_id = format_id; }
+//! \brief sets the code of the input format.
+inline void Scene_graph::set_input_format(Uint format)
+{ m_input_format = format; }
 
 //! \brief obtains the begin pointer of the containers.
 inline Scene_graph::Container_list_iter Scene_graph::containers_begin()

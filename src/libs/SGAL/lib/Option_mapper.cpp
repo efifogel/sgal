@@ -60,12 +60,12 @@ size_t Option_mapper::find_code(const String& name) const
   return (it == m_options.end()) ? INVALID : it->second;
 }
 
-//! \brief find the option of a code.
-const String& Option_mapper::find_option(size_t code) const
+//! \brief finds the name of the option of a code.
+const String& Option_mapper::find_name(size_t code) const
 {
   auto it = std::find_if(m_options.begin(), m_options.end(),
                          (boost::bind(&Map::value_type::second, _1) == code));
-  return (it != m_options.end()) ? it->first : find_option(INVALID);
+  return (it != m_options.end()) ? it->first : find_name(INVALID);
 }
 
 //! \brief registers a trace option.

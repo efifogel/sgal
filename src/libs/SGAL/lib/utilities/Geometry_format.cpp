@@ -14,29 +14,42 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/File_format_3d.hpp"
+#include "SGAL/Geometry_format.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-//! file format options.
-const Char* File_format_3d::s_names[] = {
-  "none",
-  "wrl",
-  "x3d",
-  "off",
-  "stl",
-  "obj",
-  "json"
+//! The singleton.
+Geometry_format* Geometry_format::s_instance(nullptr);
+
+//! \brief obtains the singleton.
+Geometry_format* Geometry_format::get_instance()
+{
+  if (!s_instance) s_instance = new Geometry_format();
+  return s_instance;
+}
+
+//! \brief constructs.
+Geometry_format::Geometry_format()
+{
+  // Trace options.
+  Map options = {
+    {"", INVALID},
+    {"wrl", WRL},
+#if 0
+    {"x3d", X3D},
+#endif
+    {"off", OFF},
+    {"stl", STL},
+    {"obj", OBJ},
+    {"json", JSON},
+    {"dxf", DXF}
+  };
+  set_options(std::move(options));
 };
-
-//! \brief compares the name of the ith format to a given token.
-Boolean File_format_3d::compare_name(Uint i, const std::string& token)
-{ return (token.compare(s_names[i]) == 0); }
-
-//! obtains the ith format name.
-const Char* File_format_3d::get_name(Uint i) { return s_names[i]; }
 
 SGAL_END_NAMESPACE

@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <string>
@@ -27,6 +29,7 @@
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Dxf_configuration.hpp"
+#include "SGAL/Geometry_format.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_parser.hpp"
@@ -456,7 +459,7 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
   }
 
   // Construct the scene graph rooted at the given root.
-  m_scene_graph->set_input_format_id(SGAL::File_format_3d::DXF);
+  m_scene_graph->set_input_format(SGAL::Geometry_format::DXF);
   process_layers();
 
   add_background(root);

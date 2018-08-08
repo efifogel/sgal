@@ -77,6 +77,7 @@
 #include "SGAL/Key_sensor.hpp"
 #include "SGAL/Polyhedron_attributes_array.hpp"
 #include "SGAL/Gfx_conf.hpp"
+#include "SGAL/Geometry_format.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -113,7 +114,7 @@ Scene_graph::Scene_graph(bool syncronize) :
   m_owned_camera(false),
   m_owned_navigation_info(false),
   m_owned_background(false),
-  m_input_format_id(File_format_3d::INVALID)
+  m_input_format(Geometry_format::INVALID)
 {
   m_isect_action = new Isect_action();
   m_touch_sensors.clear();
@@ -920,36 +921,36 @@ const Background* Scene_graph::get_active_background() const
 
 //! \brief exports the scene to a file in a given format.
 void Scene_graph::write(const std::string& filename,
-                        File_format_3d::Code format_id, Boolean is_binary)
+                        Uint format, Boolean is_binary)
 {
-  if (filename.empty()) write(filename, std::cout, format_id, is_binary);
+  if (filename.empty()) write(filename, std::cout, format, is_binary);
   else {
     std::ios_base::openmode mode = (is_binary) ?
       (std::ios_base::out | std::ios_base::binary) : std::ios_base::out;
     std::ofstream os(filename, mode);
     if (!os.is_open()) return;
-    write(filename, os, format_id, is_binary);
+    write(filename, os, format, is_binary);
     os.close();
   }
 }
 
 //! \brief exports the scene to an output stream in a given format.
 void Scene_graph::write(const std::string& filename, std::ostream& os,
-                        File_format_3d::Code format_id, Boolean is_binary)
+                        Uint format, Boolean is_binary)
 {
   SGAL_TRACE_CODE(Tracer::EXPORT,
-                  std::cout << "Scene_graph: " << "Format: " << format_id
+                  std::cout << "Scene_graph: " << "Format: " << format
                   << std::endl;);
-  switch (format_id) {
-   case File_format_3d::WRL: write_vrml(filename, os); break;
-   case File_format_3d::X3D: break;
-   case File_format_3d::OFF: break;
-   case File_format_3d::STL: write_stl(filename, os, is_binary); break;
-   case File_format_3d::OBJ: write_obj(filename, os);break;
-   case File_format_3d::JSON: write_json(filename, os);break;
+  switch (format) {
+   case Geometry_format::WRL: write_vrml(filename, os); break;
+   case Geometry_format::X3D: break;
+   case Geometry_format::OFF: break;
+   case Geometry_format::STL: write_stl(filename, os, is_binary); break;
+   case Geometry_format::OBJ: write_obj(filename, os);break;
+   case Geometry_format::JSON: write_json(filename, os);break;
 
-   case File_format_3d::INVALID:
-   case File_format_3d::NUM_CODES:
+   case Geometry_format::INVALID:
+   case Geometry_format::NUM_CODES:
    default: return;
   }
 }

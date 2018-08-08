@@ -26,7 +26,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Node.hpp"
-#include "SGAL/File_format_2d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -85,8 +84,7 @@ public:
   Boolean* trigger_handle(const Field_info*) { return &m_trigger; }
   std::string* dir_name_handle(const Field_info*) { return &m_dir_name; }
   std::string* file_name_handle(const Field_info*) { return &m_file_name; }
-  File_format_2d::Code* file_format_handle(const Field_info*)
-  { return &m_file_format; }
+  Uint* file_format_handle(const Field_info*){ return &m_file_format; }
   Boolean* flip_handle(const Field_info*) { return &m_flip; }
   Shared_image* image_handle(const Field_info*)
   { return &m_image; }
@@ -131,11 +129,11 @@ public:
 
   /*! Set the file format.
    */
-  void set_file_format(File_format_2d::Code format);
+  void set_file_format(Uint format);
 
   /*! Obtain the file format.
    */
-  File_format_2d::Code get_file_format() const;
+  Uint get_file_format() const;
 
   /*! Set the flag that indicates whether the image should be reflected. */
   void set_flip(Boolean flag);
@@ -156,28 +154,28 @@ public:
   Shared_image get_image() const;
 
 protected:
-  /*! Obtain the tag (type) of the container. */
+  //! Obtain the tag (type) of the container.
   virtual const std::string& get_tag() const;
 
-  /*! The trigger of the engine, which makes the engine excute. */
+  //! The trigger of the engine, which makes the engine excute.
   Boolean m_trigger;
 
-  /*! The directory to save the image at. */
+  //! The directory to save the image at.
   std::string m_dir_name;
 
-  /*! The name of the file the image is written to. */
+  //! The name of the file the image is written to.
   std::string m_file_name;
 
-  /*! The format of the file the image is written to. */
-  File_format_2d::Code m_file_format;
+  //! The format of the file the image is written to.
+  Uint m_file_format;
 
-  /*! The quality of the (loss) image (applicable to jpeg). */
+  //! The quality of the (loss) image (applicable to jpeg).
   Uint m_quality;
 
-  /*! Indicates whether the rows are in reverse order (window system style) */
+  //! Indicates whether the rows are in reverse order (window system style).
   Boolean m_flip;
 
-  /*! The output image. */
+  //! The output image.
   Shared_image m_image;
 
 private:
@@ -190,7 +188,7 @@ private:
   //! Default values:
   const static std::string s_def_dir_name;
   const static std::string s_def_file_name;
-  const static File_format_2d::Code s_def_file_format;
+  const static Uint s_def_file_format;
   const static Uint s_def_quality;
   const static Boolean s_def_flip;
 
@@ -224,12 +222,11 @@ inline const std::string& Image_writer::get_file_name() const
 { return m_file_name; }
 
 //! \brief sets the file format.
-inline void Image_writer::set_file_format(File_format_2d::Code format)
+inline void Image_writer::set_file_format(Uint format)
 { m_file_format = format; }
 
 //! \brief obtains the file format.
-inline File_format_2d::Code Image_writer::get_file_format() const
-{ return m_file_format; }
+inline Uint Image_writer::get_file_format() const { return m_file_format; }
 
 //! \brief sets the flag that indicates whether the image should be reflected.
 inline void Image_writer::set_flip(Boolean flag) { m_flip = flag; }

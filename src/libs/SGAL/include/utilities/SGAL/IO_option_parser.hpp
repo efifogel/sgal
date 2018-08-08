@@ -35,8 +35,8 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/File_format_2d.hpp"
-#include "SGAL/File_format_3d.hpp"
+#include "SGAL/Image_format.hpp"
+#include "SGAL/Geometry_format.hpp"
 
 namespace po = boost::program_options;
 
@@ -51,16 +51,13 @@ class Configuration;
 
 class SGAL_SGAL_DECL IO_option_parser {
 public:
-  typedef std::vector<File_format_2d::Code> Formats_2d;
-  typedef Formats_2d::const_iterator        Format_2d_const_iter;
+  typedef std::vector<Uint>                     File_formats;
+  typedef File_formats::const_iterator          Format_const_iter;
 
-  typedef std::vector<File_format_3d::Code> Formats_3d;
-  typedef Formats_3d::const_iterator        Format_3d_const_iter;
+  typedef std::vector<std::string>              Input_path;
+  typedef Input_path::const_iterator            Input_path_const_iterator;
 
-  typedef std::vector<std::string>          Input_path;
-  typedef Input_path::const_iterator        Input_path_const_iterator;
-
-  /*! Constructor. */
+  /*! Construct. */
   IO_option_parser();
 
   /*! Destructor. */
@@ -84,20 +81,20 @@ public:
    */
   void configure(Configuration* conf);
 
-  /*! Obtain the begin iterator of the selected 2d format container.
-   * \return the begin iterator of the selected 2d format container.
+  /*! Obtain the begin iterator of the selected image format container.
+   * \return the begin iterator of the selected image format container.
    */
-  Format_2d_const_iter formats_2d_begin() const;
+  Format_const_iter image_formats_begin() const;
 
-  /*! Obtain the past-the-end iterator of the selected 2d format container.
-   * \return the past-the-end iterator of the selected 2d format container.
+  /*! Obtain the past-the-end iterator of the selected image format container.
+   * \return the past-the-end iterator of the selected image format container.
    */
-  Format_2d_const_iter formats_2d_end() const;
+  Format_const_iter image_formats_end() const;
 
-  /*! Obtain the size of the selected 2d format container.
-   * \return the size of the selected 2d format container.
+  /*! Obtain the size of the selected image format container.
+   * \return the size of the selected image format container.
    */
-  size_t formats_2d_size() const;
+  size_t image_formats_size() const;
 
   /*! Determine whether to take a snapshot of the scene and save it in a file.
    * \return true if a snapshot of the the scene should be taken;
@@ -105,20 +102,20 @@ public:
    */
   Boolean do_snapshot() const;
 
-  /*! Obtain the begin iterator of the selected 3d format container.
-   * \return the begin iterator of the selected 3d format container.
+  /*! Obtain the begin iterator of the selected geometry format container.
+   * \return the begin iterator of the selected geometry format container.
    */
-  Format_3d_const_iter formats_3d_begin() const;
+  Format_const_iter geometry_formats_begin() const;
 
-  /*! Obtain the past-the-end iterator of the selected 3d format container.
-   * \return the past-the-end iterator of the selected 3d format container.
+  /*! Obtain the past-the-end iterator of the selected geometry format container.
+   * \return the past-the-end iterator of the selected geometry format container.
    */
-  Format_3d_const_iter formats_3d_end() const;
+  Format_const_iter geometry_formats_end() const;
 
-  /*! Obtain the size of the selected 3d format container.
-   * \return the size of the selected 3d format container.
+  /*! Obtain the size of the selected geometry format container.
+   * \return the size of the selected geometry format container.
    */
-  size_t formats_3d_size() const;
+  size_t geometry_formats_size() const;
 
   /*! Determine whether to export the scene.
    * \return true if the scene should be saved in output files; false otherwise.
@@ -185,31 +182,31 @@ public:
   Boolean get_export_non_visible() const;
 
 protected:
-  /*! The options. */
+  //! The options.
   po::options_description m_io_opts;
 
-  /*! The selected 2D formats. */
-  Formats_2d m_formats_2d;
+  //! The selected image formats.
+  File_formats m_image_formats;
 
-  /*! The selected 3D formats. */
-  Formats_3d m_formats_3d;
+  //! The selected geometry formats.
+  File_formats m_geometry_formats;
 
-  /*! Indicates whether a snapshot of the scene should be taken. */
+  //! Indicates whether a snapshot of the scene should be taken.
   Boolean m_snapshot;
 
-  /*! Indicates whether to save the scene to an output file. */
+  //! Indicates whether to save the scene to an output file.
   Boolean m_export;
 
-  /*! Indicates whether the operation is interactive. */
+  //! Indicates whether the operation is interactive.
   Boolean m_interactive;
 
-  /*! Indicates whether the output file format is binary. */
+  //! Indicates whether the output file format is binary.
   Boolean m_binary;
 
-  /*! Output file name. */
+  //! Output file name.
   std::string m_output_file;
 
-  /*! Output path name. */
+  //! Output path name.
   std::string m_output_path;
 
   /*! The root of the scene to export:
@@ -220,8 +217,7 @@ protected:
    */
   Uint m_export_scene_root;
 
-  /*! Indicates whether to export non-visible geometries.
-   */
+  //! Indicates whether to export non-visible geometries.
   Boolean m_export_non_visible;
 
 private:
@@ -244,36 +240,41 @@ private:
 inline const po::options_description& IO_option_parser::get_io_opts() const
 { return m_io_opts; }
 
-//! \brief obtains the begin iterator of the selected 2d format container.
+//! \brief obtains the begin iterator of the selected image format container.
 inline
-IO_option_parser::Format_2d_const_iter IO_option_parser::formats_2d_begin() const
-{ return m_formats_2d.begin(); }
+IO_option_parser::Format_const_iter
+IO_option_parser::image_formats_begin() const
+{ return m_image_formats.begin(); }
 
-//! \brief obtains the past-the-end iterator of the selected 2d format container.
+/*! \brief obtains the past-the-end iterator of the selected image format
+ * container.
+ */
 inline
-IO_option_parser::Format_2d_const_iter IO_option_parser::formats_2d_end() const
-{ return m_formats_2d.end(); }
+IO_option_parser::Format_const_iter IO_option_parser::image_formats_end() const
+{ return m_image_formats.end(); }
 
 //! \brief obtains the size of the selected 2d format container.
-inline size_t IO_option_parser::formats_2d_size() const
-{ return m_formats_2d.size(); }
+inline size_t IO_option_parser::image_formats_size() const
+{ return m_image_formats.size(); }
 
 //! \brief determines whether a snapshot of the scene should be taken.
 inline Boolean IO_option_parser::do_snapshot() const { return m_snapshot; }
 
-//! \brief obtains the begin iterator of the selected 3d format container.
-inline
-IO_option_parser::Format_3d_const_iter IO_option_parser::formats_3d_begin() const
-{ return m_formats_3d.begin(); }
+//! \brief obtains the begin iterator of the selected geometry format container.
+inline IO_option_parser::Format_const_iter
+IO_option_parser::geometry_formats_begin() const
+{ return m_geometry_formats.begin(); }
 
-//! \brief obtains the past-the-end iterator of the selected 3d format container.
-inline
-IO_option_parser::Format_3d_const_iter IO_option_parser::formats_3d_end() const
-{ return m_formats_3d.end(); }
+/*! \brief obtains the past-the-end iterator of the selected geometry format
+ * container.
+ */
+inline IO_option_parser::Format_const_iter
+IO_option_parser::geometry_formats_end() const
+{ return m_geometry_formats.end(); }
 
-//! \brief obtains the size of the selected 3d format container.
-inline size_t IO_option_parser::formats_3d_size() const
-{ return m_formats_3d.size(); }
+//! \brief obtains the size of the selected geometry format container.
+inline size_t IO_option_parser::geometry_formats_size() const
+{ return m_geometry_formats.size(); }
 
 //! \brief determines whether to save to output files.
 inline Boolean IO_option_parser::do_export() const { return m_export; }
@@ -323,35 +324,36 @@ inline UnaryFunction IO_option_parser::for_each_dir(UnaryFunction func)
  * corresponding Id types.
  */
 template <typename T> struct File_format;
-template <> struct File_format<File_format_2d::Code>
-{ typedef File_format_2d type; };
-template <> struct File_format<File_format_3d::Code>
-{ typedef File_format_3d type; };
 
-//! Import 3D (graphics) and 2D (image) file formats
+template <> struct File_format<Image_format::Code>
+{ typedef Image_format type; };
+
+template <> struct File_format<Geometry_format::Code>
+{ typedef Geometry_format type; };
+
+//! Import geometry and image file formats
 template <typename InputStream, typename Code>
 InputStream& import(InputStream& in, Code& format)
 {
-  typedef typename File_format<Code>::type                My_file_format;
-  std::string token;
-  in >> token;
-  for (size_t i = 0; i < My_file_format::NUM_CODES; ++i) {
-    if (! My_file_format::compare_name(i, token)) continue;
-    format = static_cast<Code>(i);
-    return in;
-  }
+  typedef typename File_format<Code>::type                My_format;
+  auto* file_format = My_format::get_instance();
+  std::string name;
+  in >> name;
+  format = file_format->find_code(name);
+  if (format != My_format::INVALID) return in;
+
   throw po::validation_error(po::validation_error::invalid_option_value);
   return in;
 }
 
-//! Import 2D (image) file formats
+//! Import image file formats
 template <typename InputStream>
-InputStream& operator>>(InputStream& in, File_format_2d::Code& format)
+InputStream& operator>>(InputStream& in, Image_format::Code& format)
 { return import(in, format); }
 
-//! Import 3D (graphics) file formats
+//! Import geometry file formats
 template <typename InputStream>
-InputStream& operator>>(InputStream& in, File_format_3d::Code& format)
+InputStream& operator>>(InputStream& in, Geometry_format::Code& format)
 { return import(in, format); }
 
 //! \brief obtains the root of the scene to export.

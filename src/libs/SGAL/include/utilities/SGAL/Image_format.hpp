@@ -18,22 +18,22 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_FILE_FORMAT_2D_HPP
-#define SGAL_FILE_FORMAT_2D_HPP
+#ifndef SGAL_IMAGE_FORMAT_HPP
+#define SGAL_IMAGE_FORMAT_HPP
 
 #include <string>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Option_mapper.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_SGAL_DECL File_format_2d {
+class SGAL_SGAL_DECL Image_format : public Option_mapper {
 public:
   //! Format codes
   enum Code {
-    INVALID = 0,
-    ANI,
+    ANI = START_CODE,
     ANIM,
     APNG,
     ART,
@@ -140,21 +140,18 @@ public:
     NUM_CODES
   };
 
-  /*! Compare the name of the ith format to a given token.
-   * \param[in] i The index of the format to compare against.
-   * \param[in] token The token string to compare.
+  /*! Obtain the trace singleton.
+   * \return the trace singleton.
    */
-  static Boolean compare_name(Uint i, const std::string& token);
-
-  /*! obtains the ith format name.
-   * \param[in] i The index of the format.
-   * \return the name of the ith format.
-   */
-  static const Char* get_name(Uint i);
+  static Image_format* get_instance();
 
 private:
-  //! file format names also used as file extensions.
-  static const Char* s_names[];
+  /*! Construct.
+   */
+  Image_format();
+
+  //! The singleton.
+  static Image_format* s_instance;
 };
 
 SGAL_END_NAMESPACE

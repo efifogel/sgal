@@ -32,7 +32,6 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Snapshotter.hpp"
 #include "SGAL/Action.hpp"
-#include "SGAL/File_format_2d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -99,8 +98,7 @@ public:
   //@{
   std::string* dir_name_handle(const Field_info*) { return &m_dir_name; }
   std::string* file_name_handle(const Field_info*) { return &m_file_name; }
-  File_format_2d::Code* file_format_handle(const Field_info*)
-  { return &m_file_format; }
+  Uint* file_format_handle(const Field_info*) { return &m_file_format; }
   Shared_image_writer* image_writer_handle(const Field_info*)
   { return &m_image_writer; }
   //@}
@@ -147,11 +145,11 @@ public:
 
   /*! Set the file format.
    */
-  void set_file_format(File_format_2d::Code format);
+  void set_file_format(Uint format);
 
   /*! Obtain the file format.
    */
-  File_format_2d::Code get_file_format();
+  Uint get_file_format();
 
   /*! Set the flag that indicates whether to generate the file name as part of
    * a sequence.
@@ -187,41 +185,41 @@ protected:
    */
   void clean_image_writer();
 
-  /*! The image writer. */
+  //! The image writer.
   Shared_image_writer m_image_writer;
 
-  /*! The directory to save the image at. */
+  //! The directory to save the image at.
   std::string m_dir_name;
 
-  /*! The name of the file the image is written to. */
+  //! The name of the file the image is written to.
   std::string m_file_name;
 
-  /*! The format of the file the image is written to. */
-  File_format_2d::Code m_file_format;
+  //! The format of the file the image is written to.
+  Uint m_file_format;
 
-  /*! The quality of the (loss) image (applicable to jpeg). */
+  //! The quality of the (loss) image (applicable to jpeg).
   Uint m_quality;
 
-  /*! Indicates whether to generate the file name  as part of a sequence. */
+  //! Indicates whether to generate the file name  as part of a sequence.
   Boolean m_sequence;
 
-  /*! The sequence counter. */
+  //! The sequence counter.
   Uint m_count;
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The node prototype */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
-  /*! Indicates whether the image writer is dirty and thus must be cleaned. */
+  //! Indicates whether the image writer is dirty and thus must be cleaned.
   Boolean m_dirty_image_writer;
 
-  /*! Indicates whether the file name is dirty and thus must be cleaned. */
+  //! Indicates whether the file name is dirty and thus must be cleaned.
   Boolean m_dirty_file_name;
 
-  /*! Indicates whether the directory name is dirty and thus must be cleaned. */
+  //! Indicates whether the directory name is dirty and thus must be cleaned.
   Boolean m_dirty_dir_name;
 
   /*! Indicates whether the file format is dirty and thus must be cleaned. */

@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #if defined(PLAYER_CONTROL)
@@ -87,6 +89,7 @@
 #include "SGAL/Field.hpp"
 #include "SGAL/Camera.hpp"
 #include "SGAL/Polyhedron_attributes_array.hpp"
+#include "SGAL/Geometry_format.hpp"
 
 #if (defined SGAL_USE_GLUT)
 #include "SGLUT/Glut_window_item.hpp"
@@ -372,7 +375,7 @@ void Player_scene::snapshot_scene()
   auto* src_field = snapshotter->get_source_field("image");
   SGAL_assertion(src_field);
   typedef boost::shared_ptr<SGAL::Image_writer>         Shared_image_writer;
-  if (0 == m_option_parser->formats_2d_size()) {
+  if (0 == m_option_parser->image_formats_size()) {
     Shared_image_writer image_writer(new SGAL::Image_writer);
     SGAL_assertion(image_writer);
     m_scene_graph->get_root()->add_child(image_writer);
@@ -390,8 +393,8 @@ void Player_scene::snapshot_scene()
   }
 
   // Iterate over all requested formats.
-  for (auto it = m_option_parser->formats_2d_begin();
-       it != m_option_parser->formats_2d_end(); ++it)
+  for (auto it = m_option_parser->image_formats_begin();
+       it != m_option_parser->image_formats_end(); ++it)
   {
     Shared_image_writer image_writer(new SGAL::Image_writer);
     SGAL_assertion(image_writer);
@@ -400,8 +403,8 @@ void Player_scene::snapshot_scene()
     image_writer->set_image(m_image);
     if (!parent_name.empty()) image_writer->set_dir_name(parent_name);
     if (!file_name.empty()) image_writer->set_file_name(file_name);
-    SGAL::File_format_2d::Code format_id = *it;
-    image_writer->set_file_format(format_id);
+    auto format = *it;
+    image_writer->set_file_format(format);
 
     auto* dst_field = image_writer->get_destination_field("trigger");
     SGAL_assertion(dst_field);
@@ -414,6 +417,7 @@ void Player_scene::snapshot_scene()
 //! \brief exports the scene.
 void Player_scene::export_scene()
 {
+  auto* file_format = SGAL::Geometry_format::get_instance();
   fi::path file_path;
   if (!m_option_parser->is_output_file_empty())
     file_path = fi::path(m_option_parser->get_output_file());
@@ -422,32 +426,31 @@ void Player_scene::export_scene()
     file_path = fi::path(m_option_parser->get_input_file(0)).filename();
   }
   fi::path parent_path(m_option_parser->get_output_path());
-  auto input_format_id = m_scene_graph->get_input_format_id();
+  auto input_format = m_scene_graph->get_input_format();
 
-  if (0 == m_option_parser->formats_3d_size()) {
+  if (0 == m_option_parser->geometry_formats_size()) {
     SGAL_assertion(!file_path.empty());
     if (! file_path.has_extension()) {
-      const auto& new_extension =
-        SGAL::File_format_3d::get_name(input_format_id);
+      const auto& new_extension = file_format->find_name(input_format);
       file_path.replace_extension(new_extension);
     }
     if (file_path.is_relative() && !parent_path.empty())
       file_path = parent_path / file_path;
-    m_scene_graph->write(file_path.string(), input_format_id,
+    m_scene_graph->write(file_path.string(), input_format,
                          m_option_parser->is_binary());
     return;
   }
 
   // Iterate over all requested formats.
-  for (auto it = m_option_parser->formats_3d_begin();
-       it != m_option_parser->formats_3d_end(); ++it)
+  for (auto it = m_option_parser->geometry_formats_begin();
+       it != m_option_parser->geometry_formats_end(); ++it)
   {
-    SGAL::File_format_3d::Code format_id = *it;
-    const auto& new_extension = SGAL::File_format_3d::get_name(format_id);
+    auto format = *it;
+    const auto& new_extension = file_format->find_name(format);
     file_path.replace_extension(new_extension);
     if (file_path.is_relative() && !parent_path.empty())
       file_path = parent_path / file_path;
-    m_scene_graph->write(file_path.string(), format_id,
+    m_scene_graph->write(file_path.string(), format,
                          m_option_parser->is_binary());
   }
 }

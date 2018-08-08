@@ -31,7 +31,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Snapshot.hpp"
-#include "SGAL/File_format_2d.hpp"
+#include "SGAL/Image_format.hpp"
 #include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
@@ -180,17 +180,10 @@ void Snapshot::set_attributes(Element* elem)
       continue;
     }
     if (name == "fileFormat") {
-      size_t i;
-      for (i = 0; i < File_format_2d::NUM_CODES; ++i) {
-        if (File_format_2d::compare_name(i, value)) {
-          set_file_format(static_cast<File_format_2d::Code>(i));
-          break;
-        }
-      }
-      if (i == File_format_2d::NUM_CODES) {
-        std::cerr << "Illegal file format (" << value.c_str() << ")!"
-                  << std::endl;
-      }
+      auto code = Image_format::get_instance()->find_code(value);
+      if (code != Image_format::INVALID) set_file_format(code);
+      else std::cerr << "Illegal file format (" << value.c_str() << ")!"
+                     << std::endl;
       elem->mark_delete(ai);
       continue;
     }
@@ -253,7 +246,7 @@ std::string Snapshot::get_dir_name()
 }
 
 //! \brief sets the file format.
-void Snapshot::set_file_format(File_format_2d::Code format)
+void Snapshot::set_file_format(Uint format)
 {
   m_file_format = format;
   m_dirty_image_writer = true;
@@ -261,7 +254,7 @@ void Snapshot::set_file_format(File_format_2d::Code format)
 }
 
 //! \brief obtains the file format.
-File_format_2d::Code Snapshot::get_file_format()
+Uint Snapshot::get_file_format()
 {
   if (m_dirty_file_format) clean_attributes();
   return m_file_format;
@@ -300,9 +293,10 @@ void Snapshot::write_field(const Field_info* field_info, Formatter* formatter)
   auto* vrml_formatter = static_cast<Vrml_formatter*>(formatter);
   if (vrml_formatter) {
     if (FILE_FORMAT == field_info->get_id()) {
+      auto* file_format = Image_format::get_instance();
       vrml_formatter->single_string(field_info->get_name(),
-                                    File_format_2d::get_name(m_file_format),
-                                    File_format_2d::get_name(Image_writer::s_def_file_format));
+                                    file_format->find_name(m_file_format),
+                                    file_format->find_name(Image_writer::s_def_file_format));
       return;
     }
   }

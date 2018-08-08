@@ -74,11 +74,11 @@ public:
    */
   size_t find_code(const String& name) const;
 
-  /*! Find the option of a code.
+  /*! Find the name of the option of a code.
    * \param[in] code the code.
    * \return the option.
    */
-  const String& find_option(size_t code) const;
+  const String& find_name(size_t code) const;
 
   /*! Register a option.
    * \param[in] name the new option name.

@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_MSC_VER)
 #pragma warning ( disable : 4512 )
@@ -22,8 +24,9 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/IO_option_parser.hpp"
-#include "SGAL/File_format_3d.hpp"
 #include "SGAL/Configuration.hpp"
+#include "SGAL/Image_format.hpp"
+#include "SGAL/Geometry_format.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -39,28 +42,33 @@ IO_option_parser::IO_option_parser() :
 {
   typedef std::vector<std::string> vs;
 
+  // Extract geometry file format options:
+  auto* gf = Geometry_format::get_instance();
+  std::string gff_msg("geometry file formats:\n");
+  for (auto it = gf->names_begin(); it != gf->names_end(); ++it)
+    if (! it->empty()) gff_msg += "  " + *it + "\n";
+
+  // Extract image file format options:
+  auto* if_ = Image_format::get_instance();
+  std::string iff_msg("image file formats:\n");
+  for (auto it = if_->names_begin(); it != if_->names_end(); ++it)
+    if (! it->empty()) iff_msg += "  " + *it + "\n";
+
   // Options allowed on the command line, config file, or env. variables
   m_io_opts.add_options()
     ("input-path", po::value<vs>()->composing(), "input path")
-    ("format-2d", po::value<Formats_2d>(&m_formats_2d)->multitoken(),
-       "Image formats\n"
-       "  jpg\n"
-       "  png")
-    ("format-3d,f", po::value<Formats_3d>(&m_formats_3d)->multitoken(),
-       "3D formats\n"
-       "  wrl\n"
-       "  x3d\n"
-       "  stl\n"
-       "  obj\n"
-       "  json\n"
-       "  dxf")
+    ("image-format", po::value<File_formats>(&m_image_formats)->multitoken(),
+     iff_msg.c_str())
+    ("geometry-format,f", po::value<File_formats>(&m_geometry_formats)->multitoken(),
+     gff_msg.c_str())
     ("snapshot,S", po::value<Boolean>(&m_snapshot)->default_value(false),
      "snapshot")
     ("export,E", po::value<Boolean>(&m_export)->default_value(false), "export")
     ("interactive,I", po::value<Boolean>(&m_interactive)->default_value(true),
      "run in interactive mode.")
     ("output-file", po::value<std::string>(&m_output_file), "output file")
-    ("output-path", po::value<std::string>(&m_output_path)->default_value("."), "output path")
+    ("output-path", po::value<std::string>(&m_output_path)->default_value("."),
+     "output path")
     ("binary", po::value<Boolean>(&m_binary)->default_value(true), "binary")
     ("export-scene-root", po::value<Uint>(&m_export_scene_root),
      "The root of the scene to export; (0, 1, ...")

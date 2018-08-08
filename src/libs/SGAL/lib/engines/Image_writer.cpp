@@ -18,11 +18,6 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-/*! \file
- *
- * Converts an image to a height map
- */
-
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/path.hpp>
 
@@ -50,6 +45,7 @@
 #include "SGAL/Image_writer.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Utilities.hpp"
+#include "SGAL/Image_format.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -59,7 +55,7 @@ Container_proto* Image_writer::s_prototype(nullptr);
 // Default values
 const std::string Image_writer::s_def_dir_name(".");
 const std::string Image_writer::s_def_file_name("snaphsot");
-const File_format_2d::Code Image_writer::s_def_file_format(File_format_2d::PPM);
+const Uint Image_writer::s_def_file_format(Image_format::PPM);
 const Uint Image_writer::s_def_quality(50);
 const Boolean Image_writer::s_def_flip(true);
 
@@ -175,18 +171,10 @@ void Image_writer::set_attributes(Element* elem)
       continue;
     }
     if (name == "fileFormat") {
-      auto str = value;
-      size_t i;
-      for (i = 0; i < File_format_2d::NUM_CODES; ++i) {
-        if (File_format_2d::compare_name(i, str)) {
-          set_file_format(static_cast<File_format_2d::Code>(i));
-          break;
-        }
-      }
-      if (i == File_format_2d::NUM_CODES) {
-        std::cerr << "Illegal file format (" << value.c_str() << ")!"
-                  << std::endl;
-      }
+      auto code = Image_format::get_instance()->find_code(value);
+      if (code != Image_format::INVALID) set_file_format(code);
+      else std::cerr << "Illegal file format (" << value.c_str() << ")!"
+                     << std::endl;
       elem->mark_delete(ai);
       continue;
     }
@@ -223,12 +211,13 @@ void Image_writer::execute()
 {
   if (!m_image) return;
   m_trigger = false;
+  auto* file_format = Image_format::get_instance();
 
   boost::filesystem::path file_path(m_file_name);
   if (file_path.is_relative() && !m_dir_name.empty())
     file_path = boost::filesystem::path(m_dir_name) / file_path;
   auto file_name = file_path.string();
-  file_name += std::string(".") + File_format_2d::get_name(m_file_format);
+  file_name += std::string(".") + file_format->find_name(m_file_format);
 
   auto width = m_image->get_width();
   auto height = m_image->get_height();
@@ -241,7 +230,7 @@ void Image_writer::execute()
     "unknown";
   Magick::Image image(width, height, name.c_str(), Magick::CharPixel, pixels);
   if (m_flip) image.flip();
-  image.magick(File_format_2d::get_name(m_file_format));
+  image.magick(file_format->find_name(m_file_format));
   image.write(file_name);
 }
 

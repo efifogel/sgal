@@ -31,19 +31,19 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Scene_graph.hpp"
-#include "SGAL/File_format_3d.hpp"
+#include "SGAL/Geometry_format.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-const std::string Exporter::s_tag = "Exporter";
+const std::string Exporter::s_tag("Exporter");
 Container_proto* Exporter::s_prototype(nullptr);
 
 // Default values
 const std::string Exporter::s_def_dir_name(".");
 const std::string Exporter::s_def_file_name("sgal");
-const File_format_3d::Code Exporter::s_def_file_format(File_format_3d::WRL);
+const Uint Exporter::s_def_file_format(Geometry_format::WRL);
 const Boolean Exporter::s_def_separate(false);
 
 REGISTER_TO_FACTORY(Exporter, "Exporter");
@@ -72,7 +72,8 @@ void Exporter::execute(const Field_info* /* field_info */)
     oss << m_count++;
     file_name += "_" + oss.str();
   }
-  file_name += std::string(".") + File_format_3d::get_name(m_file_format);
+  auto* geometry_format = Geometry_format::get_instance();
+  file_name += std::string(".") + geometry_format->find_name(m_file_format);
   m_scene_graph->write(file_name, m_file_format);
 }
 
@@ -160,17 +161,10 @@ void Exporter::set_attributes(Element* elem)
       continue;
     }
     if (name == "fileFormat") {
-      size_t i;
-      for (i = 0; i < File_format_3d::NUM_CODES; ++i) {
-        if (File_format_3d::compare_name(i, value)) {
-          set_file_format(static_cast<File_format_3d::Code>(i));
-          break;
-        }
-      }
-      if (i == File_format_3d::NUM_CODES) {
-        std::cerr << "Illegal file format (" << value.c_str() << ")!"
-                  << std::endl;
-      }
+      auto code = Geometry_format::get_instance()->find_code(value);
+      if (code != Geometry_format::INVALID) set_file_format(code);
+      else std::cerr << "Illegal file format (" << value.c_str() << ")!"
+                     << std::endl;
       elem->mark_delete(ai);
       continue;
     }
@@ -194,9 +188,10 @@ void Exporter::write_field(const Field_info* field_info, Formatter* formatter)
   auto* vrml_formatter = static_cast<Vrml_formatter*>(formatter);
   if (vrml_formatter) {
     if (FILE_FORMAT == field_info->get_id()) {
+      auto* geom_format = Geometry_format::get_instance();
       vrml_formatter->single_string(field_info->get_name(),
-                                    File_format_3d::get_name(m_file_format),
-                                    File_format_3d::get_name(s_def_file_format));
+                                    geom_format->find_name(m_file_format),
+                                    geom_format->find_name(s_def_file_format));
       return;
     }
   }
