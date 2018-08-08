@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Switch.hpp"
@@ -30,7 +30,7 @@
 #include "SGAL/Touch_sensor.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Formatter.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -249,7 +249,7 @@ void Switch::write_field(const Field_info* field_info, Formatter* formatter)
 //! \brief exports this container.
 void Switch::write(Formatter* formatter)
 {
-  SGAL_TRACE_CODE(Trace::EXPORT,
+  SGAL_TRACE_CODE(Tracer::EXPORT,
                   std::cout << "Switch: " << "Tag: " << get_tag()
                   << ", name: " << get_name()
                   << std::endl;);

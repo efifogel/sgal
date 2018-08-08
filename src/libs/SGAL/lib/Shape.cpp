@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
 #include <boost/lexical_cast.hpp>
@@ -39,7 +39,7 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/Geometry.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Execution_function.hpp"
@@ -527,7 +527,7 @@ void Shape::field_changed(const Field_info* field_info)
 //! \brief writes this container.
 void Shape::write(Formatter* formatter)
 {
-  SGAL_TRACE_CODE(Trace::EXPORT,
+  SGAL_TRACE_CODE(Tracer::EXPORT,
                   std::cout << "Shape: " << "Tag: " << get_tag()
                   << ", name: " << get_name()
                   << std::endl;);

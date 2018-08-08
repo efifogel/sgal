@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
 #pragma warning(disable: 4146)
@@ -36,7 +36,6 @@
 #include "SGAL/Camera.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Tick_event.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Background.hpp"
 #include "SGAL/Transform.hpp"
 #include "SGAL/Configuration.hpp"

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
 
@@ -37,7 +37,7 @@
 #include "SGAL/Halftone.hpp"
 #include "SGAL/Gfx.hpp"
 #include "SGAL/Open_gl_os_init.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 //! \todo #include "Win_handle.h"
 
@@ -205,42 +205,42 @@ void Context::init_context_attributes()
 {
   GLint tmp;
   glGetIntegerv(GL_RED_BITS, &tmp); m_red_bits = tmp;
-  SGAL_TRACE_CODE(Trace::GRAPHICS,
+  SGAL_TRACE_CODE(Tracer::GRAPHICS,
                   std::cout << "Red bits: " << m_red_bits << std::endl;);
   glGetIntegerv(GL_GREEN_BITS, &tmp); m_green_bits = tmp;
-  SGAL_TRACE_CODE(Trace::GRAPHICS,
+  SGAL_TRACE_CODE(Tracer::GRAPHICS,
                   std::cout << "Green bits: " << m_green_bits << std::endl;);
   glGetIntegerv(GL_BLUE_BITS, &tmp); m_blue_bits = tmp;
-  SGAL_TRACE_CODE(Trace::GRAPHICS,
+  SGAL_TRACE_CODE(Tracer::GRAPHICS,
                   std::cout << "Blue bits: " << m_blue_bits << std::endl;);
   glGetIntegerv(GL_ALPHA_BITS, &tmp); m_alpha_bits = tmp;
-  SGAL_TRACE_CODE(Trace::GRAPHICS,
+  SGAL_TRACE_CODE(Tracer::GRAPHICS,
                   std::cout << "Alpha bits: " << m_alpha_bits << std::endl;);
   glGetIntegerv(GL_ACCUM_RED_BITS, &tmp); m_accum_red_bits = tmp;
-  SGAL_TRACE_CODE(Trace::GRAPHICS,
+  SGAL_TRACE_CODE(Tracer::GRAPHICS,
                   std::cout << "Accum red bits: " << m_accum_red_bits
                             << std::endl;);
   glGetIntegerv(GL_ACCUM_GREEN_BITS, &tmp); m_accum_green_bits = tmp;
-  SGAL_TRACE_CODE(Trace::GRAPHICS,
+  SGAL_TRACE_CODE(Tracer::GRAPHICS,
                   std::cout << "Accum green bits: " << m_accum_green_bits
                             << std::endl;);
   glGetIntegerv(GL_ACCUM_BLUE_BITS, &tmp); m_accum_blue_bits = tmp;
-  SGAL_TRACE_CODE(Trace::GRAPHICS,
+  SGAL_TRACE_CODE(Tracer::GRAPHICS,
                   std::cout << "Accum blue bits: " << m_accum_blue_bits
                             << std::endl;);
   glGetIntegerv(GL_ACCUM_ALPHA_BITS, &tmp); m_accum_alpha_bits = tmp;
-  SGAL_TRACE_CODE(Trace::GRAPHICS,
+  SGAL_TRACE_CODE(Tracer::GRAPHICS,
                   std::cout << "Accum alpha bits: " << m_accum_alpha_bits
                             << std::endl;);
   glGetIntegerv(GL_DEPTH_BITS, &tmp); m_depth_bits = tmp;
-  SGAL_TRACE_CODE(Trace::GRAPHICS,
+  SGAL_TRACE_CODE(Tracer::GRAPHICS,
                   std::cout << "Depth bits: " << m_depth_bits << std::endl;);
   glGetIntegerv(GL_STENCIL_BITS, &tmp); m_stencil_bits = tmp;
-  SGAL_TRACE_CODE(Trace::GRAPHICS,
+  SGAL_TRACE_CODE(Tracer::GRAPHICS,
                   std::cout << "Stencil bits: " << m_stencil_bits
                             << std::endl;);
   glGetIntegerv(GL_SAMPLES, &tmp); m_number_of_samples = tmp;
-  SGAL_TRACE_CODE(Trace::GRAPHICS,
+  SGAL_TRACE_CODE(Tracer::GRAPHICS,
                   std::cout << "Samples: " << m_number_of_samples
                             << std::endl;);
 }
@@ -1471,7 +1471,7 @@ void Context::delete_context()
 void Context::swap_buffers()
 {
   //! \todo m_gfx_handle->swap_buffers();
-  SGAL_TRACE_MSG(Trace::GRAPHICS, "Context::swap_buffers()\n");
+  SGAL_TRACE_MSG(Tracer::GRAPHICS, "Context::swap_buffers()\n");
 }
 
 //! \brief

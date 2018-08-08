@@ -14,14 +14,14 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Array_types.hpp"
 #include "SGAL/Formatter.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -299,7 +299,7 @@ void Field_info::write(Formatter* formatter,
     return;
   }
 
-  SGAL_TRACE_CODE(Trace::EXPORT,
+  SGAL_TRACE_CODE(Tracer::EXPORT,
                   std::cout << "Field_info: " << ", name: " << get_name()
                   << ": " << value.size()
                   << std::endl;);

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 /**
   ESAINode - implementation
@@ -28,18 +28,18 @@
 #include "SAISFNodeField.h"
 #include "SAISFStringField.h"
 #include "SAIClient.h"
-#include "Trace.h"
+#include "SGAL/Trace.hpp"
 
-/*! Constructor */
+//! \brief constructs.
 SAI_node::SAI_node(Container* container,
                    ESAIUpdatesInterface* SAIUpdatesInterface):
     m_container(container),m_SAIUpdatesInterface(SAIUpdatesInterface),
     m_referenceCounter(0),m_client(ENULL){}
 
-/*! Destructor */
+//! \brief destructs.
 SAI_node::~SAI_node()
 {
-  TRACE_MSG(Trace::DESTRUCTOR, "~SAI_node ...");
+  TRACE_MSG(Tracer::DESTRUCTOR, "~SAI_node ...");
   SAI_fieldServicesListType::iterator fieldServicesIterator = m_fieldsServices.begin();
   while( fieldServicesIterator != m_fieldsServices.end())
   {
@@ -48,7 +48,7 @@ SAI_node::~SAI_node()
     fieldServicesIterator ++;
   }
   if (m_client) m_client->Destroy();
-  TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
+  TRACE_MSG(Tracer::DESTRUCTOR, " completed\n");
 }
 
 

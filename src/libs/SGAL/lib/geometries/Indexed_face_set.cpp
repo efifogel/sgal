@@ -48,7 +48,7 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/GL_error.hpp"
 #include "SGAL/calculate_multiple_normals_per_vertex.hpp"
@@ -270,7 +270,7 @@ void Indexed_face_set::isect(Isect_action* action)
 //! \brief cleans the sphere bound.
 void Indexed_face_set::clean_bounding_sphere()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
                   std::cout << "Indexed_face_set::clean_bounding_sphere(): "
                   << "name: " << get_name() << std::endl;);
 
@@ -312,7 +312,7 @@ void Indexed_face_set::clean_bounding_sphere()
 //! \brief cleans the coordinate array and coordinate indices.
 void Indexed_face_set::clean_coords()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
                   std::cout
                   << "Indexed_face_set::clean_coords(): "
                   << "name: " << get_name() << std::endl;);
@@ -352,7 +352,7 @@ void Indexed_face_set::clean_coords()
 //! \brief clears the coordinates.
 void Indexed_face_set::clear_coord_array()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
                   std::cout << "Indexed_face_set::clear_coord_array(): "
                   << "name: " << get_name() << std::endl;);
 
@@ -365,7 +365,7 @@ void Indexed_face_set::clear_coord_array()
 //! \brief obtains the coordinate array.
 Indexed_face_set::Shared_coord_array Indexed_face_set::get_coord_array()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
                   std::cout << "Indexed_face_set::get_coord_array(): "
                   << "name: " << get_name() << std::endl;);
 
@@ -383,7 +383,7 @@ Indexed_face_set::Shared_coord_array Indexed_face_set::get_coord_array()
 //! \brief cleans the coordinate indices.
 void Indexed_face_set::clean_facet_coord_indices_from_polyhedron()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
                   std::cout << "Indexed_face_set::clean_facet_coord_indices_from_polyhedron(): "
                   << "name: " << get_name() << std::endl;);
 
@@ -422,7 +422,7 @@ void Indexed_face_set::clean_facet_coord_indices_from_polyhedron()
 //! \brief cleans (validate) the facet coordinate indices.
 void Indexed_face_set::clean_facet_coord_indices()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
                   std::cout << "Indexed_face_set::clean_facet_coord_indices(): "
                   << "name: " << get_name() << std::endl;);
 
@@ -433,7 +433,7 @@ void Indexed_face_set::clean_facet_coord_indices()
 //! \brief cleans the normal array and the normal indices.
 void Indexed_face_set::clean_normals()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
                   std::cout << "Indexed_face_set::clean_normals(): "
                   << "name: " << get_name() << std::endl;);
 
@@ -457,7 +457,7 @@ void Indexed_face_set::clean_normals()
 //! \brief repairs the data structures
 void Indexed_face_set::repair()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
                   std::cout << "Indexed_face_set::repair(): "
                   << get_name() << std::endl;);
 
@@ -638,7 +638,7 @@ void Indexed_face_set::convex_hull()
 // function at a later point after the indices have been cleaned.
 void Indexed_face_set::clean_polyhedron()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
                   std::cout << "Indexed_face_set::clean_polyhedron(): "
                   << "name: " << get_name() << std::endl;);
 
@@ -725,7 +725,7 @@ void Indexed_face_set::clean_polyhedron()
 //! \brief clears the polyhedron.
 void Indexed_face_set::clear_polyhedron()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
                   std::cout << "Indexed_face_set::clear_polyhedron(): "
                   << "name: " << get_name() << std::endl;);
 
@@ -748,7 +748,7 @@ void Indexed_face_set::clear_polyhedron()
 //! \brief sets the polyhedron data-structure.
 void Indexed_face_set::set_polyhedron(Polyhedron& polyhedron)
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
                   std::cout << "Indexed_face_set::set_polyhedron(): "
                   << "name: " << get_name() << std::endl;);
 
@@ -759,7 +759,7 @@ void Indexed_face_set::set_polyhedron(Polyhedron& polyhedron)
 //! \brief obtains the representation mode.
 Geo_set::Primitive_type Indexed_face_set::get_primitive_type()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
                   std::cout << "Indexed_face_set::get_primitive_type(): "
                   << "name: " << get_name() << std::endl;);
 
@@ -780,7 +780,7 @@ Geo_set::Primitive_type Indexed_face_set::get_primitive_type()
 //! \brief obtains the number of primitives.
 Size Indexed_face_set::get_num_primitives()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
                   std::cout << "Indexed_face_set::get_num_primitives(): "
                   << "name: " << get_name() << std::endl;);
   if (is_dirty_coord_array()) clean_coords();
@@ -801,7 +801,7 @@ Size Indexed_face_set::get_num_primitives()
 const Indexed_face_set::Polyhedron&
 Indexed_face_set::get_polyhedron(Boolean clean_facet_normals)
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
                   std::cout << "Indexed_face_set::get_polyhedron(): "
                   << "name: " << get_name() << std::endl;);
 
@@ -889,12 +889,12 @@ void Indexed_face_set::print_stat()
 //! Write this container.
 void Indexed_face_set::write(Formatter* formatter)
 {
-  SGAL_TRACE_CODE(Trace::EXPORT,
+  SGAL_TRACE_CODE(Tracer::EXPORT,
                   std::cout << "Indexed_face_set: " << "Tag: " << get_tag()
                   << ", name: " << get_name()
                   << std::endl;);
 
-  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
                   std::cout << "Indexed_face_set:write(): "
                   << ", name: " << get_name() << std::endl;);
 
@@ -958,7 +958,7 @@ void Indexed_face_set::clean_surface_area()
 //! \brief computes the volume of the polyhedron.
 Float Indexed_face_set::volume()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
                   std::cout << "Indexed_face_set::volume(): "
                   << "name: " << get_name() << std::endl;);
 
@@ -973,7 +973,7 @@ Float Indexed_face_set::volume()
 //! \brief computes the surface area of the polyhedron.
 Float Indexed_face_set::surface_area()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
                   std::cout << "Indexed_face_set::surface_area(): "
                   << "name: " << get_name() << std::endl;);
 
@@ -988,7 +988,7 @@ Float Indexed_face_set::surface_area()
 //! \brief determines wheather the mesh is consistent.
 Boolean Indexed_face_set::is_consistent()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
                   std::cout << "Indexed_face_set::is_consistent(): "
                   << "name: " << get_name() << std::endl;);
 
@@ -1022,7 +1022,7 @@ bool Indexed_face_set::is_polyhedron_empty()
 //! \brief determines whether there are no border edges.
 Boolean Indexed_face_set::is_closed()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
                   std::cout << "Indexed_face_set::is_closed(): "
                   << "name: " << get_name() << std::endl;);
 

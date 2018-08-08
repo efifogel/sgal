@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
 #pragma warning( disable : 4996 )
@@ -36,7 +36,7 @@
 #include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Font_style.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/Field.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -229,7 +229,7 @@ void Text_3d::clean_text_geometry()
 
     for (auto cit = line.begin(); cit != line.end(); ++cit) {
       auto c = *cit;
-      SGAL_TRACE_MSG(Trace::FONT,
+      SGAL_TRACE_MSG(Tracer::FONT,
                      "Character: " + std::string((const char*)(&c)) + "\n");
       const auto& glyph_geom = m_font_style->compute_glyph_geometry(c);
       line_geometry.push_back(&glyph_geom);
@@ -289,7 +289,7 @@ void Text_3d::clean_coords()
       size += tri.number_of_vertices();
     }
   }
-  // SGAL_TRACE_MSG(Trace::FONT,
+  // SGAL_TRACE_MSG(Tracer::FONT,
   //                "Glyph scale: " + std::to_string(glyph_scale) + "\n");
 
   // Resize the coordinate array

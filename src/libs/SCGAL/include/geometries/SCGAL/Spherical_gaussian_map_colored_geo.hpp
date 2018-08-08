@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s) : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_SPHERICAL_GAUSSIAN_MAP_COLORED_GEO_HPP
 #define SCGAL_SPHERICAL_GAUSSIAN_MAP_COLORED_GEO_HPP
@@ -40,7 +40,6 @@
 #include "SGAL/Epec_kernel.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Vector4f.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Cull_context.hpp"
 
 #include "SCGAL/basic.hpp"

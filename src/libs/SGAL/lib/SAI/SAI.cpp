@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 /**
  ESAI - implementation
@@ -26,26 +26,26 @@
 #include "Group.h"
 #include "XML_entity_factory.h"
 #include "SAI_nodeCreationEvent.h"
-#include "Trace.h"
+#include "SGAL/Tracer.hpp"
 
-/*! Constructor */
+//! \brief constructs.
 SAI::SAI(Scene_graph* sceneGraph):
   m_sceneGraph(sceneGraph),
   m_currentUpdateFields(ENULL),
   m_time(Execution_coordinator::get_sceneTime())
 {}
 
-/*! Destructor */
+//! \brief destructs.
 SAI::~SAI()
 {
-  TRACE_MSG(Trace::DESTRUCTOR, "~SAI ...");
+  TRACE_MSG(Tracer::DESTRUCTOR, "~SAI ...");
   SAI_nodeMapType::iterator nodeIterator = m_nodes.begin();
   while (nodeIterator != m_nodes.end()) {
     SAI_node * node = (*nodeIterator).second;
     delete node;
     nodeIterator++;
   }
-  TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
+  TRACE_MSG(Tracer::DESTRUCTOR, " completed\n");
 }
 
 /**
@@ -430,4 +430,3 @@ void SAI::RegisterNodeCreationInterest(const String& type,
             SAI_nodeCreationEvent(SAI_nodeCreationEvent::NODE_CREATION, sceneTime, c->get_name()));
      }
 }
-

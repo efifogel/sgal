@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 /**
     SAI_field - implementation
@@ -24,14 +24,14 @@
 #pragma warning (disable: 4786) // this will disable the truncate to 255
 
 #include "SAI_field.h"
-#include "Trace.h"
+#include "SGAL/Tracer.hpp"
 
-/*! Destructor */
+//! \brief destructs.
 SAI_field::~SAI_field()
 {
-  TRACE_MSG(Trace::DESTRUCTOR, "~SAI_field ...");
+  TRACE_MSG(Tracer::DESTRUCTOR, "~SAI_field ...");
   if (m_goalField) m_goalField->Disconnect(this);
-  TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
+  TRACE_MSG(Tracer::DESTRUCTOR, " completed\n");
 }
 
 /**
@@ -104,4 +104,3 @@ void SAI_field::RegisterFieldInterest(ESAIEventListener* eventListener)
     TAutoLock AutoLock(&m_eventListenersCS);
   m_eventListenerList.insert(m_eventListenerList.begin(),eventListener);
 }
-

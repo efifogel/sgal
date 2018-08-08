@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
 #include <sstream>
@@ -26,7 +26,7 @@
 #include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Coord_array_3d.hpp"
@@ -671,7 +671,7 @@ Container_proto* Indexed_line_set::get_prototype()
 //! \brief obtains the coordinate array.
 Indexed_line_set::Shared_coord_array Indexed_line_set::get_coord_array()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_LINE_SET,
                   std::cout << "Indexed_line_set::get_coord_array(): "
                   << "name: " << get_name() << std::endl;);
 
@@ -718,7 +718,7 @@ void Indexed_line_set::tex_coord_indices_changed(const Field_info* field_info)
 //! \brief cleans the coordinate array.
 void Indexed_line_set::clean_coords()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_LINE_SET,
                   std::cout
                   << "Indexed_line_set::clean_coords(): "
                   << "name: " << get_name() << std::endl;);
@@ -730,7 +730,7 @@ void Indexed_line_set::clean_coords()
 //! \brief obtains the coordinate indices.
 std::vector<Int32>& Indexed_line_set::get_coord_indices()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_LINE_SET,
                   std::cout
                   << "Indexed_line_set::get_coord_indices(): "
                   << "name: " << get_name() << std::endl;);
@@ -742,7 +742,7 @@ std::vector<Int32>& Indexed_line_set::get_coord_indices()
 //! \brief obtains the normal indices.
 std::vector<Int32>& Indexed_line_set::get_normal_indices()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_LINE_SET,
                   std::cout
                   << "Indexed_line_set::get_normal_indices(): "
                   << "name: " << get_name() << std::endl;);
@@ -754,7 +754,7 @@ std::vector<Int32>& Indexed_line_set::get_normal_indices()
 //! \brief obtains the color indices.
 std::vector<Int32>& Indexed_line_set::get_color_indices()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_LINE_SET,
                   std::cout
                   << "Indexed_line_set::get_color_indices(): "
                   << "name: " << get_name() << std::endl;);
@@ -766,7 +766,7 @@ std::vector<Int32>& Indexed_line_set::get_color_indices()
 //! \brief obtains the texture coordinate indices.
 std::vector<Int32>& Indexed_line_set::get_tex_coord_indices()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_LINE_SET,
                   std::cout
                   << "Indexed_line_set::get_tex_coord_indices(): "
                   << "name: " << get_name() << std::endl;);
@@ -779,7 +779,7 @@ std::vector<Int32>& Indexed_line_set::get_tex_coord_indices()
 //! \brief cleans the array of coordinate indices.
 void Indexed_line_set::clean_coord_indices()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_LINE_SET,
                   std::cout
                   << "Indexed_line_set::clean_coord_indices(): "
                   << "name: " << get_name() << std::endl;);
@@ -790,7 +790,7 @@ void Indexed_line_set::clean_coord_indices()
 //! \brief cleans the array of normal indices.
 void Indexed_line_set::clean_normal_indices()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_LINE_SET,
                   std::cout
                   << "Indexed_line_set::clean_normal_indices(): "
                   << "name: " << get_name() << std::endl;);
@@ -801,7 +801,7 @@ void Indexed_line_set::clean_normal_indices()
 //! \brief cleans the array of color indices.
 void Indexed_line_set::clean_color_indices()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_LINE_SET,
                   std::cout
                   << "Indexed_line_set::clean_color_indices(): "
                   << "name: " << get_name() << std::endl;);
@@ -812,7 +812,7 @@ void Indexed_line_set::clean_color_indices()
 //! \brief cleans the array of texture indices.
 void Indexed_line_set::clean_tex_coord_indices()
 {
-  SGAL_TRACE_CODE(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_LINE_SET,
                   std::cout
                   << "Indexed_line_set::clean_tex_coord_indices(): "
                   << "name: " << get_name() << std::endl;);

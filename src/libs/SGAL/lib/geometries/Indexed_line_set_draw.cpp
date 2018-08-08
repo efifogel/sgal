@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
 
@@ -31,13 +31,13 @@
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Normal_array.hpp"
 #include "SGAL/Tex_coord_array.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 void Indexed_line_set::draw_invalid()
-{ SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "invalid\n"); }
+{ SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "invalid\n"); }
 
 /*!
  * Fragment attach  - none
@@ -46,7 +46,7 @@ void Indexed_line_set::draw_invalid()
  */
 void Indexed_line_set::draw_FANO_TENO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "draw_FANO_TENO_MOLI_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "draw_FANO_TENO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
 
@@ -69,7 +69,7 @@ void Indexed_line_set::draw_FANO_TENO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSNO_FINO_FAPV_TENO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSNO_FINO_FAPV_TENO_MOLI_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FSNO_FINO_FAPV_TENO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
@@ -95,7 +95,7 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TENO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPV_TENO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FINO_FAPV_TENO_MOLI_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FSCO_FINO_FAPV_TENO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
@@ -121,7 +121,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPV_TENO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSNO_FIYE_FAPV_TENO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSNO_FIYE_FAPV_TENO_MOLI_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FSNO_FIYE_FAPV_TENO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
@@ -147,7 +147,7 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPV_TENO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSCO_FIYE_FAPV_TENO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FIYE_FAPV_TENO_MOLI_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FSCO_FIYE_FAPV_TENO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
@@ -173,7 +173,7 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPV_TENO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSNO_FINO_FAPL_TENO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSNO_FINO_FAPL_TENO_MOLI_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FSNO_FINO_FAPL_TENO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
@@ -198,7 +198,7 @@ void Indexed_line_set::draw_FSNO_FINO_FAPL_TENO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPL_TENO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FINO_FAPL_TENO_MOLI_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FSCO_FINO_FAPL_TENO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
@@ -223,7 +223,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPL_TENO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSNO_FIYE_FAPL_TENO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSNO_FIYE_FAPL_TENO_MOLI_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FSNO_FIYE_FAPL_TENO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
@@ -248,7 +248,7 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPL_TENO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSCO_FIYE_FAPL_TENO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FIYE_FAPL_TENO_MOLI_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FSCO_FIYE_FAPL_TENO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
@@ -275,7 +275,7 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPL_TENO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FINO_FAPM_TENO_MOLI_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FSCO_FINO_FAPM_TENO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
@@ -304,7 +304,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FANO_TEYE_TINO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FANO_TEYE_TINO_MOLI_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FANO_TEYE_TINO_MOLI_VANO\n");
 
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
@@ -331,7 +331,7 @@ void Indexed_line_set::draw_FANO_TEYE_TINO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FINO_FAPV_TEYE_TINO_MOLI_VANO\n");
 
   SGAL_assertion(m_normal_array);
@@ -362,7 +362,7 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FINO_FAPV_TEYE_TINO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -393,7 +393,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TINO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -424,7 +424,7 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TINO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -455,7 +455,7 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TINO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FINO_FAPL_TEYE_TINO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -485,7 +485,7 @@ void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TINO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TINO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FINO_FAPL_TEYE_TINO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -515,7 +515,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TINO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TINO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FIYE_FAPL_TEYE_TINO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -545,7 +545,7 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TINO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TINO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FIYE_FAPL_TEYE_TINO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -577,7 +577,7 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TINO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FINO_FAPM_TEYE_TINO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -608,7 +608,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLI_VANO()
  */
 void Indexed_line_set::draw_FANO_TEYE_TIYE_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FANO_TEYE_TIYE_MOLI_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FANO_TEYE_TIYE_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_tex_coord_array);
@@ -635,7 +635,7 @@ void Indexed_line_set::draw_FANO_TEYE_TIYE_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FINO_FAPV_TEYE_TIYE_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -666,7 +666,7 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FINO_FAPV_TEYE_TIYE_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -697,7 +697,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TIYE_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -728,7 +728,7 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TIYE_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -759,7 +759,7 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TIYE_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FINO_FAPL_TEYE_TIYE_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -789,7 +789,7 @@ void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TIYE_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TIYE_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FINO_FAPL_TEYE_TIYE_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -819,7 +819,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TIYE_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TIYE_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FIYE_FAPL_TEYE_TIYE_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -849,7 +849,7 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TIYE_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TIYE_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FIYE_FAPL_TEYE_TIYE_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -881,7 +881,7 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TIYE_MOLI_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FINO_FAPM_TEYE_TIYE_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -914,7 +914,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLI_VANO()
  */
 void Indexed_line_set::draw_FANO_TENO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FANO_TENO_MOLS_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FANO_TENO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
 
@@ -937,7 +937,7 @@ void Indexed_line_set::draw_FANO_TENO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSNO_FINO_FAPV_TENO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FINO_FAPV_TENO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -964,7 +964,7 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TENO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPV_TENO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "draw_FSCO_FINO_FAPV_TENO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -991,7 +991,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPV_TENO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSNO_FIYE_FAPV_TENO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FIYE_FAPV_TENO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1017,7 +1017,7 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPV_TENO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSCO_FIYE_FAPV_TENO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FIYE_FAPV_TENO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1044,7 +1044,7 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPV_TENO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSNO_FINO_FAPL_TENO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FINO_FAPL_TENO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1070,7 +1070,7 @@ void Indexed_line_set::draw_FSNO_FINO_FAPL_TENO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPL_TENO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FINO_FAPL_TENO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1097,7 +1097,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPL_TENO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSNO_FIYE_FAPL_TENO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FIYE_FAPL_TENO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1123,7 +1123,7 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPL_TENO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSCO_FIYE_FAPL_TENO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FIYE_FAPL_TENO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1151,7 +1151,7 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPL_TENO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FINO_FAPM_TENO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1181,7 +1181,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FANO_TEYE_TINO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FANO_TEYE_TINO_MOLS_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FANO_TEYE_TINO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_tex_coord_array);
@@ -1208,7 +1208,7 @@ void Indexed_line_set::draw_FANO_TEYE_TINO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FINO_FAPV_TEYE_TINO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1238,7 +1238,7 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FINO_FAPV_TEYE_TINO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1268,7 +1268,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TINO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1298,7 +1298,7 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TINO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1328,7 +1328,7 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TINO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FINO_FAPL_TEYE_TINO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1358,7 +1358,7 @@ void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TINO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TINO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FINO_FAPL_TEYE_TINO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1388,7 +1388,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TINO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TINO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FIYE_FAPL_TEYE_TINO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1418,7 +1418,7 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TINO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TINO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FIYE_FAPL_TEYE_TINO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1450,7 +1450,7 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TINO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "draw_FSCO_FINO_FAPM_TEYE_TINO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1481,7 +1481,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FANO_TEYE_TIYE_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FANO_TEYE_TIYE_MOLS_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FANO_TEYE_TIYE_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_tex_coord_array);
@@ -1508,7 +1508,7 @@ void Indexed_line_set::draw_FANO_TEYE_TIYE_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FINO_FAPV_TEYE_TIYE_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1538,7 +1538,7 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FINO_FAPV_TEYE_TIYE_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1568,7 +1568,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TIYE_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1598,7 +1598,7 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TIYE_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1628,7 +1628,7 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TIYE_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FINO_FAPL_TEYE_TIYE_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1658,7 +1658,7 @@ void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TIYE_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TIYE_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FINO_FAPL_TEYE_TIYE_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1688,7 +1688,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TIYE_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TIYE_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FIYE_FAPL_TEYE_TIYE_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1718,7 +1718,7 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TIYE_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TIYE_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FIYE_FAPL_TEYE_TIYE_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1750,7 +1750,7 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TIYE_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FINO_FAPM_TEYE_TIYE_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -1783,7 +1783,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLS_VANO()
  */
 void Indexed_line_set::draw_FANO_TENO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FANO_TENO_MOLL_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FANO_TENO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
 
@@ -1806,7 +1806,7 @@ void Indexed_line_set::draw_FANO_TENO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSNO_FINO_FAPV_TENO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSNO_FINO_FAPV_TENO_MOLL_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FSNO_FINO_FAPV_TENO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
@@ -1832,7 +1832,7 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TENO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPV_TENO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FINO_FAPV_TENO_MOLL_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FSCO_FINO_FAPV_TENO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
@@ -1858,7 +1858,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPV_TENO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSNO_FIYE_FAPV_TENO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSNO_FIYE_FAPV_TENO_MOLL_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FSNO_FIYE_FAPV_TENO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
@@ -1884,7 +1884,7 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPV_TENO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSCO_FIYE_FAPV_TENO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FIYE_FAPV_TENO_MOLL_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FSCO_FIYE_FAPV_TENO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
@@ -1910,7 +1910,7 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPV_TENO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSNO_FINO_FAPL_TENO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSNO_FINO_FAPL_TENO_MOLL_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FSNO_FINO_FAPL_TENO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
@@ -1935,7 +1935,7 @@ void Indexed_line_set::draw_FSNO_FINO_FAPL_TENO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPL_TENO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FINO_FAPL_TENO_MOLL_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FSCO_FINO_FAPL_TENO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
@@ -1960,7 +1960,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPL_TENO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSNO_FIYE_FAPL_TENO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSNO_FIYE_FAPL_TENO_MOLL_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FSNO_FIYE_FAPL_TENO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
@@ -1985,7 +1985,7 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPL_TENO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSCO_FIYE_FAPL_TENO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FIYE_FAPL_TENO_MOLL_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FSCO_FIYE_FAPL_TENO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
@@ -2012,7 +2012,7 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPL_TENO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FINO_FAPM_TENO_MOLL_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FSCO_FINO_FAPM_TENO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
@@ -2041,7 +2041,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FANO_TEYE_TINO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FANO_TEYE_TINO_MOLL_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FANO_TEYE_TINO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_tex_coord_array);
@@ -2068,7 +2068,7 @@ void Indexed_line_set::draw_FANO_TEYE_TINO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FINO_FAPV_TEYE_TINO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -2098,7 +2098,7 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FINO_FAPV_TEYE_TINO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -2128,7 +2128,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TINO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -2158,7 +2158,7 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TINO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -2188,7 +2188,7 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TINO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FINO_FAPL_TEYE_TINO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -2218,7 +2218,7 @@ void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TINO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TINO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FINO_FAPL_TEYE_TINO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -2248,7 +2248,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TINO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TINO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FIYE_FAPL_TEYE_TINO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -2278,7 +2278,7 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TINO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TINO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FIYE_FAPL_TEYE_TINO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -2310,7 +2310,7 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TINO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FINO_FAPM_TEYE_TINO_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -2341,7 +2341,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLL_VANO()
  */
 void Indexed_line_set::draw_FANO_TEYE_TIYE_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FANO_TEYE_TIYE_MOLL_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FANO_TEYE_TIYE_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_tex_coord_array);
@@ -2368,7 +2368,7 @@ void Indexed_line_set::draw_FANO_TEYE_TIYE_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FINO_FAPV_TEYE_TIYE_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -2398,7 +2398,7 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FINO_FAPV_TEYE_TIYE_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -2428,7 +2428,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TIYE_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -2458,7 +2458,7 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TIYE_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -2488,7 +2488,7 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TIYE_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FINO_FAPL_TEYE_TIYE_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -2518,7 +2518,7 @@ void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TIYE_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TIYE_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FINO_FAPL_TEYE_TIYE_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -2548,7 +2548,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TIYE_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TIYE_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSNO_FIYE_FAPL_TEYE_TIYE_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -2578,7 +2578,7 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TIYE_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TIYE_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FIYE_FAPL_TEYE_TIYE_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -2610,7 +2610,7 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TIYE_MOLL_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET,
                  "FSCO_FINO_FAPM_TEYE_TIYE_MOLL_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -2637,7 +2637,7 @@ void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLL_VANO()
 
 void Indexed_line_set::draw_FAPV_VAYE()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FAPV_VAYE\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FAPV_VAYE\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_error_msg("Not implemented yet!");
@@ -2645,7 +2645,7 @@ void Indexed_line_set::draw_FAPV_VAYE()
 
 void Indexed_line_set::draw_FAPL_VAYE()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FAPL_VAYE\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FAPL_VAYE\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_error_msg("Not implemented yet!");
@@ -2653,7 +2653,7 @@ void Indexed_line_set::draw_FAPL_VAYE()
 
 void Indexed_line_set::draw_FAPM_VAYE()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FAPM_VAYE\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_LINE_SET, "FAPM_VAYE\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_error_msg("Not implemented yet!");

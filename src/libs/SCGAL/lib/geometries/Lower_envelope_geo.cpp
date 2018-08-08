@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
  * A geometry node in the scene graph that maintains a CGAL::Lower_envelope_3
@@ -34,7 +34,6 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Context.hpp"

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <algorithm>
 #include <iterator>
@@ -36,7 +36,7 @@
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Field.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/multi_istream_iterator.hpp"
@@ -127,7 +127,7 @@ void Script::getter(v8::Local<v8::String> property,
                     const v8::PropertyCallbackInfo<v8::Value>& info)
 {
 #if !defined(NDEBUG) || defined(SGAL_TRACE)
-  if (SGAL::TRACE(Trace::SCRIPT)) {
+  if (SGAL::TRACE(Tracer::SCRIPT)) {
     v8::String::Utf8Value utf8_property(property);
     std::cout << "getter() " << *utf8_property << std::endl;
   }
@@ -142,14 +142,14 @@ void Script::getter(v8::Local<v8::String> property,
     v8::Handle<v8::External>::Cast(obj->GetInternalField(0));
   SGAL_assertion(internal_field->Value() != nullptr);
   auto* script_node = static_cast<Script*>(internal_field->Value());
-  SGAL_TRACE_MSG(Trace::SCRIPT, "  script: " + script_node->get_name() + "\n");
+  SGAL_TRACE_MSG(Tracer::SCRIPT, "  script: " + script_node->get_name() + "\n");
 
   // Obtain the field information record:
   v8::Local<v8::Value> data = info.Data();
   v8::Handle<v8::External> ext = v8::Handle<v8::External>::Cast(data);
   SGAL_assertion(ext->Value() != nullptr);
   auto* field_info = static_cast<Field_info*>(ext->Value());
-  SGAL_TRACE_MSG(Trace::SCRIPT, "  field: " + field_info->get_name() + "\n");
+  SGAL_TRACE_MSG(Tracer::SCRIPT, "  field: " + field_info->get_name() + "\n");
 
   auto type_id = field_info->get_type_id();
   auto id = field_info->get_id();
@@ -229,7 +229,7 @@ void Script::setter(v8::Local<v8::String> property,
                     const v8::PropertyCallbackInfo<void>& info)
 {
 #if !defined(NDEBUG) || defined(SGAL_TRACE)
-  if (SGAL::TRACE(Trace::SCRIPT)) {
+  if (SGAL::TRACE(Tracer::SCRIPT)) {
     v8::String::Utf8Value utf8_property(property);
     std::cout << "setter() " << *utf8_property << std::endl;
   }
@@ -242,14 +242,14 @@ void Script::setter(v8::Local<v8::String> property,
     v8::Handle<v8::External>::Cast(obj->GetInternalField(0));
   SGAL_assertion(internal_field->Value() != nullptr);
   auto* script_node = static_cast<Script*>(internal_field->Value());
-  SGAL_TRACE_MSG(Trace::SCRIPT, "  script: " + script_node->get_name() + "\n");
+  SGAL_TRACE_MSG(Tracer::SCRIPT, "  script: " + script_node->get_name() + "\n");
 
   // Obtain the field information record:
   v8::Local<v8::Value> data = info.Data();
   v8::Handle<v8::External> ext = v8::Handle<v8::External>::Cast(data);
   SGAL_assertion(ext->Value() != nullptr);
   auto* field_info = static_cast<Field_info*>(ext->Value());
-  SGAL_TRACE_MSG(Trace::SCRIPT, "  field: " + field_info->get_name() + "\n");
+  SGAL_TRACE_MSG(Tracer::SCRIPT, "  field: " + field_info->get_name() + "\n");
 
   // Apply the setting
   auto type_id = field_info->get_type_id();
@@ -341,7 +341,7 @@ void Script::array_getter(v8::Local<v8::String> property,
                           const v8::PropertyCallbackInfo<v8::Value>& info)
 {
 #if !defined(NDEBUG) || defined(SGAL_TRACE)
-  if (SGAL::TRACE(Trace::SCRIPT)) {
+  if (SGAL::TRACE(Tracer::SCRIPT)) {
     v8::String::Utf8Value utf8_property(property);
     std::cout << "array_getter() " << *utf8_property << std::endl;
   }
@@ -357,7 +357,7 @@ void Script::array_getter(v8::Local<v8::String> property,
     v8::Handle<v8::External>::Cast(obj->GetInternalField(0));
   SGAL_assertion(internal_field->Value() != nullptr);
   auto* script_node = static_cast<Script*>(internal_field->Value());
-  SGAL_TRACE_MSG(Trace::SCRIPT, "  script: " + script_node->get_name() + "\n");
+  SGAL_TRACE_MSG(Tracer::SCRIPT, "  script: " + script_node->get_name() + "\n");
 
   // Prepare for indexing
   v8::Local<v8::Value> data = info.Data();
@@ -376,7 +376,7 @@ void Script::array_setter(v8::Local<v8::String> property,
                           const v8::PropertyCallbackInfo<void>& info)
 {
 #if !defined(NDEBUG) || defined(SGAL_TRACE)
-  if (SGAL::TRACE(Trace::SCRIPT)) {
+  if (SGAL::TRACE(Tracer::SCRIPT)) {
     v8::String::Utf8Value utf8_property(property);
     std::cout << "array_setter() " << *utf8_property << std::endl;
   }
@@ -391,14 +391,14 @@ void Script::array_setter(v8::Local<v8::String> property,
     v8::Handle<v8::External>::Cast(obj->GetInternalField(0));
   SGAL_assertion(internal_field->Value() != nullptr);
   auto* script_node = static_cast<Script*>(internal_field->Value());
-  SGAL_TRACE_MSG(Trace::SCRIPT, "  script: " + script_node->get_name() + "\n");
+  SGAL_TRACE_MSG(Tracer::SCRIPT, "  script: " + script_node->get_name() + "\n");
 
   // Obtain the field handle and apply the setting:
   v8::Local<v8::Value> data = info.Data();
   v8::Handle<v8::External> ext = v8::Handle<v8::External>::Cast(data);
   SGAL_assertion(ext->Value() != nullptr);
   auto* field_info = static_cast<Field_info*>(ext->Value());
-  SGAL_TRACE_MSG(Trace::SCRIPT, "  field: " + field_info->get_name() + "\n");
+  SGAL_TRACE_MSG(Tracer::SCRIPT, "  field: " + field_info->get_name() + "\n");
 
   switch (field_info->get_type_id()) {
    case Field_type::SF_BOOL:
@@ -584,7 +584,7 @@ void Script::array_setter(v8::Local<v8::String> property,
 void Script::indexed_getter(uint32_t index,
                             const v8::PropertyCallbackInfo<v8::Value>& info)
 {
-  SGAL_TRACE_CODE(Trace::SCRIPT,
+  SGAL_TRACE_CODE(Tracer::SCRIPT,
                   std::cout << "indexed_getter() " << index << std::endl;);
 
   auto isolate = info.GetIsolate();
@@ -596,14 +596,14 @@ void Script::indexed_getter(uint32_t index,
     v8::Handle<v8::External>::Cast(obj->GetInternalField(0));
   SGAL_assertion(internal_field->Value() != nullptr);
   auto* script_node = static_cast<Script*>(internal_field->Value());
-  SGAL_TRACE_MSG(Trace::SCRIPT, "  script: " + script_node->get_name() + "\n");
+  SGAL_TRACE_MSG(Tracer::SCRIPT, "  script: " + script_node->get_name() + "\n");
 
   // Obtain the field information record:
   v8::Local<v8::Value> data = info.Data();
   v8::Handle<v8::External> ext = v8::Handle<v8::External>::Cast(data);
   SGAL_assertion(ext->Value() != nullptr);
   auto* field_info = static_cast<Field_info*>(ext->Value());
-  SGAL_TRACE_MSG(Trace::SCRIPT, "  field: " + field_info->get_name() + "\n");
+  SGAL_TRACE_MSG(Tracer::SCRIPT, "  field: " + field_info->get_name() + "\n");
 
   // Obtain
   switch (field_info->get_type_id()) {
@@ -748,7 +748,7 @@ void Script::indexed_setter(uint32_t index,
                             v8::Local<v8::Value> value,
                             const v8::PropertyCallbackInfo<v8::Value>& info)
 {
-  SGAL_TRACE_CODE(Trace::SCRIPT,
+  SGAL_TRACE_CODE(Tracer::SCRIPT,
                   std::cout << "indexed_setter() " << index << std::endl;);
 
   auto isolate = info.GetIsolate();
@@ -760,14 +760,14 @@ void Script::indexed_setter(uint32_t index,
     v8::Handle<v8::External>::Cast(obj->GetInternalField(0));
   SGAL_assertion(internal_field->Value() != nullptr);
   auto* script_node = static_cast<Script*>(internal_field->Value());
-  SGAL_TRACE_MSG(Trace::SCRIPT, "  script: " + script_node->get_name() + "\n");
+  SGAL_TRACE_MSG(Tracer::SCRIPT, "  script: " + script_node->get_name() + "\n");
 
   // Obtain the field information record:
   v8::Local<v8::Value> data = info.Data();
   v8::Handle<v8::External> ext = v8::Handle<v8::External>::Cast(data);
   SGAL_assertion(ext->Value() != nullptr);
   auto* field_info = static_cast<Field_info*>(ext->Value());
-  SGAL_TRACE_MSG(Trace::SCRIPT, "  field: " + field_info->get_name() + "\n");
+  SGAL_TRACE_MSG(Tracer::SCRIPT, "  field: " + field_info->get_name() + "\n");
 
   // Assign
   switch (field_info->get_type_id()) {
@@ -928,7 +928,7 @@ void Script::add_field_info(Field_rule rule, Field_type type,
                             const String& name, const String& value)
 {
 #if !defined(NDEBUG) || defined(SGAL_TRACE)
-  if (SGAL::TRACE(Trace::SCRIPT)) {
+  if (SGAL::TRACE(Tracer::SCRIPT)) {
     std::cout << "add_field_info() " << name << ", " << value << std::endl;
   }
 #endif

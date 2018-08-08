@@ -14,10 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
-// $Revision: 1308 $
+// SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 /*!
  * This class handles error reporting for the java script interpreter
@@ -38,10 +37,10 @@ public:
                       int lineNo, const String & message)
   {
     if (lineNo > 0)
-      debug("JS Error - Object: %s, Function: %s, Line No: %d, Message: %s", 
+      debug("JS Error - Object: %s, Function: %s, Line No: %d, Message: %s",
             objectName, currFuncName, lineNo, message);
     else
-      debug("JS Error - Object: %s, Function: %s, Message: %s", 
+      debug("JS Error - Object: %s, Function: %s, Message: %s",
             objectName, currFuncName, message);
   }
 

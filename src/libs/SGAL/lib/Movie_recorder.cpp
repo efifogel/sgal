@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <direct.h>
 #include <stdlib.h>
@@ -31,7 +31,7 @@
 #include "Scene_graph.h"
 #include "Element.h"
 #include "Container_proto.h"
-#include "Trace.h"
+#include "SGAL/Tracer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -100,14 +100,14 @@ Movie_recorder::Movie_recorder(Boolean proto) :
 /*! Destructor */
 Movie_recorder::~Movie_recorder()
 {
-  TRACE_MSG(Trace::DESTRUCTOR, "~Movie_recorder ...");
+  TRACE_MSG(Tracer::DESTRUCTOR, "~Movie_recorder ...");
   DELETE_ARRAY(m_pixels);
   DELETE_ARRAY(m_rgbBuffer);
   DELETE_ARRAY(m_rgbBuffer2);
   DELETE_ARRAY(m_hintBuffer);
   DELETE_ARRAY(m_bgBuffer);
   DELETE_ARRAY(m_quantBuffer);
-  TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
+  TRACE_MSG(Tracer::DESTRUCTOR, " completed\n");
 }
 
 /**

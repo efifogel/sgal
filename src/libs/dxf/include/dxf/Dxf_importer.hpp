@@ -21,7 +21,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/Base_loader.hpp"
 
 #include "dxf/basic.hpp"

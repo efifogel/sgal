@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
 #include "Antialiasing.h"
@@ -44,9 +44,9 @@ Antialiasing::Antialiasing() :
 /*! Destructor */
 Antialiasing::~Antialiasing()
 {
-  TRACE_MSG(Trace::DESTRUCTOR, "~Antialiasing ...");
+  TRACE_MSG(Tracer::DESTRUCTOR, "~Antialiasing ...");
   //! \todo delete m_timer;
-  TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
+  TRACE_MSG(Tracer::DESTRUCTOR, " completed\n");
 }
 
 void Antialiasing::set_delay_duration(Int dur)

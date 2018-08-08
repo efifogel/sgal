@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
 #pragma warning ( disable : 4146 )
@@ -45,7 +45,7 @@
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Sphere.hpp"
 #include "SGAL/Cylinder.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Container_factory.hpp"
@@ -875,7 +875,7 @@ void Cubical_gaussian_map_geo::draw_geometry(SGAL::Draw_action* action)
 //! \brief draws the polyhedron directly from the gaussian map representation.
 void Cubical_gaussian_map_geo::draw_primal(Draw_action* action)
 {
-  SGAL_TRACE_MSG(SGAL::Trace::CUBICAL_GAUSSIAN_MAP, "draw_primal()\n");
+  SGAL_TRACE_MSG(SGAL::Tracer::CUBICAL_GAUSSIAN_MAP, "draw_primal()\n");
 
   Context* context = action->get_context();
   glColor3fv((float*)&m_marked_facet_color);

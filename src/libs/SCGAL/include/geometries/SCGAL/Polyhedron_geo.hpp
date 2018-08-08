@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s) : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 /*!
  * A node in the scene graph that maintains a planar map.
@@ -39,7 +39,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Mesh_set.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Cull_context.hpp"
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Inexact_kernel.hpp"

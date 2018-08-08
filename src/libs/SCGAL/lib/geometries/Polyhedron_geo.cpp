@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
 #pragma warning ( disable : 4146 )
@@ -41,7 +41,7 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 
 #include "SCGAL/Polyhedron_geo.hpp"
 
@@ -125,7 +125,7 @@ void Polyhedron_geo::draw_geometry(Draw_action* /* action */)
     } while (++j != i->facet_begin());
     glEnd();
   }
-  SGAL_TRACE_MSG(Trace::POLYHEDRON, "completed\n");
+  SGAL_TRACE_MSG(Tracer::POLYHEDRON, "completed\n");
 }
 
 //! \brief

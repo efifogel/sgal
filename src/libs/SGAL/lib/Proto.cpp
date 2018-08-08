@@ -29,7 +29,7 @@
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/multi_istream_iterator.hpp"
 #include "SGAL/io_vector2f.hpp"
 #include "SGAL/io_vector3f.hpp"
@@ -87,7 +87,7 @@ void Proto::add_field_info(Field_rule rule, Field_type type,
                            const String& name, const String& value)
 {
 #if !defined(NDEBUG) || defined(SGAL_TRACE)
-  if (SGAL::TRACE(Trace::PROTO)) {
+  if (SGAL::TRACE(Tracer::PROTO)) {
     std::cout << "add_field_info() " << name << ", " << value << std::endl;
   }
 #endif

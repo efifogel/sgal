@@ -14,14 +14,14 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
 #include "Scene_manager.h"
 #include "Scene_graph.h"
 #include "SAI.h"
 #include "Interpolator_int.h"
-#include "Trace.h"
+#include "SGAL/Tracer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -43,7 +43,7 @@ Scene_manager::Scene_manager(Boolean createScene)
 /*! Destructor */
 Scene_manager::~Scene_manager()
 {
-  TRACE_MSG(Trace::DESTRUCTOR, "~Scene_manage ...");
+  TRACE_MSG(Tracer::DESTRUCTOR, "~Scene_manage ...");
   // Delete all items in m_SAIs
   SAIListType::iterator iter = m_SAIs.begin();
   while( iter != m_SAIs.end())
@@ -55,7 +55,7 @@ Scene_manager::~Scene_manager()
 
   delete m_scene;
   m_scene = 0;
-  TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
+  TRACE_MSG(Tracer::DESTRUCTOR, " completed\n");
 }
 
 void Scene_manager::CreateContext(Window_handle *winHandle)

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s) : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_EXACT_POLYHEDRON_GEO_HPP
 #define SCGAL_EXACT_POLYHEDRON_GEO_HPP
@@ -23,7 +23,6 @@
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Boundary_set.hpp"
 #include "SGAL/Epec_kernel.hpp"

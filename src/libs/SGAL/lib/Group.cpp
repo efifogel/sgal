@@ -14,8 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
-//                 Ram Shaked        <ramsha7@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
+//            Ram Shaked        <ramsha7@gmail.com>
 
 #include <algorithm>
 #include <iostream>
@@ -35,7 +35,7 @@
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Formatter.hpp"
 #include "SGAL/Scene_graph.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -439,7 +439,7 @@ Boolean Group::detach_context(Context* context)
 void Group::write(Formatter* formatter)
 {
   if (m_dirty_childs) clean_childs();
-  SGAL_TRACE_CODE(Trace::EXPORT,
+  SGAL_TRACE_CODE(Tracer::EXPORT,
                   std::cout << "Group: " << "Tag: " << get_tag()
                   << ", name: " << get_name()
                   << std::endl;);

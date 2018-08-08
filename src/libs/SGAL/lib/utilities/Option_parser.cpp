@@ -32,7 +32,7 @@
 
 #include "SGAL/Option_parser.hpp"
 #include "SGAL/Scene_graph.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/Configuration.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -49,7 +49,7 @@ Option_parser::Option_parser() :
   typedef std::vector<std::string> vs;
 
   // Extract trace options:
-  auto* tracer = Trace::get_instance();
+  auto* tracer = Tracer::get_instance();
   std::string trace_msg("trace options:\n");
   // for (const auto& trace_opt : tracer->get_options())
   //   trace_msg += "  " + trace_opt.first + "\n";
@@ -136,16 +136,17 @@ void Option_parser::apply()
 void Option_parser::configure(Scene_graph* scene_graph)
 {
   typedef std::vector<std::string> vs;
+  auto* tracer = Tracer::get_instance();
   if (m_variable_map.count("trace")) {
     auto& traces = m_variable_map["trace"].as<vs>();
     for (auto it = traces.begin(); it != traces.end(); ++it) {
-      auto code = Trace::get_instance()->find_code(*it);
-      if (code == Trace::INVALID) {
+      auto code = tracer->find_code(*it);
+      if (code == Tracer::INVALID) {
         throw po::validation_error(po::validation_error::invalid_option_value,
                                    "--trace", *it);
         continue;
       }
-      Trace::get_instance()->enable(code);
+      tracer->enable(code);
     }
   }
 

@@ -46,7 +46,6 @@
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Sphere.hpp"
 #include "SGAL/Cylinder.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Container_factory.hpp"

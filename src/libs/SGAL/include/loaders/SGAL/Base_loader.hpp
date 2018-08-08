@@ -26,7 +26,7 @@
 #include "SGAL/Loader_code.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Configuration.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -113,7 +113,7 @@ inline Loader_code Base_loader::operator()(std::istream& is,
 inline Base_loader::Base_loader() :
   m_scene_graph(nullptr),
   m_line(0),
-  m_trace_code(static_cast<size_t>(Trace::INVALID))
+  m_trace_code(static_cast<size_t>(Tracer::INVALID))
 {}
 
 //! \brief obtains the input stream.

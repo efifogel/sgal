@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #if (defined _MSC_VER)
 #include <windows.h>
@@ -29,7 +29,6 @@
 #include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Draw_action.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Matrix4f.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Coord_array_3d.hpp"

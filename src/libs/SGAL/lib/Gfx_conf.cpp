@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <stdio.h>
 #include <string.h>
@@ -22,7 +22,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Gfx_conf.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 
 #ifndef GL_GLEXT_PROTOTYPES
 
@@ -126,7 +126,7 @@ Gfx_conf::Gfx_conf() :
   m_seamless_cube_map_supported(true)
 { init(); }
 
-/*! Destructor */
+//! \brief destructs.
 Gfx_conf::~Gfx_conf() {}
 
 void Gfx_conf::init()
@@ -139,7 +139,7 @@ void Gfx_conf::init()
       break;
   }
   if (i != veNum) m_vendor = static_cast<Vendor>(i);
-  SGAL_TRACE_CODE(Trace::GRAPHICS,
+  SGAL_TRACE_CODE(Tracer::GRAPHICS,
                   std::cout << "Vendor: " << vendor << " (" << m_vendor << ")"
                   << std::endl;);
   const Uchar* renderer = glGetString(GL_RENDERER);
@@ -149,12 +149,12 @@ void Gfx_conf::init()
       break;
   }
   if (i != reNum) m_renderer = static_cast<Renderer>(i);
-  SGAL_TRACE_CODE(Trace::GRAPHICS,
+  SGAL_TRACE_CODE(Tracer::GRAPHICS,
                   std::cout << "Renderer: " << renderer << " ("
                   << m_renderer << ")"
                   << std::endl;);
 
-  SGAL_TRACE_CODE(Trace::GRAPHICS,
+  SGAL_TRACE_CODE(Tracer::GRAPHICS,
                   const Uchar* version = glGetString(GL_VERSION);
                   std::cout << "Version: " << version << std::endl;);
 
@@ -164,7 +164,7 @@ void Gfx_conf::init()
 #endif
 
   const Uchar* extensions = glGetString(GL_EXTENSIONS);
-  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "Extensions: " << extensions
+  SGAL_TRACE_CODE(Tracer::GRAPHICS, std::cout << "Extensions: " << extensions
                   << std::endl;);
 
   m_bump_map_supported = true;          // Start optimistic
@@ -283,7 +283,7 @@ void Gfx_conf::init()
   //           << m_vertex_buffer_object_supported << std::endl;
 }
 
-/*! Is the the extension given by a name supported? */
+//! \brief is the the extension given by a name supported?
 Boolean Gfx_conf::is_extension_supported(const Uchar* extensions,
                                          const char* target_extension)
 {

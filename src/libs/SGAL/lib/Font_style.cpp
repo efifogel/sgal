@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <stdexcept>
 #include <algorithm>
@@ -61,7 +61,7 @@ extern "C" {
 #include "SGAL/Font_style.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Texture_font.hpp"
@@ -492,7 +492,7 @@ void Font_style::clean_face()
   get_font_file_name(file_name, face_index);
 
   if (file_name.empty()) return;
-  SGAL_TRACE_MSG(Trace::FONT, "Font file name: " + file_name + "\n");
+  SGAL_TRACE_MSG(Tracer::FONT, "Font file name: " + file_name + "\n");
 
   auto err = FT_New_Face(m_ft_library, file_name.c_str(), face_index, &m_face);
   if (err) throw FreeType_error(err);
@@ -738,7 +738,7 @@ void Font_style::get_font_file_name(std::string& file_name, FT_Long& face_index)
   SelectObject(hdc, hfont);
   TCHAR face_name[256] = {};
   GetTextFace(hdc, sizeof(face_name) / sizeof(TCHAR), face_name);
-  SGAL_TRACE_MSG(Trace::FONT,
+  SGAL_TRACE_MSG(Tracer::FONT,
                  std::string("Face name: ").append(face_name).append("\n"));
   auto face_name_len = lstrlen(face_name);
 
@@ -838,7 +838,7 @@ void Font_style::get_font_file_name(std::string& file_name, FT_Long& face_index)
   }
   if (m_style.find("BOLD") != std::string::npos) font_name += ":bold";
   if (m_style.find("ITALIC") != std::string::npos) font_name += ":italic";
-  SGAL_TRACE_MSG(Trace::FONT, "Font name: " + font_name + "\n");
+  SGAL_TRACE_MSG(Tracer::FONT, "Font name: " + font_name + "\n");
 
   FcPattern* initial_pat = FcNameParse((FcChar8*)(font_name.c_str()));
   if (!initial_pat) { throw std::bad_alloc(); }

@@ -37,7 +37,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_SGAL_DECL Trace : public Option_mapper {
+class SGAL_SGAL_DECL Tracer : public Option_mapper {
 public:
   //! Pre-defined codes:
   enum Code {
@@ -65,7 +65,7 @@ public:
   /*! Obtain the trace singleton.
    * \return the trace singleton.
    */
-  static Trace* get_instance();
+  static Tracer* get_instance();
 
   /*! Enable the trace for the given code.
    * \param[in] code the given code.
@@ -96,7 +96,7 @@ public:
 private:
   /*! Construct.
    */
-  Trace();
+  Tracer();
 
   /*! Obtain the signature of the given trace-code.
    */
@@ -106,33 +106,33 @@ private:
   Signature m_signature;
 
   //! The singleton.
-  static Trace* s_instance;
+  static Tracer* s_instance;
 };
 
 //! \brief
 inline Boolean TRACE(size_t code)
-{ return Trace::get_instance()->is_enabled(code); }
+{ return Tracer::get_instance()->is_enabled(code); }
 
 //! \brief enables the trace for the given code.
-inline void Trace::enable(size_t code) { enable(signature(code)); }
+inline void Tracer::enable(size_t code) { enable(signature(code)); }
 
 //! \brief enables the trace for the given code-signature.
-inline void Trace::enable(Signature my_signature)
+inline void Tracer::enable(Signature my_signature)
 { m_signature |= my_signature; }
 
 //! \brief disables the trace for the given code.
-inline void Trace::disable(size_t code) { disable(signature(code)); }
+inline void Tracer::disable(size_t code) { disable(signature(code)); }
 
 //! \brief disables the trace for the given code-signature.
-inline void Trace::disable(Signature my_signature)
+inline void Tracer::disable(Signature my_signature)
 { m_signature &= ~my_signature; }
 
 //! \brief determines whether the trace for the given code is enabled.
-inline Boolean Trace::is_enabled(size_t code) const
+inline Boolean Tracer::is_enabled(size_t code) const
 { return ((m_signature & signature(code)) != 0x0); }
 
 //! \brief obtains the signature of the given trace-code.
-inline Trace::Signature Trace::signature(size_t code)
+inline Tracer::Signature Tracer::signature(size_t code)
   const { return 0x1 << code; }
 
 #if defined(NDEBUG) && !defined(SGAL_TRACE)

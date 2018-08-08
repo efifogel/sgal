@@ -14,14 +14,14 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 /*! Implements Rotation interpolator with asynchronic loading of compressed
  * data
  */
 
 #include "SGAL/Comp_rotation_interpolator.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -47,9 +47,9 @@ Comp_rotation_interpolator::Comp_rotation_interpolator(Boolean flag,
 /*! Destructor */
 Comp_rotation_interpolator::~Comp_rotation_interpolator()
 {
-  TRACE_MSG(Trace::DESTRUCTOR, "~Comp_rotation_interpolator ...");
+  TRACE_MSG(Tracer::DESTRUCTOR, "~Comp_rotation_interpolator ...");
   if (m_pInterpolator_data) delete m_pInterpolator_data;
-  TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
+  TRACE_MSG(Tracer::DESTRUCTOR, " completed\n");
 }
 
 // Overiding base interpolator get_attributes function

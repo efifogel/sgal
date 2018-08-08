@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <algorithm>
 
@@ -24,7 +24,7 @@
 #include "SGAL/Field.hpp"
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/Formatter.hpp"
 #include "SGAL/Field_type.hpp"
 
@@ -199,7 +199,7 @@ void Container::write_fields(Formatter* formatter)
 //! \brief writes this container.
 void Container::write(Formatter* formatter)
 {
-  SGAL_TRACE_CODE(Trace::EXPORT,
+  SGAL_TRACE_CODE(Tracer::EXPORT,
                   std::cout << "Container: " << "Tag: " << get_tag()
                   << ", name: " << get_name()
                   << std::endl;);

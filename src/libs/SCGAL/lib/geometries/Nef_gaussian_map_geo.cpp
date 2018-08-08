@@ -46,7 +46,6 @@
 #include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
-// #include "SGAL/Trace.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Sphere.hpp"

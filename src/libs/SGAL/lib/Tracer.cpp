@@ -19,22 +19,22 @@
 #include <iostream>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 //! The trace singleton.
-Trace* Trace::s_instance(nullptr);
+Tracer* Tracer::s_instance(nullptr);
 
 //! \brief obtains a trace singleton.
-Trace* Trace::get_instance()
+Tracer* Tracer::get_instance()
 {
-  if (!s_instance) s_instance = new Trace();
+  if (!s_instance) s_instance = new Tracer();
   return s_instance;
 }
 
 //! \brief constructs.
-Trace::Trace() :
+Tracer::Tracer() :
   m_signature(0x0)
 {
   // Trace options.

@@ -23,7 +23,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Dxf_configuration.hpp"

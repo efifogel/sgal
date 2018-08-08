@@ -34,7 +34,6 @@
 #include <CGAL/envelope_3.h>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Geometry.hpp"
 
 #include "SCGAL/basic.hpp"

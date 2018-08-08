@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #if defined(PLAYER_CONTROL)
 #include "stdafx.h"
@@ -66,7 +66,6 @@
 #include "SGAL/Navigation_info.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Shape.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Coord_transformer.hpp"
 #include "SGAL/Route.hpp"
 #include "SGAL/Appearance.hpp"

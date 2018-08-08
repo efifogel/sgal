@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #if (defined _MSC_VER)
 #include <windows.h>
@@ -29,7 +29,6 @@
 #include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 
@@ -37,13 +36,13 @@ SGAL_BEGIN_NAMESPACE
 
 Container_proto* Shader::s_prototype(nullptr);
 
-/*! Constructor */
+//! Construct.
 Shader::Shader(Boolean proto) :  Container(proto) { }
 
-/*! Destructor */
+//! Destruct.
 Shader::~Shader() {}
 
-/*! \brief applies the shader. */
+//! \brief applies the shader.
 void Shader::draw(Context* /* context */)
 {
   if (m_dirty) clean();
@@ -51,7 +50,7 @@ void Shader::draw(Context* /* context */)
   // Do stuff
 }
 
-/*! \brief cleans (compiles, link, and download) the shader. */
+//! \brief cleans (compiles, link, and download) the shader.
 void Shader::clean()
 {
   // Do stuff
@@ -59,7 +58,7 @@ void Shader::clean()
   m_dirty = false;
 }
 
-/*! \brief sets the attributes of the shader node. */
+//! \brief sets the attributes of the shader node.
 void Shader::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
@@ -85,7 +84,7 @@ void Shader::init_prototype()
   s_prototype = new Container_proto();
 }
 
-/*! \brief deletes the shader node prototype. */
+//! \brief deletes the shader node prototype.
 void Shader::delete_prototype()
 {
   delete s_prototype;
@@ -100,14 +99,14 @@ void Shader::delete_prototype()
                                             url_func));
 }
 
-/*! \brief obtains the shader node prototype. */
+//! \brief obtains the shader node prototype.
 Container_proto* Shader::get_prototype()
 {
   if (!s_prototype) Shader::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the URL. */
+//! \brief sets the URL.
 void Shader::set_url(const std::string& url)
 {
   m_url = url;

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s) : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_TRIANGULATION_GEO_HPP
 #define SCGAL_TRIANGULATION_GEO_HPP
@@ -43,7 +43,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Geometry.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Cull_context.hpp"
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Color_array.hpp"

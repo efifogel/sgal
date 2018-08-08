@@ -20,7 +20,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Loader.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_parser.hpp"
@@ -29,7 +29,7 @@ DXF_BEGIN_NAMESPACE
 
 extern "C" void BOOST_EXTENSION_EXPORT_DECL dxf_init()
 {
-  auto* tracer = SGAL::Trace::get_instance();
+  auto* tracer = SGAL::Tracer::get_instance();
   auto code = tracer->register_option("dxf-parsing");
 
   auto* loader = SGAL::Loader::get_instance();

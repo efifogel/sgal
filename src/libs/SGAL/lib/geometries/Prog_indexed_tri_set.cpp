@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include "Scene_graphPch.h"
 #include "ProgIndexedTriSet.h"
@@ -24,7 +24,7 @@
 #include "TexCoordSet.h"
 #include "ExecutionCoordinator.h"
 #include "Draw_action.h"
-#include "Trace.h"
+#include "SGAL/Tracer.hpp"
 
 using namespace SGAL;
 
@@ -49,9 +49,9 @@ Prog_indexed_tri_set::Prog_indexed_tri_set() : Indexed_face_set(),
 /*! Destructor */
 Prog_indexed_tri_set::~Prog_indexed_tri_set()
 {
-  TRACE_MSG(Trace::DESTRUCTOR, "~Prog_indexed_tri_set ...");
+  TRACE_MSG(Tracer::DESTRUCTOR, "~Prog_indexed_tri_set ...");
   DestroyData();
-  TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
+  TRACE_MSG(Tracer::DESTRUCTOR, " completed\n");
 }
 
 void Prog_indexed_tri_set::DestroyData()

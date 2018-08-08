@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
 
@@ -31,13 +31,13 @@
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Normal_array.hpp"
 #include "SGAL/Tex_coord_array.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 void Boundary_set::draw_invalid()
-{ SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "invalid\n"); }
+{ SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "invalid\n"); }
 
 /****************      Polygons      ****************/
 
@@ -50,7 +50,7 @@ void Boundary_set::draw_invalid()
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TENO_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TENO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TENO_MOPO_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
@@ -75,7 +75,7 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TENO_MOPO_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TENO_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TENO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TENO_MOPO_VANO\n");
   SGAL_error_msg("Not implemented yet!");
 }
 
@@ -88,7 +88,7 @@ void Boundary_set::draw_FSCO_FINO_FAPV_TENO_MOPO_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TENO_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOPO_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
@@ -114,7 +114,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TENO_MOPO_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TENO_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TENO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TENO_MOPO_VANO\n");
 }
 
 /*!
@@ -126,7 +126,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPV_TENO_MOPO_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TENO_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TENO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TENO_MOPO_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
@@ -150,7 +150,7 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TENO_MOPO_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TENO_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOPO_VANO\n");
 }
 
 /*!
@@ -162,7 +162,7 @@ void Boundary_set::draw_FSCO_FINO_FAPT_TENO_MOPO_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TENO_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TENO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TENO_MOPO_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
@@ -187,7 +187,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TENO_MOPO_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TENO_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOPO_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
@@ -215,7 +215,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPT_TENO_MOPO_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOPO_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
@@ -246,7 +246,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOPO_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPV_TEYE_TINO_MOPO_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -275,7 +275,7 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOPO_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPV_TEYE_TINO_MOPO_VANO\n");
 }
 
@@ -289,7 +289,7 @@ void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOPO_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TINO_MOPO_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -319,7 +319,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOPO_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TINO_MOPO_VANO\n");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -334,7 +334,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOPO_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPT_TEYE_TINO_MOPO_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -363,7 +363,7 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOPO_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPT_TEYE_TINO_MOPO_VANO\n");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -378,7 +378,7 @@ void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOPO_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPT_TEYE_TINO_MOPO_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -408,7 +408,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOPO_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPT_TEYE_TINO_MOPO_VANO\n");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -424,7 +424,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOPO_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPM_TEYE_TINO_MOPO_VANO\n");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -442,7 +442,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOPO_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPV_TEYE_TIYE_MOPO_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -472,7 +472,7 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOPO_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPV_TEYE_TIYE_MOPO_VANO\n");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -487,7 +487,7 @@ void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOPO_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -518,7 +518,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO\n");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -533,7 +533,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPT_TEYE_TIYE_MOPO_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -563,7 +563,7 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOPO_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPT_TEYE_TIYE_MOPO_VANO\n");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -578,7 +578,7 @@ void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOPO_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -609,7 +609,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO\n");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -626,7 +626,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPM_TEYE_TIYE_MOPO_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -659,7 +659,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOPO_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TENO_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TENO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TENO_MOTR_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
@@ -686,7 +686,7 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TENO_MOTR_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TENO_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TENO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TENO_MOTR_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
@@ -713,7 +713,7 @@ void Boundary_set::draw_FSCO_FINO_FAPV_TENO_MOTR_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TENO_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOTR_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
@@ -741,7 +741,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TENO_MOTR_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TENO_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TENO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TENO_MOTR_VANO\n");
   SGAL_error_msg("Not implemented yet!");
 }
 
@@ -754,7 +754,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPV_TENO_MOTR_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TENO_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TENO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TENO_MOTR_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
@@ -779,7 +779,7 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TENO_MOTR_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TENO_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOTR_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
@@ -804,7 +804,7 @@ void Boundary_set::draw_FSCO_FINO_FAPT_TENO_MOTR_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TENO_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TENO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TENO_MOTR_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
@@ -830,7 +830,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TENO_MOTR_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TENO_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOTR_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
@@ -858,7 +858,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPT_TENO_MOTR_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOTR_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
@@ -887,7 +887,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOTR_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPV_TEYE_TINO_MOTR_VANO\n");
 
   SGAL_assertion(m_coord_array);
@@ -920,7 +920,7 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOTR_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPV_TEYE_TINO_MOTR_VANO\n");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -935,7 +935,7 @@ void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOTR_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TINO_MOTR_VANO\n");
 
   const auto& coords = triangle_coord_indices();
@@ -965,7 +965,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOTR_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TINO_MOTR_VANO\n");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -980,7 +980,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOTR_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPT_TEYE_TINO_MOTR_VANO\n");
 
   const auto& coords = triangle_coord_indices();
@@ -1008,7 +1008,7 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOTR_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPT_TEYE_TINO_MOTR_VANO\n");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -1023,7 +1023,7 @@ void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOTR_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPT_TEYE_TINO_MOTR_VANO\n");
 
   const auto& coords = triangle_coord_indices();
@@ -1052,7 +1052,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOTR_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPT_TEYE_TINO_MOTR_VANO\n");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -1069,7 +1069,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOTR_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPM_TEYE_TINO_MOTR_VANO\n");
 
   glColor3fv(get(m_color_array, 0));
@@ -1100,7 +1100,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOTR_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPV_TEYE_TIYE_MOTR_VANO\n");
 
   const auto& coords = triangle_coord_indices();
@@ -1130,7 +1130,7 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTR_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPV_TEYE_TIYE_MOTR_VANO\n");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -1145,7 +1145,7 @@ void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOTR_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO\n");
 
   const auto& coords = triangle_coord_indices();
@@ -1176,7 +1176,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO\n");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -1191,7 +1191,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPT_TEYE_TIYE_MOTR_VANO\n");
 
   const auto& coords = triangle_coord_indices();
@@ -1220,7 +1220,7 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOTR_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPT_TEYE_TIYE_MOTR_VANO\n");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -1235,7 +1235,7 @@ void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOTR_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO\n");
 
   const auto& coords = triangle_coord_indices();
@@ -1265,7 +1265,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO\n");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -1282,7 +1282,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTR_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPM_TEYE_TIYE_MOTR_VANO\n");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -1301,7 +1301,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTR_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TENO_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TENO_MOQU_VANO\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TENO_MOQU_VANO\n");
 
   const auto& coords = quad_coord_indices();
   glBegin(GL_QUADS);
@@ -1327,7 +1327,7 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TENO_MOQU_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TENO_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TENO_MOQU_VANO");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TENO_MOQU_VANO");
 }
 
 /*!
@@ -1339,7 +1339,7 @@ void Boundary_set::draw_FSCO_FINO_FAPV_TENO_MOQU_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TENO_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOQU_VANO");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOQU_VANO");
 
   const auto& coords = quad_coord_indices();
   const auto& normals = quad_normal_indices();
@@ -1366,7 +1366,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TENO_MOQU_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TENO_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TENO_MOQU_VANO");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TENO_MOQU_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
 
@@ -1379,7 +1379,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPV_TENO_MOQU_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TENO_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TENO_MOQU_VANO");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TENO_MOQU_VANO");
 
   const auto& coords = quad_coord_indices();
   glBegin(GL_QUADS);
@@ -1403,7 +1403,7 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TENO_MOQU_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TENO_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOQU_VANO");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOQU_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
 
@@ -1416,7 +1416,7 @@ void Boundary_set::draw_FSCO_FINO_FAPT_TENO_MOQU_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TENO_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TENO_MOQU_VANO");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TENO_MOQU_VANO");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
@@ -1444,7 +1444,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TENO_MOQU_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TENO_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOQU_VANO");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOQU_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
 
@@ -1459,7 +1459,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPT_TENO_MOQU_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOQU_VANO");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOQU_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
 
@@ -1476,7 +1476,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOQU_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPV_TEYE_TINO_MOQU_VANO");
 
   const auto& coords = quad_coord_indices();
@@ -1508,7 +1508,7 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOQU_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPV_TEYE_TINO_MOQU_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -1523,7 +1523,7 @@ void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOQU_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TINO_MOQU_VANO");
 
   const auto& coords = quad_coord_indices();
@@ -1556,7 +1556,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOQU_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TINO_MOQU_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -1571,7 +1571,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOQU_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPT_TEYE_TINO_MOQU_VANO");
 
   const auto& coords = quad_coord_indices();
@@ -1601,7 +1601,7 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOQU_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPT_TEYE_TINO_MOQU_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -1616,7 +1616,7 @@ void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOQU_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPT_TEYE_TINO_MOQU_VANO");
 
   const auto& coords = quad_coord_indices();
@@ -1647,7 +1647,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOQU_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPT_TEYE_TINO_MOQU_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -1664,7 +1664,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOQU_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPM_TEYE_TINO_MOQU_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -1682,7 +1682,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOQU_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPV_TEYE_TIYE_MOQU_VANO");
 
   const auto& coords = quad_coord_indices();
@@ -1715,7 +1715,7 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOQU_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TIYE_MOQU_VANO");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TIYE_MOQU_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
 
@@ -1729,7 +1729,7 @@ void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOQU_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO");
 
   const auto& coords = quad_coord_indices();
@@ -1763,7 +1763,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -1778,7 +1778,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPT_TEYE_TIYE_MOQU_VANO");
 
   const auto& coords = quad_coord_indices();
@@ -1809,7 +1809,7 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOQU_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPT_TEYE_TIYE_MOQU_VANO");
 
   const auto& coords = quad_coord_indices();
@@ -1840,7 +1840,7 @@ void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOQU_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO");
 
   const auto& coords = quad_coord_indices();
@@ -1872,7 +1872,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -1889,7 +1889,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOQU_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPM_TEYE_TIYE_MOQU_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -1908,7 +1908,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOQU_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TENO_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TENO_MOTS_VANO");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TENO_MOTS_VANO");
 
   SGAL_error_msg("Not implemented yet!");
   // if (!m_coord_array->size() || !m_normal_array->size() ||
@@ -1939,7 +1939,7 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TENO_MOTS_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TENO_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TENO_MOTS_VANO");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TENO_MOTS_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
 
@@ -1952,7 +1952,7 @@ void Boundary_set::draw_FSCO_FINO_FAPV_TENO_MOTS_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TENO_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOTS_VANO");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOTS_VANO");
 
   // if (!m_coord_array->size() || !m_normal_array->size() ||
   //     !m_tri_strip_lengths)
@@ -2008,7 +2008,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TENO_MOTS_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TENO_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TENO_MOTS_VANO");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TENO_MOTS_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
 
@@ -2020,7 +2020,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPV_TENO_MOTS_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TENO_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TENO_MOTS_VANO");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TENO_MOTS_VANO");
 
   // if (!m_coord_array->size() || !m_normal_array->size() ||
   //     !m_tri_strip_lengths)
@@ -2070,7 +2070,7 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TENO_MOTS_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TENO_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOTS_VANO");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOTS_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
 
@@ -2083,7 +2083,7 @@ void Boundary_set::draw_FSCO_FINO_FAPT_TENO_MOTS_VANO()
  */
  void Boundary_set::draw_FSNO_FIYE_FAPT_TENO_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TENO_MOTS_VANO");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TENO_MOTS_VANO");
 
   // if (!m_coord_array->size() || !m_normal_array->size() ||
   //     !m_tri_strip_lengths)
@@ -2125,7 +2125,7 @@ void Boundary_set::draw_FSCO_FINO_FAPT_TENO_MOTS_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TENO_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOTS_VANO");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOTS_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
 
@@ -2140,7 +2140,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPT_TENO_MOTS_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOTS_VANO");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOTS_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
 
@@ -2159,7 +2159,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOTS_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPV_TEYE_TINO_MOTS_VANO");
 
   // if (!m_coord_array->size() || !m_normal_array->size() ||
@@ -2193,7 +2193,7 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOTS_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPV_TEYE_TINO_MOTS_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -2208,7 +2208,7 @@ void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOTS_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TINO_MOTS_VANO");
 
   if (!m_coord_array->size() || !m_normal_array->size() ||
@@ -2275,7 +2275,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOTS_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TINO_MOTS_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -2290,7 +2290,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOTS_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPT_TEYE_TINO_MOTS_VANO");
 
   if (!m_coord_array->size() || !m_normal_array->size() ||
@@ -2353,7 +2353,7 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOTS_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPT_TEYE_TINO_MOTS_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -2368,7 +2368,7 @@ void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOTS_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPT_TEYE_TINO_MOTS_VANO");
 
   if (!m_coord_array->size() || !m_normal_array->size() ||
@@ -2414,7 +2414,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOTS_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPT_TEYE_TINO_MOTS_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -2431,7 +2431,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOTS_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPM_TEYE_TINO_MOTS_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -2449,7 +2449,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOTS_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPV_TEYE_TIYE_MOTS_VANO");
 
   if (!m_coord_array->size() || !m_normal_array->size() ||
@@ -2483,7 +2483,7 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTS_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPV_TEYE_TIYE_MOTS_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -2497,7 +2497,7 @@ void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOTS_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO");
 
   if (!m_coord_array->size() || !m_normal_array->size() ||
@@ -2531,7 +2531,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -2546,7 +2546,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO()
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPT_TEYE_TIYE_MOTS_VANO");
 
   if (!m_coord_array->size() || !m_normal_array->size() ||
@@ -2592,7 +2592,7 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOTS_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPT_TEYE_TIYE_MOTS_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -2607,7 +2607,7 @@ void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOTS_VANO()
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO");
 
   if (!m_coord_array->size() || !m_normal_array->size() ||
       !m_tex_coord_array->size() || !m_tri_strip_lengths)
@@ -2653,7 +2653,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO()
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -2670,7 +2670,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO()
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VANO");
   SGAL_error_msg("Not implemented yet!");
 }
@@ -2683,7 +2683,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VANO()
 // Texture disabled:
 void Boundary_set::draw_FAPV_VAYE()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FAPV_VAYE\n");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FAPV_VAYE\n");
 
   Uint tcoords = num_tex_coordinates();
 
@@ -2770,13 +2770,13 @@ void Boundary_set::draw_FAPV_VAYE()
 
 void Boundary_set::draw_FAPT_VAYE()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FAPT_VAYE");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FAPT_VAYE");
   SGAL_error_msg("Not implemented yet!");
 }
 
 void Boundary_set::draw_FAPM_VAYE()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FAPM_VAYE");
+  SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FAPM_VAYE");
   SGAL_error_msg("Not implemented yet!");
 }
 

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
  * X11 window system component of the window manager
@@ -55,7 +55,7 @@
 #include "SGAL/Passive_motion_event.hpp"
 #include "SGAL/Tick_event.hpp"
 #include "SGAL/Scene.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 
 // #include "X11_event_names.hpp"
 
@@ -258,7 +258,7 @@ void X11_window_manager::process_xevent(XEvent& event)
   // std::cout << "event type: " << event_names[event.type] << std::endl;
   switch (event.type) {
    case Expose:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "Expose" << std::endl;);
     // Draw only if the number of Expose events that are to follow vanishes:
     if (event.xexpose.count != 0) break;
@@ -272,7 +272,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case ConfigureNotify:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "ConfigureNotify" << std::endl;);
     for (auto it = this->begin_windows(); it != this->end_windows(); ++it) {
       X11_window_item* window_item = *it;
@@ -299,7 +299,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case ButtonPress:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "ButtonPress" << std::endl;);
     button_id = (event.xbutton.button == Button1) ? 0 :
       (event.xbutton.button == Button2) ? 1 :
@@ -317,7 +317,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case ButtonRelease:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "ButtonRelease" << std::endl;);
     button_id = (event.xbutton.button == Button1) ? 0 :
       (event.xbutton.button == Button2) ? 1 :
@@ -335,7 +335,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case KeyPress:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "KeyPress" << std::endl;);
     /* Break out if the window has been destroyed. This is possible, for
      * example, if auto-repeat for the key is on. In this case alternating
@@ -358,7 +358,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case KeyRelease:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "KeyRelease" << std::endl;);
     // Break out if the window has been destroyed:
     if (!m_current_window) break;
@@ -381,7 +381,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case MotionNotify:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "MotionNotify" << std::endl;);
     if (!m_current_window) {
       for (auto it = this->begin_windows(); it != this->end_windows(); ++it) {
@@ -414,7 +414,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case ClientMessage:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "ClientMessage" << std::endl;);
     if (event.xclient.window == RootWindow(m_display, m_screen)) break;
     if (!m_current_window) break;
@@ -428,7 +428,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case FocusIn:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "FocusIn" << std::endl;);
     // kc_values.auto_repeat_mode = 0;
     // XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
@@ -442,7 +442,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case FocusOut:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "FocusOut" << std::endl;);
     m_current_window = nullptr;
     // kc_values.auto_repeat_mode = 1;
@@ -450,7 +450,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case CreateNotify:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "CreateNotify" << std::endl;);
     if (event.xcreatewindow.override_redirect) break;
     // Check whether the event is associated with our window.
@@ -464,7 +464,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case DestroyNotify:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "DestroyNotify" << std::endl;);
     if (event.xdestroywindow.event != event.xdestroywindow.window) break;
     for (auto it = this->begin_windows(); it != this->end_windows(); ++it) {
@@ -481,7 +481,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case MapNotify:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "MapNotify" << std::endl;);
     if (event.xunmap.event != event.xunmap.window) break;
     if (!m_current_window) {
@@ -498,7 +498,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case UnmapNotify:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "UnmapNotify" << std::endl;);
     if (event.xunmap.event != event.xunmap.window) break;
     if (!m_current_window) {
@@ -515,7 +515,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    default:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "default" << std::endl;);
     break;
   }

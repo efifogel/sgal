@@ -14,34 +14,34 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Event_handler.hpp"
 #include "SGAL/Event.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-Uint Event_handler::s_verbose_level = 0;
+Uint Event_handler::s_verbose_level(0);
 Event_handler::Event_queue Event_handler::s_queue;
 
-/*! \brief */
+//! \brief
 void Event_handler::process()
 {
   while (!s_queue.empty()) {
     Event* event = s_queue.front();
     s_queue.pop();
-    SGAL_TRACE_CODE(Trace::EVENTS, event->identify(););
+    SGAL_TRACE_CODE(Tracer::EVENTS, event->identify(););
     event->handle();
     delete event;
   }
 }
 
-/*! \brief */
+//! \brief
 void Event_handler::issue(Event* event) { s_queue.push(event); }
 
-/*! \brief */
+//! \brief
 Boolean Event_handler::is_empty(void) { return s_queue.empty(); }
 
 SGAL_END_NAMESPACE

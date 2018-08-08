@@ -55,7 +55,7 @@
 #include "SGAL/Cull_context.hpp"
 #include "SGAL/GL_error.hpp"
 #include "SGAL/Route.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/Snapshotter.hpp"
 #include "SGAL/Point_light.hpp"
 #include "SGAL/Bindable_stack.hpp"
@@ -935,7 +935,7 @@ void Scene_graph::write(const std::string& filename,
 void Scene_graph::write(const std::string& filename, std::ostream& os,
                         File_format_3d::Id format_id, Boolean is_binary)
 {
-  SGAL_TRACE_CODE(Trace::EXPORT,
+  SGAL_TRACE_CODE(Tracer::EXPORT,
                   std::cout << "Scene_graph: " << "Format: " << format_id
                   << std::endl;);
   switch (format_id) {

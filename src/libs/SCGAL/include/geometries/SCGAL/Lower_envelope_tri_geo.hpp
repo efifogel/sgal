@@ -33,7 +33,6 @@
 #include <CGAL/envelope_3.h>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Coord_array_3d.hpp"

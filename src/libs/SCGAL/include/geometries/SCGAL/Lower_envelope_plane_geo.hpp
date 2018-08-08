@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s) : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_LOWER_ENVELOPE_PLANE_GEO_HPP
 #define SCGAL_LOWER_ENVELOPE_PLANE_GEO_HPP
@@ -34,7 +34,6 @@
 #include <CGAL/Arr_observer.h>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Epec_kernel.hpp"
 #include "SGAL/Epec_plane_array.hpp"
 #include "SGAL/Epec_coord_array_2d.hpp"

@@ -22,7 +22,7 @@
 #define SGAL_GL_WRAPPER_HPP
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/Gl_mapper.hpp"
 
 SGAL_BEGIN_NAMESPACE

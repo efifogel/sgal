@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
 #pragma warning ( disable : 4146 )
@@ -48,7 +48,6 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Stl_formatter.hpp"
 #include "SGAL/Vector3f.hpp"

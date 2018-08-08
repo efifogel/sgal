@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
  * Windows window system component of the window manager
@@ -32,32 +32,32 @@
 #include "SGAL/Passive_motion_event.hpp"
 #include "SGAL/Tick_event.hpp"
 #include "SGAL/Scene.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Has the shift key pressed */
+//! \brief has the shift key pressed.
 Boolean Windows_window_manager::s_capital(false);
 
-/*! The single instance of a window manager */
-Windows_window_manager* Windows_window_manager::s_instance = NULL;
+//! \brief the single instance of a window manager
+Windows_window_manager* Windows_window_manager::s_instance(nullptr);
 
-/*! The event handler */
+//! \brief the event handler.
 Event_handler Windows_window_manager::s_event_handler;
 
-/*! Constructor */
+//! \brief constructs.
 Windows_window_manager::Windows_window_manager() :
   m_window_class_name("SGAL")
 {}
 
-/*! \brief obtains a pointer to the manager */
+//! \brief obtains a pointer to the manager.
 Windows_window_manager* Windows_window_manager::instance()
 {
   if (!s_instance) s_instance = new Windows_window_manager();
   return s_instance;
 }
 
-/*! \brief registers a window class for this application */
+//! \brief registers a window class for this application.
 void Windows_window_manager::register_window_class()
 {
   // Fill in the window class structure:
@@ -109,7 +109,7 @@ LRESULT CALLBACK
 Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
                                    WPARAM wParam, LPARAM lParam)
 {
-  SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+  SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                   std::cout << "WindowProc()" << std::endl;);
 
   // Get The Window Context
@@ -130,7 +130,7 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
 
   switch (uMsg) {
    case WM_CREATE:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "WM_CREATE" << std::endl;);
     // Store Window Structure Pointer:
     creation = reinterpret_cast<CREATESTRUCT*>(lParam);
@@ -142,7 +142,7 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     break;
 
    case WM_DESTROY:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "WM_DESTROY" << std::endl;);
     current_window = reinterpret_cast<Windows_window_item*>
       (GetWindowLongPtr(hWnd, GWLP_USERDATA));
@@ -151,7 +151,7 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     break;
 
    case WM_SIZE:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "WM_SIZE" << std::endl;);
     current_window = reinterpret_cast<Windows_window_item*>
       (GetWindowLongPtr(hWnd, GWLP_USERDATA));
@@ -179,7 +179,7 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     break;
 
    case WM_PAINT:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "WM_PAINT" << std::endl;);
     BeginPaint(hWnd, &ps);
     current_window = reinterpret_cast<Windows_window_item*>
@@ -197,7 +197,7 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     break;
 
    case WM_KEYDOWN:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "WM_KEYDOWN" << std::endl;);
     current_window = reinterpret_cast<Windows_window_item*>
       (GetWindowLongPtr(hWnd, GWLP_USERDATA));
@@ -225,7 +225,7 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     break;
 
    case WM_KEYUP:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "WM_KEYUP" << std::endl;);
     current_window = reinterpret_cast<Windows_window_item*>
       (GetWindowLongPtr(hWnd, GWLP_USERDATA));
@@ -244,7 +244,7 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     break;
 
    case WM_LBUTTONDOWN:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "WM_LBUTTONDOWN" << std::endl;);
     current_window = reinterpret_cast<Windows_window_item*>
       (GetWindowLongPtr(hWnd, GWLP_USERDATA));
@@ -265,7 +265,7 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     break;
 
    case WM_LBUTTONUP:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "WM_LBUTTONUP" << std::endl;);
     current_window = reinterpret_cast<Windows_window_item*>
       (GetWindowLongPtr(hWnd, GWLP_USERDATA));
@@ -276,7 +276,7 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     goto process_mouse;
 
    case WM_MBUTTONDOWN:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "WM_MBUTTONDOWN" << std::endl;);
     current_window = reinterpret_cast<Windows_window_item*>
       (GetWindowLongPtr(hWnd, GWLP_USERDATA));
@@ -287,7 +287,7 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     goto process_mouse;
 
    case WM_MBUTTONUP:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "WM_MBUTTONUP" << std::endl;);
     current_window = reinterpret_cast<Windows_window_item*>
       (GetWindowLongPtr(hWnd, GWLP_USERDATA));
@@ -307,7 +307,7 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     goto process_mouse;
 
    case WM_RBUTTONUP:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "WM_RBUTTONUP" << std::endl;);
     current_window = reinterpret_cast<Windows_window_item*>
       (GetWindowLongPtr(hWnd, GWLP_USERDATA));
@@ -318,7 +318,7 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     goto process_mouse;
 
    case WM_MOUSEMOVE:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "WM_MOUSEMOVE" << std::endl;);
     current_window = reinterpret_cast<Windows_window_item*>
       (GetWindowLongPtr(hWnd, GWLP_USERDATA));
@@ -341,12 +341,12 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     break;
 
    case WM_CAPTURECHANGED:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "WM_CAPTURECHANGED" << std::endl;)
     break;
 
    default:
-    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+    SGAL_TRACE_CODE(Tracer::WINDOW_MANAGER,
                     std::cout << "default" << std::endl;)
     // Pass it on if unproccessed:
     lRet = DefWindowProc(hWnd, uMsg, wParam, lParam);

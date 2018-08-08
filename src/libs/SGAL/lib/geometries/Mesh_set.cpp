@@ -35,7 +35,7 @@
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Draw_action.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Formatter.hpp"
@@ -819,7 +819,7 @@ void Mesh_set::clear_tex_coord_indices()
 //! \brief writes this container.
 void Mesh_set::write(Formatter* formatter)
 {
-  SGAL_TRACE_CODE(Trace::EXPORT,
+  SGAL_TRACE_CODE(Tracer::EXPORT,
                   std::cout << "Mesh_set: " << "Tag: " << get_tag()
                   << ", name: " << get_name()
                   << std::endl;);

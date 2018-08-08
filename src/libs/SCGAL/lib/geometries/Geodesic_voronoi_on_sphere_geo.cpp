@@ -39,7 +39,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Element.hpp"

@@ -35,7 +35,7 @@
 #include "SGAL/Types.hpp"
 #include "SGAL/Loader_code.hpp"
 #include "SGAL/Base_loader.hpp"
-#include "SGAL/Trace.hpp"
+#include "SGAL/Tracer.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_importer.hpp"

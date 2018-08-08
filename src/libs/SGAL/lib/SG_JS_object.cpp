@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 /**
   SG_JSObject - implementation
@@ -53,9 +53,9 @@ SG_JSObject::SG_JSObject(ESAIServices* SAI,
 /*! Destructor */
 SG_JSObject::~SG_JSObject()
 {
-  TRACE_MSG(Trace::DESTRUCTOR, "~SG_JSObject ...");
+  TRACE_MSG(Tracer::DESTRUCTOR, "~SG_JSObject ...");
   if (m_properties) m_properties->destroy();
-  TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
+  TRACE_MSG(Tracer::DESTRUCTOR, " completed\n");
 }
 
 const std::string & SG_JSObject::get_name()
@@ -485,5 +485,3 @@ JSWPropContainerInt* SG_JSObject::get_propContainer()
 
   return m_properties;
 }
-
-

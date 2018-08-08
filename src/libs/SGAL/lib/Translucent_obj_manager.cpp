@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
 #include "TranslucentObjManager.h"
@@ -54,7 +54,7 @@ Translucent_manager::Translucent_manager(Boolean proto) :
 /*! Destructor */
 Translucent_manager::~Translucent_manager()
 {
-  TRACE_MSG(Trace::DESTRUCTOR, "~Translucent_manager ...");
+  TRACE_MSG(Tracer::DESTRUCTOR, "~Translucent_manager ...");
   m_translucentRef.erase(m_translucentRef.begin(), m_translucentRef.end());
 
   for (Translucent_iter tIter = m_translucentList.begin();
@@ -62,7 +62,7 @@ Translucent_manager::~Translucent_manager()
   {
     delete (*tIter);
   }
-  TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
+  TRACE_MSG(Tracer::DESTRUCTOR, " completed\n");
 }
 
 /** Call this function before the first pass.
