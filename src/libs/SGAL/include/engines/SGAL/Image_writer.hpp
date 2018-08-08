@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_IMAGE_WRITER_HPP
 #define SGAL_IMAGE_WRITER_HPP
@@ -83,7 +85,7 @@ public:
   Boolean* trigger_handle(const Field_info*) { return &m_trigger; }
   std::string* dir_name_handle(const Field_info*) { return &m_dir_name; }
   std::string* file_name_handle(const Field_info*) { return &m_file_name; }
-  File_format_2d::Id* file_format_handle(const Field_info*)
+  File_format_2d::Code* file_format_handle(const Field_info*)
   { return &m_file_format; }
   Boolean* flip_handle(const Field_info*) { return &m_flip; }
   Shared_image* image_handle(const Field_info*)
@@ -129,11 +131,11 @@ public:
 
   /*! Set the file format.
    */
-  void set_file_format(File_format_2d::Id format);
+  void set_file_format(File_format_2d::Code format);
 
   /*! Obtain the file format.
    */
-  File_format_2d::Id get_file_format() const;
+  File_format_2d::Code get_file_format() const;
 
   /*! Set the flag that indicates whether the image should be reflected. */
   void set_flip(Boolean flag);
@@ -167,7 +169,7 @@ protected:
   std::string m_file_name;
 
   /*! The format of the file the image is written to. */
-  File_format_2d::Id m_file_format;
+  File_format_2d::Code m_file_format;
 
   /*! The quality of the (loss) image (applicable to jpeg). */
   Uint m_quality;
@@ -188,7 +190,7 @@ private:
   //! Default values:
   const static std::string s_def_dir_name;
   const static std::string s_def_file_name;
-  const static File_format_2d::Id s_def_file_format;
+  const static File_format_2d::Code s_def_file_format;
   const static Uint s_def_quality;
   const static Boolean s_def_flip;
 
@@ -222,11 +224,11 @@ inline const std::string& Image_writer::get_file_name() const
 { return m_file_name; }
 
 //! \brief sets the file format.
-inline void Image_writer::set_file_format(File_format_2d::Id format)
+inline void Image_writer::set_file_format(File_format_2d::Code format)
 { m_file_format = format; }
 
 //! \brief obtains the file format.
-inline File_format_2d::Id Image_writer::get_file_format() const
+inline File_format_2d::Code Image_writer::get_file_format() const
 { return m_file_format; }
 
 //! \brief sets the flag that indicates whether the image should be reflected.

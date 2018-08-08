@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/exception.hpp>
@@ -41,7 +43,7 @@ Container_proto* Exporter::s_prototype(nullptr);
 // Default values
 const std::string Exporter::s_def_dir_name(".");
 const std::string Exporter::s_def_file_name("sgal");
-const File_format_3d::Id Exporter::s_def_file_format(File_format_3d::ID_WRL);
+const File_format_3d::Code Exporter::s_def_file_format(File_format_3d::WRL);
 const Boolean Exporter::s_def_separate(false);
 
 REGISTER_TO_FACTORY(Exporter, "Exporter");
@@ -159,13 +161,13 @@ void Exporter::set_attributes(Element* elem)
     }
     if (name == "fileFormat") {
       size_t i;
-      for (i = 0; i < File_format_3d::NUM_IDS; ++i) {
+      for (i = 0; i < File_format_3d::NUM_CODES; ++i) {
         if (File_format_3d::compare_name(i, value)) {
-          set_file_format(static_cast<File_format_3d::Id>(i));
+          set_file_format(static_cast<File_format_3d::Code>(i));
           break;
         }
       }
-      if (i == File_format_3d::NUM_IDS) {
+      if (i == File_format_3d::NUM_CODES) {
         std::cerr << "Illegal file format (" << value.c_str() << ")!"
                   << std::endl;
       }

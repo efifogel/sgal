@@ -263,12 +263,12 @@ SGAL_END_NAMESPACE
 
 Start           : VRML vrmlScene
                 {
-                  scene_graph->set_input_format_id(File_format_3d::ID_WRL);
+                  scene_graph->set_input_format_id(File_format_3d::WRL);
                 }
                 | K_SOLID facets K_SOLID_END
                 {
                   /* STL */
-                  scene_graph->set_input_format_id(File_format_3d::ID_STL);
+                  scene_graph->set_input_format_id(File_format_3d::STL);
 
                   /*! Add Shape */
                   Shared_shape shape(new Shape);

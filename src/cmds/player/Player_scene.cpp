@@ -400,7 +400,7 @@ void Player_scene::snapshot_scene()
     image_writer->set_image(m_image);
     if (!parent_name.empty()) image_writer->set_dir_name(parent_name);
     if (!file_name.empty()) image_writer->set_file_name(file_name);
-    SGAL::File_format_2d::Id format_id = *it;
+    SGAL::File_format_2d::Code format_id = *it;
     image_writer->set_file_format(format_id);
 
     auto* dst_field = image_writer->get_destination_field("trigger");
@@ -442,7 +442,7 @@ void Player_scene::export_scene()
   for (auto it = m_option_parser->formats_3d_begin();
        it != m_option_parser->formats_3d_end(); ++it)
   {
-    SGAL::File_format_3d::Id format_id = *it;
+    SGAL::File_format_3d::Code format_id = *it;
     const auto& new_extension = SGAL::File_format_3d::get_name(format_id);
     file_path.replace_extension(new_extension);
     if (file_path.is_relative() && !parent_path.empty())

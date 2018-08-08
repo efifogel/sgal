@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 /*! This file and its content, namely the class Snapshot, are obsolete.
  * They are retained for backward compatibility.
@@ -179,13 +181,13 @@ void Snapshot::set_attributes(Element* elem)
     }
     if (name == "fileFormat") {
       size_t i;
-      for (i = 0; i < File_format_2d::NUM_IDS; ++i) {
+      for (i = 0; i < File_format_2d::NUM_CODES; ++i) {
         if (File_format_2d::compare_name(i, value)) {
-          set_file_format(static_cast<File_format_2d::Id>(i));
+          set_file_format(static_cast<File_format_2d::Code>(i));
           break;
         }
       }
-      if (i == File_format_2d::NUM_IDS) {
+      if (i == File_format_2d::NUM_CODES) {
         std::cerr << "Illegal file format (" << value.c_str() << ")!"
                   << std::endl;
       }
@@ -251,7 +253,7 @@ std::string Snapshot::get_dir_name()
 }
 
 //! \brief sets the file format.
-void Snapshot::set_file_format(File_format_2d::Id format)
+void Snapshot::set_file_format(File_format_2d::Code format)
 {
   m_file_format = format;
   m_dirty_image_writer = true;
@@ -259,7 +261,7 @@ void Snapshot::set_file_format(File_format_2d::Id format)
 }
 
 //! \brief obtains the file format.
-File_format_2d::Id Snapshot::get_file_format()
+File_format_2d::Code Snapshot::get_file_format()
 {
   if (m_dirty_file_format) clean_attributes();
   return m_file_format;

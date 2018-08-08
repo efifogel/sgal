@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
  *
@@ -57,13 +59,13 @@ Container_proto* Image_writer::s_prototype(nullptr);
 // Default values
 const std::string Image_writer::s_def_dir_name(".");
 const std::string Image_writer::s_def_file_name("snaphsot");
-const File_format_2d::Id Image_writer::s_def_file_format(File_format_2d::ID_PPM);
+const File_format_2d::Code Image_writer::s_def_file_format(File_format_2d::PPM);
 const Uint Image_writer::s_def_quality(50);
 const Boolean Image_writer::s_def_flip(true);
 
 REGISTER_TO_FACTORY(Image_writer, "Image_writer");
 
-//! \brief constructor.
+//! \brief constructs.
 Image_writer::Image_writer(Boolean proto) :
   Node(proto),
   m_trigger(false),
@@ -74,7 +76,7 @@ Image_writer::Image_writer(Boolean proto) :
   m_flip(s_def_flip)
 {}
 
-//! \brief destructor.
+//! \brief destructs.
 Image_writer::~Image_writer() {}
 
 //! \brief initializes the container prototype.
@@ -175,13 +177,13 @@ void Image_writer::set_attributes(Element* elem)
     if (name == "fileFormat") {
       auto str = value;
       size_t i;
-      for (i = 0; i < File_format_2d::NUM_IDS; ++i) {
+      for (i = 0; i < File_format_2d::NUM_CODES; ++i) {
         if (File_format_2d::compare_name(i, str)) {
-          set_file_format(static_cast<File_format_2d::Id>(i));
+          set_file_format(static_cast<File_format_2d::Code>(i));
           break;
         }
       }
-      if (i == File_format_2d::NUM_IDS) {
+      if (i == File_format_2d::NUM_CODES) {
         std::cerr << "Illegal file format (" << value.c_str() << ")!"
                   << std::endl;
       }

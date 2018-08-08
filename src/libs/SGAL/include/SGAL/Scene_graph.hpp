@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_SCENE_GRAPH_HPP
@@ -427,12 +429,12 @@ public:
   /*! Obtain the input file format.
    * \return The input file format.
    */
-  File_format_3d::Id get_input_format_id() const;
+  File_format_3d::Code get_input_format_id() const;
 
   /*! Set the input file format.
    * \param[in] format The input file format.
    */
-  void set_input_format_id(File_format_3d::Id format_id);
+  void set_input_format_id(File_format_3d::Code format_id);
 
   /// \name Writters
   //@{
@@ -440,7 +442,7 @@ public:
    * \param[in] filename The file name.
    * \param[in] format_id The id of the given format.
    */
-  void write(const std::string& filename, File_format_3d::Id format_id,
+  void write(const std::string& filename, File_format_3d::Code format_id,
              Boolean is_binary = false);
 
   /*! Export the scene to an output stream in a given format.
@@ -449,7 +451,7 @@ public:
    * \param[in] format_id The id of the given format.
    */
   void write(const std::string& filename, std::ostream& os,
-             File_format_3d::Id format_id, Boolean is_binary = false);
+             File_format_3d::Code format_id, Boolean is_binary = false);
 
   /*! Export the scene to an output stream in VRML format.
    * \param[in] filename The file name.
@@ -661,7 +663,7 @@ private:
   Boolean m_owned_background;
 
   //! The id of the input format.
-  File_format_3d::Id m_input_format_id;
+  File_format_3d::Code m_input_format_id;
 
   void set_head_light(Configuration* config);
 
@@ -705,11 +707,11 @@ inline Scene_graph::Shared_group Scene_graph::get_root() const
 { return m_root; }
 
 //! \brief obtains the input file format.
-inline File_format_3d::Id Scene_graph::get_input_format_id() const
+inline File_format_3d::Code Scene_graph::get_input_format_id() const
 { return m_input_format_id; }
 
 //! \brief sets the input file format.
-inline void Scene_graph::set_input_format_id(File_format_3d::Id format_id)
+inline void Scene_graph::set_input_format_id(File_format_3d::Code format_id)
 { m_input_format_id = format_id; }
 
 //! \brief obtains the begin pointer of the containers.

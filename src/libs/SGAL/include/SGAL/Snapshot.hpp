@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 /*! This file and its content, namely the class Snapshot, are obsolete.
  * They are retained for backward compatibility.
@@ -97,7 +99,7 @@ public:
   //@{
   std::string* dir_name_handle(const Field_info*) { return &m_dir_name; }
   std::string* file_name_handle(const Field_info*) { return &m_file_name; }
-  File_format_2d::Id* file_format_handle(const Field_info*)
+  File_format_2d::Code* file_format_handle(const Field_info*)
   { return &m_file_format; }
   Shared_image_writer* image_writer_handle(const Field_info*)
   { return &m_image_writer; }
@@ -145,11 +147,11 @@ public:
 
   /*! Set the file format.
    */
-  void set_file_format(File_format_2d::Id format);
+  void set_file_format(File_format_2d::Code format);
 
   /*! Obtain the file format.
    */
-  File_format_2d::Id get_file_format();
+  File_format_2d::Code get_file_format();
 
   /*! Set the flag that indicates whether to generate the file name as part of
    * a sequence.
@@ -195,7 +197,7 @@ protected:
   std::string m_file_name;
 
   /*! The format of the file the image is written to. */
-  File_format_2d::Id m_file_format;
+  File_format_2d::Code m_file_format;
 
   /*! The quality of the (loss) image (applicable to jpeg). */
   Uint m_quality;

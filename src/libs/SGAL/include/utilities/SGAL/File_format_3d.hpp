@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_FILE_FORMAT_3D_HPP
 #define SGAL_FILE_FORMAT_3D_HPP
@@ -28,17 +30,17 @@ SGAL_BEGIN_NAMESPACE
 
 class SGAL_SGAL_DECL File_format_3d {
 public:
-  /*! Format ids */
-  enum Id {
-    NONE = 0,
-    ID_WRL,
-    ID_X3D,
-    ID_OFF,
-    ID_STL,
-    ID_OBJ,
-    ID_JSON,
-    ID_DXF,
-    NUM_IDS
+  //! Format codes
+  enum Code {
+    INVALID = 0,
+    WRL,
+    X3D,
+    OFF,
+    STL,
+    OBJ,
+    JSON,
+    DXF,
+    NUM_CODES
   };
 
   /*! Compare the name of the ith format to a given token.

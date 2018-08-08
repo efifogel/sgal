@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #if (defined _MSC_VER)
@@ -111,7 +113,7 @@ Scene_graph::Scene_graph(bool syncronize) :
   m_owned_camera(false),
   m_owned_navigation_info(false),
   m_owned_background(false),
-  m_input_format_id(File_format_3d::NONE)
+  m_input_format_id(File_format_3d::INVALID)
 {
   m_isect_action = new Isect_action();
   m_touch_sensors.clear();
@@ -918,7 +920,7 @@ const Background* Scene_graph::get_active_background() const
 
 //! \brief exports the scene to a file in a given format.
 void Scene_graph::write(const std::string& filename,
-                        File_format_3d::Id format_id, Boolean is_binary)
+                        File_format_3d::Code format_id, Boolean is_binary)
 {
   if (filename.empty()) write(filename, std::cout, format_id, is_binary);
   else {
@@ -933,21 +935,21 @@ void Scene_graph::write(const std::string& filename,
 
 //! \brief exports the scene to an output stream in a given format.
 void Scene_graph::write(const std::string& filename, std::ostream& os,
-                        File_format_3d::Id format_id, Boolean is_binary)
+                        File_format_3d::Code format_id, Boolean is_binary)
 {
   SGAL_TRACE_CODE(Tracer::EXPORT,
                   std::cout << "Scene_graph: " << "Format: " << format_id
                   << std::endl;);
   switch (format_id) {
-   case File_format_3d::ID_WRL: write_vrml(filename, os); break;
-   case File_format_3d::ID_X3D: break;
-   case File_format_3d::ID_OFF: break;
-   case File_format_3d::ID_STL: write_stl(filename, os, is_binary); break;
-   case File_format_3d::ID_OBJ: write_obj(filename, os);break;
-   case File_format_3d::ID_JSON: write_json(filename, os);break;
+   case File_format_3d::WRL: write_vrml(filename, os); break;
+   case File_format_3d::X3D: break;
+   case File_format_3d::OFF: break;
+   case File_format_3d::STL: write_stl(filename, os, is_binary); break;
+   case File_format_3d::OBJ: write_obj(filename, os);break;
+   case File_format_3d::JSON: write_json(filename, os);break;
 
-   case File_format_3d::NONE:
-   case File_format_3d::NUM_IDS:
+   case File_format_3d::INVALID:
+   case File_format_3d::NUM_CODES:
    default: return;
   }
 }

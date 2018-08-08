@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_IO_OPTION_PARSER_HPP
 #define SGAL_IO_OPTION_PARSER_HPP
@@ -49,10 +51,10 @@ class Configuration;
 
 class SGAL_SGAL_DECL IO_option_parser {
 public:
-  typedef std::vector<File_format_2d::Id>   Formats_2d;
+  typedef std::vector<File_format_2d::Code> Formats_2d;
   typedef Formats_2d::const_iterator        Format_2d_const_iter;
 
-  typedef std::vector<File_format_3d::Id>   Formats_3d;
+  typedef std::vector<File_format_3d::Code> Formats_3d;
   typedef Formats_3d::const_iterator        Format_3d_const_iter;
 
   typedef std::vector<std::string>          Input_path;
@@ -321,21 +323,21 @@ inline UnaryFunction IO_option_parser::for_each_dir(UnaryFunction func)
  * corresponding Id types.
  */
 template <typename T> struct File_format;
-template <> struct File_format<File_format_2d::Id>
+template <> struct File_format<File_format_2d::Code>
 { typedef File_format_2d type; };
-template <> struct File_format<File_format_3d::Id>
+template <> struct File_format<File_format_3d::Code>
 { typedef File_format_3d type; };
 
 //! Import 3D (graphics) and 2D (image) file formats
-template <typename InputStream, typename Id>
-InputStream& import(InputStream& in, Id& format)
+template <typename InputStream, typename Code>
+InputStream& import(InputStream& in, Code& format)
 {
-  typedef typename File_format<Id>::type                My_file_format;
+  typedef typename File_format<Code>::type                My_file_format;
   std::string token;
   in >> token;
-  for (size_t i = 0; i < My_file_format::NUM_IDS; ++i) {
+  for (size_t i = 0; i < My_file_format::NUM_CODES; ++i) {
     if (! My_file_format::compare_name(i, token)) continue;
-    format = static_cast<Id>(i);
+    format = static_cast<Code>(i);
     return in;
   }
   throw po::validation_error(po::validation_error::invalid_option_value);
@@ -344,12 +346,12 @@ InputStream& import(InputStream& in, Id& format)
 
 //! Import 2D (image) file formats
 template <typename InputStream>
-InputStream& operator>>(InputStream& in, File_format_2d::Id& format)
+InputStream& operator>>(InputStream& in, File_format_2d::Code& format)
 { return import(in, format); }
 
 //! Import 3D (graphics) file formats
 template <typename InputStream>
-InputStream& operator>>(InputStream& in, File_format_3d::Id& format)
+InputStream& operator>>(InputStream& in, File_format_3d::Code& format)
 { return import(in, format); }
 
 //! \brief obtains the root of the scene to export.

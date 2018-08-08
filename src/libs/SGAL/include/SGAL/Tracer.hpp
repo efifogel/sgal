@@ -14,10 +14,12 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_TRACE_HPP
-#define SGAL_TRACE_HPP
+#ifndef SGAL_TRACER_HPP
+#define SGAL_TRACER_HPP
 
 #include <iostream>
 #include <bitset>

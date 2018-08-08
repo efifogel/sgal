@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_EXPORTER_HPP
 #define SGAL_EXPORTER_HPP
@@ -89,7 +91,7 @@ public:
   Boolean* trigger_handle(const Field_info*) { return &m_trigger; }
   std::string* dir_name_handle(const Field_info*) { return &m_dir_name; }
   std::string* file_name_handle(const Field_info*) { return &m_file_name; }
-  File_format_3d::Id* file_format_handle(const Field_info*)
+  File_format_3d::Code* file_format_handle(const Field_info*)
   { return &m_file_format; }
   Boolean* separate_handle(const Field_info*) { return &m_separate; }
   //@}
@@ -129,11 +131,11 @@ public:
 
   /*! Set the file format.
    */
-  void set_file_format(File_format_3d::Id format);
+  void set_file_format(File_format_3d::Code format);
 
   /*! Obtain the file format.
    */
-  File_format_3d::Id get_file_format() const;
+  File_format_3d::Code get_file_format() const;
 
   /*! Indicates whether to save different geometries in separate files. */
   Boolean m_separate;
@@ -153,7 +155,7 @@ protected:
   std::string m_file_name;
 
   /*! The format of the file the image is written to. */
-  File_format_3d::Id m_file_format;
+  File_format_3d::Code m_file_format;
 
 private:
   /*! The tag that identifies this container type. */
@@ -171,7 +173,7 @@ private:
   // Default values for fields
   const static std::string s_def_dir_name;
   const static std::string s_def_file_name;
-  const static File_format_3d::Id s_def_file_format;
+  const static File_format_3d::Code s_def_file_format;
   const static Boolean s_def_separate;
 };
 
@@ -201,11 +203,11 @@ inline const std::string& Exporter::get_file_name() const
 { return m_file_name; }
 
 //! \brief sets the file format.
-inline void Exporter::set_file_format(File_format_3d::Id format)
+inline void Exporter::set_file_format(File_format_3d::Code format)
 { m_file_format = format; }
 
 //! \brief obtains the file format.
-inline File_format_3d::Id Exporter::get_file_format() const
+inline File_format_3d::Code Exporter::get_file_format() const
 { return m_file_format; }
 
 //! \brief obtains the tag (type) of the container.
