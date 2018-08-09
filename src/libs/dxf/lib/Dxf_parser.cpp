@@ -459,7 +459,6 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
   }
 
   // Construct the scene graph rooted at the given root.
-  m_scene_graph->set_input_format(SGAL::Geometry_format::DXF);
   process_layers();
 
   add_background(root);
