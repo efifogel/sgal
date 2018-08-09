@@ -34,6 +34,7 @@
 #include "SGAL/Geometry_format.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Utilities.hpp"
+#include "SGAL/Writer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -74,7 +75,8 @@ void Exporter::execute(const Field_info* /* field_info */)
   }
   auto* geometry_format = Geometry_format::get_instance();
   file_name += std::string(".") + geometry_format->find_name(m_file_format);
-  m_scene_graph->write(file_name, m_file_format);
+  auto& writer = *(SGAL::Writer::get_instance());
+  writer(m_scene_graph, file_name, m_file_format);
 }
 
 //! \brief initializes the container prototype.

@@ -64,6 +64,7 @@
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Transform.hpp"
 #include "SGAL/Loader.hpp"
+#include "SGAL/Writer.hpp"
 #include "SGAL/Loader_code.hpp"
 #include "SGAL/Navigation_info.hpp"
 #include "SGAL/Container.hpp"
@@ -134,6 +135,8 @@
 #include "SCGAL/Nef_gaussian_map_geo.hpp"
 #endif
 #endif
+
+namespace fi = boost::filesystem;
 
 //! \brief constructs default.
 Player_scene::Player_scene() :
@@ -418,6 +421,8 @@ void Player_scene::snapshot_scene()
 void Player_scene::export_scene()
 {
   auto* file_format = SGAL::Geometry_format::get_instance();
+  auto& writer = *(SGAL::Writer::get_instance());
+
   fi::path file_path;
   if (!m_option_parser->is_output_file_empty())
     file_path = fi::path(m_option_parser->get_output_file());
@@ -429,6 +434,7 @@ void Player_scene::export_scene()
   if (file_path.is_relative() && !parent_path.empty())
     file_path = parent_path / file_path;
 
+  auto is_binary = m_option_parser->is_binary();
   if (0 == m_option_parser->geometry_formats_size()) {
     SGAL_assertion(! file_path.empty());
     // If the user hasn't explicitly specified a format, rely on the extension.
@@ -436,8 +442,10 @@ void Player_scene::export_scene()
     const auto& extension = file_path.extension().string();
     std::string str(extension.begin()+1, extension.end()); // remove leading "."
     auto format_code = file_format->find_code(str);
-    m_scene_graph->write(file_path.string(), format_code,
-                         m_option_parser->is_binary());
+
+    if (fi::equivalent(file_path, m_option_parser->get_input_file(0)))
+      std::cout << "Cannot override input file!" << std::endl;
+    else writer(m_scene_graph, file_path.string(), format_code, is_binary);
     return;
   }
 
@@ -448,8 +456,11 @@ void Player_scene::export_scene()
     auto format_code = *it;
     const auto& new_extension = file_format->find_name(format_code);
     file_path.replace_extension(new_extension);
-    m_scene_graph->write(file_path.string(), format_code,
-                         m_option_parser->is_binary());
+    if (fi::equivalent(file_path, m_option_parser->get_input_file(0))) {
+      std::cout << "Cannot override input file!" << std::endl;
+      continue;
+    }
+    writer(m_scene_graph, file_path.string(), format_code, is_binary);
   }
 }
 
