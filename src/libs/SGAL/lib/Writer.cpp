@@ -81,7 +81,6 @@ void Writer::operator()(Scene_graph* sg, const std::string& filename,
    default:
     // Try registered writers
     {
-      // If the extension matches the extension of the registered loader, use it.
       auto it = m_writers.find(format);
       SGAL_assertion(it != m_writers.end());
       auto& writer = *(it->second);
