@@ -40,6 +40,10 @@ public:
    */
   Base_loader();
 
+  /*! Destruct.
+   */
+  ~Base_loader();
+
   /*! Load.
    * \param[in] is the input stream.
    * \param[in] filename the input filename.
@@ -82,7 +86,7 @@ public:
   size_t get_verbose_level() const;
 
 protected:
-  //! The text input stream to load.
+  //! The input stream to load.
   std::istream* m_is;
 
   //! The scene graph.
@@ -111,10 +115,14 @@ inline Loader_code Base_loader::operator()(std::istream& is,
 
 //! \brief constructs.
 inline Base_loader::Base_loader() :
+  m_is(nullptr),
   m_scene_graph(nullptr),
   m_line(0),
   m_trace_code(static_cast<size_t>(Tracer::INVALID))
 {}
+
+//! \brief Destructs.
+inline Base_loader::~Base_loader() {}
 
 //! \brief obtains the input stream.
 inline std::istream& Base_loader::input_stream() { return *m_is; }
