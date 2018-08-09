@@ -175,7 +175,7 @@ public:
   /*! Register a loader.
    * \param[in] the new loader.
    */
-  void doregister_loader(const String& extension, Base_loader* loader);
+  void doregister(const String& extension, Base_loader* loader);
 
 protected:
   class Triangle {
