@@ -65,7 +65,6 @@
 #include "SGAL/Attribute_error.hpp"
 #include "SGAL/Proto.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Geometry_format.hpp"
 #ifdef SGAL_USE_V8
   #include "SGAL/Script.hpp"
 #endif
@@ -264,21 +263,19 @@ SGAL_END_NAMESPACE
 
 Start           : VRML vrmlScene
                 {
-                  scene_graph->set_input_format(Geometry_format::WRL);
+                  /* WRL */
                 }
                 | K_SOLID facets K_SOLID_END
                 {
                   /* STL */
-                  scene_graph->set_input_format(Geometry_format::STL);
-
-                  /*! Add Shape */
+                  /* Add Shape */
                   Shared_shape shape(new Shape);
                   SGAL_assertion(shape);
                   shape->add_to_scene(scene_graph);
                   scene_graph->add_container(shape);
                   root->add_child(shape);
 
-                  /*! Add IndexedFaceSet */
+                  /* Add IndexedFaceSet */
                   Shared_indexed_face_set ifs = $2.first;
                   ifs->set_coord_indices_from_range($2.second->begin(),
                                                     $2.second->end());
