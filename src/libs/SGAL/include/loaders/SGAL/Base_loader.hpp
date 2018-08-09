@@ -33,14 +33,14 @@ SGAL_BEGIN_NAMESPACE
 class Scene_graph;
 class Group;
 
-//! A base parser used as a base class for parsers.
+//! A base loader used as a base class for loaders.
 class SGAL_SGAL_DECL Base_loader {
 public:
   /*! Construct.
    */
   Base_loader();
 
-  /*! Parse.
+  /*! Load.
    * \param[in] is the input stream.
    * \param[in] filename the input filename.
    * \param[in] scene_graph the scene graph.
@@ -82,7 +82,7 @@ public:
   size_t get_verbose_level() const;
 
 protected:
-  //! The text input stream to parse.
+  //! The text input stream to load.
   std::istream* m_is;
 
   //! The scene graph.
@@ -98,7 +98,7 @@ protected:
   size_t m_trace_code;
 };
 
-//! \brief parses.
+//! \brief loads.
 inline Loader_code Base_loader::operator()(std::istream& is,
                                            const String& filename,
                                            Scene_graph* sg, Group* /* root */)
@@ -141,6 +141,7 @@ inline size_t Base_loader::get_trace_code() const { return m_trace_code; }
 inline size_t Base_loader::get_verbose_level() const
 {
   const auto* conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
   return conf->get_verbose_level();
 }
 
