@@ -113,8 +113,7 @@ Scene_graph::Scene_graph(bool syncronize) :
   m_owned_configuration(false),
   m_owned_camera(false),
   m_owned_navigation_info(false),
-  m_owned_background(false),
-  m_input_format(Geometry_format::INVALID)
+  m_owned_background(false)
 {
   m_isect_action = new Isect_action();
   m_touch_sensors.clear();

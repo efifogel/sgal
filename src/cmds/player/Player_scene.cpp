@@ -426,17 +426,17 @@ void Player_scene::export_scene()
     file_path = fi::path(m_option_parser->get_input_file(0)).filename();
   }
   fi::path parent_path(m_option_parser->get_output_path());
-  auto input_format = m_scene_graph->get_input_format();
+  if (file_path.is_relative() && !parent_path.empty())
+    file_path = parent_path / file_path;
 
   if (0 == m_option_parser->geometry_formats_size()) {
-    SGAL_assertion(!file_path.empty());
-    if (! file_path.has_extension()) {
-      const auto& new_extension = file_format->find_name(input_format);
-      file_path.replace_extension(new_extension);
-    }
-    if (file_path.is_relative() && !parent_path.empty())
-      file_path = parent_path / file_path;
-    m_scene_graph->write(file_path.string(), input_format,
+    SGAL_assertion(! file_path.empty());
+    // If the user hasn't explicitly specified a format, rely on the extension.
+    SGAL_assertion(file_path.has_extension());
+    const auto& extension = file_path.extension().string();
+    std::string str(extension.begin()+1, extension.end()); // remove leading "."
+    auto format_code = file_format->find_code(str);
+    m_scene_graph->write(file_path.string(), format_code,
                          m_option_parser->is_binary());
     return;
   }
@@ -445,12 +445,10 @@ void Player_scene::export_scene()
   for (auto it = m_option_parser->geometry_formats_begin();
        it != m_option_parser->geometry_formats_end(); ++it)
   {
-    auto format = *it;
-    const auto& new_extension = file_format->find_name(format);
+    auto format_code = *it;
+    const auto& new_extension = file_format->find_name(format_code);
     file_path.replace_extension(new_extension);
-    if (file_path.is_relative() && !parent_path.empty())
-      file_path = parent_path / file_path;
-    m_scene_graph->write(file_path.string(), format,
+    m_scene_graph->write(file_path.string(), format_code,
                          m_option_parser->is_binary());
   }
 }

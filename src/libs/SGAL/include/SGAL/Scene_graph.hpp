@@ -426,16 +426,6 @@ public:
     return oi;
   }
 
-  /*! Obtain the input format.
-   * \return The input format.
-   */
-  Uint get_input_format() const;
-
-  /*! Set the input format.
-   * \param[in] code The code of the input format.
-   */
-  void set_input_format(Uint code);
-
   /// \name Writters
   //@{
   /*! Export the scene to a file in a given format.
@@ -663,9 +653,6 @@ private:
   //! Indicates whether the background node is owned.
   Boolean m_owned_background;
 
-  //! The code of the input format.
-  Uint m_input_format;
-
   void set_head_light(Configuration* config);
 
   /*! Set the camera and draws the background. Any other rendering
@@ -706,13 +693,6 @@ inline Bindable_stack* Scene_graph::get_camera_stack()
 //! \brief obtains the root of the scene graph.
 inline Scene_graph::Shared_group Scene_graph::get_root() const
 { return m_root; }
-
-//! \brief obtains the input format.
-inline Uint Scene_graph::get_input_format() const { return m_input_format; }
-
-//! \brief sets the code of the input format.
-inline void Scene_graph::set_input_format(Uint format)
-{ m_input_format = format; }
 
 //! \brief obtains the begin pointer of the containers.
 inline Scene_graph::Container_list_iter Scene_graph::containers_begin()
