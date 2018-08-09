@@ -36,7 +36,7 @@ Image_format* Image_format::get_instance()
 //! \brief constructs.
 Image_format::Image_format()
 {
-  // Trace options.
+  // Image format options.
   Map options = {
     {"", INVALID},
 #if 0

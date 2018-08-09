@@ -36,7 +36,7 @@ Geometry_format* Geometry_format::get_instance()
 //! \brief constructs.
 Geometry_format::Geometry_format()
 {
-  // Trace options.
+  // Geometry format options.
   Map options = {
     {"", INVALID},
     {"wrl", WRL},
