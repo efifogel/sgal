@@ -562,6 +562,7 @@ set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Transform.cpp)
 set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Vertex_shader.cpp)
 set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Volume_action.cpp)
 set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Surface_area_action.cpp)
+set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/Writer.cpp)
 set(SGAL_OTHER_SRC_FILES ${SGAL_OTHER_SRC_FILES} lib/World_info.cpp)
 
 set(SGAL_OTHER_HEADER_FILES ${SGAL_OTHER_HEADER_FILES} include/SGAL/construct_triangulation.hpp)
