@@ -16,8 +16,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef DXF_HEADER_HPP
-#define DXF_HEADER_HPP
+#ifndef DXF_HEADER_FULL_HPP
+#define DXF_HEADER_FULL_HPP
 
 #include <cstdint>
 
@@ -28,7 +28,7 @@
 
 DXF_BEGIN_NAMESPACE
 
-struct SGAL_SGAL_DECL Dxf_header {
+struct SGAL_SGAL_DECL Dxf_header_full {
   int16_t m_acadmaintver; // Maintenance version number (should be ignored)
   SGAL::String m_acadver; // The AutoCAD drawing database version number:
                         // AC1006 = R10

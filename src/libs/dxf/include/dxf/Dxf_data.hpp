@@ -25,7 +25,7 @@
 #include "SGAL/basic.hpp"
 
 #include "dxf/basic.hpp"
-#include "dxf/Dxf_header.hpp"
+#include "dxf/Dxf_header_full.hpp"
 #include "dxf/Dxf_class.hpp"
 #include "dxf/Dxf_table.hpp"
 #include "dxf/Dxf_appid_entry.hpp"
@@ -55,7 +55,7 @@ struct SGAL_SGAL_DECL Dxf_data {
   virtual ~Dxf_data();
 
   //! Header data
-  Dxf_header m_header;
+  Dxf_header_full m_header;
 
   // Classes
   std::list<Dxf_class> m_classes;

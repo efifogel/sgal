@@ -38,6 +38,30 @@ public:
   virtual void operator()(SGAL::Scene_graph* scene_graph,
                           std::ostream& os, const std::string& filename,
                           bool is_binary = false);
+
+  /*! Write the HEADER section.
+   */
+  void write_header();
+
+  /*! Write the CLASSES section.
+   */
+  void write_classes();
+
+  /*! Write the TABLES section.
+   */
+  void write_tables();
+
+  /*! Write the BLOCKS section.
+   */
+  void write_blocks();
+
+  /*! Write the ENTITIES section.
+   */
+  void write_entities();
+
+  /*! Write the OBJECTS section.
+   */
+  void write_objects();
 };
 
 DXF_END_NAMESPACE

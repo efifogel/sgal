@@ -36,6 +36,7 @@
 #include "dxf/Dxf_data.hpp"
 #include "dxf/Dxf_simple_record_wrapper.hpp"
 #include "dxf/Dxf_record_wrapper.hpp"
+#include "dxf/Dxf_header_full_wrapper.hpp"
 #include "dxf/Dxf_base_boundary_path.hpp"
 #include "dxf/Dxf_boundary_path.hpp"
 #include "dxf/Dxf_polyline_boundary_path.hpp"
@@ -513,14 +514,12 @@ void Dxf_parser::parse_header()
                     std::cout << "Parsing HEADER section" << std::endl;);
 
   bool done(false);
-  while (!done) {
+  while (true) {
     int n;
     import_code(n);
-    switch (n) {
-     case 0: done = true; break;
-     case 9: read_header_member(); break;
-     case 999: read_comment(); break;
-    }
+    if (0 == n) break;
+    if (9 == n) read_header_member(); continue;
+    if (999 == n) read_comment(); continue;
   }
   SGAL::String str;
   import_value(str);
@@ -898,8 +897,9 @@ void Dxf_parser::read_header_member()
   SGAL_assertion(c == '$');
   std::string str;
   import_value(str);
-  auto it = s_header_members.find(str);
-  if (it == s_header_members.end()) {
+  const auto& members = Dxf_header_full_wrapper::s_header_members;
+  auto it = members.find(str);
+  if (it == members.end()) {
     if (m_report_unrecognized_code) {
       std::string unrecognized_msg("Unrecognized header variable ");
       unrecognized_msg += str + ", at line " + std::to_string(m_line) + "!";
@@ -927,6 +927,16 @@ void Dxf_parser::read_header_member()
   auto& handle = header_var.m_handle;
   auto& header = m_data->m_header;
 
+  typedef Dxf_header_full_wrapper::String_header        String_header;
+  typedef Dxf_header_full_wrapper::Double_header        Double_header;
+  typedef Dxf_header_full_wrapper::Int8_header          Int8_header;
+  typedef Dxf_header_full_wrapper::Int16_header         Int16_header;
+  typedef Dxf_header_full_wrapper::Int32_header         Int32_header;
+  typedef Dxf_header_full_wrapper::Uint_header          Uint_header;
+  typedef Dxf_header_full_wrapper::Bool_header          Bool_header;
+  typedef Dxf_header_full_wrapper::Double_2d_header     Double_2d_header;
+  typedef Dxf_header_full_wrapper::Double_3d_header     Double_3d_header;
+
   auto dim = codes.size();
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 8)
@@ -946,6 +956,7 @@ void Dxf_parser::read_header_member()
                     if (get_verbose_level() >= 8)
                       std::cout << "Parsing header member code type: "
                                 << s_code_type_names[ct] << std::endl;);
+
     switch (ct) {
      case STRING: assign_member<String_header>(handle, header); break;
      case DOUBLE: assign_member<Double_header>(handle, header); break;

@@ -41,7 +41,6 @@
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_importer.hpp"
-#include "dxf/Dxf_header.hpp"
 #include "dxf/Dxf_class.hpp"
 #include "dxf/Dxf_block.hpp"
 #include "dxf/Dxf_base_table.hpp"
@@ -185,44 +184,6 @@ private:
   //! The type of a section parser member function.
   typedef void(Dxf_parser::*Section_parser)(void);
 
-  /// \name Header types
-  //@{
-
-  // Header data member types.
-  typedef SGAL::String Dxf_header::*    String_header;
-  typedef float Dxf_header::*           Float_header;
-  typedef double Dxf_header::*          Double_header;
-  typedef double (Dxf_header::*Double_2d_header)[2];
-  typedef double (Dxf_header::*Double_3d_header)[3];
-  typedef int8_t Dxf_header::*          Int8_header;
-  typedef int16_t Dxf_header::*         Int16_header;
-  typedef int32_t Dxf_header::*         Int32_header;
-  typedef SGAL::Uint Dxf_header::*      Uint_header;
-  typedef bool Dxf_header::*            Bool_header;
-
-  //! The variant type of handle to all types of HEADER data members.
-  typedef boost::variant<String_header,
-                         Float_header,
-                         Double_header,
-                         Double_2d_header,
-                         Double_3d_header,
-                         Int8_header,
-                         Int16_header,
-                         Int32_header,
-                         Uint_header,
-                         Bool_header>   Header_member_type;
-
-  //! Information of a header member.
-  struct Header_member {
-    Header_member(Header_member_type handle, std::list<int> codes) :
-      m_handle(handle), m_codes(codes)
-    {}
-    Header_member_type m_handle;
-    std::list<int> m_codes;
-  };
-
-  //@}
-
   /// \name Class types
   //@{
 
@@ -252,7 +213,7 @@ private:
                          Int16_block,
                          Double_3d_block>       Block_member_type;
 
-  //! Information of a header member.
+  //! Information of a block member.
   struct Block_member {
     Block_member(Block_member_type handle, int size, int index) :
       m_handle(handle), m_size(size), m_index(index)
@@ -1409,7 +1370,6 @@ private:
   static std::vector<SGAL::Vector3f> s_palette;
 
   static const std::map<SGAL::String, Section_parser> s_sections;
-  static const std::map<SGAL::String, Header_member> s_header_members;
   static const std::vector<Code_range> s_code_ranges;
   static const std::array<SGAL::String, 8> s_code_type_names;
   static const std::map<int, Class_member_type> s_class_members;
