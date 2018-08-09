@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <boost/bind.hpp>
@@ -46,7 +48,10 @@ void Option_mapper::set_options(Map&& options)
   SGAL_assertion(m_options.size() == 1);
   m_options = options;
   m_free_codes.clear();
-  m_free_codes.insert(ival::closed(m_options.size(),
+  auto it = std::max_element(m_options.begin(), m_options.end(),
+                             [](Map::value_type& i1, Map::value_type& i2)
+                             { return (i1.second < i2.second); });
+  m_free_codes.insert(ival::closed(it->second+1,
                                    std::numeric_limits<size_t>::max()));
 }
 
