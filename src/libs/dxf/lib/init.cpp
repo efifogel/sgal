@@ -14,17 +14,21 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <boost/extension/extension.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Loader.hpp"
+#include "SGAL/Writer.hpp"
 #include "SGAL/Tracer.hpp"
 #include "SGAL/Geometry_format.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_parser.hpp"
+#include "dxf/Dxf_writer.hpp"
 
 DXF_BEGIN_NAMESPACE
 
@@ -41,11 +45,9 @@ extern "C" void BOOST_EXTENSION_EXPORT_DECL dxf_init()
   dxf_parser->set_trace_code(trace_code);
   loader->doregister(".dxf", dxf_parser);
 
-#if 0
   auto* writer = SGAL::Writer::get_instance();
-  auto*
-  writer.doregister(format_code);
-#endif
+  auto* dxf_writter = new Dxf_writer;
+  writer->doregister(format_code, dxf_writter);
 
   //! \todo Need a method (API) to add stuff to the command-line options by a
   // Dynamically Loaded Library (DLL).
