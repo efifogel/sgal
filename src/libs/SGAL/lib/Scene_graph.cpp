@@ -918,42 +918,6 @@ Background* Scene_graph::get_active_background()
 const Background* Scene_graph::get_active_background() const
 { return static_cast<const Background*>(m_background_stack.top()); }
 
-//! \brief exports the scene to a file in a given format.
-void Scene_graph::write(const std::string& filename,
-                        Uint format, Boolean is_binary)
-{
-  if (filename.empty()) write(filename, std::cout, format, is_binary);
-  else {
-    std::ios_base::openmode mode = (is_binary) ?
-      (std::ios_base::out | std::ios_base::binary) : std::ios_base::out;
-    std::ofstream os(filename, mode);
-    if (!os.is_open()) return;
-    write(filename, os, format, is_binary);
-    os.close();
-  }
-}
-
-//! \brief exports the scene to an output stream in a given format.
-void Scene_graph::write(const std::string& filename, std::ostream& os,
-                        Uint format, Boolean is_binary)
-{
-  SGAL_TRACE_CODE(Tracer::EXPORT,
-                  std::cout << "Scene_graph: " << "Format: " << format
-                  << std::endl;);
-  switch (format) {
-   case Geometry_format::WRL: write_vrml(filename, os); break;
-   case Geometry_format::X3D: break;
-   case Geometry_format::OFF: break;
-   case Geometry_format::STL: write_stl(filename, os, is_binary); break;
-   case Geometry_format::OBJ: write_obj(filename, os);break;
-   case Geometry_format::JSON: write_json(filename, os);break;
-
-   case Geometry_format::INVALID:
-   case Geometry_format::NUM_CODES:
-   default: return;
-  }
-}
-
 //! \brief exports the scene to an output stream in the VRML format.
 void Scene_graph::write_vrml(const std::string& filename, std::ostream& os)
 {

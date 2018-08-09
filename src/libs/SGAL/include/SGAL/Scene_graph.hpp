@@ -428,21 +428,6 @@ public:
 
   /// \name Writters
   //@{
-  /*! Export the scene to a file in a given format.
-   * \param[in] filename The file name.
-   * \param[in] format The code of the given format.
-   */
-  void write(const std::string& filename, Uint format,
-             Boolean is_binary = false);
-
-  /*! Export the scene to an output stream in a given format.
-   * \param[in] filename The file name.
-   * \param[in] os (in) The output stream.
-   * \param[in] format The code of the given format.
-   */
-  void write(const std::string& filename, std::ostream& os,
-             Uint format, Boolean is_binary = false);
-
   /*! Export the scene to an output stream in VRML format.
    * \param[in] filename The file name.
    * \param[in] os The output stream.
