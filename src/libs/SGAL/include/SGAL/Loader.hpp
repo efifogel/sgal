@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s) : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_LOADER_HPP
@@ -72,6 +74,10 @@ class Base_loader;
 
 class SGAL_SGAL_DECL Loader {
 public:
+  /*! Destruct.
+   */
+  ~Loader();
+
   /*! Obtain the loader singleton.
    * \return the loader singleton.
    */
