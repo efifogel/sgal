@@ -46,8 +46,7 @@ Geometry_format::Geometry_format()
     {"off", OFF},
     {"stl", STL},
     {"obj", OBJ},
-    {"json", JSON},
-    {"dxf", DXF}
+    {"json", JSON}
   };
   set_options(std::move(options));
 };
