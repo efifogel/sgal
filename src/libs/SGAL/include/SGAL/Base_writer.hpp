@@ -32,7 +32,15 @@ class Scene_graph;
 
 class SGAL_SGAL_DECL Base_writer {
 public:
-  /*! Write the scene to a file.
+  /*! Construct.
+   */
+  Base_writer();
+
+  /*! Destruct.
+   */
+  virtual ~Base_writer();
+
+  /*! Write a scene to an output stream.
    * \param[in] scene_graph the scene graph that represents the scene.
    * \param[in] os the output stream.
    * \param[in] filename the output filename.
@@ -40,7 +48,35 @@ public:
   virtual void operator()(Scene_graph* scene_graph,
                           std::ostream& os, const std::string& filename,
                           bool is_binary = false) = 0;
+
+  /*! Set the output stream.
+   */
+  void set_out(std::ostream& os);
+
+  /*! Obtain the output stream.
+   */
+  inline std::ostream& out();
+
+protected:
+  //! The output stream to load.
+  std::ostream* m_out;
 };
+
+//! \brief constructs.
+inline Base_writer::Base_writer() : m_out(nullptr) {}
+
+//! \brief Destructs.
+inline Base_writer::~Base_writer() {}
+
+//! \brief Set the output stream.
+inline void Base_writer::set_out(std::ostream& os) { m_out = &os; }
+
+//! \brief Obtain the output stream. */
+inline std::ostream& Base_writer::out()
+{
+  SGAL_assertion(m_out != nullptr);
+  return *m_out;
+}
 
 SGAL_END_NAMESPACE
 
