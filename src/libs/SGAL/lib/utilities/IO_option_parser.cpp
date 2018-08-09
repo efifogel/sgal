@@ -57,10 +57,8 @@ IO_option_parser::IO_option_parser() :
   // Options allowed on the command line, config file, or env. variables
   m_io_opts.add_options()
     ("input-path", po::value<vs>()->composing(), "input path")
-    ("image-format", po::value<File_formats>(&m_image_formats)->multitoken(),
-     iff_msg.c_str())
-    ("geometry-format,f", po::value<File_formats>(&m_geometry_formats)->multitoken(),
-     gff_msg.c_str())
+    ("image-format", po::value<vs>()->multitoken(), iff_msg.c_str())
+    ("geometry-format,f", po::value<vs>()->multitoken(), gff_msg.c_str())
     ("snapshot,S", po::value<Boolean>(&m_snapshot)->default_value(false),
      "snapshot")
     ("export,E", po::value<Boolean>(&m_export)->default_value(false), "export")
@@ -86,9 +84,35 @@ void IO_option_parser::apply() {}
 //! \brief sets the Configuration node.
 void IO_option_parser::configure(Configuration* conf)
 {
-  if (!conf) return;
+  typedef std::vector<std::string> vs;
 
   const auto& var_map = get_variable_map();
+
+  auto* image_format = Image_format::get_instance();
+  if (var_map.count("image-format")) {
+    for (const auto& name : var_map["image-format"].as<vs>()) {
+      auto code = image_format->find_code(name);
+      if (code == Image_format::INVALID) {
+        throw po::validation_error(po::validation_error::invalid_option_value,
+                                   "--geometry-format", name);
+      }
+      m_image_formats.push_back(code);
+    }
+  }
+
+  auto* geom_format = Geometry_format::get_instance();
+  if (var_map.count("geometry-format")) {
+    for (const auto& name : var_map["geometry-format"].as<vs>()) {
+      auto code = geom_format->find_code(name);
+      if (code == Image_format::INVALID) {
+        throw po::validation_error(po::validation_error::invalid_option_value,
+                                   "--geometry-format", name);
+      }
+      m_geometry_formats.push_back(code);
+    }
+  }
+
+  if (!conf) return;
 
   if (var_map.count("export-scene-root"))
     conf->set_export_scene_root(var_map["export-scene-root"].as<Uint>());
