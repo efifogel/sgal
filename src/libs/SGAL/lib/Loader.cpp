@@ -54,15 +54,18 @@ SGAL_BEGIN_NAMESPACE
 //! The Loader singleton.
 Loader* Loader::s_instance(nullptr);
 
+//! \brief constructs.
+Loader::Loader() : m_multiple_shapes(false) {}
+
+//! \brief destructs.
+Loader::~Loader() { m_loaders.clear(); }
+
 //! \brief obtains the loader singleton.
 Loader* Loader::get_instance()
 {
   if (!s_instance) s_instance = new Loader();
   return s_instance;
 }
-
-//! \brief constructs.
-Loader::Loader() : m_multiple_shapes(false) {}
 
 //! \brief loads a scene graph from a file.
 Loader_code
