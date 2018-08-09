@@ -39,7 +39,6 @@ public:
     STL,
     OBJ,
     JSON,
-    DXF,
     NUM_CODES
   };
 
