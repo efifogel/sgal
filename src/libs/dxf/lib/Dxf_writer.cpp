@@ -25,11 +25,56 @@
 
 DXF_BEGIN_NAMESPACE
 
+//! \brief writes a scene to an output stream.
 void Dxf_writer::operator()(SGAL::Scene_graph* scene_graph,
                             std::ostream& os, const std::string& filename,
-                            bool is_binary)
+                            bool /* is_binary */)
 {
-  std::cout << "Writing " << filename << std::endl;
+  set_out(os);
+
+  out() << "Writing " << filename << std::endl;
+
+  out() << "0" << std::endl;
+  out() << "SECTION" << std::endl;
+  write_header();
+
+  out() << "0" << std::endl;
+  out() << "SECTION" << std::endl;
+  write_classes();
+
+  out() << "0" << std::endl;
+  out() << "SECTION" << std::endl;
+  write_tables();
+
+  out() << "0" << std::endl;
+  out() << "SECTION" << std::endl;
+  write_blocks();
+
+  out() << "0" << std::endl;
+  out() << "SECTION" << std::endl;
+  write_entities();
+
+  out() << "0" << std::endl;
+  out() << "SECTION" << std::endl;
+  write_objects();
 };
+
+//! \brief writes the HEADER section.
+void Dxf_writer::write_header() {}
+
+//! \brief writes the CLASSES section.
+void Dxf_writer::write_classes() {}
+
+//! \brief writes the TABLES section.
+void Dxf_writer::write_tables() {}
+
+//! \brief writes the BLOCKS section.
+void Dxf_writer::write_blocks() {}
+
+//! \brief writes the ENTITIES section.
+void Dxf_writer::write_entities() {}
+
+//! \brief writes the OBJECTS section.
+void Dxf_writer::write_objects() {}
 
 DXF_END_NAMESPACE
