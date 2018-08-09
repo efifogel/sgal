@@ -21,6 +21,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Loader.hpp"
 #include "SGAL/Tracer.hpp"
+#include "SGAL/Geometry_format.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_parser.hpp"
@@ -30,12 +31,21 @@ DXF_BEGIN_NAMESPACE
 extern "C" void BOOST_EXTENSION_EXPORT_DECL dxf_init()
 {
   auto* tracer = SGAL::Tracer::get_instance();
-  auto code = tracer->register_option("dxf-parsing");
+  auto trace_code = tracer->register_option("dxf-parsing");
+
+  auto* geom_format = SGAL::Geometry_format::get_instance();
+  auto format_code = geom_format->register_option("dxf");
 
   auto* loader = SGAL::Loader::get_instance();
-  auto* parser = new Dxf_parser();
-  parser->set_trace_code(code);
-  loader->doregister_loader(".dxf", parser);
+  auto* dxf_parser = new Dxf_parser();
+  dxf_parser->set_trace_code(trace_code);
+  loader->doregister(".dxf", dxf_parser);
+
+#if 0
+  auto* writer = SGAL::Writer::get_instance();
+  auto*
+  writer.doregister(format_code);
+#endif
 
   //! \todo Need a method (API) to add stuff to the command-line options by a
   // Dynamically Loaded Library (DLL).
