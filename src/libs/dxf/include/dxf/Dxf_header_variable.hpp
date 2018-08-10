@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef DXF_HEADER_VARIABLE_HPP
@@ -21,6 +23,8 @@
 
 #include <cstdint>
 #include <list>
+
+#include <boost/variant.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -32,16 +36,15 @@ DXF_BEGIN_NAMESPACE
 struct SGAL_SGAL_DECL Dxf_header_variable {
   typedef boost::variant<std::string*,
                          double*,
-                         //double[2]*,
-                         //double[3]*,
                          int8_t*,
                          int16_t*,
                          int32_t*,
                          SGAL::Uint*,
-                         bool*>         Header_variable_data;
+                         bool*>         Header_variable_value;
 
   std::string m_name;
-  Header_variable_data m_data;
+  Header_variable_value m_value;
+  size_t m_num;
 };
 
 DXF_END_NAMESPACE

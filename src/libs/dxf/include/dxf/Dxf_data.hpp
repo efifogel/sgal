@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef DXF_DATA_HPP
@@ -25,7 +27,7 @@
 #include "SGAL/basic.hpp"
 
 #include "dxf/basic.hpp"
-#include "dxf/Dxf_header_full.hpp"
+#include "dxf/Dxf_header.hpp"
 #include "dxf/Dxf_class.hpp"
 #include "dxf/Dxf_table.hpp"
 #include "dxf/Dxf_appid_entry.hpp"
@@ -55,7 +57,7 @@ struct SGAL_SGAL_DECL Dxf_data {
   virtual ~Dxf_data();
 
   //! Header data
-  Dxf_header_full m_header;
+  Dxf_header m_header;
 
   // Classes
   std::list<Dxf_class> m_classes;

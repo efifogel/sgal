@@ -16,6 +16,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0+
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <string>
@@ -36,7 +38,8 @@
 #include "dxf/Dxf_data.hpp"
 #include "dxf/Dxf_simple_record_wrapper.hpp"
 #include "dxf/Dxf_record_wrapper.hpp"
-#include "dxf/Dxf_header_full_wrapper.hpp"
+#include "dxf/Dxf_header_wrapper.hpp"
+#include "dxf/Dxf_header_variable.hpp"
 #include "dxf/Dxf_base_boundary_path.hpp"
 #include "dxf/Dxf_boundary_path.hpp"
 #include "dxf/Dxf_polyline_boundary_path.hpp"
@@ -897,7 +900,7 @@ void Dxf_parser::read_header_member()
   SGAL_assertion(c == '$');
   std::string str;
   import_value(str);
-  const auto& members = Dxf_header_full_wrapper::s_header_members;
+  const auto& members = Dxf_header_wrapper::s_header_members;
   auto it = members.find(str);
   if (it == members.end()) {
     if (m_report_unrecognized_code) {
@@ -922,11 +925,117 @@ void Dxf_parser::read_header_member()
     return;
   }
 
-  const auto& header_var = it->second;
-  const auto& codes = header_var.m_codes;
-  auto& handle = header_var.m_handle;
+  const auto& codes = it->second;
   auto& header = m_data->m_header;
 
+  auto dim = codes.size();
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (get_verbose_level() >= 8)
+                    std::cout << "Parsing header member dimension: "
+                              << dim << std::endl;);
+
+  m_data->m_header.m_variables.emplace_back();
+  auto& var = m_data->m_header.m_variables.back();
+  var.m_num = dim;
+
+  std::string* str_p(nullptr);
+  double* double_p;
+  int8_t* int8_p;
+  int16_t* int16_p;
+  int32_t* int32_p;
+  SGAL::Uint* uint_p;
+  bool* bool_p;
+
+  auto cit = codes.begin();
+  auto expected_code = *cit++;
+  int code;
+  import_code(code);
+  if (code != expected_code) {
+    // Error recovery
+    read_unrecognized(code);
+    return;
+  }
+  auto ct = code_type(code);
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (get_verbose_level() >= 8)
+                    std::cout << "Parsing header member code type: "
+                              << s_code_type_names[ct] << std::endl;);
+
+  switch (ct) {
+   case STRING:
+    str_p = new std::string;
+    var.m_value = str_p;
+    import_value(str_p[0]);
+    break;
+
+   case DOUBLE:
+    double_p = new double;
+    var.m_value = double_p;
+    import_value(double_p[0]);
+    break;
+
+   case INT8:
+    int8_p = new int8_t;
+    var.m_value = int8_p;
+    import_value(int8_p[0]);
+    break;
+
+   case INT16:
+    int16_p = new int16_t;
+    var.m_value = int16_p;
+    import_value(int16_p[0]);
+    break;
+
+   case INT32:
+    int32_p = new int32_t;
+    var.m_value = int32_p;
+    import_value(int32_p[0]);
+    break;
+
+   case UINT:
+    uint_p = new SGAL::Uint;
+    var.m_value = uint_p;
+    import_value(uint_p[0]);
+    break;
+
+   case BOOL:
+    bool_p = new bool;
+    var.m_value = bool_p;
+    import_value(bool_p[0]);
+    break;
+
+   default: SGAL_error();
+  }
+
+  size_t i(1);
+  for (; cit != codes.end(); ++cit) {
+    auto expected_code = *cit;
+    int code;
+    import_code(code);
+    if (code != expected_code) {
+      // Error recovery
+      read_unrecognized(code);
+      return;
+    }
+    auto ct = code_type(code);
+    SGAL_TRACE_CODE(m_trace_code,
+                    if (get_verbose_level() >= 8)
+                      std::cout << "Parsing header member code type: "
+                                << s_code_type_names[ct] << std::endl;);
+
+    switch (ct) {
+     case STRING: import_value(str_p[i]);    break;
+     case DOUBLE: import_value(double_p[i]); break;
+     case INT8:   import_value(int8_p[i]);   break;
+     case INT16:  import_value(int16_p[i]);  break;
+     case INT32:  import_value(int32_p[i]);  break;
+     case UINT:   import_value(uint_p[i]);   break;
+     case BOOL:   import_value(bool_p[i]);   break;
+     default: SGAL_error();
+    }
+    ++i;
+  }
+#if 0
   typedef Dxf_header_full_wrapper::String_header        String_header;
   typedef Dxf_header_full_wrapper::Double_header        Double_header;
   typedef Dxf_header_full_wrapper::Int8_header          Int8_header;
@@ -937,11 +1046,6 @@ void Dxf_parser::read_header_member()
   typedef Dxf_header_full_wrapper::Double_2d_header     Double_2d_header;
   typedef Dxf_header_full_wrapper::Double_3d_header     Double_3d_header;
 
-  auto dim = codes.size();
-  SGAL_TRACE_CODE(m_trace_code,
-                  if (get_verbose_level() >= 8)
-                    std::cout << "Parsing header member dimension: "
-                              << dim << std::endl;);
   if (1 == dim) {
     auto expected_code = codes.front();
     int code;
@@ -990,6 +1094,7 @@ void Dxf_parser::read_header_member()
     else (*m_is) >> (header.*(boost::get<Double_3d_header>(handle)))[i++];
     ++m_line;
   }
+#endif
 }
 
 //! \brief reads a comment line.
