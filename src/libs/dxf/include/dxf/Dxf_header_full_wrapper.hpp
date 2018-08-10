@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef DXF_HEADER_FULL_WRAPPER_HPP
@@ -66,7 +68,7 @@ struct SGAL_SGAL_DECL Dxf_header_full_wrapper {
     std::list<int> m_codes;
   };
 
-  static const std::map<SGAL::String, Header_member> s_header_members;
+  static const std::map<SGAL::String, Header_member> s_header_full_members;
 
   //@}
 };
