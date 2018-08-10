@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <map>
@@ -43,7 +45,7 @@ DXF_BEGIN_NAMESPACE
  */
 
 const std::map<SGAL::String, Dxf_header_full_wrapper::Header_member>
-Dxf_header_full_wrapper::s_header_members = {
+Dxf_header_full_wrapper::s_header_full_members = {
   {"ACADMAINTVER",    {&Dxf_header_full::m_acadmaintver, {70}}},
   {"ACADVER",         {&Dxf_header_full::m_acadver, {1}}},
   {"ANGBASE",         {&Dxf_header_full::m_angbase, {50}}},
