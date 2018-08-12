@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -14,27 +14,23 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_EQUAL_FACET_INDICES_VISITOR_HPP
-#define SGAL_EQUAL_FACET_INDICES_VISITOR_HPP
+#ifndef SGAL_EMPTY_LINES_INDICES_VISITOR_HPP
+#define SGAL_EMPTY_LINES_INDICES_VISITOR_HPP
 
 #include <boost/variant.hpp>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Types.hpp"
 #include "SGAL/Indices_types.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Equal facet indices visitor */
-class Equal_facet_indices_visitor : public boost::static_visitor<Boolean> {
+/*! Empty lines indices visitor */
+class Empty_lines_indices_visitor : public boost::static_visitor<Boolean> {
 public:
-  template <typename T, typename U>
-  Boolean operator()(const T&, const U&) const { return false; }
-
-  template <typename T>
-  Boolean operator()(const T& lhs, const T& rhs) const { return lhs == rhs; }
+  template <typename Indices_>
+  Boolean operator()(const Indices_& indices) const { return indices.empty(); }
 };
 
 SGAL_END_NAMESPACE

@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Israel.
+// Copyright (c) 2018 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -14,10 +14,10 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_CLEAN_INDICES_VISITOR_HPP
-#define SGAL_CLEAN_INDICES_VISITOR_HPP
+#ifndef SGAL_CLEAN_LINES_INDICES_VISITOR_HPP
+#define SGAL_CLEAN_LINES_INDICES_VISITOR_HPP
 
 #include <boost/variant.hpp>
 
@@ -27,55 +27,41 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! Clean indices visitor */
-class Clean_indices_visitor : public boost::static_visitor<> {
+class Clean_lines_indices_visitor : public boost::static_visitor<> {
 public:
   const std::vector<Int32>& m_indices;
   Size m_num_primitives;
 
-  Clean_indices_visitor(const std::vector<Int32>& indices,
-                        Size num_primitives) :
+  Clean_lines_indices_visitor(const std::vector<Int32>& indices,
+                              Size num_primitives) :
     m_indices(indices),
     m_num_primitives(num_primitives)
   {}
 
-  void operator()(Triangle_indices& triangles)
+  void operator()(Line_indices& lines)
   {
-    triangles.resize(m_num_primitives);
+    lines.resize(m_num_primitives);
     auto it = m_indices.begin();
     for (size_t j = 0; j < m_num_primitives; ++j) {
-      triangles[j][0] = *it++;
-      triangles[j][1] = *it++;
-      triangles[j][2] = *it++;
-      ++it;               // consume the -1 end-of-facet indicator
+      lines[j][0] = *it++;
+      lines[j][1] = *it++;
+      ++it;               // consume the -1 end-of-line-strip indicator
     }
   }
 
-  void operator()(Quad_indices& quads)
+  void operator()(Polyline_indices& polylines)
   {
-    quads.resize(m_num_primitives);
-    auto it = m_indices.begin();
-    for (size_t j = 0; j < m_num_primitives; ++j) {
-      quads[j][0] = *it++;
-      quads[j][1] = *it++;
-      quads[j][2] = *it++;
-      quads[j][3] = *it++;
-      ++it;                       // consume the -1 end-of-facet indicator
-    }
-  }
-
-  void operator()(Polygon_indices& polygons)
-  {
-    polygons.resize(m_num_primitives);
+    polylines.resize(m_num_primitives);
     auto it = m_indices.begin();
     for (size_t j = 0; j < m_num_primitives; ++j) {
       auto it_start = it;
       size_t count(0);
       while (*it++ != -1) ++count;
       if (count != 0) {
-        polygons[j].resize(count);
+        polylines[j].resize(count);
         it = it_start;
         size_t i(0);
-        while (*it != -1) polygons[j][i++] = *it++;
+        while (*it != -1) polylines[j][i++] = *it++;
         ++it;
       }
     }

@@ -14,10 +14,10 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_EMPTY_FACET_INDICES_VISITOR_HPP
-#define SGAL_EMPTY_FACET_INDICES_VISITOR_HPP
+#ifndef SGAL_EMPTY_INDICES_VISITOR_HPP
+#define SGAL_EMPTY_INDICES_VISITOR_HPP
 
 #include <boost/variant.hpp>
 
@@ -26,8 +26,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Empty facet indices visitor */
-class Empty_facet_indices_visitor : public boost::static_visitor<Boolean> {
+/*! Empty indices visitor */
+class Empty_indices_visitor : public boost::static_visitor<Boolean> {
 public:
   template <typename Indices_>
   Boolean operator()(const Indices_& indices) const { return indices.empty(); }

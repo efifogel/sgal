@@ -57,7 +57,7 @@ REGISTER_TO_FACTORY(Indexed_line_set, "Indexed_line_set");
 
 //! \brief constructor.
 Indexed_line_set::Indexed_line_set(Boolean proto) :
-  Geo_set(proto),
+  Lines_set(proto),
   m_color_per_vertex(m_def_color_per_vertex),
   m_normal_per_vertex(m_def_normal_per_vertex),
   m_line_width(s_def_line_width),
@@ -66,11 +66,7 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_bb_is_pre_set(false),
   m_use_display_list(false),
   m_display_list_id(-1),
-  m_dirty_coord_array(false),
-  m_dirty_coord_indices(false),
-  m_dirty_normal_indices(false),
-  m_dirty_color_indices(false),
-  m_dirty_tex_coord_indices(false)
+  m_dirty_coord_array(false)
 {
   m_primitive_type = PT_LINE_STRIPS;
 
@@ -535,8 +531,16 @@ void Indexed_line_set::set_color_per_vertex(Boolean color_per_vertex)
  */
 void Indexed_line_set::draw(Draw_action* action)
 {
+  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
+                  if (true)
+                    std::cout << "Indexed_line_set::draw(): "
+                              << "name: " << get_name() << std::endl;);
+
   if (m_dirty_coord_array) clean_coords();
-  if (m_dirty_coord_indices) clean_coord_indices();
+  if (is_dirty_lines_coord_indices()) clean_lines_coord_indices();
+
+  if (empty_lines_indices(m_lines_coord_indices)) return;
+  if (!m_coord_array || m_coord_array->empty()) return;
 
   auto* context = action->get_context();
   if (!m_elliminate_hiden) {
@@ -545,6 +549,18 @@ void Indexed_line_set::draw(Draw_action* action)
   }
   context->draw_line_width(m_line_width);
 
+  draw_lines(action);
+
+  context->draw_line_width(1.0f);
+  if (!m_elliminate_hiden) {
+    context->draw_depth_enable(true);
+    context->draw_depth_mask(true);
+  }
+}
+
+//! \brief draws the representation.
+void Indexed_line_set::draw_lines(Draw_action* action)
+{
   //! \todo use vertex array
   // Boolean va = use_vertex_array();
   auto va = false;
@@ -580,12 +596,6 @@ void Indexed_line_set::draw(Draw_action* action)
                          0x0)))))));
 
   (this->*m_draws[mask])();
-
-  context->draw_line_width(1.0f);
-  if (!m_elliminate_hiden) {
-    context->draw_depth_enable(true);
-    context->draw_depth_mask(true);
-  }
 }
 
 //! \brief
@@ -595,7 +605,7 @@ void Indexed_line_set::isect(Isect_action* /* action */) { }
 void Indexed_line_set::clean_bounding_sphere()
 {
   if (m_dirty_coord_array) clean_coords();
-  if (m_dirty_coord_indices) clean_coord_indices();
+  if (is_dirty_lines_coord_indices()) clean_lines_coord_indices();
 
   if (!m_bb_is_pre_set && m_coord_array) {
     boost::shared_ptr<Coord_array_3d> coord_array =
@@ -609,7 +619,7 @@ void Indexed_line_set::clean_bounding_sphere()
 //! \brief setss the attributes of the geometry object.
 void Indexed_line_set::set_attributes(Element* elem)
 {
-  Geo_set::set_attributes(elem);
+  Lines_set::set_attributes(elem);
 
   std::string normal_indices_string;
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
@@ -645,7 +655,7 @@ void Indexed_line_set::set_attributes(Element* elem)
 void Indexed_line_set::init_prototype()
 {
   if (s_prototype) return;
-  s_prototype = new Container_proto(Geo_set::get_prototype());
+  s_prototype = new Container_proto(Lines_set::get_prototype());
 
   auto line_width_func =
     static_cast<Float_handle_function>(&Indexed_line_set::line_width_handle);
@@ -684,35 +694,35 @@ Indexed_line_set::Shared_coord_array Indexed_line_set::get_coord_array()
 void Indexed_line_set::coord_content_changed(const Field_info* field_info)
 {
   m_dirty_coord_array = false;
-  Geo_set::coord_content_changed(field_info);
+  Lines_set::coord_content_changed(field_info);
 }
 
 //! \brief responds to a change in the coordinate indices.
 void Indexed_line_set::coord_indices_changed(const Field_info* field_info)
 {
-  m_dirty_coord_indices = false;
-  Geo_set::coord_indices_changed(field_info);
+  // m_dirty_coord_buffer = true;
+  Lines_set::coord_indices_changed(field_info);
 }
 
 //! \brief responds to a change in the normal indices.
 void Indexed_line_set::normal_indices_changed(const Field_info* field_info)
 {
-  m_dirty_normal_indices = false;
-  Geo_set::normal_indices_changed(field_info);
+  // m_dirty_normal_buffer = true;
+  Lines_set::normal_indices_changed(field_info);
 }
 
 //! \brief responds to a change in the color indices.
 void Indexed_line_set::color_indices_changed(const Field_info* field_info)
 {
-  m_dirty_color_indices = false;
-  Geo_set::color_indices_changed(field_info);
+  // m_dirty_color_buffer = true;
+  Lines_set::color_indices_changed(field_info);
 }
 
 //! \brief responds to a change in the texture-coordinate index array.
 void Indexed_line_set::tex_coord_indices_changed(const Field_info* field_info)
 {
-  m_dirty_tex_coord_indices = false;
-  Geo_set::tex_coord_indices_changed(field_info);
+  // m_dirty_tex_coord_buffer = true;
+  Lines_set::tex_coord_indices_changed(field_info);
 }
 
 //! \brief cleans the coordinate array.
@@ -724,100 +734,6 @@ void Indexed_line_set::clean_coords()
                   << "name: " << get_name() << std::endl;);
 
   coord_content_changed();
-}
-
-//////// Index-array getters ////////
-//! \brief obtains the coordinate indices.
-std::vector<Int32>& Indexed_line_set::get_coord_indices()
-{
-  SGAL_TRACE_CODE(Tracer::INDEXED_LINE_SET,
-                  std::cout
-                  << "Indexed_line_set::get_coord_indices(): "
-                  << "name: " << get_name() << std::endl;);
-
-  if (m_dirty_coord_indices) clean_coord_indices();
-  return Geo_set::get_coord_indices();
-}
-
-//! \brief obtains the normal indices.
-std::vector<Int32>& Indexed_line_set::get_normal_indices()
-{
-  SGAL_TRACE_CODE(Tracer::INDEXED_LINE_SET,
-                  std::cout
-                  << "Indexed_line_set::get_normal_indices(): "
-                  << "name: " << get_name() << std::endl;);
-
-  if (m_dirty_normal_indices) clean_normal_indices();
-  return Geo_set::get_normal_indices();
-}
-
-//! \brief obtains the color indices.
-std::vector<Int32>& Indexed_line_set::get_color_indices()
-{
-  SGAL_TRACE_CODE(Tracer::INDEXED_LINE_SET,
-                  std::cout
-                  << "Indexed_line_set::get_color_indices(): "
-                  << "name: " << get_name() << std::endl;);
-
-  if (m_dirty_color_indices) clean_color_indices();
-  return Geo_set::get_color_indices();
-}
-
-//! \brief obtains the texture coordinate indices.
-std::vector<Int32>& Indexed_line_set::get_tex_coord_indices()
-{
-  SGAL_TRACE_CODE(Tracer::INDEXED_LINE_SET,
-                  std::cout
-                  << "Indexed_line_set::get_tex_coord_indices(): "
-                  << "name: " << get_name() << std::endl;);
-
-  if (m_dirty_tex_coord_indices) clean_tex_coord_indices();
-  return Geo_set::get_tex_coord_indices();
-}
-
-//////// Index-array cleaners ////////
-//! \brief cleans the array of coordinate indices.
-void Indexed_line_set::clean_coord_indices()
-{
-  SGAL_TRACE_CODE(Tracer::INDEXED_LINE_SET,
-                  std::cout
-                  << "Indexed_line_set::clean_coord_indices(): "
-                  << "name: " << get_name() << std::endl;);
-
-  coord_indices_changed();
-}
-
-//! \brief cleans the array of normal indices.
-void Indexed_line_set::clean_normal_indices()
-{
-  SGAL_TRACE_CODE(Tracer::INDEXED_LINE_SET,
-                  std::cout
-                  << "Indexed_line_set::clean_normal_indices(): "
-                  << "name: " << get_name() << std::endl;);
-
-  normal_indices_changed();
-}
-
-//! \brief cleans the array of color indices.
-void Indexed_line_set::clean_color_indices()
-{
-  SGAL_TRACE_CODE(Tracer::INDEXED_LINE_SET,
-                  std::cout
-                  << "Indexed_line_set::clean_color_indices(): "
-                  << "name: " << get_name() << std::endl;);
-
-  color_indices_changed();
-}
-
-//! \brief cleans the array of texture indices.
-void Indexed_line_set::clean_tex_coord_indices()
-{
-  SGAL_TRACE_CODE(Tracer::INDEXED_LINE_SET,
-                  std::cout
-                  << "Indexed_line_set::clean_tex_coord_indices(): "
-                  << "name: " << get_name() << std::endl;);
-
-  tex_coord_indices_changed();
 }
 
 SGAL_END_NAMESPACE

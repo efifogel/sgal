@@ -50,12 +50,11 @@ void Indexed_line_set::draw_FANO_TENO_MOLI_VANO()
 
   SGAL_assertion(m_coord_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -74,14 +73,13 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TENO_MOLI_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_coord_index(m_normal_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glNormal3fv(get_by_coord_index(m_normal_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(m_normal_array->datum(coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glNormal3fv(m_normal_array->datum(coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -100,14 +98,13 @@ void Indexed_line_set::draw_FSCO_FINO_FAPV_TENO_MOLI_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_coord_index(m_color_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glColor3fv(get_by_coord_index(m_color_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glColor3fv(m_color_array->datum(coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -126,14 +123,14 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPV_TENO_MOLI_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
+  const auto& normals = line_normal_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_normal_index(m_normal_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glNormal3fv(get_by_normal_index(m_normal_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(m_normal_array->datum(normals[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glNormal3fv(m_normal_array->datum(normals[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -152,14 +149,14 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPV_TENO_MOLI_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
+  const auto& colors = line_color_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_color_index(m_color_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glColor3fv(get_by_color_index(m_color_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(colors[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glColor3fv(m_color_array->datum(colors[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -178,13 +175,12 @@ void Indexed_line_set::draw_FSNO_FINO_FAPL_TENO_MOLI_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_coord_index(m_normal_array, i));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get(m_normal_array, i));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -203,13 +199,12 @@ void Indexed_line_set::draw_FSCO_FINO_FAPL_TENO_MOLI_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_coord_index(m_color_array, i));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get(m_color_array, i));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -228,13 +223,13 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPL_TENO_MOLI_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
+  const auto& normals = flat_normal_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_normal_index(m_normal_array, i));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(m_normal_array->datum(normals[i]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -253,13 +248,13 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPL_TENO_MOLI_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
+  const auto& colors = flat_color_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_color_index(m_color_array, i));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(colors[i]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -281,12 +276,12 @@ void Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLI_VANO()
   SGAL_assertion(m_color_array);
 
   glColor3fv(get(m_color_array, 0));
-  Uint j = 0;
+
+  const auto& coords = line_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -309,14 +304,13 @@ void Indexed_line_set::draw_FANO_TEYE_TINO_MOLI_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -338,16 +332,15 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOLI_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_coord_index(m_normal_array, j));
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glNormal3fv(get_by_coord_index(m_normal_array, j+1));
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(m_normal_array->datum(coords[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glNormal3fv(m_normal_array->datum(coords[i][1]));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -369,16 +362,15 @@ void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOLI_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_coord_index(m_color_array, j));
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glColor3fv(get_by_coord_index(m_color_array, j+1));
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(coords[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glColor3fv(m_color_array->datum(coords[i][1]));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -400,16 +392,16 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOLI_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
+  const auto& normals = line_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_normal_index(m_normal_array, j));
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glNormal3fv(get_by_normal_index(m_normal_array, j+1));
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(m_normal_array->datum(normals[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glNormal3fv(m_normal_array->datum(normals[i][1]));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -431,16 +423,16 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOLI_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
+  const auto& colors = line_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_color_index(m_color_array, j));
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glColor3fv(get_by_color_index(m_color_array, j+1));
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(colors[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glColor3fv(m_color_array->datum(colors[i][1]));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -462,15 +454,14 @@ void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TINO_MOLI_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_coord_index(m_normal_array, i));
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get(m_normal_array, i));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -492,15 +483,14 @@ void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TINO_MOLI_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_coord_index(m_color_array, i));
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get(m_color_array, i));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -522,15 +512,15 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TINO_MOLI_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
+  const auto& normals = flat_normal_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_normal_index(m_normal_array, i));
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(m_normal_array->datum(normals[i]));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -552,15 +542,15 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TINO_MOLI_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
+  const auto& colors = flat_color_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_color_index(m_color_array, i));
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(colors[i]));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -585,14 +575,14 @@ void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLI_VANO()
   SGAL_assertion(m_tex_coord_array);
 
   glColor3fv(get(m_color_array, 0));
-  Uint j = 0;
+
+  const auto& coords = line_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -613,14 +603,14 @@ void Indexed_line_set::draw_FANO_TEYE_TIYE_MOLI_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
+  const auto& tex_coords = line_tex_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -642,16 +632,16 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLI_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
+  const auto& tex_coords = line_tex_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_coord_index(m_normal_array, j));
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glNormal3fv(get_by_coord_index(m_normal_array, j+1));
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(m_normal_array->datum(coords[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glNormal3fv(m_normal_array->datum(coords[i][1]));
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -673,16 +663,16 @@ void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOLI_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
+  const auto& tex_coords = line_tex_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_coord_index(m_color_array, j));
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glColor3fv(get_by_coord_index(m_color_array, j+1));
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(coords[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glColor3fv(m_color_array->datum(coords[i][1]));
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -704,16 +694,17 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOLI_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
+  const auto& normals = line_normal_indices();
+  const auto& tex_coords = line_tex_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_normal_index(m_normal_array, j));
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glNormal3fv(get_by_normal_index(m_normal_array, j+1));
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(m_normal_array->datum(normals[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glNormal3fv(m_normal_array->datum(normals[i][1]));
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -735,16 +726,17 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLI_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
+  const auto& colors = line_color_indices();
+  const auto& tex_coords = line_tex_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_color_index(m_color_array, j));
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glColor3fv(get_by_color_index(m_color_array, j+1));
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(colors[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glColor3fv(m_color_array->datum(colors[i][1]));
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -766,15 +758,15 @@ void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TIYE_MOLI_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
+  const auto& tex_coords = line_tex_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_coord_index(m_normal_array, i));
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get(m_normal_array, i));
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -796,15 +788,15 @@ void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TIYE_MOLI_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
+  const auto& tex_coords = line_tex_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_coord_index(m_color_array, i));
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get(m_color_array, i));
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -826,15 +818,16 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TIYE_MOLI_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
+  const auto& normals = flat_normal_indices();
+  const auto& tex_coords = line_tex_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_normal_index(m_normal_array, i));
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(m_normal_array->datum(normals[i]));
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -856,15 +849,16 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TIYE_MOLI_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
+  const auto& coords = line_coord_indices();
+  const auto& colors = flat_color_indices();
+  const auto& tex_coords = line_tex_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_color_index(m_color_array, i));
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(colors[i]));
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -889,14 +883,15 @@ void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLI_VANO()
   SGAL_assertion(m_tex_coord_array);
 
   glColor3fv(get(m_color_array, 0));
-  Uint j = 0;
+
+  const auto& coords = line_coord_indices();
+  const auto& tex_coords = line_tex_coord_indices();
   glBegin(GL_LINES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-    glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j+1));
-    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-    j += 2;
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][0]));
+    glVertex3fv(m_coord_array->datum(coords[i][0]));
+    glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][1]));
+    glVertex3fv(m_coord_array->datum(coords[i][1]));
   }
   glEnd();
 }
@@ -918,13 +913,12 @@ void Indexed_line_set::draw_FANO_TENO_MOLS_VANO()
 
   SGAL_assertion(m_coord_array);
 
-  Uint j = 0;
+  const auto& coords = polyline_coord_indices();
   for (auto i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j)
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     glEnd();
-    ++j;
   }
 }
 
@@ -943,15 +937,14 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TENO_MOLS_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glNormal3fv(get_by_coord_index(m_normal_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glNormal3fv(m_normal_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -970,15 +963,14 @@ void Indexed_line_set::draw_FSCO_FINO_FAPV_TENO_MOLS_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glColor3fv(get_by_coord_index(m_color_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glColor3fv(m_color_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -996,15 +988,15 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPV_TENO_MOLS_VANO()
 
   SGAL_assertion(m_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& normals = polyline_normal_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glNormal3fv(get_by_normal_index(m_normal_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glNormal3fv(m_normal_array->datum(normals[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1023,15 +1015,15 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPV_TENO_MOLS_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& colors = polyline_color_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glColor3fv(get_by_color_index(m_color_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glColor3fv(m_color_array->datum(colors[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1050,14 +1042,14 @@ void Indexed_line_set::draw_FSNO_FINO_FAPL_TENO_MOLS_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& normals = flat_normal_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glNormal3fv(get(m_normal_array, i));
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j)
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     glEnd();
-    ++j;
   }
 }
 
@@ -1076,15 +1068,14 @@ void Indexed_line_set::draw_FSCO_FINO_FAPL_TENO_MOLS_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& colors = flat_color_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glColor3fv(get(m_color_array, i));
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
-    }
+    for (size_t j = 0; j < coords[i].size(); ++j)
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     glEnd();
-    ++j;
   }
 }
 
@@ -1103,14 +1094,14 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPL_TENO_MOLS_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_normal_index(m_normal_array, i));
+  const auto& coords = polyline_coord_indices();
+  const auto& normals = flat_normal_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(m_normal_array->datum(normals[i]));
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j)
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     glEnd();
-    ++j;
   }
 }
 
@@ -1129,14 +1120,14 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPL_TENO_MOLS_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_color_index(m_color_array, i));
+  const auto& coords = polyline_coord_indices();
+  const auto& colors = flat_color_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(colors[i]));
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j)
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     glEnd();
-    ++j;
   }
 }
 
@@ -1157,14 +1148,13 @@ void Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLS_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
 
+  const auto& coords = polyline_coord_indices();
   glColor3fv(get(m_color_array, 0));
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j)
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     glEnd();
-    ++j;
   }
 }
 
@@ -1186,15 +1176,14 @@ void Indexed_line_set::draw_FANO_TEYE_TINO_MOLS_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1215,16 +1204,15 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOLS_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glNormal3fv(get_by_coord_index(m_normal_array, j));
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glNormal3fv(m_normal_array->datum(coords[i][j]));
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1245,16 +1233,15 @@ void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOLS_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glColor3fv(get_by_coord_index(m_color_array, j));
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glColor3fv(m_color_array->datum(coords[i][j]));
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1275,16 +1262,16 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOLS_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& normals = polyline_normal_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glNormal3fv(get_by_normal_index(m_normal_array, j));
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glNormal3fv(m_normal_array->datum(normals[i][j]));
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1305,16 +1292,16 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOLS_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& colors = polyline_color_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glColor3fv(get_by_color_index(m_color_array, j));
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glColor3fv(m_color_array->datum(colors[i][j]));
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1335,16 +1322,15 @@ void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TINO_MOLS_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_coord_index(m_normal_array, i));
+  const auto& coords = polyline_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(m_normal_array->datum(i));
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1365,16 +1351,15 @@ void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TINO_MOLS_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_coord_index(m_color_array, i));
+  const auto& coords = polyline_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(i));
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1395,16 +1380,16 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TINO_MOLS_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_normal_index(m_normal_array, i));
+  const auto& coords = polyline_coord_indices();
+  const auto& normals = flat_normal_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(m_normal_array->datum(normals[i]));
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1425,16 +1410,16 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TINO_MOLS_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_color_index(m_color_array, i));
+  const auto& coords = polyline_coord_indices();
+  const auto& colors = flat_color_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(colors[i]));
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1457,16 +1442,16 @@ void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLS_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
+  const auto& coords = polyline_coord_indices();
+  const auto& colors = polyline_color_indices();
   glColor3fv(get(m_color_array, 0));
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1486,15 +1471,15 @@ void Indexed_line_set::draw_FANO_TEYE_TIYE_MOLS_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& tex_coords = line_tex_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1515,16 +1500,16 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLS_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& tex_coords = line_tex_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glNormal3fv(get_by_coord_index(m_normal_array, j));
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glNormal3fv(m_normal_array->datum(coords[i][j]));
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1545,16 +1530,16 @@ void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOLS_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& tex_coords = line_tex_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glColor3fv(get_by_coord_index(m_color_array, j));
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glColor3fv(m_color_array->datum(coords[i][j]));
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1575,16 +1560,17 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOLS_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& normals = polyline_normal_indices();
+  const auto& tex_coords = line_tex_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glNormal3fv(get_by_normal_index(m_normal_array, j));
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glNormal3fv(m_normal_array->datum(normals[i][j]));
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1605,16 +1591,17 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLS_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& colors = polyline_color_indices();
+  const auto& tex_coords = line_tex_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glColor3fv(get_by_color_index(m_color_array, j));
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glColor3fv(m_color_array->datum(colors[i][j]));
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1635,16 +1622,16 @@ void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TIYE_MOLS_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& tex_coords = line_tex_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
-    glNormal3fv(get_by_coord_index(m_normal_array, i));
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+    glNormal3fv(m_normal_array->datum(i));
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1665,16 +1652,16 @@ void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TIYE_MOLS_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_coord_index(m_color_array, i));
+  const auto& coords = polyline_coord_indices();
+  const auto& tex_coords = line_tex_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(i));
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1695,16 +1682,17 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TIYE_MOLS_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_normal_index(m_normal_array, i));
+  const auto& coords = polyline_coord_indices();
+  const auto& normals = flat_normal_indices();
+  const auto& tex_coords = line_tex_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(m_normal_array->datum(normals[i]));
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1725,16 +1713,17 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TIYE_MOLS_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_color_index(m_color_array, i));
+  const auto& coords = polyline_coord_indices();
+  const auto& colors = flat_color_indices();
+  const auto& tex_coords = line_tex_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(colors[i]));
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1757,16 +1746,16 @@ void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLS_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
+  const auto& coords = polyline_coord_indices();
+  const auto& tex_coords = line_tex_coord_indices();
   glColor3fv(get(m_color_array, 0));
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1787,13 +1776,12 @@ void Indexed_line_set::draw_FANO_TENO_MOLL_VANO()
 
   SGAL_assertion(m_coord_array);
 
-  Uint j = 0;
+  const auto& coords = polyline_coord_indices();
   for (auto i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j)
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     glEnd();
-    ++j;
   }
 }
 
@@ -1811,15 +1799,14 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TENO_MOLL_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glNormal3fv(get_by_coord_index(m_normal_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glNormal3fv(m_normal_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1837,15 +1824,14 @@ void Indexed_line_set::draw_FSCO_FINO_FAPV_TENO_MOLL_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glColor3fv(get_by_coord_index(m_color_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glColor3fv(m_color_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1863,15 +1849,15 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPV_TENO_MOLL_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& normals = polyline_normal_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glNormal3fv(get_by_normal_index(m_normal_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glNormal3fv(m_normal_array->datum(normals[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1889,15 +1875,15 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPV_TENO_MOLL_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& colors = polyline_color_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glColor3fv(get_by_color_index(m_color_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glColor3fv(m_color_array->datum(colors[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -1915,14 +1901,13 @@ void Indexed_line_set::draw_FSNO_FINO_FAPL_TENO_MOLL_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_coord_index(m_normal_array, i));
+  const auto& coords = polyline_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(m_normal_array->datum(i));
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j)
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     glEnd();
-    ++j;
   }
 }
 
@@ -1940,14 +1925,13 @@ void Indexed_line_set::draw_FSCO_FINO_FAPL_TENO_MOLL_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_coord_index(m_color_array, i));
+  const auto& coords = polyline_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(i));
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j)
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     glEnd();
-    ++j;
   }
 }
 
@@ -1965,14 +1949,14 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPL_TENO_MOLL_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_normal_index(m_normal_array, i));
+  const auto& coords = polyline_coord_indices();
+  const auto& normals = flat_normal_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(m_normal_array->datum(normals[i]));
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j)
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     glEnd();
-    ++j;
   }
 }
 
@@ -1990,14 +1974,14 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPL_TENO_MOLL_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_color_index(m_color_array, i));
+  const auto& coords = polyline_coord_indices();
+  const auto& colors = flat_color_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(colors[i]));
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j)
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     glEnd();
-    ++j;
   }
 }
 
@@ -2017,14 +2001,13 @@ void Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLL_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
 
+  const auto& coords = polyline_coord_indices();
   glColor3fv(get(m_color_array, 0));
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j)
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     glEnd();
-    ++j;
   }
 }
 
@@ -2046,15 +2029,14 @@ void Indexed_line_set::draw_FANO_TEYE_TINO_MOLL_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -2075,16 +2057,15 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOLL_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glNormal3fv(get_by_coord_index(m_normal_array, j));
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glNormal3fv(m_normal_array->datum(coords[i][j]));
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -2105,16 +2086,15 @@ void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOLL_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glColor3fv(get_by_coord_index(m_color_array, j));
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glColor3fv(m_color_array->datum(coords[i][j]));
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -2135,16 +2115,16 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOLL_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& normals = polyline_normal_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glNormal3fv(get_by_normal_index(m_normal_array, j));
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glNormal3fv(m_normal_array->datum(normals[i][j]));
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -2165,16 +2145,16 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOLL_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& colors = polyline_color_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glColor3fv(get_by_color_index(m_color_array, j));
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glColor3fv(m_color_array->datum(colors[i][j]));
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -2195,16 +2175,15 @@ void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TINO_MOLL_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_coord_index(m_normal_array, i));
+  const auto& coords = polyline_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(m_normal_array->datum(i));
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -2225,16 +2204,15 @@ void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TINO_MOLL_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_coord_index(m_color_array, i));
+  const auto& coords = polyline_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(i));
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -2255,16 +2233,16 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TINO_MOLL_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_normal_index(m_normal_array, i));
+  const auto& coords = polyline_coord_indices();
+  const auto& normals = flat_normal_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(m_normal_array->datum(normals[i]));
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -2285,16 +2263,16 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TINO_MOLL_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_color_index(m_color_array, i));
+  const auto& coords = polyline_coord_indices();
+  const auto& colors = flat_color_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(colors[i]));
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -2317,16 +2295,15 @@ void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLL_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
+  const auto& coords = polyline_coord_indices();
   glColor3fv(get(m_color_array, 0));
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -2346,15 +2323,15 @@ void Indexed_line_set::draw_FANO_TEYE_TIYE_MOLL_VANO()
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& tex_coords = line_tex_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -2375,16 +2352,16 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLL_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& tex_coords = line_tex_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glNormal3fv(get_by_coord_index(m_normal_array, j));
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glNormal3fv(m_normal_array->datum(coords[i][j]));
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -2405,16 +2382,16 @@ void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOLL_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& tex_coords = line_tex_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glColor3fv(get_by_coord_index(m_color_array, j));
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glColor3fv(m_color_array->datum(coords[i][j]));
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -2435,16 +2412,17 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOLL_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& normals = polyline_normal_indices();
+  const auto& tex_coords = line_tex_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glNormal3fv(get_by_normal_index(m_normal_array, j));
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glNormal3fv(m_normal_array->datum(normals[i][j]));
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -2465,16 +2443,17 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLL_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  const auto& coords = polyline_coord_indices();
+  const auto& colors = polyline_color_indices();
+  const auto& tex_coords = line_tex_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glColor3fv(get_by_color_index(m_color_array, j));
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glColor3fv(m_color_array->datum(colors[i][j]));
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -2495,16 +2474,16 @@ void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TIYE_MOLL_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_coord_index(m_normal_array, i));
+  const auto& coords = polyline_coord_indices();
+  const auto& tex_coords = line_tex_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(m_normal_array->datum(i));
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -2525,16 +2504,16 @@ void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TIYE_MOLL_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_coord_index(m_color_array, i));
+  const auto& coords = polyline_coord_indices();
+  const auto& tex_coords = line_tex_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(i));
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -2555,16 +2534,17 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TIYE_MOLL_VANO()
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_normal_index(m_normal_array, i));
+  const auto& coords = polyline_coord_indices();
+  const auto& normals = flat_normal_indices();
+  const auto& tex_coords = line_tex_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(m_normal_array->datum(normals[i]));
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -2585,16 +2565,17 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TIYE_MOLL_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_color_index(m_color_array, i));
+  const auto& coords = polyline_coord_indices();
+  const auto& colors = flat_color_indices();
+  const auto& tex_coords = line_tex_coord_indices();
+  for (size_t i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(m_color_array->datum(colors[i]));
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 
@@ -2617,16 +2598,16 @@ void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLL_VANO()
   SGAL_assertion(m_color_array);
   SGAL_assertion(m_tex_coord_array);
 
+  const auto& coords = polyline_coord_indices();
+  const auto& tex_coords = line_tex_coord_indices();
   glColor3fv(get(m_color_array, 0));
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; ++i) {
+  for (size_t i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_LINE_LOOP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-      glTexCoord2fv(get_by_tex_coord_index(m_tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    for (size_t j = 0; j < coords[i].size(); ++j) {
+      glTexCoord2fv(m_tex_coord_array->datum(tex_coords[i][j]));
+      glVertex3fv(m_coord_array->datum(coords[i][j]));
     }
     glEnd();
-    ++j;
   }
 }
 

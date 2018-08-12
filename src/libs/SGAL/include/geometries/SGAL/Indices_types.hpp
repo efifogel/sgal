@@ -39,6 +39,12 @@ typedef std::vector<Index_type>                         Flat_indices;
 typedef boost::variant<Triangle_indices, Quad_indices, Polygon_indices,
                        Flat_indices>                    Facet_indices;
 
+typedef std::vector<std::array<Index_type, 2> >         Line_indices;
+typedef std::vector<std::vector<Index_type> >           Polyline_indices;
+typedef std::vector<Index_type>                         Flat_indices;
+typedef boost::variant<Line_indices, Polyline_indices,
+                       Flat_indices>                    Lines_indices;
+
 SGAL_END_NAMESPACE
 
 #endif

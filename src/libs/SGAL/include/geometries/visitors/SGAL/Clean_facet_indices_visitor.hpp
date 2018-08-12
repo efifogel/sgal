@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_CLEAN_FACET_INDICES_VISITOR_HPP
 #define SGAL_CLEAN_FACET_INDICES_VISITOR_HPP
@@ -26,55 +26,65 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Clean (compute) facet indices visitor */
+/*! Clean facet indices visitor */
 class Clean_facet_indices_visitor : public boost::static_visitor<> {
 public:
-  std::vector<Int32>& m_indices;
+  const std::vector<Int32>& m_indices;
+  Size m_num_primitives;
 
-  Clean_facet_indices_visitor(std::vector<Int32>& indices) :
-    m_indices(indices)
+  Clean_facet_indices_visitor(const std::vector<Int32>& indices,
+                        Size num_primitives) :
+    m_indices(indices),
+    m_num_primitives(num_primitives)
   {}
 
-  void operator()(const Triangle_indices& triangles)
+  void operator()(Triangle_indices& triangles)
   {
-    m_indices.resize(4 * triangles.size());
-    size_t k(0);
-    for (size_t i = 0; i < triangles.size(); ++i) {
-      m_indices[k++] = triangles[i][0];
-      m_indices[k++] = triangles[i][1];
-      m_indices[k++] = triangles[i][2];
-      m_indices[k++] = -1;
+    triangles.resize(m_num_primitives);
+    auto it = m_indices.begin();
+    for (size_t j = 0; j < m_num_primitives; ++j) {
+      triangles[j][0] = *it++;
+      triangles[j][1] = *it++;
+      triangles[j][2] = *it++;
+      ++it;                     // consume the -1 end-of-facet indicator
     }
   }
 
-  void operator()(const Quad_indices& quads)
+  void operator()(Quad_indices& quads)
   {
-    m_indices.resize(5 * quads.size());
-    size_t k(0);
-    for (size_t i = 0; i < quads.size(); ++i) {
-      m_indices[k++] = quads[i][0];
-      m_indices[k++] = quads[i][1];
-      m_indices[k++] = quads[i][2];
-      m_indices[k++] = quads[i][3];
-      m_indices[k++] = -1;
+    quads.resize(m_num_primitives);
+    auto it = m_indices.begin();
+    for (size_t j = 0; j < m_num_primitives; ++j) {
+      quads[j][0] = *it++;
+      quads[j][1] = *it++;
+      quads[j][2] = *it++;
+      quads[j][3] = *it++;
+      ++it;                     // consume the -1 end-of-facet indicator
     }
   }
 
-  void operator()(const Polygon_indices& polygons)
+  void operator()(Polygon_indices& polygons)
   {
-    size_t size(0);
-    for (size_t i = 0; i < polygons.size(); ++i) size += polygons[i].size() + 1;
-    m_indices.resize(size);
-    size_t k(0);
-    for (size_t i = 0; i < polygons.size(); ++i) {
-      for (size_t j = 0; j < polygons[i].size(); ++j)
-        m_indices[k++] = polygons[i][j];
-      m_indices[k++] = -1;
+    polygons.resize(m_num_primitives);
+    auto it = m_indices.begin();
+    for (size_t j = 0; j < m_num_primitives; ++j) {
+      auto it_start = it;
+      size_t count(0);
+      while (*it++ != -1) ++count;
+      if (count != 0) {
+        polygons[j].resize(count);
+        it = it_start;
+        size_t i(0);
+        while (*it != -1) polygons[j][i++] = *it++;
+        ++it;
+      }
     }
   }
 
-  void operator()(const Flat_indices& flats)
-  { std::copy(flats.begin(), flats.end(), m_indices.begin()); }
+  void operator()(Flat_indices& flats)
+  {
+    flats.resize(m_num_primitives);
+    std::copy(m_indices.begin(), m_indices.end(), flats.begin()); }
 };
 
 SGAL_END_NAMESPACE

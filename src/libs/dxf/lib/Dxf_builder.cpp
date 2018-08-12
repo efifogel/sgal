@@ -697,7 +697,7 @@ void Dxf_parser::process_line_entity(const Dxf_line_entity& line,
 
   // Allocate indices:
   auto& indices = ils->get_coord_indices();
-  indices.resize(size);
+  indices.resize(size+1);
 
   // Check whether mirroring is required
   bool mirror(false);
@@ -716,6 +716,7 @@ void Dxf_parser::process_line_entity(const Dxf_line_entity& line,
   auto it = indices.begin();
   *it++ = 0;
   *it++ = 1;
+  *it = -1;
 
   ils->set_primitive_type(SGAL::Geo_set::PT_LINES);
   ils->set_coord_array(shared_coords);

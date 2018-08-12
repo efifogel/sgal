@@ -211,6 +211,7 @@ set(SGAL_GEOMETRIES_SRC_FILES ${SGAL_GEOMETRIES_SRC_FILES} lib/geometries/Indexe
 set(SGAL_GEOMETRIES_SRC_FILES ${SGAL_GEOMETRIES_SRC_FILES} lib/geometries/Indexed_line_set_draw.cpp)
 set(SGAL_GEOMETRIES_SRC_FILES ${SGAL_GEOMETRIES_SRC_FILES} lib/geometries/Indexed_geodesic_set.cpp)
 set(SGAL_GEOMETRIES_SRC_FILES ${SGAL_GEOMETRIES_SRC_FILES} lib/geometries/Indexed_face_set_draw.cpp)
+set(SGAL_GEOMETRIES_SRC_FILES ${SGAL_GEOMETRIES_SRC_FILES} lib/geometries/Lines_set.cpp)
 set(SGAL_GEOMETRIES_SRC_FILES ${SGAL_GEOMETRIES_SRC_FILES} lib/geometries/Mesh_set.cpp)
 set(SGAL_GEOMETRIES_SRC_FILES ${SGAL_GEOMETRIES_SRC_FILES} lib/geometries/Normal_array.cpp)
 set(SGAL_GEOMETRIES_SRC_FILES ${SGAL_GEOMETRIES_SRC_FILES} lib/geometries/Piece.cpp)

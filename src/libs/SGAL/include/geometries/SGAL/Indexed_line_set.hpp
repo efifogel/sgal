@@ -20,7 +20,7 @@
 #define SGAL_INDEXED_LINE_SET_HPP
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Geo_set.hpp"
+#include "SGAL/Lines_set.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -36,10 +36,10 @@ class Tex_coord_array;
 #pragma warning( disable: 4251 )
 #endif
 
-class SGAL_SGAL_DECL Indexed_line_set : public Geo_set {
+class SGAL_SGAL_DECL Indexed_line_set : public Lines_set {
 public:
   enum {
-    FIRST = Geo_set::LAST - 1,
+    FIRST = Lines_set::LAST - 1,
     COLOR_PER_VERTEX,
     NORMAL_PER_VERTEX,
     LINE_WIDTH,
@@ -125,50 +125,6 @@ public:
    */
   virtual void clean_coords();
 
-  /// \name Index-Array getters.
-  // The setters (in the base Geo_set) call respective virtual functions, so
-  // they doesn't need to be virtual as well.
-  //@{
-  /*! Obtain the coordinate indices.
-   * \return the coordinate indices.
-   */
-  virtual std::vector<Int32>& get_coord_indices();
-
-  /*! Obtain the normal indices.
-   * \return the normal indices.
-   */
-  virtual std::vector<Int32>& get_normal_indices();
-
-  /*! Obtain the color indices.
-   * \return the color indices.
-   */
-  virtual std::vector<Int32>& get_color_indices();
-
-  /*! Obtain the texture coordinate indices.
-   * \return the texture coordinate indices.
-   */
-  virtual std::vector<Int32>& get_tex_coord_indices();
-  //@}
-
-  /// \name Index-array cleaners
-  //@{
-  /*! Clean the coordinate indices array.
-   */
-  virtual void clean_coord_indices();
-
-  /*! Clean the normal indices array.
-   */
-  virtual void clean_normal_indices();
-
-  /*! Clean the color indices array.
-   */
-  virtual void clean_color_indices();
-
-  /*! Clean the texture coordinate indices array.
-   */
-  virtual void clean_tex_coord_indices();
-  //@}
-
   /// \name Change Recators
   //@{
   /*! Respond to a change in the coordinate array.
@@ -236,6 +192,11 @@ public:
    * \param width (in) The line width.
    */
   Float get_line_width();
+
+  /*! Draw the representation.
+   * \param action action.
+   */
+  virtual void draw_lines(Draw_action* action);
 
 protected:
   // Draw routines:
@@ -437,20 +398,6 @@ protected:
 
   //! Indicates whether the coordinate array has beeen invalidated.
   Boolean m_dirty_coord_array;
-
-  //! Indicates whether the array of coordinate indices has beeen invalidated.
-  Boolean m_dirty_coord_indices;
-
-  //! Indicates whether the array of normal indices has beeen invalidated.
-  Boolean m_dirty_normal_indices;
-
-  //! Indicates whether the array of color indices has beeen invalidated.
-  Boolean m_dirty_color_indices;
-
-  /*! Indicates whether the array of texture coordinate indices has beeen
-   * invalidated.
-   */
-  Boolean m_dirty_tex_coord_indices;
 
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
