@@ -16,6 +16,10 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include <iterator>
+#include <sstream>
+#include <algorithm>
+
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -195,35 +199,27 @@ void Geo_set::set_attributes(Element* elem)
     }
 
     if (name == "coordIndex") {
-      m_num_primitives = 0;
+      std::stringstream ss(value);
+      std::copy(std::istream_iterator<int>(ss), std::istream_iterator<int>(),
+                std::back_inserter(m_coord_indices));
+      m_coord_indices.shrink_to_fit();
 
-      typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
-      boost::char_separator<char> sep(", \t\n\r");
-      tokenizer tokens(value, sep);
-      Uint size = 0;
-      for (tokenizer::iterator it = tokens.begin(); it != tokens.end(); ++it)
-        ++size;
-      if (size == 0) {
+      m_num_primitives = 0;
+      auto size = m_coord_indices.size();
+      if (0 == size) {
       err:
-        m_coord_indices.clear();
         std::cerr << "Error!" << std::endl;
         //! todo issue an error
         elem->mark_delete(ai);
         continue;               // Advance to next attribute
       }
 
-      m_coord_indices.resize(size);
-      Uint i = 0;
-      for (tokenizer::iterator it = tokens.begin(); it != tokens.end(); ++it) {
-        m_coord_indices[i++] = static_cast<Uint>(boost::lexical_cast<int>(*it));
-      }
-
       if (m_primitive_type == PT_POLYGONS) {
-        Uint j = 0;
-        Boolean tris = true, quads = true;
-        for (i = 0; i < size; ++i) {
-          if (m_coord_indices[i] == static_cast<Uint>(-1)) {
-            m_num_primitives++;
+        Uint j(0);
+        Boolean tris(true), quads(true);
+        for (auto id : m_coord_indices) {
+          if (static_cast<Uint>(-1) == id) {
+            ++m_num_primitives;
             if (j != 3) tris = false;
             if (j != 4) quads = false;
             if (j < 3) goto err;
@@ -236,14 +232,17 @@ void Geo_set::set_attributes(Element* elem)
           (tris) ? PT_TRIANGLES : (quads) ? PT_QUADS : PT_POLYGONS;
         //! \todo sg->get_stats().add_num_polygons(m_num_primitives);
       }
-      else if (m_primitive_type == PT_LINES) {
-        if ((size & 0x1) != 0) goto err;
-        m_num_primitives = size >> 1;
-      }
       else if (m_primitive_type == PT_LINE_STRIPS) {
-        for (auto it = m_coord_indices.begin(); it != m_coord_indices.end();
-             ++it)
-          if (*it == static_cast<Uint>(-1)) ++m_num_primitives;
+        Uint j(0);
+        Boolean lines(true);
+        for (auto id : m_coord_indices) {
+          if (static_cast<Uint>(-1) == id) {
+            ++m_num_primitives;
+            if (j != 2) lines = false;
+          }
+          else ++j;
+        }
+        if (lines) m_primitive_type = PT_LINES;
       }
       if (m_num_primitives == 0) goto err;
       coord_indices_changed();
