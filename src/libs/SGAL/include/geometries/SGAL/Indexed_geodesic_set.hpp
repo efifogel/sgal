@@ -14,7 +14,10 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>; Boris Kozorovitzky <zbzzn@hotmail.com>
+// Author(s): Efi Fogel          <efifogel@gmail.com>
+//            Boris Kozorovitzky <zbzzn@hotmail.com>
+
+//! \todo Derive from Lines_set (instead of Geo_set).
 
 #ifndef SGAL_INDEXED_GEODESIC_SET_HPP
 #define SGAL_INDEXED_GEODESIC_SET_HPP
