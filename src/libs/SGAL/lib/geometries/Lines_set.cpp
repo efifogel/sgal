@@ -79,8 +79,6 @@ void Lines_set::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Geo_set::get_prototype());
-
-  // Add the field-info records to the prototype:
 }
 
 //! \brief deletes the container prototype.
@@ -93,7 +91,7 @@ void Lines_set::delete_prototype()
 //! \brief obtains the container prototype.
 Container_proto* Lines_set::get_prototype()
 {
-  if (!s_prototype) Geo_set::init_prototype();
+  if (!s_prototype) Lines_set::init_prototype();
   return s_prototype;
 }
 
