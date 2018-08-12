@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_BOUNDARY_SET_HPP
 #define SGAL_BOUNDARY_SET_HPP
@@ -39,6 +41,7 @@ SGAL_BEGIN_NAMESPACE
 class Element;
 class Container_proto;
 class Scene_graph;
+class Formatter;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -405,6 +408,12 @@ public:
    * \param action action.
    */
   virtual void draw_geometry(Draw_action* action);
+
+  /*! Export a field of this container.
+   * \param[in] field_info The field information record.
+   * \param[in] formatter The formatter to use for exporting, e.g., VRML.
+   */
+   virtual void write_field(const Field_info* field_info, Formatter* formatter);
 
   // Drawing:
 #include "SGAL/Indexed_face_set_mask.hpp"
