@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <iterator>
 #include <sstream>
@@ -34,6 +36,7 @@
 #include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Utilities.hpp"
+#include "SGAL/Vrml_formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -52,13 +55,17 @@ const Char* Geo_set::s_attachment_names[] =
 // Default value:
 const
 Geo_set::Primitive_type Geo_set::s_def_primitive_type(Geo_set::PT_POLYGONS);
+const
+Geo_set::Attachment Geo_set::s_def_normal_attachment(Geo_set::AT_PER_PRIMITIVE);
+const
+Geo_set::Attachment Geo_set::s_def_color_attachment(Geo_set::AT_PER_PRIMITIVE);
 
 //! \brief constructor.
 Geo_set::Geo_set(Boolean proto) :
   Geometry(proto),
   m_num_primitives(0),
-  m_normal_attachment(AT_PER_PRIMITIVE),
-  m_color_attachment(AT_PER_PRIMITIVE),
+  m_normal_attachment(s_def_normal_attachment),
+  m_color_attachment(s_def_color_attachment),
   m_coord_indices(),
   m_normal_indices(),
   m_color_indices(),
@@ -157,9 +164,27 @@ void Geo_set::init_prototype()
     reinterpret_cast<Int32_array_handle_function>
     (&Geo_set::tex_coord_indices_handle);
   s_prototype->add_field_info(new MF_int32(TEX_COORD_INDEX_ARRAY,
-                                          "texCoordIndex",
+                                           "texCoordIndex",
+                                           Field_rule::RULE_EXPOSED_FIELD,
+                                           tex_coord_index_func, exec_func));
+
+  // normalAttachment
+  auto normal_attachment_func =
+    reinterpret_cast<Uint_handle_function>(&Geo_set::normal_attachment_handle);
+  s_prototype->add_field_info(new SF_uint(NORMAL_ATTACHMENT,
+                                          "normalAttachment",
                                           Field_rule::RULE_EXPOSED_FIELD,
-                                          tex_coord_index_func, exec_func));
+                                          normal_attachment_func,
+                                          s_def_normal_attachment));
+
+  // colorAttachment
+  auto color_attachment_func =
+    reinterpret_cast<Uint_handle_function>(&Geo_set::color_attachment_handle);
+  s_prototype->add_field_info(new SF_uint(COLOR_ATTACHMENT,
+                                          "colorAttachment",
+                                          Field_rule::RULE_EXPOSED_FIELD,
+                                          color_attachment_func,
+                                          s_def_color_attachment));
 }
 
 //! \brief deletes the container prototype.
@@ -523,5 +548,34 @@ Geo_set::Primitive_type Geo_set::get_primitive_type()
 
 //! \brief obtains the number of primitives.
 Size Geo_set::get_num_primitives() { return m_num_primitives; }
+
+//! \brief exports a field of this container.
+void Geo_set::write_field(const Field_info* field_info, Formatter* formatter)
+{
+  auto* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
+  if (vrml_formatter) {
+    if (NORMAL_ATTACHMENT == field_info->get_id()) {
+      if (m_normal_attachment == s_def_normal_attachment) return;
+      const auto& value = s_attachment_names[m_normal_attachment];
+      formatter->single_string(field_info->get_name(), value, "");
+      return;
+    }
+    if (COLOR_ATTACHMENT == field_info->get_id()) {
+      if (m_color_attachment == s_def_color_attachment) return;
+      const auto& value = s_attachment_names[m_color_attachment];
+      formatter->single_string(field_info->get_name(), value, "");
+      return;
+    }
+  }
+  Geometry::write_field(field_info, formatter);
+}
+
+///! \brief sets the normal attachment method.
+void Geo_set::set_normal_attachment(Attachment attachment)
+{ m_normal_attachment = attachment; }
+
+//! \brief sets the color attachment method.
+void Geo_set::set_color_attachment(Attachment attachment)
+{ m_color_attachment = attachment; }
 
 SGAL_END_NAMESPACE

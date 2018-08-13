@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
@@ -52,7 +54,6 @@
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/GL_error.hpp"
 #include "SGAL/calculate_multiple_normals_per_vertex.hpp"
-#include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Field_infos.hpp"
@@ -911,27 +912,6 @@ void Indexed_face_set::write(Formatter* formatter)
   }
   if (!m_normals_repaired && m_repair_normals) repair_normals();
   Boundary_set::write(formatter);
-}
-
-//! \brief writes a field of this container.
-void Indexed_face_set::write_field(const Field_info* field_info,
-                                   Formatter* formatter)
-{
-  auto* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
-  if (vrml_formatter) {
-    if (COLOR_PER_VERTEX == field_info->get_id()) {
-      const auto & name = field_info->get_name();
-      vrml_formatter->single_boolean(name, get_color_per_vertex(), true);
-      return;
-    }
-
-    if (NORMAL_PER_VERTEX == field_info->get_id()) {
-      const auto & name = field_info->get_name();
-      vrml_formatter->single_boolean(name, get_normal_per_vertex(), true);
-      return;
-    }
-  }
-  Boundary_set::write_field(field_info, formatter);
 }
 
 //! \brief cleans (compute) the volume.

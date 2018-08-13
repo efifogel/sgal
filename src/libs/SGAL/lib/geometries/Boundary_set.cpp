@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
 #include <sstream>
@@ -53,6 +55,8 @@
 #include "SGAL/Bounding_box.hpp"
 #include "SGAL/Gfx_conf.hpp"
 #include "SGAL/Utilities.hpp"
+#include "SGAL/Vrml_formatter.hpp"
+#include <SGAL/to_boolean.hpp>
 
 SGAL_BEGIN_NAMESPACE
 
@@ -1391,12 +1395,12 @@ void Boundary_set::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "normalPerVertex") {
-      set_normal_per_vertex(compare_to_true(value));
+      set_normal_per_vertex(to_boolean(value));
       elem->mark_delete(ai);
       continue;
     }
     if (name == "colorPerVertex") {
-      set_color_per_vertex(compare_to_true(value));
+      set_color_per_vertex(to_boolean(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -2416,6 +2420,39 @@ void Boundary_set::facet_tex_coord_indices_changed()
 {
   m_dirty_coord_buffer = true;
   Mesh_set::facet_tex_coord_indices_changed();
+}
+
+//! \brief writes a field of this container.
+void Boundary_set::write_field(const Field_info* field_info,
+                               Formatter* formatter)
+{
+  auto* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
+  if (vrml_formatter) {
+    // Handle normal attachment:
+    if (NORMAL_PER_VERTEX == field_info->get_id()) {
+      SGAL_assertion(m_normal_attachment != AT_PER_MESH);
+      const auto& name = field_info->get_name();
+      vrml_formatter->single_boolean(name, get_normal_per_vertex(), true);
+      return;
+    }
+    if (NORMAL_ATTACHMENT == field_info->get_id()) return;
+
+    // Handle color attachment:
+    if (COLOR_PER_VERTEX == field_info->get_id()) {
+      if (m_color_attachment == AT_PER_MESH) return;
+      const auto& name = field_info->get_name();
+      vrml_formatter->single_boolean(name, get_color_per_vertex(), true);
+      return;
+    }
+    if (COLOR_ATTACHMENT == field_info->get_id()) {
+      if (m_color_attachment != AT_PER_MESH) return;
+      const auto& name = field_info->get_name();
+      const auto& value = attachment_name(AT_PER_MESH);
+      formatter->single_string(name, value, "");
+      return;
+    }
+  }
+  Mesh_set::write_field(field_info, formatter);
 }
 
 SGAL_END_NAMESPACE

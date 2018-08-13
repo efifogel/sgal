@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s) : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_APPEARANCE_HPP
 #define SGAL_APPEARANCE_HPP
@@ -99,6 +101,8 @@ public:
   Shared_halftone* halftone_handle(const Field_info*) { return &m_halftone; }
   Shared_material* back_material_handle(const Field_info*)
   { return &m_back_material; }
+  Boolean* depth_mask_handle(const Field_info*) { return &m_depth_mask; }
+  Boolean* depth_enable_handle(const Field_info*) { return &m_depth_enable; }
   //@}
 
   /*! Set the attributes of this node. */

@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_INDEXED_FACE_SET_HPP
 #define SGAL_INDEXED_FACE_SET_HPP
@@ -135,12 +137,6 @@ public:
    * \param[in] formatter The formatter to use for exporting, e.g., VRML.
    */
   virtual void write(Formatter* formatter);
-
-  /*! Export a field of this container.
-   * \param[in] field_info The field information record.
-   * \param[in] formatter The formatter to use for exporting, e.g., VRML.
-   */
-   virtual void write_field(const Field_info* field_info, Formatter* formatter);
 
   /*! Draw the polygons for selection.
    */

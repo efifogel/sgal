@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
@@ -661,7 +663,8 @@ void Indexed_line_set::init_prototype()
     static_cast<Float_handle_function>(&Indexed_line_set::line_width_handle);
   s_prototype->add_field_info(new SF_float(LINE_WIDTH, "lineWidth",
                                            Field_rule::RULE_EXPOSED_FIELD,
-                                           line_width_func));
+                                           line_width_func,
+                                           s_def_line_width));
 }
 
 //! \brief deletes the prototype.

@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
 #include <algorithm>
@@ -43,6 +45,7 @@
 #include "SGAL/Texture_2d.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Utilities.hpp"
+#include <SGAL/to_boolean.hpp>
 
 SGAL_BEGIN_NAMESPACE
 
@@ -604,6 +607,24 @@ void Appearance::init_prototype()
                                                       Field_rule::RULE_EXPOSED_FIELD,
                                                       back_material_func,
                                                       exec_func));
+
+  // depthMask
+  exec_func =
+    static_cast<Execution_function>(&Container::set_rendering_required);
+  auto depth_mask_func =
+    static_cast<Boolean_handle_function>(&Appearance::depth_mask_handle);
+  s_prototype->add_field_info(new SF_bool(DEPTH_MASK, "depthMask",
+                                          Field_rule::RULE_EXPOSED_FIELD,
+                                          depth_mask_func, true, exec_func));
+
+  // depthEnable
+  exec_func =
+    static_cast<Execution_function>(&Container::set_rendering_required);
+  auto depth_enable_func =
+    static_cast<Boolean_handle_function>(&Appearance::depth_enable_handle);
+  s_prototype->add_field_info(new SF_bool(DEPTH_ENABLE, "depthEnable",
+                                          Field_rule::RULE_EXPOSED_FIELD,
+                                          depth_enable_func, true, exec_func));
 }
 
 //! \brief deletes the appearance prototype.
@@ -625,11 +646,9 @@ void Appearance::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "polyFillMode") {
       if (value == "point") set_poly_mode(Gfx::POINT_PMODE);
       else if (value == "line") set_poly_mode(Gfx::LINE_PMODE);
@@ -653,17 +672,27 @@ void Appearance::set_attributes(Element* elem)
       continue;
     }
     if (name == "polygonStipple") {
-      if (!compare_to_true(value)) set_polygon_stipple_enable(true);
+      if (!to_boolean(value)) set_polygon_stipple_enable(true);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "depthMask") {
+      set_depth_mask(to_boolean(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "depthEnable") {
+      set_depth_enable(to_boolean(value));
       elem->mark_delete(ai);
       continue;
     }
   }
 
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
-    const std::string& name = elem->get_name(cai);
-    Shared_container cont = elem->get_value(cai);
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
+    const auto& name = elem->get_name(cai);
+    auto cont = elem->get_value(cai);
     if (name == "material") {
       Shared_material material = boost::dynamic_pointer_cast<Material>(cont);
       if (material) {
