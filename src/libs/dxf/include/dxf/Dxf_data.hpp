@@ -23,6 +23,7 @@
 
 #include <vector>
 #include <list>
+#include <string>
 
 #include "SGAL/basic.hpp"
 
@@ -40,6 +41,7 @@
 #include "dxf/Dxf_view_entry.hpp"
 #include "dxf/Dxf_vport_entry.hpp"
 #include "dxf/Dxf_block.hpp"
+#include "dxf/Dxf_section.hpp"
 
 DXF_BEGIN_NAMESPACE
 
@@ -91,6 +93,12 @@ struct SGAL_SGAL_DECL Dxf_data {
 
   // Objects
   std::vector<Dxf_base_object*> m_objects;
+
+  // Thumbnail images
+  Dxf_section m_thumbnailimage;
+
+  // Acds data
+  Dxf_section m_acdsdata;
 };
 
 DXF_END_NAMESPACE

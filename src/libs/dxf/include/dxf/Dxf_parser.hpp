@@ -71,6 +71,7 @@ struct Dxf_line_edge;
 struct Dxf_circle_edge;
 struct Dxf_ellipse_edge;
 struct Dxf_spline_edge;
+struct Dxf_section;
 
 struct Dxf_line_entity;
 struct Dxf_polyline_entity;
@@ -129,6 +130,10 @@ protected:
   void parse_entities();
   void parse_objects();
   void parse_thumbnailimage();
+  void parse_acdsdata();
+
+  // Parse a generic section and store the data.
+  void parse_section(const std::string& name, Dxf_section& section);
 
   // Table entry parsers
   void parse_appid_table();

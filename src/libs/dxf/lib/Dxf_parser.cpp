@@ -16,8 +16,6 @@
 //
 // SPDX-License-Identifier: GPL-3.0+
 //
-// SPDX-License-Identifier: GPL-3.0+
-//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <string>
@@ -50,6 +48,7 @@
 #include "dxf/Dxf_spline_edge.hpp"
 #include "dxf/Dxf_base_entity.hpp"
 #include "dxf/Dxf_base_object.hpp"
+#include "dxf/Dxf_section.hpp"
 
 // Entities
 #include "dxf/Dxf_3dface_entity.hpp"
@@ -217,7 +216,8 @@ Dxf_parser::s_sections = {
   {"BLOCKS", &Dxf_parser::parse_blocks},
   {"ENTITIES", &Dxf_parser::parse_entities},
   {"OBJECTS", &Dxf_parser::parse_objects},
-  {"THUMBNAILIMAGE", &Dxf_parser::parse_thumbnailimage}
+  {"THUMBNAILIMAGE", &Dxf_parser::parse_thumbnailimage},
+  {"ACDSDATA", &Dxf_parser::parse_acdsdata},
 };
 
 //!
@@ -516,7 +516,6 @@ void Dxf_parser::parse_header()
                   if (get_verbose_level() >= 2)
                     std::cout << "Parsing HEADER section" << std::endl;);
 
-  bool done(false);
   while (true) {
     int n;
     import_code(n);
@@ -539,14 +538,10 @@ void Dxf_parser::parse_class()
   m_data->m_classes.emplace_back();
   auto& dxf_class = m_data->m_classes.back();
 
-  bool done(false);
-  while (!done) {
+  while (true) {
     int code;
     import_code(code);
-    if (0 == code) {
-      done = true;
-      break;
-    }
+    if (0 == code) break;
 
     auto it = s_class_members.find(code);
     SGAL_assertion(it != s_class_members.end());
@@ -883,14 +878,40 @@ void Dxf_parser::parse_objects()
   } while (true);
 }
 
-//! \brief parses the thumbnail image section.
-void Dxf_parser::parse_thumbnailimage()
+//! \brief parse a generic section and stores the data.
+void Dxf_parser::parse_section(const std::string& name, Dxf_section& section)
 {
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 2)
-                    std::cout << "Parsing THUMBNAILIMAGE section"
+                    std::cout << "Parsing " << name <<  " section"
                               << std::endl;);
+  while (true) {
+    int n;
+    import_code(n);
+    if (0 == n) break;
+
+    SGAL::String str;
+    import_value(str);
+
+    section.m_items.emplace_back(n, str);
+  }
+
+  SGAL::String str;
+  import_value(str);
+  if ("ENDSEC" == str) return;
+
+  auto* sub_section = new Dxf_section;
+  section.m_sub_sections.emplace_back(str, sub_section);
+  parse_section(str, *sub_section);
 }
+
+//! \brief parses the thumbnail image section.
+void Dxf_parser::parse_thumbnailimage()
+{ parse_section("THUMBNAILIMAGE", m_data->m_acdsdata); }
+
+//! \brief parses the acdsdata section.
+void Dxf_parser::parse_acdsdata()
+{ parse_section("ACDSDATA", m_data->m_acdsdata); }
 
 //! \brief reads a HEADER veriable.
 void Dxf_parser::read_header_member()
