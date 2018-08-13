@@ -28,8 +28,18 @@
 
 DXF_BEGIN_NAMESPACE
 
+class Dxf_data;
+
 class SGAL_SGAL_DECL Dxf_writer : public SGAL::Base_writer {
 public:
+  /*! Construct
+   */
+  Dxf_writer();
+
+  /*! Destruct.
+   */
+  virtual ~Dxf_writer();
+
   /*! Write the scene to a file.
    * \param[in] scene_graph the scene graph that represents the scene.
    * \param[in] os the output stream.
@@ -62,6 +72,39 @@ public:
   /*! Write the OBJECTS section.
    */
   void write_objects();
+
+  /*! Write the THUMBNAILIMAGE section.
+   */
+  void write_thumbnailimage();
+
+  /*! Write the ACDSDATA section.
+   */
+  void write_acdsdata();
+
+protected:
+  /// Exporters
+  //@{
+
+  /*! Export a given code.
+   */
+  void export_code(int code);
+
+  /*! Export a given code.
+   */
+  template <typename T>
+  void export_value(const T& value)   { out() << value << std::endl; }
+
+  //@}
+
+  /*! Initialize with the minimal requirements.
+   */
+  void init();
+
+  //! A dxf data to export.
+  Dxf_data* m_data;
+
+  //! Indicates whether the dxf data is owned, and thus should be deallocated.
+  bool m_owned;
 };
 
 DXF_END_NAMESPACE

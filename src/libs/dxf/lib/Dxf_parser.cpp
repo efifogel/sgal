@@ -916,11 +916,9 @@ void Dxf_parser::parse_acdsdata()
 //! \brief reads a HEADER veriable.
 void Dxf_parser::read_header_member()
 {
-  char c;
-  (*m_is) >> c;
-  SGAL_assertion(c == '$');
   std::string str;
   import_value(str);
+  SGAL_assertion(str[0] == '$');
   const auto& members = Dxf_header_wrapper::s_header_members;
   auto it = members.find(str);
   if (it == members.end()) {
@@ -955,9 +953,7 @@ void Dxf_parser::read_header_member()
                     std::cout << "Parsing header member dimension: "
                               << dim << std::endl;);
 
-  m_data->m_header.m_variables.emplace_back();
-  auto& var = m_data->m_header.m_variables.back();
-  var.m_num = dim;
+  auto& vars = m_data->m_header.m_variables;
 
   std::string* str_p(nullptr);
   double* double_p;
@@ -985,44 +981,44 @@ void Dxf_parser::read_header_member()
   switch (ct) {
    case STRING:
     str_p = new std::string;
-    var.m_value = str_p;
     import_value(str_p[0]);
+    vars.emplace_back(str, str_p);
     break;
 
    case DOUBLE:
-    double_p = new double;
-    var.m_value = double_p;
+    double_p = new double[dim];
     import_value(double_p[0]);
+    vars.emplace_back(str, double_p);
     break;
 
    case INT8:
     int8_p = new int8_t;
-    var.m_value = int8_p;
     import_value(int8_p[0]);
+    vars.emplace_back(str, int8_p);
     break;
 
    case INT16:
     int16_p = new int16_t;
-    var.m_value = int16_p;
     import_value(int16_p[0]);
+    vars.emplace_back(str, int16_p);
     break;
 
    case INT32:
     int32_p = new int32_t;
-    var.m_value = int32_p;
     import_value(int32_p[0]);
+    vars.emplace_back(str, int32_p);
     break;
 
    case UINT:
     uint_p = new SGAL::Uint;
-    var.m_value = uint_p;
     import_value(uint_p[0]);
+    vars.emplace_back(str, uint_p);
     break;
 
    case BOOL:
     bool_p = new bool;
-    var.m_value = bool_p;
     import_value(bool_p[0]);
+    vars.emplace_back(str, bool_p);
     break;
 
    default: SGAL_error();
