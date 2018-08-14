@@ -1339,7 +1339,7 @@ private:
   /*! Obtain the color array of an entity.
    */
   Shared_color_array get_color_array(int32_t color, int16_t color_index,
-                                     const SGAL::String& layer);
+                                     const SGAL::String& layer_name);
 
   /*! Obtain the light-disabled appearance.
    */
