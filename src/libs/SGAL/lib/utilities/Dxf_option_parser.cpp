@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_MSC_VER)
@@ -53,6 +55,9 @@ Dxf_option_parser::Dxf_option_parser() :
     ("dxf-store-data", po::value<Boolean>()->
      default_value(Dxf_configuration::s_def_store_data),
      "Store the dxf data for later use")
+    ("dxf-version", po::value<size_t>()->
+     default_value(Dxf_configuration::s_def_version),
+     "The DXF version number")
    ;
 }
 
@@ -81,6 +86,7 @@ void Dxf_option_parser::configure(Configuration* conf)
   dxf->set_min_bulge(var_map["dxf-min-bulge"].as<Float>());
   dxf->set_refinement_arcs_num(var_map["dxf-refinement-arcs-num"].as<Uint>());
   dxf->set_store_data(var_map["dxf-store-data"].as<Boolean>());
+  dxf->set_version(var_map["dxf-version"].as<size_t>());
 }
 
 SGAL_END_NAMESPACE

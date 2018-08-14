@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_DXF_CONFIGURATION_HPP
@@ -42,6 +44,7 @@ public:
     MIN_BULGE,
     REFINMENT_ARCS_NUM,
     STORE_DATA,
+    VERSION,
     LAST
   };
 
@@ -78,6 +81,7 @@ public:
   Uint* refinement_arcs_num_handle(const Field_info*)
   { return &m_refinement_arcs_num; }
   Boolean* store_data_handle(const Field_info*) { return &m_store_data; }
+  Uint* version_handle(const Field_info*) { return &m_version; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -125,12 +129,21 @@ public:
    */
   Boolean get_store_data() const;
 
+  /*! Set the DXF version number.
+   */
+  void set_version(Uint version);
+
+  /*! Obatin the DXF version number.
+   */
+  Uint get_version() const;
+
   /*! Set defualt values. */
   void reset(const String& def_palette_file_name = s_def_palette_file_name,
              const Vector4f& def_background_color = s_def_background_color,
              const Float def_min_bulge = s_def_min_bulge,
              const Uint def_refinement_arcs_num = s_def_refinement_arcs_num,
-             const Boolean def_store_data = s_def_store_data);
+             const Boolean def_store_data = s_def_store_data,
+             const Uint def_version = s_def_version);
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -158,12 +171,16 @@ private:
   //! Indicates whether to store the dxf data for later use.
   Boolean m_store_data;
 
+  //! The DXF version number.
+  Uint m_version;
+
   // default values
   static const String s_def_palette_file_name;
   static const Vector4f s_def_background_color;
   static const Float s_def_min_bulge;
   static const Uint s_def_refinement_arcs_num;
   static const Boolean s_def_store_data;
+  static const Uint s_def_version;
 };
 
 //! \brief constructs the prototype.
@@ -213,8 +230,13 @@ inline void Dxf_configuration::set_store_data(Boolean flag)
 { m_store_data = flag; }
 
 //! \brief obatins the flag that indicates whether to store the dxf data.
-inline Boolean Dxf_configuration::get_store_data() const
-{ return m_store_data; }
+inline Boolean Dxf_configuration::get_store_data() const { return m_store_data; }
+
+//! \brief sets the DXF version number.
+inline void Dxf_configuration::set_version(Uint version) { m_version = version; }
+
+//! \brief obatins the DXF version number.
+inline Uint Dxf_configuration::get_version() const { return m_version; }
 
 SGAL_END_NAMESPACE
 

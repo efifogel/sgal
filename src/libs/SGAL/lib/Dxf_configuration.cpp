@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <boost/lexical_cast.hpp>
@@ -39,6 +41,7 @@ const Vector4f Dxf_configuration::s_def_background_color{0.9, 0.9, 0.9, 1};
 const Float Dxf_configuration::s_def_min_bulge(0.1f);
 const Uint Dxf_configuration::s_def_refinement_arcs_num(16);
 const Boolean Dxf_configuration::s_def_store_data(false);
+const Uint Dxf_configuration::s_def_version(17);
 
 //! \brief constructs.
 Dxf_configuration::Dxf_configuration(Boolean proto) :
@@ -46,7 +49,8 @@ Dxf_configuration::Dxf_configuration(Boolean proto) :
   m_palette_file_name(s_def_palette_file_name),
   m_background_color(s_def_background_color),
   m_min_bulge(s_def_min_bulge),
-  m_store_data(s_def_store_data)
+  m_store_data(s_def_store_data),
+  m_version(s_def_version)
 {}
 
 //! \brief initializes the node prototype.
@@ -104,11 +108,17 @@ void Dxf_configuration::init_prototype()
   // storeData
   auto store_data_func =
     static_cast<Boolean_handle_function>(&Dxf_configuration::store_data_handle);
-  s_prototype->add_field_info(new SF_bool(STORE_DATA,
-                                          "storeData",
+  s_prototype->add_field_info(new SF_bool(STORE_DATA, "storeData",
                                           Field_rule::RULE_EXPOSED_FIELD,
-                                          store_data_func,
-                                          s_def_store_data,
+                                          store_data_func, s_def_store_data,
+                                          exec_func));
+
+  // version
+  auto version_func =
+    static_cast<Uint_handle_function>(&Dxf_configuration::version_handle);
+  s_prototype->add_field_info(new SF_uint(VERSION, "version",
+                                          Field_rule::RULE_EXPOSED_FIELD,
+                                          version_func, s_def_version,
                                           exec_func));
 }
 
@@ -160,6 +170,11 @@ void Dxf_configuration::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "version") {
+      set_version(boost::lexical_cast<Uint>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
   }
 
   // Remove all the marked attributes:
@@ -171,13 +186,15 @@ void Dxf_configuration::reset(const String& def_palette_file_name,
                               const Vector4f& def_background_color,
                               const Float def_min_bulge,
                               const Uint def_refinement_arcs_num,
-                              const Boolean def_store_data)
+                              const Boolean def_store_data,
+                              const Uint def_version)
 {
   m_palette_file_name = def_palette_file_name;
   m_background_color = def_background_color;
   m_min_bulge = def_min_bulge;
   m_refinement_arcs_num = def_refinement_arcs_num;
   m_store_data = def_store_data;
+  m_version = def_version;
 }
 
 SGAL_END_NAMESPACE
