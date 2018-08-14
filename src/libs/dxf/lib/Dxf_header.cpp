@@ -24,6 +24,7 @@
 #include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
+#include "dxf/Dxf_header.hpp"
 #include "dxf/Dxf_header_wrapper.hpp"
 
 DXF_BEGIN_NAMESPACE
@@ -43,6 +44,23 @@ DXF_BEGIN_NAMESPACE
  * Also, some of the codes listed in the Autodesk page where erroneous (i.e.,
  * HIDETEXT, INTERSECTIONDISPLAY).
  */
+
+//! The DXF version names
+const std::map<size_t, std::string> Dxf_header::s_version_names = {
+  {10, "AC1006"},
+  {11, "AC1009"},
+  {12, "AC1009"},
+  {13, "AC1012"},
+  {14, "AC1014"},
+  {15, "AC1015"},
+  {16, "AC1018"},
+  {17, "AC1021"},
+  {18, "AC1024"},
+  {19, "AC1027"},
+  {20, "AC1029"},
+  {21, "AC1031"},
+  {22, "AC1032"}
+};
 
 const std::map<std::string, std::list<int> >
 Dxf_header_wrapper::s_header_members = {
