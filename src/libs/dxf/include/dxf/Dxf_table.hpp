@@ -40,6 +40,10 @@ struct SGAL_SGAL_DECL Dxf_table : Dxf_base_table {
   Dxf_record_wrapper<Entry> m_entry_wrapper;
   std::vector<Entry> m_entries;
 
+  /*! Destruct.
+   */
+  ~Dxf_table() { clear(); }
+
   /*! Find an entry by name.
    */
   typename std::vector<Entry>::const_iterator find(const std::string& name)
@@ -49,10 +53,22 @@ struct SGAL_SGAL_DECL Dxf_table : Dxf_base_table {
                         { return (entry.m_name == name); });
   }
 
+  /*! Determine whether the table has entries.
+   */
+  bool empty() const;
+
   /*! Clear all entries.
    */
-  void clear() { m_entries.clear(); }
+  void clear();
 };
+
+//! \brief determines whether the table has entries.
+template <typename Entry>
+inline bool Dxf_table<Entry>::empty() const { return m_entries.empty(); }
+
+//! \brief clear all entries.
+template <typename Entry>
+inline void Dxf_table<Entry>::clear() { m_entries.clear(); }
 
 DXF_END_NAMESPACE
 
