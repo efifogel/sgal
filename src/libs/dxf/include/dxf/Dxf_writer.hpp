@@ -29,6 +29,17 @@
 DXF_BEGIN_NAMESPACE
 
 class Dxf_data;
+class Dxf_base_table;
+class Dxf_table_entry;
+class Dxf_appid_entry;
+class Dxf_block_record_entry;
+class Dxf_dimstyle_entry;
+class Dxf_layer_entry;
+class Dxf_ltype_entry;
+class Dxf_style_entry;
+class Dxf_ucs_entry;
+class Dxf_view_entry;
+class Dxf_vport_entry;
 
 class SGAL_SGAL_DECL Dxf_writer : public SGAL::Base_writer {
 public:
@@ -49,42 +60,75 @@ public:
                           std::ostream& os, const std::string& filename,
                           bool is_binary = false);
 
+  /*! Export a section
+   */
+  template <typename Function>
+  void export_section(Function fnc);
+
   /*! Write the HEADER section.
    */
-  void write_header();
+  void export_header();
 
   /*! Write the CLASSES section.
    */
-  void write_classes();
+  void export_classes();
 
   /*! Write the TABLES section.
    */
-  void write_tables();
+  void export_tables();
 
   /*! Write the BLOCKS section.
    */
-  void write_blocks();
+  void export_blocks();
 
   /*! Write the ENTITIES section.
    */
-  void write_entities();
+  void export_entities();
 
   /*! Write the OBJECTS section.
    */
-  void write_objects();
+  void export_objects();
 
   /*! Write the THUMBNAILIMAGE section.
    */
-  void write_thumbnailimage();
+  void export_thumbnailimage();
 
   /*! Write the ACDSDATA section.
    */
-  void write_acdsdata();
+  void export_acdsdata();
 
-protected:
+  /*! Export a given table.
+   */
+  template <typename Table>
+  void export_table(const Table& table, const std::string& name);
+
+  /*! Export a given base_table.
+   */
+  void export_base_table(const Dxf_base_table& base_table);
+
+  /*! Export a generic entry.
+   */
+  template <typename Entry>
+  void export_entry(const Entry& entry, const std::string& name);
+
+  /*! Export a given entry.
+   */
+  void export_base_entry(const Dxf_table_entry& base_entry);
+
+  /*! Export a given entry.
+   */
+  void export_entry(const Dxf_appid_entry& entry);
+  void export_entry(const Dxf_block_record_entry& entry);
+  void export_entry(const Dxf_dimstyle_entry& entry);
+  void export_entry(const Dxf_layer_entry& entry);
+  void export_entry(const Dxf_ltype_entry& entry);
+  void export_entry(const Dxf_style_entry& entry);
+  void export_entry(const Dxf_ucs_entry& entry);
+  void export_entry(const Dxf_view_entry& entry);
+  void export_entry(const Dxf_vport_entry& entry);
+
   /// Exporters
   //@{
-
   /*! Export a given code.
    */
   void export_code(int code);
@@ -94,11 +138,28 @@ protected:
   template <typename T>
   void export_value(const T& value)   { out() << value << std::endl; }
 
+  /*! Export an item if not equal to a given default value.
+   */
+  template <typename T>
+  void export_item(int code, const T& value, const T& default_value);
+
+  /*! Export an item.
+   */
+  template <typename T>
+  void export_item(int code, const T& value);
+
+  /*! Export a string item.
+   */
+  void export_string(int code, const std::string& str);
   //@}
 
+ protected:
   /*! Initialize with the minimal requirements.
    */
   void init();
+
+  //! The scene to export.
+  SGAL::Scene_graph* m_scene_graph;
 
   //! A dxf data to export.
   Dxf_data* m_data;
@@ -106,6 +167,53 @@ protected:
   //! Indicates whether the dxf data is owned, and thus should be deallocated.
   bool m_owned;
 };
+
+//! \brief export an item if not equal to a given default value.
+template <typename T>
+void Dxf_writer::export_item(int code, const T& value, const T& default_value)
+{
+  if (value == default_value) return;
+  export_item(code, value);
+}
+
+//! \brief export an item.
+template <typename T>
+void Dxf_writer::export_item(int code, const T& value)
+{
+  export_code(code);
+  export_value(value);
+}
+
+//! \brief exports an object.
+template <typename Function>
+inline void Dxf_writer::export_section(Function fnc)
+{
+  export_string(0, "SECTION");
+  fnc();
+  export_string(0, "ENDSEC");
+}
+
+/*! Export a given table.
+ */
+template <typename Table>
+void Dxf_writer::export_table(const Table& table, const std::string& name)
+{
+  export_string(0, "TABLE");
+  export_string(2, name);
+  export_base_table(table);
+  export_item(70, table.m_entries.size());
+  for (auto& entry : table.m_entries) export_entry(entry, name);
+  export_string(0, "ENDTAB");
+}
+
+//! \brief export a generic entry.
+template <typename Entry>
+void Dxf_writer::export_entry(const Entry& entry, const std::string& name)
+{
+  export_string(0, name);
+  export_base_entry(entry);
+  export_entry(entry);
+}
 
 DXF_END_NAMESPACE
 
