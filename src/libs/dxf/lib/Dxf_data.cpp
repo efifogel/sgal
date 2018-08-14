@@ -31,6 +31,12 @@ Dxf_data::Dxf_data() {}
 //! \brief destructs.
 Dxf_data::~Dxf_data()
 {
+  // Clear header
+  m_header.clear();
+
+  // Clear classes
+  m_classes.clear();
+
   // Clear tables
   m_appid_table.clear();
   m_block_record_table.clear();
@@ -42,20 +48,30 @@ Dxf_data::~Dxf_data()
   m_view_table.clear();
   m_vport_table.clear();
 
-  // Clear classes
-  m_classes.clear();
-
   // Clear blocks
   m_blocks.clear();
 
   // Clear entities
-
   for (auto* entity : m_entities) delete entity;
   m_entities.clear();
 
   // Clear objects
   for (auto* object : m_objects) delete object;
   m_objects.clear();
+}
+
+//! \brief determiness whether there are any tables.
+bool Dxf_data::tables_empty() const
+{
+  return (m_appid_table.empty() &&
+          m_block_record_table.empty() &&
+          m_dimstyle_table.empty() &&
+          m_layer_table.empty() &&
+          m_ltype_table.empty() &&
+          m_style_table.empty() &&
+          m_ucs_table.empty() &&
+          m_view_table.empty() &&
+          m_vport_table.empty());
 }
 
 DXF_END_NAMESPACE
