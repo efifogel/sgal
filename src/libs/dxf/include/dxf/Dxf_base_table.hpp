@@ -27,14 +27,17 @@
 DXF_BEGIN_NAMESPACE
 
 struct SGAL_SGAL_DECL Dxf_base_table {
+  /*! Destruct.
+   */
+  virtual ~Dxf_base_table() {}
+
+  /// Record members
+  //@{
   SGAL::String m_handle; // Handle
   SGAL::String m_owner_dict; // Hard owner ID/handle to owner dictionary
                         // (optional)
   SGAL::String m_owner_obj; // Soft-pointer ID/handle to owner object
-  SGAL::String m_group; // "{ACAD_XDICTIONARY" and "}" indicate the start and
-                        // end, respectively, of an extension dictionary group.
-                        // This group exists only if persistent reactors have
-                        // been attached to this object (optional)
+  //@}
 };
 
 DXF_END_NAMESPACE
