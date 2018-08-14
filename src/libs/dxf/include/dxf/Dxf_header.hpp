@@ -22,6 +22,8 @@
 #define DXF_HEADER_HPP
 
 #include <list>
+#include <map>
+#include <string>
 
 #include "SGAL/basic.hpp"
 
@@ -31,8 +33,25 @@
 DXF_BEGIN_NAMESPACE
 
 struct SGAL_SGAL_DECL Dxf_header {
+  //! The DXF version names
+  static const std::map<size_t, std::string> s_version_names;
+
+  /*! Determine whether the header is empty.
+   */
+  bool empty() const;
+
+  /*! Clear the header.
+   */
+  void clear();
+
   std::list<Dxf_header_variable> m_variables;
 };
+
+//! \brief determines whether the header is empty.
+inline bool Dxf_header::empty() const { return m_variables.empty(); }
+
+//! \brief clears the header.
+inline void Dxf_header::clear() { m_variables.clear(); }
 
 DXF_END_NAMESPACE
 
