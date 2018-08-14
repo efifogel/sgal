@@ -35,11 +35,14 @@ struct SGAL_SGAL_DECL Dxf_header_full {
                         // AC1009 = R11 and R12
                         // AC1012 = R13
                         // AC1014 = R14
-                        // AC1015 = AutoCAD 2000
-                        // AC1018 = AutoCAD 2004
-                        // AC1021 = AutoCAD 2007
-                        // AC1024 = AutoCAD 2010
-                        // AC1027 = AutoCAD 2013
+                        // AC1015 = AutoCAD 2000 R15
+                        // AC1018 = AutoCAD 2004 R16
+                        // AC1021 = AutoCAD 2007 R17
+                        // AC1024 = AutoCAD 2010 R18
+                        // AC1027 = AutoCAD 2013 R19
+                        // AC1029 = AutoCAD 2015 R20
+                        // AC1031 = AutoCAD 2017 R21
+                        // AC1032 = AutoCad 2018,2019 R22
   double m_angbase;     // Angle 0 direction
   int16_t m_angdir;     // 1 = Clockwise angles; 0 = Counterclockwise angles
   int16_t m_attmode;    // Attribute visibility:
