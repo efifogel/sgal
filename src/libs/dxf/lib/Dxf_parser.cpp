@@ -582,6 +582,7 @@ void Dxf_parser::parse_appid_table()
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 4)
                     std::cout << "Parse APPID table" << std::endl;);
+
   parse_table(m_data->m_appid_table, "APPID");
 }
 
@@ -591,6 +592,7 @@ void Dxf_parser::parse_block_record_table()
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 4)
                     std::cout << "Parse BLOCK_RECORD table" << std::endl;);
+
   parse_table(m_data->m_block_record_table, "BLOCK_RECORD");
 }
 
@@ -600,6 +602,7 @@ void Dxf_parser::parse_dimstyle_table()
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing DIMSTYLE table" << std::endl;);
+
   parse_table(m_data->m_dimstyle_table, "DIMSTYLE");
 }
 
@@ -609,6 +612,7 @@ void Dxf_parser::parse_layer_table()
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing LAYER table" << std::endl;);
+
   parse_table(m_data->m_layer_table, "LAYER");
 }
 
@@ -618,6 +622,7 @@ void Dxf_parser::parse_ltype_table()
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing LTYPE table" << std::endl;);
+
   parse_table(m_data->m_ltype_table, "LTYPE");
 }
 
@@ -627,6 +632,7 @@ void Dxf_parser::parse_style_table()
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing STYLE table" << std::endl;);
+
   parse_table(m_data->m_style_table, "STYLE");
 }
 
@@ -636,6 +642,7 @@ void Dxf_parser::parse_ucs_table()
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing UCS table" << std::endl;);
+
   parse_table(m_data->m_ucs_table, "UCS");
 }
 
@@ -645,6 +652,7 @@ void Dxf_parser::parse_view_table()
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing VIEW table" << std::endl;);
+
   parse_table(m_data->m_view_table, "VIEW");
 }
 
@@ -654,6 +662,7 @@ void Dxf_parser::parse_vport_table()
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing VPORT table" << std::endl;);
+
   parse_table(m_data->m_vport_table, "VPORT");
 }
 
