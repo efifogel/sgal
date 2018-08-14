@@ -33,9 +33,17 @@ DXF_BEGIN_NAMESPACE
  *      a handle to (sub) section.
  */
 struct SGAL_SGAL_DECL Dxf_section {
+  /*! Determine whether section is empty.
+   */
+  bool empty() const;
+
   std::list<std::pair<int, std::string> > m_items;
   std::list<std::pair<std::string, Dxf_section*> > m_sub_sections;
 };
+
+//! \brief determines whether section is empty.
+inline bool Dxf_section::empty() const
+{ return m_items.empty() && m_sub_sections.empty(); }
 
 DXF_END_NAMESPACE
 
