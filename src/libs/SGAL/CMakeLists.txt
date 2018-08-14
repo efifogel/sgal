@@ -1,3 +1,5 @@
+include(WriteCompilerDetectionHeader)
+
 # Check for bison
 find_package(BISON 2.7 REQUIRED)
 find_package(FLEX 2.5.31 REQUIRED)
@@ -680,6 +682,21 @@ foreach (dir ${SGAL_SGAL_INCLUDE_DIRS})
 endforeach()
 
 set_target_properties(SGAL PROPERTIES PUBLIC_HEADER "${SGAL_PUBLIC_HEADERS}")
+
+# Generate files suitable for preprocessor inclusion; these files contain
+# macros to be used in source code
+
+write_compiler_detection_header(FILE climbingstats_compiler_detection.h
+  PREFIX ClimbingStats
+  OUTPUT_FILES_VAR support_files
+  OUTPUT_DIR compilers
+  COMPILERS GNU Clang MSVC
+  FEATURES cxx_generic_lambdas)
+
+# Inctall the support files
+install(FILES
+  ${support_files}
+  DESTINATION include/compilers)
 
 install(TARGETS SGAL
   EXPORT SGALTargets
