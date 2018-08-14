@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef DXF_LTYPE_ENTRY_HPP
@@ -33,6 +35,14 @@ DXF_BEGIN_NAMESPACE
 class Dxf_parser;
 
 struct SGAL_SGAL_DECL Dxf_ltype_entry : Dxf_table_entry {
+  enum {
+    XRF_DEPENDENT = 16,
+    RESOLVED = 32,
+    REFERENCED = 64
+  };
+
+  /// Record members
+  //@{
   SGAL::String m_name;  // Viewport name
   int16_t m_flags;      // 16 = If set, table entry is externally dependent on
                         //      an xref
@@ -74,6 +84,7 @@ struct SGAL_SGAL_DECL Dxf_ltype_entry : Dxf_table_entry {
   std::vector<std::array<double, 2> > m_offsets; // offset values (optional)
   std::vector<SGAL::String> m_text_strings; // Text string (one per element if
                         // code 74 = 2)
+  //@}
 
   /*! Handle a value that requires special handling (as opposed to only storing).
    */
