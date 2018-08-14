@@ -30,6 +30,8 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_header.hpp"
 #include "dxf/Dxf_class.hpp"
+#include "dxf/Dxf_block.hpp"
+#include "dxf/Dxf_section.hpp"
 #include "dxf/Dxf_table.hpp"
 #include "dxf/Dxf_appid_entry.hpp"
 #include "dxf/Dxf_block_record_entry.hpp"
@@ -40,8 +42,6 @@
 #include "dxf/Dxf_ucs_entry.hpp"
 #include "dxf/Dxf_view_entry.hpp"
 #include "dxf/Dxf_vport_entry.hpp"
-#include "dxf/Dxf_block.hpp"
-#include "dxf/Dxf_section.hpp"
 
 DXF_BEGIN_NAMESPACE
 
@@ -57,6 +57,10 @@ struct SGAL_SGAL_DECL Dxf_data {
   /*! Destruct.
    */
   virtual ~Dxf_data();
+
+  /*! Determines whether there are non-empty tables.
+   */
+  bool tables_empty() const;
 
   //! Header data
   Dxf_header m_header;
