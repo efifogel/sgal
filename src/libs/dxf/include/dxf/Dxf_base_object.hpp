@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef DXF_BASE_OBJECT_HPP
@@ -34,8 +36,10 @@ DXF_BEGIN_NAMESPACE
 class Dxf_parser;
 
 struct Dxf_base_object {
+  /// Record members
+  //@{
   SGAL::String m_handle; // Handle
-  SGAL::String m_owner_object; // Soft pointer ID/handle to owner dictionary
+  SGAL::String m_owner_handle; // Soft pointer ID/handle to owner dictionary
                         // (optional)
   SGAL::String m_owner_dict; // Hard owner ID/handle to owner dictionary
                         // (optional)
@@ -43,6 +47,7 @@ struct Dxf_base_object {
                         // BLOCK_RECORD object
   std::map<SGAL::String, std::vector<SGAL::String> > m_xdata;
   std::vector<Dxf_extended_data> m_extended_data;
+  //@}
 
   /*! Construct.
    */
