@@ -31,8 +31,10 @@
 
 DXF_BEGIN_NAMESPACE
 
+//! Enumerations of types of code numbers.
 enum class Code_type { STRING, DOUBLE, INT8, INT16, INT32, UINT, BOOL };
 
+//! Represents a range of code numbers associated with a particular type.
 struct Code_range {
   Code_range(int min, int max, Code_type type) :
     m_min(min), m_max(max), m_type(type)
