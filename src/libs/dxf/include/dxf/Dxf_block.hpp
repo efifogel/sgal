@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef DXF_BLOCK_HPP
@@ -46,7 +48,6 @@ struct SGAL_SGAL_DECL Dxf_block {
 
   /// Member records
   //@{
-
   SGAL::String m_handle; // Handle
   SGAL::String m_owner_handle; // Soft-pointer ID/handle to owner object
   int16_t m_paper_space; // Absent or zero indicates entity is in model space.
@@ -75,7 +76,6 @@ struct SGAL_SGAL_DECL Dxf_block {
   SGAL::String m_description; // Block description (optional)
   std::map<SGAL::String, std::vector<SGAL::String> > m_xdata; // Begin xdata
                         // "{", "}" (opt.)
-
   //@}
 
   /*! Construct
