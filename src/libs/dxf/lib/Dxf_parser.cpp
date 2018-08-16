@@ -153,60 +153,6 @@ std::vector<SGAL::Vector3f> Dxf_parser::s_palette = {
   {0.75, 0.75, 0.75}    // 15
 };
 
-//! Name of code types
-const std::array<SGAL::String, 8> Dxf_parser::s_code_type_names = {
-  "STRING", "DOUBLE", "INT8", "INT16", "INT32", "UINT", "BOOL"
-};
-
-const std::vector<Dxf_parser::Code_range> Dxf_parser::s_code_ranges = {
-  {0, 9, STRING},       // SGAL::String (With the introduction of extended
-                        // symbol names in AutoCAD 2000, the 255 character limit
-                        // has been lifted. There is no explicit limit to the
-                        // number of bytes per line, although most lines should
-                        // fall within 2049 bytes.)
-  {10, 59, DOUBLE},     // Double precision 3D point
-  {60, 79, INT16},      // 16-bit integer value
-  {90, 99, INT32},      // 32-bit integer value
-  {100, 100, STRING},   // SGAL::String (255-character maximum; less for Unicode
-                        // strings)
-  {102, 102, STRING},   // SGAL::String (255-character maximum; less for Unicode
-                        // strings)
-  {105, 105, STRING},   // SGAL::String representing hexadecimal (hex) handle
-                        // value
-  {110, 112, DOUBLE},   // x-value of UCS
-  {120, 122, DOUBLE},   // y-value of UCS
-  {130, 132, DOUBLE},   // z-value of UCS
-  {140, 149, DOUBLE},   // Double precision scalar floating-point value
-  {160, 169, DOUBLE},   // Double precision floating-point value
-  {170, 179, INT16},    // 16-bit integer value
-  {210, 239, DOUBLE},   // x-value of extrusion direction
-  {270, 279, INT16},    // 16-bit integer value
-  {280, 289, INT8},     // 8-bit integer value
-  {290, 299, BOOL},     // Boolean flag value
-  {300, 309, STRING},   // Arbitrary text string
-  {310, 319, STRING},   // SGAL::String representing hex value of binary chunk
-  {320, 329, UINT},     // SGAL::String representing hex handle value
-  {330, 369, STRING},   // SGAL::String representing hex object IDs
-  {370, 379, INT8},     // 8-bit integer value
-  {380, 389, INT8},     // 8-bit integer value
-  {390, 399, STRING},   // SGAL::String representing hex handle value
-  {400, 409, INT16},    // 16-bit integer value
-  {410, 419, STRING},   // SGAL::String
-  {420, 429, INT32},    // 32-bit integer value
-  {430, 439, STRING},   // SGAL::String
-  {440, 449, INT32},    // 32-bit integer value
-  {450, 459, INT32},    // Long ???
-  {460, 469, DOUBLE},   // Double-precision floating-point value
-  {470, 479, STRING},   // SGAL::String
-  {480, 481, UINT},     // SGAL::String representing hex handle value
-  {999, 999, STRING},   // Comment (string)
-  {1000, 1009, STRING}, // SGAL::String. (Same limits as indicated with 0-9 code
-                        // range.)
-  {1010, 1059, DOUBLE}, // Double-precision floating-point value
-  {1060, 1070, INT16},  // 16-bit integer value
-  {1071, 1071, INT32}   // 32-bit integer value
-};
-
 //!
 const std::map<SGAL::String, Dxf_parser::Section_parser>
 Dxf_parser::s_sections = {
@@ -417,6 +363,10 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
   while (true) {
     int n;
     import_code(n);
+    if (999 == n) {
+      read_comment();
+      continue;
+    }
     SGAL_assertion(n == 0);
     std::string str;
     import_value(str);
@@ -427,9 +377,7 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
     std::string section;
     import_value(section);
     auto sec_it = s_sections.find(section);
-    if (sec_it == s_sections.end()) {
-      SGAL_error_msg("Unrecognize section");
-    }
+    if (sec_it == s_sections.end()) SGAL_error_msg("Unrecognize section");
     (this->*(sec_it->second))();
   }
 
@@ -459,25 +407,6 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
   else delete m_data;
 
   return SGAL::Loader_code::SUCCESS;
-}
-
-//! \brief obtains the type of a code
-Dxf_parser::Code_type Dxf_parser::code_type(int code)
-{
-  auto it = std::find_if(s_code_ranges.begin(), s_code_ranges.end(),
-                         [&](const Code_range& code_range)
-                         {
-                           return ((code_range.m_min <= code) &&
-                                   (code <= code_range.m_max));
-                         });
-
-  if (it == s_code_ranges.end()) {
-    std::string unrecognized_msg("Unrecognized code (in range) ");
-    unrecognized_msg +=
-      std::to_string(code) + "\", at line " + std::to_string(m_line) + "!";
-    SGAL_error_msg(unrecognized_msg.c_str());
-  }
-  return it->m_type;
 }
 
 //! \brief parses the header section.
@@ -518,9 +447,9 @@ void Dxf_parser::parse_class()
     SGAL_assertion(it != s_class_members.end());
     auto handle = it->second;
     switch (code_type(code)) {
-     case STRING: assign_member<String_class>(handle, dxf_class); break;
-     case INT8: assign_member<Int8_class>(handle, dxf_class); break;
-     case INT32: assign_member<Int32_class>(handle, dxf_class); break;
+     case Code_type::STRING: assign_member<String_class>(handle, dxf_class); break;
+     case Code_type::INT8: assign_member<Int8_class>(handle, dxf_class); break;
+     case Code_type::INT32: assign_member<Int32_class>(handle, dxf_class); break;
      default: SGAL_error();
     }
   }
@@ -956,46 +885,46 @@ void Dxf_parser::read_header_member()
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 8)
                     std::cout << "Parsing header member code type: "
-                              << s_code_type_names[ct] << std::endl;);
+                              << code_type_name(ct) << std::endl;);
 
   switch (ct) {
-   case STRING:
+   case Code_type::STRING:
     str_p = new std::string;
     import_value(str_p[0]);
     vars.emplace_back(str, str_p);
     break;
 
-   case DOUBLE:
+   case Code_type::DOUBLE:
     double_p = new double[dim];
     import_value(double_p[0]);
     vars.emplace_back(str, double_p);
     break;
 
-   case INT8:
+   case Code_type::INT8:
     int8_p = new int8_t;
     import_value(int8_p[0]);
     vars.emplace_back(str, int8_p);
     break;
 
-   case INT16:
+   case Code_type::INT16:
     int16_p = new int16_t;
     import_value(int16_p[0]);
     vars.emplace_back(str, int16_p);
     break;
 
-   case INT32:
+   case Code_type::INT32:
     int32_p = new int32_t;
     import_value(int32_p[0]);
     vars.emplace_back(str, int32_p);
     break;
 
-   case UINT:
+   case Code_type::UINT:
     uint_p = new SGAL::Uint;
     import_value(uint_p[0]);
     vars.emplace_back(str, uint_p);
     break;
 
-   case BOOL:
+   case Code_type::BOOL:
     bool_p = new bool;
     import_value(bool_p[0]);
     vars.emplace_back(str, bool_p);
@@ -1018,16 +947,16 @@ void Dxf_parser::read_header_member()
     SGAL_TRACE_CODE(m_trace_code,
                     if (get_verbose_level() >= 8)
                       std::cout << "Parsing header member code type: "
-                                << s_code_type_names[ct] << std::endl;);
+                                << code_type_name(ct) << std::endl;);
 
     switch (ct) {
-     case STRING: import_value(str_p[i]);    break;
-     case DOUBLE: import_value(double_p[i]); break;
-     case INT8:   import_value(int8_p[i]);   break;
-     case INT16:  import_value(int16_p[i]);  break;
-     case INT32:  import_value(int32_p[i]);  break;
-     case UINT:   import_value(uint_p[i]);   break;
-     case BOOL:   import_value(bool_p[i]);   break;
+     case Code_type::STRING: import_value(str_p[i]);    break;
+     case Code_type::DOUBLE: import_value(double_p[i]); break;
+     case Code_type::INT8:   import_value(int8_p[i]);   break;
+     case Code_type::INT16:  import_value(int16_p[i]);  break;
+     case Code_type::INT32:  import_value(int32_p[i]);  break;
+     case Code_type::UINT:   import_value(uint_p[i]);   break;
+     case Code_type::BOOL:   import_value(bool_p[i]);   break;
      default: SGAL_error();
     }
     ++i;
@@ -1056,16 +985,16 @@ void Dxf_parser::read_header_member()
     SGAL_TRACE_CODE(m_trace_code,
                     if (get_verbose_level() >= 8)
                       std::cout << "Parsing header member code type: "
-                                << s_code_type_names[ct] << std::endl;);
+                                << code_type_name(ct) << std::endl;);
 
     switch (ct) {
-     case STRING: assign_member<String_header>(handle, header); break;
-     case DOUBLE: assign_member<Double_header>(handle, header); break;
-     case INT8: assign_member<Int8_header>(handle, header); break;
-     case INT16: assign_member<Int16_header>(handle, header); break;
-     case INT32: assign_member<Int32_header>(handle, header); break;
-     case UINT: assign_member<Uint_header>(handle, header); break;
-     case BOOL: assign_member<Bool_header>(handle, header); break;
+     case Code_type::STRING: assign_member<String_header>(handle, header); break;
+     case Code_type::DOUBLE: assign_member<Double_header>(handle, header); break;
+     case Code_type::INT8: assign_member<Int8_header>(handle, header); break;
+     case Code_type::INT16: assign_member<Int16_header>(handle, header); break;
+     case Code_type::INT32: assign_member<Int32_header>(handle, header); break;
+     case Code_type::UINT: assign_member<Uint_header>(handle, header); break;
+     case Code_type::BOOL: assign_member<Bool_header>(handle, header); break;
     }
     return;
   }
@@ -1084,7 +1013,7 @@ void Dxf_parser::read_header_member()
     SGAL_TRACE_CODE(m_trace_code,
                     if (get_verbose_level() >= 8)
                       std::cout << "Parsing header member code type: "
-                                << s_code_type_names[ct] << std::endl;);
+                                << code_type_name(ct) << std::endl;);
     SGAL_assertion(DOUBLE == ct);
     if (dim == 2)
       (*m_is) >> (header.*(boost::get<Double_2d_header>(handle)))[i++];
@@ -1115,30 +1044,30 @@ void Dxf_parser::read_unrecognized(int code)
   std::stringstream stream;
 
   switch (code_type(code)) {
-   case STRING:
+   case Code_type::STRING:
     import_value(str);
     msg += ", string value: " + str;
     break;
 
-   case BOOL:
+   case Code_type::BOOL:
     import_value(bval);
     msg += ", Bool value: " + std::to_string(bval);
     break;
 
-   case INT8:
-   case INT16:
-   case INT32:
+   case Code_type::INT8:
+   case Code_type::INT16:
+   case Code_type::INT32:
     import_value(ival);
     msg += ", int value: " + std::to_string(ival);
     break;
 
-   case UINT:
+   case Code_type::UINT:
     import_value(uval);
     stream << std::hex << uval;
     msg += ", unsigned int value: 0x" + stream.str();
     break;
 
-   case DOUBLE:
+   case Code_type::DOUBLE:
     import_value(dval);
     msg += ", double value: " + std::to_string(dval);
     break;

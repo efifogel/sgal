@@ -19,6 +19,7 @@
 #include "SGAL/basic.hpp"
 
 #include "dxf/basic.hpp"
+#include "dxf/Code_type.hpp"
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_boundary_path.hpp"
 #include "dxf/Dxf_parser.hpp"
@@ -54,7 +55,7 @@ void Dxf_boundary_path::handle_edges_num(int32_t size)
     int code;
     m_parser->import_code(code);
     SGAL_assertion(72 == code);
-    auto ct = m_parser->code_type(code);
+    auto ct = code_type(code);
 
     int16_t type;
     m_parser->import_value(type);

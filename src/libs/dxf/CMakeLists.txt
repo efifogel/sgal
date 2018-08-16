@@ -3,6 +3,7 @@
 # dxf
 
 set(DXF_OTHER_SOURCE_FILES ${DXF_OTHER_SOURCE_FILES} lib/init.cpp)
+set(DXF_OTHER_SOURCE_FILES ${DXF_OTHER_SOURCE_FILES} lib/code_type.cpp)
 set(DXF_OTHER_SOURCE_FILES ${DXF_OTHER_SOURCE_FILES} lib/Dxf_base_boundary_path.cpp)
 set(DXF_OTHER_SOURCE_FILES ${DXF_OTHER_SOURCE_FILES} lib/Dxf_base_entity.cpp)
 set(DXF_OTHER_SOURCE_FILES ${DXF_OTHER_SOURCE_FILES} lib/Dxf_base_entry.cpp)

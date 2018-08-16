@@ -21,10 +21,14 @@
 #ifndef DXF_WRITER_HPP
 #define DXF_WRITER_HPP
 
+#include <boost/variant.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Base_writer.hpp"
 
 #include "dxf/basic.hpp"
+#include "dxf/Code_type.hpp"
+#include "dxf/Dxf_exporter.hpp"
 
 DXF_BEGIN_NAMESPACE
 
@@ -151,6 +155,29 @@ public:
   /*! Export a string item.
    */
   void export_string(int code, const std::string& str);
+
+  /*! Export an item.
+   * \param[in] code the code to export.
+   * \param[in] record the source record.
+   * \param[in] handle the handle to the struct member.
+   */
+  template <typename T, typename Record, typename MemberVariant>
+  void export_member(int code, const Record& record, MemberVariant handle);
+
+  /*! Export an element of an array.
+   * \param[in] code the code to export.
+   * \param[in] record the source struct.
+   * \param[in] handle the handle to the member.
+   * \param[in] index the index of the array element.
+   */
+  template <typename T, typename Record, typename MemberVariant>
+  void export_member(int code, const Record& record, MemberVariant handle,
+                     int index);
+
+  /*! Export an item.
+   */
+  template <typename Record, typename Members>
+  void export_member(int code, const Record& record, Members& members);
   //@}
 
  protected:
@@ -181,7 +208,64 @@ template <typename T>
 void Dxf_writer::export_item(int code, const T& value)
 {
   export_code(code);
-  export_value(value);
+  Dxf_exporter<T> exporter(*this);
+  exporter(value);
+}
+
+//! \brief exports an item.
+template <typename T, typename Record, typename MemberVariant>
+void Dxf_writer::export_member(int code, const Record& record,
+                               MemberVariant handle)
+{ export_item(code, record.*(boost::get<T>(handle))); }
+
+//! \brief exports an element of an array.
+template <typename T, typename Record, typename MemberVariant>
+void Dxf_writer::export_member(int code, const Record& record,
+                               MemberVariant handle, int index)
+{ export_item(code, (record.*(boost::get<T>(handle)))[index]); }
+
+//! \brief Export an item.
+template <typename Record_, typename Members>
+void Dxf_writer::export_member(int code, const Record_& record, Members& members)
+{
+  typedef Record_                             Record;
+
+  typedef SGAL::String Record::*              String_record;
+  typedef bool Record::*                      Bool_record;
+  typedef int8_t Record::*                    Int8_record;
+  typedef int16_t Record::*                   Int16_record;
+  typedef int32_t Record::*                   Int32_record;
+  typedef double Record::*                    Double_record;
+  typedef SGAL::Uint Record::*                Uint_record;
+  typedef double (Record::*Double_2d_record)[2];
+  typedef double (Record::*Double_3d_record)[3];
+
+  auto it = members.find(code);
+  SGAL_assertion(it != members.end());
+  auto ct = code_type(code);
+
+  auto handle = it->second.m_handle;
+  auto size = it->second.m_size;
+  auto index = it->second.m_index;
+
+  switch (ct) {
+   case Code_type::STRING: export_member<String_record>(code, record, handle); break;
+   case Code_type::BOOL: export_member<Bool_record>(code, record, handle); break;
+   case Code_type::INT8: export_member<Int8_record>(code, record, handle); break;
+   case Code_type::INT16: export_member<Int16_record>(code, record, handle); break;
+   case Code_type::INT32: export_member<Int32_record>(code, record, handle); break;
+   case Code_type::UINT: export_member<Uint_record>(code, record, handle); break;
+
+   case Code_type::DOUBLE:
+    switch (size) {
+     case 1: export_member<Double_record>(code, record, handle); break;
+     case 2: export_member<Double_2d_record>(code, record, handle, index); break;
+     case 3: export_member<Double_3d_record>(code, record, handle, index); break;
+    }
+    break;
+
+   default: SGAL_error();
+  }
 }
 
 //! \brief exports an object.

@@ -48,6 +48,7 @@
 #include "dxf/Dxf_simple_record_wrapper.hpp"
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_extended_data.hpp"
+#include "dxf/Code_type.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -172,18 +173,6 @@ private:
     OBJECTS,
     THUMBNAILIMAGE,
     NUM_SECTIONS
-  };
-
-  enum Code_type { STRING, DOUBLE, INT8, INT16, INT32, UINT, BOOL };
-
-  struct Code_range {
-    Code_range(int min, int max, Code_type type) :
-      m_min(min), m_max(max), m_type(type)
-    {}
-
-    int m_min;
-    int m_max;
-    Code_type m_type;
   };
 
   //! The type of a section parser member function.
@@ -440,12 +429,12 @@ private:
     typedef double Record::*                    Double_record;
 
     switch (ct) {
-     case STRING: assign_member<String_record>(handle, record); break;
-     case UINT: assign_member<Uint_record>(handle, record);  break;
-     case INT8: assign_member<Int8_record>(handle, record);  break;
-     case INT16: assign_member<Int16_record>(handle, record);  break;
-     case INT32: assign_member<Int32_record>(handle, record);  break;
-     case DOUBLE: assign_member<Double_record>(handle, record);  break;
+     case Code_type::STRING: assign_member<String_record>(handle, record); break;
+     case Code_type::UINT: assign_member<Uint_record>(handle, record);  break;
+     case Code_type::INT8: assign_member<Int8_record>(handle, record);  break;
+     case Code_type::INT16: assign_member<Int16_record>(handle, record);  break;
+     case Code_type::INT32: assign_member<Int32_record>(handle, record);  break;
+     case Code_type::DOUBLE: assign_member<Double_record>(handle, record);  break;
      default: break;
     }
   }
@@ -485,14 +474,14 @@ private:
     typedef double (Record::*Double_3d_record)[3];
 
     switch (ct) {
-     case STRING: assign_member<String_record>(handle, record); break;
-     case BOOL: assign_member<Bool_record>(handle, record); break;
-     case INT8: assign_member<Int8_record>(handle, record); break;
-     case INT16: assign_member<Int16_record>(handle, record); break;
-     case INT32: assign_member<Int32_record>(handle, record); break;
-     case UINT: assign_member<Uint_record>(handle, record); break;
+     case Code_type::STRING: assign_member<String_record>(handle, record); break;
+     case Code_type::BOOL: assign_member<Bool_record>(handle, record); break;
+     case Code_type::INT8: assign_member<Int8_record>(handle, record); break;
+     case Code_type::INT16: assign_member<Int16_record>(handle, record); break;
+     case Code_type::INT32: assign_member<Int32_record>(handle, record); break;
+     case Code_type::UINT: assign_member<Uint_record>(handle, record); break;
 
-     case DOUBLE:
+     case Code_type::DOUBLE:
       switch (size) {
        case 1: assign_member<Double_record>(handle, record); break;
        case 2: assign_member<Double_2d_record>(handle, record, index); break;
@@ -527,12 +516,12 @@ private:
   void handle_record_value(Code_type ct, Handler handler, Record_& record)
   {
     switch (ct) {
-     case STRING: handle_string_item(handler, record);  break;
-     case INT8: handle_item<int8_t>(handler, record);  break;
-     case INT16: handle_item<int16_t>(handler, record);  break;
-     case INT32: handle_item<int32_t>(handler, record);  break;
-     case UINT: handle_item<SGAL::Uint>(handler, record);  break;
-     case DOUBLE: handle_item<double>(handler, record);  break;
+     case Code_type::STRING: handle_string_item(handler, record);  break;
+     case Code_type::INT8: handle_item<int8_t>(handler, record);  break;
+     case Code_type::INT16: handle_item<int16_t>(handler, record);  break;
+     case Code_type::INT32: handle_item<int32_t>(handler, record);  break;
+     case Code_type::UINT: handle_item<SGAL::Uint>(handler, record);  break;
+     case Code_type::DOUBLE: handle_item<double>(handler, record);  break;
      default: SGAL_error();
     }
   }
@@ -693,7 +682,7 @@ private:
     // the type of the value, e.g., for a SGAL::String value, we require:
     //    bool (Record::*)(int, const SGAL::String&)
     switch (ct) {
-     case STRING:
+     case Code_type::STRING:
       import_value(str);
       if (handle_value<has_member_function_handle_value
           <bool (Record::*)(int, const SGAL::String&)>::value>(code, str,
@@ -702,7 +691,7 @@ private:
       msg += ", string value: " + str;
       break;
 
-     case BOOL:
+     case Code_type::BOOL:
       import_value(bool_val);
       if (handle_value<has_member_function_handle_value
           <bool (Record::*)(int, bool)>::value>(code, bool_val, record))
@@ -710,7 +699,7 @@ private:
       msg += ", bool value: " + std::to_string(bool_val);
       break;
 
-     case INT8:
+     case Code_type::INT8:
       import_value(int8_val);
       if (handle_value<has_member_function_handle_value
           <bool (Record::*)(int, int8_t)>::value>(code, int8_val, record))
@@ -718,7 +707,7 @@ private:
       msg += ", int8_t value: " + std::to_string((int)int8_val);
       break;
 
-     case INT16:
+     case Code_type::INT16:
       import_value(int16_val);
       if (handle_value<has_member_function_handle_value
           <bool (Record::*)(int, int16_t)>::value>(code, int16_val, record))
@@ -726,7 +715,7 @@ private:
       msg += ", int16_t value: " + std::to_string(int16_val);
       break;
 
-     case INT32:
+     case Code_type::INT32:
       import_value(int32_val);
       if (handle_value<has_member_function_handle_value
           <bool (Record::*)(int, int32_t)>::value>(code, int32_val, record))
@@ -734,7 +723,7 @@ private:
       msg += ", int32_t value: " + std::to_string(int32_val);
       break;
 
-     case UINT:
+     case Code_type::UINT:
       import_value(uint_val);
       if (handle_value<has_member_function_handle_value
           <bool (Record::*)(int, SGAL::Uint)>::value>(code, uint_val, record))
@@ -743,7 +732,7 @@ private:
       msg += ", unsigned int value: 0x" + stream.str();
       break;
 
-     case DOUBLE:
+     case Code_type::DOUBLE:
       import_value(double_val);
       if (handle_value<has_member_function_handle_value
           <bool (Record::*)(int, double)>::value>(code, double_val, record))
@@ -892,11 +881,6 @@ private:
    */
   void clear();
 
-  /*! Obtain the type of a code
-   * \param code the given code.
-   */
-  Code_type code_type(int code);
-
   /*! Export a code
    */
   void export_code(int code)
@@ -950,7 +934,7 @@ private:
    * same type, naturally).
    * \param[handle] handle the handle to the member.
    * \param[target] target the target struct.
-   * \param[index] the index of the array item.
+   * \param[index] the index of the array element.
    */
   template <typename T, typename MemberVariant, typename Target>
   void assign_member(MemberVariant handle, Target& target, int index)
@@ -1375,8 +1359,6 @@ private:
   static std::vector<SGAL::Vector3f> s_palette;
 
   static const std::map<SGAL::String, Section_parser> s_sections;
-  static const std::vector<Code_range> s_code_ranges;
-  static const std::array<SGAL::String, 8> s_code_type_names;
   static const std::map<int, Class_member_type> s_class_members;
   static const std::map<SGAL::String, Table_parser> s_tables;
   static const std::map<SGAL::String, Entity_parser> s_entities;
