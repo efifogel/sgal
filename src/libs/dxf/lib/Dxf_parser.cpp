@@ -207,16 +207,6 @@ Dxf_ucs_wrapper::s_record_handlers = {};
 //@}
 
 //!
-typedef Dxf_simple_record_wrapper<Dxf_base_table>       Dxf_base_table_wrapper;
-template <>
-const std::map<int, Dxf_base_table_wrapper::Record_member_type>
-Dxf_base_table_wrapper::s_record_members = {
-  {5, &Dxf_base_table::m_handle},
-  {360, &Dxf_base_table::m_owner_dict},
-  {330, &Dxf_base_table::m_owner_obj}
-};
-
-//!
 const std::map<SGAL::String, Dxf_parser::Entity_parser>
 Dxf_parser::s_entities = {
   { "3DFACE", &Dxf_parser::parse_3dface_entity },
@@ -296,19 +286,6 @@ Dxf_parser::s_objects = {
   {"VISUALSTYLE", &Dxf_parser::parse_visualstyle_object},
   {"WIPEOUTVARIABLES", &Dxf_parser::parse_wipeoutvariables_object},
   {"XRECORD", &Dxf_parser::parse_xrecord_object}
-};
-
-//!
-typedef Dxf_simple_record_wrapper<Dxf_base_object>
-                                                Dxf_base_object_wrapper;
-
-//!
-template <>
-const std::map<int, Dxf_base_object_wrapper::Record_member_type>
-Dxf_base_object_wrapper::s_record_members = {
-  {5, &Dxf_base_object::m_handle},
-  {360, &Dxf_base_object::m_owner_dict},
-  {330, &Dxf_base_object::m_owner_object}
 };
 
 //! \brief constructs.
