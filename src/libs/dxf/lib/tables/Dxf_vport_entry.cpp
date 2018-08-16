@@ -110,7 +110,7 @@ Dxf_vport_wrapper::s_record_members = {
   {142, {&Dxf_vport_entry::m_contrast, 1, 0}},
   {63, {&Dxf_vport_entry::m_ambient_color, 1, 0}},
   {421, {&Dxf_vport_entry::m_ambient_color_i32, 1, 0}},
-  {31, {&Dxf_vport_entry::m_ambient_color_name, 1, 0}}
+  {431, {&Dxf_vport_entry::m_ambient_color_name, 1, 0}}
 };
 
 //!
