@@ -246,24 +246,6 @@ Dxf_parser::s_tables = {
   { "VPORT", &Dxf_parser::parse_vport_table }
 };
 
-/// Appid table
-//@{
-typedef Dxf_record_wrapper<Dxf_appid_entry>     Dxf_appid_wrapper;
-
-//!
-template <>
-const std::map<int, Dxf_appid_wrapper::Record_member>
-Dxf_appid_wrapper::s_record_members = {
-  {2, {&Dxf_appid_entry::m_name, 1, 0}},
-  {70, {&Dxf_appid_entry::m_flags, 1, 0}}
-};
-
-//!
-template <>
-const std::map<int, Dxf_appid_wrapper::Record_handler_type>
-Dxf_appid_wrapper::s_record_handlers = {};
-//@}
-
 /// Ucs table
 typedef Dxf_record_wrapper<Dxf_ucs_entry>               Dxf_ucs_wrapper;
 
@@ -286,17 +268,6 @@ Dxf_base_table_wrapper::s_record_members = {
   {5, &Dxf_base_table::m_handle},
   {360, &Dxf_base_table::m_owner_dict},
   {330, &Dxf_base_table::m_owner_obj}
-};
-
-//!
-typedef Dxf_simple_record_wrapper<Dxf_table_entry>      Dxf_entry_wrapper;
-template <>
-const std::map<int, Dxf_entry_wrapper::Record_member_type>
-Dxf_entry_wrapper::s_record_members = {
-  {5, &Dxf_table_entry::m_handle},
-  {105, &Dxf_table_entry::m_handle}, // DYMSTYLE only, probably due to old vers.
-  {360, &Dxf_table_entry::m_owner_dict},
-  {330, &Dxf_table_entry::m_owner_obj}
 };
 
 //!

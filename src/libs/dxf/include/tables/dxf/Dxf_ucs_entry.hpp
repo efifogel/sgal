@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef DXF_UCS_ENTRY_HPP
@@ -23,11 +25,11 @@
 #include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
-#include "dxf/Dxf_table_entry.hpp"
+#include "dxf/Dxf_base_entry.hpp"
 
 DXF_BEGIN_NAMESPACE
 
-struct SGAL_SGAL_DECL Dxf_ucs_entry : Dxf_table_entry {
+struct SGAL_SGAL_DECL Dxf_ucs_entry : Dxf_base_entry {
 };
 
 DXF_END_NAMESPACE

@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef DXF_BLOCK_RECORD_ENTRY_HPP
@@ -27,14 +29,13 @@
 #include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
-#include "dxf/Dxf_table_entry.hpp"
+#include "dxf/Dxf_base_entry.hpp"
 
 DXF_BEGIN_NAMESPACE
 
-struct SGAL_SGAL_DECL Dxf_block_record_entry : Dxf_table_entry {
+struct SGAL_SGAL_DECL Dxf_block_record_entry : Dxf_base_entry {
   /// Record members
   //@{
-
   SGAL::String m_name;  // Block name
   SGAL::String m_layout_handle; // Hard-pointer ID/handle to associated LAYOUT
                         // object
@@ -75,7 +76,6 @@ struct SGAL_SGAL_DECL Dxf_block_record_entry : Dxf_table_entry {
   SGAL::String m_string_data; // Xdata string data "DesignCenter Data" (optional)
   std::map<SGAL::String, std::list<SGAL::String> > m_xdata; // Begin xdata
                         // "{", "}" (opt.)
-
   //@}
 
   /// Record handles

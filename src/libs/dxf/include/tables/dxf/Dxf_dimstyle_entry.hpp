@@ -25,12 +25,14 @@
 #include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
-#include "dxf/Dxf_table_entry.hpp"
+#include "dxf/Dxf_base_entry.hpp"
 #include "dxf/Dxf_extended_data.hpp"
 
 DXF_BEGIN_NAMESPACE
 
-struct SGAL_SGAL_DECL Dxf_dimstyle_entry : Dxf_table_entry {
+struct SGAL_SGAL_DECL Dxf_dimstyle_entry : Dxf_base_entry {
+  /// Record members
+  //@{
   SGAL::String m_name;  // Dimension style name
   int16_t m_flags;      // Standard flag values (bit-coded values):
                         // 16 = If set, table entry is externally dependent on
@@ -114,6 +116,7 @@ struct SGAL_SGAL_DECL Dxf_dimstyle_entry : Dxf_table_entry {
   SGAL::String m_dimblk2; // DIMBLK2 (handle of referenced BLOCK)
   int8_t m_dimension_line_weight; // DIMLWD (lineweight enum value)
   int8_t m_dimension_extension_line_weight; // DIMLWE (lineweight enum value)
+  //@}
 
   std::vector<Dxf_extended_data> m_extended_data;
 };

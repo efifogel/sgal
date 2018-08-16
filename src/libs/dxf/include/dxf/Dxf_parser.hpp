@@ -44,7 +44,7 @@
 #include "dxf/Dxf_class.hpp"
 #include "dxf/Dxf_block.hpp"
 #include "dxf/Dxf_base_table.hpp"
-#include "dxf/Dxf_table_entry.hpp"
+#include "dxf/Dxf_base_entry.hpp"
 #include "dxf/Dxf_simple_record_wrapper.hpp"
 #include "dxf/Dxf_record_wrapper.hpp"
 #include "dxf/Dxf_extended_data.hpp"
@@ -1224,8 +1224,8 @@ private:
         }
 
         auto& base_members =
-          Dxf_simple_record_wrapper<Dxf_table_entry>::s_record_members;
-        auto& base_entry = static_cast<Dxf_table_entry&>(entry);
+          Dxf_simple_record_wrapper<Dxf_base_entry>::s_record_members;
+        auto& base_entry = static_cast<Dxf_base_entry&>(entry);
         if (assign_simple_record_value(code, base_entry, base_members)) continue;
 
         auto& members = Dxf_record_wrapper<Entry>::s_record_members;

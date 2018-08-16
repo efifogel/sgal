@@ -23,11 +23,13 @@
 #include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
-#include "dxf/Dxf_table_entry.hpp"
+#include "dxf/Dxf_base_entry.hpp"
 
 DXF_BEGIN_NAMESPACE
 
-struct SGAL_SGAL_DECL Dxf_appid_entry : Dxf_table_entry {
+struct SGAL_SGAL_DECL Dxf_appid_entry : Dxf_base_entry {
+  /// Record members
+  //@{
   SGAL::String m_name;  // User-supplied (or application-supplied) application
                         // name (for extended data).
   int16_t m_flags;      // 16 = If set, table entry is externally dependent on
@@ -41,6 +43,7 @@ struct SGAL_SGAL_DECL Dxf_appid_entry : Dxf_table_entry {
                         //      benefit of AutoCAD commands. It can be ignored
                         //      by most programs that read DXF files and need
                         //      not be set by programs that write DXF files)
+  //@}
 };
 
 DXF_END_NAMESPACE

@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef DXF_TABLE_ENTRY_HPP
@@ -31,11 +33,9 @@
 
 DXF_BEGIN_NAMESPACE
 
-struct SGAL_SGAL_DECL Dxf_table_entry {
-
+struct SGAL_SGAL_DECL Dxf_base_entry {
   /// Member records
   //@{
-
   SGAL::String m_handle; // Handle
   SGAL::String m_owner_dict; // Hard owner ID/handle to owner dictionary
                         // (optional)
@@ -47,7 +47,6 @@ struct SGAL_SGAL_DECL Dxf_table_entry {
                         // This group exists only if persistent reactors have
                         // been attached to this object (optional)
   std::vector<Dxf_extended_data> m_extended_data;
-
   //@}
 
   /*! Initialize */

@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef DXF_STYLE_ENTRY_HPP
@@ -23,11 +25,13 @@
 #include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
-#include "dxf/Dxf_table_entry.hpp"
+#include "dxf/Dxf_base_entry.hpp"
 
 DXF_BEGIN_NAMESPACE
 
-struct SGAL_SGAL_DECL Dxf_style_entry : Dxf_table_entry {
+struct SGAL_SGAL_DECL Dxf_style_entry : Dxf_base_entry {
+  /// Record members
+  //@{
   SGAL::String m_name;  // Style name
   int16_t m_flags;      // 16 = If set, table entry is externally dependent on
                         //      an xref
@@ -52,6 +56,7 @@ struct SGAL_SGAL_DECL Dxf_style_entry : Dxf_table_entry {
   SGAL::String m_big_font_file_name; // Bigfont file name; blank if none
   int32_t m_font_flags; // A truetype font's pitch and family, charset, and
                         // italic and bold flags
+  //@}
 };
 
 DXF_END_NAMESPACE

@@ -30,7 +30,7 @@ DXF_BEGIN_NAMESPACE
 
 class Dxf_data;
 class Dxf_base_table;
-class Dxf_table_entry;
+class Dxf_base_entry;
 class Dxf_appid_entry;
 class Dxf_block_record_entry;
 class Dxf_dimstyle_entry;
@@ -113,7 +113,7 @@ public:
 
   /*! Export a given entry.
    */
-  void export_base_entry(const Dxf_table_entry& base_entry);
+  void export_base_entry(const Dxf_base_entry& base_entry);
 
   /*! Export a given entry.
    */

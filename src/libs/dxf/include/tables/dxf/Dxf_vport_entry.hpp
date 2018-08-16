@@ -23,11 +23,13 @@
 #include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
-#include "dxf/Dxf_table_entry.hpp"
+#include "dxf/Dxf_base_entry.hpp"
 
 DXF_BEGIN_NAMESPACE
 
-struct SGAL_SGAL_DECL Dxf_vport_entry : Dxf_table_entry {
+struct SGAL_SGAL_DECL Dxf_vport_entry : Dxf_base_entry {
+  /// Record members
+  //@{
   SGAL::String m_name;  // Viewport name
   int16_t m_flags;      // 16 = If set, table entry is externally dependent on
                         //      an xref
@@ -123,6 +125,7 @@ struct SGAL_SGAL_DECL Dxf_vport_entry : Dxf_table_entry {
   int16_t m_ambient_color; // Ambient color (only output when non-black) 63
   int32_t m_ambient_color_i32; // Ambient color
   SGAL::String m_ambient_color_name; // Ambient color
+  //@}
 };
 
 DXF_END_NAMESPACE

@@ -5,6 +5,7 @@
 set(DXF_OTHER_SOURCE_FILES ${DXF_OTHER_SOURCE_FILES} lib/init.cpp)
 set(DXF_OTHER_SOURCE_FILES ${DXF_OTHER_SOURCE_FILES} lib/Dxf_base_boundary_path.cpp)
 set(DXF_OTHER_SOURCE_FILES ${DXF_OTHER_SOURCE_FILES} lib/Dxf_base_entity.cpp)
+set(DXF_OTHER_SOURCE_FILES ${DXF_OTHER_SOURCE_FILES} lib/Dxf_base_entry.cpp)
 set(DXF_OTHER_SOURCE_FILES ${DXF_OTHER_SOURCE_FILES} lib/Dxf_block.cpp)
 set(DXF_OTHER_SOURCE_FILES ${DXF_OTHER_SOURCE_FILES} lib/Dxf_boundary_path.cpp)
 set(DXF_OTHER_SOURCE_FILES ${DXF_OTHER_SOURCE_FILES} lib/Dxf_circle_edge.cpp)
@@ -110,6 +111,7 @@ set(DXF_SOURCE_FILES ${DXF_SOURCE_FILES} ${DXF_OBJECTS_SOURCE_FILES} ${DXF_OBJEC
 source_group(src\\objects FILES ${DXF_OBJECTS_SOURCE_FILES} ${DXF_OBJECTS_HEADER_FILES})
 
 # dxf tables
+set(DXF_TABLES_SOURCE_FILES ${DXF_TABLES_SOURCE_FILES} lib/tables/Dxf_appid_entry.cpp)
 set(DXF_TABLES_SOURCE_FILES ${DXF_TABLES_SOURCE_FILES} lib/tables/Dxf_dimstyle_entry.cpp)
 set(DXF_TABLES_SOURCE_FILES ${DXF_TABLES_SOURCE_FILES} lib/tables/Dxf_block_record_entry.cpp)
 set(DXF_TABLES_SOURCE_FILES ${DXF_TABLES_SOURCE_FILES} lib/tables/Dxf_layer_entry.cpp)
