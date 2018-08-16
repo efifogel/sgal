@@ -1,44 +1,44 @@
 999
 dxfrw 0.5.10
-0
+  0
 SECTION
-2
+  2
 HEADER
-9
+  9
 $ACADVER
-1
+  1
 AC1021
-9
+  9
 $HANDSEED
-5
+  5
 20000
-0
+  0
 ENDSEC
-0
+  0
 SECTION
-2
+  2
 CLASSES
-0
+  0
 ENDSEC
-0
+  0
 SECTION
-2
+  2
 TABLES
-0
+  0
 TABLE
-2
+  2
 VPORT
-5
+  5
 8
 330
 0
 100
 AcDbSymbolTable
-70
+ 70
 1
-0
+  0
 VPORT
-5
+  5
 31
 330
 2
@@ -46,79 +46,79 @@ VPORT
 AcDbSymbolTableRecord
 100
 AcDbViewportTableRecord
-2
+  2
 *ACTIVE
-70
+ 70
 0
-10
+ 10
 0
-20
+ 20
 0
-11
+ 11
 1
-21
+ 21
 1
-12
+ 12
 209.475294253
-22
+ 22
 86.0026335861
-13
+ 13
 0
-23
+ 23
 0
-14
+ 14
 10
-24
+ 24
 10
-15
+ 15
 10
-25
+ 25
 10
-16
+ 16
 0
-26
+ 26
 0
-36
+ 36
 1
-17
+ 17
 0
-27
+ 27
 0
-37
+ 37
 0
-40
+ 40
 319.744231092
-41
+ 41
 2.12946428571
-42
+ 42
 50
-43
+ 43
 0
-44
+ 44
 0
-50
+ 50
 0
-51
+ 51
 0
-71
+ 71
 0
-72
+ 72
 100
-73
+ 73
 1
-74
+ 74
 3
-75
+ 75
 0
-76
+ 76
 0
-77
+ 77
 0
-78
+ 78
 0
 281
 0
-65
+ 65
 1
 110
 0
@@ -138,16 +138,12 @@ AcDbViewportTableRecord
 1
 132
 0
-79
+ 79
 0
 146
 0
 348
 10020
-60
-7
-61
-5
 292
 1
 282
@@ -156,27 +152,27 @@ AcDbViewportTableRecord
 0
 142
 0
-63
+ 63
 250
 421
 3358443
-0
+  0
 ENDTAB
-0
+  0
 TABLE
-2
+  2
 LTYPE
-5
+  5
 5
 330
 0
 100
 AcDbSymbolTable
-70
+ 70
 4
-0
+  0
 LTYPE
-5
+  5
 14
 330
 5
@@ -184,21 +180,21 @@ LTYPE
 AcDbSymbolTableRecord
 100
 AcDbLinetypeTableRecord
-2
+  2
 ByBlock
-70
+ 70
 0
-3
+  3
 
-72
+ 72
 65
-73
+ 73
 0
-40
+ 40
 0
-0
+  0
 LTYPE
-5
+  5
 15
 330
 5
@@ -206,21 +202,21 @@ LTYPE
 AcDbSymbolTableRecord
 100
 AcDbLinetypeTableRecord
-2
+  2
 ByLayer
-70
+ 70
 0
-3
+  3
 
-72
+ 72
 65
-73
+ 73
 0
-40
+ 40
 0
-0
+  0
 LTYPE
-5
+  5
 16
 330
 5
@@ -228,35 +224,35 @@ LTYPE
 AcDbSymbolTableRecord
 100
 AcDbLinetypeTableRecord
-2
+  2
 Continuous
-70
+ 70
 0
-3
+  3
 Solid line
-72
+ 72
 65
-73
+ 73
 0
-40
+ 40
 0
-0
+  0
 ENDTAB
-0
+  0
 TABLE
-2
+  2
 LAYER
-5
+  5
 2
 330
 0
 100
 AcDbSymbolTable
-70
+ 70
 1
-0
+  0
 LAYER
-5
+  5
 10
 330
 2
@@ -264,35 +260,35 @@ LAYER
 AcDbSymbolTableRecord
 100
 AcDbLayerTableRecord
-2
+  2
 0
-70
+ 70
 0
-62
+ 62
 7
-6
+  6
 CONTINUOUS
 370
 -3
 390
 F
-0
+  0
 ENDTAB
-0
+  0
 TABLE
-2
+  2
 STYLE
-5
+  5
 3
 330
 0
 100
 AcDbSymbolTable
-70
+ 70
 3
-0
+  0
 STYLE
-5
+  5
 45
 330
 2
@@ -300,69 +296,69 @@ STYLE
 AcDbSymbolTableRecord
 100
 AcDbTextStyleTableRecord
-2
+  2
 Standard
-70
+ 70
 0
-40
+ 40
 0
-41
+ 41
 1
-50
+ 50
 0
-71
+ 71
 0
-42
+ 42
 1
-3
+  3
 txt
-4
+  4
 
-0
+  0
 ENDTAB
-0
+  0
 TABLE
-2
+  2
 VIEW
-5
+  5
 6
 330
 0
 100
 AcDbSymbolTable
-70
+ 70
 0
-0
+  0
 ENDTAB
-0
+  0
 TABLE
-2
+  2
 UCS
-5
+  5
 7
 330
 0
 100
 AcDbSymbolTable
-70
+ 70
 0
-0
+  0
 ENDTAB
-0
+  0
 TABLE
-2
+  2
 APPID
-5
+  5
 9
 330
 0
 100
 AcDbSymbolTable
-70
+ 70
 1
-0
+  0
 APPID
-5
+  5
 12
 330
 9
@@ -370,29 +366,29 @@ APPID
 AcDbSymbolTableRecord
 100
 AcDbRegAppTableRecord
-2
+  2
 ACAD
-70
+ 70
 0
-0
+  0
 ENDTAB
-0
+  0
 TABLE
-2
+  2
 DIMSTYLE
-5
+  5
 A
 330
 0
 100
 AcDbSymbolTable
-70
+ 70
 1
 100
 AcDbDimStyleTable
-71
+ 71
 1
-0
+  0
 DIMSTYLE
 105
 46
@@ -402,27 +398,27 @@ A
 AcDbSymbolTableRecord
 100
 AcDbDimStyleTableRecord
-2
+  2
 Standard
-70
+ 70
 0
-40
+ 40
 1
-41
+ 41
 0.18
-42
+ 42
 0.0625
-43
+ 43
 0.38
-44
+ 44
 0.18
-45
+ 45
 0
-46
+ 46
 0
-47
+ 47
 0
-48
+ 48
 0
 140
 0.18
@@ -442,23 +438,23 @@ Standard
 0.09
 148
 0
-71
+ 71
 0
-72
+ 72
 0
-73
+ 73
 0
-74
+ 74
 1
-75
+ 75
 0
-76
+ 76
 0
-77
+ 77
 0
-78
+ 78
 0
-79
+ 79
 0
 170
 0
@@ -524,23 +520,23 @@ Standard
 -2
 372
 -2
-0
+  0
 ENDTAB
-0
+  0
 TABLE
-2
+  2
 BLOCK_RECORD
-5
+  5
 1
 330
 0
 100
 AcDbSymbolTable
-70
+ 70
 2
-0
+  0
 BLOCK_RECORD
-5
+  5
 1F
 330
 1
@@ -548,17 +544,17 @@ BLOCK_RECORD
 AcDbSymbolTableRecord
 100
 AcDbBlockTableRecord
-2
+  2
 *Model_Space
-70
+ 70
 0
 280
 1
 281
 0
-0
+  0
 BLOCK_RECORD
-5
+  5
 1E
 330
 1
@@ -566,113 +562,141 @@ BLOCK_RECORD
 AcDbSymbolTableRecord
 100
 AcDbBlockTableRecord
-2
+  2
 *Paper_Space
-70
+ 70
 0
 280
 1
 281
 0
-0
+  0
 ENDTAB
-0
+  0
 ENDSEC
-0
+  0
 SECTION
-2
+  2
 BLOCKS
-0
+  0
 BLOCK
-5
+  5
 20
 330
 1F
 100
 AcDbEntity
-8
+  8
 0
 100
 AcDbBlockBegin
-2
+  2
 *Model_Space
-70
+ 70
 0
-10
+ 10
 0
-20
+ 20
 0
-30
+ 30
 0
-3
+  3
 *Model_Space
-1
+  1
 
-0
+  0
 ENDBLK
-5
+  5
 21
 330
 1F
 100
 AcDbEntity
-8
+  8
 0
 100
 AcDbBlockEnd
-0
+  0
 BLOCK
-5
+  5
 1C
 330
 1B
 100
 AcDbEntity
-8
+  8
 0
 100
 AcDbBlockBegin
-2
+  2
 *Paper_Space
-70
+ 70
 0
-10
+ 10
 0
-20
+ 20
 0
-30
+ 30
 0
-3
+  3
 *Paper_Space
-1
+  1
 
-0
+  0
 ENDBLK
-5
+  5
 1D
 330
 1E
 100
 AcDbEntity
-8
+  8
 0
 100
 AcDbBlockEnd
-0
+  0
 ENDSEC
-0
+  0
 SECTION
-2
+  2
 ENTITIES
+  0
+LINE
+  5
+72
+330
+1F
+100
+AcDbEntity
+  8
 0
+ 62
+   179
+420
+  2237004
+100
+AcDbLine
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 11
+100.0
+ 21
+100.0
+ 31
+0.0
+  0
 ENDSEC
-0
+  0
 SECTION
-2
+  2
 OBJECTS
-0
+  0
 DICTIONARY
-5
+  5
 C
 330
 0
@@ -680,13 +704,13 @@ C
 AcDbDictionary
 281
 1
-3
+  3
 ACAD_GROUP
 350
 D
-0
+  0
 DICTIONARY
-5
+  5
 D
 330
 C
@@ -694,7 +718,7 @@ C
 AcDbDictionary
 281
 1
-0
+  0
 ENDSEC
-0
+  0
 EOF
