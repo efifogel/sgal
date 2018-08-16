@@ -21,6 +21,9 @@
 #ifndef DXF_WRITER_HPP
 #define DXF_WRITER_HPP
 
+#include <string>
+#include <sstream>
+
 #include <boost/variant.hpp>
 
 #include "SGAL/basic.hpp"
@@ -156,6 +159,10 @@ public:
    */
   void export_string(int code, const std::string& str);
 
+  /*! Export a string item if the string is not empty.
+   */
+  void export_nonempty_string(int code, const std::string& str);
+
   /*! Export an item.
    * \param[in] code the code to export.
    * \param[in] record the source record.
@@ -180,6 +187,12 @@ public:
   void export_member(int code, const Record& record, Members& members);
   //@}
 
+  /*! Return a string with the hex representation of val.
+   * \param[in] Numerical value.
+   */
+  template <typename T>
+  std::string to_hex_string(T val) const;
+
  protected:
   /*! Initialize with the minimal requirements.
    */
@@ -193,7 +206,44 @@ public:
 
   //! Indicates whether the dxf data is owned, and thus should be deallocated.
   bool m_owned;
+
+private:
+  static const size_t s_vport_table_handle;
+  static const size_t s_vport_entry_handle;
+  static const size_t s_ltype_table_handle;
+  static const size_t s_ltype_byblock_handle;
+  static const size_t s_ltype_bylayer_handle;
+  static const size_t s_ltype_continuous_handle;
+  static const size_t s_layer_table_handle;
+  static const size_t s_layer_entry_handle;
+  static const size_t s_style_table_handle;
+  static const size_t s_style_entry_handle;
+  static const size_t s_vies_table_handle;
+  static const size_t s_ucs_table_handle;
+  static const size_t s_appid_table_handle;
+  static const size_t s_appid_entry_handle;
+  static const size_t s_dimstyle_table_handle;
+  static const size_t s_dimstyle_entry_handle;
+  static const size_t s_block_record_table_handle;
+  static const size_t s_block_record_model_space_handle;
+  static const size_t s_block_record_paper_space_handle;
+  static const size_t s_block_model_space_handle;
+  static const size_t s_endblk_model_space_handle;
+  static const size_t s_block_paper_space_handle;
+  static const size_t s_endblk_paper_space_handle;
+  static const size_t s_disctionary_handle;
+  static const size_t s_disctionary1_handle;
+  static const size_t s_disctionary2_handle;
 };
+
+//! \brief returns a string with the hex representation of val.
+template <typename T>
+std::string Dxf_writer::to_hex_string(T val) const
+{
+  std::stringstream ss;
+  ss << std::hex << val;
+  return ss.str();
+}
 
 //! \brief export an item if not equal to a given default value.
 template <typename T>

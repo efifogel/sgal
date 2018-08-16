@@ -21,6 +21,8 @@
 #ifndef DXF_EXPORTER_HPP
 #define DXF_EXPORTER_HPP
 
+#include <iomanip>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Base_writer.hpp"
@@ -29,7 +31,7 @@
 
 DXF_BEGIN_NAMESPACE
 
-/*! Import a value.
+/*! Export a value.
  */
 template <typename T>
 struct Dxf_exporter {
@@ -42,7 +44,7 @@ struct Dxf_exporter {
   { m_writer.out() << value << std::endl; }
 };
 
-/*! Import an int8_t value.
+/*! Export an int8_t value.
  * C/C++ defines int8_t to be 'signed char'; thus, a negative integer cannot
  * be imported directly, since the preceding '-' is interpreted as the (sole)
  * char input.
@@ -58,7 +60,7 @@ struct Dxf_exporter<int8_t> {
   { m_writer.out() << value << std::endl; }
 };
 
-/*! Import a hex value.
+/*! Export a hex value.
  */
 template <>
 struct Dxf_exporter<SGAL::Uint> {
@@ -71,7 +73,7 @@ struct Dxf_exporter<SGAL::Uint> {
   { m_writer.out() << value << std::endl; }
 };
 
-/*! Import a SGAL::String value.
+/*! Export an SGAL::String value.
  */
 template <>
 struct Dxf_exporter<SGAL::String> {
@@ -82,6 +84,22 @@ struct Dxf_exporter<SGAL::String> {
 
   void operator()(const SGAL::String& value)
   { m_writer.out() << value << std::endl; }
+};
+
+/*! Export a double.
+ */
+template <>
+struct Dxf_exporter<double> {
+
+  SGAL::Base_writer& m_writer;
+
+  Dxf_exporter(SGAL::Base_writer& writer) : m_writer(writer) {}
+
+  void operator()(const double& value)
+  {
+    m_writer.out() << std::setprecision(12) << value
+                   << std::endl;
+  }
 };
 
 DXF_END_NAMESPACE

@@ -37,6 +37,32 @@
 
 DXF_BEGIN_NAMESPACE
 
+const size_t Dxf_writer::s_vport_table_handle(0x8);
+const size_t Dxf_writer::s_vport_entry_handle(0x29);
+const size_t Dxf_writer::s_ltype_table_handle(0x5);
+const size_t Dxf_writer::s_ltype_byblock_handle(0x14);
+const size_t Dxf_writer::s_ltype_bylayer_handle(0x15);
+const size_t Dxf_writer::s_ltype_continuous_handle(0x16);
+const size_t Dxf_writer::s_layer_table_handle(0x2);
+const size_t Dxf_writer::s_layer_entry_handle(0x10);
+const size_t Dxf_writer::s_style_table_handle(0x3);
+const size_t Dxf_writer::s_style_entry_handle(0x11);
+const size_t Dxf_writer::s_vies_table_handle(0x6);
+const size_t Dxf_writer::s_ucs_table_handle(0x7);
+const size_t Dxf_writer::s_appid_table_handle(0x9);
+const size_t Dxf_writer::s_appid_entry_handle(0x12);
+const size_t Dxf_writer::s_dimstyle_table_handle(0xA);
+const size_t Dxf_writer::s_dimstyle_entry_handle(0x27);
+const size_t Dxf_writer::s_block_record_table_handle(0x1);
+const size_t Dxf_writer::s_block_record_model_space_handle(0x1F);
+const size_t Dxf_writer::s_block_record_paper_space_handle(0x1B);
+const size_t Dxf_writer::s_block_model_space_handle(0x20);
+const size_t Dxf_writer::s_endblk_model_space_handle(0x21);
+const size_t Dxf_writer::s_block_paper_space_handle(0x1C);
+const size_t Dxf_writer::s_endblk_paper_space_handle(0x1D);
+const size_t Dxf_writer::s_disctionary1_handle(0xC);
+const size_t Dxf_writer::s_disctionary2_handle(0xD);
+
 //! \brief constructs
 Dxf_writer::Dxf_writer() :
   m_data(nullptr),
@@ -97,10 +123,13 @@ void Dxf_writer::export_code(int code)
 
 //! \brief export a string item.
 void Dxf_writer::export_string(int code, const std::string& str)
+{ export_item(code, str); }
+
+//! \brief exports a string item if the string is not empty.
+void Dxf_writer::export_nonempty_string(int code, const std::string& str)
 {
   if (str.empty()) return;
-  export_code(code);
-  export_value(str);
+  export_string(code, str);
 }
 
 #if ! ClimbingStats_COMPILER_CXX_GENERIC_LAMDAS
@@ -267,90 +296,88 @@ void Dxf_writer::export_acdsdata()
 //! \brief exports a given base_table.
 void Dxf_writer::export_base_table(const Dxf_base_table& base_table)
 {
-  export_string(5, base_table.m_handle);
-  export_string(360, base_table.m_owner_dict);
-  export_string(330, base_table.m_owner_obj);
+  export_nonempty_string(5, base_table.m_handle);
+  export_nonempty_string(360, base_table.m_owner_dict);
+  export_nonempty_string(330, base_table.m_owner_obj);
 }
 
 //! \brief exports a given entry.
 void Dxf_writer::export_base_entry(const Dxf_base_entry& base_entry)
 {
-  export_string(5, base_entry.m_handle);
-  export_string(360, base_entry.m_owner_dict);
-  export_string(330, base_entry.m_owner_obj);
+  export_nonempty_string(5, base_entry.m_handle);
+  export_nonempty_string(360, base_entry.m_owner_dict);
+  export_nonempty_string(330, base_entry.m_owner_obj);
 }
 
 void Dxf_writer::export_entry(const Dxf_vport_entry& entry)
 {
   auto& members = Dxf_record_wrapper<Dxf_vport_entry>::s_record_members;
   export_member(2, entry, members);
-
-  export_string(2, entry.m_name);
-  export_item(70, entry.m_flags);
-  export_item(10, entry.m_lower_left[0]);
-  export_item(20, entry.m_lower_left[1]);
-  export_item(11, entry.m_upper_right[0]);
-  export_item(21, entry.m_upper_right[1]);
-  export_item(12, entry.m_view_center[0]);
-  export_item(22, entry.m_view_center[1]);
-  export_item(13, entry.m_snap_base[0]);
-  export_item(23, entry.m_snap_base[1]);
-  export_item(14, entry.m_snap_spacing[0]);
-  export_item(24, entry.m_snap_spacing[1]);
-  export_item(15, entry.m_grid_spacing[0]);
-  export_item(25, entry.m_grid_spacing[1]);
-  export_item(16, entry.m_view_direction[0]);
-  export_item(26, entry.m_view_direction[1]);
-  export_item(36, entry.m_view_direction[2]);
-  export_item(17, entry.m_view_target[0]);
-  export_item(27, entry.m_view_target[1]);
-  export_item(37, entry.m_view_target[2]);
-  export_item(40, entry.m_view_height);
-  export_item(41, entry.m_aspect_ratio);
-  export_item(42, entry.m_lens_length);
-  export_item(43, entry.m_front_clipping_plane);
-  export_item(44, entry.m_back_clipping_plane);
-  export_item(45, entry.m_view_height);
-  export_item(50, entry.m_snap_rotation_angle);
-  export_item(51, entry.m_view_twist_angle);
-  export_string(331, entry.m_soft_frozen_layer);
-  export_string(341, entry.m_hard_frozen_layer);
-  export_string(1, entry.m_plot_style_sheet);
-  export_item(71, entry.m_view_mode);
-  export_item(72, entry.m_circle_sides);
-  export_item(73, entry.m_fast_zoom);
-  export_item(74, entry.m_ucs_icon);
-  export_item(75, entry.m_snap_on);
-  export_item(76, entry.m_grid_on);
-  export_item(77, entry.m_snap_style);
-  export_item(78, entry.m_snap_isopair);
-  export_item(281, entry.m_render_mode);
-  export_item(65, entry.m_ucs_up);
-  export_item(110, entry.m_ucs_origin[0]);
-  export_item(120, entry.m_ucs_origin[1]);
-  export_item(130, entry.m_ucs_origin[2]);
-  export_item(111, entry.m_ucs_x_axis[0]);
-  export_item(121, entry.m_ucs_x_axis[1]);
-  export_item(131, entry.m_ucs_x_axis[2]);
-  export_item(112, entry.m_ucs_y_axis[0]);
-  export_item(122, entry.m_ucs_y_axis[1]);
-  export_item(132, entry.m_ucs_y_axis[2]);
-  export_item(345, entry.m_ucs_handle);
-  export_item(346, entry.m_base_ucs_handle);
-  export_item(79, entry.m_orthographic_type);
-  export_item(146, entry.m_elevation);
-  export_item(170, entry.m_shade_plot_setting);
-  export_item(61, entry.m_major_grid_lines);
-  export_item(332, entry.m_background_object_pointer);
-  export_item(333, entry.m_shade_plot_object_pointer);
-  export_item(348, entry.m_visual_style_object_pointer);
-  export_item(292, entry.m_is_default_lighting_on);
-  export_item(282, entry.m_default_lighting_type);
-  export_item(141, entry.m_brightness);
-  export_item(142, entry.m_contrast);
-  export_item(63, entry.m_ambient_color);
-  export_item(421, entry.m_ambient_color_i32);
-  export_item(431, entry.m_ambient_color_name);
+  export_member(70, entry, members);
+  export_member(10, entry, members);
+  export_member(20, entry, members);
+  export_member(11, entry, members);
+  export_member(21, entry, members);
+  export_member(12, entry, members);
+  export_member(22, entry, members);
+  export_member(13, entry, members);
+  export_member(23, entry, members);
+  export_member(14, entry, members);
+  export_member(24, entry, members);
+  export_member(15, entry, members);
+  export_member(25, entry, members);
+  export_member(16, entry, members);
+  export_member(26, entry, members);
+  export_member(36, entry, members);
+  export_member(17, entry, members);
+  export_member(27, entry, members);
+  export_member(37, entry, members);
+  export_member(40, entry, members);
+  export_member(41, entry, members);
+  export_member(42, entry, members);
+  export_member(43, entry, members);
+  export_member(44, entry, members);
+  export_member(45, entry, members);
+  export_member(50, entry, members);
+  export_member(51, entry, members);
+  export_member(331, entry, members);
+  export_member(341, entry, members);
+  export_member(1, entry, members);
+  export_member(71, entry, members);
+  export_member(72, entry, members);
+  export_member(73, entry, members);
+  export_member(74, entry, members);
+  export_member(75, entry, members);
+  export_member(76, entry, members);
+  export_member(77, entry, members);
+  export_member(78, entry, members);
+  export_member(281, entry, members);
+  export_member(65, entry, members);
+  export_member(110, entry, members);
+  export_member(120, entry, members);
+  export_member(130, entry, members);
+  export_member(111, entry, members);
+  export_member(121, entry, members);
+  export_member(131, entry, members);
+  export_member(112, entry, members);
+  export_member(122, entry, members);
+  export_member(132, entry, members);
+  export_member(345, entry, members);
+  export_member(346, entry, members);
+  export_member(79, entry, members);
+  export_member(146, entry, members);
+  export_member(170, entry, members);
+  export_member(61, entry, members);
+  export_member(332, entry, members);
+  export_member(333, entry, members);
+  export_member(348, entry, members);
+  export_member(292, entry, members);
+  export_member(282, entry, members);
+  export_member(141, entry, members);
+  export_member(142, entry, members);
+  export_member(63, entry, members);
+  export_member(421, entry, members);
+  export_member(431, entry, members);
 }
 
 void Dxf_writer::export_entry(const Dxf_appid_entry& entry)
@@ -367,11 +394,12 @@ void Dxf_writer::export_entry(const Dxf_dimstyle_entry& entry)
 
 void Dxf_writer::export_entry(const Dxf_layer_entry& entry)
 {
-  export_string(2, entry.m_name);
-  export_item(70, entry.m_flags);
-  export_item(62, entry.m_color_index);
-  export_item(420, entry.m_color, static_cast<int32_t>(-1));
-  export_string(6, entry.m_line_type);
+  auto& members = Dxf_record_wrapper<Dxf_layer_entry>::s_record_members;
+  export_member(2, entry, members);
+  export_member(70, entry, members);
+  export_member(62, entry, members);
+  export_member(420, entry, members);
+  export_member(6, entry, members);
 
   //! \todo export optional
   // (290, entry.m_is_layer_plotted);
@@ -382,12 +410,13 @@ void Dxf_writer::export_entry(const Dxf_layer_entry& entry)
 
 void Dxf_writer::export_entry(const Dxf_ltype_entry& entry)
 {
-  export_string(2, entry.m_name);
-  export_item(70, entry.m_flags);
-  export_string(3, entry.m_description);
-  export_item(72, entry.m_alignment_code);
-  export_item(73, entry.m_element_count);
-  export_item(40, entry.m_total_pattern_length);
+  auto& members = Dxf_record_wrapper<Dxf_ltype_entry>::s_record_members;
+  export_member(2, entry, members);
+  export_member(70, entry, members);
+  export_member(3, entry, members);
+  export_member(72, entry, members);
+  export_member(73, entry, members);
+  export_member(40, entry, members);
 
   //! \todo export optional
   // (49, entry.m_dash_dot_space_lengths);
@@ -442,10 +471,15 @@ void Dxf_writer::init()
   // TABLES
 
   // VPORT
+  auto vport_handle = to_hex_string(s_vport_table_handle);
   auto& vport_table = m_data->m_vport_table;
+  vport_table.m_handle = vport_handle;
+  vport_table.m_owner_obj = "0";
 
   vport_table.m_entries.emplace_back();
   auto& vport_entry = vport_table.m_entries.back();
+  vport_entry.m_handle = to_hex_string(s_vport_entry_handle);
+  vport_entry.m_owner_obj = vport_handle;
   vport_entry.m_name = "*ACTIVE";
   vport_entry.m_flags = 0;
   vport_entry.m_lower_left[0] = 0.0;
@@ -505,10 +539,15 @@ void Dxf_writer::init()
   vport_entry.m_ambient_color_i32 = 3358443;
 
   // LTYPE
+  auto ltype_handle = to_hex_string(s_ltype_table_handle);
   auto& ltype_table = m_data->m_ltype_table;
+  ltype_table.m_handle = ltype_handle;
+  ltype_table.m_owner_obj = "0";
 
   ltype_table.m_entries.emplace_back();
   auto& ltype_entry1 = ltype_table.m_entries.back();
+  ltype_entry1.m_handle = to_hex_string(s_ltype_byblock_handle);
+  ltype_entry1.m_owner_obj = ltype_handle;
   ltype_entry1.m_name.assign("ByBlock");
   ltype_entry1.m_flags = 0;
   ltype_entry1.m_description = "";
@@ -518,6 +557,8 @@ void Dxf_writer::init()
 
   ltype_table.m_entries.emplace_back();
   auto& ltype_entry2 = ltype_table.m_entries.back();
+  ltype_entry2.m_handle = to_hex_string(s_ltype_bylayer_handle);
+  ltype_entry2.m_owner_obj = ltype_handle;
   ltype_entry2.m_name.assign("ByLayer");
   ltype_entry2.m_flags = 0;
   ltype_entry2.m_description = "";
@@ -527,6 +568,8 @@ void Dxf_writer::init()
 
   ltype_table.m_entries.emplace_back();
   auto& ltype_entry3 = ltype_table.m_entries.back();
+  ltype_entry3.m_handle = to_hex_string(s_ltype_continuous_handle);
+  ltype_entry3.m_owner_obj = ltype_handle;
   ltype_entry3.m_name.assign("Continuous");
   ltype_entry3.m_flags = 0;
   ltype_entry3.m_description = "Solid line";
@@ -535,20 +578,30 @@ void Dxf_writer::init()
   ltype_entry3.m_total_pattern_length = 0.0;
 
   // LAYER
+  auto layer_handle = to_hex_string(s_layer_table_handle);
   auto& layer_table = m_data->m_layer_table;
+  layer_table.m_handle = layer_handle;
+  layer_table.m_owner_obj = "0";
 
   layer_table.m_entries.emplace_back();
   auto& layer_entry = layer_table.m_entries.back();
+  layer_entry.m_handle = to_hex_string(s_layer_entry_handle);
+  layer_entry.m_owner_obj = layer_handle;
   layer_entry.m_name = "0";
   layer_entry.m_flags = 64;
   layer_entry.m_color_index = 7;
   layer_entry.m_line_type = "Continuous";
 
   // STYLE
+  auto style_handle = to_hex_string(s_style_table_handle);
   auto& style_table = m_data->m_style_table;
+  style_table.m_handle = style_handle;
+  style_table.m_owner_obj = "0";
 
   style_table.m_entries.emplace_back();
   auto& style_entry = style_table.m_entries.back();
+  style_entry.m_handle = to_hex_string(s_style_entry_handle);
+  style_entry.m_owner_obj = style_handle;
   style_entry.m_name = "Standard";
   style_entry.m_flags = 0;
   style_entry.m_text_height = 0.0;
@@ -561,18 +614,30 @@ void Dxf_writer::init()
 
   // VIEW can be empty
   // UCS can be empty
+
+  // APPID
+  auto appid_handle = to_hex_string(s_appid_table_handle);
   auto& appid_table = m_data->m_appid_table;
+  appid_table.m_handle = appid_handle;
+  appid_table.m_owner_obj = "0";
 
   appid_table.m_entries.emplace_back();
   auto& appid_entry = appid_table.m_entries.back();
+  appid_entry.m_handle = to_hex_string(s_appid_entry_handle);
+  appid_entry.m_owner_obj = appid_handle;
   appid_entry.m_name = "ACAD";
   appid_entry.m_flags = 0;
 
   // DIMSTYLE
+  auto dimstyle_handle = to_hex_string(s_dimstyle_table_handle);
   auto& dimstyle_table = m_data->m_dimstyle_table;
+  dimstyle_table.m_handle = dimstyle_handle;
+  dimstyle_table.m_owner_obj = "0";
 
   dimstyle_table.m_entries.emplace_back();
   auto& dimstyle_entry = dimstyle_table.m_entries.back();
+  dimstyle_entry.m_handle = to_hex_string(s_dimstyle_entry_handle);
+  dimstyle_entry.m_owner_obj = dimstyle_handle;
   dimstyle_entry.m_name = "Standard";
   dimstyle_entry.m_flags = 0;
   dimstyle_entry.m_dimensioning_scale_factor = 1.0;
@@ -636,10 +701,15 @@ void Dxf_writer::init()
   dimstyle_entry.m_dimension_extension_line_weight = -2;
 
   // BLOCK_RECORD
+  auto block_record_handle = to_hex_string(s_dimstyle_table_handle);
   auto& block_record_table = m_data->m_block_record_table;
+  block_record_table.m_handle = block_record_handle;
+  block_record_table.m_owner_obj = "0";
 
   block_record_table.m_entries.emplace_back();
   auto& block_record_entry1 = block_record_table.m_entries.back();
+  block_record_entry1.m_handle = to_hex_string(s_block_record_model_space_handle);
+  block_record_entry1.m_owner_obj = block_record_handle;
   block_record_entry1.m_name = "*Model_Space";
   block_record_entry1.m_insertion_units = 0;
   block_record_entry1.m_explodability = 1;
@@ -647,6 +717,8 @@ void Dxf_writer::init()
 
   block_record_table.m_entries.emplace_back();
   auto& block_record_entry2 = block_record_table.m_entries.back();
+  block_record_entry2.m_handle = to_hex_string(s_block_record_paper_space_handle);
+  block_record_entry2.m_owner_obj = block_record_handle;
   block_record_entry2.m_name = "*Paper_Space";
   block_record_entry2.m_insertion_units = 0;
   block_record_entry2.m_explodability = 1;
@@ -657,6 +729,8 @@ void Dxf_writer::init()
 
   blocks.emplace_back();
   auto& block1 = blocks.back();
+  block1.m_handle = to_hex_string(s_block_model_space_handle);
+  block1.m_owner_handle = to_hex_string(s_block_record_model_space_handle);;
   block1.m_layer_name = "0";
   block1.m_name = "*Model_Space";
   block1.m_flags = 0;
@@ -669,6 +743,8 @@ void Dxf_writer::init()
   // *PAPER_SPACE
   blocks.emplace_back();
   auto& block2 = blocks.back();
+  block2.m_handle = to_hex_string(s_block_paper_space_handle);
+  block2.m_owner_handle = to_hex_string(s_block_record_paper_space_handle);;
   block2.m_layer_name = "0";
   block2.m_name = "*Paper_Space";
   block2.m_flags = 0;
@@ -687,12 +763,16 @@ void Dxf_writer::init()
   auto* dictionary_object1 = new Dxf_dictionary_object;
   objects.push_back(dictionary_object1);
   dictionary_object1->m_duplicate_record_handling = 1;
+  dictionary_object1->m_handle = to_hex_string(s_disctionary1_handle);
+  dictionary_object1->m_owner_handle = "0";
   dictionary_object1->m_entry_name = "ACAD_GROUP";
 
   // DICTONARY ACAD_GROUP can be empty
   auto* dictionary_object2 = new Dxf_dictionary_object;
   objects.push_back(dictionary_object2);
   dictionary_object2->m_duplicate_record_handling = 1;
+  dictionary_object2->m_handle = to_hex_string(s_disctionary2_handle);
+  dictionary_object2->m_owner_handle = to_hex_string(s_disctionary1_handle);
 }
 
 DXF_END_NAMESPACE
