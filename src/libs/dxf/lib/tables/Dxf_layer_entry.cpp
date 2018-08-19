@@ -24,6 +24,7 @@
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_layer_entry.hpp"
 #include "dxf/Dxf_record_wrapper.hpp"
+#include "dxf/Line_weight.hpp"
 
 DXF_BEGIN_NAMESPACE
 
@@ -38,6 +39,8 @@ DXF_BEGIN_NAMESPACE
  * 45 => 40 (view height)
  * new: 41, 65, 73, 75, 76, 77, 78
  */
+
+const bool Dxf_layer_entry::s_def_line_weight(1);
 
 typedef Dxf_record_wrapper<Dxf_layer_entry>             Dxf_layer_wrapper;
 
@@ -60,5 +63,12 @@ Dxf_layer_wrapper::s_record_members = {
 template <>
 const std::map<int, Dxf_layer_wrapper::Record_handler_type>
 Dxf_layer_wrapper::s_record_handlers = {};
+
+//! \brief constructs.
+Dxf_layer_entry::Dxf_layer_entry() :
+  m_color(static_cast<int32_t>(-1)),
+  m_is_layer_plotted(s_def_line_weight),
+  m_line_weight(static_cast<int8_t>(Line_weight::BY_DEFAULT))
+{}
 
 DXF_END_NAMESPACE

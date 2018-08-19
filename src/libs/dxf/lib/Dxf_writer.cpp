@@ -27,12 +27,16 @@
 #include "SGAL/Dxf_configuration.hpp"
 
 #include "dxf/basic.hpp"
+#include "dxf/Dxf_record_wrapper.hpp"
+#include "dxf/Dxf_simple_record_wrapper.hpp"
 #include "dxf/Dxf_writer.hpp"
 #include "dxf/Dxf_data.hpp"
 #include "dxf/Dxf_header.hpp"
 #include "dxf/Dxf_header_wrapper.hpp"
 #include "dxf/Dxf_base_table.hpp"
 #include "dxf/Dxf_base_entry.hpp"
+#include "dxf/Dxf_block.hpp"
+
 #include "dxf/Dxf_dictionary_object.hpp"
 
 DXF_BEGIN_NAMESPACE
@@ -47,7 +51,7 @@ const size_t Dxf_writer::s_layer_table_handle(0x2);
 const size_t Dxf_writer::s_layer_entry_handle(0x10);
 const size_t Dxf_writer::s_style_table_handle(0x3);
 const size_t Dxf_writer::s_style_entry_handle(0x11);
-const size_t Dxf_writer::s_vies_table_handle(0x6);
+const size_t Dxf_writer::s_view_table_handle(0x6);
 const size_t Dxf_writer::s_ucs_table_handle(0x7);
 const size_t Dxf_writer::s_appid_table_handle(0x9);
 const size_t Dxf_writer::s_appid_entry_handle(0x12);
@@ -201,37 +205,52 @@ void Dxf_writer::export_classes()
 //! \brief writes the TABLES section.
 void Dxf_writer::export_tables()
 {
+  SGAL_assertion(m_scene_graph);
+  auto* conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
+  auto dxf_conf = conf->get_dxf_configuration();
+  SGAL_assertion(dxf_conf);
+  auto version = dxf_conf->get_version();
+
   export_string(2, "TABLES");
 
   SGAL_assertion(m_data);
   if (m_data->tables_empty()) return;
 
   auto& vport_table = m_data->m_vport_table;
-  if (! vport_table.empty()) export_table(vport_table, "VPORT");
+  if ((version > 12) || ! vport_table.empty())
+    export_table(vport_table, "VPORT");
 
   auto& ltype_table = m_data->m_ltype_table;
-  if (! ltype_table.empty()) export_table(ltype_table, "LTYPE");
+  if ((version > 12) || ! ltype_table.empty())
+    export_table(ltype_table, "LTYPE");
 
   auto& layer_table = m_data->m_layer_table;
-  if (! layer_table.empty()) export_table(layer_table, "LAYER");
+  if ((version > 12) || ! layer_table.empty())
+    export_table(layer_table, "LAYER");
 
   auto& style_table = m_data->m_style_table;
-  if (! style_table.empty()) export_table(style_table, "STYLE");
+  if ((version > 12) || ! style_table.empty())
+    export_table(style_table, "STYLE");
 
   auto& view_table = m_data->m_view_table;
-  if (! view_table.empty()) export_table(view_table, "VIEW");
+  if ((version > 12) || ! view_table.empty())
+    export_table(view_table, "VIEW");
 
   auto& ucs_table = m_data->m_ucs_table;
-  if (! ucs_table.empty()) export_table(ucs_table, "UCS");
+  if ((version > 12) || ! ucs_table.empty())
+    export_table(ucs_table, "UCS");
 
   auto& appid_table = m_data->m_appid_table;
-  if (! appid_table.empty()) export_table(appid_table, "APPID");
+  if ((version > 12) || ! appid_table.empty())
+    export_table(appid_table, "APPID");
 
   auto& dimstyle_table = m_data->m_dimstyle_table;
-  if (! dimstyle_table.empty()) export_table(dimstyle_table, "DIMSTYLE");
+  if ((version > 12) || ! dimstyle_table.empty())
+    export_table(dimstyle_table, "DIMSTYLE");
 
   auto& block_record_table = m_data->m_block_record_table;
-  if (! block_record_table.empty())
+  if ((version > 12) || ! block_record_table.empty())
     export_table(block_record_table, "BLOCK_RECORD");
 }
 
@@ -243,6 +262,12 @@ void Dxf_writer::export_blocks()
   auto& blocks = m_data->m_blocks;
   if (blocks.empty()) return;
 
+  for (const auto& block : m_data->m_blocks) {
+    export_string(0, "BLOCK");
+    export_block(block);
+    export_string(0, "ENDBLK");
+    export_endblk(block);
+  }
   //! \todo Export BLOCKS
 }
 
@@ -267,7 +292,12 @@ void Dxf_writer::export_objects()
   auto& objects = m_data->m_objects;
   if (objects.empty()) return;
 
-  //! \todo Export ENTITIES
+  for (const Dxf_base_object* base_object : m_data->m_objects) {
+    export_base_object(*base_object);
+    auto* dictionary_object =
+      dynamic_cast<const Dxf_dictionary_object*>(base_object);
+    if (dictionary_object) export_object(*dictionary_object);
+  }
 }
 
 //! \brief writes the THUMBNAILIMAGE section.
@@ -299,6 +329,7 @@ void Dxf_writer::export_base_table(const Dxf_base_table& base_table)
   export_nonempty_string(5, base_table.m_handle);
   export_nonempty_string(360, base_table.m_owner_dict);
   export_nonempty_string(330, base_table.m_owner_obj);
+  export_string(100, "AcDbSymbolTable");
 }
 
 //! \brief exports a given entry.
@@ -307,10 +338,40 @@ void Dxf_writer::export_base_entry(const Dxf_base_entry& base_entry)
   export_nonempty_string(5, base_entry.m_handle);
   export_nonempty_string(360, base_entry.m_owner_dict);
   export_nonempty_string(330, base_entry.m_owner_obj);
+  export_string(100, "AcDbSymbolTableRecord");
 }
 
+//! \brief exports a DIMSTYLE entry.
+inline void Dxf_writer::export_entry(const Dxf_dimstyle_entry& entry,
+                                     const std::string& name)
+{
+  export_string(100, "AcDbDimStyleTable");
+  export_string(0, name);
+  export_dimstyle_base_entry(entry);
+  export_entry(entry);
+}
+
+//! \brief exports a DIMSTYLE base entry.
+void Dxf_writer::export_dimstyle_base_entry(const Dxf_base_entry& base_entry)
+{
+  export_nonempty_string(105, base_entry.m_handle);
+  export_nonempty_string(360, base_entry.m_owner_dict);
+  export_nonempty_string(330, base_entry.m_owner_obj);
+  export_string(100, "AcDbSymbolTableRecord");
+}
+
+//! \brief exports a VPORT table entry.
 void Dxf_writer::export_entry(const Dxf_vport_entry& entry)
 {
+  SGAL_assertion(m_scene_graph);
+  auto* conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
+  auto dxf_conf = conf->get_dxf_configuration();
+  SGAL_assertion(dxf_conf);
+  auto version = dxf_conf->get_version();
+
+  export_string(100, "AcDbViewportTableRecord");
+
   auto& members = Dxf_record_wrapper<Dxf_vport_entry>::s_record_members;
   export_member(2, entry, members);
   export_member(70, entry, members);
@@ -332,17 +393,17 @@ void Dxf_writer::export_entry(const Dxf_vport_entry& entry)
   export_member(17, entry, members);
   export_member(27, entry, members);
   export_member(37, entry, members);
-  export_member(40, entry, members);
+  if (version < 19) export_member(40, entry, members);
   export_member(41, entry, members);
   export_member(42, entry, members);
   export_member(43, entry, members);
   export_member(44, entry, members);
-  export_member(45, entry, members);
+  if (version >= 19) export_member(45, entry, members);
   export_member(50, entry, members);
   export_member(51, entry, members);
-  export_member(331, entry, members);
-  export_member(341, entry, members);
-  export_member(1, entry, members);
+  export_nonempty_member(331, entry, members);
+  export_nonempty_member(341, entry, members);
+  export_nonempty_member(1, entry, members);
   export_member(71, entry, members);
   export_member(72, entry, members);
   export_member(73, entry, members);
@@ -362,14 +423,14 @@ void Dxf_writer::export_entry(const Dxf_vport_entry& entry)
   export_member(112, entry, members);
   export_member(122, entry, members);
   export_member(132, entry, members);
-  export_member(345, entry, members);
-  export_member(346, entry, members);
+  export_nonempty_member(345, entry, members);
+  export_nonempty_member(346, entry, members);
   export_member(79, entry, members);
   export_member(146, entry, members);
-  export_member(170, entry, members);
-  export_member(61, entry, members);
-  export_member(332, entry, members);
-  export_member(333, entry, members);
+  if (version >= 19) export_member(170, entry, members);
+  if (version >= 19) export_member(61, entry, members);
+  export_nonempty_member(332, entry, members);
+  export_nonempty_member(333, entry, members);
   export_member(348, entry, members);
   export_member(292, entry, members);
   export_member(282, entry, members);
@@ -377,39 +438,14 @@ void Dxf_writer::export_entry(const Dxf_vport_entry& entry)
   export_member(142, entry, members);
   export_member(63, entry, members);
   export_member(421, entry, members);
-  export_member(431, entry, members);
+  export_nonempty_member(431, entry, members);
 }
 
-void Dxf_writer::export_entry(const Dxf_appid_entry& entry)
-{
-}
-
-void Dxf_writer::export_entry(const Dxf_block_record_entry& entry)
-{
-}
-
-void Dxf_writer::export_entry(const Dxf_dimstyle_entry& entry)
-{
-}
-
-void Dxf_writer::export_entry(const Dxf_layer_entry& entry)
-{
-  auto& members = Dxf_record_wrapper<Dxf_layer_entry>::s_record_members;
-  export_member(2, entry, members);
-  export_member(70, entry, members);
-  export_member(62, entry, members);
-  export_member(420, entry, members);
-  export_member(6, entry, members);
-
-  //! \todo export optional
-  // (290, entry.m_is_layer_plotted);
-  // (370, entry.m_line_weight);
-  // (390, entry.m_plot_style_pointer);
-  // (347, entry.m_material_handle);
-}
-
+//! \brief exports a LTYPE table entry.
 void Dxf_writer::export_entry(const Dxf_ltype_entry& entry)
 {
+  export_string(100, "AcDbLinetypeTableRecord");
+
   auto& members = Dxf_record_wrapper<Dxf_ltype_entry>::s_record_members;
   export_member(2, entry, members);
   export_member(70, entry, members);
@@ -430,16 +466,264 @@ void Dxf_writer::export_entry(const Dxf_ltype_entry& entry)
   // (9, entry.m_text_strings);
 }
 
+//! \brief exports a LAYER table entry.
+void Dxf_writer::export_entry(const Dxf_layer_entry& entry)
+{
+  export_string(100, "AcDbLayerTableRecord");
+
+  auto& members = Dxf_record_wrapper<Dxf_layer_entry>::s_record_members;
+  export_member(2, entry, members);
+  export_member(70, entry, members);
+  export_member(62, entry, members);
+  // export_member(420, entry, members);
+  export_member(6, entry, members);
+  export_item(290, entry.m_is_layer_plotted, entry.s_def_line_weight);
+  export_member(370, entry, members);
+  export_nonempty_member(390, entry, members);
+  export_nonempty_member(347, entry, members);
+}
+
+//! \brief exports a STYLE table entry.
 void Dxf_writer::export_entry(const Dxf_style_entry& entry)
 {
+  SGAL_assertion(m_scene_graph);
+  auto* conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
+  auto dxf_conf = conf->get_dxf_configuration();
+  SGAL_assertion(dxf_conf);
+  auto version = dxf_conf->get_version();
+
+  export_string(100, "AcDbTextStyleTableRecord");
+
+  auto& members = Dxf_record_wrapper<Dxf_style_entry>::s_record_members;
+  export_member(2, entry, members);
+  export_member(70, entry, members);
+  export_member(40, entry, members);
+  export_member(41, entry, members);
+  export_member(50, entry, members);
+  export_member(71, entry, members);
+  export_member(42, entry, members);
+  export_member(3, entry, members);
+  export_member(4, entry, members);
+  if (version >= 19) export_member(1071, entry, members);
 }
 
-void Dxf_writer::export_entry(const Dxf_ucs_entry& entry)
-{
-}
-
+//! \brief exports a VIEW table entry.
 void Dxf_writer::export_entry(const Dxf_view_entry& entry)
 {
+  export_string(100, "AcDbViewTableRecord");
+
+  auto& members = Dxf_record_wrapper<Dxf_view_entry>::s_record_members;
+  export_member(2, entry, members);
+  export_member(70, entry, members);
+  export_member(40, entry, members);
+  export_member(10, entry, members);
+  export_member(20, entry, members);
+  export_member(41, entry, members);
+  export_member(11, entry, members);
+  export_member(21, entry, members);
+  export_member(31, entry, members);
+  export_member(12, entry, members);
+  export_member(22, entry, members);
+  export_member(32, entry, members);
+  export_member(42, entry, members);
+  export_member(43, entry, members);
+  export_member(44, entry, members);
+  export_member(50, entry, members);
+  export_member(71, entry, members);
+  export_member(281, entry, members);
+  export_member(72, entry, members);
+  export_member(73, entry, members);
+  export_member(332, entry, members);
+  export_member(334, entry, members);
+  export_member(348, entry, members);
+  export_member(361, entry, members);
+  export_member(110, entry, members);
+  export_member(120, entry, members);
+  export_member(130, entry, members);
+  export_member(111, entry, members);
+  export_member(121, entry, members);
+  export_member(131, entry, members);
+  export_member(112, entry, members);
+  export_member(122, entry, members);
+  export_member(132, entry, members);
+  export_member(79, entry, members);
+  export_member(146, entry, members);
+  export_member(345, entry, members);
+  export_member(346, entry, members);
+}
+
+//! \brief exports a UCS table entry.
+void Dxf_writer::export_entry(const Dxf_ucs_entry& entry)
+{
+  export_string(100, "AcDbUCSTableRecord");
+
+  auto& members = Dxf_record_wrapper<Dxf_ucs_entry>::s_record_members;
+  export_member(2, entry, members);
+  export_member(70, entry, members);
+  export_member(10, entry, members);
+  export_member(20, entry, members);
+  export_member(30, entry, members);
+  export_member(11, entry, members);
+  export_member(21, entry, members);
+  export_member(31, entry, members);
+  export_member(12, entry, members);
+  export_member(22, entry, members);
+  export_member(32, entry, members);
+  export_member(79, entry, members);
+  export_member(146, entry, members);
+  export_member(346, entry, members);
+  export_member(71, entry, members);
+  export_member(13, entry, members);
+  export_member(23, entry, members);
+  export_member(33, entry, members);
+}
+
+//! \brief exports a APPID table entry.
+void Dxf_writer::export_entry(const Dxf_appid_entry& entry)
+{
+  export_string(100, "AcDbRegAppTableRecord");
+
+  auto& members = Dxf_record_wrapper<Dxf_appid_entry>::s_record_members;
+  export_member(2, entry, members);
+  export_member(70, entry, members);
+}
+
+//! \brief exports a DIMSTYLE table entry.
+void Dxf_writer::export_entry(const Dxf_dimstyle_entry& entry)
+{
+  export_string(100, "AcDbDimStyleTableRecord");
+
+  auto& members = Dxf_record_wrapper<Dxf_dimstyle_entry>::s_record_members;
+  export_member(2, entry, members);
+  export_member(70, entry, members);
+  export_nonempty_member(3, entry, members);
+  export_nonempty_member(4, entry, members);
+  export_nonempty_member(5, entry, members);
+  export_nonempty_member(6, entry, members);
+  export_nonempty_member(7, entry, members);
+  export_member(40, entry, members);
+  export_member(41, entry, members);
+  export_member(42, entry, members);
+  export_member(43, entry, members);
+  export_member(44, entry, members);
+  export_member(45, entry, members);
+  export_member(46, entry, members);
+  export_member(47, entry, members);
+  export_member(48, entry, members);
+  export_member(140, entry, members);
+  export_member(141, entry, members);
+  export_member(142, entry, members);
+  export_member(143, entry, members);
+  export_member(144, entry, members);
+  export_member(145, entry, members);
+  export_member(146, entry, members);
+  export_member(147, entry, members);
+  export_member(148, entry, members);
+  export_member(71, entry, members);
+  export_member(72, entry, members);
+  export_member(73, entry, members);
+  export_member(74, entry, members);
+  export_member(75, entry, members);
+  export_member(76, entry, members);
+  export_member(77, entry, members);
+  export_member(78, entry, members);
+  export_member(79, entry, members);
+  export_member(170, entry, members);
+  export_member(171, entry, members);
+  export_member(172, entry, members);
+  export_member(173, entry, members);
+  export_member(174, entry, members);
+  export_member(175, entry, members);
+  export_member(176, entry, members);
+  export_member(177, entry, members);
+  export_member(178, entry, members);
+  export_member(179, entry, members);
+  export_member(270, entry, members);
+  export_member(271, entry, members);
+  export_member(272, entry, members);
+  export_member(273, entry, members);
+  export_member(274, entry, members);
+  export_member(275, entry, members);
+  export_member(276, entry, members);
+  export_member(277, entry, members);
+  export_member(278, entry, members);
+  export_member(279, entry, members);
+  export_member(280, entry, members);
+  // 281 DIMSD1
+  // 282 DIMSD2
+  export_member(283, entry, members);
+}
+
+//! \brief exports a BLOCK_RECORD_entry table entry.
+void Dxf_writer::export_entry(const Dxf_block_record_entry& entry)
+{
+  export_string(100, "AcDbBlockTableRecord");
+
+  auto& members = Dxf_record_wrapper<Dxf_block_record_entry>::s_record_members;
+  export_member(2, entry, members);
+  export_member(340, entry, members);
+  export_member(70, entry, members);
+  export_member(280, entry, members);
+  export_member(281, entry, members);
+  export_member(310, entry, members);
+  // {1070, {&Dxf_block_record_entry::m_design_center_version_number, 1, 0}},
+  // {1070, {&Dxf_block_record_entry::m_insert_units, 1, 0}},
+  export_nonempty_member(1001, entry, members);
+  export_nonempty_member(1000, entry, members);
+  // {1002, {&Dxf_block_record_entry::m_xdata, n, i}},
+}
+
+//! \brief exports a BLOCK record.
+void Dxf_writer::export_block(const Dxf_block& block)
+{
+  auto& members = Dxf_record_wrapper<Dxf_block>::s_record_members;
+
+  export_member(5, block, members);
+  export_member(330, block, members);
+  export_string(100, "AcDbEntity");
+  export_item(67, block.m_paper_space, block.s_def_paper_space);
+  export_member(8, block, members);
+  export_string(100, "AcDbBlockBegin");
+  export_member(2, block, members);
+  export_member(70, block, members);
+  export_member(10, block, members);
+  export_member(20, block, members);
+  export_member(30, block, members);
+  export_member(3, block, members);
+  export_member(1, block, members);
+  export_nonempty_member(4, block, members);
+}
+
+//! \brief exports an ENDBLK record.
+void Dxf_writer::export_endblk(const Dxf_block& block)
+{
+  auto& members = Dxf_record_wrapper<Dxf_block>::s_record_members;
+
+  export_member(5, block, members);
+  export_member(330, block, members);
+  export_string(100, "AcDbEntity");
+  export_member(8, block, members);
+  export_string(100, "AcDbBlockEnd");
+}
+
+//! \brief exports a base object record.
+void Dxf_writer::export_base_object(const Dxf_base_object& base_object)
+{
+  //auto& members = Dxf_simple_record_wrapper<Dxf_base_object>::s_record_members;
+  //export_member(5, base_object, members);
+  //export_member(360, base_object, members);
+  //export_member(330, base_object, members);
+}
+
+//! \brief exports a DICT>IONARY object record.
+void Dxf_writer::export_object(const Dxf_dictionary_object& object)
+{
+  auto& members = Dxf_record_wrapper<Dxf_dictionary_object>::s_record_members;
+  export_member(5, object, members);
+  export_string(100, "AcDbDictionary");
+  export_member(280, object, members);
+  export_member(281, object, members);
 }
 
 //! \brief initializes with the minimal requirements.
@@ -588,9 +872,12 @@ void Dxf_writer::init()
   layer_entry.m_handle = to_hex_string(s_layer_entry_handle);
   layer_entry.m_owner_obj = layer_handle;
   layer_entry.m_name = "0";
-  layer_entry.m_flags = 64;
+  layer_entry.m_flags = 0;
   layer_entry.m_color_index = 7;
   layer_entry.m_line_type = "Continuous";
+
+  //! \todo why "F"?
+  layer_entry.m_plot_style_pointer = "F";
 
   // STYLE
   auto style_handle = to_hex_string(s_style_table_handle);
@@ -613,7 +900,16 @@ void Dxf_writer::init()
   style_entry.m_big_font_file_name = "";
 
   // VIEW can be empty
+  auto view_handle = to_hex_string(s_view_table_handle);
+  auto& view_table = m_data->m_view_table;
+  view_table.m_handle = view_handle;
+  view_table.m_owner_obj = "0";
+
   // UCS can be empty
+  auto ucs_handle = to_hex_string(s_ucs_table_handle);
+  auto& ucs_table = m_data->m_ucs_table;
+  ucs_table.m_handle = ucs_handle;
+  ucs_table.m_owner_obj = "0";
 
   // APPID
   auto appid_handle = to_hex_string(s_appid_table_handle);

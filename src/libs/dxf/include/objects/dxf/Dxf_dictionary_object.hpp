@@ -30,7 +30,7 @@ DXF_BEGIN_NAMESPACE
 
 class Dxf_parser;
 
-struct Dxf_dictionary_object : public Dxf_base_object {
+struct Dxf_dictionary_object : Dxf_base_object {
   typedef Dxf_base_object                       Base;
 
   /// \name Data members

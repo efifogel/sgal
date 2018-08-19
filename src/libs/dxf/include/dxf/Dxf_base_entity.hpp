@@ -38,7 +38,6 @@ struct Dxf_base_entity {
 
   /// Member records
   //@{
-
   SGAL::String m_handle; // Handle
   SGAL::String m_owner_handle; // Soft pointer ID/handle to owner dictionary
                         // (optional)
@@ -97,7 +96,6 @@ struct Dxf_base_entity {
   std::map<SGAL::String, std::vector<SGAL::String> > m_xdata; // Begin xdata
                         // "{", "}" (opt.)
   std::vector<Dxf_extended_data> m_extended_data;
-
   //@}
 
   /*! Construct.
@@ -111,7 +109,9 @@ struct Dxf_base_entity {
     m_parser(nullptr)
   {}
 
-  //! Destruct
+  /*! Destruct
+   * This is necessary to enable dynamic_cast.
+   */
   virtual ~Dxf_base_entity() {}
 
   /*! Set the parser.

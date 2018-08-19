@@ -25,6 +25,7 @@
 #include <sstream>
 
 #include <boost/variant.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Base_writer.hpp"
@@ -32,21 +33,30 @@
 #include "dxf/basic.hpp"
 #include "dxf/Code_type.hpp"
 #include "dxf/Dxf_exporter.hpp"
+#include "dxf/Dxf_dimstyle_entry.hpp"
 
 DXF_BEGIN_NAMESPACE
 
-class Dxf_data;
-class Dxf_base_table;
-class Dxf_base_entry;
-class Dxf_appid_entry;
-class Dxf_block_record_entry;
-class Dxf_dimstyle_entry;
-class Dxf_layer_entry;
-class Dxf_ltype_entry;
-class Dxf_style_entry;
-class Dxf_ucs_entry;
-class Dxf_view_entry;
-class Dxf_vport_entry;
+struct Dxf_data;
+struct Dxf_base_table;
+struct Dxf_base_entry;
+struct Dxf_block;
+struct Dxf_base_entity;
+struct Dxf_base_object;
+
+// Table entry types
+struct Dxf_appid_entry;
+struct Dxf_block_record_entry;
+struct Dxf_dimstyle_entry;
+struct Dxf_layer_entry;
+struct Dxf_ltype_entry;
+struct Dxf_style_entry;
+struct Dxf_ucs_entry;
+struct Dxf_view_entry;
+struct Dxf_vport_entry;
+
+// Object types
+struct Dxf_dictionary_object;
 
 class SGAL_SGAL_DECL Dxf_writer : public SGAL::Base_writer {
 public:
@@ -118,9 +128,17 @@ public:
   template <typename Entry>
   void export_entry(const Entry& entry, const std::string& name);
 
-  /*! Export a given entry.
+  /*! Export a DIMSTYLE entry.
+   */
+  void export_entry(const Dxf_dimstyle_entry& entry, const std::string& name);
+
+  /*! Export a given base entry.
    */
   void export_base_entry(const Dxf_base_entry& base_entry);
+
+  /*! Export a given DIMSTYLE base entry.
+   */
+  void export_dimstyle_base_entry(const Dxf_base_entry& base_entry);
 
   /*! Export a given entry.
    */
@@ -133,6 +151,27 @@ public:
   void export_entry(const Dxf_ucs_entry& entry);
   void export_entry(const Dxf_view_entry& entry);
   void export_entry(const Dxf_vport_entry& entry);
+
+  /*! Export a BLOCK record.
+   */
+  void export_block(const Dxf_block& block);
+
+  /*! Export an ENDBLK record.
+   */
+  void export_endblk(const Dxf_block& block);
+
+  /// Object exporters
+  //@{
+
+  /*! Export a base object record.
+   */
+  void export_base_object(const Dxf_base_object& base_object);
+
+  /*! Export a DICT>IONARY object record.
+   */
+  void export_object(const Dxf_dictionary_object& object);
+
+  //@}
 
   /// Exporters
   //@{
@@ -185,6 +224,21 @@ public:
    */
   template <typename Record, typename Members>
   void export_member(int code, const Record& record, Members& members);
+
+  /*! Export a non-empty item.
+   * \param[in] code the code to export.
+   * \param[in] record the source record.
+   * \param[in] handle the handle to the struct member.
+   */
+  template <typename T, typename Record, typename MemberVariant>
+  void export_nonempty_member(int code, const Record& record,
+                              MemberVariant handle);
+
+  /*! Export a non-empty item.
+   * \pre code_type(code) must be a handle to SGAL::String.
+   */
+  template <typename Record, typename Members>
+  void export_nonempty_member(int code, const Record& record, Members& members);
   //@}
 
   /*! Return a string with the hex representation of val.
@@ -218,7 +272,7 @@ private:
   static const size_t s_layer_entry_handle;
   static const size_t s_style_table_handle;
   static const size_t s_style_entry_handle;
-  static const size_t s_vies_table_handle;
+  static const size_t s_view_table_handle;
   static const size_t s_ucs_table_handle;
   static const size_t s_appid_table_handle;
   static const size_t s_appid_entry_handle;
@@ -242,7 +296,9 @@ std::string Dxf_writer::to_hex_string(T val) const
 {
   std::stringstream ss;
   ss << std::hex << val;
-  return ss.str();
+  auto tmp = ss.str();
+  boost::to_upper(tmp);
+  return tmp;
 }
 
 //! \brief export an item if not equal to a given default value.
@@ -274,9 +330,10 @@ void Dxf_writer::export_member(int code, const Record& record,
                                MemberVariant handle, int index)
 { export_item(code, (record.*(boost::get<T>(handle)))[index]); }
 
-//! \brief Export an item.
+//! \brief exports an item.
 template <typename Record_, typename Members>
-void Dxf_writer::export_member(int code, const Record_& record, Members& members)
+void Dxf_writer::export_member(int code, const Record_& record,
+                               Members& members)
 {
   typedef Record_                             Record;
 
@@ -318,6 +375,25 @@ void Dxf_writer::export_member(int code, const Record_& record, Members& members
   }
 }
 
+//! \brief exports a non-empty item.
+template <typename T, typename Record, typename MemberVariant>
+void Dxf_writer::export_nonempty_member(int code, const Record& record,
+                                        MemberVariant handle)
+{ export_nonempty_string(code, record.*(boost::get<T>(handle))); }
+
+//! \brief exports a non-empty item.
+template <typename Record, typename Members>
+void Dxf_writer::export_nonempty_member(int code, const Record& record,
+                                        Members& members)
+{
+  auto it = members.find(code);
+  SGAL_assertion(it != members.end());
+  SGAL_assertion_code(auto ct = code_type(code));
+  SGAL_assertion(ct == Code_type::STRING);
+  auto handle = it->second.m_handle;
+  export_nonempty_member<SGAL::String Record::*>(code, record, handle);
+}
+
 //! \brief exports an object.
 template <typename Function>
 inline void Dxf_writer::export_section(Function fnc)
@@ -344,6 +420,7 @@ void Dxf_writer::export_table(const Table& table, const std::string& name)
 template <typename Entry>
 void Dxf_writer::export_entry(const Entry& entry, const std::string& name)
 {
+
   export_string(0, name);
   export_base_entry(entry);
   export_entry(entry);

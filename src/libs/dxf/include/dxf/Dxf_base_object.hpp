@@ -53,6 +53,11 @@ struct Dxf_base_object {
    */
   Dxf_base_object() : m_parser(nullptr) {}
 
+  /*! Destruct.
+   * This is necessary to enable dynamic_cast.
+   */
+  virtual ~Dxf_base_object() {}
+
   /*! Set the parser.
    * \param[in] parser the parser.
    */

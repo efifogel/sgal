@@ -27,6 +27,9 @@
 
 DXF_BEGIN_NAMESPACE
 
+// Default values
+const int16_t Dxf_block::s_def_paper_space(0);
+
 /* This object contains the description of DXF BLOCK variables.
  * The DXF BLOCK variables listed below are extracted from
  *   http://help.autodesk.com/view/ACD/2017/ENU/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A

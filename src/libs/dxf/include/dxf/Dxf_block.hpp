@@ -80,7 +80,7 @@ struct SGAL_SGAL_DECL Dxf_block {
 
   /*! Construct
    */
-  Dxf_block() : m_paper_space(0) {}
+  Dxf_block() : m_paper_space(s_def_paper_space) {}
 
   /*! Destruct.
    */
@@ -91,6 +91,9 @@ struct SGAL_SGAL_DECL Dxf_block {
 
   //! The Group sub-graph represenetd by the block.
   Shared_group m_group;
+
+  //! Default values
+  static const int16_t s_def_paper_space;
 };
 
 DXF_END_NAMESPACE

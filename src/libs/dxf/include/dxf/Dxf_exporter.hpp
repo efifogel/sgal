@@ -57,7 +57,7 @@ struct Dxf_exporter<int8_t> {
   Dxf_exporter(SGAL::Base_writer& writer) : m_writer(writer) {}
 
   void operator()(const int8_t& value)
-  { m_writer.out() << value << std::endl; }
+  { m_writer.out() << static_cast<int>(value) << std::endl; }
 };
 
 /*! Export a hex value.

@@ -69,12 +69,13 @@ struct SGAL_SGAL_DECL Dxf_layer_entry : Dxf_base_entry {
   /*! Construct.
    * Initialize the color with -1 to indicate that it hasn't been set.
    */
-  Dxf_layer_entry() :
-    m_color(static_cast<int32_t>(-1))
-  {}
+  Dxf_layer_entry();
 
   //! The color array for this layer, which consists of one color.
   Shared_color_array m_color_array;
+
+  //! Default values
+  static const bool s_def_line_weight;
 };
 
 DXF_END_NAMESPACE
