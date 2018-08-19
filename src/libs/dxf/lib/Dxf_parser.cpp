@@ -192,20 +192,6 @@ Dxf_parser::s_tables = {
   { "VPORT", &Dxf_parser::parse_vport_table }
 };
 
-/// Ucs table
-typedef Dxf_record_wrapper<Dxf_ucs_entry>               Dxf_ucs_wrapper;
-
-//!
-template <>
-const std::map<int, Dxf_ucs_wrapper::Record_member>
-Dxf_ucs_wrapper::s_record_members = {};
-
-//!
-template <>
-const std::map<int, Dxf_ucs_wrapper::Record_handler_type>
-Dxf_ucs_wrapper::s_record_handlers = {};
-//@}
-
 //!
 const std::map<SGAL::String, Dxf_parser::Entity_parser>
 Dxf_parser::s_entities = {
