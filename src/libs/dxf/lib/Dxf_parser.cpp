@@ -593,7 +593,7 @@ void Dxf_parser::parse_block(Dxf_block& block)
 }
 
 //! \brief parses one ENDBLK.
-void Dxf_parser::parse_endblk()
+void Dxf_parser::parse_endblk(Dxf_endblk& endblk)
 {
   SGAL_TRACE_CODE(m_trace_code,
                   if (get_verbose_level() >= 4)
@@ -625,21 +625,21 @@ void Dxf_parser::parse_blocks()
   import_code(n);
   SGAL_assertion(0 == n);
 
-  Dxf_block* block(nullptr);
+  std::pair<Dxf_block, Dxf_endblk>* block(nullptr);
   do {
     SGAL::String str;
     import_value(str);
     if ("BLOCK" == str) {
       SGAL_assertion(! block);
-      m_data->m_blocks.push_back(Dxf_block());
+      m_data->m_blocks.emplace_back();
       block = &(m_data->m_blocks.back());
-      parse_block(*block);
+      parse_block(block->first);
       continue;
     }
 
     if ("ENDBLK" == str) {
       SGAL_assertion(block);
-      parse_endblk();
+      parse_endblk(block->second);
       block = nullptr;
       continue;
     }
@@ -650,7 +650,7 @@ void Dxf_parser::parse_blocks()
     auto it = s_entities.find(str);
     if (it != s_entities.end()) {
       auto* entity = (this->*(it->second))();
-      if (entity) block->m_entities.push_back(entity);
+      if (entity) block->first.m_entities.push_back(entity);
       continue;
     }
 

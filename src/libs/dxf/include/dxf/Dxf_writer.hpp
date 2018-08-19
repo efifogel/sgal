@@ -41,6 +41,7 @@ struct Dxf_data;
 struct Dxf_base_table;
 struct Dxf_base_entry;
 struct Dxf_block;
+struct Dxf_endblk;
 struct Dxf_base_entity;
 struct Dxf_base_object;
 
@@ -158,7 +159,7 @@ public:
 
   /*! Export an ENDBLK record.
    */
-  void export_endblk(const Dxf_block& block);
+  void export_endblk(const Dxf_endblk& block);
 
   /// Object exporters
   //@{

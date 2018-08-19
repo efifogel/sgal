@@ -43,6 +43,7 @@
 #include "dxf/Dxf_importer.hpp"
 #include "dxf/Dxf_class.hpp"
 #include "dxf/Dxf_block.hpp"
+#include "dxf/Dxf_endblk.hpp"
 #include "dxf/Dxf_base_table.hpp"
 #include "dxf/Dxf_base_entry.hpp"
 #include "dxf/Dxf_simple_record_wrapper.hpp"
@@ -161,7 +162,7 @@ protected:
 
   /*! Parse one ENDBLK.
    */
-  void parse_endblk();
+  void parse_endblk(Dxf_endblk& endblk);
 
 private:
   enum Section_type {

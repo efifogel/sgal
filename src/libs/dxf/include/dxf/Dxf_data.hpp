@@ -31,6 +31,7 @@
 #include "dxf/Dxf_header.hpp"
 #include "dxf/Dxf_class.hpp"
 #include "dxf/Dxf_block.hpp"
+#include "dxf/Dxf_endblk.hpp"
 #include "dxf/Dxf_section.hpp"
 #include "dxf/Dxf_table.hpp"
 #include "dxf/Dxf_appid_entry.hpp"
@@ -90,7 +91,7 @@ struct SGAL_SGAL_DECL Dxf_data {
   Vport_table m_vport_table;
 
   // Blocks
-  std::list<Dxf_block> m_blocks;
+  std::list<std::pair<Dxf_block, Dxf_endblk> > m_blocks;
 
   // Entities
   std::vector<Dxf_base_entity*> m_entities;

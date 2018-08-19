@@ -60,6 +60,7 @@
 #include "dxf/Dxf_parser.hpp"
 #include "dxf/Dxf_data.hpp"
 #include "dxf/Dxf_block.hpp"
+#include "dxf/Dxf_endblk.hpp"
 #include "dxf/Dxf_polyline_boundary_path.hpp"
 #include "dxf/Dxf_line_entity.hpp"
 #include "dxf/Dxf_circle_entity.hpp"
@@ -1144,9 +1145,9 @@ void Dxf_parser::process_insert_entity(const Dxf_insert_entity& insert,
   ++m_inserts_num;
 
   auto it = std::find_if(m_data->m_blocks.begin(), m_data->m_blocks.end(),
-                         [&](Dxf_block& block)
-                         { return insert.m_name == block.m_name; });
-  auto& block = *it;
+                         [&](std::pair<Dxf_block, Dxf_endblk>& block)
+                         { return insert.m_name == block.first.m_name; });
+  auto& block = it->first;
   if (! block.m_group) {
     auto* group = new SGAL::Group;
     group->add_to_scene(m_scene_graph);

@@ -36,6 +36,7 @@
 #include "dxf/Dxf_base_table.hpp"
 #include "dxf/Dxf_base_entry.hpp"
 #include "dxf/Dxf_block.hpp"
+#include "dxf/Dxf_endblk.hpp"
 
 #include "dxf/Dxf_dictionary_object.hpp"
 
@@ -264,9 +265,9 @@ void Dxf_writer::export_blocks()
 
   for (const auto& block : m_data->m_blocks) {
     export_string(0, "BLOCK");
-    export_block(block);
+    export_block(block.first);
     export_string(0, "ENDBLK");
-    export_endblk(block);
+    export_endblk(block.second);
   }
   //! \todo Export BLOCKS
 }
@@ -696,14 +697,14 @@ void Dxf_writer::export_block(const Dxf_block& block)
 }
 
 //! \brief exports an ENDBLK record.
-void Dxf_writer::export_endblk(const Dxf_block& block)
+void Dxf_writer::export_endblk(const Dxf_endblk& endblk)
 {
-  auto& members = Dxf_record_wrapper<Dxf_block>::s_record_members;
+  auto& members = Dxf_record_wrapper<Dxf_endblk>::s_record_members;
 
-  export_member(5, block, members);
-  export_member(330, block, members);
+  export_member(5, endblk, members);
+  export_member(330, endblk, members);
   export_string(100, "AcDbEntity");
-  export_member(8, block, members);
+  export_member(8, endblk, members);
   export_string(100, "AcDbBlockEnd");
 }
 
@@ -1024,7 +1025,8 @@ void Dxf_writer::init()
   auto& blocks = m_data->m_blocks;
 
   blocks.emplace_back();
-  auto& block1 = blocks.back();
+  auto& full_block1 = blocks.back();
+  auto& block1 = full_block1.first;
   block1.m_handle = to_hex_string(s_block_model_space_handle);
   block1.m_owner_handle = to_hex_string(s_block_record_model_space_handle);;
   block1.m_layer_name = "0";
@@ -1036,9 +1038,15 @@ void Dxf_writer::init()
   block1.m_name = "*Model_Space";
   block1.m_xref_path_name = "";
 
+  auto& edblk1 = full_block1.second;
+  edblk1.m_handle = to_hex_string(s_endblk_model_space_handle);
+  edblk1.m_owner_handle = to_hex_string(s_block_record_model_space_handle);;
+  edblk1.m_layer_name = "0";
+
   // *PAPER_SPACE
   blocks.emplace_back();
-  auto& block2 = blocks.back();
+  auto& full_block2 = blocks.back();
+  auto& block2 = full_block2.first;
   block2.m_handle = to_hex_string(s_block_paper_space_handle);
   block2.m_owner_handle = to_hex_string(s_block_record_paper_space_handle);;
   block2.m_layer_name = "0";
@@ -1049,6 +1057,11 @@ void Dxf_writer::init()
   block2.m_base_point[2] = 0.0;
   block2.m_name = "*Paper_Space";
   block2.m_xref_path_name = "";
+
+  auto& edblk2 = full_block2.second;
+  edblk2.m_handle = to_hex_string(s_endblk_paper_space_handle);
+  edblk2.m_owner_handle = to_hex_string(s_block_record_paper_space_handle);;
+  block2.m_layer_name = "0";
 
   // ENtitIES can be empty.
 
