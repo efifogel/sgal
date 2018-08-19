@@ -37,6 +37,7 @@
 #include "dxf/Dxf_base_entry.hpp"
 #include "dxf/Dxf_block.hpp"
 #include "dxf/Dxf_endblk.hpp"
+#include "dxf/Line_weight.hpp"
 
 #include "dxf/Dxf_dictionary_object.hpp"
 
@@ -654,6 +655,18 @@ void Dxf_writer::export_entry(const Dxf_dimstyle_entry& entry)
   // 281 DIMSD1
   // 282 DIMSD2
   export_member(283, entry, members);
+  export_member(284, entry, members);
+  export_member(285, entry, members);
+  export_member(286, entry, members);
+  export_member(288, entry, members);
+  export_member(289, entry, members);
+  export_member(340, entry, members);
+  export_member(341, entry, members);
+  export_member(342, entry, members);
+  export_member(343, entry, members);
+  export_member(344, entry, members);
+  export_member(371, entry, members);
+  export_member(372, entry, members);
 }
 
 //! \brief exports a BLOCK_RECORD_entry table entry.
@@ -994,8 +1007,10 @@ void Dxf_writer::init()
   dimstyle_entry.m_dimension_text_and_arrow_placement = 3;
   dimstyle_entry.m_dimension_text_style = "Standard";
   dimstyle_entry.m_dimension_leader_block_name = "";
-  dimstyle_entry.m_dimension_line_weight = -2;
-  dimstyle_entry.m_dimension_extension_line_weight = -2;
+  dimstyle_entry.m_dimension_line_weight =
+    static_cast<int8_t>(Line_weight::BY_BLOCK);
+  dimstyle_entry.m_dimension_extension_line_weight =
+    static_cast<int8_t>(Line_weight::BY_BLOCK);
 
   // BLOCK_RECORD
   auto block_record_handle = to_hex_string(s_dimstyle_table_handle);
