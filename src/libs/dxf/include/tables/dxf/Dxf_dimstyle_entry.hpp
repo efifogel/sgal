@@ -99,8 +99,8 @@ struct SGAL_SGAL_DECL Dxf_dimstyle_entry : Dxf_base_entry {
   int16_t m_dimension_decilam_separator_char; //DIMDSEP
   int16_t m_dimension_text_movement_rule; // DIMTMOVE
   int8_t m_dimension_text_justification; // DIMJUST
-  // int8_t DIMSD1
-  // int8_t DIMSD2
+  int8_t m_dimsd1;      // DIMSD1
+  int8_t m_dimsd2;      // DIMSD2
   int8_t m_dimension_tolerance_vertical_justification; // DIMTOLJ
   int8_t m_dimension_tolerance_zero_suppression; // DIMTZIN
   int8_t m_alternate_dimensioning_zero_suppression; // DIMALTZ

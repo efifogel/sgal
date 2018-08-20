@@ -221,12 +221,12 @@ public:
   void export_member(int code, const Record& record, MemberVariant handle,
                      int index);
 
-  /*! Export an item.
+  /*! Export an item that is a member of a record.
    */
   template <typename Record, typename Members>
   void export_member(int code, const Record& record, Members& members);
 
-  /*! Export a non-empty item.
+  /*! Export a non-empty item .that is a member of a record.
    * \param[in] code the code to export.
    * \param[in] record the source record.
    * \param[in] handle the handle to the struct member.
@@ -235,11 +235,23 @@ public:
   void export_nonempty_member(int code, const Record& record,
                               MemberVariant handle);
 
-  /*! Export a non-empty item.
+  /*! Export a non-empty item that is a member of a record.
    * \pre code_type(code) must be a handle to SGAL::String.
    */
   template <typename Record, typename Members>
   void export_nonempty_member(int code, const Record& record, Members& members);
+
+  /*! Export an item that is a member of a simple record.
+   */
+  template <typename Record, typename Members>
+  void export_simple_member(int code, const Record& record, Members& members);
+
+  /*! Export a non-empty item that is a member of a simple record.
+   * \pre code_type(code) must be a handle to SGAL::String.
+   */
+  template <typename Record, typename Members>
+  void export_nonempty_simple_member(int code, const Record& record,
+                                     Members& members);
   //@}
 
   /*! Return a string with the hex representation of val.
@@ -333,8 +345,7 @@ void Dxf_writer::export_member(int code, const Record& record,
 
 //! \brief exports an item.
 template <typename Record_, typename Members>
-void Dxf_writer::export_member(int code, const Record_& record,
-                               Members& members)
+void Dxf_writer::export_member(int code, const Record_& record, Members& members)
 {
   typedef Record_                             Record;
 
@@ -376,6 +387,39 @@ void Dxf_writer::export_member(int code, const Record_& record,
   }
 }
 
+//! \brief export an item that is a member of a simple record.
+template <typename Record, typename Members>
+void Dxf_writer::export_simple_member(int code, const Record& record,
+                                      Members& members)
+{
+  typedef SGAL::String Record::*              String_record;
+  typedef bool Record::*                      Bool_record;
+  typedef int8_t Record::*                    Int8_record;
+  typedef int16_t Record::*                   Int16_record;
+  typedef int32_t Record::*                   Int32_record;
+  typedef double Record::*                    Double_record;
+  typedef SGAL::Uint Record::*                Uint_record;
+
+  auto it = members.find(code);
+  SGAL_assertion(it != members.end());
+  auto ct = code_type(code);
+
+  auto handle = it->second;
+
+  switch (ct) {
+   case Code_type::STRING: export_member<String_record>(code, record, handle); break;
+   case Code_type::BOOL: export_member<Bool_record>(code, record, handle); break;
+   case Code_type::INT8: export_member<Int8_record>(code, record, handle); break;
+   case Code_type::INT16: export_member<Int16_record>(code, record, handle); break;
+   case Code_type::INT32: export_member<Int32_record>(code, record, handle); break;
+   case Code_type::UINT: export_member<Uint_record>(code, record, handle); break;
+
+   case Code_type::DOUBLE: export_member<Double_record>(code, record, handle); break;
+
+   default: SGAL_error();
+  }
+}
+
 //! \brief exports a non-empty item.
 template <typename T, typename Record, typename MemberVariant>
 void Dxf_writer::export_nonempty_member(int code, const Record& record,
@@ -392,6 +436,19 @@ void Dxf_writer::export_nonempty_member(int code, const Record& record,
   SGAL_assertion_code(auto ct = code_type(code));
   SGAL_assertion(ct == Code_type::STRING);
   auto handle = it->second.m_handle;
+  export_nonempty_member<SGAL::String Record::*>(code, record, handle);
+}
+
+//! \brief exports a non-empty item that is a member of a simple record.
+template <typename Record, typename Members>
+void Dxf_writer::export_nonempty_simple_member(int code, const Record& record,
+                                               Members& members)
+{
+  auto it = members.find(code);
+  SGAL_assertion(it != members.end());
+  SGAL_assertion_code(auto ct = code_type(code));
+  SGAL_assertion(ct == Code_type::STRING);
+  auto handle = it->second;
   export_nonempty_member<SGAL::String Record::*>(code, record, handle);
 }
 

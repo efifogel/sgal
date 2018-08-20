@@ -35,8 +35,6 @@ struct Dxf_dictionary_object : Dxf_base_object {
 
   /// \name Data members
   //@{
-
-  SGAL::String m_handle; // Handle
   int8_t m_is_hard_owner; // Hard-owner flag. If set to 1, indicates that
                         // elements of the dictionary are to be treated as
                         // hard-owned
@@ -51,8 +49,11 @@ struct Dxf_dictionary_object : Dxf_base_object {
   std::map<SGAL::String, SGAL::String> m_value_handles; // A mapping from
                         // soft-owner ID/handles to entry objects (one for each
                         // entry) (optional)
-
   //@}
+
+  /*! Construct.
+   */
+  Dxf_dictionary_object() : m_is_hard_owner(s_def_is_hard_owner) {}
 
   /// \name Data handlers
   //@{
@@ -70,6 +71,9 @@ struct Dxf_dictionary_object : Dxf_base_object {
   SGAL::String m_entry_name;
 
   //@}
+
+  // Default values
+  static const int8_t s_def_is_hard_owner;
 };
 
 DXF_END_NAMESPACE

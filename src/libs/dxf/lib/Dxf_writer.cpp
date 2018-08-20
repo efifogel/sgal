@@ -294,8 +294,7 @@ void Dxf_writer::export_objects()
   auto& objects = m_data->m_objects;
   if (objects.empty()) return;
 
-  for (const Dxf_base_object* base_object : m_data->m_objects) {
-    export_base_object(*base_object);
+  for (const auto* base_object : m_data->m_objects) {
     auto* dictionary_object =
       dynamic_cast<const Dxf_dictionary_object*>(base_object);
     if (dictionary_object) export_object(*dictionary_object);
@@ -594,6 +593,13 @@ void Dxf_writer::export_entry(const Dxf_appid_entry& entry)
 //! \brief exports a DIMSTYLE table entry.
 void Dxf_writer::export_entry(const Dxf_dimstyle_entry& entry)
 {
+  SGAL_assertion(m_scene_graph);
+  auto* conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
+  auto dxf_conf = conf->get_dxf_configuration();
+  SGAL_assertion(dxf_conf);
+  auto version = dxf_conf->get_version();
+
   export_string(100, "AcDbDimStyleTableRecord");
 
   auto& members = Dxf_record_wrapper<Dxf_dimstyle_entry>::s_record_members;
@@ -641,19 +647,21 @@ void Dxf_writer::export_entry(const Dxf_dimstyle_entry& entry)
   export_member(177, entry, members);
   export_member(178, entry, members);
   export_member(179, entry, members);
-  export_member(270, entry, members);
+  if (version <= 12) export_member(270, entry, members);
   export_member(271, entry, members);
   export_member(272, entry, members);
   export_member(273, entry, members);
   export_member(274, entry, members);
   export_member(275, entry, members);
-  export_member(276, entry, members);
-  export_member(277, entry, members);
+  if (version > 12) {
+    export_member(276, entry, members);
+    export_member(277, entry, members);
+  }
   export_member(278, entry, members);
   export_member(279, entry, members);
   export_member(280, entry, members);
-  // 281 DIMSD1
-  // 282 DIMSD2
+  export_member(281, entry, members);
+  export_member(282, entry, members);
   export_member(283, entry, members);
   export_member(284, entry, members);
   export_member(285, entry, members);
@@ -662,9 +670,9 @@ void Dxf_writer::export_entry(const Dxf_dimstyle_entry& entry)
   export_member(289, entry, members);
   export_member(340, entry, members);
   export_member(341, entry, members);
-  export_member(342, entry, members);
-  export_member(343, entry, members);
-  export_member(344, entry, members);
+  export_nonempty_member(342, entry, members);
+  export_nonempty_member(343, entry, members);
+  export_nonempty_member(344, entry, members);
   export_member(371, entry, members);
   export_member(372, entry, members);
 }
@@ -676,11 +684,11 @@ void Dxf_writer::export_entry(const Dxf_block_record_entry& entry)
 
   auto& members = Dxf_record_wrapper<Dxf_block_record_entry>::s_record_members;
   export_member(2, entry, members);
-  export_member(340, entry, members);
+  export_nonempty_member(340, entry, members);
   export_member(70, entry, members);
   export_member(280, entry, members);
   export_member(281, entry, members);
-  export_member(310, entry, members);
+  export_nonempty_member(310, entry, members);
   // {1070, {&Dxf_block_record_entry::m_design_center_version_number, 1, 0}},
   // {1070, {&Dxf_block_record_entry::m_insert_units, 1, 0}},
   export_nonempty_member(1001, entry, members);
@@ -724,20 +732,25 @@ void Dxf_writer::export_endblk(const Dxf_endblk& endblk)
 //! \brief exports a base object record.
 void Dxf_writer::export_base_object(const Dxf_base_object& base_object)
 {
-  //auto& members = Dxf_simple_record_wrapper<Dxf_base_object>::s_record_members;
-  //export_member(5, base_object, members);
-  //export_member(360, base_object, members);
-  //export_member(330, base_object, members);
+  auto& members = Dxf_simple_record_wrapper<Dxf_base_object>::s_record_members;
+  export_simple_member(5, base_object, members);
+  export_nonempty_simple_member(360, base_object, members);
+  export_simple_member(330, base_object, members);
 }
 
 //! \brief exports a DICT>IONARY object record.
 void Dxf_writer::export_object(const Dxf_dictionary_object& object)
 {
+  export_string(0, "DICTIONARY");
+  export_base_object(object);
   auto& members = Dxf_record_wrapper<Dxf_dictionary_object>::s_record_members;
-  export_member(5, object, members);
   export_string(100, "AcDbDictionary");
-  export_member(280, object, members);
+  export_item(280, object.m_is_hard_owner, object.s_def_is_hard_owner);
   export_member(281, object, members);
+  for (const auto& entry : object.m_value_handles) {
+    export_item(3, entry.first);
+    export_item(350, entry.second);
+  }
 }
 
 //! \brief initializes with the minimal requirements.
@@ -1013,7 +1026,7 @@ void Dxf_writer::init()
     static_cast<int8_t>(Line_weight::BY_BLOCK);
 
   // BLOCK_RECORD
-  auto block_record_handle = to_hex_string(s_dimstyle_table_handle);
+  auto block_record_handle = to_hex_string(s_block_record_table_handle);
   auto& block_record_table = m_data->m_block_record_table;
   block_record_table.m_handle = block_record_handle;
   block_record_table.m_owner_obj = "0";
@@ -1076,20 +1089,21 @@ void Dxf_writer::init()
   auto& edblk2 = full_block2.second;
   edblk2.m_handle = to_hex_string(s_endblk_paper_space_handle);
   edblk2.m_owner_handle = to_hex_string(s_block_record_paper_space_handle);;
-  block2.m_layer_name = "0";
+  edblk2.m_layer_name = "0";
 
   // ENtitIES can be empty.
 
   // OBJECTS
   auto& objects = m_data->m_objects;
 
-  // DICTIONARY - the root dict - one entry named ACAD_GROUP
+  // DICTIONARY, the root dict, one entry named ACAD_GROUP
   auto* dictionary_object1 = new Dxf_dictionary_object;
   objects.push_back(dictionary_object1);
   dictionary_object1->m_duplicate_record_handling = 1;
   dictionary_object1->m_handle = to_hex_string(s_disctionary1_handle);
   dictionary_object1->m_owner_handle = "0";
-  dictionary_object1->m_entry_name = "ACAD_GROUP";
+  dictionary_object1->m_value_handles["ACAD_GROUP"] =
+    to_hex_string(s_disctionary2_handle);
 
   // DICTONARY ACAD_GROUP can be empty
   auto* dictionary_object2 = new Dxf_dictionary_object;

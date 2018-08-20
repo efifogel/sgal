@@ -28,11 +28,13 @@ DXF_BEGIN_NAMESPACE
 
 typedef Dxf_record_wrapper<Dxf_dictionary_object>  Dxf_dictionary_object_wrapper;
 
+// Default values
+const int8_t Dxf_dictionary_object::s_def_is_hard_owner(0);
+
 //! Record members
 template <>
 const std::map<int, Dxf_dictionary_object_wrapper::Record_member>
 Dxf_dictionary_object_wrapper::s_record_members = {
-  {5, {&Dxf_dictionary_object::m_handle, 1, 0}},
   {280, {&Dxf_dictionary_object::m_is_hard_owner, 1, 0}},
   {281, {&Dxf_dictionary_object::m_duplicate_record_handling, 1, 0}},
 };

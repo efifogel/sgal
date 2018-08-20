@@ -85,8 +85,8 @@ Dxf_dimstyle_wrapper::s_record_members = {
   {278, {&Dxf_dimstyle_entry::m_dimension_decilam_separator_char, 1, 0}},
   {279, {&Dxf_dimstyle_entry::m_dimension_text_movement_rule, 1, 0}},
   {280, {&Dxf_dimstyle_entry::m_dimension_text_justification, 1, 0}},
-  // 281 DIMSD1
-  // 282 DIMSD2
+  {281, {&Dxf_dimstyle_entry::m_dimsd1, 1, 0}},
+  {282, {&Dxf_dimstyle_entry::m_dimsd2, 1, 0}},
   {283, {&Dxf_dimstyle_entry::m_dimension_tolerance_vertical_justification, 1, 0}},
   {284, {&Dxf_dimstyle_entry::m_dimension_tolerance_zero_suppression, 1, 0}},
   {285, {&Dxf_dimstyle_entry::m_alternate_dimensioning_zero_suppression, 1, 0}},
