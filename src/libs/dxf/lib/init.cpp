@@ -35,14 +35,14 @@ DXF_BEGIN_NAMESPACE
 extern "C" void BOOST_EXTENSION_EXPORT_DECL dxf_init()
 {
   auto* tracer = SGAL::Tracer::get_instance();
-  auto trace_code = tracer->register_option("dxf-parsing");
+  auto trace_code_parsing = tracer->register_option("dxf-parsing");
 
   auto* geom_format = SGAL::Geometry_format::get_instance();
   auto format_code = geom_format->register_option("dxf");
 
   auto* loader = SGAL::Loader::get_instance();
   auto* dxf_parser = new Dxf_parser();
-  dxf_parser->set_trace_code(trace_code);
+  dxf_parser->set_trace_code(trace_code_parsing);
   loader->doregister(".dxf", dxf_parser);
 
   auto* writer = SGAL::Writer::get_instance();
