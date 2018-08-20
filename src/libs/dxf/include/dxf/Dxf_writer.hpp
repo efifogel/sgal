@@ -22,10 +22,8 @@
 #define DXF_WRITER_HPP
 
 #include <string>
-#include <sstream>
 
 #include <boost/variant.hpp>
-#include <boost/algorithm/string.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Base_writer.hpp"
@@ -55,6 +53,9 @@ struct Dxf_style_entry;
 struct Dxf_ucs_entry;
 struct Dxf_view_entry;
 struct Dxf_vport_entry;
+
+// Entity types
+struct Dxf_line_entity;
 
 // Object types
 struct Dxf_dictionary_object;
@@ -161,6 +162,19 @@ public:
    */
   void export_endblk(const Dxf_endblk& block);
 
+  /// Entity exporters
+  //@{
+
+  /*! Export a base entity record.
+   */
+  void export_base_entity(const Dxf_base_entity& base_entity);
+
+  /*! Export a LINE entity record.
+   */
+  void export_entity(const Dxf_line_entity& entity);
+
+  //@}
+
   /// Object exporters
   //@{
 
@@ -168,7 +182,7 @@ public:
    */
   void export_base_object(const Dxf_base_object& base_object);
 
-  /*! Export a DICT>IONARY object record.
+  /*! Export a DICTIONARY object record.
    */
   void export_object(const Dxf_dictionary_object& object);
 
@@ -254,12 +268,6 @@ public:
                                      Members& members);
   //@}
 
-  /*! Return a string with the hex representation of val.
-   * \param[in] Numerical value.
-   */
-  template <typename T>
-  std::string to_hex_string(T val) const;
-
  protected:
   /*! Initialize a DXF data structure with the minimal requirements.
    */
@@ -281,46 +289,7 @@ public:
 
   //! Indicates whether the dxf data is owned, and thus should be deallocated.
   bool m_owned;
-
-private:
-  static const size_t s_vport_table_handle;
-  static const size_t s_vport_entry_handle;
-  static const size_t s_ltype_table_handle;
-  static const size_t s_ltype_byblock_handle;
-  static const size_t s_ltype_bylayer_handle;
-  static const size_t s_ltype_continuous_handle;
-  static const size_t s_layer_table_handle;
-  static const size_t s_layer_entry_handle;
-  static const size_t s_style_table_handle;
-  static const size_t s_style_entry_handle;
-  static const size_t s_view_table_handle;
-  static const size_t s_ucs_table_handle;
-  static const size_t s_appid_table_handle;
-  static const size_t s_appid_entry_handle;
-  static const size_t s_dimstyle_table_handle;
-  static const size_t s_dimstyle_entry_handle;
-  static const size_t s_block_record_table_handle;
-  static const size_t s_block_record_model_space_handle;
-  static const size_t s_block_record_paper_space_handle;
-  static const size_t s_block_model_space_handle;
-  static const size_t s_endblk_model_space_handle;
-  static const size_t s_block_paper_space_handle;
-  static const size_t s_endblk_paper_space_handle;
-  static const size_t s_disctionary_handle;
-  static const size_t s_disctionary1_handle;
-  static const size_t s_disctionary2_handle;
 };
-
-//! \brief returns a string with the hex representation of val.
-template <typename T>
-std::string Dxf_writer::to_hex_string(T val) const
-{
-  std::stringstream ss;
-  ss << std::hex << val;
-  auto tmp = ss.str();
-  boost::to_upper(tmp);
-  return tmp;
-}
 
 //! \brief export an item if not equal to a given default value.
 template <typename T>

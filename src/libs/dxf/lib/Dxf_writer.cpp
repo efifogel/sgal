@@ -24,6 +24,8 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Configuration.hpp"
+#include "SGAL/Transform.hpp"
+#include "SGAL/to_hex_string.hpp"
 #include "SGAL/Dxf_configuration.hpp"
 
 #include "dxf/basic.hpp"
@@ -38,36 +40,13 @@
 #include "dxf/Dxf_block.hpp"
 #include "dxf/Dxf_endblk.hpp"
 #include "dxf/Line_weight.hpp"
+#include "dxf/Dxf_updater.hpp"
+
+#include "dxf/Dxf_line_entity.hpp"
 
 #include "dxf/Dxf_dictionary_object.hpp"
 
 DXF_BEGIN_NAMESPACE
-
-const size_t Dxf_writer::s_vport_table_handle(0x8);
-const size_t Dxf_writer::s_vport_entry_handle(0x29);
-const size_t Dxf_writer::s_ltype_table_handle(0x5);
-const size_t Dxf_writer::s_ltype_byblock_handle(0x14);
-const size_t Dxf_writer::s_ltype_bylayer_handle(0x15);
-const size_t Dxf_writer::s_ltype_continuous_handle(0x16);
-const size_t Dxf_writer::s_layer_table_handle(0x2);
-const size_t Dxf_writer::s_layer_entry_handle(0x10);
-const size_t Dxf_writer::s_style_table_handle(0x3);
-const size_t Dxf_writer::s_style_entry_handle(0x11);
-const size_t Dxf_writer::s_view_table_handle(0x6);
-const size_t Dxf_writer::s_ucs_table_handle(0x7);
-const size_t Dxf_writer::s_appid_table_handle(0x9);
-const size_t Dxf_writer::s_appid_entry_handle(0x12);
-const size_t Dxf_writer::s_dimstyle_table_handle(0xA);
-const size_t Dxf_writer::s_dimstyle_entry_handle(0x27);
-const size_t Dxf_writer::s_block_record_table_handle(0x1);
-const size_t Dxf_writer::s_block_record_model_space_handle(0x1F);
-const size_t Dxf_writer::s_block_record_paper_space_handle(0x1B);
-const size_t Dxf_writer::s_block_model_space_handle(0x20);
-const size_t Dxf_writer::s_endblk_model_space_handle(0x21);
-const size_t Dxf_writer::s_block_paper_space_handle(0x1C);
-const size_t Dxf_writer::s_endblk_paper_space_handle(0x1D);
-const size_t Dxf_writer::s_disctionary1_handle(0xC);
-const size_t Dxf_writer::s_disctionary2_handle(0xD);
 
 //! \brief constructs
 Dxf_writer::Dxf_writer() :
@@ -102,6 +81,10 @@ void Dxf_writer::operator()(SGAL::Scene_graph* scene_graph,
 //! \brief adds the scene to a DXF data structure.
 void Dxf_writer::update(Dxf_data* data)
 {
+  Dxf_updater updater(*data);
+  auto root = m_scene_graph->get_navigation_root();
+  for (auto it = root->children_begin(); it != root->children_end(); ++it)
+    updater(*it);
 }
 
 //! \brief exports a DXF data structure.
@@ -291,7 +274,11 @@ void Dxf_writer::export_entities(Dxf_data* data)
   auto& entities = data->m_entities;
   if (entities.empty()) return;
 
-  //! \todo Export ENTITIES
+
+  for (const auto* entity : data->m_entities) {
+    auto* line_entity =  dynamic_cast<const Dxf_line_entity*>(entity);
+    if (line_entity) export_entity(*line_entity);
+  }
 }
 
 //! \brief writes the OBJECTS section.
@@ -303,9 +290,8 @@ void Dxf_writer::export_objects(Dxf_data* data)
   auto& objects = data->m_objects;
   if (objects.empty()) return;
 
-  for (const auto* base_object : data->m_objects) {
-    auto* dictionary_object =
-      dynamic_cast<const Dxf_dictionary_object*>(base_object);
+  for (const auto* object : data->m_objects) {
+    auto* dictionary_object = dynamic_cast<const Dxf_dictionary_object*>(object);
     if (dictionary_object) export_object(*dictionary_object);
   }
 }
@@ -338,7 +324,7 @@ void Dxf_writer::export_base_table(const Dxf_base_table& base_table)
 {
   export_nonempty_string(5, base_table.m_handle);
   export_nonempty_string(360, base_table.m_owner_dict);
-  export_nonempty_string(330, base_table.m_owner_obj);
+  export_nonempty_string(330, base_table.m_owner_handle);
   export_string(100, "AcDbSymbolTable");
 }
 
@@ -347,7 +333,7 @@ void Dxf_writer::export_base_entry(const Dxf_base_entry& base_entry)
 {
   export_nonempty_string(5, base_entry.m_handle);
   export_nonempty_string(360, base_entry.m_owner_dict);
-  export_nonempty_string(330, base_entry.m_owner_obj);
+  export_nonempty_string(330, base_entry.m_owner_handle);
   export_string(100, "AcDbSymbolTableRecord");
 }
 
@@ -366,7 +352,7 @@ void Dxf_writer::export_dimstyle_base_entry(const Dxf_base_entry& base_entry)
 {
   export_nonempty_string(105, base_entry.m_handle);
   export_nonempty_string(360, base_entry.m_owner_dict);
-  export_nonempty_string(330, base_entry.m_owner_obj);
+  export_nonempty_string(330, base_entry.m_owner_handle);
   export_string(100, "AcDbSymbolTableRecord");
 }
 
@@ -738,16 +724,60 @@ void Dxf_writer::export_endblk(const Dxf_endblk& endblk)
   export_string(100, "AcDbBlockEnd");
 }
 
+//! \brief exports a base entity record.
+void Dxf_writer::export_base_entity(const Dxf_base_entity& base_entity)
+{
+  auto& members = Dxf_simple_record_wrapper<Dxf_base_entity>::s_record_members;
+  export_simple_member(5, base_entity, members);
+  export_simple_member(330, base_entity, members);
+  export_nonempty_simple_member(360, base_entity, members);
+  export_string(100, "AcDbEntity");
+  export_simple_member(67, base_entity, members);
+  export_simple_member(410, base_entity, members);
+  export_simple_member(8, base_entity, members);
+  export_simple_member(6, base_entity, members);
+  export_simple_member(62, base_entity, members);
+  export_simple_member(370, base_entity, members);
+  export_simple_member(48, base_entity, members);
+  export_simple_member(60, base_entity, members);
+  export_simple_member(92, base_entity, members);
+  for (const auto& id : base_entity.m_preview_image_data) export_item(310, id);
+  export_simple_member(420, base_entity, members);
+  export_simple_member(430, base_entity, members);
+  export_simple_member(440, base_entity, members);
+  export_simple_member(390, base_entity, members);
+  export_simple_member(284, base_entity, members);
+}
+
+//! \brief exports a LINE entity record.
+void Dxf_writer::export_entity(const Dxf_line_entity& entity)
+{
+  export_string(0, "LINE");
+  export_base_entity(entity);
+  auto& members = Dxf_record_wrapper<Dxf_line_entity>::s_record_members;
+  export_string(100, "AcDbLine");
+  export_member(39, entity, members);
+  export_member(10, entity, members);
+  export_member(20, entity, members);
+  export_member(30, entity, members);
+  export_member(11, entity, members);
+  export_member(21, entity, members);
+  export_member(31, entity, members);
+  export_member(210, entity, members);
+  export_member(220, entity, members);
+  export_member(230, entity, members);
+}
+
 //! \brief exports a base object record.
 void Dxf_writer::export_base_object(const Dxf_base_object& base_object)
 {
   auto& members = Dxf_simple_record_wrapper<Dxf_base_object>::s_record_members;
   export_simple_member(5, base_object, members);
-  export_nonempty_simple_member(360, base_object, members);
   export_simple_member(330, base_object, members);
+  export_nonempty_simple_member(360, base_object, members);
 }
 
-//! \brief exports a DICT>IONARY object record.
+//! \brief exports a DICTIONARY object record.
 void Dxf_writer::export_object(const Dxf_dictionary_object& object)
 {
   export_string(0, "DICTIONARY");
@@ -791,15 +821,15 @@ void Dxf_writer::init(Dxf_data* data)
   // TABLES
 
   // VPORT
-  auto vport_handle = to_hex_string(s_vport_table_handle);
+  auto vport_handle = SGAL::to_hex_string(Dxf_data::s_vport_table_handle);
   auto& vport_table = data->m_vport_table;
   vport_table.m_handle = vport_handle;
-  vport_table.m_owner_obj = "0";
+  vport_table.m_owner_handle = "0";
 
   vport_table.m_entries.emplace_back();
   auto& vport_entry = vport_table.m_entries.back();
-  vport_entry.m_handle = to_hex_string(s_vport_entry_handle);
-  vport_entry.m_owner_obj = vport_handle;
+  vport_entry.m_handle = SGAL::to_hex_string(Dxf_data::s_vport_entry_handle);
+  vport_entry.m_owner_handle = vport_handle;
   vport_entry.m_name = "*ACTIVE";
   vport_entry.m_flags = 0;
   vport_entry.m_lower_left[0] = 0.0;
@@ -859,15 +889,15 @@ void Dxf_writer::init(Dxf_data* data)
   vport_entry.m_ambient_color_i32 = 3358443;
 
   // LTYPE
-  auto ltype_handle = to_hex_string(s_ltype_table_handle);
+  auto ltype_handle = SGAL::to_hex_string(Dxf_data::s_ltype_table_handle);
   auto& ltype_table = data->m_ltype_table;
   ltype_table.m_handle = ltype_handle;
-  ltype_table.m_owner_obj = "0";
+  ltype_table.m_owner_handle = "0";
 
   ltype_table.m_entries.emplace_back();
   auto& ltype_entry1 = ltype_table.m_entries.back();
-  ltype_entry1.m_handle = to_hex_string(s_ltype_byblock_handle);
-  ltype_entry1.m_owner_obj = ltype_handle;
+  ltype_entry1.m_handle = SGAL::to_hex_string(Dxf_data::s_ltype_byblock_handle);
+  ltype_entry1.m_owner_handle = ltype_handle;
   ltype_entry1.m_name.assign("ByBlock");
   ltype_entry1.m_flags = 0;
   ltype_entry1.m_description = "";
@@ -877,8 +907,8 @@ void Dxf_writer::init(Dxf_data* data)
 
   ltype_table.m_entries.emplace_back();
   auto& ltype_entry2 = ltype_table.m_entries.back();
-  ltype_entry2.m_handle = to_hex_string(s_ltype_bylayer_handle);
-  ltype_entry2.m_owner_obj = ltype_handle;
+  ltype_entry2.m_handle = SGAL::to_hex_string(Dxf_data::s_ltype_bylayer_handle);
+  ltype_entry2.m_owner_handle = ltype_handle;
   ltype_entry2.m_name.assign("ByLayer");
   ltype_entry2.m_flags = 0;
   ltype_entry2.m_description = "";
@@ -888,8 +918,8 @@ void Dxf_writer::init(Dxf_data* data)
 
   ltype_table.m_entries.emplace_back();
   auto& ltype_entry3 = ltype_table.m_entries.back();
-  ltype_entry3.m_handle = to_hex_string(s_ltype_continuous_handle);
-  ltype_entry3.m_owner_obj = ltype_handle;
+  ltype_entry3.m_handle = SGAL::to_hex_string(Dxf_data::s_ltype_continuous_handle);
+  ltype_entry3.m_owner_handle = ltype_handle;
   ltype_entry3.m_name.assign("Continuous");
   ltype_entry3.m_flags = 0;
   ltype_entry3.m_description = "Solid line";
@@ -898,15 +928,15 @@ void Dxf_writer::init(Dxf_data* data)
   ltype_entry3.m_total_pattern_length = 0.0;
 
   // LAYER
-  auto layer_handle = to_hex_string(s_layer_table_handle);
+  auto layer_handle = SGAL::to_hex_string(Dxf_data::s_layer_table_handle);
   auto& layer_table = data->m_layer_table;
   layer_table.m_handle = layer_handle;
-  layer_table.m_owner_obj = "0";
+  layer_table.m_owner_handle = "0";
 
   layer_table.m_entries.emplace_back();
   auto& layer_entry = layer_table.m_entries.back();
-  layer_entry.m_handle = to_hex_string(s_layer_entry_handle);
-  layer_entry.m_owner_obj = layer_handle;
+  layer_entry.m_handle = SGAL::to_hex_string(Dxf_data::s_layer_entry_handle);
+  layer_entry.m_owner_handle = layer_handle;
   layer_entry.m_name = "0";
   layer_entry.m_flags = 0;
   layer_entry.m_color_index = 7;
@@ -916,15 +946,15 @@ void Dxf_writer::init(Dxf_data* data)
   layer_entry.m_plot_style_pointer = "F";
 
   // STYLE
-  auto style_handle = to_hex_string(s_style_table_handle);
+  auto style_handle = SGAL::to_hex_string(Dxf_data::s_style_table_handle);
   auto& style_table = data->m_style_table;
   style_table.m_handle = style_handle;
-  style_table.m_owner_obj = "0";
+  style_table.m_owner_handle = "0";
 
   style_table.m_entries.emplace_back();
   auto& style_entry = style_table.m_entries.back();
-  style_entry.m_handle = to_hex_string(s_style_entry_handle);
-  style_entry.m_owner_obj = style_handle;
+  style_entry.m_handle = SGAL::to_hex_string(Dxf_data::s_style_entry_handle);
+  style_entry.m_owner_handle = style_handle;
   style_entry.m_name = "Standard";
   style_entry.m_flags = 0;
   style_entry.m_text_height = 0.0;
@@ -936,40 +966,40 @@ void Dxf_writer::init(Dxf_data* data)
   style_entry.m_big_font_file_name = "";
 
   // VIEW can be empty
-  auto view_handle = to_hex_string(s_view_table_handle);
+  auto view_handle = SGAL::to_hex_string(Dxf_data::s_view_table_handle);
   auto& view_table = data->m_view_table;
   view_table.m_handle = view_handle;
-  view_table.m_owner_obj = "0";
+  view_table.m_owner_handle = "0";
 
   // UCS can be empty
-  auto ucs_handle = to_hex_string(s_ucs_table_handle);
+  auto ucs_handle = SGAL::to_hex_string(Dxf_data::s_ucs_table_handle);
   auto& ucs_table = data->m_ucs_table;
   ucs_table.m_handle = ucs_handle;
-  ucs_table.m_owner_obj = "0";
+  ucs_table.m_owner_handle = "0";
 
   // APPID
-  auto appid_handle = to_hex_string(s_appid_table_handle);
+  auto appid_handle = SGAL::to_hex_string(Dxf_data::s_appid_table_handle);
   auto& appid_table = data->m_appid_table;
   appid_table.m_handle = appid_handle;
-  appid_table.m_owner_obj = "0";
+  appid_table.m_owner_handle = "0";
 
   appid_table.m_entries.emplace_back();
   auto& appid_entry = appid_table.m_entries.back();
-  appid_entry.m_handle = to_hex_string(s_appid_entry_handle);
-  appid_entry.m_owner_obj = appid_handle;
+  appid_entry.m_handle = SGAL::to_hex_string(Dxf_data::s_appid_entry_handle);
+  appid_entry.m_owner_handle = appid_handle;
   appid_entry.m_name = "ACAD";
   appid_entry.m_flags = 0;
 
   // DIMSTYLE
-  auto dimstyle_handle = to_hex_string(s_dimstyle_table_handle);
+  auto dimstyle_handle = SGAL::to_hex_string(Dxf_data::s_dimstyle_table_handle);
   auto& dimstyle_table = data->m_dimstyle_table;
   dimstyle_table.m_handle = dimstyle_handle;
-  dimstyle_table.m_owner_obj = "0";
+  dimstyle_table.m_owner_handle = "0";
 
   dimstyle_table.m_entries.emplace_back();
   auto& dimstyle_entry = dimstyle_table.m_entries.back();
-  dimstyle_entry.m_handle = to_hex_string(s_dimstyle_entry_handle);
-  dimstyle_entry.m_owner_obj = dimstyle_handle;
+  dimstyle_entry.m_handle = SGAL::to_hex_string(Dxf_data::s_dimstyle_entry_handle);
+  dimstyle_entry.m_owner_handle = dimstyle_handle;
   dimstyle_entry.m_name = "Standard";
   dimstyle_entry.m_flags = 0;
   dimstyle_entry.m_dimensioning_scale_factor = 1.0;
@@ -1035,15 +1065,17 @@ void Dxf_writer::init(Dxf_data* data)
     static_cast<int8_t>(Line_weight::BY_BLOCK);
 
   // BLOCK_RECORD
-  auto block_record_handle = to_hex_string(s_block_record_table_handle);
+  auto block_record_handle =
+    SGAL::to_hex_string(Dxf_data::s_block_record_table_handle);
   auto& block_record_table = data->m_block_record_table;
   block_record_table.m_handle = block_record_handle;
-  block_record_table.m_owner_obj = "0";
+  block_record_table.m_owner_handle = "0";
 
   block_record_table.m_entries.emplace_back();
   auto& block_record_entry1 = block_record_table.m_entries.back();
-  block_record_entry1.m_handle = to_hex_string(s_block_record_model_space_handle);
-  block_record_entry1.m_owner_obj = block_record_handle;
+  block_record_entry1.m_handle =
+    SGAL::to_hex_string(Dxf_data::s_block_record_model_space_handle);
+  block_record_entry1.m_owner_handle = block_record_handle;
   block_record_entry1.m_name = "*Model_Space";
   block_record_entry1.m_insertion_units = 0;
   block_record_entry1.m_explodability = 1;
@@ -1051,8 +1083,9 @@ void Dxf_writer::init(Dxf_data* data)
 
   block_record_table.m_entries.emplace_back();
   auto& block_record_entry2 = block_record_table.m_entries.back();
-  block_record_entry2.m_handle = to_hex_string(s_block_record_paper_space_handle);
-  block_record_entry2.m_owner_obj = block_record_handle;
+  block_record_entry2.m_handle =
+    SGAL::to_hex_string(Dxf_data::s_block_record_paper_space_handle);
+  block_record_entry2.m_owner_handle = block_record_handle;
   block_record_entry2.m_name = "*Paper_Space";
   block_record_entry2.m_insertion_units = 0;
   block_record_entry2.m_explodability = 1;
@@ -1064,9 +1097,10 @@ void Dxf_writer::init(Dxf_data* data)
   blocks.emplace_back();
   auto& full_block1 = blocks.back();
   auto& block1 = full_block1.first;
-  block1.m_handle = to_hex_string(s_block_model_space_handle);
-  block1.m_owner_handle = to_hex_string(s_block_record_model_space_handle);;
-  block1.m_layer_name = "0";
+  block1.m_handle = SGAL::to_hex_string(Dxf_data::s_block_model_space_handle);
+  block1.m_owner_handle =
+    SGAL::to_hex_string(Dxf_data::s_block_record_model_space_handle);;
+  block1.m_layer_name = Dxf_data::s_def_layer;
   block1.m_name = "*Model_Space";
   block1.m_flags = 0;
   block1.m_base_point[0] = 0.0;
@@ -1076,17 +1110,19 @@ void Dxf_writer::init(Dxf_data* data)
   block1.m_xref_path_name = "";
 
   auto& edblk1 = full_block1.second;
-  edblk1.m_handle = to_hex_string(s_endblk_model_space_handle);
-  edblk1.m_owner_handle = to_hex_string(s_block_record_model_space_handle);;
-  edblk1.m_layer_name = "0";
+  edblk1.m_handle = SGAL::to_hex_string(Dxf_data::s_endblk_model_space_handle);
+  edblk1.m_owner_handle =
+    SGAL::to_hex_string(Dxf_data::s_block_record_model_space_handle);
+  edblk1.m_layer_name = Dxf_data::s_def_layer;
 
   // *PAPER_SPACE
   blocks.emplace_back();
   auto& full_block2 = blocks.back();
   auto& block2 = full_block2.first;
-  block2.m_handle = to_hex_string(s_block_paper_space_handle);
-  block2.m_owner_handle = to_hex_string(s_block_record_paper_space_handle);;
-  block2.m_layer_name = "0";
+  block2.m_handle = SGAL::to_hex_string(Dxf_data::s_block_paper_space_handle);
+  block2.m_owner_handle =
+    SGAL::to_hex_string(Dxf_data::s_block_record_paper_space_handle);;
+  block2.m_layer_name = Dxf_data::s_def_layer;
   block2.m_name = "*Paper_Space";
   block2.m_flags = 0;
   block2.m_base_point[0] = 0.0;
@@ -1096,9 +1132,10 @@ void Dxf_writer::init(Dxf_data* data)
   block2.m_xref_path_name = "";
 
   auto& edblk2 = full_block2.second;
-  edblk2.m_handle = to_hex_string(s_endblk_paper_space_handle);
-  edblk2.m_owner_handle = to_hex_string(s_block_record_paper_space_handle);;
-  edblk2.m_layer_name = "0";
+  edblk2.m_handle = SGAL::to_hex_string(Dxf_data::s_endblk_paper_space_handle);
+  edblk2.m_owner_handle =
+    SGAL::to_hex_string(Dxf_data::s_block_record_paper_space_handle);;
+  edblk2.m_layer_name = Dxf_data::s_def_layer;
 
   // ENtitIES can be empty.
 
@@ -1109,17 +1146,19 @@ void Dxf_writer::init(Dxf_data* data)
   auto* dictionary_object1 = new Dxf_dictionary_object;
   objects.push_back(dictionary_object1);
   dictionary_object1->m_duplicate_record_handling = 1;
-  dictionary_object1->m_handle = to_hex_string(s_disctionary1_handle);
+  dictionary_object1->m_handle = SGAL::to_hex_string(Dxf_data::s_disctionary1_handle);
   dictionary_object1->m_owner_handle = "0";
   dictionary_object1->m_value_handles["ACAD_GROUP"] =
-    to_hex_string(s_disctionary2_handle);
+    SGAL::to_hex_string(Dxf_data::s_disctionary2_handle);
 
   // DICTONARY ACAD_GROUP can be empty
   auto* dictionary_object2 = new Dxf_dictionary_object;
   objects.push_back(dictionary_object2);
   dictionary_object2->m_duplicate_record_handling = 1;
-  dictionary_object2->m_handle = to_hex_string(s_disctionary2_handle);
-  dictionary_object2->m_owner_handle = to_hex_string(s_disctionary1_handle);
+  dictionary_object2->m_handle =
+    SGAL::to_hex_string(Dxf_data::s_disctionary2_handle);
+  dictionary_object2->m_owner_handle =
+    SGAL::to_hex_string(Dxf_data::s_disctionary1_handle);
 }
 
 DXF_END_NAMESPACE

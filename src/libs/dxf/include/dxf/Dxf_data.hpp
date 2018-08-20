@@ -90,20 +90,54 @@ struct SGAL_SGAL_DECL Dxf_data {
   View_table m_view_table;
   Vport_table m_vport_table;
 
-  // Blocks
+  //! Blocks
   std::list<std::pair<Dxf_block, Dxf_endblk> > m_blocks;
 
-  // Entities
+  //! Entities
   std::vector<Dxf_base_entity*> m_entities;
 
-  // Objects
+  //! Objects
   std::vector<Dxf_base_object*> m_objects;
 
-  // Thumbnail images
+  //! Thumbnail images
   Dxf_section m_thumbnailimage;
 
-  // Acds data
+  //! Acds data
   Dxf_section m_acdsdata;
+
+  //! Next available handle.
+  size_t m_handle;
+
+  //! Default handles
+  static const size_t s_vport_table_handle;
+  static const size_t s_vport_entry_handle;
+  static const size_t s_ltype_table_handle;
+  static const size_t s_ltype_byblock_handle;
+  static const size_t s_ltype_bylayer_handle;
+  static const size_t s_ltype_continuous_handle;
+  static const size_t s_layer_table_handle;
+  static const size_t s_layer_entry_handle;
+  static const size_t s_style_table_handle;
+  static const size_t s_style_entry_handle;
+  static const size_t s_view_table_handle;
+  static const size_t s_ucs_table_handle;
+  static const size_t s_appid_table_handle;
+  static const size_t s_appid_entry_handle;
+  static const size_t s_dimstyle_table_handle;
+  static const size_t s_dimstyle_entry_handle;
+  static const size_t s_block_record_table_handle;
+  static const size_t s_block_record_model_space_handle;
+  static const size_t s_block_record_paper_space_handle;
+  static const size_t s_block_model_space_handle;
+  static const size_t s_endblk_model_space_handle;
+  static const size_t s_block_paper_space_handle;
+  static const size_t s_endblk_paper_space_handle;
+  static const size_t s_disctionary_handle;
+  static const size_t s_disctionary1_handle;
+  static const size_t s_disctionary2_handle;
+
+  //! Default layer name
+  static const std::string s_def_layer;
 };
 
 DXF_END_NAMESPACE

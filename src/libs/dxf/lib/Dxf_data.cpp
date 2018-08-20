@@ -25,8 +25,40 @@
 
 DXF_BEGIN_NAMESPACE
 
+//! Default handles
+const size_t Dxf_data::s_vport_table_handle(0x8);
+const size_t Dxf_data::s_vport_entry_handle(0x29);
+const size_t Dxf_data::s_ltype_table_handle(0x5);
+const size_t Dxf_data::s_ltype_byblock_handle(0x14);
+const size_t Dxf_data::s_ltype_bylayer_handle(0x15);
+const size_t Dxf_data::s_ltype_continuous_handle(0x16);
+const size_t Dxf_data::s_layer_table_handle(0x2);
+const size_t Dxf_data::s_layer_entry_handle(0x10);
+const size_t Dxf_data::s_style_table_handle(0x3);
+const size_t Dxf_data::s_style_entry_handle(0x11);
+const size_t Dxf_data::s_view_table_handle(0x6);
+const size_t Dxf_data::s_ucs_table_handle(0x7);
+const size_t Dxf_data::s_appid_table_handle(0x9);
+const size_t Dxf_data::s_appid_entry_handle(0x12);
+const size_t Dxf_data::s_dimstyle_table_handle(0xA);
+const size_t Dxf_data::s_dimstyle_entry_handle(0x27);
+const size_t Dxf_data::s_block_record_table_handle(0x1);
+const size_t Dxf_data::s_block_record_model_space_handle(0x1F);
+const size_t Dxf_data::s_block_record_paper_space_handle(0x1B);
+const size_t Dxf_data::s_block_model_space_handle(0x20);
+const size_t Dxf_data::s_endblk_model_space_handle(0x21);
+const size_t Dxf_data::s_block_paper_space_handle(0x1C);
+const size_t Dxf_data::s_endblk_paper_space_handle(0x1D);
+const size_t Dxf_data::s_disctionary1_handle(0xC);
+const size_t Dxf_data::s_disctionary2_handle(0xD);
+
+//! Default layer name
+const std::string Dxf_data::s_def_layer("0");
+
 //! \brief constructs
-Dxf_data::Dxf_data() {}
+Dxf_data::Dxf_data() :
+  m_handle(100)
+{}
 
 //! \brief destructs.
 Dxf_data::~Dxf_data()
