@@ -57,6 +57,7 @@
 #include "SGAL/Epic_triangulation.hpp"
 
 #include "dxf/basic.hpp"
+#include "dxf/Dxf_builder.hpp"
 #include "dxf/Dxf_parser.hpp"
 #include "dxf/Dxf_data.hpp"
 #include "dxf/Dxf_block.hpp"
@@ -93,6 +94,16 @@ DXF_BEGIN_NAMESPACE
 //      shader.
 // 3. DIMENSION entities.
 // 4. Probably more.
+
+//! \brief constructs
+Dxf_builder::Dxf_builder(Dxf_data& data) :
+  m_trace_code_building(static_cast<size_t>(SGAL::Tracer::INVALID))
+{}
+
+//! \brief builds from the root.
+void Dxf_builder::operator()(SGAL::Group* root)
+{
+}
 
 //! \brief initializes the pallete.
 void Dxf_parser::init_palette(const SGAL::String& file_name)
@@ -1237,7 +1248,6 @@ void Dxf_parser::process_solid_entity(const Dxf_solid_entity& solid,
 
   // Count number of primitives & vertices:
   size_t num_primitives(1);
-  size_t num_indices(5);
   size_t size(4);
 
   // Allocate vertices:
@@ -1246,24 +1256,20 @@ void Dxf_parser::process_solid_entity(const Dxf_solid_entity& solid,
   coords->add_to_scene(m_scene_graph);
   m_scene_graph->add_container(shared_coords);
 
-  // Allocate indices:
-  auto& indices = ifs->get_coord_indices();
-  indices.resize(num_indices);
+  // Allocate & assign indices:
+  SGAL::Quad_indices quad_indices(1);
+  auto& indices = quad_indices.front();
+  indices = {0, 1, 2, 3};
 
   // Assign the coordinates & indices:
   auto cit = coords->begin();
-  *cit++ = SGAL::Vector3f(solid.m_corner1[0], solid.m_corner1[1], solid.m_corner1[2]);
-  *cit++ = SGAL::Vector3f(solid.m_corner2[0], solid.m_corner2[1], solid.m_corner2[2]);
-  *cit++ = SGAL::Vector3f(solid.m_corner4[0], solid.m_corner4[1], solid.m_corner4[2]);
-  *cit++ = SGAL::Vector3f(solid.m_corner3[0], solid.m_corner3[1], solid.m_corner3[2]);
+  typedef SGAL::Vector3f V3f;
+  *cit++ = V3f(solid.m_corner1[0], solid.m_corner1[1], solid.m_corner1[2]);
+  *cit++ = V3f(solid.m_corner2[0], solid.m_corner2[1], solid.m_corner2[2]);
+  *cit++ = V3f(solid.m_corner4[0], solid.m_corner4[1], solid.m_corner4[2]);
+  *cit++ = V3f(solid.m_corner3[0], solid.m_corner3[1], solid.m_corner3[2]);
 
-  auto it = indices.begin();
-  *it++ = 0;
-  *it++ = 1;
-  *it++ = 2;
-  *it++ = 3;
-  *it++ = -1;
-
+  ifs->set_facet_coord_indices(std::move(quad_indices));
   ifs->set_coord_array(shared_coords);
   ifs->set_color_array(shared_colors);
   ifs->set_num_primitives(num_primitives);

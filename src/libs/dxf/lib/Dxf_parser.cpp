@@ -49,6 +49,7 @@
 #include "dxf/Dxf_base_entity.hpp"
 #include "dxf/Dxf_base_object.hpp"
 #include "dxf/Dxf_section.hpp"
+#include "dxf/Dxf_builder.hpp"
 
 // Entities
 #include "dxf/Dxf_3dface_entity.hpp"
@@ -343,6 +344,9 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
     if (sec_it == s_sections.end()) SGAL_error_msg("Unrecognize section");
     (this->*(sec_it->second))();
   }
+
+  Dxf_builder builder(*m_data);
+  builder(root);
 
   // Construct the scene graph rooted at the given root.
   process_layers();
