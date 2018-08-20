@@ -85,35 +85,35 @@ public:
 
   /*! Write the HEADER section.
    */
-  void export_header();
+  void export_header(Dxf_data* data);
 
   /*! Write the CLASSES section.
    */
-  void export_classes();
+  void export_classes(Dxf_data* data);
 
   /*! Write the TABLES section.
    */
-  void export_tables();
+  void export_tables(Dxf_data* data);
 
   /*! Write the BLOCKS section.
    */
-  void export_blocks();
+  void export_blocks(Dxf_data* data);
 
   /*! Write the ENTITIES section.
    */
-  void export_entities();
+  void export_entities(Dxf_data* data);
 
   /*! Write the OBJECTS section.
    */
-  void export_objects();
+  void export_objects(Dxf_data* data);
 
   /*! Write the THUMBNAILIMAGE section.
    */
-  void export_thumbnailimage();
+  void export_thumbnailimage(Dxf_data* data);
 
   /*! Write the ACDSDATA section.
    */
-  void export_acdsdata();
+  void export_acdsdata(Dxf_data* data);
 
   /*! Export a given table.
    */
@@ -261,9 +261,17 @@ public:
   std::string to_hex_string(T val) const;
 
  protected:
-  /*! Initialize with the minimal requirements.
+  /*! Initialize a DXF data structure with the minimal requirements.
    */
-  void init();
+  void init(Dxf_data* data);
+
+  /*! Add the scene to a DXF data structure.
+   */
+  void update(Dxf_data* data);
+
+  /*! Export a DXF data structure.
+   */
+  void export_data(Dxf_data* data);
 
   //! The scene to export.
   SGAL::Scene_graph* m_scene_graph;
