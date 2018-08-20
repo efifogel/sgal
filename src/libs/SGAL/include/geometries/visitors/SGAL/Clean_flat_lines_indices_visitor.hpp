@@ -30,9 +30,12 @@ SGAL_BEGIN_NAMESPACE
 class Clean_flat_lines_indices_visitor : public boost::static_visitor<> {
 public:
   std::vector<Int32>& m_indices;
+  bool m_loop;
 
-  Clean_flat_lines_indices_visitor(std::vector<Int32>& indices) :
-    m_indices(indices)
+  Clean_flat_lines_indices_visitor(std::vector<Int32>& indices,
+                                   bool loop = false) :
+    m_indices(indices),
+    m_loop(loop)
   {}
 
   void operator()(const Line_indices& lines)
@@ -51,11 +54,13 @@ public:
     size_t size(0);
     for (size_t i = 0; i < polylines.size(); ++i)
       size += polylines[i].size() + 1;
+    if (m_loop) size += polylines.size();
     m_indices.resize(size);
     size_t k(0);
     for (size_t i = 0; i < polylines.size(); ++i) {
       for (size_t j = 0; j < polylines[i].size(); ++j)
         m_indices[k++] = polylines[i][j];
+      if (m_loop) m_indices[k++] = polylines[i][0];
       m_indices[k++] = -1;
     }
   }

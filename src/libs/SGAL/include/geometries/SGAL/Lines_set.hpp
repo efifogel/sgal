@@ -591,8 +591,8 @@ public:
   Lines_indices_const_iterator end_lines_indices(const Lines_indices& indices);
 
   /*! Clean an indices from a lines indices structure. */
-  void clean_indices(Int32_array& indices,
-                     const Lines_indices& source);
+  void clean_indices(Int32_array& indices, const Lines_indices& source,
+                     bool loop = false);
 
   /*! Assign the lines coordinate indices with the reverse of given indices.
    * \param[in] indices the input indices to reverse.

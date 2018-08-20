@@ -820,8 +820,9 @@ void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
   m_scene_graph->add_container(shared_coords);
 
   // Allocate indices:
-  auto& indices = ils->get_coord_indices();
-  indices.resize(size + num_primitives);
+  SGAL::Polyline_indices polyline_indices(1);
+  auto& indices = polyline_indices.front();
+  indices.resize(size);
 
   // Assign the vertices & indices:
   std::transform(poly.begin(), poly.end(), coords->begin(),
@@ -834,11 +835,11 @@ void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
   auto it = indices.begin();
   std::advance(it, size);
   std::iota(indices.begin(), it, 0);
-  *it++ = -1;
 
   auto type = closed ?
     SGAL::Geo_set::PT_LINE_LOOPS : SGAL::Geo_set::PT_LINE_STRIPS;
   ils->set_primitive_type(type);
+  ils->set_lines_coord_indices(std::move(polyline_indices));
   ils->set_coord_array(shared_coords);
   ils->set_color_array(shared_colors);
   ils->set_num_primitives(num_primitives);
@@ -932,8 +933,9 @@ void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline
   m_scene_graph->add_container(shared_coords);
 
   // Allocate indices:
-  auto& indices = ils->get_coord_indices();
-  indices.resize(size + num_primitives);
+  SGAL::Polyline_indices polyline_indices(1);
+  auto& indices = polyline_indices.front();
+  indices.resize(size);
 
   // Assign the vertices & indices:
   std::transform(poly.begin(), poly.end(), coords->begin(),
@@ -946,11 +948,11 @@ void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline
   auto it = indices.begin();
   std::advance(it, size);
   std::iota(indices.begin(), it, 0);
-  *it++ = -1;
 
   auto type = closed ?
     SGAL::Geo_set::PT_LINE_LOOPS : SGAL::Geo_set::PT_LINE_STRIPS;
   ils->set_primitive_type(type);
+  ils->set_lines_coord_indices(std::move(polyline_indices));
   ils->set_coord_array(shared_coords);
   ils->set_color_array(shared_colors);
   ils->set_num_primitives(num_primitives);
@@ -1010,8 +1012,9 @@ void Dxf_parser::process_circle_entity(const Dxf_circle_entity& circle,
   m_scene_graph->add_container(shared_coords);
 
   // Allocate indices:
-  auto& indices = ils->get_coord_indices();
-  indices.resize(size + num_primitives);
+  SGAL::Polyline_indices polyline_indices(1);
+  auto& indices = polyline_indices.front();
+  indices.resize(size);
 
   // Check whether mirroring is required
   bool mirror(false);
@@ -1036,10 +1039,10 @@ void Dxf_parser::process_circle_entity(const Dxf_circle_entity& circle,
   auto it_start = it;
   std::advance(it, size);
   std::iota(it_start, it, 0);
-  *it++ = -1;
 
   auto type = SGAL::Geo_set::PT_LINE_LOOPS;
   ils->set_primitive_type(type);
+  ils->set_lines_coord_indices(std::move(polyline_indices));
   ils->set_coord_array(shared_coords);
   ils->set_color_array(shared_colors);
   ils->set_num_primitives(num_primitives);

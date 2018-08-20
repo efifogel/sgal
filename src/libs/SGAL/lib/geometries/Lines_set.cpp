@@ -213,6 +213,8 @@ void Lines_set::lines_tex_coord_indices_changed()
 //! \brief calculates the sphere bound.
 void Lines_set::clean_bounding_sphere()
 {
+  // Do not bother cleaning the indices, because only the coordinates are used.
+  if (m_lines_coord_indices.empty()) return;
   if (m_bb_is_pre_set) {
     m_dirty_bounding_sphere = false;
     return;
@@ -598,7 +600,8 @@ void Lines_set::reverse_lines_coord_indices(const Lines_indices& source)
 //! \brief cleans the coordinate indices.
 void Lines_set::clean_coord_indices()
 {
-  clean_indices(m_coord_indices, m_lines_coord_indices);
+  bool loop = (PT_LINE_LOOPS == get_primitive_type());
+  clean_indices(m_coord_indices, m_lines_coord_indices, loop);
   m_dirty_coord_indices = false;
   Geo_set::coord_indices_changed();
 }
@@ -606,7 +609,9 @@ void Lines_set::clean_coord_indices()
 //! \brief cleans the normal indices.
 void Lines_set::clean_normal_indices()
 {
-  clean_indices(m_normal_indices, m_lines_normal_indices);
+  bool loop = ((PT_LINE_LOOPS == get_primitive_type()) &&
+               (AT_PER_VERTEX == get_normal_attachment()));
+  clean_indices(m_normal_indices, m_lines_normal_indices, loop);
   m_dirty_normal_indices = false;
   Geo_set::normal_indices_changed();
 }
@@ -614,6 +619,8 @@ void Lines_set::clean_normal_indices()
 //! \brief validates (cleans) the color indices.
 void Lines_set::clean_color_indices()
 {
+  bool loop = ((PT_LINE_LOOPS == get_primitive_type()) &&
+               (AT_PER_VERTEX == get_color_attachment()));
   clean_indices(m_color_indices, m_lines_color_indices);
   m_dirty_color_indices = false;
   Geo_set::color_indices_changed();
@@ -875,9 +882,9 @@ void Lines_set::clear_lines_indices(Lines_indices& indices)
 
 //! \brief cleans an index array from a lines indices structure.
 void Lines_set::clean_indices(std::vector<Int32>& indices,
-                             const Lines_indices& source)
+                              const Lines_indices& source, bool loop)
 {
-  Clean_flat_lines_indices_visitor visitor(indices);
+  Clean_flat_lines_indices_visitor visitor(indices, loop);
   boost::apply_visitor(visitor, source);
 }
 
