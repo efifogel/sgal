@@ -33,7 +33,7 @@ const std::map<int, Dxf_base_table_wrapper::Record_member_type>
 Dxf_base_table_wrapper::s_record_members = {
   {5, &Dxf_base_table::m_handle},
   {360, &Dxf_base_table::m_owner_dict},
-  {330, &Dxf_base_table::m_owner_obj}
+  {330, &Dxf_base_table::m_owner_handle}
 };
 
 DXF_END_NAMESPACE

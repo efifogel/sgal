@@ -36,7 +36,7 @@ struct SGAL_SGAL_DECL Dxf_base_table {
   SGAL::String m_handle; // Handle
   SGAL::String m_owner_dict; // Hard owner ID/handle to owner dictionary
                         // (optional)
-  SGAL::String m_owner_obj; // Soft-pointer ID/handle to owner object
+  SGAL::String m_owner_handle; // Soft-pointer ID/handle to owner object
   //@}
 };
 

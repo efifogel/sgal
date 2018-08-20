@@ -32,9 +32,9 @@ template <>
 const std::map<int, Dxf_entry_wrapper::Record_member_type>
 Dxf_entry_wrapper::s_record_members = {
   {5, &Dxf_base_entry::m_handle},
-  {105, &Dxf_base_entry::m_handle}, // DYMSTYLE only, probably due to old vers.
+  {105, &Dxf_base_entry::m_handle}, // DYMSTYLE only; Lame!!!
   {360, &Dxf_base_entry::m_owner_dict},
-  {330, &Dxf_base_entry::m_owner_obj}
+  {330, &Dxf_base_entry::m_owner_handle}
 };
 
 DXF_END_NAMESPACE

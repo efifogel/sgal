@@ -39,7 +39,7 @@ struct SGAL_SGAL_DECL Dxf_base_entry {
   SGAL::String m_handle; // Handle
   SGAL::String m_owner_dict; // Hard owner ID/handle to owner dictionary
                         // (optional)
-  SGAL::String m_owner_obj; // Soft-pointer ID/handle to owner object
+  SGAL::String m_owner_handle; // Soft-pointer ID/handle to owner object
   std::map<SGAL::String, std::vector<SGAL::String> > m_xdata; //
                         // "{ACAD_XDICTIONARY" and "}"
                         // indicate the start and end, respectively, of an
