@@ -727,26 +727,37 @@ void Dxf_writer::export_endblk(const Dxf_endblk& endblk)
 //! \brief exports a base entity record.
 void Dxf_writer::export_base_entity(const Dxf_base_entity& base_entity)
 {
+  SGAL_assertion(m_scene_graph);
+  auto* conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
+  auto dxf_conf = conf->get_dxf_configuration();
+  SGAL_assertion(dxf_conf);
+  auto version = dxf_conf->get_version();
+
   auto& members = Dxf_simple_record_wrapper<Dxf_base_entity>::s_record_members;
   export_simple_member(5, base_entity, members);
   export_simple_member(330, base_entity, members);
   export_nonempty_simple_member(360, base_entity, members);
   export_string(100, "AcDbEntity");
-  export_simple_member(67, base_entity, members);
-  export_simple_member(410, base_entity, members);
+  export_item(67, base_entity.m_is_in_paper_space,
+              base_entity.s_def_is_in_paper_space);
+  export_nonempty_simple_member(410, base_entity, members);
   export_simple_member(8, base_entity, members);
-  export_simple_member(6, base_entity, members);
+  export_item(6, base_entity.m_line_type_name, base_entity.s_def_line_type_name);
   export_simple_member(62, base_entity, members);
-  export_simple_member(370, base_entity, members);
-  export_simple_member(48, base_entity, members);
-  export_simple_member(60, base_entity, members);
-  export_simple_member(92, base_entity, members);
-  for (const auto& id : base_entity.m_preview_image_data) export_item(310, id);
-  export_simple_member(420, base_entity, members);
-  export_simple_member(430, base_entity, members);
-  export_simple_member(440, base_entity, members);
-  export_simple_member(390, base_entity, members);
-  export_simple_member(284, base_entity, members);
+  // export_simple_member(370, base_entity, members);
+  export_item(48, base_entity.m_line_type_scale,
+              base_entity.s_def_line_type_scale);
+  export_item(60, base_entity.m_is_visible, base_entity.s_def_is_visible);
+  if (! base_entity.m_preview_image_data.empty()) {
+    export_simple_member(92, base_entity, members);
+    for (const auto& id : base_entity.m_preview_image_data) export_item(310, id);
+  }
+  export_item(420, base_entity.m_color, base_entity.s_def_color);
+  export_nonempty_simple_member(430, base_entity, members);
+  export_item(440, base_entity.m_transparency, base_entity.s_def_transparency);
+  export_nonempty_simple_member(390, base_entity, members);
+  if (version > 12) export_simple_member(284, base_entity, members);
 }
 
 //! \brief exports a LINE entity record.
@@ -756,16 +767,19 @@ void Dxf_writer::export_entity(const Dxf_line_entity& entity)
   export_base_entity(entity);
   auto& members = Dxf_record_wrapper<Dxf_line_entity>::s_record_members;
   export_string(100, "AcDbLine");
-  export_member(39, entity, members);
+  export_item(39, entity.m_thickness, entity.s_def_thickness);
   export_member(10, entity, members);
   export_member(20, entity, members);
   export_member(30, entity, members);
   export_member(11, entity, members);
   export_member(21, entity, members);
   export_member(31, entity, members);
-  export_member(210, entity, members);
-  export_member(220, entity, members);
-  export_member(230, entity, members);
+  export_item(210, entity.m_extrusion_direction[0],
+              entity.s_def_extrusion_direction[0]);
+  export_item(220, entity.m_extrusion_direction[1],
+              entity.s_def_extrusion_direction[1]);
+  export_item(230, entity.m_extrusion_direction[2],
+              entity.s_def_extrusion_direction[2]);
 }
 
 //! \brief exports a base object record.

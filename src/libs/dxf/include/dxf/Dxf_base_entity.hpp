@@ -35,7 +35,6 @@ DXF_BEGIN_NAMESPACE
 class Dxf_parser;
 
 struct Dxf_base_entity {
-
   /// Member records
   //@{
   SGAL::String m_handle; // Handle
@@ -83,7 +82,7 @@ struct Dxf_base_entity {
                         // by custom entities for their own data because the
                         // group code is reserved for AcDbEntity, class-level
                         // color data and AcDbEntity, class-level transparency
-                        // data
+                        // data. Seems optional.
   SGAL::String m_plot_style; // Hard-pointer ID/handle to the plot style object
   int8_t m_shadow_mode; // Shadow mode
                         // 0 = Casts and receives shadows
@@ -101,13 +100,7 @@ struct Dxf_base_entity {
   /*! Construct.
    * Initialize the color with -1 to indicate that it hasn't been set.
    */
-  Dxf_base_entity() :
-    m_is_in_paper_space(0),
-    m_color_index(static_cast<int16_t>(By::BYLAYER)),
-    m_line_type_scale(1.0),
-    m_color(static_cast<int32_t>(-1)),
-    m_parser(nullptr)
-  {}
+  Dxf_base_entity();
 
   /*! Destruct
    * This is necessary to enable dynamic_cast.
@@ -124,6 +117,15 @@ struct Dxf_base_entity {
 
   //! The parser.
   Dxf_parser* m_parser;
+
+  //! Default values
+  static const int16_t s_def_is_in_paper_space;
+  static const SGAL::String s_def_line_type_name;
+  static const int16_t s_def_color_index;
+  static const double s_def_line_type_scale;
+  static const int16_t s_def_is_visible;
+  static const int32_t s_def_color;
+  static const int32_t s_def_transparency;
 };
 
 DXF_END_NAMESPACE

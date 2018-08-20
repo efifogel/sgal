@@ -26,6 +26,10 @@
 
 DXF_BEGIN_NAMESPACE
 
+//! Default values
+const double Dxf_line_entity::s_def_thickness(0);
+const double Dxf_line_entity::s_def_extrusion_direction[3] = {0, 0, 1};
+
 typedef Dxf_record_wrapper<Dxf_line_entity>  Dxf_line_entity_wrapper;
 
 //! Record members
@@ -51,7 +55,7 @@ Dxf_line_entity_wrapper::s_record_handlers = {};
 
 //! \brief constructs (set default values).
 Dxf_line_entity::Dxf_line_entity() :
-  m_thickness(0),
+  m_thickness(s_def_thickness),
   m_extrusion_direction{0, 0, 1},
   m_start{0, 0, 0},
   m_end{0, 0, 0}

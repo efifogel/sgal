@@ -27,6 +27,15 @@
 
 DXF_BEGIN_NAMESPACE
 
+//! Default values
+const int16_t Dxf_base_entity::s_def_is_in_paper_space(0);
+const SGAL::String Dxf_base_entity::s_def_line_type_name("BYLAYER");
+const int16_t Dxf_base_entity::s_def_color_index(static_cast<int16_t>(By::BYLAYER));
+const double Dxf_base_entity::s_def_line_type_scale(-1);
+const int16_t Dxf_base_entity::s_def_is_visible(0);
+const int32_t Dxf_base_entity::s_def_color(static_cast<int32_t>(-1));
+const int32_t Dxf_base_entity::s_def_transparency(0);
+
 //!
 typedef Dxf_simple_record_wrapper<Dxf_base_entity>      Base_entity_wrapper;
 template <>
@@ -52,5 +61,17 @@ Base_entity_wrapper::s_record_members = {
   {390, &Dxf_base_entity::m_plot_style},
   {284, &Dxf_base_entity::m_shadow_mode}
 };
+
+//! \brief constructs.
+Dxf_base_entity::Dxf_base_entity() :
+  m_is_in_paper_space(s_def_is_in_paper_space),
+  m_line_type_name(s_def_line_type_name),
+  m_color_index(s_def_color_index),
+  m_line_type_scale(s_def_line_type_scale),
+  m_is_visible(s_def_is_visible),
+  m_color(s_def_color),
+  m_transparency(s_def_transparency),
+  m_parser(nullptr)
+{}
 
 DXF_END_NAMESPACE
