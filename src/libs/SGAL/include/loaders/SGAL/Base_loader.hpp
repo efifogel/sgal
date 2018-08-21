@@ -26,7 +26,6 @@
 #include "SGAL/Loader_code.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Configuration.hpp"
-#include "SGAL/Tracer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -73,14 +72,6 @@ public:
    */
   void inc_line();
 
-  /*! Set the trace code.
-   */
-  void set_trace_code(size_t code);
-
-  /*! Obtain the trace code.
-   */
-  size_t get_trace_code() const;
-
   /*! Obtain the verbose level.
    */
   size_t get_verbose_level() const;
@@ -97,9 +88,6 @@ protected:
 
   //! The current line number
   size_t m_line;
-
-  //! The trace code.
-  size_t m_trace_code;
 };
 
 //! \brief loads.
@@ -117,8 +105,7 @@ inline Loader_code Base_loader::operator()(std::istream& is,
 inline Base_loader::Base_loader() :
   m_is(nullptr),
   m_scene_graph(nullptr),
-  m_line(0),
-  m_trace_code(static_cast<size_t>(Tracer::INVALID))
+  m_line(0)
 {}
 
 //! \brief Destructs.
@@ -138,12 +125,6 @@ inline void Base_loader::set_line(size_t line) { m_line = line; }
 
 //! \brief increments the line number.
 inline void Base_loader::inc_line() { ++m_line; }
-
-//! \brief sets the trace code.
-inline void Base_loader::set_trace_code(size_t code) { m_trace_code = code; }
-
-//! \brief obtains the trace code.
-inline size_t Base_loader::get_trace_code() const { return m_trace_code; }
 
 //! \brief obtains the verbose level.
 inline size_t Base_loader::get_verbose_level() const
