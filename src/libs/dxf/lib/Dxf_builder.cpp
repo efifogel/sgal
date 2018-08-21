@@ -118,10 +118,11 @@ std::vector<SGAL::Vector3f> Dxf_builder::s_palette = {
 };
 
 //! \brief constructs
-Dxf_builder::Dxf_builder(Dxf_data& data, SGAL::Scene_graph* scene_graph) :
+Dxf_builder::Dxf_builder(Dxf_data& data, SGAL::Scene_graph* scene_graph,
+                         size_t trace_code) :
   m_data(data),
   m_scene_graph(scene_graph),
-  m_trace_code(static_cast<size_t>(SGAL::Tracer::INVALID)),
+  m_trace_code(trace_code),
   m_lines_num(0),
   m_polylines_num(0),
   m_lwpolylines_num(0),
@@ -191,6 +192,10 @@ void Dxf_builder::init_palette(const SGAL::String& file_name)
 //! \brief processes all layers. Create a color array for each.
 void Dxf_builder::process_layers()
 {
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Processing layers" << std::endl;);
+
   for (auto& layer : m_data.m_layer_table.m_entries) {
     Shared_color_array shared_colors;
     size_t color = layer.m_color;
@@ -229,6 +234,10 @@ void Dxf_builder::process_layers()
 void Dxf_builder::process_entities(std::vector<Dxf_base_entity*>& entities,
                                    SGAL::Group* root)
 {
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Processing entities" << std::endl;);
+
   for (auto* entity : entities) {
     if (auto* line = dynamic_cast<Dxf_line_entity*>(entity)) {
       process_line_entity(*line, root);
@@ -428,11 +437,15 @@ void Dxf_builder::print_hatch_information(const Dxf_hatch_entity& hatch)
 
 //! \brief add polylines.
 void Dxf_builder::
-process_polyline_boundaries
-(const Dxf_hatch_entity& hatch,
- const std::list<Dxf_polyline_boundary_path*>& polylines,
- SGAL::Group* root)
+process_polyline_boundaries(const Dxf_hatch_entity& hatch,
+                            const std::list<Dxf_polyline_boundary_path*>&
+                              polylines,
+                            SGAL::Group* root)
 {
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Processing polyline boundaries" << std::endl;);
+
   if (0 == polylines.size()) return;
 
   // Obtain the color array:
@@ -457,26 +470,8 @@ process_polyline_boundaries
   typedef boost::shared_ptr<SGAL::Indexed_face_set>   Shared_indexed_face_set;
   typedef boost::shared_ptr<SGAL::Coord_array_3d>     Shared_coord_array_3d;
 
-  // Add Shape
-  Shared_shape shape(new SGAL::Shape);
-  SGAL_assertion(shape);
-  shape->add_to_scene(m_scene_graph);
-  m_scene_graph->add_container(shape);
-  root->add_child(shape);
-
-  // Add Appearance
-  auto app = (hatch.m_flags) ? get_fill_appearance() : get_pattern_appearance();
-  shape->set_appearance(app);
-
   // Handle pattern
   /// if (! hatch.m_flags) {...}
-
-  // Add geometry
-  Shared_indexed_face_set ifs(new SGAL::Indexed_face_set);
-  SGAL_assertion(ifs);
-  ifs->add_to_scene(m_scene_graph);
-  m_scene_graph->add_container(ifs);
-  shape->set_geometry(ifs);
 
   // Compute orientation
   // Note, reorienting the polygons to be counterclockwise is unnecessary,
@@ -517,7 +512,6 @@ process_polyline_boundaries
 
   // Count number of primitives & vertices:
   size_t num_primitives(0);
-  size_t num_indices(0);
   size_t size(0);
   for (auto& tri : tris) {
     size += tri.number_of_vertices();
@@ -525,13 +519,13 @@ process_polyline_boundaries
          ++fit)
     {
       if (! fit->info().in_domain()) continue;
-
       ++num_primitives;
-      num_indices += 4;
     }
   }
+
+  if (0 == num_primitives) return;
+
   // std::cout << "# primitives: " << num_primitives << std::endl;
-  // std::cout << "# indices: " << num_indices << std::endl;
   // std::cout << "size: " << size << std::endl;
 
   // Allocate vertices:
@@ -541,11 +535,10 @@ process_polyline_boundaries
   m_scene_graph->add_container(shared_coords);
 
   // Allocate indices:
-  auto& indices = ifs->get_coord_indices();
-  indices.resize(num_indices);
+  SGAL::Triangle_indices tri_indices(num_primitives);
 
   // Assign the coordinates & indices:
-  auto it = indices.begin();
+  auto it = tri_indices.begin();
   auto cit = coords->begin();
   size_t i(0);
   for (auto& tri : tris) {
@@ -565,15 +558,35 @@ process_polyline_boundaries
          ++fit)
     {
       if (! fit->info().in_domain()) continue;
-      *it++ = fit->vertex(0)->info() + i;
-      *it++ = fit->vertex(1)->info() + i;
-      *it++ = fit->vertex(2)->info() + i;
-      *it++ = -1;
+      (*it)[0] = fit->vertex(0)->info().m_index + i;
+      (*it)[1] = fit->vertex(1)->info().m_index + i;
+      (*it)[2] = fit->vertex(2)->info().m_index + i;
+      ++it;
     }
     i += tri.number_of_vertices();
   }
   tris.clear();
 
+  // Add Shape
+  Shared_shape shape(new SGAL::Shape);
+  SGAL_assertion(shape);
+  shape->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(shape);
+  root->add_child(shape);
+
+  // Add Appearance
+  auto app = (hatch.m_flags) ? get_fill_appearance() : get_pattern_appearance();
+  shape->set_appearance(app);
+
+  // Add geometry
+  Shared_indexed_face_set ifs(new SGAL::Indexed_face_set);
+  SGAL_assertion(ifs);
+  ifs->add_to_scene(m_scene_graph);
+  m_scene_graph->add_container(ifs);
+  shape->set_geometry(ifs);
+
+  ifs->set_primitive_type(SGAL::Geo_set::PT_TRIANGLES);
+  ifs->set_facet_coord_indices(std::move(tri_indices));
   ifs->set_coord_array(shared_coords);
   ifs->set_color_array(shared_colors);
   ifs->set_num_primitives(num_primitives);
@@ -584,6 +597,10 @@ process_polyline_boundaries
 void Dxf_builder::process_hatch_entity(const Dxf_hatch_entity& hatch,
                                       SGAL::Group* root)
 {
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Processing hatch entity" << std::endl;);
+
   ++m_hatches_num;
 
   std::list<Dxf_polyline_boundary_path*> polylines;
@@ -607,6 +624,10 @@ void Dxf_builder::process_hatch_entity(const Dxf_hatch_entity& hatch,
 void Dxf_builder::process_spline_entity(const Dxf_spline_entity& spline,
                                        SGAL::Group* root)
 {
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Processing spline entity" << std::endl;);
+
   //! \todo Add support for splines.
   return;
 
@@ -730,6 +751,10 @@ void Dxf_builder::process_spline_entity(const Dxf_spline_entity& spline,
 void Dxf_builder::process_line_entity(const Dxf_line_entity& line,
                                      SGAL::Group* root)
 {
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Processing line entity" << std::endl;);
+
   ++m_lines_num;
 
   // Obtain the color array:
@@ -767,8 +792,9 @@ void Dxf_builder::process_line_entity(const Dxf_line_entity& line,
   m_scene_graph->add_container(shared_coords);
 
   // Allocate indices:
-  auto& indices = ils->get_coord_indices();
-  indices.resize(size+1);
+  SGAL::Line_indices line_indices(1);
+  auto& indices = line_indices.front();
+  indices = {0, 1};
 
   // Check whether mirroring is required
   bool mirror(false);
@@ -784,12 +810,8 @@ void Dxf_builder::process_line_entity(const Dxf_line_entity& line,
   auto x2 = (mirror) ? -(line.m_end[0]) : line.m_end[0];
   *cit++ = SGAL::Vector3f(x2, line.m_end[1], line.m_end[2]);
 
-  auto it = indices.begin();
-  *it++ = 0;
-  *it++ = 1;
-  *it = -1;
-
   ils->set_primitive_type(SGAL::Geo_set::PT_LINES);
+  ils->set_lines_coord_indices(std::move(line_indices));
   ils->set_coord_array(shared_coords);
   ils->set_color_array(shared_colors);
   ils->set_num_primitives(1);
@@ -798,8 +820,12 @@ void Dxf_builder::process_line_entity(const Dxf_line_entity& line,
 
 //! \brief processes a polyline entity. Construct Indexed_line_set as necessary.
 void Dxf_builder::process_polyline_entity(const Dxf_polyline_entity& polyline,
-                                         SGAL::Group* root)
+                                          SGAL::Group* root)
 {
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Processing polyline entity" << std::endl;);
+
   ++m_polylines_num;
 
   // Obtain the color array:
@@ -915,9 +941,14 @@ void Dxf_builder::process_polyline_entity(const Dxf_polyline_entity& polyline,
 }
 
 //! \brief processes a light weight polyline entity.
-void Dxf_builder::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline,
-                                           SGAL::Group* root)
+void
+Dxf_builder::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline,
+                                       SGAL::Group* root)
 {
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Processing lwpolyline entity" << std::endl;);
+
   ++m_lwpolylines_num;
 
   // Obtain the color array:
@@ -1031,6 +1062,10 @@ void Dxf_builder::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polylin
 void Dxf_builder::process_circle_entity(const Dxf_circle_entity& circle,
                                        SGAL::Group* root)
 {
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Processing circle entity" << std::endl;);
+
   ++m_circles_num;
 
   // Obtain the color array:
@@ -1119,8 +1154,12 @@ void Dxf_builder::process_circle_entity(const Dxf_circle_entity& circle,
 
 //! \brief processes an arc entity. Construct Indexed_line_set as necessary.
 void Dxf_builder::process_arc_entity(const Dxf_arc_entity& arc,
-                                    SGAL::Group* root)
+                                     SGAL::Group* root)
 {
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Processing arc entity" << std::endl;);
+
   ++m_arcs_num;
 
   // Obtain the color array:
@@ -1211,8 +1250,12 @@ void Dxf_builder::process_arc_entity(const Dxf_arc_entity& arc,
 
 //! \brief processes all insert entities.
 void Dxf_builder::process_insert_entity(const Dxf_insert_entity& insert,
-                                       SGAL::Group* root)
+                                        SGAL::Group* root)
 {
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Processing insert entity" << std::endl;);
+
   ++m_inserts_num;
 
   auto it = std::find_if(m_data.m_blocks.begin(), m_data.m_blocks.end(),
@@ -1263,6 +1306,10 @@ void Dxf_builder::process_insert_entity(const Dxf_insert_entity& insert,
 void Dxf_builder::process_solid_entity(const Dxf_solid_entity& solid,
                                       SGAL::Group* root)
 {
+  SGAL_TRACE_CODE(m_trace_code,
+                  if (true)
+                    std::cout << "Processing solid entity" << std::endl;);
+
   ++m_solids_num;
 
   // Obtain the color array:
@@ -1326,6 +1373,7 @@ void Dxf_builder::process_solid_entity(const Dxf_solid_entity& solid,
   *cit++ = V3f(solid.m_corner4[0], solid.m_corner4[1], solid.m_corner4[2]);
   *cit++ = V3f(solid.m_corner3[0], solid.m_corner3[1], solid.m_corner3[2]);
 
+  ifs->set_primitive_type(SGAL::Geo_set::PT_QUADS);
   ifs->set_facet_coord_indices(std::move(quad_indices));
   ifs->set_coord_array(shared_coords);
   ifs->set_color_array(shared_colors);
