@@ -34,18 +34,24 @@ DXF_BEGIN_NAMESPACE
  */
 template <typename T>
 struct Dxf_importer {
+  //! The basic loader.
+  SGAL::Base_loader& m_loader;
 
-  SGAL::Base_loader& m_parser;
+  //! The trace code.
+  size_t m_trace_code;
 
-  Dxf_importer(SGAL::Base_loader& parser) : m_parser(parser) {}
+  Dxf_importer(SGAL::Base_loader& loader, size_t code) :
+    m_loader(loader),
+    m_trace_code(code)
+  {}
 
   void operator()(T& variable)
   {
-    m_parser.input_stream() >> variable;
-    m_parser.inc_line();
-    SGAL_TRACE_CODE(m_parser.get_trace_code(),
-                    if (m_parser.get_verbose_level() >= 8)
-                      std::cout << "[" << std::to_string(m_parser.line())
+    m_loader.input_stream() >> variable;
+    m_loader.inc_line();
+    SGAL_TRACE_CODE(m_trace_code,
+                    if (m_loader.get_verbose_level() >= 8)
+                      std::cout << "[" << std::to_string(m_loader.line())
                                 << "] " << "Importering dxf value: "
                                 << variable << std::endl;);
   }
@@ -58,21 +64,27 @@ struct Dxf_importer {
  */
 template <>
 struct Dxf_importer<int8_t> {
+  //! The basic loader.
+  SGAL::Base_loader& m_loader;
 
-  SGAL::Base_loader& m_parser;
+  //! The trace code.
+  size_t m_trace_code;
 
-  Dxf_importer(SGAL::Base_loader& parser) : m_parser(parser) {}
+  Dxf_importer(SGAL::Base_loader& loader, size_t code) :
+    m_loader(loader),
+    m_trace_code(code)
+  {}
 
   void operator()(int8_t& variable)
   {
     // First read as an integer; then, cast to int8_t.
     int tmp;
-    m_parser.input_stream() >> tmp;
-    m_parser.inc_line();
+    m_loader.input_stream() >> tmp;
+    m_loader.inc_line();
     variable = (int8_t) tmp;
-    SGAL_TRACE_CODE(m_parser.get_trace_code(),
-                    if (m_parser.get_verbose_level() >= 8)
-                      std::cout << "[" << std::to_string(m_parser.line()) << "] "
+    SGAL_TRACE_CODE(m_trace_code,
+                    if (m_loader.get_verbose_level() >= 8)
+                      std::cout << "[" << std::to_string(m_loader.line()) << "] "
                                 << "Importing dxf int8 value: "
                                 << (int)(variable) << std::endl;);
   }
@@ -82,18 +94,24 @@ struct Dxf_importer<int8_t> {
  */
 template <>
 struct Dxf_importer<SGAL::Uint> {
+  //! The basic loader.
+  SGAL::Base_loader& m_loader;
 
-  SGAL::Base_loader& m_parser;
+  //! The trace code.
+  size_t m_trace_code;
 
-  Dxf_importer(SGAL::Base_loader& parser) : m_parser(parser) {}
+  Dxf_importer(SGAL::Base_loader& loader, size_t code) :
+    m_loader(loader),
+    m_trace_code(code)
+  {}
 
   void operator()(SGAL::Uint& variable)
   {
-    m_parser.input_stream() >> std::hex >> variable >> std::dec;
-    m_parser.inc_line();
-    SGAL_TRACE_CODE(m_parser.get_trace_code(),
-                    if (m_parser.get_verbose_level() >= 8)
-                      std::cout << "[" << std::to_string(m_parser.line())
+    m_loader.input_stream() >> std::hex >> variable >> std::dec;
+    m_loader.inc_line();
+    SGAL_TRACE_CODE(m_trace_code,
+                    if (m_loader.get_verbose_level() >= 8)
+                      std::cout << "[" << std::to_string(m_loader.line())
                                 << "] " << "Importing dxf SGAL::Uint value: "
                                 << std::hex << std::showbase << variable
                                 << std::noshowbase << std::dec << std::endl;);
@@ -104,10 +122,16 @@ struct Dxf_importer<SGAL::Uint> {
  */
 template <>
 struct Dxf_importer<SGAL::String> {
+  //! The basic loader.
+  SGAL::Base_loader& m_loader;
 
-  SGAL::Base_loader& m_parser;
+  //! The trace code.
+  size_t m_trace_code;
 
-  Dxf_importer(SGAL::Base_loader& parser) : m_parser(parser) {}
+  Dxf_importer(SGAL::Base_loader& loader, size_t code) :
+    m_loader(loader) ,
+    m_trace_code(code)
+  {}
 
   void operator()(SGAL::String& variable)
   {
@@ -115,12 +139,12 @@ struct Dxf_importer<SGAL::String> {
     // When used immediately after whitespace-delimited input, getline
     // consumes the endline character left on the input stream by operator>>,
     // and returns immediately. Ignore all leftover characters.
-    std::getline(m_parser.input_stream(), variable);
-    m_parser.inc_line();
+    std::getline(m_loader.input_stream(), variable);
+    m_loader.inc_line();
     variable.erase(variable.find_last_not_of(" \t\n\r\f\v") + 1);
-    SGAL_TRACE_CODE(m_parser.get_trace_code(),
-                    if (m_parser.get_verbose_level() >= 8)
-                      std::cout << "[" << std::to_string(m_parser.line())
+    SGAL_TRACE_CODE(m_trace_code,
+                    if (m_loader.get_verbose_level() >= 8)
+                      std::cout << "[" << std::to_string(m_loader.line())
                                 << "] " << "Importing dxf string value: "
                                 << variable << std::endl;);
   }
