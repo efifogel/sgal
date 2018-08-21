@@ -118,6 +118,22 @@ public:
    */
   void set_report_unrecognized_code(bool flag);
 
+  /*! Set the trace code for parsing.
+   */
+  void set_trace_code_parsing(size_t code);
+
+  /*! Obtain the trace code for parsing.
+   */
+  size_t get_trace_code_parsing() const;
+
+  /*! Set the trace code for building.
+   */
+  void set_trace_code_building(size_t code);
+
+  /*! Obtain the trace code for building.
+   */
+  size_t get_trace_code_building() const;
+
 protected:
   // Section parsers:
   void parse_header();
@@ -231,7 +247,7 @@ private:
   template <typename Entity>
   Entity* parse_entity(const std::string& type, Entity* entity)
   {
-    SGAL_TRACE_CODE(m_trace_code,
+    SGAL_TRACE_CODE(get_trace_code_parsing(),
                     if (get_verbose_level() >= 4)
                       std::cout << "Parsing " << type << " entity"
                                 << std::endl;);
@@ -243,7 +259,7 @@ private:
   template <typename Object>
   Object* parse_object(const std::string& type, Object* object)
   {
-    SGAL_TRACE_CODE(m_trace_code,
+    SGAL_TRACE_CODE(get_trace_code_parsing(),
                     if (get_verbose_level() >= 4)
                       std::cout << "Parsing " << type << " object"
                                 << std::endl;);
@@ -828,6 +844,13 @@ private:
     }
   }
 
+private:
+  //! The trace code for parsing.
+  size_t m_trace_code_parsing;
+
+  //! The trace code for building.
+  size_t m_trace_code_building;
+
   //! The active data storage record.
   Dxf_data* m_data;
 
@@ -837,7 +860,6 @@ private:
   //! Indicates whether there is a code pending.
   bool m_is_pending;
 
-private:
   //! Extended data.
   Dxf_extended_data* m_extended_data;
 
@@ -873,7 +895,7 @@ private:
       m_is->ignore(std::numeric_limits<std::streamsize>::max(), '\n');
       ++m_line;
     }
-    SGAL_TRACE_CODE(m_trace_code,
+    SGAL_TRACE_CODE(get_trace_code_parsing(),
                     if (get_verbose_level() >= 8)
                       std::cout << "[" << std::to_string(m_line) << "] "
                                 << "Parsing code: "
@@ -886,7 +908,7 @@ private:
   template <typename T>
   void import_value(T& variable)
   {
-    Dxf_importer<T> importer(*this);
+    Dxf_importer<T> importer(*this, m_trace_code_parsing);
     importer(variable);
   }
 
@@ -919,7 +941,7 @@ private:
   template <typename T, typename HandrelVariant, typename Record>
   void handle_item(HandrelVariant handler, Record& record)
   {
-    Dxf_importer<T> importer(*this);
+    Dxf_importer<T> importer(*this, m_trace_code_parsing);
 
     typedef void(Record::*Handler)(T);
     T value;
@@ -1070,7 +1092,7 @@ private:
   template <typename Table>
   void parse_base_table(Table& table)
   {
-    SGAL_TRACE_CODE(m_trace_code,
+    SGAL_TRACE_CODE(get_trace_code_parsing(),
                     if (get_verbose_level() >= 4)
                       std::cout << "Parseing base table" << std::endl;);
 
@@ -1083,7 +1105,7 @@ private:
     while (true) {
       int code;
       import_code(code);
-      SGAL_TRACE_CODE(m_trace_code,
+      SGAL_TRACE_CODE(get_trace_code_parsing(),
                       if (get_verbose_level() >= 8)
                         std::cout << "Parse base table code: " << code
                                   << std::endl;);
@@ -1245,6 +1267,22 @@ private:
 //! \brief sets the flag that determines whether to report unrecognized code.
 inline void Dxf_parser::set_report_unrecognized_code(bool flag)
 { m_report_unrecognized_code = flag; }
+
+//! \brief sets the trace code for parsing.
+inline void Dxf_parser::set_trace_code_parsing(size_t code)
+{ m_trace_code_parsing = code; }
+
+//! \brief obtains the trace code for parsing.
+inline size_t Dxf_parser::get_trace_code_parsing() const
+{ return m_trace_code_parsing; }
+
+//! \brief sets the trace code for building.
+inline void Dxf_parser::set_trace_code_building(size_t code)
+{ m_trace_code_building = code; }
+
+//! \brief obtains the trace code for building.
+inline size_t Dxf_parser::get_trace_code_building() const
+{ return m_trace_code_building; }
 
 DXF_END_NAMESPACE
 
