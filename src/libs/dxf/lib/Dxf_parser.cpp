@@ -257,6 +257,8 @@ Dxf_parser::s_objects = {
 //! \brief constructs.
 Dxf_parser::Dxf_parser() :
   Base_loader(),
+  m_trace_code_parsing(static_cast<size_t>(SGAL::Tracer::INVALID)),
+  m_trace_code_building(static_cast<size_t>(SGAL::Tracer::INVALID)),
   m_data(nullptr),
   m_pending_code(0),
   m_is_pending(false),
@@ -312,7 +314,7 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
     (this->*(sec_it->second))();
   }
 
-  Dxf_builder builder(*m_data, scene_graph);
+  Dxf_builder builder(*m_data, scene_graph, get_trace_code_building());
   builder(root);
 
   // Store the data for future use:
@@ -326,7 +328,7 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
 //! \brief parses the header section.
 void Dxf_parser::parse_header()
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 2)
                     std::cout << "Parsing HEADER section" << std::endl;);
 
@@ -345,7 +347,7 @@ void Dxf_parser::parse_header()
 //! \brief parses one class.
 void Dxf_parser::parse_class()
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 4)
                     std::cout << "Parse class" << std::endl;);
 
@@ -372,7 +374,7 @@ void Dxf_parser::parse_class()
 //! \brief parses the CLASSES section.
 void Dxf_parser::parse_classes()
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 2)
                     std::cout << "Parser CLASSES section" << std::endl;);
 
@@ -393,7 +395,7 @@ void Dxf_parser::parse_classes()
 //! \brief parses a table of type APPID.
 void Dxf_parser::parse_appid_table()
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 4)
                     std::cout << "Parse APPID table" << std::endl;);
 
@@ -403,7 +405,7 @@ void Dxf_parser::parse_appid_table()
 //! \brief parses a table of type BLOCK_RECORD.
 void Dxf_parser::parse_block_record_table()
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 4)
                     std::cout << "Parse BLOCK_RECORD table" << std::endl;);
 
@@ -413,7 +415,7 @@ void Dxf_parser::parse_block_record_table()
 //! \brief parses a table of type DIMSTYLE.
 void Dxf_parser::parse_dimstyle_table()
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing DIMSTYLE table" << std::endl;);
 
@@ -423,7 +425,7 @@ void Dxf_parser::parse_dimstyle_table()
 //! \brief parses a table of type LAYER.
 void Dxf_parser::parse_layer_table()
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing LAYER table" << std::endl;);
 
@@ -433,7 +435,7 @@ void Dxf_parser::parse_layer_table()
 //! \brief parses a table of type LTYPE.
 void Dxf_parser::parse_ltype_table()
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing LTYPE table" << std::endl;);
 
@@ -443,7 +445,7 @@ void Dxf_parser::parse_ltype_table()
 //! \brief parses a table of type STYLE.
 void Dxf_parser::parse_style_table()
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing STYLE table" << std::endl;);
 
@@ -453,7 +455,7 @@ void Dxf_parser::parse_style_table()
 //! \brief parses a table of type UCS.
 void Dxf_parser::parse_ucs_table()
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing UCS table" << std::endl;);
 
@@ -463,7 +465,7 @@ void Dxf_parser::parse_ucs_table()
 //! \brief parses a table of type VIEW.
 void Dxf_parser::parse_view_table()
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing VIEW table" << std::endl;);
 
@@ -473,7 +475,7 @@ void Dxf_parser::parse_view_table()
 //! \brief parses a table of type VPORT.
 void Dxf_parser::parse_vport_table()
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing VPORT table" << std::endl;);
 
@@ -483,7 +485,7 @@ void Dxf_parser::parse_vport_table()
 //! \brief parses the TABLES section.
 void Dxf_parser::parse_tables()
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 2)
                     std::cout << "Parsing TABLES section" << std::endl;);
 
@@ -517,7 +519,7 @@ void Dxf_parser::parse_tables()
 //! \brief parses one block.
 void Dxf_parser::parse_block(Dxf_block& block)
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing block" << std::endl;);
 
@@ -546,7 +548,7 @@ void Dxf_parser::parse_block(Dxf_block& block)
 //! \brief parses one ENDBLK.
 void Dxf_parser::parse_endblk(Dxf_endblk& endblk)
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing endblk" << std::endl;);
 
@@ -568,7 +570,7 @@ void Dxf_parser::parse_endblk(Dxf_endblk& endblk)
 //! \brief parses BLOCKS section
 void Dxf_parser::parse_blocks()
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 2)
                     std::cout << "Parsing BLOCKS section" << std::endl;);
 
@@ -617,7 +619,7 @@ void Dxf_parser::parse_blocks()
 //! \brief parse ENTITIES section
 void Dxf_parser::parse_entities()
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 2)
                     std::cout << "Parsing ENTITIES section" << std::endl;);
 
@@ -661,7 +663,7 @@ void Dxf_parser::parse_entities()
 //! \brief parse OBJECTS section
 void Dxf_parser::parse_objects()
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 2)
                     std::cout << "Parsing OBJECTS section" << std::endl;);
 
@@ -704,7 +706,7 @@ void Dxf_parser::parse_objects()
 //! \brief parse a generic section and stores the data.
 void Dxf_parser::parse_section(const std::string& name, Dxf_section& section)
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 2)
                     std::cout << "Parsing " << name <<  " section"
                               << std::endl;);
@@ -771,7 +773,7 @@ void Dxf_parser::read_header_member()
   auto& header = m_data->m_header;
 
   auto dim = codes.size();
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 8)
                     std::cout << "Parsing header member dimension: "
                               << dim << std::endl;);
@@ -796,7 +798,7 @@ void Dxf_parser::read_header_member()
     return;
   }
   auto ct = code_type(code);
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 8)
                     std::cout << "Parsing header member code type: "
                               << code_type_name(ct) << std::endl;);
@@ -858,7 +860,7 @@ void Dxf_parser::read_header_member()
       return;
     }
     auto ct = code_type(code);
-    SGAL_TRACE_CODE(m_trace_code,
+    SGAL_TRACE_CODE(get_trace_code_parsing(),
                     if (get_verbose_level() >= 8)
                       std::cout << "Parsing header member code type: "
                                 << code_type_name(ct) << std::endl;);
@@ -896,7 +898,7 @@ void Dxf_parser::read_header_member()
       return;
     }
     auto ct = code_type(code);
-    SGAL_TRACE_CODE(m_trace_code,
+    SGAL_TRACE_CODE(get_trace_code_parsing(),
                     if (get_verbose_level() >= 8)
                       std::cout << "Parsing header member code type: "
                                 << code_type_name(ct) << std::endl;);
@@ -924,7 +926,7 @@ void Dxf_parser::read_header_member()
       continue;
     }
     auto ct = code_type(code);
-    SGAL_TRACE_CODE(m_trace_code,
+    SGAL_TRACE_CODE(get_trace_code_parsing(),
                     if (get_verbose_level() >= 8)
                       std::cout << "Parsing header member code type: "
                                 << code_type_name(ct) << std::endl;);
@@ -1107,7 +1109,7 @@ Dxf_base_entity* Dxf_parser::parse_rtext_entity()
 //! \brief parses a seqend entity.
 Dxf_base_entity* Dxf_parser::parse_seqend_entity()
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing SEQEND entity" << std::endl;);
   Dxf_seqend_entity seqend;
@@ -1143,7 +1145,7 @@ Dxf_base_entity* Dxf_parser::parse_trace_entity()
 //! \brief parses a vertex entity.
 Dxf_base_entity* Dxf_parser::parse_vertex_entity()
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 4)
                     std::cout << "Parsing VERTEX entity" << std::endl;);
 
@@ -1317,7 +1319,7 @@ Dxf_base_object* Dxf_parser::parse_xrecord_object()
 //! \brief parses a regular boundary path.
 void Dxf_parser::parse_boundary_path(Dxf_boundary_path& path)
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 5)
                     std::cout << "Parsing boundary_path" << std::endl;);
 
@@ -1350,7 +1352,7 @@ void Dxf_parser::parse_boundary_path(Dxf_boundary_path& path)
 //! \brief parses a polyline boundary path.
 void Dxf_parser::parse_polyline_boundary_path(Dxf_polyline_boundary_path& path)
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 5)
                     std::cout << "Parsing polyline_boundary_path" << std::endl;);
 
@@ -1384,7 +1386,7 @@ void Dxf_parser::parse_polyline_boundary_path(Dxf_polyline_boundary_path& path)
 //! \brief parses a pattern data.
 void Dxf_parser::parse_pattern_data(Dxf_pattern_data& pattern_data)
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 5)
                     std::cout << "Parsing pattern_data" << std::endl;);
 
@@ -1408,7 +1410,7 @@ void Dxf_parser::parse_pattern_data(Dxf_pattern_data& pattern_data)
 //! \brief parses a line edge
 void Dxf_parser::parse_line_edge(Dxf_line_edge& edge)
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 5)
                     std::cout << "Parsing line_edge" << std::endl;);
 
@@ -1432,7 +1434,7 @@ void Dxf_parser::parse_line_edge(Dxf_line_edge& edge)
 //! \brief parses a circle edge
 void Dxf_parser::parse_circle_edge(Dxf_circle_edge& edge)
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 5)
                     std::cout << "Parsing circle_edge" << std::endl;);
 
@@ -1456,7 +1458,7 @@ void Dxf_parser::parse_circle_edge(Dxf_circle_edge& edge)
 //! \brief parses an ellipse edge
 void Dxf_parser::parse_ellipse_edge(Dxf_ellipse_edge& edge)
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 5)
                     std::cout << "Parsing ellipse_edge" << std::endl;);
 
@@ -1480,7 +1482,7 @@ void Dxf_parser::parse_ellipse_edge(Dxf_ellipse_edge& edge)
 //! \brief parses a spellipse edge
 void Dxf_parser::parse_spline_edge(Dxf_spline_edge& edge)
 {
-  SGAL_TRACE_CODE(m_trace_code,
+  SGAL_TRACE_CODE(get_trace_code_parsing(),
                   if (get_verbose_level() >= 5)
                     std::cout << "Parsing spline_edge" << std::endl;);
 
