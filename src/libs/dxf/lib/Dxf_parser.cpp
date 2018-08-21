@@ -26,7 +26,6 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Tracer.hpp"
-#include "SGAL/Scene_graph.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Dxf_configuration.hpp"
 #include "SGAL/Geometry_format.hpp"
@@ -133,26 +132,6 @@ DXF_BEGIN_NAMESPACE
 
 //! Stores all the dxf data of all parser invocations.
 std::map<SGAL::String, Dxf_data*> Dxf_parser::s_datas;
-
-//! Default color palette
-std::vector<SGAL::Vector3f> Dxf_parser::s_palette = {
-  {0, 0, 0},            //  0, Black,     0,  0,  0, #000000
-  {1, 0, 0},            //  1, Red,     255,  0,  0, #ff0000
-  {1, 1, 0},            //  2, Yellow,  255,255,  0, #ffff00
-  {0, 1, 0},            //  3, Green,     0,255,  0, #00ff00
-  {0, 1, 1},            //  4, Cyan,      0,255,255, #00ffff
-  {0, 0, 1},            //  5, Blue,      0,  0,  1, #0000ff
-  {1, 0, 1},            //  6, Magenta, 255,  0,255, #ff00ff
-  {1, 1, 1},            //  7, White,     1,  1,  1, #ffffff
-  {0.5, 0.5, 0.5},      //  8
-  {0.5, 0, 0},          //  9
-  {0.5, 0.5, 0},        // 10
-  {0, 0.5, 0},          // 11
-  {0, 0.5, 0.5},        // 12
-  {0, 0, 0.5},          // 13
-  {0.5, 0, 0.5},        // 14
-  {0.75, 0.75, 0.75}    // 15
-};
 
 //!
 const std::map<SGAL::String, Dxf_parser::Section_parser>
@@ -283,16 +262,7 @@ Dxf_parser::Dxf_parser() :
   m_is_pending(false),
   m_extended_data(nullptr),
   m_report_unrecognized_code(false),
-  m_active_polyline_entity(nullptr),
-  m_lines_num(0),
-  m_polylines_num(0),
-  m_lwpolylines_num(0),
-  m_circles_num(0),
-  m_arcs_num(0),
-  m_hatches_num(0),
-  m_splines_num(0),
-  m_solids_num(0),
-  m_inserts_num(0)
+  m_active_polyline_entity(nullptr)
 {}
 
 //! \brief destructs.
@@ -305,24 +275,21 @@ Dxf_parser::~Dxf_parser()
 //! \brief parses.
 SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
                                          const SGAL::String& filename,
-                                         SGAL::Scene_graph* sg,
+                                         SGAL::Scene_graph* scene_graph,
                                          SGAL::Group* root)
 {
   m_data = new Dxf_data;
 
-  Base_loader::operator()(is, filename, sg, root);
+  Base_loader::operator()(is, filename, scene_graph, root);
   m_pending_code = 0;
   m_is_pending = false;
 
   //! \todo Make the Configuration a singleton and remove it from the
   // scene-graph. Then, move the following code exerpt to dxf_init().
-  auto* conf = sg->get_configuration();
+  auto* conf = scene_graph->get_configuration();
   SGAL_assertion(conf);
   auto dxf_conf = conf->get_dxf_configuration();
   SGAL_assertion(dxf_conf);
-
-  auto& palette_file_name = dxf_conf->get_palette_file_name();
-  init_palette(palette_file_name);
 
   while (true) {
     int n;
@@ -345,33 +312,13 @@ SGAL::Loader_code Dxf_parser::operator()(std::istream& is,
     (this->*(sec_it->second))();
   }
 
-  Dxf_builder builder(*m_data);
+  Dxf_builder builder(*m_data, scene_graph);
   builder(root);
-
-  // Construct the scene graph rooted at the given root.
-  process_layers();
-
-  add_background(root);
-  process_entities(m_data->m_entities, root);
-
-#if ! defined(NDEBUG) || defined(SGAL_TRACE)
-  if (SGAL::TRACE(m_trace_code)) {
-    std::cout << "Processed " << m_lines_num << " lines" << std::endl;
-    std::cout << "Processed " << m_polylines_num << " polylines" << std::endl;
-    std::cout << "Processed " << m_lwpolylines_num << " lwpolylines" << std::endl;
-    std::cout << "Processed " << m_circles_num << " circles" << std::endl;
-    std::cout << "Processed " << m_arcs_num << " arcs" << std::endl;
-    std::cout << "Processed " << m_hatches_num << " hatches" << std::endl;
-    std::cout << "Processed " << m_solids_num << " solids" << std::endl;
-    std::cout << "Processed " << m_inserts_num << " inserts" << std::endl;
-  }
-#endif
-
-  clear();
 
   // Store the data for future use:
   if (dxf_conf->get_store_data()) s_datas[filename] = m_data;
   else delete m_data;
+  m_data = nullptr;
 
   return SGAL::Loader_code::SUCCESS;
 }
@@ -1552,14 +1499,6 @@ void Dxf_parser::parse_spline_edge(Dxf_spline_edge& edge)
     export_code(code);
     return;
   }
-}
-
-//! \brief clears the parser. Deallocate data structure and prepare for reuse.
-void Dxf_parser::clear()
-{
-  m_color_arrays.clear();
-  m_pattern_appearances.clear();
-  m_data = nullptr;
 }
 
 DXF_END_NAMESPACE

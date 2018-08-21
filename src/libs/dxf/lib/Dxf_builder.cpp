@@ -32,6 +32,7 @@
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Tracer.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Group.hpp"
 #include "SGAL/Shape.hpp"
@@ -58,11 +59,12 @@
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_builder.hpp"
-#include "dxf/Dxf_parser.hpp"
 #include "dxf/Dxf_data.hpp"
 #include "dxf/Dxf_block.hpp"
 #include "dxf/Dxf_endblk.hpp"
 #include "dxf/Dxf_polyline_boundary_path.hpp"
+#include "dxf/Dxf_base_entity.hpp"
+
 #include "dxf/Dxf_line_entity.hpp"
 #include "dxf/Dxf_circle_entity.hpp"
 #include "dxf/Dxf_arc_entity.hpp"
@@ -95,18 +97,80 @@ DXF_BEGIN_NAMESPACE
 // 3. DIMENSION entities.
 // 4. Probably more.
 
+//! Default color palette
+std::vector<SGAL::Vector3f> Dxf_builder::s_palette = {
+  {0, 0, 0},            //  0, Black,     0,  0,  0, #000000
+  {1, 0, 0},            //  1, Red,     255,  0,  0, #ff0000
+  {1, 1, 0},            //  2, Yellow,  255,255,  0, #ffff00
+  {0, 1, 0},            //  3, Green,     0,255,  0, #00ff00
+  {0, 1, 1},            //  4, Cyan,      0,255,255, #00ffff
+  {0, 0, 1},            //  5, Blue,      0,  0,  1, #0000ff
+  {1, 0, 1},            //  6, Magenta, 255,  0,255, #ff00ff
+  {1, 1, 1},            //  7, White,     1,  1,  1, #ffffff
+  {0.5, 0.5, 0.5},      //  8
+  {0.5, 0, 0},          //  9
+  {0.5, 0.5, 0},        // 10
+  {0, 0.5, 0},          // 11
+  {0, 0.5, 0.5},        // 12
+  {0, 0, 0.5},          // 13
+  {0.5, 0, 0.5},        // 14
+  {0.75, 0.75, 0.75}    // 15
+};
+
 //! \brief constructs
-Dxf_builder::Dxf_builder(Dxf_data& data) :
-  m_trace_code_building(static_cast<size_t>(SGAL::Tracer::INVALID))
-{}
+Dxf_builder::Dxf_builder(Dxf_data& data, SGAL::Scene_graph* scene_graph) :
+  m_data(data),
+  m_scene_graph(scene_graph),
+  m_trace_code(static_cast<size_t>(SGAL::Tracer::INVALID)),
+  m_lines_num(0),
+  m_polylines_num(0),
+  m_lwpolylines_num(0),
+  m_circles_num(0),
+  m_arcs_num(0),
+  m_hatches_num(0),
+  m_splines_num(0),
+  m_solids_num(0),
+  m_inserts_num(0)
+{
+  auto* conf = scene_graph->get_configuration();
+  SGAL_assertion(conf);
+  auto dxf_conf = conf->get_dxf_configuration();
+  SGAL_assertion(dxf_conf);
+
+  auto& palette_file_name = dxf_conf->get_palette_file_name();
+  init_palette(palette_file_name);
+}
+
+//! \brief destructs.
+Dxf_builder::~Dxf_builder()
+{
+  m_color_arrays.clear();
+  m_pattern_appearances.clear();
+}
 
 //! \brief builds from the root.
 void Dxf_builder::operator()(SGAL::Group* root)
 {
+  process_layers();
+  add_background(root);
+  process_entities(m_data.m_entities, root);
+
+#if ! defined(NDEBUG) || defined(SGAL_TRACE)
+  if (SGAL::TRACE(m_trace_code)) {
+    std::cout << "Processed " << m_lines_num << " lines" << std::endl;
+    std::cout << "Processed " << m_polylines_num << " polylines" << std::endl;
+    std::cout << "Processed " << m_lwpolylines_num << " lwpolylines" << std::endl;
+    std::cout << "Processed " << m_circles_num << " circles" << std::endl;
+    std::cout << "Processed " << m_arcs_num << " arcs" << std::endl;
+    std::cout << "Processed " << m_hatches_num << " hatches" << std::endl;
+    std::cout << "Processed " << m_solids_num << " solids" << std::endl;
+    std::cout << "Processed " << m_inserts_num << " inserts" << std::endl;
+  }
+#endif
 }
 
 //! \brief initializes the pallete.
-void Dxf_parser::init_palette(const SGAL::String& file_name)
+void Dxf_builder::init_palette(const SGAL::String& file_name)
 {
   std::ifstream t(file_name);
   //! \todo move the test for file existance out of here
@@ -125,9 +189,9 @@ void Dxf_parser::init_palette(const SGAL::String& file_name)
 }
 
 //! \brief processes all layers. Create a color array for each.
-void Dxf_parser::process_layers()
+void Dxf_builder::process_layers()
 {
-  for (auto& layer : m_data->m_layer_table.m_entries) {
+  for (auto& layer : m_data.m_layer_table.m_entries) {
     Shared_color_array shared_colors;
     size_t color = layer.m_color;
     if (color != static_cast<size_t>(-1)) {
@@ -162,8 +226,8 @@ void Dxf_parser::process_layers()
 }
 
 //! \brief dispatches the processing of all entities.
-void Dxf_parser::process_entities(std::vector<Dxf_base_entity*>& entities,
-                                  SGAL::Group* root)
+void Dxf_builder::process_entities(std::vector<Dxf_base_entity*>& entities,
+                                   SGAL::Group* root)
 {
   for (auto* entity : entities) {
     if (auto* line = dynamic_cast<Dxf_line_entity*>(entity)) {
@@ -206,8 +270,8 @@ void Dxf_parser::process_entities(std::vector<Dxf_base_entity*>& entities,
 }
 
 //! \brief Obtain the color array of an entity.
-Dxf_parser::Shared_color_array
-Dxf_parser::get_color_array(int32_t color, int16_t color_index,
+Dxf_builder::Shared_color_array
+Dxf_builder::get_color_array(int32_t color, int16_t color_index,
                             const SGAL::String& layer)
 {
   Shared_color_array shared_colors;
@@ -224,8 +288,8 @@ Dxf_parser::get_color_array(int32_t color, int16_t color_index,
   }
 
   if (color_index == static_cast<int16_t>(By::BYLAYER)) {
-    auto it = m_data->m_layer_table.find(layer);
-    SGAL_assertion(it != m_data->m_layer_table.m_entries.end());
+    auto it = m_data.m_layer_table.find(layer);
+    SGAL_assertion(it != m_data.m_layer_table.m_entries.end());
     shared_colors = it->m_color_array;
     SGAL_assertion(shared_colors);
     return shared_colors;
@@ -251,7 +315,7 @@ Dxf_parser::get_color_array(int32_t color, int16_t color_index,
 //! \brief obtains the lighting-disabled appearance.
 // Also, assuming that this appearance is used for paper-space, we also disable
 // the hidden-surface-removal, and draw the entities in the order they appear.
-Dxf_parser::Shared_appearance Dxf_parser::get_fill_appearance()
+Dxf_builder::Shared_appearance Dxf_builder::get_fill_appearance()
 {
   if (! m_fill_appearance) {
     m_fill_appearance.reset(new SGAL::Appearance);
@@ -269,8 +333,8 @@ Dxf_parser::Shared_appearance Dxf_parser::get_fill_appearance()
 //! \brief obtains the lighting-disabled appearance.
 // Also, assuming that this appearance is used for paper-space, we also disable
 // the hidden-surface-removal, and draw the entities in the order they appear.
-Dxf_parser::Shared_appearance
-Dxf_parser::get_pattern_appearance()
+Dxf_builder::Shared_appearance
+Dxf_builder::get_pattern_appearance()
 {
   Shared_appearance app(new SGAL::Appearance);
   app->add_to_scene(m_scene_graph);
@@ -289,7 +353,7 @@ Dxf_parser::get_pattern_appearance()
 }
 
 //! \brief add a default background color
-void Dxf_parser::add_background(SGAL::Group* root)
+void Dxf_builder::add_background(SGAL::Group* root)
 {
   typedef boost::shared_ptr<SGAL::Color_background>    Shared_color_background;
 
@@ -337,7 +401,7 @@ void approximate(std::list<SGAL::Vector2f>& points,
 }
 
 //! \brief prints out hatch information.
-void Dxf_parser::print_hatch_information(const Dxf_hatch_entity& hatch)
+void Dxf_builder::print_hatch_information(const Dxf_hatch_entity& hatch)
 {
   std::cout << "style: " << hatch.m_style << std::endl;
   std::cout << "pattern name: " << hatch.m_pattern_name << std::endl;
@@ -363,7 +427,7 @@ void Dxf_parser::print_hatch_information(const Dxf_hatch_entity& hatch)
 }
 
 //! \brief add polylines.
-void Dxf_parser::
+void Dxf_builder::
 process_polyline_boundaries
 (const Dxf_hatch_entity& hatch,
  const std::list<Dxf_polyline_boundary_path*>& polylines,
@@ -517,7 +581,7 @@ process_polyline_boundaries
 }
 
 //! \brief processes a hatch entity. Construct Indexed_line_set as necessary.
-void Dxf_parser::process_hatch_entity(const Dxf_hatch_entity& hatch,
+void Dxf_builder::process_hatch_entity(const Dxf_hatch_entity& hatch,
                                       SGAL::Group* root)
 {
   ++m_hatches_num;
@@ -540,7 +604,7 @@ void Dxf_parser::process_hatch_entity(const Dxf_hatch_entity& hatch,
 }
 
 //! \brief processes a spline entity. Construct Indexed_line_set as necessary.
-void Dxf_parser::process_spline_entity(const Dxf_spline_entity& spline,
+void Dxf_builder::process_spline_entity(const Dxf_spline_entity& spline,
                                        SGAL::Group* root)
 {
   //! \todo Add support for splines.
@@ -593,8 +657,7 @@ void Dxf_parser::process_spline_entity(const Dxf_spline_entity& spline,
   for (const auto& point : spline.m_fit_points)
     std::cout << "  " << point << std::endl;
 
-  if (number_of_poles < 2)
-    throw SGAL::Parse_error(filename(), "less than 2 control points!");
+  SGAL_assertion(number_of_poles >= 2);
 
   size_t number_of_knots(0);
   size_t sum_of_mults(0);
@@ -651,26 +714,20 @@ void Dxf_parser::process_spline_entity(const Dxf_spline_entity& spline,
   std::cout << "sum_of_mults: " << sum_of_mults << std::endl;
 
   // The folowing check is redundant, given the current handling of weights.
-  if (spline.m_weights.size() != number_of_poles)
-    throw SGAL::Parse_error(filename(),
-                            "number of poles and weights mismatch!");
+  SGAL_assertion(spline.m_weights.size() == number_of_poles);
 
   // Check whether the number of poles matches the sum of mults
-  if ((periodic && (sum_of_mults != number_of_poles)) ||
-      (! periodic && ((sum_of_mults - degree - 1) != number_of_poles)))
-    throw SGAL::Parse_error(filename(),
-                            "number of poles and sum of mults mismatch");
+  SGAL_assertion((! periodic || (sum_of_mults == number_of_poles)) &&
+                 (periodic || ((sum_of_mults - degree - 1) == number_of_poles)));
 
   std::cout << "Knots: " << knots.size() << std::endl;
-  for (const auto& knot : knots)
-    std::cout << "  " << knot << std::endl;
+  for (const auto& knot : knots) std::cout << "  " << knot << std::endl;
   std::cout << "Mults: " << mults.size() << std::endl;
-  for (const auto& mult : mults)
-    std::cout << "  " << mult << std::endl;
+  for (const auto& mult : mults) std::cout << "  " << mult << std::endl;
 }
 
 //! \brief processes a line entity. Construct Indexed_line_set as necessary.
-void Dxf_parser::process_line_entity(const Dxf_line_entity& line,
+void Dxf_builder::process_line_entity(const Dxf_line_entity& line,
                                      SGAL::Group* root)
 {
   ++m_lines_num;
@@ -740,7 +797,7 @@ void Dxf_parser::process_line_entity(const Dxf_line_entity& line,
 }
 
 //! \brief processes a polyline entity. Construct Indexed_line_set as necessary.
-void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
+void Dxf_builder::process_polyline_entity(const Dxf_polyline_entity& polyline,
                                          SGAL::Group* root)
 {
   ++m_polylines_num;
@@ -858,7 +915,7 @@ void Dxf_parser::process_polyline_entity(const Dxf_polyline_entity& polyline,
 }
 
 //! \brief processes a light weight polyline entity.
-void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline,
+void Dxf_builder::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline,
                                            SGAL::Group* root)
 {
   ++m_lwpolylines_num;
@@ -971,7 +1028,7 @@ void Dxf_parser::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline
 }
 
 //! \brief processes a circle entity. Construct Indexed_line_set as necessary.
-void Dxf_parser::process_circle_entity(const Dxf_circle_entity& circle,
+void Dxf_builder::process_circle_entity(const Dxf_circle_entity& circle,
                                        SGAL::Group* root)
 {
   ++m_circles_num;
@@ -1061,7 +1118,7 @@ void Dxf_parser::process_circle_entity(const Dxf_circle_entity& circle,
 }
 
 //! \brief processes an arc entity. Construct Indexed_line_set as necessary.
-void Dxf_parser::process_arc_entity(const Dxf_arc_entity& arc,
+void Dxf_builder::process_arc_entity(const Dxf_arc_entity& arc,
                                     SGAL::Group* root)
 {
   ++m_arcs_num;
@@ -1153,12 +1210,12 @@ void Dxf_parser::process_arc_entity(const Dxf_arc_entity& arc,
 }
 
 //! \brief processes all insert entities.
-void Dxf_parser::process_insert_entity(const Dxf_insert_entity& insert,
+void Dxf_builder::process_insert_entity(const Dxf_insert_entity& insert,
                                        SGAL::Group* root)
 {
   ++m_inserts_num;
 
-  auto it = std::find_if(m_data->m_blocks.begin(), m_data->m_blocks.end(),
+  auto it = std::find_if(m_data.m_blocks.begin(), m_data.m_blocks.end(),
                          [&](std::pair<Dxf_block, Dxf_endblk>& block)
                          { return insert.m_name == block.first.m_name; });
   auto& block = it->first;
@@ -1203,7 +1260,7 @@ void Dxf_parser::process_insert_entity(const Dxf_insert_entity& insert,
 }
 
 //! \brief processes a solid entity.
-void Dxf_parser::process_solid_entity(const Dxf_solid_entity& solid,
+void Dxf_builder::process_solid_entity(const Dxf_solid_entity& solid,
                                       SGAL::Group* root)
 {
   ++m_solids_num;
