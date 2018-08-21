@@ -449,9 +449,9 @@ void Text_3d::clean_facet_coord_indices()
            ++it)
       {
         if (! it->info().in_domain()) continue;
-        coord_indices[i][0] = it->vertex(2)->info() + base;
-        coord_indices[i][1] = it->vertex(1)->info() + base;
-        coord_indices[i][2] = it->vertex(0)->info() + base;
+        coord_indices[i][0] = it->vertex(2)->info().m_index + base;
+        coord_indices[i][1] = it->vertex(1)->info().m_index + base;
+        coord_indices[i][2] = it->vertex(0)->info().m_index + base;
         ++i;
       }
       // Set the back indices
@@ -459,9 +459,9 @@ void Text_3d::clean_facet_coord_indices()
            ++it)
       {
         if (! it->info().in_domain()) continue;
-        coord_indices[i][0] = it->vertex(0)->info() + base + size;
-        coord_indices[i][1] = it->vertex(1)->info() + base + size;
-        coord_indices[i][2] = it->vertex(2)->info() + base + size;
+        coord_indices[i][0] = it->vertex(0)->info().m_index + base + size;
+        coord_indices[i][1] = it->vertex(1)->info().m_index + base + size;
+        coord_indices[i][2] = it->vertex(2)->info().m_index + base + size;
         ++i;
       }
 
@@ -472,15 +472,15 @@ void Text_3d::clean_facet_coord_indices()
         auto f1 = it->first;
         auto f2 = f1->neighbor(it->second);
         if (f1->info().in_domain() && !f2->info().in_domain()) {
-          auto a = f1->vertex(f1->ccw(it->second))->info() + base;
-          auto b = f1->vertex(f1->cw(it->second))->info() + base;
+          auto a = f1->vertex(f1->ccw(it->second))->info().m_index + base;
+          auto b = f1->vertex(f1->cw(it->second))->info().m_index + base;
           auto c = b + size;
           auto d = a + size;
           i = create_quad(coord_indices, a, b, c, d, i);
         }
         else if (f2->info().in_domain() && !f1->info().in_domain()) {
-          auto a = f1->vertex(f1->cw(it->second))->info() + base;
-          auto b = f1->vertex(f1->ccw(it->second))->info() + base;
+          auto a = f1->vertex(f1->cw(it->second))->info().m_index + base;
+          auto b = f1->vertex(f1->ccw(it->second))->info().m_index + base;
           auto c = b + size;
           auto d = a + size;
           i = create_quad(coord_indices, a, b, c, d, i);

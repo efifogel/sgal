@@ -26,11 +26,29 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Inexact_kernel.hpp"
+#include "SGAL/Vertex_index.hpp"
 #include "SGAL/Face_nesting_level.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-typedef CGAL::Triangulation_vertex_base_with_info_2<size_t, Inexact_kernel>
+/* The vertex type is extended with the type Vertex_index. The Vertex_index
+ * construct contains only a size_t type member (typically used as an index). We
+ * must use a construct, namely Vertex_index, to extend the vertex instead of
+ * directly using the simple type size_t, because we need to initialize it with
+ * a significant value, namely -1, upon construction of the containing vertex.
+ *
+ * The member function tri.insert(p) inserts a point into the triangulation and
+ * returns a handle to the corresponding vertex. If the point exists already,
+ * the function returns a handle to the existing vertex. Otherwise, it returns
+ * a handle to a new vertex with the index initialized to -1. We increase the
+ * index counter only if we get a new vertex (with its index initialized to -1).
+ *
+ * Had the triangulation supported a mechanism to initialize the extended data
+ * of the vertex, e.g., an observer that contains a call back invoked
+ * immediately after a vertex is constructed, we could have avoided all this,
+ * and use the simple type size_t directly.
+ */
+typedef CGAL::Triangulation_vertex_base_with_info_2<Vertex_index, Inexact_kernel>
   Inexact_vb;
 
 typedef CGAL::Triangulation_face_base_with_info_2<Face_nesting_level,

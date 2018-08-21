@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_CONSTRUCT_TRIANGULATION_HPP
 #define SGAL_CONSTRUCT_TRIANGULATION_HPP
@@ -41,12 +43,13 @@ Uint construct_triangulation(Triangulation_& tri,
   auto pit = begin;
   typename Triangulation::Point p((*pit)[0], (*pit)[1]);
   auto start = tri.insert(p);
-  start->info() = k++;
+  start->info().m_index = k++;
   auto prev = start;
   for (++pit; pit != end; ++pit) {
     typename Triangulation::Point p((*pit)[0], (*pit)[1]);
     auto next = tri.insert(p);
-    next->info() = k++;
+    if (static_cast<size_t>(-1) == next->info().m_index)
+      next->info().m_index = k++;
     tri.insert_constraint(prev, next);
     prev = next;
   }
@@ -116,4 +119,3 @@ void mark_domains(Triangulation_& tri)
 SGAL_END_NAMESPACE
 
 #endif
-
