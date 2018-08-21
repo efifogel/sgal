@@ -905,7 +905,6 @@ void Dxf_builder::process_polyline_entity(const Dxf_polyline_entity& polyline,
 
   // Count number of vertices:
   size_t size(poly.size());
-  size_t num_primitives(1);
 
   // Allocate vertices:
   auto* coords = new SGAL::Coord_array_3d(size);
@@ -936,7 +935,7 @@ void Dxf_builder::process_polyline_entity(const Dxf_polyline_entity& polyline,
   ils->set_lines_coord_indices(std::move(polyline_indices));
   ils->set_coord_array(shared_coords);
   ils->set_color_array(shared_colors);
-  ils->set_num_primitives(num_primitives);
+  ils->set_num_primitives(1);
   ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
@@ -1023,7 +1022,6 @@ Dxf_builder::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline,
 
   // Count number of vertices:
   size_t size(poly.size());
-  size_t num_primitives(1);
 
   // Allocate vertices:
   auto* coords = new SGAL::Coord_array_3d(size);
@@ -1054,7 +1052,7 @@ Dxf_builder::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline,
   ils->set_lines_coord_indices(std::move(polyline_indices));
   ils->set_coord_array(shared_coords);
   ils->set_color_array(shared_colors);
-  ils->set_num_primitives(num_primitives);
+  ils->set_num_primitives(1);
   ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
@@ -1077,8 +1075,6 @@ void Dxf_builder::process_circle_entity(const Dxf_circle_entity& circle,
   SGAL_assertion(conf);
   auto dxf_conf = conf->get_dxf_configuration();
   SGAL_assertion(dxf_conf);
-
-  size_t num_primitives(1);
 
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
   typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
@@ -1148,7 +1144,7 @@ void Dxf_builder::process_circle_entity(const Dxf_circle_entity& circle,
   ils->set_lines_coord_indices(std::move(polyline_indices));
   ils->set_coord_array(shared_coords);
   ils->set_color_array(shared_colors);
-  ils->set_num_primitives(num_primitives);
+  ils->set_num_primitives(1);
   ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
@@ -1171,8 +1167,6 @@ void Dxf_builder::process_arc_entity(const Dxf_arc_entity& arc,
   SGAL_assertion(conf);
   auto dxf_conf = conf->get_dxf_configuration();
   SGAL_assertion(dxf_conf);
-
-  size_t num_primitives(1);
 
   typedef boost::shared_ptr<SGAL::Shape>              Shared_shape;
   typedef boost::shared_ptr<SGAL::Indexed_line_set>   Shared_indexed_line_set;
@@ -1211,8 +1205,9 @@ void Dxf_builder::process_arc_entity(const Dxf_arc_entity& arc,
   m_scene_graph->add_container(shared_coords);
 
   // Allocate indices:
-  auto& indices = ils->get_coord_indices();
-  indices.resize(size + num_primitives);
+  SGAL::Polyline_indices polyline_indices(1);
+  auto& indices = polyline_indices.front();
+  indices.resize(size);
 
   // Check whether mirroring is required
   bool mirror(false);
@@ -1238,13 +1233,13 @@ void Dxf_builder::process_arc_entity(const Dxf_arc_entity& arc,
   auto it_start = it;
   std::advance(it, size);
   std::iota(it_start, it, 0);
-  *it++ = -1;
 
   auto type = SGAL::Geo_set::PT_LINE_STRIPS;
   ils->set_primitive_type(type);
+  ils->set_lines_coord_indices(std::move(polyline_indices));
   ils->set_coord_array(shared_coords);
   ils->set_color_array(shared_colors);
-  ils->set_num_primitives(num_primitives);
+  ils->set_num_primitives(1);
   ils->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
@@ -1351,7 +1346,6 @@ void Dxf_builder::process_solid_entity(const Dxf_solid_entity& solid,
   // the triangulate.
 
   // Count number of primitives & vertices:
-  size_t num_primitives(1);
   size_t size(4);
 
   // Allocate vertices:
@@ -1377,7 +1371,7 @@ void Dxf_builder::process_solid_entity(const Dxf_solid_entity& solid,
   ifs->set_facet_coord_indices(std::move(quad_indices));
   ifs->set_coord_array(shared_coords);
   ifs->set_color_array(shared_colors);
-  ifs->set_num_primitives(num_primitives);
+  ifs->set_num_primitives(1);
   ifs->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
 }
 
