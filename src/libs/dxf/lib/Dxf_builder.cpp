@@ -353,6 +353,8 @@ Dxf_builder::get_pattern_appearance()
   app->set_depth_enable(false);
 
   //! \todo add a (vertex) shader that draws the pattern.
+  // app->set_transp_enable(true);
+  // app->set_transp_mode(SGAL::Gfx::BLEND_TRANSP);
 
   m_scene_graph->add_container(app);
 
@@ -558,9 +560,16 @@ process_polyline_boundaries(const Dxf_hatch_entity& hatch,
          ++fit)
     {
       if (! fit->info().in_domain()) continue;
-      (*it)[0] = fit->vertex(0)->info().m_index + i;
-      (*it)[1] = fit->vertex(1)->info().m_index + i;
-      (*it)[2] = fit->vertex(2)->info().m_index + i;
+      if (mirror) {
+        (*it)[2] = fit->vertex(0)->info().m_index + i;
+        (*it)[1] = fit->vertex(1)->info().m_index + i;
+        (*it)[0] = fit->vertex(2)->info().m_index + i;
+      }
+      else {
+        (*it)[0] = fit->vertex(0)->info().m_index + i;
+        (*it)[1] = fit->vertex(1)->info().m_index + i;
+        (*it)[2] = fit->vertex(2)->info().m_index + i;
+      }
       ++it;
     }
     i += tri.number_of_vertices();
