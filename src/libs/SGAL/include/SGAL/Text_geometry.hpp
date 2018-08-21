@@ -22,49 +22,34 @@
 #include <list>
 #include <vector>
 
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/Triangulation_face_base_with_info_2.h>
-
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Inexact_kernel.hpp"
-#include "SGAL/Face_nesting_level.hpp"
+#include "SGAL/Inexact_triangulation.hpp"
 #include "SGAL/construct_triangulation.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class SGAL_SGAL_DECL Glyph_geometry {
 public:
-  /*! Construct default. */
+  /*! Construct default.
+   */
   Glyph_geometry();
-
-  // Triangulation.
-  typedef Inexact_kernel                                                Kernel;
-  typedef CGAL::Triangulation_vertex_base_with_info_2<Uint, Kernel>     VB;
-  typedef CGAL::Triangulation_face_base_with_info_2<Face_nesting_level, Kernel>
-                                                                        FBI;
-  typedef CGAL::Constrained_triangulation_face_base_2<Kernel, FBI>      FB;
-  typedef CGAL::Triangulation_data_structure_2<VB, FB>                  TDS;
-  typedef CGAL::No_intersection_tag                                     Itag;
-  // typedef CGAL::Exact_predicates_tag                                    Itag;
-  typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>
-    Triangulation;
 
   /*! Set the triangulation of the glyph geometry.
    * \param[in] triangulation the new triangulation.
    */
-  void set_triangulation(const Triangulation& triangulation);
+  void set_triangulation(const Inexact_triangulation& triangulation);
 
   /*! Obtain the (const) triangulation of the glyph geometry.
    * \param[in] triangulation the new triangulation.
    */
-  const Triangulation& get_triangulation() const;
+  const Inexact_triangulation& get_triangulation() const;
 
   /*! Obtain the (non-const) triangulation of the glyph geometry.
    * \return the triangulation.
    */
-  Triangulation& get_triangulation();
+  Inexact_triangulation& get_triangulation();
 
   template <typename InputIterator>
   Uint construct_triangulation(InputIterator begin, InputIterator end, Uint k);
@@ -101,7 +86,7 @@ public:
 
 private:
   /*! The triangulation of the glyph geometry. */
-  Triangulation m_triangulation;
+  Inexact_triangulation m_triangulation;
 
   /*! The scale factor of the glyph geometry. */
   Float m_scale;
@@ -258,16 +243,15 @@ inline Glyph_geometry::Glyph_geometry() : m_scale(1.0f) {}
 
 //! \brief sets the triangulation of the glyph geometry.
 inline void
-Glyph_geometry::set_triangulation(const Triangulation& triangulation)
+Glyph_geometry::set_triangulation(const Inexact_triangulation& triangulation)
 { m_triangulation = triangulation; }
 
 //! \brief obtains the (const) triangulation of the glyph geometry.
-inline const Glyph_geometry::Triangulation&
-Glyph_geometry::get_triangulation() const
+inline const Inexact_triangulation& Glyph_geometry::get_triangulation() const
 { return m_triangulation; }
 
 //! \brief obtains the (non-const) triangulation of the glyph geometry.
-inline Glyph_geometry::Triangulation& Glyph_geometry::get_triangulation()
+inline Inexact_triangulation& Glyph_geometry::get_triangulation()
 { return m_triangulation; }
 
 template <typename InputIterator>
