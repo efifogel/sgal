@@ -65,7 +65,7 @@ public:
 
   /*! Construct.
    */
-  Dxf_builder(Dxf_data& data, SGAL::Scene_graph* scene_graph);
+  Dxf_builder(Dxf_data& data, SGAL::Scene_graph* scene_graph, size_t trace_code);
 
   /*! Destruct.
    */
