@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_COLOR_ARRAY_HPP
 #define SGAL_COLOR_ARRAY_HPP
@@ -28,7 +30,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
-#include "SGAL/Vector3f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -41,8 +42,7 @@ class Container_proto;
 #endif
 
 /*! \class Color_array Color_array.hpp
- * Coord_array maintains an array of 3D vertex-colors of floating point
- * type.
+ * Coord_array maintains an abstract array of 3D vertex-colors.
  */
 class SGAL_SGAL_DECL Color_array : public Container {
 public:
@@ -52,36 +52,22 @@ public:
     LAST
   };
 
-  typedef std::vector<Vector3f>::iterator       iterator;
-  typedef std::vector<Vector3f>::const_iterator const_iterator;
-
   /*! Construct.
    * \param[in] proto determines whether to construct a prototype.
    */
   Color_array(Boolean proto = false);
 
-  /*! Construct. */
-  Color_array(Size n);
-
   /*! Destruct. */
   virtual ~Color_array();
 
-  /*! Construct the prototype.
-   * \return the prototype.
-   */
-  static Color_array* prototype();
-
-  /*! Create a new container of this type (virtual copy constructor).
-   * \return a new container of this type.
-   */
-  virtual Container* create();
-
   /// \name Protoype handling
   //@{
-  /*! Initialize the node prototype. */
+  /*! Initialize the node prototype.
+   */
   virtual void init_prototype();
 
-  /*! Delete the node prototype. */
+  /*! Delete the node prototype.
+   */
   virtual void delete_prototype();
 
   /*! Obtain the node prototype.
@@ -92,81 +78,58 @@ public:
 
   /// \name field handlers
   //@{
-  std::vector<Vector3f>* array_handle(const Field_info*) { return &m_array; }
   //@}
 
   /*! Set the attributes of this node.
    */
   virtual void set_attributes(Element* elem);
 
-  //! \todo virtual Attribute_list get_attributes();
-
   /*! Obtain the array size.
    * \return the array size.
    */
-  Size size() const;
+  virtual Size size() const = 0;
 
-  /*! Determine whether the array is empty. */
-  Boolean empty() const;
-
-  /*! Resize the array capacity. */
-  void resize(Size n);
-
-  /*! Clear the array. */
-  void clear();
-
-  /*! Obtain the iterator to the Array first element. */
-  std::vector<Vector3f>::iterator begin();
-
-  /*! Obtain the const iterator to the Array first element. */
-  const std::vector<Vector3f>::const_iterator begin() const;
-
-  /*! Obtain the iterator to the Array past-the-end element. */
-  std::vector<Vector3f>::iterator end();
-
-  /*! Obtain the const iterator to the Array past-the-end element. */
-  const std::vector<Vector3f>::const_iterator end() const ;
-
-  /*! Push a new element at the back.
-   * \param[in] val the new element.
+  /*! Determine whether the array is empty.
    */
-  void push_back(const Vector3f& val);
+  virtual Boolean empty() const;
 
-  /*! Array indexing operator. */
-  Vector3f& operator[](Uint n);
+  /*! Resize the array capacity.
+   */
+  virtual void resize(Size n) = 0;
 
-  /*! Array indexing operator. */
-  const Vector3f& operator[](Uint n) const;
+  /*! Clear the array.
+   */
+  virtual void clear() = 0;
+
+  /*! Obtain the number of coordinate dimensions.
+   * \return the number of coordinate dimensions.
+   */
+  virtual Size num_coordinates() const = 0;
 
   /*! Obtain the data size.
    * \return the data size.
    */
-  Size data_size() const;
+  virtual Size data_size() const = 0;
 
   /*! Obtain the data.
    * \return the data.
    */
-  const GLfloat* data() const;
+  virtual const GLfloat* data() const = 0;
 
   /*! Obtain the datum at a given index.
    * \param[in] i the index of the obtained datum.
    * \return the datum at a given index.
    */
-  virtual const GLfloat* datum(Uint i) const;
+  virtual const GLfloat* datum(Uint i) const = 0;
 
-protected:
-  /*! Obtain the tag (type) of the container. */
-  virtual const std::string& get_tag() const;
+  /*! Process change of colors.
+   * \param[in] field_info
+   */
+  void color_changed(const Field_info* field_info);
 
 private:
-  /*! The tag that identifies this container type. */
-  static const std::string s_tag;
-
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
-
-  /*! The array of colors. */
-  std::vector<Vector3f> m_array;
 };
 
 #if defined(_MSC_VER)
@@ -176,69 +139,8 @@ private:
 //! \brief constructor.
 inline Color_array::Color_array(Boolean proto) : Container(proto) {}
 
-//!\brief constructor.
-inline Color_array::Color_array(Size n) { m_array.resize(n); }
-
 //! \brief destructor.
 inline Color_array::~Color_array() {}
-
-//! \brief constructs the prototype.
-inline Color_array* Color_array::prototype() { return new Color_array(true); }
-
-//! \brief creates a new container of this type (virtual copy constructor).
-inline Container* Color_array::create()
-{ return new Color_array(); }
-
-//! \brief obtains the array size.
-inline Size Color_array::size() const { return m_array.size(); }
-
-//! \brief resizes the array capacity.
-inline void Color_array::resize(Size n) { m_array.resize(n); }
-
-//! \brief clears the array.
-inline void Color_array::clear() { m_array.clear(); }
-
-//! \brief obtains the iterator to the Array first element.
-inline std::vector<Vector3f>::iterator Color_array::begin()
-{ return m_array.begin(); }
-
-//! \brief obtains the const iterator to the Array first element.
-inline const std::vector<Vector3f>::const_iterator Color_array::begin() const
-{ return m_array.begin(); }
-
-//! \brief obtains the iterator to the Array past-the-end element.
-inline std::vector<Vector3f>::iterator Color_array::end()
-{ return m_array.end(); }
-
-//! \brief obtains the const iterator to the Array first element.
-inline const std::vector<Vector3f>::const_iterator Color_array::end() const
-{ return m_array.end(); }
-
-//! \brief pushes a new element at the back.
-inline void Color_array::push_back(const Vector3f& val)
-{ m_array.push_back(val); }
-
-//! \brief Array indexing operator.
-inline Vector3f& Color_array::operator[](Uint n) { return m_array[n]; }
-
-//! \brief Array indexing operator.
-inline const Vector3f& Color_array::operator[](Uint n) const
-{ return m_array[n]; }
-
-//! \brief obtain the data size.
-inline Size Color_array::data_size() const
-{ return m_array.size() * sizeof(Vector3f); }
-
-//! \brief obtains the data.
-inline const GLfloat* Color_array::data() const
-{ return (GLfloat*)(&(*(m_array.begin()))); }
-
-//! \brief obtains the datum at a given index.
-inline const GLfloat* Color_array::datum(Uint i) const
-{ return (GLfloat*)(&(m_array[i])); }
-
-//! \brief obtains the tag (type) of the container.
-inline const std::string& Color_array::get_tag() const { return s_tag; }
 
 //! \brief determines whether the array is empty.
 inline Boolean Color_array::empty() const {return (size() == 0); }

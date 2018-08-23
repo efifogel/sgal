@@ -193,6 +193,8 @@ source_group(src\\events FILES ${SGAL_EVENTS_SRC_FILES} ${SGAL_EVENTS_HEADER_FIL
 # Geometries
 set(SGAL_GEOMETRIES_SRC_FILES ${SGAL_GEOMETRIES_SRC_FILES} lib/geometries/Boundary_set.cpp)
 set(SGAL_GEOMETRIES_SRC_FILES ${SGAL_GEOMETRIES_SRC_FILES} lib/geometries/Color_array.cpp)
+set(SGAL_GEOMETRIES_SRC_FILES ${SGAL_GEOMETRIES_SRC_FILES} lib/geometries/Color_array_3d.cpp)
+set(SGAL_GEOMETRIES_SRC_FILES ${SGAL_GEOMETRIES_SRC_FILES} lib/geometries/Color_array_4d.cpp)
 set(SGAL_GEOMETRIES_SRC_FILES ${SGAL_GEOMETRIES_SRC_FILES} lib/geometries/Coord_array.cpp)
 set(SGAL_GEOMETRIES_SRC_FILES ${SGAL_GEOMETRIES_SRC_FILES} lib/geometries/Coord_array_1d.cpp)
 set(SGAL_GEOMETRIES_SRC_FILES ${SGAL_GEOMETRIES_SRC_FILES} lib/geometries/Coord_array_2d.cpp)

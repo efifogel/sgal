@@ -37,7 +37,7 @@ SGAL_BEGIN_NAMESPACE
 class Scene_graph;
 class Group;
 class Appearance;
-class Color_array;
+class Color_array_3d;
 
 SGAL_END_NAMESPACE
 
@@ -61,7 +61,7 @@ class Dxf_insert_entity;
 class SGAL_SGAL_DECL Dxf_builder {
 public:
   typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
-  typedef boost::shared_ptr<SGAL::Color_array>        Shared_color_array;
+  typedef boost::shared_ptr<SGAL::Color_array_3d>     Shared_color_array_3d;
 
   /*! Construct.
    */
@@ -143,8 +143,8 @@ protected:
 
   /*! Obtain the color array of an entity.
    */
-  Shared_color_array get_color_array(int32_t color, int16_t color_index,
-                                     const SGAL::String& layer_name);
+  Shared_color_array_3d get_color_array(int32_t color, int16_t color_index,
+                                        const SGAL::String& layer_name);
 
   /*! Obtain the light-disabled appearance.
    */
@@ -185,7 +185,7 @@ private:
   std::list<Shared_appearance> m_pattern_appearances;
 
   //! Color arrays that match the default color palette
-  std::map<size_t, Shared_color_array> m_color_arrays;
+  std::map<size_t, Shared_color_array_3d> m_color_arrays;
 
   /// Counters for statistics. \todo Move out with Builder.
   //@{

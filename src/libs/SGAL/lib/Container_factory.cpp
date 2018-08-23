@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
 
@@ -62,7 +64,8 @@
 
 #include "SGAL/Coord_transformer.hpp"
 #include "SGAL/Coord_minkowski.hpp"
-#include "SGAL/Color_array.hpp"
+#include "SGAL/Color_array_3d.hpp"
+#include "SGAL/Color_array_4d.hpp"
 #include "SGAL/Coord_array_1d.hpp"
 #include "SGAL/Coord_array_2d.hpp"
 #include "SGAL/Coord_array_3d.hpp"
@@ -191,7 +194,8 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Camera);
   REGISTER_OBJECT(Collision);
   REGISTER_OBJECT(Color_background);
-  REGISTER_OBJECT(Color_array);
+  REGISTER_OBJECT(Color_array_3d);
+  REGISTER_OBJECT(Color_array_4d);
   REGISTER_OBJECT(Coord_array_1d);
   REGISTER_OBJECT(Coord_array_2d);
   REGISTER_OBJECT(Coord_array_3d);

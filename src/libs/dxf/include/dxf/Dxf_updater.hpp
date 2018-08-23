@@ -50,9 +50,24 @@ public:
   void operator()(Shared_container node);
 
 protected:
+  //! Obtain a compact colod.
+  // \todo Consider moveing out from here.
+  template <typename SharedColorArray>
+    int compact_color(SharedColorArray array, size_t index);
+
   //! The DXF data.
   Dxf_data& m_data;
 };
+
+//! \brief obtains a compact colod.
+template <typename SharedColorArray>
+inline int Dxf_updater::compact_color(SharedColorArray color_array, size_t index)
+{
+  auto r = static_cast<int>((*color_array)[index][0] * 255.0 + 0.5f);
+  auto g = static_cast<int>((*color_array)[index][1] * 255.0 + 0.5f);
+  auto b = static_cast<int>((*color_array)[index][2] * 255.0 + 0.5f);
+  return (r << 16) | (g << 8) | b;
+}
 
 DXF_END_NAMESPACE
 

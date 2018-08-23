@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
  */
@@ -290,7 +292,8 @@ void Json_formatter::tri_facet(Shared_mesh_set mesh_set, size_t i)
   }
 
   auto color_array = mesh_set->get_color_array();
-  auto has_colors = color_array && ! color_array->empty();
+  auto color_array_3d = boost::dynamic_pointer_cast<Color_array_3d>(color_array);
+  auto has_colors = color_array_3d && ! color_array_3d->empty();
   if (has_colors) {
     switch (mesh_set->get_color_attachment()) {
      case Geo_set::AT_PER_VERTEX:
@@ -362,7 +365,8 @@ void Json_formatter::quad_facet(Shared_mesh_set mesh_set, size_t i)
   }
 
   auto color_array = mesh_set->get_color_array();
-  auto has_colors = color_array && ! color_array->empty();
+  auto color_array_3d = boost::dynamic_pointer_cast<Color_array_3d>(color_array);
+  auto has_colors = color_array_3d && ! color_array_3d->empty();
   if (has_colors) {
     switch (mesh_set->get_color_attachment()) {
      case Geo_set::AT_PER_VERTEX:
@@ -699,7 +703,8 @@ void Json_formatter::export_geo_set_data(Shared_geo_set geo_set)
   auto has_normals = normal_array && ! normal_array->empty();
 
   auto color_array = geo_set->get_color_array();
-  auto has_colors = color_array && ! color_array->empty();
+  auto color_array_3d = boost::dynamic_pointer_cast<Color_array_3d>(color_array);
+  auto has_colors = color_array_3d && ! color_array_3d->empty();
 
   auto tex_coord_array = geo_set->get_tex_coord_array();
   auto tex_coord_array_2d =
@@ -719,7 +724,7 @@ void Json_formatter::export_geo_set_data(Shared_geo_set geo_set)
                      if (has_normals)
                        attribute("normals", normal_array->size());
                      if (has_colors)
-                       attribute("colors", color_array->size());
+                       attribute("colors", color_array_3d->size());
                      if (has_uvs)
                        attribute ("uvs", tex_coord_array_2d->size());
                      if (is_mesh(type))
@@ -766,7 +771,7 @@ void Json_formatter::export_geo_set_data(Shared_geo_set geo_set)
   if (has_colors)
     attribute_multiple("colors",
                        [&]() {
-                         for (const auto& n : *color_array) vertex(n, true);
+                         for (const auto& n : *color_array_3d) vertex(n, true);
                        },
                        true);
 

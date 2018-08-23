@@ -31,7 +31,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Color_array;
+class Color_array_3d;
 
 SGAL_END_NAMESPACE
 
@@ -39,7 +39,7 @@ DXF_BEGIN_NAMESPACE
 
 struct SGAL_SGAL_DECL Dxf_layer_entry : Dxf_base_entry {
 
-  typedef boost::shared_ptr<SGAL::Color_array>        Shared_color_array;
+  typedef boost::shared_ptr<SGAL::Color_array_3d>       Shared_color_array_3d;
 
   /// Member records
   //@{
@@ -72,7 +72,7 @@ struct SGAL_SGAL_DECL Dxf_layer_entry : Dxf_base_entry {
   Dxf_layer_entry();
 
   //! The color array for this layer, which consists of one color.
-  Shared_color_array m_color_array;
+  Shared_color_array_3d m_color_array;
 
   //! Default values
   static const bool s_def_line_weight;

@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_COORD_ARRAY_1D_HPP
 #define SGAL_COORD_ARRAY_1D_HPP
@@ -63,10 +65,12 @@ public:
    */
   Coord_array_1d(Boolean proto = false);
 
-  /*! Construct. */
+  /*! Construct.
+   */
   Coord_array_1d(Size n);
 
-  /*! Destruct. */
+  /*! Destruct.
+   */
   virtual ~Coord_array_1d();
 
   /* Construct the prototype.
@@ -84,10 +88,12 @@ public:
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype. */
+  /*! Delete the node prototype.
+   */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype. */
+  /*! Obtains the node prototype.
+   */
   virtual Container_proto* get_prototype();
   //@}
 
@@ -148,32 +154,37 @@ public:
    */
   virtual const GLfloat* datum(Uint i) const;
 
-  /*! The iterator to the Array first element. */
+  /*! Obtain the iterator to the Array first element.
+   */
   Float_array::iterator begin();
   const Float_array::const_iterator begin() const;
 
-  /*! The iterator to the Array past-the-end element */
+  /*! Obtain the iterator to the Array past-the-end element.
+   */
   Float_array::iterator end();
   const Float_array::const_iterator end() const;
 
-  /*! Push a new element at the back */
+  /*! Push a new element at the back.
+   */
   void push_back(Float val);
 
-  /*! Array indexing operator. */
+  /*! Array indexing operator.
+   */
   Float operator[](Uint n) const;
 
 protected:
-  /*! Obtain the tag (type) of the container. */
+  /*! Obtain the tag (type) of the container.
+   */
   virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
-  /*! The coordinate array. */
+  //! The coordinate array.
   Float_array m_array;
 };
 

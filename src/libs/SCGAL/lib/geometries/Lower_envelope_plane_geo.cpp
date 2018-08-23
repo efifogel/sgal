@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
  * A geometry node in the scene graph that maintains a CGAL::Lower_envelope_3
@@ -48,6 +50,8 @@
 #include "SGAL/Epec_plane_array.hpp"
 #include "SGAL/Epec_coord_array_2d.hpp"
 #include "SGAL/Utilities.hpp"
+#include "SGAL/Color_array_3d.hpp"
+#include "SGAL/Color_array_4d.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Lower_envelope_plane_geo.hpp"
@@ -145,8 +149,7 @@ void Lower_envelope_plane_geo::set_attributes(Element* elem)
       continue;
     }
     if (name == "color") {
-      Shared_color_array color_array =
-        boost::dynamic_pointer_cast<Color_array>(cont);
+      auto color_array = boost::dynamic_pointer_cast<Color_array>(cont);
       set_color_array(color_array);
       elem->mark_delete(cai);
       continue;
@@ -201,13 +204,27 @@ void Lower_envelope_plane_geo::draw_envelope_faces(Draw_action* action)
     SGAL_assertion(fit->number_of_surfaces() > 0);
     if (fit->is_unbounded()) continue;
 
-    if (m_color_array) {
-      Vector3f color;
+    if (m_color_array && ! m_color_array->empty()) {
       auto sit = fit->surfaces_begin();
-      for (; sit != fit->surfaces_end(); ++sit) {
-        Uint index = sit->data();
-        const Vector3f& surf_color = (*m_color_array)[index];
-        color.add(surf_color);
+      Vector3f color;
+      auto ca_3d = boost::dynamic_pointer_cast<Color_array_3d>(m_color_array);
+      if (ca_3d) {
+        for (; sit != fit->surfaces_end(); ++sit) {
+          auto index = sit->data();
+          const Vector3f& surf_color = (*ca_3d)[index];
+          color.add(surf_color);
+        }
+      }
+      else {
+        auto ca_4d = boost::dynamic_pointer_cast<Color_array_4d>(m_color_array);
+        SGAL_assertion(ca_4d);
+        auto sit = fit->surfaces_begin();
+        for (; sit != fit->surfaces_end(); ++sit) {
+          auto index = sit->data();
+          const auto& tmp = (*ca_4d)[index];
+          Vector3f surf_color(tmp[0], tmp[1], tmp[2]);
+          color.add(surf_color);
+        }
       }
       color.scale(1.0f / fit->number_of_surfaces());
       glColor4f(color[0], color[1], color[2], m_face_transparency);
@@ -313,13 +330,27 @@ void Lower_envelope_plane_geo::draw_patches(Draw_action* action)
     const auto& b = plane.b();
     const auto& c = plane.c();
     const auto& d = plane.d();
-    if (m_color_array) {
-      Vector3f color;
+    if (m_color_array && ! m_color_array->empty()) {
       auto sit = fit->surfaces_begin();
-      for (; sit != fit->surfaces_end(); ++sit) {
-        Uint index = sit->data();
-        const auto& surf_color = (*m_color_array)[index];
-        color.add(surf_color);
+      Vector3f color;
+      auto ca_3d = boost::dynamic_pointer_cast<Color_array_3d>(m_color_array);
+      if (ca_3d) {
+        for (; sit != fit->surfaces_end(); ++sit) {
+          auto index = sit->data();
+          const auto& surf_color = (*ca_3d)[index];
+          color.add(surf_color);
+        }
+      }
+      else {
+        auto ca_4d = boost::dynamic_pointer_cast<Color_array_4d>(m_color_array);
+        SGAL_assertion(ca_4d);
+        auto sit = fit->surfaces_begin();
+        for (; sit != fit->surfaces_end(); ++sit) {
+          auto index = sit->data();
+          const auto& tmp = (*ca_4d)[index];
+          Vector3f surf_color(tmp[0], tmp[1], tmp[2]);
+          color.add(surf_color);
+        }
       }
       color.scale(1.0f / fit->number_of_surfaces());
       glColor3fv((float*)&color);

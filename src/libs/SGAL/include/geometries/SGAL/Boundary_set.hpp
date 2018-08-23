@@ -29,7 +29,7 @@
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Normal_array.hpp"
-#include "SGAL/Color_array.hpp"
+#include "SGAL/Color_array_3d.hpp"
 #include "SGAL/Tex_coord_array.hpp"
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Vector3f.hpp"
@@ -723,9 +723,7 @@ protected:
   /*! Clean the local coordinates, normals, color, and texture coordinates
    * vertex buffers.
    */
-  void clean_local_cnct2_vertex_buffers();
-  void clean_local_cnct3_vertex_buffers();
-  void clean_local_cnct4_vertex_buffers();
+  void clean_local_cnct_vertex_buffers();
 
   /*! Clean the local coordinates, normals, and color, vertex buffers. */
   void clean_local_cnc_vertex_buffers();
@@ -733,9 +731,7 @@ protected:
   /*! Clean the local coordinates, normals, and texture coordinates vertex
    * buffers.
    */
-  void clean_local_cnt2_vertex_buffers();
-  void clean_local_cnt3_vertex_buffers();
-  void clean_local_cnt4_vertex_buffers();
+  void clean_local_cnt_vertex_buffers();
 
   /*! Clean the local coordinates and normals vertex buffers. */
   void clean_local_cn_vertex_buffers();
@@ -743,17 +739,13 @@ protected:
   /*! Clean the local coordinates, colors, and texture coordinates vertex
    * buffers.
    */
-  void clean_local_cct2_vertex_buffers();
-  void clean_local_cct3_vertex_buffers();
-  void clean_local_cct4_vertex_buffers();
+  void clean_local_cct_vertex_buffers();
 
   /*! Clean the local coordinates and colors vertex buffers. */
   void clean_local_cc_vertex_buffers();
 
   /*! Clean the local coordinates and texture coordinates vertex buffers. */
-  void clean_local_ct2_vertex_buffers();
-  void clean_local_ct3_vertex_buffers();
-  void clean_local_ct4_vertex_buffers();
+  void clean_local_ct_vertex_buffers();
 
   /*! Destroy the data structure of the vertex buffer object. */
   void destroy_vertex_buffers();
@@ -918,7 +910,12 @@ protected:
   /*! Obtain local color data.
    * \return local color data.
    */
-  const GLfloat* local_color_data() const;
+  const GLfloat* local_color_3d_data() const;
+
+  /*! Obtain local color data.
+   * \return local color data.
+   */
+  const GLfloat* local_color_4d_data() const;
 
   /*! Obtain local 2d teture coordinate data.
    * \return local 2d teture coordinate data.
@@ -991,10 +988,15 @@ protected:
    */
   const GLvoid* indices_data() const;
 
+  /*! Obtain color data size.
+   * \return color data size.
+   */
+  size_t color_data_size() const;
+
   /*! Obtain teture coordinate data size.
    * \return teture coordinate data size.
    */
-  Uint tex_coord_data_size() const;
+  size_t tex_coord_data_size() const;
 
   /*! Obtain the number of tex ture coordinates.
    * \return the number of tex ture coordinates.
@@ -1063,32 +1065,33 @@ private:
     }
   };
 
-  /*! The type Id_map maps from tuples of ids to ids. */
+  //! The type Id_map maps from tuples of ids to ids.
   typedef boost::unordered_map<Id_key_2d, Uint, Id_hash_2d> Id_map_2d;
   typedef boost::unordered_map<Id_key_3d, Uint, Id_hash_3d> Id_map_3d;
   typedef boost::unordered_map<Id_key_4d, Uint, Id_hash_4d> Id_map_4d;
 
-  /*! The coordinates vertex array. */
+  //! The coordinates vertex array.
   std::vector<Vector3f> m_local_coord_buffer;
 
-  /*! The normals vertex array. */
+  //! The normals vertex array.
   std::vector<Vector3f> m_local_normal_buffer;
 
-  /*! The colors vertex array. */
-  std::vector<Vector3f> m_local_color_buffer;
+  //! The colors vertex array.
+  std::vector<Vector3f> m_local_color_buffer_3d;
+  std::vector<Vector4f> m_local_color_buffer_4d;
 
-  /*! The texture coordinates vertex array. */
+  //! The texture coordinates vertex array.
   std::vector<Vector2f> m_local_tex_coord_buffer_2d;
   std::vector<Vector3f> m_local_tex_coord_buffer_3d;
   std::vector<Vector4f> m_local_tex_coord_buffer_4d;
 
-  /*! The index vertex array. */
+  //! The index vertex array.
   Index_array m_local_indices;
 
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
-  /*! Default values */
+  //! Default values.
   static const Boolean s_def_normal_per_vertex;
   static const Boolean s_def_color_per_vertex;
 
@@ -1290,10 +1293,17 @@ inline const GLfloat* Boundary_set::local_normal_data() const
 }
 
 //! \brief obtains local color data.
-inline const GLfloat* Boundary_set::local_color_data() const
+inline const GLfloat* Boundary_set::local_color_3d_data() const
 {
-  SGAL_assertion(! m_local_color_buffer.empty());
-  return (GLfloat*)(&(*(m_local_color_buffer.begin())));
+  SGAL_assertion(! m_local_color_buffer_3d.empty());
+  return (GLfloat*)(&(*(m_local_color_buffer_3d.begin())));
+}
+
+//! \brief obtains local color data.
+inline const GLfloat* Boundary_set::local_color_4d_data() const
+{
+  SGAL_assertion(! m_local_color_buffer_4d.empty());
+  return (GLfloat*)(&(*(m_local_color_buffer_4d.begin())));
 }
 
 //! \brief obtains local 2d teture coordinate data.
@@ -1349,8 +1359,10 @@ inline const GLfloat* Boundary_set::normal_data() const
 //! \brief obtains color data.
 inline const GLfloat* Boundary_set::color_data() const
 {
-  return m_local_color_buffer.empty() ? m_color_array->data() :
-    local_color_data();
+  return
+    (! m_local_color_buffer_3d.empty()) ? local_color_3d_data() :
+    ((! m_local_color_buffer_4d.empty()) ? local_color_4d_data() :
+     m_color_array->data());
 }
 
 //! \brief obtains teture coordinate data.
@@ -1363,8 +1375,18 @@ inline const GLfloat* Boundary_set::tex_coord_data() const
       m_tex_coord_array->data()));
 }
 
+//! \brief obtains color size.
+inline size_t Boundary_set::color_data_size() const
+{
+  return
+    (! m_local_color_buffer_3d.empty()) ?
+    (m_local_color_buffer_3d.size() * sizeof(Vector3f)) :
+    ((! m_local_color_buffer_4d.empty()) ?
+     (m_local_color_buffer_4d.size() * sizeof(Vector4f)) : 0);
+}
+
 //! \brief obtains teture coordinate size.
-inline Uint Boundary_set::tex_coord_data_size() const
+inline size_t Boundary_set::tex_coord_data_size() const
 {
   return
     (! m_local_tex_coord_buffer_2d.empty()) ?
@@ -1372,8 +1394,7 @@ inline Uint Boundary_set::tex_coord_data_size() const
     ((! m_local_tex_coord_buffer_3d.empty()) ?
      (m_local_tex_coord_buffer_3d.size() * sizeof(Vector3f)) :
      ((! m_local_tex_coord_buffer_4d.empty()) ?
-      (m_local_tex_coord_buffer_4d.size() * sizeof(Vector4f)) :
-      m_tex_coord_array->data_size()));
+      (m_local_tex_coord_buffer_4d.size() * sizeof(Vector4f)) : 0));
 }
 
 //! Obtain the indices.

@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_COORD_ARRAY_HPP
 #define SGAL_COORD_ARRAY_HPP
@@ -48,18 +50,23 @@ public:
    */
   Coord_array(Boolean proto = false);
 
-  /*! Destruct. */
+  /*! Destruct.
+   */
   virtual ~Coord_array();
 
   /// \name Protoype handling
   //@{
-  /*! Initialize the node prototype. */
+  /*! Initialize the node prototype.
+   */
   virtual void init_prototype();
 
-  /*! Delete the node prototype. */
+  /*! Delete the node prototype.
+   */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype. */
+  /*! Obtain the node prototype.
+   * \return the node prototype.
+   */
   virtual Container_proto* get_prototype();
   //@}
 
@@ -77,13 +84,16 @@ public:
    */
   virtual Size size() const = 0;
 
-  /*! Determine whether the array is empty. */
+  /*! Determine whether the array is empty.
+   */
   Boolean empty() const;
 
-  /*! Resize the array capacity. */
+  /*! Resize the array capacity.
+   */
   virtual void resize(Size n) = 0;
 
-  /*! Clear the array. */
+  /*! Clear the array.
+   */
   virtual void clear() = 0;
 
   /*! Obtain the number of coordinate dimensions.
@@ -113,7 +123,7 @@ public:
   void point_changed(const Field_info* field_info);
 
 private:
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 };
 

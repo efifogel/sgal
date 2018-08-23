@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_LOWER_ENVELOPE_PLANE_GEO_HPP
@@ -68,7 +70,7 @@ public:
     LAST
   };
 
-  typedef boost::shared_ptr<Color_array>            Shared_color_array;
+  typedef boost::shared_ptr<Color_array>           Shared_color_array;
   typedef boost::shared_ptr<Epec_coord_array_2d>   Shared_exact_coord_array_2d;
   typedef boost::shared_ptr<Epec_plane_array>      Shared_exact_plane_array;
 

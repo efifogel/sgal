@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
 #pragma warning ( disable : 4146 )
@@ -35,7 +37,7 @@
 #include <map>
 
 #include "SGAL/Coord_array_3d.hpp"
-#include "SGAL/Color_array.hpp"
+#include "SGAL/Color_array_3d.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Math_defs.hpp"
@@ -121,9 +123,13 @@ void Triangulation_geo::clean()
     if (do_generate_color() && m_color_array && (0 != m_color_array->size())) {
       Index_iter ii = point_index.find(&p);
       SGAL_assertion(ii != point_index.end());
-      Uint i = (*ii).second;
-      const Vector3f& color = (*m_color_array)[i];
-      vd.set_color(color);
+      auto i = (*ii).second;
+      auto ca = boost::dynamic_pointer_cast<Color_array_3d>(m_color_array);
+      if (ca) {
+        const Vector3f& color = (*ca)[i];
+        vd.set_color(color);
+      }
+      else SGAL_error_msg("Not supported yet!");
     }
   }
 

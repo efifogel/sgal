@@ -33,7 +33,8 @@
 #include "SGAL/Boundary_set.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Normal_array.hpp"
-#include "SGAL/Color_array.hpp"
+#include "SGAL/Color_array_3d.hpp"
+#include "SGAL/Color_array_4d.hpp"
 #include "SGAL/Texture.hpp"
 #include "SGAL/Tex_coord_array_2d.hpp"
 #include "SGAL/Tex_coord_array_3d.hpp"
@@ -718,7 +719,7 @@ Boundary_set::Shared_normal_array Boundary_set::get_normal_array()
   return m_normal_array;
 }
 
-//! \brief Calculate vertex information per triangle for all triangles. */
+//! \brief Calculate vertex information per triangle for all triangles.
 void
 Boundary_set::calculate_vertex_info_per_triangle(Vertices_info& vertices_info)
 {
@@ -741,7 +742,7 @@ Boundary_set::calculate_vertex_info_per_triangle(Vertices_info& vertices_info)
   }
 }
 
-//! \brief Calculate vertex information per quad for all quads. */
+//! \brief Calculate vertex information per quad for all quads.
 void Boundary_set::calculate_vertex_info_per_quad(Vertices_info& vertices_info)
 {
   const auto& quads = quad_coord_indices();
@@ -767,7 +768,7 @@ void Boundary_set::calculate_vertex_info_per_quad(Vertices_info& vertices_info)
   }
 }
 
-//! \brief Calculate vertex information per polygon for all polygons. */
+//! \brief Calculate vertex information per polygon for all polygons.
 void
 Boundary_set::calculate_vertex_info_per_polygon(Vertices_info& vertices_info)
 {
@@ -830,7 +831,7 @@ Boolean Boundary_set::is_smooth(const Vector3f& normal1,
   return (angle > m_crease_angle);
 }
 
-//! \brief calculates a single normal per triangle for all triangles. */
+//! \brief calculates a single normal per triangle for all triangles.
 void Boundary_set::calculate_normal_per_triangle(Normal_array& normals)
 {
   const auto& tris = triangle_coord_indices();
@@ -843,7 +844,7 @@ void Boundary_set::calculate_normal_per_triangle(Normal_array& normals)
   }
 }
 
-//! \brief calculates a single normal per quad for all quads. */
+//! \brief calculates a single normal per quad for all quads.
 void Boundary_set::calculate_normal_per_quad(Normal_array& normals)
 {
   const auto& quads = quad_coord_indices();
@@ -864,7 +865,7 @@ void Boundary_set::calculate_normal_per_quad(Normal_array& normals)
   }
 }
 
-//! \brief Calculate a single normal per polygon for all polygons. */
+//! \brief Calculate a single normal per polygon for all polygons.
 void Boundary_set::calculate_normal_per_polygon(Normal_array& normals)
 {
   const auto& polygons = polygon_coord_indices();
@@ -924,8 +925,7 @@ Boundary_set::Shared_tex_coord_array Boundary_set::get_tex_coord_array()
   return m_tex_coord_array;
 }
 
-/*! \brief cleans the texture-mapping coordinate array and coordinate indices.
- */
+//! \brief cleans the texture-mapping coordinate array and coordinate indices.
 void Boundary_set::clean_tex_coords(Texture::Target target)
 {
   m_dirty_tex_coord_array = false;
@@ -1166,69 +1166,38 @@ void Boundary_set::draw_geometry(Draw_action* action)
           if (m_normal_array) {
             if (m_color_array) {
               if (!m_tex_coord_array) clean_local_cnc_vertex_buffers();
-              else {
-                Uint num_tex_coords = m_tex_coord_array->num_coordinates();
-                switch (num_tex_coords) {
-                 case 2: clean_local_cnct2_vertex_buffers(); break;
-                 case 3: clean_local_cnct3_vertex_buffers(); break;
-                 case 4: clean_local_cnct4_vertex_buffers(); break;
-                }
-              }
+              else clean_local_cnct_vertex_buffers();
             }
             else {
-              if (!m_tex_coord_array) {
-                clean_local_cn_vertex_buffers();
-              }
-              else {
-                Uint num_tex_coords = m_tex_coord_array->num_coordinates();
-                switch (num_tex_coords) {
-                 case 2: clean_local_cnt2_vertex_buffers(); break;
-                 case 3: clean_local_cnt3_vertex_buffers(); break;
-                 case 4: clean_local_cnt4_vertex_buffers(); break;
-                }
-              }
+              if (!m_tex_coord_array) clean_local_cn_vertex_buffers();
+              else clean_local_cnt_vertex_buffers();
             }
           }
           else {
             if (m_color_array) {
               if (!m_tex_coord_array) clean_local_cc_vertex_buffers();
-              else {
-                Uint num_tex_coords = m_tex_coord_array->num_coordinates();
-                switch (num_tex_coords) {
-                 case 2: clean_local_cct2_vertex_buffers(); break;
-                 case 3: clean_local_cct3_vertex_buffers(); break;
-                 case 4: clean_local_cct4_vertex_buffers(); break;
-                }
-              }
+              else clean_local_cct_vertex_buffers();
             }
-            else {
-              Uint num_tex_coords = m_tex_coord_array->num_coordinates();
-              switch (num_tex_coords) {
-               case 2: clean_local_ct2_vertex_buffers(); break;
-               case 3: clean_local_ct3_vertex_buffers(); break;
-               case 4: clean_local_ct4_vertex_buffers(); break;
-              }
-            }
+            else clean_local_ct_vertex_buffers();
           }
         }
 
         // Clean OpenGL vertex array buffers:
         if (m_dirty_coord_buffer && !m_local_coord_buffer.empty()) {
-          Uint size = m_local_coord_buffer.size() * sizeof(Vector3f);
+          auto size = m_local_coord_buffer.size() * sizeof(Vector3f);
           clean_vertex_coord_buffer(size, local_coord_data());
         }
         if (m_dirty_normal_buffer && !m_local_normal_buffer.empty()) {
-          Uint size = m_local_normal_buffer.size() * sizeof(Vector3f);
+          auto size = m_local_normal_buffer.size() * sizeof(Vector3f);
           clean_vertex_normal_buffer(size, local_normal_data());
         }
-        if (m_dirty_color_buffer && !m_local_color_buffer.empty()) {
-          Uint size = m_local_color_buffer.size() * sizeof(Vector3f);
-          clean_vertex_color_buffer(size, local_color_data());
-        }
-        if (m_dirty_tex_coord_buffer && m_tex_coord_array) {
-          Uint size = tex_coord_data_size();
-          clean_vertex_tex_coord_buffer(size, tex_coord_data());
-        }
+        auto color_size = color_data_size();
+        if (m_dirty_color_buffer && (0 != color_size))
+          clean_vertex_color_buffer(color_size, color_data());
+
+        auto tex_coord_size = tex_coord_data_size();
+        if (m_dirty_tex_coord_buffer && (0 != tex_coord_size))
+          clean_vertex_tex_coord_buffer(tex_coord_size, tex_coord_data());
       }
     }
 
@@ -1238,7 +1207,7 @@ void Boundary_set::draw_geometry(Draw_action* action)
   }
 }
 
-/*! \brief dispatches the appropriate drawing routine. */
+//! \brief dispatches the appropriate drawing routine.
 void Boundary_set::draw_dispatch(Draw_action* /* action */)
 {
   Boolean va = use_vertex_array();
@@ -1514,7 +1483,8 @@ void Boundary_set::clear_local_vertex_buffers()
 {
   m_local_coord_buffer.clear();
   m_local_normal_buffer.clear();
-  m_local_color_buffer.clear();
+  m_local_color_buffer_3d.clear();
+  m_local_color_buffer_4d.clear();
   m_local_tex_coord_buffer_2d.clear();
   m_local_tex_coord_buffer_3d.clear();
   m_local_tex_coord_buffer_4d.clear();
@@ -1634,8 +1604,7 @@ void Boundary_set::clean_vertex_color_buffer(Uint size, const GLfloat* data)
 /*! \brief cleans the data structure of the vertex texture coordinate buffer
  * object.
  */
-void Boundary_set::clean_vertex_tex_coord_buffer(Uint size,
-                                                     const GLfloat* data)
+void Boundary_set::clean_vertex_tex_coord_buffer(Uint size, const GLfloat* data)
 {
 #if defined(GL_ARB_vertex_buffer_object)
   if (m_tex_coord_buffer_id == 0) glGenBuffersARB(1, &m_tex_coord_buffer_id);
@@ -1750,7 +1719,6 @@ void Boundary_set::compute_flat_indices_per_mesh(const Facet_indices& indices,
 void Boundary_set::clean_local_cnc_vertex_buffers()
 {
   SGAL_assertion(m_normal_array);
-  SGAL_assertion(m_color_array);
 
   Facet_indices tmp_facet_normal_indices = Flat_indices();
   auto& tmp_normal_indices = boost::get<Flat_indices>(tmp_facet_normal_indices);
@@ -1774,23 +1742,33 @@ void Boundary_set::clean_local_cnc_vertex_buffers()
     compute_flat_indices_per_mesh(m_facet_color_indices, tmp_color_indices);
   }
 
-  auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
+  auto ni_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
     begin_facet_indices(tmp_facet_normal_indices) :
     (empty_facet_indices(m_facet_normal_indices) ?
      begin_facet_indices(m_facet_coord_indices) :
      begin_facet_indices(m_facet_normal_indices));
-  auto color_indices_begin =
+  auto ci_begin =
     ((m_color_attachment == AT_PER_PRIMITIVE) ||
      (m_color_attachment == AT_PER_MESH)) ?
     begin_facet_indices(tmp_facet_color_indices) :
     (empty_facet_indices(m_facet_color_indices) ?
      begin_facet_indices(m_facet_coord_indices) :
      begin_facet_indices(m_facet_color_indices));
-  SGAL_assertion(normal_indices_begin != color_indices_begin);
-  clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
-                                normal_indices_begin,
-                                m_color_array, m_local_color_buffer,
-                                color_indices_begin);
+  SGAL_assertion(ni_begin != ci_begin);
+
+  auto ca = boost::dynamic_pointer_cast<Color_array_3d>(m_color_array);
+  if (ca)
+    clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                  ni_begin,
+                                  ca, m_local_color_buffer_3d, ci_begin);
+  else {
+    auto ca = boost::dynamic_pointer_cast<Color_array_4d>(m_color_array);
+    SGAL_assertion(ca);
+    clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                  ni_begin,
+                                  ca, m_local_color_buffer_4d, ci_begin);
+  }
+
   tmp_normal_indices.clear();
   tmp_color_indices.clear();
   m_dirty_normal_buffer = true;
@@ -1800,13 +1778,9 @@ void Boundary_set::clean_local_cnc_vertex_buffers()
 /*! \brief cleans the local coordinates, normals, color, and 2d texture
  * coordinates vertex buffers.
  */
-void Boundary_set::clean_local_cnct2_vertex_buffers()
+void Boundary_set::clean_local_cnct_vertex_buffers()
 {
   SGAL_assertion(m_normal_array);
-  SGAL_assertion(m_color_array);
-  boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
-    boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
-  SGAL_assertion(tex_coord_array);
 
   Facet_indices tmp_facet_normal_indices = Flat_indices();
   auto& tmp_normal_indices = boost::get<Flat_indices>(tmp_facet_normal_indices);
@@ -1830,162 +1804,79 @@ void Boundary_set::clean_local_cnct2_vertex_buffers()
     compute_flat_indices_per_mesh(m_facet_color_indices, tmp_color_indices);
   }
 
-  auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
+  auto ni_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
     begin_facet_indices(tmp_facet_normal_indices) :
     (empty_facet_indices(m_facet_normal_indices) ?
      begin_facet_indices(m_facet_coord_indices) :
      begin_facet_indices(m_facet_normal_indices));
-  auto color_indices_begin =
+  auto ci_begin =
     ((m_color_attachment == AT_PER_PRIMITIVE) ||
      (m_color_attachment == AT_PER_MESH)) ?
     begin_facet_indices(tmp_facet_color_indices) :
     (empty_facet_indices(m_facet_color_indices) ?
      begin_facet_indices(m_facet_coord_indices) :
      begin_facet_indices(m_facet_color_indices));
-  auto tex_coord_indices_begin =
+  auto ti_begin =
     empty_facet_indices(m_facet_tex_coord_indices) ?
     begin_facet_indices(m_facet_coord_indices) :
     begin_facet_indices(m_facet_tex_coord_indices);
-  SGAL_assertion((normal_indices_begin != color_indices_begin) ||
-                 (color_indices_begin != tex_coord_indices_begin));
-  clean_local_4d_vertex_buffers(m_normal_array, m_local_normal_buffer,
-                                normal_indices_begin,
-                                m_color_array, m_local_color_buffer,
-                                color_indices_begin,
-                                tex_coord_array, m_local_tex_coord_buffer_2d,
-                                tex_coord_indices_begin);
-  tmp_normal_indices.clear();
-  tmp_color_indices.clear();
-  m_dirty_normal_buffer = true;
-  m_dirty_color_buffer = true;
-  m_dirty_tex_coord_buffer = true;
-}
+  SGAL_assertion((ni_begin != ci_begin) || (ci_begin != ti_begin));
 
-/*! \brief cleans the local coordinates, normals, color, and 3d texture
- * coordinates vertex buffers.
- */
-void Boundary_set::clean_local_cnct3_vertex_buffers()
-{
-  SGAL_assertion(m_normal_array);
-  SGAL_assertion(m_color_array);
-  boost::shared_ptr<Tex_coord_array_3d> tex_coord_array =
-    boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
-  SGAL_assertion(tex_coord_array);
-
-  Facet_indices tmp_facet_normal_indices = Flat_indices();
-  auto& tmp_normal_indices = boost::get<Flat_indices>(tmp_facet_normal_indices);
-  if (m_normal_attachment == AT_PER_PRIMITIVE) {
-    auto size = size_facet_indices(m_facet_coord_indices);
-    tmp_normal_indices.resize(size);
-    compute_flat_indices_per_primitive(m_facet_normal_indices,
-                                       tmp_normal_indices);
+  auto ta = boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
+  if (ta) {
+    auto ca = boost::dynamic_pointer_cast<Color_array_3d>(m_color_array);
+    if (ca)
+      clean_local_4d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                    ni_begin,
+                                    ca, m_local_color_buffer_3d, ci_begin,
+                                    ta, m_local_tex_coord_buffer_2d, ti_begin);
+    else {
+      auto ca = boost::dynamic_pointer_cast<Color_array_4d>(m_color_array);
+      SGAL_assertion(ca);
+      clean_local_4d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                    ni_begin,
+                                    ca, m_local_color_buffer_4d, ci_begin,
+                                    ta, m_local_tex_coord_buffer_2d, ti_begin);
+    }
   }
-  Facet_indices tmp_facet_color_indices = Flat_indices();
-  auto& tmp_color_indices = boost::get<Flat_indices>(tmp_facet_color_indices);
-  if (m_color_attachment == AT_PER_PRIMITIVE) {
-    auto size = size_facet_indices(m_facet_coord_indices);
-    tmp_color_indices.resize(size);
-    compute_flat_indices_per_primitive(m_facet_color_indices,
-                                       tmp_color_indices);
+  else {
+    auto ta = boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
+    if (ta) {
+      auto ca = boost::dynamic_pointer_cast<Color_array_3d>(m_color_array);
+      if (ca)
+        clean_local_4d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                      ni_begin,
+                                      ca, m_local_color_buffer_3d, ci_begin,
+                                      ta, m_local_tex_coord_buffer_3d, ti_begin);
+      else {
+        auto ca = boost::dynamic_pointer_cast<Color_array_4d>(m_color_array);
+        SGAL_assertion(ca);
+        clean_local_4d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                      ni_begin,
+                                      ca, m_local_color_buffer_4d, ci_begin,
+                                      ta, m_local_tex_coord_buffer_3d, ti_begin);
+      }
+    }
+    else {
+      auto ta =
+        boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
+      SGAL_assertion(ta);
+      auto ca = boost::dynamic_pointer_cast<Color_array_3d>(m_color_array);
+      if (ca)
+        clean_local_4d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                      ni_begin,
+                                      ca, m_local_color_buffer_3d, ci_begin,
+                                      ta, m_local_tex_coord_buffer_4d, ti_begin);
+      else {
+        auto ca = boost::dynamic_pointer_cast<Color_array_4d>(m_color_array);
+        SGAL_assertion(ca);
+        clean_local_4d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                      ni_begin,
+                                      ca, m_local_color_buffer_4d, ci_begin,
+                                      ta, m_local_tex_coord_buffer_4d, ti_begin);
+      }
+    }
   }
-  else if (m_color_attachment == AT_PER_MESH) {
-    auto size = size_facet_indices(m_facet_coord_indices);
-    tmp_color_indices.resize(size);
-    compute_flat_indices_per_mesh(m_facet_color_indices, tmp_color_indices);
-  }
-
-  auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
-    begin_facet_indices(tmp_facet_normal_indices) :
-    (empty_facet_indices(m_facet_normal_indices) ?
-     begin_facet_indices(m_facet_coord_indices) :
-     begin_facet_indices(m_facet_normal_indices));
-  auto color_indices_begin =
-    ((m_color_attachment == AT_PER_PRIMITIVE) ||
-     (m_color_attachment == AT_PER_MESH)) ?
-    begin_facet_indices(tmp_facet_color_indices) :
-    (empty_facet_indices(m_facet_color_indices) ?
-     begin_facet_indices(m_facet_coord_indices) :
-     begin_facet_indices(m_facet_color_indices));
-  auto tex_coord_indices_begin =
-    empty_facet_indices(m_facet_tex_coord_indices) ?
-    begin_facet_indices(m_facet_coord_indices) :
-    begin_facet_indices(m_facet_tex_coord_indices);
-  SGAL_assertion((normal_indices_begin != color_indices_begin) ||
-                 (color_indices_begin != tex_coord_indices_begin));
-  clean_local_4d_vertex_buffers(m_normal_array, m_local_normal_buffer,
-                                normal_indices_begin,
-                                m_color_array, m_local_color_buffer,
-                                color_indices_begin,
-                                tex_coord_array, m_local_tex_coord_buffer_3d,
-                                tex_coord_indices_begin);
-
-  tmp_normal_indices.clear();
-  tmp_color_indices.clear();
-  m_dirty_normal_buffer = true;
-  m_dirty_color_buffer = true;
-  m_dirty_tex_coord_buffer = true;
-}
-
-/*! \brief cleans the local coordinates, normals, color, and 4d texture
- * coordinates vertex buffers.
- */
-void Boundary_set::clean_local_cnct4_vertex_buffers()
-{
-  SGAL_error_msg("clean_local_cnct4_vertex_buffers() not implemented yet!");
-  SGAL_assertion(m_normal_array);
-  SGAL_assertion(m_color_array);
-  boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
-    boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
-  SGAL_assertion(tex_coord_array);
-
-  Facet_indices tmp_facet_normal_indices = Flat_indices();
-  auto& tmp_normal_indices = boost::get<Flat_indices>(tmp_facet_normal_indices);
-  if (m_normal_attachment == AT_PER_PRIMITIVE) {
-    auto size = size_facet_indices(m_facet_coord_indices);
-    tmp_normal_indices.resize(size);
-    compute_flat_indices_per_primitive(m_facet_normal_indices,
-                                       tmp_normal_indices);
-  }
-
-  Facet_indices tmp_facet_color_indices = Flat_indices();
-  auto& tmp_color_indices = boost::get<Flat_indices>(tmp_facet_color_indices);
-  if (m_color_attachment == AT_PER_PRIMITIVE) {
-    auto size = size_facet_indices(m_facet_coord_indices);
-    tmp_color_indices.resize(size);
-    compute_flat_indices_per_primitive(m_facet_color_indices,
-                                       tmp_color_indices);
-  }
-  else if (m_color_attachment == AT_PER_MESH) {
-    auto size = size_facet_indices(m_facet_coord_indices);
-    tmp_color_indices.resize(size);
-    compute_flat_indices_per_mesh(m_facet_color_indices, tmp_color_indices);
-  }
-
-  auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
-    begin_facet_indices(tmp_facet_normal_indices) :
-    (empty_facet_indices(m_facet_normal_indices) ?
-     begin_facet_indices(m_facet_coord_indices) :
-     begin_facet_indices(m_facet_normal_indices));
-  auto color_indices_begin =
-    ((m_color_attachment == AT_PER_PRIMITIVE) ||
-     (m_color_attachment == AT_PER_MESH)) ?
-    begin_facet_indices(tmp_facet_color_indices) :
-    (empty_facet_indices(m_facet_color_indices) ?
-     begin_facet_indices(m_facet_coord_indices) :
-     begin_facet_indices(m_facet_color_indices));
-  auto tex_coord_indices_begin =
-    empty_facet_indices(m_facet_tex_coord_indices) ?
-    begin_facet_indices(m_facet_coord_indices) :
-    begin_facet_indices(m_facet_tex_coord_indices);
-  SGAL_assertion((normal_indices_begin != color_indices_begin) ||
-                 (color_indices_begin != tex_coord_indices_begin));
-  clean_local_4d_vertex_buffers(m_normal_array, m_local_normal_buffer,
-                                normal_indices_begin,
-                                m_color_array, m_local_color_buffer,
-                                color_indices_begin,
-                                tex_coord_array, m_local_tex_coord_buffer_4d,
-                                tex_coord_indices_begin);
-
   tmp_normal_indices.clear();
   tmp_color_indices.clear();
   m_dirty_normal_buffer = true;
@@ -2005,14 +1896,13 @@ void Boundary_set::clean_local_cn_vertex_buffers()
     compute_flat_indices_per_primitive(m_facet_normal_indices,
                                        tmp_normal_indices);
   }
-  auto normal_indices_begin =
+  auto ni_begin =
     (m_normal_attachment == AT_PER_PRIMITIVE) ?
     begin_facet_indices(tmp_facet_normal_indices) :
     (empty_facet_indices(m_facet_normal_indices) ?
      begin_facet_indices(m_facet_coord_indices) :
      begin_facet_indices(m_facet_normal_indices));
-  clean_local_2d_vertex_buffers(m_normal_array, m_local_normal_buffer,
-                                normal_indices_begin);
+  clean_local_2d_vertex_buffers(m_normal_array, m_local_normal_buffer, ni_begin);
   tmp_normal_indices.clear();
   m_dirty_normal_buffer = true;
 }
@@ -2020,12 +1910,9 @@ void Boundary_set::clean_local_cn_vertex_buffers()
 /*! \brief cleans the local coordinates, normals, and 2d texture coordinates
  * vertex buffers.
  */
-void Boundary_set::clean_local_cnt2_vertex_buffers()
+void Boundary_set::clean_local_cnt_vertex_buffers()
 {
   SGAL_assertion(m_normal_array);
-  boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
-    boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
-  SGAL_assertion(tex_coord_array);
 
   Facet_indices tmp_facet_normal_indices = Flat_indices();
   auto& tmp_normal_indices = boost::get<Flat_indices>(tmp_facet_normal_indices);
@@ -2036,97 +1923,38 @@ void Boundary_set::clean_local_cnt2_vertex_buffers()
                                        tmp_normal_indices);
   }
 
-  auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
+  auto ni_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
     begin_facet_indices(tmp_facet_normal_indices) :
     (empty_facet_indices(m_facet_normal_indices) ?
      begin_facet_indices(m_facet_coord_indices) :
      begin_facet_indices(m_facet_normal_indices));
-  auto tex_coord_indices_begin =
+  auto ti_begin =
     empty_facet_indices(m_facet_tex_coord_indices) ?
     begin_facet_indices(m_facet_coord_indices) :
     begin_facet_indices(m_facet_tex_coord_indices);
-  SGAL_assertion(normal_indices_begin != tex_coord_indices_begin);
-  clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
-                                normal_indices_begin,
-                                tex_coord_array, m_local_tex_coord_buffer_2d,
-                                tex_coord_indices_begin);
-  tmp_normal_indices.clear();
-  m_dirty_normal_buffer = true;
-  m_dirty_tex_coord_buffer = true;
-}
+  SGAL_assertion(ni_begin != ti_begin);
 
-/*! \brief cleans the local coordinates, normals, and 3d texture coordinates
- * vertex buffers.
- */
-void Boundary_set::clean_local_cnt3_vertex_buffers()
-{
-  SGAL_assertion(m_normal_array);
-  boost::shared_ptr<Tex_coord_array_3d> tex_coord_array =
-    boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
-  SGAL_assertion(tex_coord_array);
-
-  Facet_indices tmp_facet_normal_indices = Flat_indices();
-  auto& tmp_normal_indices = boost::get<Flat_indices>(tmp_facet_normal_indices);
-  if (m_normal_attachment == AT_PER_PRIMITIVE) {
-    auto size = size_facet_indices(m_facet_coord_indices);
-    tmp_normal_indices.resize(size);
-    compute_flat_indices_per_primitive(m_facet_normal_indices,
-                                       tmp_normal_indices);
+  auto ta = boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
+  if (ta)
+    clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                  ni_begin,
+                                  ta, m_local_tex_coord_buffer_2d, ti_begin);
+  else {
+    auto ta = boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
+    if (ta)
+      clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                    ni_begin,
+                                    ta, m_local_tex_coord_buffer_3d, ti_begin);
+    else {
+      auto ta =
+        boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
+      SGAL_assertion(ta);
+      clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                    ni_begin,
+                                    ta, m_local_tex_coord_buffer_4d, ti_begin);
+    }
   }
 
-  auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
-    begin_facet_indices(tmp_facet_normal_indices) :
-    (empty_facet_indices(m_facet_normal_indices) ?
-     begin_facet_indices(m_facet_coord_indices) :
-     begin_facet_indices(m_facet_normal_indices));
-  auto tex_coord_indices_begin =
-    empty_facet_indices(m_facet_tex_coord_indices) ?
-    begin_facet_indices(m_facet_coord_indices) :
-    begin_facet_indices(m_facet_tex_coord_indices);
-  SGAL_assertion(normal_indices_begin != tex_coord_indices_begin);
-  clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
-                                normal_indices_begin,
-                                tex_coord_array, m_local_tex_coord_buffer_3d,
-                                tex_coord_indices_begin);
-  tmp_normal_indices.clear();
-  m_dirty_normal_buffer = true;
-  m_dirty_tex_coord_buffer = true;
-}
-
-/*! \brief cleans the local coordinates, normals, and 4d texture coordinates
- * vertex buffers.
- */
-void Boundary_set::clean_local_cnt4_vertex_buffers()
-{
-  SGAL_error_msg("clean_local_cnt4_vertex_buffers() not implemented yet!");
-  SGAL_assertion(m_normal_array);
-  boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
-    boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
-  SGAL_assertion(tex_coord_array);
-
-  Facet_indices tmp_facet_normal_indices = Flat_indices();
-  auto& tmp_normal_indices = boost::get<Flat_indices>(tmp_facet_normal_indices);
-  if (m_normal_attachment == AT_PER_PRIMITIVE) {
-    auto size = size_facet_indices(m_facet_coord_indices);
-    tmp_normal_indices.resize(size);
-    compute_flat_indices_per_primitive(m_facet_normal_indices,
-                                       tmp_normal_indices);
-  }
-
-  auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
-    begin_facet_indices(tmp_facet_normal_indices) :
-    (empty_facet_indices(m_facet_normal_indices) ?
-     begin_facet_indices(m_facet_coord_indices) :
-     begin_facet_indices(m_facet_normal_indices));
-  auto tex_coord_indices_begin =
-    empty_facet_indices(m_facet_tex_coord_indices) ?
-    begin_facet_indices(m_facet_coord_indices) :
-    begin_facet_indices(m_facet_tex_coord_indices);
-  SGAL_assertion(normal_indices_begin != tex_coord_indices_begin);
-  clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
-                                normal_indices_begin,
-                                tex_coord_array, m_local_tex_coord_buffer_4d,
-                                tex_coord_indices_begin);
   tmp_normal_indices.clear();
   m_dirty_normal_buffer = true;
   m_dirty_tex_coord_buffer = true;
@@ -2135,8 +1963,6 @@ void Boundary_set::clean_local_cnt4_vertex_buffers()
 //! \brief cleans the local coordinates and colors vertex buffers.
 void Boundary_set::clean_local_cc_vertex_buffers()
 {
-  SGAL_assertion(m_color_array);
-
   Facet_indices tmp_facet_color_indices = Flat_indices();
   auto& tmp_color_indices = boost::get<Flat_indices>(tmp_facet_color_indices);
   if (m_color_attachment == AT_PER_PRIMITIVE) {
@@ -2151,16 +1977,22 @@ void Boundary_set::clean_local_cc_vertex_buffers()
     compute_flat_indices_per_mesh(m_facet_color_indices, tmp_color_indices);
   }
 
-  auto color_indices_begin =
+  auto ci_begin =
     ((m_color_attachment == AT_PER_PRIMITIVE) ||
      (m_color_attachment == AT_PER_MESH)) ?
     begin_facet_indices(tmp_facet_color_indices) :
     (empty_facet_indices(m_facet_color_indices) ?
      begin_facet_indices(m_facet_coord_indices) :
      begin_facet_indices(m_facet_color_indices));
-  clean_local_2d_vertex_buffers(m_color_array, m_local_color_buffer,
-                                color_indices_begin);
 
+
+  auto ca = boost::dynamic_pointer_cast<Color_array_3d>(m_color_array);
+  if (ca)
+    clean_local_2d_vertex_buffers(ca, m_local_color_buffer_3d, ci_begin);
+  else {
+    auto ca = boost::dynamic_pointer_cast<Color_array_4d>(m_color_array);
+    clean_local_2d_vertex_buffers(ca, m_local_color_buffer_4d, ci_begin);
+  }
   tmp_color_indices.clear();
   m_dirty_color_buffer = true;
 }
@@ -2168,17 +2000,8 @@ void Boundary_set::clean_local_cc_vertex_buffers()
 /*! \brief cleans the local coordinates, colors, and texture coordinates vertex
  * buffers.
  */
-void Boundary_set::clean_local_cct2_vertex_buffers()
+void Boundary_set::clean_local_cct_vertex_buffers()
 {
-  SGAL_assertion(m_color_array);
-  boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
-    boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
-  SGAL_assertion(tex_coord_array);
-  auto tex_coord_indices_begin =
-    empty_facet_indices(m_facet_tex_coord_indices) ?
-    begin_facet_indices(m_facet_coord_indices) :
-    begin_facet_indices(m_facet_tex_coord_indices);
-
   Facet_indices tmp_facet_color_indices = Flat_indices();
   auto& tmp_color_indices = boost::get<Flat_indices>(tmp_facet_color_indices);
   if (m_color_attachment == AT_PER_PRIMITIVE) {
@@ -2193,105 +2016,64 @@ void Boundary_set::clean_local_cct2_vertex_buffers()
     compute_flat_indices_per_mesh(m_facet_color_indices, tmp_color_indices);
   }
 
-  auto color_indices_begin =
+  auto ci_begin =
     ((m_color_attachment == AT_PER_PRIMITIVE) ||
      (m_color_attachment == AT_PER_MESH)) ?
     begin_facet_indices(tmp_facet_color_indices) :
     (empty_facet_indices(m_facet_color_indices) ?
      begin_facet_indices(m_facet_coord_indices) :
      begin_facet_indices(m_facet_color_indices));
-  SGAL_assertion(color_indices_begin != tex_coord_indices_begin);
-  clean_local_3d_vertex_buffers(m_color_array, m_local_color_buffer,
-                                color_indices_begin,
-                                tex_coord_array, m_local_tex_coord_buffer_2d,
-                                tex_coord_indices_begin);
-
-  tmp_color_indices.clear();
-  m_dirty_color_buffer = true;
-  m_dirty_tex_coord_buffer = true;
-}
-
-void Boundary_set::clean_local_cct3_vertex_buffers()
-{
-  SGAL_assertion(m_color_array);
-  boost::shared_ptr<Tex_coord_array_3d> tex_coord_array =
-    boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
-  SGAL_assertion(tex_coord_array);
-
-  Facet_indices tmp_facet_color_indices = Flat_indices();
-  auto& tmp_color_indices = boost::get<Flat_indices>(tmp_facet_color_indices);
-  if (m_color_attachment == AT_PER_PRIMITIVE) {
-    auto size = size_facet_indices(m_facet_coord_indices);
-    tmp_color_indices.resize(size);
-    compute_flat_indices_per_primitive(m_facet_color_indices,
-                                       tmp_color_indices);
-  }
-  else if (m_color_attachment == AT_PER_MESH) {
-    auto size = size_facet_indices(m_facet_coord_indices);
-    tmp_color_indices.resize(size);
-    compute_flat_indices_per_mesh(m_facet_color_indices, tmp_color_indices);
-  }
-
-  auto color_indices_begin =
-    ((m_color_attachment == AT_PER_PRIMITIVE) ||
-     (m_color_attachment == AT_PER_MESH)) ?
-    begin_facet_indices(tmp_facet_color_indices) :
-    (empty_facet_indices(m_facet_color_indices) ?
-     begin_facet_indices(m_facet_coord_indices) :
-     begin_facet_indices(m_facet_color_indices));
-  auto tex_coord_indices_begin =
+  auto ti_begin =
     empty_facet_indices(m_facet_tex_coord_indices) ?
     begin_facet_indices(m_facet_coord_indices) :
     begin_facet_indices(m_facet_tex_coord_indices);
-  SGAL_assertion(color_indices_begin != tex_coord_indices_begin);
-  clean_local_3d_vertex_buffers(m_color_array, m_local_color_buffer,
-                                color_indices_begin,
-                                tex_coord_array, m_local_tex_coord_buffer_3d,
-                                tex_coord_indices_begin);
+  SGAL_assertion(ci_begin != ti_begin);
 
-  tmp_color_indices.clear();
-  m_dirty_color_buffer = true;
-  m_dirty_tex_coord_buffer = true;
-}
 
-void Boundary_set::clean_local_cct4_vertex_buffers()
-{
-  SGAL_error_msg("clean_local_cct4_vertex_buffers() not implemented yet!");
-  SGAL_assertion(m_color_array);
-  boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
-    boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
-  SGAL_assertion(tex_coord_array);
+  auto ta = boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
+  if (ta) {
+    auto ca = boost::dynamic_pointer_cast<Color_array_3d>(m_color_array);
+    if (ca)
+      clean_local_3d_vertex_buffers(ca, m_local_color_buffer_3d, ci_begin,
+                                    ta, m_local_tex_coord_buffer_2d, ti_begin);
+    else {
+      auto ca = boost::dynamic_pointer_cast<Color_array_4d>(m_color_array);
+      SGAL_assertion(ca);
+      clean_local_3d_vertex_buffers(ca, m_local_color_buffer_4d, ci_begin,
+                                    ta, m_local_tex_coord_buffer_2d, ti_begin);
 
-  Facet_indices tmp_facet_color_indices = Flat_indices();
-  auto& tmp_color_indices = boost::get<Flat_indices>(tmp_facet_color_indices);
-  if (m_color_attachment == AT_PER_PRIMITIVE) {
-    auto size = size_facet_indices(m_facet_coord_indices);
-    tmp_color_indices.resize(size);
-    compute_flat_indices_per_primitive(m_facet_color_indices,
-                                       tmp_color_indices);
+    }
   }
-  else if (m_color_attachment == AT_PER_MESH) {
-    auto size = size_facet_indices(m_facet_coord_indices);
-    tmp_color_indices.resize(size);
-    compute_flat_indices_per_mesh(m_facet_color_indices, tmp_color_indices);
+  else {
+    auto ta = boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
+    if (ta) {
+      auto ca = boost::dynamic_pointer_cast<Color_array_3d>(m_color_array);
+      if (ca)
+        clean_local_3d_vertex_buffers(ca, m_local_color_buffer_3d, ci_begin,
+                                      ta, m_local_tex_coord_buffer_3d, ti_begin);
+      else {
+        auto ca = boost::dynamic_pointer_cast<Color_array_4d>(m_color_array);
+        SGAL_assertion(ca);
+        clean_local_3d_vertex_buffers(ca, m_local_color_buffer_4d, ci_begin,
+                                      ta, m_local_tex_coord_buffer_3d, ti_begin);
+      }
+    }
+    else {
+      auto ta =
+        boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
+      SGAL_assertion(ta);
+      auto ca = boost::dynamic_pointer_cast<Color_array_3d>(m_color_array);
+      if (ca)
+        clean_local_3d_vertex_buffers(ca, m_local_color_buffer_3d, ci_begin,
+                                      ta, m_local_tex_coord_buffer_4d, ti_begin);
+      else {
+        auto ca = boost::dynamic_pointer_cast<Color_array_4d>(m_color_array);
+        SGAL_assertion(ca);
+        clean_local_3d_vertex_buffers(ca, m_local_color_buffer_4d, ci_begin,
+                                      ta, m_local_tex_coord_buffer_4d, ti_begin);
+      }
+    }
   }
-
-  auto color_indices_begin =
-    ((m_color_attachment == AT_PER_PRIMITIVE) ||
-     (m_color_attachment == AT_PER_MESH)) ?
-    begin_facet_indices(tmp_facet_color_indices) :
-    (empty_facet_indices(m_facet_color_indices) ?
-     begin_facet_indices(m_facet_coord_indices) :
-     begin_facet_indices(m_facet_color_indices));
-  auto tex_coord_indices_begin =
-    empty_facet_indices(m_facet_tex_coord_indices) ?
-    begin_facet_indices(m_facet_coord_indices) :
-    begin_facet_indices(m_facet_tex_coord_indices);
-  SGAL_assertion(color_indices_begin != tex_coord_indices_begin);
-  clean_local_3d_vertex_buffers(m_color_array, m_local_color_buffer,
-                                color_indices_begin,
-                                tex_coord_array, m_local_tex_coord_buffer_4d,
-                                tex_coord_indices_begin);
 
   tmp_color_indices.clear();
   m_dirty_color_buffer = true;
@@ -2299,42 +2081,26 @@ void Boundary_set::clean_local_cct4_vertex_buffers()
 }
 
 //! \brief cleans the local coordinates and texture coordinates vertex buffers.
-void Boundary_set::clean_local_ct2_vertex_buffers()
+void Boundary_set::clean_local_ct_vertex_buffers()
 {
-  boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
-    boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
-  SGAL_assertion(tex_coord_array);
-  auto tex_coord_indices_begin =
+  auto ti_begin =
     empty_facet_indices(m_facet_tex_coord_indices) ?
     begin_facet_indices(m_facet_coord_indices) :
     begin_facet_indices(m_facet_tex_coord_indices);
-  clean_local_2d_vertex_buffers(tex_coord_array, m_local_tex_coord_buffer_2d,
-                                tex_coord_indices_begin);
-  m_dirty_tex_coord_buffer = true;
-}
-
-void Boundary_set::clean_local_ct3_vertex_buffers()
-{
-  boost::shared_ptr<Tex_coord_array_3d> tex_coord_array =
-    boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
-  SGAL_assertion(tex_coord_array);
-  clean_local_2d_vertex_buffers(tex_coord_array, m_local_tex_coord_buffer_3d,
-                                begin_facet_indices(m_facet_tex_coord_indices));
-  m_dirty_tex_coord_buffer = true;
-}
-
-void Boundary_set::clean_local_ct4_vertex_buffers()
-{
-  SGAL_error_msg("clean_local_ct4_vertex_buffers() not implemented yet!");
-  boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
-    boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
-  SGAL_assertion(tex_coord_array);
-  auto tex_coord_indices_begin =
-    empty_facet_indices(m_facet_tex_coord_indices) ?
-    begin_facet_indices(m_facet_coord_indices) :
-    begin_facet_indices(m_facet_tex_coord_indices);
-  clean_local_2d_vertex_buffers(tex_coord_array, m_local_tex_coord_buffer_4d,
-                                tex_coord_indices_begin);
+  auto ta = boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
+  if (ta)
+    clean_local_2d_vertex_buffers(ta, m_local_tex_coord_buffer_2d, ti_begin);
+  else {
+    auto ta = boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
+    if (ta)
+      clean_local_2d_vertex_buffers(ta, m_local_tex_coord_buffer_3d, ti_begin);
+    else {
+      auto ta =
+        boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
+      SGAL_assertion(ta);
+      clean_local_2d_vertex_buffers(ta, m_local_tex_coord_buffer_4d, ti_begin);
+    }
+  }
   m_dirty_tex_coord_buffer = true;
 }
 

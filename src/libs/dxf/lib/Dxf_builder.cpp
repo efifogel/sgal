@@ -40,7 +40,7 @@
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Indexed_line_set.hpp"
 #include "SGAL/Coord_array_3d.hpp"
-#include "SGAL/Color_array.hpp"
+#include "SGAL/Color_array_3d.hpp"
 #include "SGAL/approximate_circular_arc.hpp"
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Vector3f.hpp"
@@ -197,10 +197,10 @@ void Dxf_builder::process_layers()
                     std::cout << "Processing layers" << std::endl;);
 
   for (auto& layer : m_data.m_layer_table.m_entries) {
-    Shared_color_array shared_colors;
+    Shared_color_array_3d shared_colors;
     size_t color = layer.m_color;
     if (color != static_cast<size_t>(-1)) {
-      auto* colors = new SGAL::Color_array(size_t(1));
+      auto* colors = new SGAL::Color_array_3d(size_t(1));
       colors->add_to_scene(m_scene_graph);
       auto r = ((color >> 16) & 0xFF) / 255.0;
       auto g = ((color >> 8) & 0xFF) / 255.0;
@@ -214,7 +214,7 @@ void Dxf_builder::process_layers()
       if (color_index >= 0) {
         auto ait = m_color_arrays.find(color_index);
         if (ait == m_color_arrays.end()) {
-          auto* colors = new SGAL::Color_array(size_t(1));
+          auto* colors = new SGAL::Color_array_3d(size_t(1));
           colors->add_to_scene(m_scene_graph);
           if (color_index >= s_palette.size()) color_index = 0;
           (*colors)[0] = s_palette[color_index];
@@ -279,13 +279,13 @@ void Dxf_builder::process_entities(std::vector<Dxf_base_entity*>& entities,
 }
 
 //! \brief Obtain the color array of an entity.
-Dxf_builder::Shared_color_array
+Dxf_builder::Shared_color_array_3d
 Dxf_builder::get_color_array(int32_t color, int16_t color_index,
                             const SGAL::String& layer)
 {
-  Shared_color_array shared_colors;
+  Shared_color_array_3d shared_colors;
   if (color != static_cast<int32_t>(-1)) {
-    auto* colors = new SGAL::Color_array(size_t(1));
+    auto* colors = new SGAL::Color_array_3d(size_t(1));
     colors->add_to_scene(m_scene_graph);
     auto r = ((color >> 16) & 0xFF) / 255.0;
     auto g = ((color >> 8) & 0xFF) / 255.0;
@@ -308,7 +308,7 @@ Dxf_builder::get_color_array(int32_t color, int16_t color_index,
 
   auto ait = m_color_arrays.find(color_index);
   if (ait == m_color_arrays.end()) {
-    auto* colors = new SGAL::Color_array(size_t(1));
+    auto* colors = new SGAL::Color_array_3d(size_t(1));
     colors->add_to_scene(m_scene_graph);
     if (color_index >= s_palette.size()) color = 0;
     (*colors)[0] = s_palette[color_index];
@@ -451,7 +451,7 @@ process_polyline_boundaries(const Dxf_hatch_entity& hatch,
   if (0 == polylines.size()) return;
 
   // Obtain the color array:
-  Shared_color_array shared_colors =
+  Shared_color_array_3d shared_colors =
     get_color_array(hatch.m_color, hatch.m_color_index, hatch.m_layer);
   if (! shared_colors) return;
 
@@ -643,7 +643,7 @@ void Dxf_builder::process_spline_entity(const Dxf_spline_entity& spline,
   ++m_splines_num;
 
   // Obtain the color array:
-  Shared_color_array shared_colors =
+  Shared_color_array_3d shared_colors =
     get_color_array(spline.m_color, spline.m_color_index, spline.m_layer);
   if (! shared_colors) return;
 
@@ -767,7 +767,7 @@ void Dxf_builder::process_line_entity(const Dxf_line_entity& line,
   ++m_lines_num;
 
   // Obtain the color array:
-  Shared_color_array shared_colors =
+  Shared_color_array_3d shared_colors =
     get_color_array(line.m_color, line.m_color_index, line.m_layer);
   if (! shared_colors) return;
 
@@ -838,7 +838,7 @@ void Dxf_builder::process_polyline_entity(const Dxf_polyline_entity& polyline,
   ++m_polylines_num;
 
   // Obtain the color array:
-  Shared_color_array shared_colors =
+  Shared_color_array_3d shared_colors =
     get_color_array(polyline.m_color, polyline.m_color_index, polyline.m_layer);
   if (! shared_colors) return;
 
@@ -960,7 +960,7 @@ Dxf_builder::process_lwpolyline_entity(const Dxf_lwpolyline_entity& polyline,
   ++m_lwpolylines_num;
 
   // Obtain the color array:
-  Shared_color_array shared_colors =
+  Shared_color_array_3d shared_colors =
     get_color_array(polyline.m_color, polyline.m_color_index, polyline.m_layer);
   if (! shared_colors) return;
 
@@ -1076,7 +1076,7 @@ void Dxf_builder::process_circle_entity(const Dxf_circle_entity& circle,
   ++m_circles_num;
 
   // Obtain the color array:
-  Shared_color_array shared_colors =
+  Shared_color_array_3d shared_colors =
     get_color_array(circle.m_color, circle.m_color_index, circle.m_layer);
   if (! shared_colors) return;
 
@@ -1168,7 +1168,7 @@ void Dxf_builder::process_arc_entity(const Dxf_arc_entity& arc,
   ++m_arcs_num;
 
   // Obtain the color array:
-  Shared_color_array shared_colors =
+  Shared_color_array_3d shared_colors =
     get_color_array(arc.m_color, arc.m_color_index, arc.m_layer);
   if (! shared_colors) return;
 
@@ -1317,7 +1317,7 @@ void Dxf_builder::process_solid_entity(const Dxf_solid_entity& solid,
   ++m_solids_num;
 
   // Obtain the color array:
-  Shared_color_array shared_colors =
+  Shared_color_array_3d shared_colors =
     get_color_array(solid.m_color, solid.m_color_index, solid.m_layer);
   if (! shared_colors) return;
 

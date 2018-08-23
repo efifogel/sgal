@@ -41,7 +41,7 @@
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Material.hpp"
 #include "SGAL/Coord_array_3d.hpp"
-#include "SGAL/Color_array.hpp"
+#include "SGAL/Color_array_3d.hpp"
 #include "SGAL/Normal_array.hpp"
 #include "SGAL/Tex_coord_array_2d.hpp"
 #include "SGAL/find_file.hpp"
@@ -524,8 +524,8 @@ void Loader::add_colored_shape(Scene_graph* scene_graph, Group* group,
   auto& indices = ifs->get_empty_triangle_coord_indices();
   indices.resize(count);
 
-  Color_array* colors = new Color_array(count);
-  Shared_color_array shared_colors(colors);
+  auto* colors = new Color_array_3d(count);
+  Shared_color_array_3d shared_colors(colors);
   ifs->set_color_array(shared_colors);
   auto& color_indices = ifs->get_empty_triangle_color_indices();
   color_indices.resize(count);
@@ -667,13 +667,13 @@ Loader_code Loader::load_off(std::istream& is, const boost::smatch& what,
   coords->add_to_scene(sg);
   sg->add_container(shared_coords);
 
-  Color_array* colors;
-  Shared_color_array shared_colors;
+  Color_array_3d* colors;
+  Shared_color_array_3d shared_colors;
   float scale;
   if (has_colors) {
-    colors = new Color_array(num_vertices);
+    colors = new Color_array_3d(num_vertices);
     SGAL_assertion(colors);
-    shared_colors = Shared_color_array(colors);
+    shared_colors = Shared_color_array_3d(colors);
     colors->add_to_scene(sg);
     sg->add_container(shared_colors);
     scale = 1.0 / 255.0;
@@ -805,7 +805,7 @@ bool read_obj_line(Vrml_scanner& scanner)
 /*! Read coords and perhaps colors from an obj file.
  */
 bool read_obj_coords_and_colors(Vrml_scanner& scanner, Coord_array_3d* coords,
-                                Color_array* colors)
+                                Color_array_3d* colors)
 {
   Vrml_parser::location_type loc;
   std::array<float, 6> nums;
@@ -1118,7 +1118,7 @@ Loader::update_ifs(Scene_graph* sg,
                    Shared_indexed_face_set ifs,
                    Shared_coord_array_3d shared_coords,
                    Shared_normal_array shared_normals,
-                   Shared_color_array shared_colors,
+                   Shared_color_array_3d shared_colors,
                    Shared_tex_coord_array_2d shared_tex_coords,
                    Polygon_indices& coord_indices,
                    Polygon_indices& normal_indices,
@@ -1220,7 +1220,7 @@ Loader_code Loader::parse_obj(std::istream& is, Scene_graph* sg, Group* root)
   SGAL_assertion(shared_coords);
   Shared_normal_array shared_normals(new Normal_array);
   SGAL_assertion(shared_normals);
-  Shared_color_array shared_colors(new Color_array);
+  Shared_color_array_3d shared_colors(new Color_array_3d);
   SGAL_assertion(shared_colors);
   Shared_tex_coord_array_2d shared_tex_coords(new Tex_coord_array_2d);
   SGAL_assertion(shared_tex_coords);

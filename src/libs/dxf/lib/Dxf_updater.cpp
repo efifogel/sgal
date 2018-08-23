@@ -22,6 +22,8 @@
 #include "SGAL/Shape.hpp"
 #include "SGAL/Indexed_line_set.hpp"
 #include "SGAL/Coord_array_3d.hpp"
+#include "SGAL/Color_array_3d.hpp"
+#include "SGAL/Color_array_4d.hpp"
 #include "SGAL/to_hex_string.hpp"
 
 #include "dxf/basic.hpp"
@@ -56,12 +58,16 @@ void Dxf_updater::operator()(Shared_container node)
         int color(-1);
         auto attach = ils->get_color_attachment();
         auto colors = ils->get_color_array();
-        if (! colors->empty()) {
+        if (colors && ! colors->empty()) {
           if (SGAL::Geo_set::AT_PER_MESH == attach) {
-            auto r = static_cast<int>((*colors)[0][0] * 255.0 + 0.5f);
-            auto g = static_cast<int>((*colors)[0][1] * 255.0 + 0.5f);
-            auto b = static_cast<int>((*colors)[0][2] * 255.0 + 0.5f);
-            color = (r << 16) | (g << 8) | b;
+            auto ca = boost::dynamic_pointer_cast<SGAL::Color_array_3d>(colors);
+            if (ca) color = compact_color(ca, 0);
+            else {
+              auto ca =
+                boost::dynamic_pointer_cast<SGAL::Color_array_4d>(colors);
+              SGAL_assertion(ca);
+              color = compact_color(ca, 0);
+            }
           }
         }
 
@@ -75,10 +81,14 @@ void Dxf_updater::operator()(Shared_container node)
           line_entity->m_layer = Dxf_data::s_def_layer;
           line_entity->m_color_index = 0;
           if (SGAL::Geo_set::AT_PER_PRIMITIVE == attach) {
-            auto r = static_cast<int>((*colors)[i][0] * 255.0 + 0.5f);
-            auto g = static_cast<int>((*colors)[i][1] * 255.0 + 0.5f);
-            auto b = static_cast<int>((*colors)[i][2] * 255.0 + 0.5f);
-            color = (r << 16) | (g << 8) | b;
+            auto ca = boost::dynamic_pointer_cast<SGAL::Color_array_3d>(colors);
+            if (ca) color = compact_color(ca, i);
+            else {
+              auto ca =
+                boost::dynamic_pointer_cast<SGAL::Color_array_4d>(colors);
+              SGAL_assertion(ca);
+              color = compact_color(ca, i);
+            }
           }
           if (-1 != color) line_entity->m_color = color;
 

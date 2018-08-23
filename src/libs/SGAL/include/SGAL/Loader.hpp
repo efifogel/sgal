@@ -43,7 +43,7 @@ class Group;
 class Shape;
 class Indexed_face_set;
 class Coord_array_3d;
-class Color_array;
+class Color_array_3d;
 class Normal_array;
 class Tex_coord_array_2d;
 class Appearance;
@@ -208,7 +208,7 @@ private:
   typedef boost::shared_ptr<Shape>                  Shared_shape;
   typedef boost::shared_ptr<Indexed_face_set>       Shared_indexed_face_set;
   typedef boost::shared_ptr<Coord_array_3d>         Shared_coord_array_3d;
-  typedef boost::shared_ptr<Color_array>            Shared_color_array;
+  typedef boost::shared_ptr<Color_array_3d>         Shared_color_array_3d;
   typedef boost::shared_ptr<Normal_array>           Shared_normal_array;
   typedef boost::shared_ptr<Tex_coord_array_2d>     Shared_tex_coord_array_2d;
   typedef boost::shared_ptr<Appearance>             Shared_appearance;
@@ -283,7 +283,7 @@ private:
                          Shared_indexed_face_set ifs,
                          Shared_coord_array_3d shared_coords,
                          Shared_normal_array shared_normals,
-                         Shared_color_array shared_colors,
+                         Shared_color_array_3d shared_colors,
                          Shared_tex_coord_array_2d shared_tex_coords,
                          Polygon_indices& coord_indices,
                          Polygon_indices& normal_indices,
