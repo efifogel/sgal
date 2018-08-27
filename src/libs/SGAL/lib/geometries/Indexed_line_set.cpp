@@ -533,7 +533,7 @@ void Indexed_line_set::set_color_per_vertex(Boolean color_per_vertex)
  */
 void Indexed_line_set::draw(Draw_action* action)
 {
-  SGAL_TRACE_CODE(Tracer::INDEXED_FACE_SET,
+  SGAL_TRACE_CODE(Tracer::INDEXED_LINE_SET,
                   if (true)
                     std::cout << "Indexed_line_set::draw(): "
                               << "name: " << get_name() << std::endl;);
