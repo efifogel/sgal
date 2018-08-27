@@ -38,6 +38,7 @@ class Scene_graph;
 class Group;
 class Appearance;
 class Color_array_3d;
+class Color_array_4d;
 
 SGAL_END_NAMESPACE
 
@@ -62,6 +63,7 @@ class SGAL_SGAL_DECL Dxf_builder {
 public:
   typedef boost::shared_ptr<SGAL::Appearance>         Shared_appearance;
   typedef boost::shared_ptr<SGAL::Color_array_3d>     Shared_color_array_3d;
+  typedef boost::shared_ptr<SGAL::Color_array_4d>     Shared_color_array_4d;
 
   /*! Construct.
    */
@@ -141,10 +143,26 @@ protected:
 
   //@}
 
-  /*! Obtain the color array of an entity.
+  /*! Obtain the n-component color array of an entity.
+ */
+  template <typename ColorArray>
+  boost::shared_ptr<ColorArray>
+  get_color_array_(std::map<size_t, boost::shared_ptr<ColorArray> >&
+                     index_arrays,
+                   std::map<SGAL::String, boost::shared_ptr<ColorArray> >&
+                     color_arrays,
+                   int32_t color, int16_t color_index,
+                   const SGAL::String& layer_name);
+
+  /*! Obtain the 3-components color array of an entity.
    */
-  Shared_color_array_3d get_color_array(int32_t color, int16_t color_index,
-                                        const SGAL::String& layer_name);
+  Shared_color_array_3d get_color_array_3d(int32_t color, int16_t color_index,
+                                           const SGAL::String& layer_name);
+
+  /*! Obtain the 4-components color array of an entity.
+   */
+  Shared_color_array_4d get_color_array_4d(int32_t color, int16_t color_index,
+                                           const SGAL::String& layer_name);
 
   /*! Obtain the light-disabled appearance.
    */
@@ -184,8 +202,17 @@ private:
   //! A light-disabled pattern enabled appearance.
   std::list<Shared_appearance> m_pattern_appearances;
 
-  //! Color arrays that match the default color palette
-  std::map<size_t, Shared_color_array_3d> m_color_arrays;
+  //! A mapping from a color index to a color array.
+  std::map<size_t, Shared_color_array_3d> m_color_3d_arrays;
+
+  //! A mapping from a color index to a color array.
+  std::map<size_t, Shared_color_array_4d> m_color_4d_arrays;
+
+  //! A mapping from a layer name to a 3-components color array.
+  std::map<SGAL::String, Shared_color_array_3d> m_layer_color_3d_arrays;
+
+  //! A mapping from a layer name to a 4-components color array.
+  std::map<SGAL::String, Shared_color_array_4d> m_layer_color_4d_arrays;
 
   /// Counters for statistics. \todo Move out with Builder.
   //@{
