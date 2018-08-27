@@ -376,96 +376,6 @@ void Dxf_builder::process_entities(std::vector<Dxf_base_entity*>& entities,
   }
 }
 
-//! \brief Obtain the color array of an entity.
-Dxf_builder::Shared_color_array_3d
-Dxf_builder::get_color_array_3d(int32_t color, int16_t color_index,
-                                const SGAL::String& layer)
-{
-  Shared_color_array_3d shared_colors_3d;
-  if (color != static_cast<int32_t>(-1)) {
-    auto* colors = new SGAL::Color_array_3d(size_t(1));
-    colors->add_to_scene(m_scene_graph);
-    auto r = ((color >> 16) & 0xFF) / 255.0;
-    auto g = ((color >> 8) & 0xFF) / 255.0;
-    auto b = ((color) & 0xFF) / 255.0;
-    (*colors)[0] = SGAL::Vector3f(r, g, b);
-    shared_colors_3d.reset(colors);
-    m_scene_graph->add_container(shared_colors_3d);
-    return shared_colors_3d;
-  }
-
-  if (color_index == static_cast<int16_t>(By::BYLAYER)) {
-    auto it = m_data.m_layer_table.find(layer);
-    SGAL_assertion(it != m_data.m_layer_table.m_entries.end());
-    auto cit = m_layer_color_3d_arrays.find(it->m_name);
-    SGAL_assertion(cit != m_layer_color_3d_arrays.end());
-    shared_colors_3d = cit->second;
-    SGAL_assertion(shared_colors_3d);
-    return shared_colors_3d;
-  }
-
-  if (color_index < 0) return shared_colors_3d;
-
-  auto ait = m_color_3d_arrays.find(color_index);
-  if (ait == m_color_3d_arrays.end()) {
-    auto* colors = new SGAL::Color_array_3d(size_t(1));
-    colors->add_to_scene(m_scene_graph);
-    if (color_index >= s_palette.size()) color = 0;
-    (*colors)[0] = s_palette[color_index];
-    shared_colors_3d.reset(colors);
-    m_scene_graph->add_container(shared_colors_3d);
-    m_color_3d_arrays[color_index] = shared_colors_3d;
-    return shared_colors_3d;
-  }
-
-  return ait->second;
-}
-
-//! \brief Obtain the color array of an entity.
-Dxf_builder::Shared_color_array_4d
-Dxf_builder::get_color_array_4d(int32_t color, int16_t color_index,
-                                const SGAL::String& layer)
-{
-  Shared_color_array_4d shared_colors_4d;
-  if (color != static_cast<int32_t>(-1)) {
-    auto* colors = new SGAL::Color_array_4d(size_t(1));
-    colors->add_to_scene(m_scene_graph);
-    auto r = ((color >> 16) & 0xFF) / 255.0;
-    auto g = ((color >> 8) & 0xFF) / 255.0;
-    auto b = ((color) & 0xFF) / 255.0;
-    (*colors)[0] = SGAL::Vector3f(r, g, b);
-    shared_colors_4d.reset(colors);
-    m_scene_graph->add_container(shared_colors_4d);
-    return shared_colors_4d;
-  }
-
-  if (color_index == static_cast<int16_t>(By::BYLAYER)) {
-    auto it = m_data.m_layer_table.find(layer);
-    SGAL_assertion(it != m_data.m_layer_table.m_entries.end());
-    auto cit = m_layer_color_4d_arrays.find(it->m_name);
-    SGAL_assertion(cit != m_layer_color_4d_arrays.end());
-    shared_colors_4d = cit->second;
-    SGAL_assertion(shared_colors_4d);
-    return shared_colors_4d;
-  }
-
-  if (color_index < 0) return shared_colors_4d;
-
-  auto ait = m_color_4d_arrays.find(color_index);
-  if (ait == m_color_4d_arrays.end()) {
-    auto* colors = new SGAL::Color_array_4d(size_t(1));
-    colors->add_to_scene(m_scene_graph);
-    if (color_index >= s_palette.size()) color = 0;
-    (*colors)[0] = s_palette[color_index];
-    shared_colors_4d.reset(colors);
-    m_scene_graph->add_container(shared_colors_4d);
-    m_color_4d_arrays[color_index] = shared_colors_4d;
-    return shared_colors_4d;
-  }
-
-  return ait->second;
-}
-
 //! \brief obtains the lighting-disabled appearance.
 // Also, assuming that this appearance is used for paper-space, we also disable
 // the hidden-surface-removal, and draw the entities in the order they appear.
@@ -498,8 +408,8 @@ Dxf_builder::get_pattern_appearance()
   app->set_depth_enable(false);
 
   //! \todo add a (vertex) shader that draws the pattern.
-  // app->set_transp_enable(true);
-  // app->set_transp_mode(SGAL::Gfx::BLEND_TRANSP);
+  app->set_transp_enable(true);
+  app->set_transp_mode(SGAL::Gfx::BLEND_TRANSP);
 
   m_scene_graph->add_container(app);
 
@@ -596,9 +506,15 @@ process_polyline_boundaries(const Dxf_hatch_entity& hatch,
   if (0 == polylines.size()) return;
 
   // Obtain the color array:
-  auto shared_colors = get_color_array_(m_color_3d_arrays,
-                                        m_layer_color_3d_arrays, hatch.m_color,
+  boost::shared_ptr<SGAL::Color_array> shared_colors;
+  if (hatch.m_flags)
+    shared_colors = get_color_array_(m_color_3d_arrays, m_layer_color_3d_arrays,
+                                     hatch.m_color, hatch.m_color_index,
+                                     hatch.m_layer);
+  else shared_colors = get_color_array_(m_color_4d_arrays,
+                                        m_layer_color_4d_arrays, hatch.m_color,
                                         hatch.m_color_index, hatch.m_layer);
+
   if (! shared_colors) return;
 
   // Check whether mirroring is required

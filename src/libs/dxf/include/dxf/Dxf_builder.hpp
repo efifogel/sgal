@@ -144,7 +144,7 @@ protected:
   //@}
 
   /*! Obtain the n-component color array of an entity.
- */
+   */
   template <typename ColorArray>
   boost::shared_ptr<ColorArray>
   get_color_array_(std::map<size_t, boost::shared_ptr<ColorArray> >&
@@ -153,16 +153,6 @@ protected:
                      color_arrays,
                    int32_t color, int16_t color_index,
                    const SGAL::String& layer_name);
-
-  /*! Obtain the 3-components color array of an entity.
-   */
-  Shared_color_array_3d get_color_array_3d(int32_t color, int16_t color_index,
-                                           const SGAL::String& layer_name);
-
-  /*! Obtain the 4-components color array of an entity.
-   */
-  Shared_color_array_4d get_color_array_4d(int32_t color, int16_t color_index,
-                                           const SGAL::String& layer_name);
 
   /*! Obtain the light-disabled appearance.
    */
