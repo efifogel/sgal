@@ -1414,7 +1414,7 @@ inline size_t Boundary_set::num_color_components() const
 {
   return
     (! m_local_color_buffer_3d.empty()) ? 3 :
-    ((! m_local_tex_coord_buffer_4d.empty()) ? 4 : 0);
+    ((! m_local_color_buffer_4d.empty()) ? 4 : 0);
 }
 
 //! \brief obtains the number of tex ture coordinates.
