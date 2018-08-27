@@ -45,6 +45,7 @@ public:
     REFINMENT_ARCS_NUM,
     STORE_DATA,
     VERSION,
+    TRANSPARENCY,
     LAST
   };
 
@@ -82,6 +83,7 @@ public:
   { return &m_refinement_arcs_num; }
   Boolean* store_data_handle(const Field_info*) { return &m_store_data; }
   Uint* version_handle(const Field_info*) { return &m_version; }
+  Float* transparency_handle(const Field_info*) { return &m_transparency; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -137,13 +139,22 @@ public:
    */
   Uint get_version() const;
 
+  /*! Set the DXF transparency value.
+   */
+  void set_transparency(Float transparency);
+
+  /*! Obatin the DXF transparency value.
+   */
+  Float get_transparency() const;
+
   /*! Set defualt values. */
   void reset(const String& def_palette_file_name = s_def_palette_file_name,
              const Vector4f& def_background_color = s_def_background_color,
              const Float def_min_bulge = s_def_min_bulge,
              const Uint def_refinement_arcs_num = s_def_refinement_arcs_num,
              const Boolean def_store_data = s_def_store_data,
-             const Uint def_version = s_def_version);
+             const Uint def_version = s_def_version,
+             const Float def_transparency = s_def_transparency);
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -174,6 +185,9 @@ private:
   //! The DXF version number.
   Uint m_version;
 
+  //! The DXF transparency value.
+  Float m_transparency;
+
   // default values
   static const String s_def_palette_file_name;
   static const Vector4f s_def_background_color;
@@ -181,6 +195,7 @@ private:
   static const Uint s_def_refinement_arcs_num;
   static const Boolean s_def_store_data;
   static const Uint s_def_version;
+  static const Float s_def_transparency;
 };
 
 //! \brief constructs the prototype.
@@ -237,6 +252,14 @@ inline void Dxf_configuration::set_version(Uint version) { m_version = version; 
 
 //! \brief obatins the DXF version number.
 inline Uint Dxf_configuration::get_version() const { return m_version; }
+
+//! \brief sets the DXF transparency value.
+inline void Dxf_configuration::set_transparency(Float transparency)
+{ m_transparency = transparency; }
+
+//! \brief obatins the DXF transparency value.
+inline Float Dxf_configuration::get_transparency() const
+{ return m_transparency; }
 
 SGAL_END_NAMESPACE
 

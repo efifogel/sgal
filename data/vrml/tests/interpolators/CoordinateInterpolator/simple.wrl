@@ -1,6 +1,6 @@
 #VRML V2.0 utf8
 
-Group { 
+Group {
   children [
     Shape{ appearance Appearance { material Material { }}
       geometry IndexedFaceSet {
@@ -18,11 +18,11 @@ Group {
     }
 
     DEF ts TimeSensor {
-      cycleInterval 2 
-      loop TRUE 
+      cycleInterval 2
+      loop TRUE
     }
    ]
 }
 
-ROUTE ts.fraction_changed TO ci.set_fraction 
-ROUTE ci.value_changed TO co.set_point 
+ROUTE ts.fraction_changed TO ci.set_fraction
+ROUTE ci.value_changed TO co.set_point

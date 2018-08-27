@@ -58,6 +58,9 @@ Dxf_option_parser::Dxf_option_parser() :
     ("dxf-version", po::value<size_t>()->
      default_value(Dxf_configuration::s_def_version),
      "The DXF version number")
+    ("dxf-transparency", po::value<Float>()->
+     default_value(Dxf_configuration::s_def_transparency),
+     "The DXF transparency value for htaches")
    ;
 }
 
@@ -87,6 +90,7 @@ void Dxf_option_parser::configure(Configuration* conf)
   dxf->set_refinement_arcs_num(var_map["dxf-refinement-arcs-num"].as<Uint>());
   dxf->set_store_data(var_map["dxf-store-data"].as<Boolean>());
   dxf->set_version(var_map["dxf-version"].as<size_t>());
+  dxf->set_transparency(var_map["dxf-transparency"].as<Float>());
 }
 
 SGAL_END_NAMESPACE

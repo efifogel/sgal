@@ -154,16 +154,19 @@ Dxf_builder::~Dxf_builder()
 }
 
 template <typename Vector>
-inline Vector get_vector(float r, float g, float b)
+inline Vector get_vector(float /* r */, float /* g */,
+                         float /* b */, float /* a */)
 { return Vector(); }
 
 template <>
-inline SGAL::Vector3f get_vector<SGAL::Vector3f>(float r, float g, float b)
+inline SGAL::Vector3f
+get_vector<SGAL::Vector3f>(float r, float g, float b, float /* a */)
 { return SGAL::Vector3f(r, g, b); }
 
 template <>
-inline SGAL::Vector4f get_vector<SGAL::Vector4f>(float r, float g, float b)
-{ return SGAL::Vector4f(r, g, b, 0.5f); }
+inline SGAL::Vector4f
+get_vector<SGAL::Vector4f>(float r, float g, float b, float a)
+{ return SGAL::Vector4f(r, g, b, a); }
 
 //! \brief obtains the n-component color array of an entity.
 template <typename ColorArray>
@@ -186,7 +189,7 @@ get_color_array_(std::map<size_t, boost::shared_ptr<ColorArray> >&
     auto r = ((color >> 16) & 0xFF) / 255.0;
     auto g = ((color >> 8) & 0xFF) / 255.0;
     auto b = ((color) & 0xFF) / 255.0;
-    (*colors)[0] = get_vector<Vector>(r, g, b);
+    (*colors)[0] = get_vector<Vector>(r, g, b, get_transparency());
     shared_colors.reset(colors);
     m_scene_graph->add_container(shared_colors);
     return shared_colors;
@@ -279,7 +282,7 @@ void Dxf_builder::process_layers()
       auto r = ((color >> 16) & 0xFF) / 255.0;
       auto g = ((color >> 8) & 0xFF) / 255.0;
       auto b = ((color) & 0xFF) / 255.0;
-      auto a = 0.5f;
+      auto a = get_transparency();
 
       (*colors_3d)[0] = SGAL::Vector3f(r, g, b);
       (*colors_4d)[0] = SGAL::Vector4f(r, g, b, a);
@@ -313,7 +316,7 @@ void Dxf_builder::process_layers()
           auto r = s_palette[color_index][0];
           auto g = s_palette[color_index][1];
           auto b = s_palette[color_index][2];
-          auto a = 0.5f;
+          auto a = get_transparency();
           (*colors_4d)[0] = SGAL::Vector4f(r, g, b, a);
           shared_colors_4d.reset(colors_4d);
           m_scene_graph->add_container(shared_colors_4d);
@@ -1456,6 +1459,16 @@ void Dxf_builder::process_solid_entity(const Dxf_solid_entity& solid,
   ifs->set_color_array(shared_colors);
   ifs->set_num_primitives(1);
   ifs->set_color_attachment(SGAL::Geo_set::AT_PER_MESH);
+}
+
+//! \brief obtains the transparency value.
+SGAL::Float Dxf_builder::get_transparency() const
+{
+  auto* conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
+  auto dxf_conf = conf->get_dxf_configuration();
+  SGAL_assertion(dxf_conf);
+  return dxf_conf->get_transparency();
 }
 
 DXF_END_NAMESPACE

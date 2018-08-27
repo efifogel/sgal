@@ -42,6 +42,7 @@ const Float Dxf_configuration::s_def_min_bulge(0.1f);
 const Uint Dxf_configuration::s_def_refinement_arcs_num(16);
 const Boolean Dxf_configuration::s_def_store_data(false);
 const Uint Dxf_configuration::s_def_version(17);
+const Float Dxf_configuration::s_def_transparency(0.5f);
 
 //! \brief constructs.
 Dxf_configuration::Dxf_configuration(Boolean proto) :
@@ -50,7 +51,8 @@ Dxf_configuration::Dxf_configuration(Boolean proto) :
   m_background_color(s_def_background_color),
   m_min_bulge(s_def_min_bulge),
   m_store_data(s_def_store_data),
-  m_version(s_def_version)
+  m_version(s_def_version),
+  m_transparency(s_def_transparency)
 {}
 
 //! \brief initializes the node prototype.
@@ -120,6 +122,14 @@ void Dxf_configuration::init_prototype()
                                           Field_rule::RULE_EXPOSED_FIELD,
                                           version_func, s_def_version,
                                           exec_func));
+
+  // transparency
+  auto transparency_func =
+    static_cast<Float_handle_function>(&Dxf_configuration::transparency_handle);
+  s_prototype->add_field_info(new SF_float(TRANSPARENCY, "transparency",
+                                           Field_rule::RULE_EXPOSED_FIELD,
+                                           transparency_func, s_def_transparency,
+                                           exec_func));
 }
 
 //! \brief deletes the node prototype.
@@ -175,6 +185,11 @@ void Dxf_configuration::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "transparency") {
+      set_transparency(boost::lexical_cast<Float>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
   }
 
   // Remove all the marked attributes:
@@ -187,7 +202,8 @@ void Dxf_configuration::reset(const String& def_palette_file_name,
                               const Float def_min_bulge,
                               const Uint def_refinement_arcs_num,
                               const Boolean def_store_data,
-                              const Uint def_version)
+                              const Uint def_version,
+                              const Float def_transparency)
 {
   m_palette_file_name = def_palette_file_name;
   m_background_color = def_background_color;
@@ -195,6 +211,7 @@ void Dxf_configuration::reset(const String& def_palette_file_name,
   m_refinement_arcs_num = def_refinement_arcs_num;
   m_store_data = def_store_data;
   m_version = def_version;
+  m_transparency = def_transparency;
 }
 
 SGAL_END_NAMESPACE

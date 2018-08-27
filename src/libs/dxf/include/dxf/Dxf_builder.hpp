@@ -176,6 +176,10 @@ protected:
    */
   void print_hatch_information(const Dxf_hatch_entity& hatch);
 
+  /*! Obtain the transparency value.
+   */
+  SGAL::Float get_transparency() const;
+
   //! The DXF data
   Dxf_data& m_data;
 
