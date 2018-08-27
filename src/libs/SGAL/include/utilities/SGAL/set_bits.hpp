@@ -14,18 +14,23 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_SET_MASK_HPP
-#define SGAL_SET_MASK_HPP
+#ifndef SGAL_SET_BITS_HPP
+#define SGAL_SET_BITS_HPP
 
 #include "SGAL/basic.hpp"
 
-// SGAL_BEGIN_NAMESPACE
+SGAL_BEGIN_NAMESPACE
 
-#define SGAL_SHIFT(mask,pos,value)    ((value << pos) & mask)
-#define SGAL_SET(mask,pos,value,data) ((data) & ~mask) | ((value << pos) & mask)
+inline size_t shift_bits(size_t mask, size_t pos, size_t value)
+{ return (value << pos) & mask; }
 
-// SGAL_END_NAMESPACE
+inline size_t set_bits(size_t mask, size_t pos, size_t value, size_t data)
+{ return (data & ~mask) | ((value << pos) & mask); }
+
+SGAL_END_NAMESPACE
 
 #endif

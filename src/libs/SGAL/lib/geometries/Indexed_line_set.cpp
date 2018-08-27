@@ -52,7 +52,7 @@ const Boolean Indexed_line_set::m_def_color_per_vertex(true);
 const Boolean Indexed_line_set::m_def_normal_per_vertex(true);
 const Float Indexed_line_set::s_def_line_width(1);
 
-void (Indexed_line_set::*Indexed_line_set::m_draws[SGAL_NUM_LI_DRAWS])();
+void (Indexed_line_set::*Indexed_line_set::m_draws[LI_NUM_DRAWS])();
 Boolean Indexed_line_set::m_draws_initialized(false);
 
 REGISTER_TO_FACTORY(Indexed_line_set, "Indexed_line_set");
@@ -76,7 +76,7 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_draws_initialized = true;
 
   // Initialize static draws[] array:
-  for (auto i = 0; i < SGAL_NUM_LI_DRAWS; ++i)
+  for (auto i = 0; i < LI_NUM_DRAWS; ++i)
     m_draws[i] = &Indexed_line_set::draw_invalid;
 
   // Standard (no vertex array):
@@ -584,18 +584,14 @@ void Indexed_line_set::draw_lines(Draw_action* action)
   // std::cout << "m_primitive_type: " << m_primitive_type << std::endl;
   // std::cout << "va: " << va << std::endl;
 
-  Uint mask =
-    SGAL_SET(SGAL_LI_FRAG_SOURCE,SGAL_LI_FRAG_SOURCE_,fragment_source,
-      SGAL_SET(SGAL_LI_FRAG_INDEXED,SGAL_LI_FRAG_INDEXED_,fragment_indexed,
-        SGAL_SET(SGAL_LI_FRAG_ATTACHMENT,SGAL_LI_FRAG_ATTACHMENT_,
-                 fragment_attached,
-          SGAL_SET(SGAL_LI_TEXTURE_ENABLED,SGAL_LI_TEXTURE_ENABLED_,
-                   texture_enbaled,
-            SGAL_SET(SGAL_LI_TEXTURE_INDEXED,SGAL_LI_TEXTURE_INDEXED_,
-                     texture_indexed,
-              SGAL_SET(SGAL_LI_PRIM_TYPE,SGAL_LI_PRIM_TYPE_,m_primitive_type,
-                SGAL_SET(SGAL_LI_VERTEX_ARRAY,SGAL_LI_VERTEX_ARRAY_,va,
-                         0x0)))))));
+  auto mask =
+    set_bits(LI_FRAG_SOURCE,LI_FRAG_SOURCE_,fragment_source,
+      set_bits(LI_FRAG_INDEXED,LI_FRAG_INDEXED_,fragment_indexed,
+        set_bits(LI_FRAG_ATTACHMENT,LI_FRAG_ATTACHMENT_,fragment_attached,
+          set_bits(LI_TEXTURE_ENABLED,LI_TEXTURE_ENABLED_,texture_enbaled,
+            set_bits(LI_TEXTURE_INDEXED,LI_TEXTURE_INDEXED_,texture_indexed,
+              set_bits(LI_PRIM_TYPE,LI_PRIM_TYPE_,m_primitive_type,
+                set_bits(LI_VERTEX_ARRAY,LI_VERTEX_ARRAY_,va,0x0)))))));
 
   (this->*m_draws[mask])();
 }

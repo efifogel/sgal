@@ -69,7 +69,7 @@ Container_proto* Boundary_set::s_prototype(nullptr);
 const Boolean Boundary_set::s_def_normal_per_vertex(false);
 const Boolean Boundary_set::s_def_color_per_vertex(false);
 
-void (Boundary_set::*Boundary_set::m_draws[SGAL_NUM_BO_DRAWS])();
+void (Boundary_set::*Boundary_set::m_draws[BO_NUM_DRAWS])();
 Boolean Boundary_set::m_draws_initialized(false);
 
 REGISTER_TO_FACTORY(Boundary_set, "Boundary_set");
@@ -107,7 +107,7 @@ Boundary_set::Boundary_set(Boolean proto) :
   m_draws_initialized = true;
 
   // Initialize static draws[] array:
-  for (auto i = 0; i < SGAL_NUM_BO_DRAWS; ++i)
+  for (auto i = 0; i < BO_NUM_DRAWS; ++i)
     m_draws[i] = &Boundary_set::draw_invalid;
 
   // Standard (no vertex array):
@@ -1236,13 +1236,13 @@ void Boundary_set::draw_dispatch(Draw_action* /* action */)
   }
 
   Uint mask =
-    SGAL_SET(SGAL_BO_FRAG_SOURCE,SGAL_BO_FRAG_SOURCE_,fragment_source,
-      SGAL_SET(SGAL_BO_FRAG_INDEXED,SGAL_BO_FRAG_INDEXED_,fragment_indexed,
-        SGAL_SET(SGAL_BO_FRAG_ATTACHMENT,SGAL_BO_FRAG_ATTACHMENT_,fragment_attached,
-          SGAL_SET(SGAL_BO_TEXTURE_ENABLED,SGAL_BO_TEXTURE_ENABLED_,texture_enbaled,
-            SGAL_SET(SGAL_BO_TEXTURE_INDEXED,SGAL_BO_TEXTURE_INDEXED_,texture_indexed,
-              SGAL_SET(SGAL_BO_PRIM_TYPE,SGAL_BO_PRIM_TYPE_,m_primitive_type,
-                SGAL_SET(SGAL_BO_VERTEX_ARRAY,SGAL_BO_VERTEX_ARRAY_,va,0x0)))))));
+    set_bits(BO_FRAG_SOURCE,BO_FRAG_SOURCE_,fragment_source,
+      set_bits(BO_FRAG_INDEXED,BO_FRAG_INDEXED_,fragment_indexed,
+        set_bits(BO_FRAG_ATTACHMENT,BO_FRAG_ATTACHMENT_,fragment_attached,
+          set_bits(BO_TEXTURE_ENABLED,BO_TEXTURE_ENABLED_,texture_enbaled,
+            set_bits(BO_TEXTURE_INDEXED,BO_TEXTURE_INDEXED_,texture_indexed,
+              set_bits(BO_PRIM_TYPE,BO_PRIM_TYPE_,m_primitive_type,
+                set_bits(BO_VERTEX_ARRAY,BO_VERTEX_ARRAY_,va,0x0)))))));
 
   (this->*m_draws[mask])();
 }

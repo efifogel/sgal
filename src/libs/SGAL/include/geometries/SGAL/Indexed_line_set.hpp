@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_INDEXED_LINE_SET_HPP
 #define SGAL_INDEXED_LINE_SET_HPP
@@ -48,27 +50,30 @@ public:
   };
 
   // Drawing & representation:
+  enum {
+    LI_FRAG_SOURCE_       = 0,
+    LI_FRAG_SOURCE        = 0x00000001,
+    LI_FRAG_INDEXED_      = 1,
+    LI_FRAG_INDEXED       = 0x00000002,
+    LI_FRAG_ATTACHMENT_   = 2,
+    LI_FRAG_ATTACHMENT    = 0x0000000c,
+    LI_TEXTURE_ENABLED_   = 4,
+    LI_TEXTURE_ENABLED    = 0x00000010,
+    LI_TEXTURE_INDEXED_   = 5,
+    LI_TEXTURE_INDEXED    = 0x00000020,
+    LI_PRIM_TYPE_         = 6,
+    LI_PRIM_TYPE          = 0x000000c0,
+    LI_VERTEX_ARRAY_      = 8,
+    LI_VERTEX_ARRAY       = 0x00000100,
+    LI_NUM_DRAWS          = 0x200,
+  };
 
-#define SGAL_LI_FRAG_SOURCE_        0
-#define SGAL_LI_FRAG_SOURCE         0x00000001
-#define SGAL_LI_FRAG_INDEXED_       1
-#define SGAL_LI_FRAG_INDEXED        0x00000002
-#define SGAL_LI_FRAG_ATTACHMENT_    2
-#define SGAL_LI_FRAG_ATTACHMENT     0x0000000c
-#define SGAL_LI_TEXTURE_ENABLED_    4
-#define SGAL_LI_TEXTURE_ENABLED     0x00000010
-#define SGAL_LI_TEXTURE_INDEXED_    5
-#define SGAL_LI_TEXTURE_INDEXED     0x00000020
-#define SGAL_LI_PRIM_TYPE_          6
-#define SGAL_LI_PRIM_TYPE           0x000000c0
-#define SGAL_LI_VERTEX_ARRAY_       8
-#define SGAL_LI_VERTEX_ARRAY        0x00000100
-#define SGAL_NUM_LI_DRAWS           0x200
-
-  /*! Constructor. */
+  /*! Construct.
+   */
   Indexed_line_set(Boolean proto = false);
 
-  /*! Destructor. */
+  /*! Destruct.
+   */
   virtual ~Indexed_line_set();
 
   /* Construct the prototype.
@@ -83,15 +88,14 @@ public:
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
-  // virtual Attribute_list get_attributes();
-
   /// \name Protoype handling
   //@{
   /*! Initialize the node prototype.
    */
   virtual void init_prototype();
 
-  /*! Delete the prototype. */
+  /*! Delete the prototype.
+   */
   virtual void delete_prototype();
 
   /*! Obtain the prototype.
@@ -369,31 +373,31 @@ protected:
   void draw_FAPL_VAYE();
   void draw_FAPM_VAYE();
 
-  /*! Indicates whether a single color is specified per vertex. */
+  //! Indicates whether a single color is specified per vertex.
   Boolean m_color_per_vertex;
 
-  /*! Indicates whether a single normal is specified per vertex. */
+  //! Indicates whether a single normal is specified per vertex.
   Boolean m_normal_per_vertex;
 
-  /*! The width of the dual lines. */
+  //! The width of the dual lines.
   Float m_line_width;
 
-  /*! Indicates whether to elliminate hiden lines using depth test. */
+  //! Indicates whether to elliminate hiden lines using depth test.
   Boolean m_elliminate_hiden;
 
-  /*! Indicates whether the mesh is textured. */
+  //! Indicates whether the mesh is textured.
   Boolean m_has_texture;
 
-  /* Indicates that the bbox is set externally. */
+  //! Indicates that the bbox is set externally.
   Boolean m_bb_is_pre_set;
 
-  /*! */
+  //!
   Boolean m_use_display_list;
 
-  /*! */
+  //!
   Int32 m_display_list_id;
 
-  static void (Indexed_line_set::*m_draws[SGAL_NUM_LI_DRAWS])();
+  static void (Indexed_line_set::*m_draws[LI_NUM_DRAWS])();
   static Boolean m_draws_initialized;
 
   //! Indicates whether the coordinate array has beeen invalidated.
@@ -403,13 +407,13 @@ protected:
   virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
-  /*! The node prototype. */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
-  /*! Default value. */
+  //! Default value.
   static const Boolean m_def_color_per_vertex;
   static const Boolean m_def_normal_per_vertex;
   static const Float s_def_line_width;

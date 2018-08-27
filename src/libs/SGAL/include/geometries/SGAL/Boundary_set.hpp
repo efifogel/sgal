@@ -35,6 +35,7 @@
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Vector4f.hpp"
 #include "SGAL/Texture.hpp"
+#include "SGAL/Indexed_face_set_mask.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -154,27 +155,30 @@ public:
   };
 
   // Drawing & representation:
+  enum {
+    BO_FRAG_SOURCE_       = 0,
+    BO_FRAG_SOURCE        = 0x00000001,
+    BO_FRAG_INDEXED_      = 1,
+    BO_FRAG_INDEXED       = 0x00000002,
+    BO_FRAG_ATTACHMENT_   = 2,
+    BO_FRAG_ATTACHMENT    = 0x0000000c,
+    BO_TEXTURE_ENABLED_   = 4,
+    BO_TEXTURE_ENABLED    = 0x00000010,
+    BO_TEXTURE_INDEXED_   = 5,
+    BO_TEXTURE_INDEXED    = 0x00000020,
+    BO_PRIM_TYPE_         = 6,
+    BO_PRIM_TYPE          = 0x000001c0,
+    BO_VERTEX_ARRAY_      = 9,
+    BO_VERTEX_ARRAY       = 0x00000200,
+    BO_NUM_DRAWS          = 0x400,
+  };
 
-#define SGAL_BO_FRAG_SOURCE_        0
-#define SGAL_BO_FRAG_SOURCE         0x00000001
-#define SGAL_BO_FRAG_INDEXED_       1
-#define SGAL_BO_FRAG_INDEXED        0x00000002
-#define SGAL_BO_FRAG_ATTACHMENT_    2
-#define SGAL_BO_FRAG_ATTACHMENT     0x0000000c
-#define SGAL_BO_TEXTURE_ENABLED_    4
-#define SGAL_BO_TEXTURE_ENABLED     0x00000010
-#define SGAL_BO_TEXTURE_INDEXED_    5
-#define SGAL_BO_TEXTURE_INDEXED     0x00000020
-#define SGAL_BO_PRIM_TYPE_          6
-#define SGAL_BO_PRIM_TYPE           0x000001c0
-#define SGAL_BO_VERTEX_ARRAY_       9
-#define SGAL_BO_VERTEX_ARRAY        0x00000200
-#define SGAL_NUM_BO_DRAWS           0x400
-
-  /*! Constructor */
+  /*! Construct.
+   */
   Boundary_set(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destruct.
+   */
   virtual ~Boundary_set();
 
   /// \name Protoype handling
@@ -413,10 +417,7 @@ public:
    * \param[in] field_info The field information record.
    * \param[in] formatter The formatter to use for exporting, e.g., VRML.
    */
-   virtual void write_field(const Field_info* field_info, Formatter* formatter);
-
-  // Drawing:
-#include "SGAL/Indexed_face_set_mask.hpp"
+  virtual void write_field(const Field_info* field_info, Formatter* formatter);
 
   // Draw routines:
   void draw_invalid();
@@ -620,7 +621,7 @@ public:
   void draw_FAPT_VAYE();
   void draw_FAPM_VAYE();
 
-  static void (Boundary_set::*m_draws[SGAL_NUM_BO_DRAWS])();
+  static void (Boundary_set::*m_draws[BO_NUM_DRAWS])();
   static Boolean m_draws_initialized;
 
 protected:
