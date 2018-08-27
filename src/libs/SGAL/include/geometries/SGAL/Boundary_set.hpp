@@ -998,10 +998,15 @@ protected:
    */
   size_t tex_coord_data_size() const;
 
-  /*! Obtain the number of tex ture coordinates.
-   * \return the number of tex ture coordinates.
+  /*! Obtain the number of color components.
+   * \return the number of color components.
    */
-  Uint num_tex_coordinates() const;
+  size_t num_color_components() const;
+
+  /*! Obtain the number of texture coordinates.
+   * \return the number of texture coordinates.
+   */
+  size_t num_tex_coordinates() const;
 
   /*! Compute flat indices for the normals or for the colors.
    * This function is invoked when the attachment is per-primitive.
@@ -1404,8 +1409,16 @@ inline const GLvoid* Boundary_set::indices_data() const
     local_indices_data();
 }
 
+//! \brief obtains the number of color components.
+inline size_t Boundary_set::num_color_components() const
+{
+  return
+    (! m_local_color_buffer_3d.empty()) ? 3 :
+    ((! m_local_tex_coord_buffer_4d.empty()) ? 4 : 0);
+}
+
 //! \brief obtains the number of tex ture coordinates.
-inline Uint Boundary_set::num_tex_coordinates() const
+inline size_t Boundary_set::num_tex_coordinates() const
 {
   return
     (! m_local_tex_coord_buffer_2d.empty()) ? 2 :

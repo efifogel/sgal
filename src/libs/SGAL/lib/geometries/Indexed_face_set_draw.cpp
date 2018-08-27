@@ -2685,7 +2685,8 @@ void Boundary_set::draw_FAPV_VAYE()
 {
   SGAL_TRACE_MSG(Tracer::INDEXED_FACE_SET, "FAPV_VAYE\n");
 
-  Uint tcoords = num_tex_coordinates();
+  auto tcoords = num_tex_coordinates();
+  auto ccoords = num_color_components();
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
@@ -2706,12 +2707,14 @@ void Boundary_set::draw_FAPV_VAYE()
     }
     else {
       if (m_color_buffer_id != 0) {
+        SGAL_assertion(ccoords != 0);
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_color_buffer_id);
-        glColorPointer(3, GL_FLOAT, 0, BUFFER_OFFSET(0));
+        glColorPointer(ccoords, GL_FLOAT, 0, BUFFER_OFFSET(0));
         glEnableClientState(GL_COLOR_ARRAY);
       }
     }
     if ((m_tex_coord_buffer_id != 0) && (tcoords != 0)) {
+      SGAL_assertion(tcoords != 0);
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_tex_coord_buffer_id);
       glTexCoordPointer(tcoords, GL_FLOAT, 0, BUFFER_OFFSET(0));
       glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -2725,7 +2728,8 @@ void Boundary_set::draw_FAPV_VAYE()
       glEnableClientState(GL_NORMAL_ARRAY);
     }
     else {
-      glColorPointer(3, GL_FLOAT, 0, color_data());
+      SGAL_assertion(ccoords != 0);
+      glColorPointer(ccoords, GL_FLOAT, 0, color_data());
       glEnableClientState(GL_COLOR_ARRAY);
     }
     if (tcoords != 0) {
@@ -2740,7 +2744,8 @@ void Boundary_set::draw_FAPV_VAYE()
     glEnableClientState(GL_NORMAL_ARRAY);
   }
   else {
-    glColorPointer(3, GL_FLOAT, 0, color_data());
+    SGAL_assertion(ccoords != 0);
+    glColorPointer(ccoords, GL_FLOAT, 0, color_data());
     glEnableClientState(GL_COLOR_ARRAY);
   }
   if (tcoords != 0) {

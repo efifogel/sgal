@@ -52,8 +52,9 @@ public:
     LAST
   };
 
-  typedef Vector3f_array::iterator       iterator;
-  typedef Vector3f_array::const_iterator const_iterator;
+  typedef Vector3f                        value_type;
+  typedef Vector3f_array::iterator        iterator;
+  typedef Vector3f_array::const_iterator  const_iterator;
 
   /*! Construct.
    * \param[in] proto determines whether to construct a prototype.
