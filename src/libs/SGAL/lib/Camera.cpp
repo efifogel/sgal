@@ -196,7 +196,8 @@ void Camera::clean_frustum()
   m_frustum.set_aspect_ratio(m_aspect_ratio);
   m_frustum.set_near(near_plane);
   m_frustum.set_far(far_plane);
-  m_frustum.set_fov(m_field_of_view);
+  m_frustum.set_horiz_fov(m_field_of_view);
+  m_frustum.set_vert_fov(m_field_of_view / m_aspect_ratio);
   m_dirty_frustum = false;
 }
 

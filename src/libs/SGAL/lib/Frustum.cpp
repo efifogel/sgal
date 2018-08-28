@@ -139,21 +139,7 @@ void Frustum::set_aspect_ratio(float ratio)
   m_dirty_planes = true;
 }
 
-//! \brief
-void Frustum::set_fov(float fov)
-{
-  set_horiz_fov(fov);
-  set_vert_fov(fov / m_aspect_ratio);
-}
-
-//! \brief
-Float Frustum::get_fov()
-{
-  if (m_dirty_corners) clean_corners();
-  return m_horiz_fov;
-}
-
-//! \brief
+//! \brief sets the horizontal field-of-view.
 void Frustum::set_horiz_fov(Float horiz_fov)
 {
   if (m_horiz_fov == horiz_fov) return;
@@ -162,13 +148,27 @@ void Frustum::set_horiz_fov(Float horiz_fov)
   m_dirty_planes = true;
 }
 
-//! \brief
+//! \brief obtains the horizontal field-of-view.
+Float Frustum::get_horiz_fov()
+{
+  if (m_dirty_corners) clean_corners();
+  return m_horiz_fov;
+}
+
+//! \brief sets the vertical field-of-view.
 void Frustum::set_vert_fov(Float vert_fov)
 {
   if (m_vert_fov == vert_fov) return;
   m_vert_fov = vert_fov;
   m_dirty_corners = true;
   m_dirty_planes = true;
+}
+
+//! \brief obtains the vertical field-of-view.
+Float Frustum::get_vert_fov()
+{
+  if (m_dirty_corners) clean_corners();
+  return m_vert_fov;
 }
 
 //! \brief
