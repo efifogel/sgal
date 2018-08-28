@@ -106,10 +106,22 @@ public:
    */
   void get_near_far(Float& near_dist, Float& far_dist);
 
-  void set_fov(Float fov);
-  Float get_fov();
+  /*! Set the horizontal field-of-view.
+   */
   void set_horiz_fov(Float horiz_fov);
+
+  /*! Obtain the horizontal field-of-view.
+   */
+  Float get_horiz_fov();
+
+  /*! Set the vertical field-of-view.
+   */
   void set_vert_fov(Float vert_fov);
+
+  /*! Obtain the vertical field-of-view.
+   */
+  Float get_vert_fov();
+
   void set_right(Float right);
   void set_left(Float left);
   void set_top(Float top);

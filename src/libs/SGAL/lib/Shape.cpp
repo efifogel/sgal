@@ -61,12 +61,7 @@ Container_proto* Shape::s_prototype(nullptr);
 const Boolean Shape::s_def_is_visible(true);
 const Vector2f Shape::s_def_depth_range(0, 1);
 const Vector4ub Shape::s_def_color_mask(0xff, 0xff, 0xff, 0xff);
-const Gfx::Depth_func Shape::s_def_depth_function(Gfx::LESS_DFUNC);
 const Gfx::Cull_face Shape::s_def_cull_face(Gfx::NO_CULL);
-
-const Char* Shape::s_depth_function_names[] = {
-  "never", "less", "equal", "lequal", "greater", "notequal", "gequal", "always"
-};
 
 const Char* Shape::s_cull_face_names[] = { "no", "front", "back", "both" };
 
@@ -79,10 +74,7 @@ REGISTER_TO_FACTORY(Shape, "Shape");
 //
 Shape::Shape(Boolean proto) :
   Node(proto),
-  m_draw_depth(true),
-  m_test_depth(true),
   m_depth_range(s_def_depth_range),
-  m_depth_function(s_def_depth_function),
   m_color_mask(s_def_color_mask),
   m_cull_face(s_def_cull_face),
   m_is_visible(s_def_is_visible),
@@ -195,13 +187,9 @@ void Shape::draw_geometry(Draw_action* action)
 {
   if (!m_geometry) return;
 
-  Context* context = action->get_context();
-  if (!m_draw_depth) context->draw_depth_mask(false);
-  if (!m_test_depth) context->draw_depth_enable(false);
+  auto* context = action->get_context();
   if (m_depth_range != s_def_depth_range)
     glDepthRange(m_depth_range[0], m_depth_range[1]);
-  if (m_depth_function != s_def_depth_function)
-    context->draw_depth_func(m_depth_function);
   if (m_color_mask != s_def_color_mask)
     context->draw_color_mask(m_color_mask);
   if (m_cull_face != s_def_cull_face)
@@ -213,12 +201,8 @@ void Shape::draw_geometry(Draw_action* action)
     context->draw_cull_face(s_def_cull_face);
   if (m_color_mask != s_def_color_mask)
     context->draw_color_mask(s_def_color_mask);
-  if (m_depth_function != s_def_depth_function)
-    context->draw_depth_func(s_def_depth_function);
   if (m_depth_range != s_def_depth_range)
     glDepthRange(s_def_depth_range[0], s_def_depth_range[1]);
-  if (!m_test_depth) context->draw_depth_enable(true);
-  if (!m_draw_depth) context->draw_depth_mask(true);
 }
 
 //! \brief draws the shape for selection.
@@ -308,28 +292,8 @@ void Shape::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "depthFunction") {
-      auto num = sizeof(s_depth_function_names) / sizeof(char*);
-      const auto** found =
-        std::find(s_depth_function_names, &s_depth_function_names[num], value);
-      auto index = found - s_depth_function_names;
-      if (index < num)
-        m_depth_function = static_cast<Gfx::Depth_func>(index);
-      elem->mark_delete(ai);
-      continue;
-    }
     if (name == "visible") {
       if (!compare_to_true(value)) set_invisible();
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "drawDepth") {
-      m_draw_depth = compare_to_true(value);
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "testDepth") {
-      m_test_depth = compare_to_true(value);
       elem->mark_delete(ai);
       continue;
     }

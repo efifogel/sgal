@@ -58,6 +58,11 @@ const Gfx::Light_model_color_control
 const Gfx::Poly_mode Appearance::s_def_poly_mode(Gfx::FILL_PMODE);
 const Gfx::Shade_model Appearance::s_def_shade_model(Gfx::SMOOTH_SHADE);
 const Gfx::Tex_env Appearance::s_def_tex_env(Gfx::MODULATE_TENV);
+const Gfx::Depth_func Appearance::s_def_depth_function(Gfx::LESS_DFUNC);
+
+const Char* Appearance::s_depth_func_names[] = {
+  "never", "less", "equal", "lequal", "greater", "notequal", "gequal", "always"
+};
 
 REGISTER_TO_FACTORY(Appearance, "Appearance");
 
@@ -120,7 +125,7 @@ void Appearance::init()
   m_tex_enable                = false;
   m_tex_mode                  = Gfx::FAST_TEX;
   m_tex_blend_color.set(0.0f, 0.0f, 0.0f, 0.0f);
-  m_tex_env                   = Gfx::MODULATE_TENV;
+  m_tex_env                   = s_def_tex_env;
   m_tex_gen_enable            = false;
   m_material_mode_enable      = Gfx::NO_COLOR_MATERIAL;
   m_light_enable              = false;
@@ -133,8 +138,8 @@ void Appearance::init()
   m_src_blend_func            = Gfx::ONE_SBLEND;
   m_dst_blend_func            = Gfx::ZERO_DBLEND;
   m_color_mask.set(0xff, 0xff, 0xff, 0xff);
-  m_depth_enable              = false;
-  m_depth_func                = Gfx::LESS_DFUNC;
+  m_depth_enable              = true;
+  m_depth_func                = s_def_depth_function;
   m_depth_mask                = true;
   m_fog_enable                = false;
   m_poly_mode                 = s_def_poly_mode;
@@ -608,23 +613,32 @@ void Appearance::init_prototype()
                                                       back_material_func,
                                                       exec_func));
 
-  // depthMask
+  // drawDepth
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   auto depth_mask_func =
     static_cast<Boolean_handle_function>(&Appearance::depth_mask_handle);
-  s_prototype->add_field_info(new SF_bool(DEPTH_MASK, "depthMask",
+  s_prototype->add_field_info(new SF_bool(DEPTH_MASK, "drawDepth",
                                           Field_rule::RULE_EXPOSED_FIELD,
                                           depth_mask_func, true, exec_func));
 
-  // depthEnable
+  // testDepth
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   auto depth_enable_func =
     static_cast<Boolean_handle_function>(&Appearance::depth_enable_handle);
-  s_prototype->add_field_info(new SF_bool(DEPTH_ENABLE, "depthEnable",
+  s_prototype->add_field_info(new SF_bool(DEPTH_ENABLE, "testDepth",
                                           Field_rule::RULE_EXPOSED_FIELD,
                                           depth_enable_func, true, exec_func));
+
+  // testFunction
+  exec_func =
+    static_cast<Execution_function>(&Container::set_rendering_required);
+  auto depth_func_func =
+    static_cast<Uint_handle_function>(&Appearance::depth_func_handle);
+  s_prototype->add_field_info(new SF_uint(DEPTH_FUNC, "testFunction",
+                                          Field_rule::RULE_EXPOSED_FIELD,
+                                          depth_func_func, true, exec_func));
 }
 
 //! \brief deletes the appearance prototype.
@@ -676,13 +690,22 @@ void Appearance::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "depthMask") {
+    if (name == "drawDepth") {
       set_depth_mask(to_boolean(value));
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "depthEnable") {
+    if (name == "testDepth") {
       set_depth_enable(to_boolean(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "depthFunction") {
+      auto num = sizeof(s_depth_func_names) / sizeof(char*);
+      const auto** found =
+        std::find(s_depth_func_names, &s_depth_func_names[num], value);
+      auto index = found - s_depth_func_names;
+      if (index < num) set_depth_func(static_cast<Gfx::Depth_func>(index));
       elem->mark_delete(ai);
       continue;
     }

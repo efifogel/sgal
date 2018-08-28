@@ -101,6 +101,7 @@ public:
   Shared_halftone* halftone_handle(const Field_info*) { return &m_halftone; }
   Shared_material* back_material_handle(const Field_info*)
   { return &m_back_material; }
+  Uint* depth_func_handle(const Field_info*) { return reinterpret_cast<Uint*>(&m_depth_func); }
   Boolean* depth_mask_handle(const Field_info*) { return &m_depth_mask; }
   Boolean* depth_enable_handle(const Field_info*) { return &m_depth_enable; }
   //@}
@@ -401,19 +402,17 @@ protected:
   virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
+  /*! Initialize the node upon construction.
+   */
+  void init();
+
+  //! The tag that identifies this container type.
   static std::string s_tag;
 
-  /*! The node prototype */
+  //! The node prototype.
   static Container_proto* s_prototype;
 
   Bit_mask m_dirty_flags;
-
-  /*! Default value */
-  static const Gfx::Poly_mode s_def_poly_mode;
-  static const Gfx::Shade_model s_def_shade_model;
-  static const Gfx::Tex_env s_def_tex_env;
-  static const Gfx::Light_model_color_control s_def_light_model_color_control;
 
   // for each field, the corresponding bit is being set when the filed is
   // set to a new value. it is then turned off after the drawing is performed
@@ -424,11 +423,18 @@ private:
   Bit_mask m_override;
   Boolean m_skip_refer;
 
-  /*! The default halftone pattern. */
+  //! Default values.
+  static const Gfx::Poly_mode s_def_poly_mode;
+  static const Gfx::Shade_model s_def_shade_model;
+  static const Gfx::Tex_env s_def_tex_env;
+  static const Gfx::Light_model_color_control s_def_light_model_color_control;
+  static const Gfx::Depth_func s_def_depth_function;
+
+  //! The default halftone pattern.
   static Ubyte s_def_halftone[];
 
-  /*! Initialize the node upon construction. */
-  void init();
+  //! The names of the depth function.
+  static const Char* s_depth_func_names[];
 
   friend class Context;
 };

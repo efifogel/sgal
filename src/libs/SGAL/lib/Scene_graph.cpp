@@ -165,9 +165,9 @@ void Scene_graph::set_context(Context* context)
 void Scene_graph::init_context()
 {
   SGAL_assertion(m_context);
-  m_context->set_depth_enable(true);
   m_context->set_cull_face(Gfx::BACK_CULL);
   m_context->draw_app(0);
+  glEnable(GL_DEPTH_TEST);
   glReadBuffer(GL_BACK);
 
   // Activate seamless cube map if supported.

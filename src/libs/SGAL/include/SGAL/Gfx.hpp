@@ -195,7 +195,7 @@ public:
   };
 
   enum Depth_func {
-    NEVER_DFUNC,
+    NEVER_DFUNC = 0,
     LESS_DFUNC,
     EQUAL_DFUNC,
     LEQUAL_DFUNC,

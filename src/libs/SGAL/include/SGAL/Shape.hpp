@@ -61,10 +61,7 @@ public:
     APPEARANCE,
     GEOMETRY,
     ISVISIBLE,
-    DRAW_DEPTH,
-    TEST_DEPTH,
     DEPTH_RANGE,
-    DEPTH_FUNCTION,
     COLOR_MASK,
     CULL_FACE,
     LAST
@@ -167,36 +164,6 @@ public:
    */
   void set_geometry(Shared_geometry geometry);
 
-  /*! Obtain the flag that indicates whether to draw into the depth buffer.
-   * \return true iff drawing into the depth buffer is enbaled.
-   */
-  Boolean get_draw_depth() const;
-
-  /*! Set the flag that indicates whether to draw into the depth buffer.
-   * \param draw_depth indicates whether to draw into the depth buffer.
-   */
-  void set_draw_depth(Boolean draw_depth);
-
-  /*! Obtain the flag that indicates whether to test the depth buffer.
-   * \return true iff testing the depth buffer is enabled.
-   */
-  Boolean get_test_depth() const;
-
-  /*! Set the flag that indicates whether to test the depth buffer.
-   * \param test_depth indicates whether to test the depth buffer.
-   */
-  void set_test_depth(Boolean test_depth);
-
-  /*! Obtain the depth function.
-   * \return the depth function.
-   */
-  Gfx::Depth_func get_depth_function() const;
-
-  /*! Set the depth function.
-   * \param depth_function the depth function.
-   */
-  void set_depth_function(Gfx::Depth_func depth_function);
-
   /*! Obtain the color mask.
    * \return the color mask.
    */
@@ -296,19 +263,10 @@ protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
-  /*! Indicates whether to draw into the depth buffer. */
-  Boolean m_draw_depth;
-
-  /*! Indicates whether to test the depth buffer. */
-  Boolean m_test_depth;
-
   /*! Specify mapping of depth values from normalized device coordinates to
    * window coordinates.
    */
   Vector2f m_depth_range;
-
-  /*! The depth function of the shape. */
-  Gfx::Depth_func m_depth_function;
 
   /*! The color mask of the shape. */
   Vector4ub m_color_mask;
@@ -410,13 +368,12 @@ private:
    */
   void draw_geometry(Draw_action* draw_action);
 
+  //! Default values
   static const Boolean s_def_is_visible;
   static const Vector2f s_def_depth_range;
   static const Vector4ub s_def_color_mask;
-  static const Gfx::Depth_func s_def_depth_function;
   static const Gfx::Cull_face s_def_cull_face;
 
-  static const Char* s_depth_function_names[];
   static const Char* s_cull_face_names[];
 };
 
@@ -429,30 +386,6 @@ inline Shape* Shape::prototype() { return new Shape(true); }
 
 //! \brief creates a new container of this type (virtual copy constructor).
 inline Container* Shape::create() { return new Shape(); }
-
-/*! \brief obtains the flag that indicates whether to draw into the depth
- * buffer.
- */
-inline Boolean Shape::get_draw_depth() const { return m_draw_depth; }
-
-//! \brief sets the flag that indicates whether to draw into the depth buffer.
-inline void Shape::set_draw_depth(Boolean draw_depth)
-{ m_draw_depth = draw_depth; }
-
-//! \brief obtains the flag that indicates whether to test the depth buffer.
-inline Boolean Shape::get_test_depth() const { return m_test_depth; }
-
-//! \brief sets the flag that indicates whether to test the depth buffer.
-inline void Shape::set_test_depth(Boolean test_depth)
-{ m_test_depth = test_depth; }
-
-//! \brief obtains the depth function.
-inline Gfx::Depth_func Shape::get_depth_function() const
-{ return m_depth_function; }
-
-//! \brief sets the depth function.
-inline void Shape::set_depth_function(Gfx::Depth_func depth_function)
-{ m_depth_function = depth_function; }
 
 // \brief obtains the color mask.
 inline Vector4ub Shape::get_color_mask() const { return m_color_mask; }

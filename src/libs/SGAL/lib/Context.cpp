@@ -139,8 +139,8 @@ void Context::init()
   m_current_state->m_src_blend_func        = Gfx::ONE_SBLEND;
   m_current_state->m_dst_blend_func        = Gfx::ZERO_DBLEND;
   m_current_state->m_color_mask.set(0xff, 0xff, 0xff, 0xff);
-  m_current_state->m_depth_enable          = false;
-  m_current_state->m_depth_func            = Gfx::LESS_DFUNC;
+  m_current_state->m_depth_enable          = true;
+  m_current_state->m_depth_func            = Appearance::s_def_depth_function;
   m_current_state->m_depth_mask            = true;
   m_current_state->m_fog_enable            = false;
   m_current_state->m_poly_mode             = Gfx::FILL_PMODE;

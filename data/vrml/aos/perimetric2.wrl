@@ -10,7 +10,6 @@ ColorBackground {
 NavigationInfo { type [ "EXAMINE" "ANY" ] }
 Viewpoint {
   type "ORTHOGONAL"
-  fieldOfView 2.98
 }
 
 DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
@@ -55,15 +54,15 @@ DEF SNAP Snapshot {
 
 Transform {
   bboxCenter 0 0 0
-  bboxSize 1.1 1.1 1.1
+  bboxSize 2 2 2
   rotation -1 0 0 1.5708
   children [
     Transform {
       rotation 0 0 1 0.3
       children [
 	Shape {
-	  drawDepth FALSE
 	  appearance Appearance {
+            drawDepth FALSE
 	    material Material {
 	      diffuseColor 0.5 0.5 0.5
 	      ambientIntensity 0.7
@@ -123,7 +122,14 @@ Transform {
 		  }
 		}
 		Shape {
-		  appearance USE AXES_APP
+                  appearance DEF AXES_APP Appearance {
+                    material Material {
+                      # ambientIntensity 1
+                      diffuseColor 0.4 0.4 0.4
+                      # specularColor 0.3 0.3 0.3
+                      # transparency 0.0001
+                    }
+                  }
 		  geometry Sphere {
 		    center 0 0 -1
 		    radius 0.05
@@ -191,14 +197,7 @@ Transform {
 	  scale 0.2 0.2 0.2
 	  children [
 	    Shape {
-	      appearance DEF AXES_APP Appearance {
-		material Material {
-		  # ambientIntensity 1
-		  diffuseColor 0.4 0.4 0.4
-		  # specularColor 0.3 0.3 0.3
-		  # transparency 0.0001
-		}
-	      }
+              appearance USE AXES_APP
 	      geometry Sphere { radius 0.1 }
 	    }
 	    DEF CS_AXIS Transform {
