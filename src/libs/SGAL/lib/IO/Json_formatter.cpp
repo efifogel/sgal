@@ -522,7 +522,7 @@ void Json_formatter::export_camera()
   auto type = frustum.get_type();
   attribute("type", ((Frustum::ORTHOGONAL == type) ?
                      "OrthogonalCamera" : "PerspectiveCamera"));
-  attribute("fov", rad2deg(frustum.get_fov()));
+  attribute("fov", rad2deg(frustum.get_horiz_fov()));
   attribute("aspect", frustum.get_aspect_ratio());
   Float near_dist, far_dist;
   frustum.get_near_far(near_dist, far_dist);
