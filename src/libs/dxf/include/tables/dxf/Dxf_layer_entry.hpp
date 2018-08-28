@@ -21,25 +21,15 @@
 #ifndef DXF_LAYER_ENTRY_HPP
 #define DXF_LAYER_ENTRY_HPP
 
-#include <boost/shared_ptr.hpp>
-
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 
 #include "dxf/basic.hpp"
 #include "dxf/Dxf_base_entry.hpp"
 
-SGAL_BEGIN_NAMESPACE
-
-class Color_array_3d;
-
-SGAL_END_NAMESPACE
-
 DXF_BEGIN_NAMESPACE
 
 struct SGAL_SGAL_DECL Dxf_layer_entry : Dxf_base_entry {
-
-  typedef boost::shared_ptr<SGAL::Color_array_3d>       Shared_color_array_3d;
 
   /// Member records
   //@{
@@ -70,9 +60,6 @@ struct SGAL_SGAL_DECL Dxf_layer_entry : Dxf_base_entry {
    * Initialize the color with -1 to indicate that it hasn't been set.
    */
   Dxf_layer_entry();
-
-  //! The color array for this layer, which consists of one color.
-  Shared_color_array_3d m_color_array;
 
   //! Default values
   static const bool s_def_line_weight;
