@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s) : Efi Fogel         <efifogel@gmail.com>
 //             Ram Shaked        <ramsha7@gmail.com>
 
@@ -358,6 +360,12 @@ private:
 
   //! The size of a bounding box that encloses the children of the group.
   Vector3f m_bbox_size;
+
+  //! Indicates whether the center of the bounding sphere is locked.
+  Boolean m_locked_bounding_sphere_center;
+
+  //! Indicates whether the radius of the bounding sphere is locked.
+  Boolean m_locked_bounding_sphere_radius;
 
   //! Default values.
   static const Vector3f s_def_bbox_center;

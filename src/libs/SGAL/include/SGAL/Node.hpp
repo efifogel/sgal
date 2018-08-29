@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s) : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_NODE_HPP
 #define SGAL_NODE_HPP
@@ -125,17 +127,14 @@ public:
   void bounding_sphere_changed(const Field_info* field_info = nullptr);
 
 protected:
-  /*! The sphere bound of the node. */
+  //! The sphere bound of the node.
   Bounding_sphere m_bounding_sphere;
 
-  /*! A flag that indicatres whether the bounding sphere is valid */
+  //! A flag that indicatres whether the bounding sphere is valid.
   Boolean m_dirty_bounding_sphere;
 
-  /*! Indicates whether the bounding sphere is locked */
-  Boolean m_locked_bounding_sphere;
-
 private:
-  /*! The container prototype. */
+  //! The container prototype.
   static Container_proto* s_prototype;
 };
 

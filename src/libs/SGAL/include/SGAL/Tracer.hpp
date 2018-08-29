@@ -57,6 +57,7 @@ public:
     EXPORT,
     FONT,
     PROTO,
+    BOUNDING_SPHERE,
     NUM_CODES,
     MAX_NUM_CODES = 32          // must be larger than NUM_CODES
   };

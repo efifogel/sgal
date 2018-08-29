@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
@@ -144,6 +146,10 @@ void Shape::set_geometry(Shared_geometry geometry)
 //! \brief cleans the bounding sphere of all geometries in the shape.
 void Shape::clean_bounding_sphere()
 {
+  SGAL_TRACE_CODE(Tracer::BOUNDING_SPHERE,
+                  std::cout << "Shape::clean " << "Tag: " << get_tag()
+                  << ", name: " << get_name()
+                  << std::endl;);
   if (!is_visible()) {
     m_bounding_sphere.set_radius(0);
     m_dirty_bounding_sphere = false;

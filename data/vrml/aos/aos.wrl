@@ -8,10 +8,10 @@ ColorBackground {
   clearStencil TRUE
 }
 NavigationInfo { type [ "EXAMINE" "ANY" ] }
-Viewpoint {
-  type "ORTHOGONAL"
-  # radiusScale 1
-}
+# Viewpoint {
+#   type "ORTHOGONAL"
+#   # radiusScale 1
+# }
 
 DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
 
@@ -53,9 +53,8 @@ DEF SNAP Snapshot {
   fileName "aos"
 }
 
-Transform {
+DEF XXX1 Transform {
   bboxCenter 0 0 0
-  bboxSize 2 2 2
   children [
     Switch {
       whichChoice 0
@@ -159,7 +158,7 @@ Transform {
     DEF DISCONTINUITY_SWITCH Switch {
       whichChoice 0
       children [
-	Transform {
+	DEF XXX2 Transform {
 	  # rotation 0 0 1 -0.5667
 	  children [
 	    Shape {
@@ -246,11 +245,11 @@ Transform {
 	    }
 	   ]
 	}
-	Transform {
+	DEF XXX3 Transform {
 	  rotation 0 0 -1 1.57
 	  children [ USE CS_AXIS ]
 	}
-	Transform {
+	DEF XXX4 Transform {
 	  rotation 1 0 0 1.57
 	  children [ USE CS_AXIS ]
 	}

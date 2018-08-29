@@ -55,7 +55,8 @@ Tracer::Tracer() :
     {"snapshot", SNAPSHOT},
     {"export", EXPORT},
     {"font", FONT},
-    {"proto", PROTO}
+    {"proto", PROTO},
+    {"boundingSphere", BOUNDING_SPHERE}
   };
   set_options(std::move(options));
 }

@@ -54,7 +54,6 @@ DEF SNAP Snapshot {
 
 Transform {
   bboxCenter 0 0 0
-  bboxSize 2 2 2
   rotation -1 0 0 1.5708
   children [
     Transform {

@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
@@ -562,10 +564,10 @@ void Transform::reset(const Field_info* /* field_info */)
  */
 void Transform::clean_bounding_sphere()
 {
-  if (m_locked_bounding_sphere) {
-    m_dirty_bounding_sphere = false;
-    return;
-  }
+  SGAL_TRACE_CODE(Tracer::BOUNDING_SPHERE,
+                  std::cout << "Transform::clean " << "Tag: " << get_tag()
+                  << ", name: " << get_name()
+                  << std::endl;);
 
   if (m_dirty_matrix) clean_matrix();
   Group::clean_bounding_sphere();

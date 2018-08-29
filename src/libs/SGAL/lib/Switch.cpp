@@ -123,11 +123,6 @@ void Switch::isect(Isect_action* isect_action)
  */
 void Switch::clean_bounding_sphere()
 {
-  if (m_locked_bounding_sphere) {
-    m_dirty_bounding_sphere = false;
-    return;
-  }
-
   if (!is_visible()) {
     m_bounding_sphere.set_radius(0);
     m_dirty_bounding_sphere = false;
@@ -136,7 +131,6 @@ void Switch::clean_bounding_sphere()
 
   auto node = boost::dynamic_pointer_cast<Node>(get_choice());
   if (node) {
-    if (node->is_dirty_bounding_sphere()) node->clean_bounding_sphere();
     const auto& sb = node->get_bounding_sphere();
     if (sb.get_radius() != 0) {
       m_bounding_sphere.set_center(sb.get_center());

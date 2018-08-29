@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Node.hpp"
@@ -22,6 +24,7 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_rule.hpp"
 #include "SGAL/Field_infos.hpp"
+#include "SGAL/Tracer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -30,8 +33,7 @@ Container_proto* Node::s_prototype(nullptr);
 //! Constructor.
 Node::Node(Boolean proto) :
   Container(proto),
-  m_dirty_bounding_sphere(true),
-  m_locked_bounding_sphere(false)
+  m_dirty_bounding_sphere(true)
 {}
 
 //! \brief initializes the node prototype.
@@ -72,6 +74,10 @@ void Node::bounding_sphere_changed(const Field_info* /* field_info */)
 //! \brief obtains the sphere bound.
 const Bounding_sphere& Node::get_bounding_sphere()
 {
+  SGAL_TRACE_CODE(Tracer::BOUNDING_SPHERE,
+                  std::cout << "Node::get " << "Tag: " << get_tag()
+                  << ", name: " << get_name()
+                  << std::endl;);
   if (m_dirty_bounding_sphere) clean_bounding_sphere();
   return m_bounding_sphere;
 }

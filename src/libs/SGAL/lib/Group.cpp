@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 //            Ram Shaked        <ramsha7@gmail.com>
 
@@ -59,7 +61,9 @@ Group::Group(Boolean proto) :
   m_dirty_childs(false),
   m_dirty_other(false),
   m_bbox_center(s_def_bbox_center),
-  m_bbox_size(s_def_bbox_size)
+  m_bbox_size(s_def_bbox_size),
+  m_locked_bounding_sphere_center(false),
+  m_locked_bounding_sphere_radius(false)
 {}
 
 //! \brief cleans the children in case they are dirty.
@@ -285,12 +289,11 @@ void Group::isect(Isect_action* isect_action)
  */
 void Group::clean_bounding_sphere()
 {
+  SGAL_TRACE_CODE(Tracer::BOUNDING_SPHERE,
+                  std::cout << "Group::clean " << "Tag: " << get_tag()
+                  << ", name: " << get_name()
+                  << std::endl;);
   if (m_dirty_childs) clean_childs();
-
-  if (m_locked_bounding_sphere) {
-    m_dirty_bounding_sphere = false;
-    return;
-  }
 
   if (!is_visible()) {
     m_bounding_sphere.set_radius(0);
@@ -302,14 +305,21 @@ void Group::clean_bounding_sphere()
   for (auto it = m_childs.begin(); it != m_childs.end(); ++it) {
     auto node = boost::dynamic_pointer_cast<Node>(*it);
     if (node) {
-      if (node->is_dirty_bounding_sphere()) node->clean_bounding_sphere();
       const Bounding_sphere& sb = node->get_bounding_sphere();
       if (sb.get_radius() == 0) continue;
       spheres.push_back(&sb);
     }
   }
 
-  m_bounding_sphere.set_around(spheres.begin(), spheres.end());
+  if (m_locked_bounding_sphere_center || m_locked_bounding_sphere_radius) {
+    Bounding_sphere bs;
+    bs.set_around(spheres.begin(), spheres.end());
+    if (! m_locked_bounding_sphere_center)
+      m_bounding_sphere.set_center(bs.get_center());
+    if (! m_locked_bounding_sphere_radius)
+      m_bounding_sphere.set_radius(bs.get_radius());
+  }
+  else m_bounding_sphere.set_around(spheres.begin(), spheres.end());
   m_dirty_bounding_sphere = false;
 }
 
@@ -328,8 +338,8 @@ void Group::set_attributes(Element* elem)
     }
     if (name == "bboxCenter") {
       m_bounding_sphere.set_center(value);
-      m_dirty_bounding_sphere = false;
-      m_locked_bounding_sphere = true;
+      m_locked_bounding_sphere_center = true;
+      if (m_locked_bounding_sphere_radius) m_dirty_bounding_sphere = false;
       elem->mark_delete(ai);
       continue;
     }
@@ -337,8 +347,8 @@ void Group::set_attributes(Element* elem)
       Vector3f vec(value);
       float radius = vec.min() * 0.5f;
       m_bounding_sphere.set_radius(radius);
-      m_dirty_bounding_sphere = false;
-      m_locked_bounding_sphere = true;
+      m_locked_bounding_sphere_radius = true;
+      if (m_locked_bounding_sphere_center) m_dirty_bounding_sphere = false;
       elem->mark_delete(ai);
       continue;
     }
@@ -519,7 +529,12 @@ void Group::field_changed(const Field_info* field_info)
 {
   switch (field_info->get_id()) {
    case BOUNDING_SPHERE:
-    m_dirty_bounding_sphere = true;
+    SGAL_TRACE_CODE(Tracer::BOUNDING_SPHERE,
+                    std::cout << "Group::dirty true " << "Tag: " << get_tag()
+                    << ", name: " << get_name()
+                    << std::endl;);
+    if (! m_locked_bounding_sphere_center || ! m_locked_bounding_sphere_radius)
+      m_dirty_bounding_sphere = true;
     break;
 
    default: break;
