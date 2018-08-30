@@ -7,6 +7,7 @@ endif()
 # Define options
 option(BUILD_SHARED_LIBS "Build shared libs instead of static libs" ON)
 option(SGAL_USE_SCGAL "Use SCGAL library" ON)
+option(SGAL_USE_DXF "Use DXF library" ON)
 option(SGAL_USE_V8 "Use V8 Javascript engine library" ON)
 option(SGAL_USE_NGM "Nef Gaussian Map (CGAL)" ON)
 option(SGAL_USE_LTS "Lines Through Segments" ON)

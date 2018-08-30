@@ -114,13 +114,16 @@ add_subdirectory(libs)
 add_subdirectory(cmds)
 
 # Add all targets to the build-tree export set
+set(SGAL_TARGETS SGAL)
 if (SGAL_USE_SCGAL)
-  export(TARGETS SGAL DXF SCGAL player-bin
-    FILE "${PROJECT_BINARY_DIR}/SGALTargets.cmake")
-else()
-  export(TARGETS SGAL DXF player-bin
-    FILE "${PROJECT_BINARY_DIR}/SGALTargets.cmake")
+  set(SGAL_TARGETS ${SGAL_TARGETS} SCGAL)
 endif()
+if (SGAL_USE_DXF)
+  set(SGAL_TARGETS ${SGAL_TARGETS} DXF)
+endif()
+set(SGAL_TARGETS ${SGAL_TARGETS} player-bin)
+export(TARGETS ${SGAL_TARGETS}
+       FILE "${PROJECT_BINARY_DIR}/SGALTargets.cmake")
 
 # Export the package for use from the build-tree
 # (this registers the build-tree with a global CMake-registry)
