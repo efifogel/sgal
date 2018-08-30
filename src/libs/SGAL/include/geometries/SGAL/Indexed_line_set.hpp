@@ -45,7 +45,6 @@ public:
     COLOR_PER_VERTEX,
     NORMAL_PER_VERTEX,
     LINE_WIDTH,
-    ELLIMINATE_HIDEN,
     LAST
   };
 
@@ -381,9 +380,6 @@ protected:
 
   //! The width of the dual lines.
   Float m_line_width;
-
-  //! Indicates whether to elliminate hiden lines using depth test.
-  Boolean m_elliminate_hiden;
 
   //! Indicates whether the mesh is textured.
   Boolean m_has_texture;

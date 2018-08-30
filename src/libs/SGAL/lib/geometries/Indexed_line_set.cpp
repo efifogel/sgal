@@ -63,7 +63,6 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_color_per_vertex(m_def_color_per_vertex),
   m_normal_per_vertex(m_def_normal_per_vertex),
   m_line_width(s_def_line_width),
-  m_elliminate_hiden(true),
   m_has_texture(false),
   m_bb_is_pre_set(false),
   m_use_display_list(false),
@@ -544,20 +543,24 @@ void Indexed_line_set::draw(Draw_action* action)
   if (empty_lines_indices(m_lines_coord_indices)) return;
   if (!m_coord_array || m_coord_array->empty()) return;
 
+  // Clean the normals or the colors.
+  //! \todo clean the nromals only if lighting is enabled.
+  if (resolve_fragment_source() == FS_NORMAL) {
+    if (is_dirty_lines_normal_indices()) clean_lines_normal_indices();
+  }
+  else {
+    if (is_dirty_lines_color_indices()) clean_lines_color_indices();
+  }
+
+  // Clean the tex coordinates.
   auto* context = action->get_context();
-  if (!m_elliminate_hiden) {
-    context->draw_depth_mask(false);
-    context->draw_depth_enable(false);
+  if (context->get_tex_enable() && !(context->get_tex_gen_enable())) {
+    if (is_dirty_lines_tex_coord_indices()) clean_lines_tex_coord_indices();
   }
+
   context->draw_line_width(m_line_width);
-
   draw_lines(action);
-
   context->draw_line_width(1.0f);
-  if (!m_elliminate_hiden) {
-    context->draw_depth_enable(true);
-    context->draw_depth_mask(true);
-  }
 }
 
 //! \brief draws the representation.
@@ -635,11 +638,6 @@ void Indexed_line_set::set_attributes(Element* elem)
     }
     if (name == "lineWidth") {
       set_line_width(boost::lexical_cast<Float>(value));
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "elliminateHiden") {
-      m_elliminate_hiden = compare_to_true(value);
       elem->mark_delete(ai);
       continue;
     }

@@ -9,11 +9,9 @@ ColorBackground {
 NavigationInfo { type [ "EXAMINE" "ANY" ] }
 Viewpoint {
   type "ORTHOGONAL"
-  fieldOfView 3.11
   #radiusScale 0.7
 }
 
-DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
 DEF EXPORT_KEY SingleKeySensor { key "O" }
 DEF SNAP_KEY SingleKeySensor { key "S" }
 
@@ -33,10 +31,11 @@ DEF TRANSFORM Transform {
     DEF SHAPE_SEGMENTS Shape {
       appearance Appearance {
     	material Material {}
+        drawDepth FALSE
+        testDepth FALSE
       }
       geometry DEF SEGMENTS IndexedLineSet {
 	colorPerVertex FALSE
-    	elliminateHiden TRUE
     	lineWidth 4
     	# coord EpecCoordinate { ratPoint
     	coord DEF co Coordinate {
