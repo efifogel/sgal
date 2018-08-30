@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
 #include <algorithm>
@@ -196,14 +198,33 @@ void Camera::clean_frustum()
   m_frustum.set_aspect_ratio(m_aspect_ratio);
   m_frustum.set_near(near_plane);
   m_frustum.set_far(far_plane);
-  m_frustum.set_horiz_fov(m_field_of_view);
-  m_frustum.set_vert_fov(m_field_of_view / m_aspect_ratio);
+
+  const auto* context = m_scene_graph->get_context();
+  if (context) {
+    const auto* viewport = context->get_viewport();
+    if (viewport[3] > viewport[2]) {
+      m_frustum.set_horiz_fov(m_field_of_view);
+      m_frustum.set_vert_fov(m_field_of_view / m_aspect_ratio);
+      m_frustum.set_aspect_mode(Frustum::CALC_VERT);
+    }
+    else {
+      m_frustum.set_vert_fov(m_field_of_view);
+      m_frustum.set_horiz_fov(m_field_of_view * m_aspect_ratio);
+      m_frustum.set_aspect_mode(Frustum::CALC_HORIZ);
+    }
+  }
+  else {
+    m_frustum.set_horiz_fov(m_field_of_view);
+    m_frustum.set_vert_fov(m_field_of_view / m_aspect_ratio);
+    m_frustum.set_aspect_mode(Frustum::CALC_VERT);
+  }
   m_dirty_frustum = false;
 }
 
 //! \brief sets the frustum field of view angle.
 void Camera::set_field_of_view(float fov)
 {
+  std::cout << "Camera::set_field_of_view() " << fov << std::endl;
   m_field_of_view = fov;
   m_dirty_distance = true;
   m_dirty_frustum = true;

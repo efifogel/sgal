@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_CONTEXT_HPP
 #define SGAL_CONTEXT_HPP
@@ -128,6 +130,7 @@
 #endif
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Bit_mask.hpp"
@@ -237,7 +240,13 @@ public:
 
   void set_viewport(Uint x, Uint y, Uint w, Uint h);
 
+  /*! Obtain the viewport.
+   */
   void get_viewport(Uint& x, Uint& y, Uint& w, Uint& h) const;
+
+  /*! Obtain the (const) viewport.
+   */
+  const Int32* get_viewport() const;
 
   void set_material_mode_enable(Gfx::Material_mode material_mode_enable);
 

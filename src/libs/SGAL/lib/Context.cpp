@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
@@ -45,16 +47,16 @@ SGAL_BEGIN_NAMESPACE
 
 // #define GL2PS
 
-Context* Context::s_current_context = nullptr;
+Context* Context::s_current_context(nullptr);
 
 // NextId, must start at 1 so we don't clobber GL default targets of 0.
 // Int Context::s_nextId = 1;
 // IntArray* Context::s_freeIdArray = 0;
 
 #if !defined(NO_AUDIO)
-Ref_array* Context::s_sounds_array = nullptr;
-Ref_array* Context::s_sound_players_array = nullptr;
-Boolean Context::s_sound_initialized = false;
+Ref_array* Context::s_sounds_array(nullptr);
+Ref_array* Context::s_sound_players_array(nullptr);
+Boolean Context::s_sound_initialized(false);
 #endif
 
 //! \brief constructor.
@@ -273,7 +275,7 @@ void Context::set_viewport(Uint x, Uint y, Uint w, Uint h)
   }
 }
 
-//! \brief Obtain the viewport.
+//! \brief obtains the viewport.
 void Context::get_viewport(Uint& x, Uint& y, Uint& w, Uint& h) const
 {
   x = static_cast<Uint>(m_viewport[0]);
@@ -281,6 +283,9 @@ void Context::get_viewport(Uint& x, Uint& y, Uint& w, Uint& h) const
   w = static_cast<Uint>(m_viewport[2]);
   h = static_cast<Uint>(m_viewport[3]);
 }
+
+//! \brief obtains the (const) viewport.
+const Int32* Context::get_viewport() const { return m_viewport; }
 
 //! \brief
 void Context::set_normalize_enable(Boolean normalize_enable)

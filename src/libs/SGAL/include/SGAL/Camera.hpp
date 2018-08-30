@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_CAMERA_HPP
 #define SGAL_CAMERA_HPP
@@ -230,75 +232,73 @@ public:
   float get_far_plane_scale() const { return m_far_plane_scale; }
 
 protected:
-  /*! The Scene_graph. */
+  //! The Scene_graph.
   Scene_graph* m_scene_graph;
 
-  /*! The offset of the camera. */
+  //! The offset of the camera.
   // Vector3f m_position;
 
-  /* The rotation relative to the local coordinate system. */
+  //! The rotation relative to the local coordinate system.
   Rotation m_orientation;
 
-  /*! The camera line of sight. */
+  //! The camera line of sight.
   Vector3f m_line_of_sight;
 
-  /*! The up vector. */
+  //! The up vector.
   Vector3f m_up;
 
-  /*! The eye position. */
+  //! The eye position.
   Vector3f m_eye;
 
-  // The normalized "right" vector.
+  //! The normalized "right" vector.
   Vector3f m_xaxis;
 
-  // The normalized "up" vector.
+  //! The normalized "up" vector.
   Vector3f m_yaxis;
 
-  // The normalized "forward" vector.
+  //! The normalized "forward" vector.
   Vector3f m_zaxis;
 
-  /*! The camera viewong matrix. */
+  //! The camera viewong matrix.
   Matrix4f m_view_mat;
 
-  /*! The camera frustum. */
+  //! The camera frustum.
   Frustum m_frustum;
 
-  /*! The camera field of view. */
+  //! The camera field of view.
   float m_field_of_view;
 
-  /*! The camera aspect ratio. */
+  //! The camera aspect ratio.
   float m_aspect_ratio;
 
-  /*! The nearest clipping plane. */
+  //! The nearest clipping plane.
   float m_nearest_clipping_plane;
 
-  /*! The furthest clipping plane. */
+  //! The furthest clipping plane.
   float m_furthest_clipping_plane;
 
-  /*! The distance betwen the camera eye position and its target. */
+  //! The distance betwen the camera eye position and its target.
   Float m_distance;
 
-  /*! The effective radius of the bounding sphere. */
+  //! The effective radius of the bounding sphere.
   Float m_radius;
 
-  /*! The offset of the camera. */
+  //! The offset of the camera.
   Vector3f m_offset;
 
-  /*! The scale factor the radius of the bounding sphere is extended by. */
+  //! The scale factor the radius of the bounding sphere is extended by.
   float m_radius_scale;
 
-  /*! The scale value the far plane is extended by. */
+  //! The scale value the far plane is extended by.
   float m_far_plane_scale;
 
-  /*! Indicates whether the camera axes are dirty and thus must be cleaned. */
+  //! Indicates whether the camera axes are dirty and thus must be cleaned.
   bool m_dirty_axes;
 
-  /*! Indicates whether the modelview matrix is durty and thus must be cleaned.
-   */
+  //! Indicates whether the modelview matrix is durty and thus must be cleaned.
   bool m_dirty_matrix;
 
-  /*! Indicates whether the frustum is dirty and thus must be cleaned.
-   */
+  //! Indicates whether the frustum is dirty and thus must be cleaned.
   bool m_dirty_frustum;
 
   /*! Indicates whether the distance between the camera eye position and its
@@ -306,14 +306,14 @@ protected:
    */
   bool m_dirty_distance;
 
-  /*! The textual description of the camera. (Used by VRML.) */
+  //! The textual description of the camera. (Used by VRML.)
   std::string m_description;
 
   /*! Obtains the tag (type) of the container. */
   virtual const std::string& get_tag() const { return s_tag; }
 
 private:
-  /*! The tag that identifies this container type. */
+  //! The tag that identifies this container type.
   static const std::string s_tag;
 
   static Container_proto* s_prototype;

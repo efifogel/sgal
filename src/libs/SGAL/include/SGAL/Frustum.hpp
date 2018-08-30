@@ -14,7 +14,11 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s) : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_FRUSTUM_HPP
 #define SGAL_FRUSTUM_HPP
@@ -232,10 +236,10 @@ private:
   Boolean m_dirty_corners;
   Boolean m_dirty_planes;
 
-  /*! The perturbation scale along the x axis for accumulation AA. */
+  //! The perturbation scale along the x axis for accumulation AA.
   Float m_x_perturbation_scale;
 
-  /*! The perturbation scale along the y axis for accumulation AA. */
+  //! The perturbation scale along the y axis for accumulation AA.
   Float m_y_perturbation_scale;
 
   // Default values

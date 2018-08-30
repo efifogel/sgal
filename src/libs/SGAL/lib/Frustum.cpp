@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
 #include <iterator>
@@ -53,7 +55,7 @@ Frustum::Frustum() :
   m_right(30.0f),
   m_top(22.5f),
   m_bottom(-22.5f),
-  m_aspect_mode(CALC_VERT),
+  m_aspect_mode(CALC_HORIZ),
   m_aspect_ratio(s_def_aspect_ratio),
   m_horiz_fov(s_def_horiz_fov),
   m_vert_fov(m_horiz_fov / m_aspect_ratio),
@@ -149,11 +151,7 @@ void Frustum::set_horiz_fov(Float horiz_fov)
 }
 
 //! \brief obtains the horizontal field-of-view.
-Float Frustum::get_horiz_fov()
-{
-  if (m_dirty_corners) clean_corners();
-  return m_horiz_fov;
-}
+Float Frustum::get_horiz_fov() { return m_horiz_fov; }
 
 //! \brief sets the vertical field-of-view.
 void Frustum::set_vert_fov(Float vert_fov)
@@ -165,11 +163,7 @@ void Frustum::set_vert_fov(Float vert_fov)
 }
 
 //! \brief obtains the vertical field-of-view.
-Float Frustum::get_vert_fov()
-{
-  if (m_dirty_corners) clean_corners();
-  return m_vert_fov;
-}
+Float Frustum::get_vert_fov() { return m_vert_fov; }
 
 //! \brief
 void Frustum::set_right(Float right)
