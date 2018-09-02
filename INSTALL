@@ -267,9 +267,23 @@ python.
 2.5.4.1. Linux
 
 ubuntu:14.04, for example, comes with V8 engine version 3.14.5.8. This
-version is too old. V8 resides in a git repository and there is no easy way
-to build from a tarball.
+version is too old. The default version that comes with ubuntu:16.04 is
+also too old. V8 resides in a git repository and there is no easy way
+to build from a tarball. However, there is a ppa that contains an appropriate
+version.
 
+2.5.4.1.1. PPA
+
+  1. Enable access to the ppa & install it.
+  sudo add-apt-repository ppa:pinepain/libv8
+  sudo apt-get update && sudo apt-get upgrade
+  sudo apt-get install -y libv8-6.6 libv8-6.6-dev
+
+  2. Export the include and lib directories
+  export V8_INC_DIR=/opt/libv8-6.6/include
+  export V8_LIB_DIR=/opt/libv8-6.6/lib
+
+2.5.4.1.2. From sources
 To obtain v8 and build,
   1. Clone the depot tools:
   git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
@@ -282,7 +296,7 @@ To obtain v8 and build,
   cd $V8_BUILD_DIR
   fetch v8
   cd v8
-  git checkout -b 5.8 -t branch-heads/5.8
+  git checkout -b 6.6 -t branch-heads/6.6
   gclient sync
   gn gen out.gn/x64.release --args='is_debug=false target_cpu="x64" is_component_build=true v8_use_external_startup_data=false'
   ninja -C out.gn/x64.release

@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
  * Initialize the Scene Graph Algorithm Library (SGAL).
@@ -49,7 +51,7 @@ SGAL_SGAL_DECL void initialize(int /* argc */, char* argv[])
 {
   Magick::InitializeMagick(*argv);
 #if defined(SGAL_USE_V8)
-  v8::V8::InitializeICU();
+  // v8::V8::InitializeICU();
   v8::V8::InitializeExternalStartupData(argv[0]);
   s_platform = v8::platform::CreateDefaultPlatform();
   SGAL_assertion(s_platform);

@@ -14,10 +14,15 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s) : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_ARRAY_BUFFER_ALLOCATOR_HPP
 #define SGAL_ARRAY_BUFFER_ALLOCATOR_HPP
+
+// This is an obsolete file that is no longer in use. It stopped being in use
+// since the switch to V8 6.6. The new version provides a default allocator.
 
 #if defined(SGAL_USE_V8)
 #include <v8.h>
@@ -27,8 +32,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! The allocator below is used by the recent version of V8, which is not
- * yet in use.
+/*! The allocator below used to be used by a certain version of V8.
  * Why doesn't it have a default? beats me.
  */
 class Array_buffer_allocator : public v8::ArrayBuffer::Allocator {

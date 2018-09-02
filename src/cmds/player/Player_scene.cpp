@@ -232,7 +232,8 @@ void Player_scene::create_scene(char* data, int size)
 #if defined(SGAL_USE_V8)
 #if 1
   v8::Isolate::CreateParams params;
-  params.array_buffer_allocator = &m_allocator;
+  params.array_buffer_allocator =
+    v8::ArrayBuffer::Allocator::NewDefaultAllocator();
   m_isolate = v8::Isolate::New(params);
 #else
   m_isolate = v8::Isolate::New();
@@ -287,13 +288,10 @@ void Player_scene::create_scene()
   m_scene_graph->get_configuration_stack()->bind_top();
 
 #if defined(SGAL_USE_V8)
-#if 1
-  // v8::Isolate::CreateParams params;
-  m_params.array_buffer_allocator = &m_allocator;
-  m_isolate = v8::Isolate::New(m_params);
-#else
-  m_isolate = v8::Isolate::New();
-#endif
+  v8::Isolate::CreateParams params;
+  params.array_buffer_allocator =
+    v8::ArrayBuffer::Allocator::NewDefaultAllocator();
+  m_isolate = v8::Isolate::New(params);
   SGAL_assertion(m_isolate);
   m_scene_graph->set_isolate(m_isolate);
 #endif

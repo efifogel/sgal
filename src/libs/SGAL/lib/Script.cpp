@@ -14,6 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #include <algorithm>
@@ -909,6 +911,7 @@ void Script::add_to_scene(Scene_graph* scene_graph)
   v8::Handle<v8::ObjectTemplate> global_tmpl =
     v8::ObjectTemplate::New(m_isolate);
   global_tmpl->SetInternalFieldCount(1);
+  add_callbacks(global_tmpl); // add callbacks for every field and output field.
 
   v8::Local<v8::Context> context =
     v8::Context::New(m_isolate, NULL, global_tmpl);
@@ -919,7 +922,6 @@ void Script::add_to_scene(Scene_graph* scene_graph)
   v8::Local<v8::Object> prototype =
     v8::Local<v8::Object>::Cast(global->GetPrototype());
   prototype->SetInternalField(0, v8::External::New(m_isolate, this));
-  add_callbacks(global);    // add callbacks for every field and output field.
   bound_script();           // bound the script to the context
 }
 
@@ -1357,11 +1359,11 @@ v8::Handle<v8::Value> Script::get_multi_external(const Field_info* field_info)
 /*! \brief adds setter and getter callbacks to the engine for every field and
  * every output field.
  */
-void Script::add_callbacks(v8::Local<v8::Object> global)
+void Script::add_callbacks(v8::Local<v8::ObjectTemplate> global_tmpl)
 {
   auto* proto = get_prototype();
   for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
-    const Field_info* field_info = (*it).second;
+    const auto* field_info = (*it).second;
     if ((field_info->get_rule() != Field_rule::RULE_FIELD) &&
         (field_info->get_rule() != Field_rule::RULE_OUT))
       continue;
@@ -1373,9 +1375,9 @@ void Script::add_callbacks(v8::Local<v8::Object> global)
     v8::Handle<v8::External> ext =
       v8::External::New(m_isolate, const_cast<Field_info*>(field_info));
     if (field_info->is_scalar())
-      global->SetAccessor(field_name, getter, setter, ext);
+      global_tmpl->SetAccessor(field_name, getter, setter, ext);
     else
-      global->SetAccessor(field_name, array_getter, array_setter, ext);
+      global_tmpl->SetAccessor(field_name, array_getter, array_setter, ext);
   }
 }
 
@@ -1423,7 +1425,7 @@ void Script::bound_script()
       v8::String::NewFromUtf8(m_isolate, source_str.c_str());
 
     // set up an error handler to catch any exceptions the script might throw.
-    v8::TryCatch try_catch;
+    v8::TryCatch try_catch(m_isolate);
 
     v8::Handle<v8::Script> script = v8::Script::Compile(source);
     if (script.IsEmpty()) {
@@ -1525,7 +1527,7 @@ void Script::execute(const Field_info* field_info)
   // the id of the associate field is inserted into the set. A field, the
   // id of which is not found in the set is not cascaded.
   clear_assigned();
-  v8::TryCatch try_catch;
+  v8::TryCatch try_catch(m_isolate);
   v8::Handle<v8::Value> func_result = func->Call(global, 2, args);
   if (func_result.IsEmpty()) {
     v8::String::Utf8Value error(try_catch.Exception());

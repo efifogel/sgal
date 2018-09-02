@@ -14,7 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef PLAYER_SCENE_HPP
 #define PLAYER_SCENE_HPP
@@ -39,9 +41,6 @@
 #include "SGAL/Scene.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Box.hpp"
-#if defined(SGAL_USE_V8)
-#include "SGAL/Array_buffer_allocator.hpp"
-#endif
 #if defined(_WIN32)
 #include "SGAL/Windows_window_manager.hpp"
 #endif
@@ -263,44 +262,39 @@ public:
     const;
 
 protected:
-  /*! The window manager. */
+  //! The window manager.
   Window_manager* m_window_manager;
 
-  /*! The window item. */
+  //! The window item.
   Window_item* m_window_item;
 
-  /*! The width of the window. */
+  //! The width of the window.
   SGAL::Uint m_win_width;
 
-  /* The height of the window. */
+  //! The height of the window.
   SGAL::Uint m_win_height;
 
-  /*! The width of the offscreen framebuffer. */
+  //! The width of the offscreen framebuffer.
   SGAL::Uint m_offscreen_width;
 
-  /* The height of the offscreen framebuffer. */
+  //! The height of the offscreen framebuffer.
   SGAL::Uint m_offscreen_height;
 
 #if defined(SGAL_USE_V8)
-  /*! An allocator. */
-  SGAL::Array_buffer_allocator m_allocator;
-
-  v8::Isolate::CreateParams m_params;
-
-  /*! An isolated instance of the V8 engine. */
+  //! An isolated instance of the V8 engine.
   v8::Isolate* m_isolate;
 #endif
 
-  /*! The scene graph. */
+  //! The scene graph.
   SGAL::Scene_graph* m_scene_graph;
 
-  /*! The configuration. */
+  //! The configuration.
   SGAL::Configuration* m_configuration;
 
-  /*! The context. */
+  //! The context.
   SGAL::Context* m_context;
 
-  /*! Option parser. */
+  //! Option parser.
   Player_option_parser* m_option_parser;
 
   SGAL::Boolean m_simulate;

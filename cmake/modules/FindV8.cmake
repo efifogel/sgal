@@ -7,6 +7,7 @@
 
 find_path(V8_INCLUDE_DIR NAMES v8.h
           PATH_SUFFIXES include
+	  PATHS /opt/libv8-$ENV{V8_VER} # ppa:pinepain/libv8
           HINTS ENV V8_INC_DIR
 	        ENV V8_DIR)
 
@@ -20,6 +21,7 @@ endif()
 if (UNIX)
   find_library(V8_LIB_OPT NAMES v8
                PATH_SUFFIXES lib
+	       PATHS /opt/libv8-$ENV{V8_VER} # ppa:pinepain/libv8
                HINTS ENV V8_LIB_DIR
 	             ENV V8_DIR)
   get_filename_component(V8_LIBRARY_DIR ${V8_LIB_OPT} PATH)

@@ -215,7 +215,7 @@ private:
    * output field.
    * \param[in] global the global object associated with the context.
    */
-  void add_callbacks(v8::Local<v8::Object> global);
+  void add_callbacks(v8::Local<v8::ObjectTemplate> global);
 
   /*! Obtain the first argument for the call.
    * \param[in] field_info the field information record of the field that
