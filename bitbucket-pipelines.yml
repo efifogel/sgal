@@ -1,0 +1,15 @@
+image: sgal:latest
+pipelines:
+  default:
+    - step:
+        script:
+          - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
+          - docker build -t efifogel/sgal:latest .
+          - docker push efifogel/sgal:latest
+
+options:
+  docker: true
+definitions:
+  services:
+    docker:
+      memory: 2048
