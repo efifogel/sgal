@@ -1,4 +1,3 @@
-image: sgal:latest
 pipelines:
   default:
     - step:
