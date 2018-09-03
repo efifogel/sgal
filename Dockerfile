@@ -1,15 +1,9 @@
-# Start with a stable version of Ubuntu, namely ubuntu:14.04
-# Version 15:04 has some problems when compiling sources that depend on
-# ImageMagick.
-# Version 15.04 comes with CGAL version 4.5, which is too old anyway.
-
 FROM ubuntu:16.04
 
 RUN apt-get update && apt-get upgrade -y && apt-get clean
 # bzip2  libc6-dev-i386 g++-multilib openjdk-7-jdk
 
 RUN apt-get install -y dialog \
-	subversion \
 	gcc g++ \
 	cmake make \
 	python \
@@ -57,6 +51,7 @@ ADD ./src ./src
 ADD ./cmake ./cmake
 
 RUN cmake -DCMAKE_BUILD_TYPE=Release \
+  	  -DBUILD_SHARED_LIBS=true \
           -DSGAL_USE_DXF:BOOL=ON \
           -DSGAL_USE_V8:BOOL=ON \
           -DSGAL_USE_SCGAL:BOOL=ON \
