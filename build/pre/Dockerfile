@@ -43,9 +43,3 @@ RUN cmake -DCMAKE_BUILD_TYPE=Release \
           -DWITH_CGAL_Qt5=OFF \
           cgal-master
 RUN make install
-
-RUN mkdir /usr/src/sgal
-WORKDIR /usr/src/sgal
-COPY ./CMakeLists.txt ./
-ADD ./src ./src
-ADD ./cmake ./cmake
